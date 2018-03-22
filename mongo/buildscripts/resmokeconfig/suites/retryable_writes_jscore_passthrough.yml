@@ -1,0 +1,64 @@
+test_kind: js_test
+
+selector:
+  roots:
+  - jstests/core/**/*.js
+  exclude_files:
+  # These tests are not expected to pass with replica-sets:
+  - jstests/core/capped_update.js
+  - jstests/core/dbadmin.js
+  - jstests/core/opcounters_write_cmd.js
+  - jstests/core/read_after_optime.js
+
+  # No-op retries are not ignored by top, the profiler, or opcount.
+  - jstests/core/operation_latency_histogram.js
+  - jstests/core/profile2.js
+  - jstests/core/profile3.js
+  - jstests/core/profile_findandmodify.js
+  - jstests/core/top.js
+  - jstests/core/views/views_stats.js
+
+  # TODO SERVER-31249: getLastError should not be affected by no-op retries.
+  - jstests/core/bulk_legacy_enforce_gle.js
+
+  # TODO SERVER-31242: findAndModify no-op retry should respect the fields option.
+  - jstests/core/crud_api.js
+  - jstests/core/find_and_modify2.js
+  - jstests/core/find_and_modify_server6865.js
+
+  # TODO SERVER-31245: Inserts to "system.indexes" bypass the check for retryability.
+  - jstests/core/batch_write_command_insert.js
+
+  # TODO SERVER-31198: Remove once retry attempts are always decremented.
+  - jstests/core/write_result.js
+
+executor:
+  config:
+    shell_options:
+      eval: >-
+        testingReplication = true;
+        load("jstests/libs/override_methods/enable_sessions.js");
+        load("jstests/libs/override_methods/retry_writes_at_least_once.js");
+      global_vars:
+        TestData:
+          alwaysInjectTransactionNumber: true
+          sessionOptions:
+            retryWrites: true
+      readMode: commands
+  hooks:
+  # The CheckReplDBHash hook waits until all operations have replicated to and have been applied
+  # on the secondaries, so we run the ValidateCollections hook after it to ensure we're
+  # validating the entire contents of the collection.
+  - class: CheckReplOplogs
+  - class: CheckReplDBHash
+  - class: ValidateCollections
+  - class: CleanEveryN
+    n: 20
+  fixture:
+    class: ReplicaSetFixture
+    mongod_options:
+      oplogSize: 511
+      set_parameters:
+        enableTestCommands: 1
+        numInitialSyncAttempts: 1
+    num_nodes: 2

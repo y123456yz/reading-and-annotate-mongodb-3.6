@@ -1,0 +1,2 @@
+scons mongod -j 3
+
