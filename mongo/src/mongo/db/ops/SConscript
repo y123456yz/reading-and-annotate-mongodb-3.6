@@ -1,0 +1,128 @@
+# -*- mode: python -*-
+
+Import("env")
+
+env = env.Clone()
+
+env.Library(
+    target='write_ops_exec',
+    source=[
+        'write_ops_exec.cpp',
+        ],
+    LIBDEPS_PRIVATE=[
+        '$BUILD_DIR/mongo/base',
+        '$BUILD_DIR/mongo/db/repl/oplog',
+        '$BUILD_DIR/mongo/db/repl/repl_coordinator_interface',
+        '$BUILD_DIR/mongo/util/fail_point',
+        '$BUILD_DIR/mongo/db/write_ops',
+        '$BUILD_DIR/mongo/db/curop',
+        '$BUILD_DIR/mongo/db/db_raii',
+    ],
+)
+
+
+
+env.Library(
+    target='update',
+    source=[
+        'modifier_add_to_set.cpp',
+        'modifier_bit.cpp',
+        'modifier_compare.cpp',
+        'modifier_current_date.cpp',
+        'modifier_inc.cpp',
+        'modifier_pop.cpp',
+        'modifier_pull.cpp',
+        'modifier_pull_all.cpp',
+        'modifier_push.cpp',
+        'modifier_rename.cpp',
+        'modifier_set.cpp',
+        'modifier_unset.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+        '$BUILD_DIR/mongo/db/service_context',
+        '$BUILD_DIR/mongo/db/logical_clock',
+        '$BUILD_DIR/mongo/db/logical_time',
+        '$BUILD_DIR/mongo/db/bson/dotted_path_support',
+        '$BUILD_DIR/mongo/db/matcher/expressions',
+        '$BUILD_DIR/mongo/db/update/update_common',
+    ],
+)
+
+env.CppUnitTest(
+    target='modifier_update_test',
+    source=[
+        'modifier_add_to_set_test.cpp',
+        'modifier_bit_test.cpp',
+        'modifier_compare_test.cpp',
+        'modifier_current_date_test.cpp',
+        'modifier_inc_test.cpp',
+        'modifier_pop_test.cpp',
+        'modifier_pull_all_test.cpp',
+        'modifier_pull_test.cpp',
+        'modifier_push_test.cpp',
+        'modifier_rename_test.cpp',
+        'modifier_set_test.cpp',
+        'modifier_unset_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/bson/mutable/mutable_bson_test_utils',
+        '$BUILD_DIR/mongo/db/query/collation/collator_interface_mock',
+        '$BUILD_DIR/mongo/db/query/query_test_service_context',
+        '$BUILD_DIR/mongo/db/service_context_noop_init',
+        '$BUILD_DIR/mongo/db/logical_clock',
+        'update',
+    ],
+)
+
+env.Library(
+    target='write_ops_parsers',
+    source=[
+        'write_ops_parsers.cpp',
+        env.Idlc('write_ops.idl')[0],
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+        '$BUILD_DIR/mongo/db/dbmessage',
+        '$BUILD_DIR/mongo/idl/idl_parser',
+    ],
+)
+
+env.Library(
+    target='write_ops_parsers_test_helpers',
+    source=[
+        'write_ops_parsers_test_helpers.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+        '$BUILD_DIR/mongo/db/dbmessage',
+    ],
+)
+
+env.CppUnitTest(
+    target='write_ops_parsers_test',
+    source='write_ops_parsers_test.cpp',
+    LIBDEPS=[
+        'write_ops_parsers',
+        'write_ops_parsers_test_helpers',
+    ],
+)
+
+env.CppIntegrationTest(
+    target='write_ops_document_stream_integration_test',
+    source='write_ops_document_stream_integration_test.cpp',
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/client/clientdriver',
+        '$BUILD_DIR/mongo/util/version_impl',
+    ],
+)
+
+env.CppUnitTest(
+    target='write_ops_retryability_test',
+    source='write_ops_retryability_test.cpp',
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/db/repl/mock_repl_coord_server_fixture',
+        '$BUILD_DIR/mongo/db/repl/oplog_entry',
+        '$BUILD_DIR/mongo/db/write_ops',
+    ],
+)

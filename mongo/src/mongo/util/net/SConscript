@@ -1,0 +1,78 @@
+# -*- mode: python; -*-
+
+Import('env')
+
+env = env.Clone()
+
+env.Library(
+    target='network',
+    source=[
+        "cidr.cpp",
+        "hostandport.cpp",
+        "hostname_canonicalization.cpp",
+        "listen.cpp",
+        "message.cpp",
+        "message_port.cpp",
+        "op_msg.cpp",
+        "private/socket_poll.cpp",
+        "private/ssl_expiration.cpp",
+        "sock.cpp",
+        "sockaddr.cpp",
+        "socket_exception.cpp",
+        "ssl_manager.cpp",
+        "ssl_options.cpp",
+        "thread_idle_callback.cpp",
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+        '$BUILD_DIR/mongo/db/auth/auth_rolename',
+        '$BUILD_DIR/mongo/util/concurrency/ticketholder',
+        '$BUILD_DIR/mongo/util/decorable',
+    ],
+    LIBDEPS_PRIVATE=[
+        '$BUILD_DIR/mongo/db/bson/dotted_path_support',
+        '$BUILD_DIR/mongo/db/server_options_core',
+        '$BUILD_DIR/mongo/util/background_job',
+        '$BUILD_DIR/mongo/util/fail_point',
+        '$BUILD_DIR/mongo/util/options_parser/options_parser',
+        '$BUILD_DIR/mongo/util/winutil',
+    ],
+)
+
+env.CppUnitTest(
+    target='network_test',
+    source=[
+        'cidr_test.cpp',
+        'hostandport_test.cpp',
+        'op_msg_test.cpp',
+        'sock_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/util/fail_point',
+        'network',
+    ],
+)
+
+
+env.CppUnitTest(
+    target='ssl_manager_test',
+    source=[
+        'ssl_manager_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+        'network',
+    ],
+)
+
+env.CppIntegrationTest(
+    target='op_msg_integration_test',
+    source=[
+        'op_msg_integration_test.cpp',
+    ],
+    LIBDEPS=[
+        'network',
+        '$BUILD_DIR/mongo/client/clientdriver',
+        '$BUILD_DIR/mongo/util/version_impl',
+    ],
+)

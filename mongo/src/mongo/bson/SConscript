@@ -1,0 +1,99 @@
+# -*- mode: python; -*-
+
+Import('env')
+
+env = env.Clone()
+
+env.SConscript(
+    dirs=[
+        'mutable',
+        'util',
+    ],
+    exports=[
+        'env',
+    ],
+)
+
+env.CppUnitTest(
+    target='bson_field_test',
+    source=[
+        'bson_field_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+    ],
+)
+
+env.CppUnitTest(
+    target='bson_obj_test',
+    source=[
+        'bson_obj_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+    ],
+)
+
+env.CppUnitTest(
+    target='bson_obj_data_type_test',
+    source=[
+        'bson_obj_data_type_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+    ]
+)
+
+env.CppUnitTest(
+    target='bson_validate_test',
+    source=[
+        'bson_validate_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+    ],
+)
+
+env.CppUnitTest(
+    target='bsonobjbuilder_test',
+    source=[
+        'bsonobjbuilder_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+    ],
+)
+
+env.CppUnitTest(
+    target='bsonelement_test',
+    source=[
+        'bsonelement_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+        '$BUILD_DIR/mongo/util/uuid',
+    ],
+)
+
+env.CppUnitTest(
+    target='oid_test',
+    source=[
+        'oid_test.cpp',
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/base',
+    ],
+)
+
+asioEnv = env.Clone()
+asioEnv.InjectThirdPartyIncludePaths('asio')
+
+asioEnv.CppIntegrationTest(
+    target='ugly_bson_integration_test',
+    source=[
+        'ugly_bson_integration_test.cpp'
+    ],
+    LIBDEPS=[
+        '$BUILD_DIR/mongo/executor/network_interface_asio_fixture',
+    ],
+)
