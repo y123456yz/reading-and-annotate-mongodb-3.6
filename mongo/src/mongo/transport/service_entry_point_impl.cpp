@@ -46,6 +46,7 @@
 #endif
 
 namespace mongo {
+//调整最大可用文件描述符fd
 ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(svcCtx) {
 
     const auto supportedMax = [] {
@@ -57,7 +58,7 @@ ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(s
 
         size_t max = (size_t)(limit.rlim_cur * .8);
 
-        LOG(1) << "fd limit"
+        LOG(1) << "fd limit 11 "
                << " hard:" << limit.rlim_max << " soft:" << limit.rlim_cur << " max conn: " << max;
 
         return std::min(max, serverGlobalParams.maxConns);

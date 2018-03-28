@@ -40,6 +40,7 @@ using std::string;
 
 FailPointRegistry::FailPointRegistry() : _frozen(false) {}
 
+//MONGO_FP_DECLAREÖÐÖ´ÐÐ
 Status FailPointRegistry::addFailPoint(const string& name, FailPoint* failPoint) {
     if (_frozen) {
         return Status(ErrorCodes::CannotMutateObject, "Registry is already frozen");

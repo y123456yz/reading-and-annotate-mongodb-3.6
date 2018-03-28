@@ -251,6 +251,9 @@ MMAPV1Engine::MMAPV1Engine(const StorageEngineLockFile* lockFile,
     }
 }
 
+/*
+mongodb使用内存文件映射管理数据,所以过一段时间有必要把脏数据写回磁盘，这里开启一个线程干的就是这个事情  
+*/
 void MMAPV1Engine::finishInit() {
     dataFileSync.go();
 

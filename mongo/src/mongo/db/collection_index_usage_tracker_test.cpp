@@ -150,3 +150,4 @@ TEST_F(CollectionIndexUsageTrackerTest, DateTimeAfterDeregister) {
 }
 }  // namespace
 }  // namespace mongo
+

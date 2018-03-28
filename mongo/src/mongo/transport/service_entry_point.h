@@ -40,7 +40,9 @@ namespace mongo {
  * The ServiceEntryPoint accepts new Sessions from the TransportLayer, and is
  * responsible for running these Sessions in a get-Message, run-Message,
  * reply-with-Message loop.  It may not do this on the TransportLayerâ€™s thread.
- */
+ */ 
+//ServiceContextMongoD->ServiceContext(°üº¬ServiceEntryPoint³ÉÔ±)
+//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 class ServiceEntryPoint {
     MONGO_DISALLOW_COPYING(ServiceEntryPoint);
 

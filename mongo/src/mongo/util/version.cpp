@@ -179,6 +179,16 @@ void VersionInfoInterface::logTargetMinOS() const {
     log() << "targetMinOS: " << targetMinOS();
 }
 
+/*
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] db version v3.6.1
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] git version: nogitversion
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] allocator: tcmalloc
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] modules: none
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] build environment:
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten]     distarch: x86_64
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten]     target_arch: x86_64
+*/
+//logProcessDetails中调用
 void VersionInfoInterface::logBuildInfo() const {
     log() << "git version: " << gitVersion();
 
@@ -201,6 +211,7 @@ void VersionInfoInterface::logBuildInfo() const {
     log() << ss.str();
 
     log() << "build environment:";
+	//编译相关的环境变量
     for (auto&& envDataEntry : buildInfo()) {
         if (std::get<3>(envDataEntry)) {
             auto val = std::get<1>(envDataEntry);

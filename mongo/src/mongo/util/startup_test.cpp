@@ -34,6 +34,7 @@ namespace mongo {
 std::vector<StartupTest*>* StartupTest::tests = 0;
 bool StartupTest::running = false;
 
+//源头在这里，db.c中的mongoDbMain->StartupTest::runTests()会先构造一个StartupTest类，然后执行
 StartupTest::StartupTest() {
     registerTest(this);
 }

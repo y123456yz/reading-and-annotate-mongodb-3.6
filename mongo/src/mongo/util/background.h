@@ -54,6 +54,7 @@ namespace mongo {
  *  BackgroundJob object must exist for as long the background thread is running.
  */
 
+//BackgroundJob的功能就是生成一个后台线程并执行相应任务,例如DataFileSync会继承该类
 class BackgroundJob {
     MONGO_DISALLOW_COPYING(BackgroundJob);
 

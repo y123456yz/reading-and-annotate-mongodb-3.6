@@ -36,6 +36,11 @@ namespace mongo {
 /**
  * does background async flushes of mmapped files
  */
+
+/*
+dataFileSync类也派生自BackgroundJob类，而BackgroundJob的功能就是生成一个后台线程并执行相应任务。而当前
+dataFileSync的任务就是在一段时间后（cmdLine.syncdelay）将内存中的数据flash到磁盘上（因为mongodb使用mmap方式将数据先放入内存中）
+*/
 class DataFileSync : public BackgroundJob, public ServerStatusSection {
 public:
     DataFileSync();

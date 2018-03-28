@@ -34,6 +34,8 @@
 #include "mongo/base/make_string_vector.h"
 #include "mongo/unittest/unittest.h"
 
+//CONSTRUCT_DEPENDENCY_GRAPH->ASSERT_ADD_INITIALIZER->ADD_INITIALIZER
+//ASSERT_ADD_INITIALIZER->ADD_INITIALIZER
 #define ADD_INITIALIZER(GRAPH, NAME, FN, PREREQS, DEPS) \
     (GRAPH).addInitializer(                             \
         (NAME), (FN), MONGO_MAKE_STRING_VECTOR PREREQS, MONGO_MAKE_STRING_VECTOR DEPS)

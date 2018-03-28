@@ -83,6 +83,7 @@ struct WireVersionInfo {
     int maxWireVersion;
 };
 
+//initWireSpec 构造一个WireSpec类
 struct WireSpec {
     MONGO_DISALLOW_COPYING(WireSpec);
 

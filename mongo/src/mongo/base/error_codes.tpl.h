@@ -52,6 +52,7 @@ enum class ErrorCategory {
  *
  * Do not update this file directly. Update src/mongo/base/error_codes.err instead.
  */
+//¼ûmongo/base/error_codes.err
 class ErrorCodes {
 public:
     // Explicitly 32-bits wide so that non-symbolic values,

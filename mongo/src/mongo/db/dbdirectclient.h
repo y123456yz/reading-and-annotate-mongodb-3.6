@@ -48,6 +48,7 @@ class OperationContext;
  * without the overhead of creating a new DBDirectClient by calling setOpCtx(), after which all
  * operations will use the new OperationContext.
  */
+//_initAndListen中会new一个该类
 class DBDirectClient : public DBClientBase {
 public:
     DBDirectClient(OperationContext* opCtx);

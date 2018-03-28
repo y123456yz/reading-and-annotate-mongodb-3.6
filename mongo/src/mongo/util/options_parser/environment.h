@@ -214,9 +214,13 @@ public:
     /* Debugging */
     void dump() const;
 
+/*
+配置相关的解析首先存入这些结构中，然后在storeMongodOptions重新赋值给 StorageGlobalParams 全局结构
+*/
 protected:
     std::vector<Constraint*> constraints;
     std::vector<KeyConstraint*> keyConstraints;
+    //Environment::set  Environment::setAll中赋值
     std::map<Key, Value> values;
     std::map<Key, Value> default_values;
     bool valid;

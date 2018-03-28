@@ -102,7 +102,8 @@ void TransportLayerManager::shutdown() {
     _foreach([](TransportLayer* tl) { tl->shutdown(); });
 }
 
-// TODO Same comment as start()
+// TODO Same comment as start() 
+//runMongosServer _initAndListenÖĞÔËĞĞ
 Status TransportLayerManager::setup() {
     for (auto&& tl : _tls) {
         auto status = tl->setup();

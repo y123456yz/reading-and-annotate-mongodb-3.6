@@ -62,7 +62,10 @@ typedef long long ConnectionId;
 /**
  * The database's concept of an outside "client".
  * */
-class Client final : public Decorable<Client> {
+//ServiceContext包含Client成员，见ServiceContext::UniqueClient
+//class Client final : public Decorable<Client> {
+class Client: public Decorable<Client> {
+
 public:
     /**
      * Creates a Client object and stores it in TLS for the current thread.

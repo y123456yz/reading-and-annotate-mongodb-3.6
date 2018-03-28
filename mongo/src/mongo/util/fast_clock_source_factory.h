@@ -36,6 +36,7 @@ namespace mongo {
 
 class ClockSource;
 
+//参考_initAndListen使用方法
 // Factory that creates the fastest to read wall clock available on the system.
 class FastClockSourceFactory {
 public:

@@ -55,6 +55,7 @@ namespace mongo {
 
 MongosGlobalParams mongosGlobalParams;
 
+//MONGO_GENERAL_STARTUP_OPTIONS_REGISTER 宏定义中调用执行
 Status addMongosOptions(moe::OptionSection* options) {
     moe::OptionSection general_options("General options");
 

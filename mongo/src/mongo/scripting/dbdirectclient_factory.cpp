@@ -45,7 +45,7 @@ const ServiceContext::Decoration<DBDirectClientFactory> forService =
 
 DBDirectClientFactory& DBDirectClientFactory::get(ServiceContext* context) {
     fassert(40151, context);
-    return forService(context);
+    return forService(context); //上面的forService全局结构
 }
 
 DBDirectClientFactory& DBDirectClientFactory::get(OperationContext* opCtx) {

@@ -36,8 +36,10 @@ using std::unique_ptr;
 
 MONGO_FP_DECLARE(dummy);  // used by tests in jstests/fail_point
 
+//FailPointRegistry类指针FailPointRegistry,下面这个函数new对象赋值给_fpRegistry
 unique_ptr<FailPointRegistry> _fpRegistry(nullptr);
 
+//定义一个GlobalInitializerRegisterer _mongoInitializerRegisterer_FailPointRegistry类,该类构造函数中new一个FailPointRegistry
 MONGO_INITIALIZER_WITH_PREREQUISITES(FailPointRegistry, MONGO_NO_PREREQUISITES)
 (InitializerContext* context) {
     _fpRegistry.reset(new FailPointRegistry());

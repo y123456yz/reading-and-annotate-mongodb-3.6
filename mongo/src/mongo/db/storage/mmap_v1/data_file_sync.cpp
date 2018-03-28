@@ -52,6 +52,7 @@ DataFileSync dataFileSync;
 DataFileSync::DataFileSync()
     : ServerStatusSection("backgroundFlushing"), _total_time(0), _flushes(0), _last() {}
 
+//À¢≈Ã»ŒŒÒ
 void DataFileSync::run() {
     Client::initThread(name().c_str());
 

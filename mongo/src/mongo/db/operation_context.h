@@ -71,6 +71,8 @@ class UnreplicatedWritesBlock;
  * (RecoveryUnitState) to reduce complexity and duplication in the storage-engine specific
  * RecoveryUnit and to allow better invariant checking.
  */
+//ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口
+//ServiceContextMongoD::_newOpCtx 中会构造该类
 class OperationContext : public Decorable<OperationContext> {
     MONGO_DISALLOW_COPYING(OperationContext);
 

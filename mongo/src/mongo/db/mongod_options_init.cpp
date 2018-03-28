@@ -35,6 +35,7 @@
 #include "mongo/util/options_parser/startup_options.h"
 #include "mongo/util/quick_exit.h"
 
+//mongos_options_init.cpp ∫Õ mongod_options_init.cpp÷–÷¥––
 namespace mongo {
 MONGO_GENERAL_STARTUP_OPTIONS_REGISTER(MongodOptions)(InitializerContext* context) {
     return addMongodOptions(&moe::startupOptions);

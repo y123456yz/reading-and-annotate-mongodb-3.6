@@ -36,6 +36,9 @@ namespace mongo {
 /**
  * The entry point into mongod. Just a wrapper around assembleResponse.
  */
+ 
+//ServiceContextMongoD->ServiceContext(°üº¬ServiceEntryPoint³ÉÔ±)
+//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 class ServiceEntryPointMongod final : public ServiceEntryPointImpl {
     MONGO_DISALLOW_COPYING(ServiceEntryPointMongod);
 

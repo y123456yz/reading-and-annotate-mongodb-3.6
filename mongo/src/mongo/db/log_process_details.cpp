@@ -51,6 +51,16 @@ bool is32bit() {
     return (sizeof(int*) == 4);
 }
 
+/*
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] db version v3.6.1
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] git version: nogitversion
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] allocator: tcmalloc
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] modules: none
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] build environment:
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten]     distarch: x86_64
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten]     target_arch: x86_64
+2018-03-26T15:07:15.988+0800 I CONTROL  [initandlisten] options: { config: "./mongo.conf", net: { bindIpAll: true, maxIncomingConnections: 20000, port: 8002 }, operationProfiling: { mode: "slowOp", slowOpThresholdMs: 100 }, processManagement: { fork: true }, replication: { oplogSizeMB: 20480, replSetName: "363" }, sharding: { archiveMovedChunks: true, clusterRole: "shardsvr" }, storage: { dbPath: "/data1/mongodb/363/data/", directoryPerDB: true, engine: "wiredTiger", journal: { enabled: true }, wiredTiger: { collectionConfig: { blockCompressor: "none" }, engineConfig: { cacheSizeGB: 40.0, directoryForIndexes: true }, indexConfig: { prefixCompression: false } } }, systemLog: { destination: "file", logAppend: true, path: "/data1/mongodb/363/logs/mongod.log", verbosity: 6 } }
+*/
 void logProcessDetails() {
     auto&& vii = VersionInfoInterface::instance();
     log() << mongodVersion(vii);

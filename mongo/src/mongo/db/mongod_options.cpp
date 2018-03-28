@@ -60,6 +60,8 @@ using std::string;
 
 MongodGlobalParams mongodGlobalParams;
 
+//mongos_options_init.cpp 和 mongod_options_init.cpp中调用
+//mongod -h的打印全部在这里
 Status addMongodOptions(moe::OptionSection* options) {
     moe::OptionSection general_options("General options");
 
@@ -925,6 +927,8 @@ Status canonicalizeMongodOptions(moe::Environment* params) {
     return Status::OK();
 }
 
+//解析配置文件的值存入到 StorageGlobalParams 类，
+//mongos_options_init.cpp 和 mongod_options_init.cpp中使用
 Status storeMongodOptions(const moe::Environment& params) {
     Status ret = storeServerOptions(params);
     if (!ret.isOK()) {

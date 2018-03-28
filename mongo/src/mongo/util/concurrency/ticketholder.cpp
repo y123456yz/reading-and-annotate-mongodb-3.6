@@ -49,6 +49,7 @@ void _check(int ret) {
 }
 }
 
+//互斥信号量初始化
 TicketHolder::TicketHolder(int num) : _outof(num) {
     _check(sem_init(&_sem, 0, num));
 }
@@ -94,6 +95,7 @@ void TicketHolder::release() {
     _check(sem_post(&_sem));
 }
 
+//checkTicketNumbers中调用，调整大小，最终TicketHolder::_outof = newSize
 Status TicketHolder::resize(int newSize) {
     stdx::lock_guard<stdx::mutex> lk(_resizeMutex);
 

@@ -37,8 +37,13 @@ namespace mongo {
 class Client;
 class StorageEngineLockFile;
 
+//ServiceContextMongoD->ServiceContext(包含ServiceContext成员)
+//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
+
+//_initAndListen中会构造使用该类  
 class ServiceContextMongoD final : public ServiceContext {
 public:
+    //下面的FactoryMap _storageFactories;使用
     using FactoryMap = std::map<std::string, const StorageEngine::Factory*>;
 
     ServiceContextMongoD();
@@ -48,30 +53,38 @@ public:
     StorageEngine* getGlobalStorageEngine() override;
 
     void createLockFile();
-
+    //初始化存储引擎
     void initializeGlobalStorageEngine() override;
 
     void shutdownGlobalStorageEngineCleanly() override;
 
+    //注册name factory到_storageFactories
     void registerStorageEngine(const std::string& name,
                                const StorageEngine::Factory* factory) override;
 
+    //name是否在_storageFactories有注册
     bool isRegisteredStorageEngine(const std::string& name) override;
 
+    //遍历下面的_storageFactories成员 map表用的
     StorageFactoriesIterator* makeStorageFactoriesIterator() override;
 
 private:
+    ////生成一个OperationContext类
     std::unique_ptr<OperationContext> _newOpCtx(Client* client, unsigned opId) override;
 
+    //createLockFile中创建lockfile
     std::unique_ptr<StorageEngineLockFile> _lockFile;
 
     // logically owned here, but never deleted by anyone.
-    StorageEngine* _storageEngine = nullptr;
+    //逻辑存储引擎  MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
+    StorageEngine* _storageEngine = nullptr; //当前用的存储引擎
 
     // All possible storage engines are registered here through MONGO_INIT.
+    //所有的存储引起都注册到这里
     FactoryMap _storageFactories;
 };
 
+//上面的ServiceContextMongoD:makeStorageFactoriesIterator 使用到该类做遍历
 class StorageFactoriesIteratorMongoD final : public StorageFactoriesIterator {
 public:
     typedef ServiceContextMongoD::FactoryMap::const_iterator FactoryMapIterator;
@@ -87,3 +100,4 @@ private:
 };
 
 }  // namespace mongo
+

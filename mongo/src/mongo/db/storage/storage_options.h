@@ -43,6 +43,7 @@
 
 namespace mongo {
 
+//变量赋值在storeMongodOptions
 struct StorageGlobalParams {
     // Default data directory for mongod when running in non-config server mode.
     static const char* kDefaultDbPath;
@@ -106,6 +107,7 @@ struct StorageGlobalParams {
     // Puts MongoD into "read-only" mode. MongoD will not write any data to the underlying
     // filesystem. Note that read operations may require writes. For example, a sort on a large
     // dataset may fail if it requires spilling to disk.
+    //createLockFile中生效使用
     bool readOnly = false;
 
     // --groupCollections
