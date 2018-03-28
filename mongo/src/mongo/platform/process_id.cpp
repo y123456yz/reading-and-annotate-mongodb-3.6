@@ -45,6 +45,7 @@ inline NativeProcessId getCurrentNativeProcessId() {
     return GetCurrentProcessId();
 }
 #else
+//获取进程号
 inline NativeProcessId getCurrentNativeProcessId() {
     return getpid();
 }

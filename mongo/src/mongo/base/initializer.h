@@ -55,6 +55,7 @@ public:
     /**
      * Get the initializer dependency graph, presumably for the purpose of adding more nodes.
      */
+    //GlobalInitializerRegisterer::GlobalInitializerRegistererÖÐµ÷ÓÃ
     InitializerDependencyGraph& getInitializerDependencyGraph() {
         return _graph;
     }

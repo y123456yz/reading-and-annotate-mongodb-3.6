@@ -31,6 +31,7 @@
 
 namespace mongo {
 
+//runGlobalInitializersÖÐµ÷ÓÃ
 Initializer& getGlobalInitializer() {
     static Initializer theGlobalInitializer;
     return theGlobalInitializer;

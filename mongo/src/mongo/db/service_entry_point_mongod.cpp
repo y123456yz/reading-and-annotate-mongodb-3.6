@@ -1093,6 +1093,8 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 
 }  // namespace
 
+//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
+//class ServiceEntryPointMongod final : public ServiceEntryPointImpl
 DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const Message& m) {
     // before we lock...
     NetworkOp op = m.operation();

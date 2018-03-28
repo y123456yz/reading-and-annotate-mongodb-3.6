@@ -38,6 +38,7 @@
 
 namespace mongo {
 
+//listener类包含该成员
 class TicketHolder {
     MONGO_DISALLOW_COPYING(TicketHolder);
 
@@ -71,6 +72,7 @@ private:
 #else
     bool _tryAcquire();
 
+    //TicketHolder::resize中进行初始化调整
     AtomicInt32 _outof;
     int _num;
     stdx::mutex _mutex;

@@ -32,7 +32,7 @@
 #include "mongo/config.h"
 
 namespace mongo {
-
+#define MONGO_CONFIG_DEBUG_BUILD 1 //yang add  env.SetConfigHeaderDefine("MONGO_CONFIG_DEBUG_BUILD") 环境变量设置
 #if defined(MONGO_CONFIG_DEBUG_BUILD)
 const bool kDebugBuild = true;
 #else

@@ -73,6 +73,7 @@ public:
 
 private:
     bool _frozen;
+    //addFailPoint÷–ÃÌº”
     unordered_map<std::string, FailPoint*> _fpMap;
 };
 }

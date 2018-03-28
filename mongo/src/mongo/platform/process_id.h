@@ -58,6 +58,7 @@ public:
     /**
      * Constructs a ProcessId from a NativeProcessId.
      */
+     //构造一个ProcessId类
     static inline ProcessId fromNative(NativeProcessId npid) {
         return ProcessId(npid);
     }
@@ -126,7 +127,7 @@ public:
 private:
     explicit ProcessId(NativeProcessId npid) : _npid(npid) {}
 
-    NativeProcessId _npid;
+    NativeProcessId _npid; //ProcessId赋值
 };
 
 std::ostream& operator<<(std::ostream& os, ProcessId pid);

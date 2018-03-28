@@ -84,10 +84,13 @@ public:
     void shutdown();
 
 private:
+    //地址列表，赋值见Listener::setupSockets
     std::vector<SockAddr> _mine;
+    //存储所有socket信息，赋值见Listener::setupSockets
     std::vector<SOCKET> _socks;
     std::string _name;
     std::string _ip;
+    //Listener::setupSockets中创建套接字成功后赋值为true
     bool _setupSocketsSuccessful;
     bool _logConnect;
     mutable stdx::mutex _readyMutex;                   // Protects _ready
@@ -116,6 +119,7 @@ public:
     static AtomicInt64 globalConnectionNumber;
 
     /** keeps track of how many allowed connections there are and how many are being used*/
+    //TicketHolder Listener::globalTicketHolder(DEFAULT_MAX_CONN); 赋初值
     static TicketHolder globalTicketHolder;
 
     /** makes sure user input is sane */

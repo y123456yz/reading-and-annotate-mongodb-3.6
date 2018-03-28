@@ -69,6 +69,7 @@ Status Environment::get(const Key& get_key, Value* get_value) const {
 }
 
 /** Set the Value in our Environment.  Always disallow empty values */
+//environment_test.cpp中的TEST中会调用
 Status Environment::set(const Key& add_key, const Value& add_value) {
     // 1. Make sure value is not empty
     if (add_value.isEmpty()) {
@@ -197,6 +198,7 @@ Status Environment::validate(bool setValid) {
  *  boost::program_options::variables_map inherits the count function from std::map, which
  *  returns 1 if the value is set, and 0 if it is not set
  */
+//Environment::key map表中是否有该key存在
 bool Environment::count(const Key& key) const {
     Value value;
     Status ret = get(key, &value);

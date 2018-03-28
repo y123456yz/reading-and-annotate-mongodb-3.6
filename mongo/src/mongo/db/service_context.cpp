@@ -45,7 +45,7 @@
 
 namespace mongo {
 namespace {
-
+//全局变量
 ServiceContext* globalServiceContext = nullptr;
 stdx::mutex globalServiceContextMutex;
 stdx::condition_variable globalServiceContextCV;
@@ -56,6 +56,8 @@ bool hasGlobalServiceContext() {
     return globalServiceContext;
 }
 
+//fassert赋值见 assert_util.h #define fassert MONGO_fassert
+//_initAndListen中调用该函数接口获取context
 ServiceContext* getGlobalServiceContext() {
     fassert(17508, globalServiceContext);
     return globalServiceContext;
@@ -189,22 +191,26 @@ transport::ServiceExecutor* ServiceContext::getServiceExecutor() const {
     return _serviceExecutor.get();
 }
 
+//_initAndListen中有调用
 void ServiceContext::setOpObserver(std::unique_ptr<OpObserver> opObserver) {
     _opObserver = std::move(opObserver);
 }
 
+//makeMongoDServiceContext 中调用
 void ServiceContext::setTickSource(std::unique_ptr<TickSource> newSource) {
     _tickSource = std::move(newSource);
 }
 
+//makeMongoDServiceContext _initAndListen中调用，默认10ms
 void ServiceContext::setFastClockSource(std::unique_ptr<ClockSource> newSource) {
     _fastClockSource = std::move(newSource);
 }
-
+//makeMongoDServiceContext 中调用
 void ServiceContext::setPreciseClockSource(std::unique_ptr<ClockSource> newSource) {
     _preciseClockSource = std::move(newSource);
 }
 
+//makeMongoDServiceContext _initAndListen中调用
 void ServiceContext::setServiceEntryPoint(std::unique_ptr<ServiceEntryPoint> sep) {
     _serviceEntryPoint = std::move(sep);
 }

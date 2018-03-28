@@ -122,10 +122,12 @@ std::string StorageEngineLockFile::getFilespec() const {
     return _filespec;
 }
 
+//createLockFile中执行
 bool StorageEngineLockFile::createdByUncleanShutdown() const {
     return _uncleanShutdown;
 }
 
+//createLockFile中执行
 Status StorageEngineLockFile::open() {
     try {
         if (!boost::filesystem::exists(_dbpath)) {

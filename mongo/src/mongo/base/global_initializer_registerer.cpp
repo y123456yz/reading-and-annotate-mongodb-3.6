@@ -34,7 +34,7 @@
 #include "mongo/base/initializer.h"
 
 namespace mongo {
-
+//使用GlobalInitializerRegisterer类的时候，构造函数中会调用addInitializer
 GlobalInitializerRegisterer::GlobalInitializerRegisterer(
     const std::string& name,
     const InitializerFunction& fn,
@@ -51,3 +51,4 @@ GlobalInitializerRegisterer::GlobalInitializerRegisterer(
 }
 
 }  // namespace mongo
+

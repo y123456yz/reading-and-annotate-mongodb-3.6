@@ -64,6 +64,7 @@ void Client::initThreadIfNotAlready() {
     initThreadIfNotAlready(getThreadName());
 }
 
+//初始化一个名称desc线程
 void Client::initThread(StringData desc, transport::SessionHandle session) {
     initThread(desc, getGlobalServiceContext(), std::move(session));
 }

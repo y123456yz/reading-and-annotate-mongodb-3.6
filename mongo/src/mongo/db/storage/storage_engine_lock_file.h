@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+//ServiceContextMongoD:_lockFile中包含该类成员
 class StorageEngineLockFile {
     MONGO_DISALLOW_COPYING(StorageEngineLockFile);
 
@@ -93,3 +94,4 @@ private:
 };
 
 }  // namespace mongo
+

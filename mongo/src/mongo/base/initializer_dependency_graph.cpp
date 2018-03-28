@@ -36,6 +36,8 @@ namespace mongo {
 InitializerDependencyGraph::InitializerDependencyGraph() {}
 InitializerDependencyGraph::~InitializerDependencyGraph() {}
 
+//GlobalInitializerRegisterer::GlobalInitializerRegisterer和ADD_INITIALIZER中注册调用
+//使用GlobalInitializerRegisterer类的时候，构造函数中会调用addInitializer
 Status InitializerDependencyGraph::addInitializer(const std::string& name,
                                                   const InitializerFunction& fn,
                                                   const std::vector<std::string>& prerequisites,
@@ -44,23 +46,24 @@ Status InitializerDependencyGraph::addInitializer(const std::string& name,
         return Status(ErrorCodes::BadValue, "Illegal to supply a NULL function");
 
     NodeData& newNode = _nodes[name];
-    if (newNode.fn) {
+    if (newNode.fn) { //已经存在
         return Status(ErrorCodes::DuplicateKey, name);
     }
 
     newNode.fn = fn;
 
     for (size_t i = 0; i < prerequisites.size(); ++i) {
-        newNode.prerequisites.insert(prerequisites[i]);
+        newNode.prerequisites.insert(prerequisites[i]); //添加
     }
 
     for (size_t i = 0; i < dependents.size(); ++i) {
-        _nodes[dependents[i]].prerequisites.insert(name);
+        _nodes[dependents[i]].prerequisites.insert(name); //添加
     }
 
     return Status::OK();
 }
 
+//Initializer::execute中使用
 InitializerFunction InitializerDependencyGraph::getInitializerFunction(
     const std::string& name) const {
     NodeMap::const_iterator iter = _nodes.find(name);
@@ -69,6 +72,11 @@ InitializerFunction InitializerDependencyGraph::getInitializerFunction(
     return iter->second.fn;
 }
 
+/*
+最终sortedNames中存储的是下面这些宏中定义的字符串信息:
+ MONGO_INITIALIZER   MONGO_INITIALIZER_WITH_PREREQUISITES MONGO_INITIALIZER_WITH_PREREQUISITES  
+ MONGO_INITIALIZER_GENERAL  MONGO_INITIALIZER_GROUP MONGO_FTS_LANGUAGE_DECLARE
+*/
 Status InitializerDependencyGraph::topSort(std::vector<std::string>* sortedNames) const {
     /*
      * This top-sort is implemented by performing a depth-first traversal of the dependency

@@ -50,7 +50,12 @@ class Session;
  * The server logic is implemented inside of handleRequest() by a subclass.
  * startSession() spawns and detaches a new thread for each incoming connection
  * (transport::Session).
- */
+ */ 
+//ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
+//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
+
+//class ServiceEntryPointMongod final : public ServiceEntryPointImpl
+//ServiceEntryPointMongod和ServiceEntryPointMongos继承该类
 class ServiceEntryPointImpl : public ServiceEntryPoint {
     MONGO_DISALLOW_COPYING(ServiceEntryPointImpl);
 

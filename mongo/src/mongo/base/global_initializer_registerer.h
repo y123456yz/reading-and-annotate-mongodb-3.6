@@ -42,8 +42,10 @@ namespace mongo {
  * Create a module-global instance of this type to register a new initializer, to be run by a
  * call to a variant of mongo::runGlobalInitializers().  See mongo/base/initializer.h,
  * mongo/base/init.h and mongo/base/initializer_dependency_graph.h for details.
- */
+ */ //MONGO_INITIALIZER_GENERAL 中注册使用该类
 class GlobalInitializerRegisterer {
+    //默认删除拷贝构造函数，无法拷贝构造  只能在定义GlobalInitializerRegisterer类变量的时候才可以构造
+    //可以参考https://blog.csdn.net/u013652425/article/details/47416381
     MONGO_DISALLOW_COPYING(GlobalInitializerRegisterer);
 
 public:
@@ -54,3 +56,4 @@ public:
 };
 
 }  // namespace mongo
+

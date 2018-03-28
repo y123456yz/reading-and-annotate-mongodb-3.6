@@ -484,6 +484,7 @@ void FileAllocator::run(FileAllocator* fa) {
     }
 }
 
+//获取一个FileAllocator实例
 FileAllocator* FileAllocator::get() {
     static FileAllocator instance;
     return &instance;

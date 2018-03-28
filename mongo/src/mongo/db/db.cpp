@@ -684,16 +684,21 @@ void initWireSpec() {
 
 MONGO_FP_DECLARE(shutdownAtStartup);
 
+//ExitCode initAndListen(int listenPort)调用该函数
 ExitCode _initAndListen(int listenPort) {
+	//初始化一个名称“initandlisten”线程用于侦听客户端传来的操作信息
     Client::initThread("initandlisten");
 
     initWireSpec();
+	//获取serviceContext类
     auto serviceContext = checked_cast<ServiceContextMongoD*>(getGlobalServiceContext());
 
     serviceContext->setFastClockSource(FastClockSourceFactory::create(Milliseconds(10)));
     serviceContext->setOpObserver(stdx::make_unique<OpObserverImpl>());
 
+	
     DBDirectClientFactory::get(serviceContext).registerImplementation([](OperationContext* opCtx) {
+		//获取DBDirectClient类
         return std::unique_ptr<DBClientBase>(new DBDirectClient(opCtx));
     });
 
@@ -701,6 +706,7 @@ ExitCode _initAndListen(int listenPort) {
         repl::ReplicationCoordinator::get(serviceContext)->getSettings();
 
     {
+		//获取当前进程ID并输出进程ID及数据库路径
         ProcessId pid = ProcessId::getCurrent();
         LogstreamBuilder l = log(LogComponent::kControl);
         l << "MongoDB starting : pid=" << pid << " port=" << serverGlobalParams.port
@@ -710,18 +716,20 @@ ExitCode _initAndListen(int listenPort) {
         if (replSettings.isSlave())
             l << " slave=" << (int)replSettings.isSlave();
 
+		//接着判断当前系统是32或64位系统？
         const bool is32bit = sizeof(int*) == 4;
         l << (is32bit ? " 32" : " 64") << "-bit host=" << getHostNameCached() << endl;
     }
 
+	//是否启用了DEBUG编译
     DEV log(LogComponent::kControl) << "DEBUG build (which is slower)" << endl;
 
 #if defined(_WIN32)
     VersionInfoInterface::instance().logTargetMinOS();
 #endif
-
     logProcessDetails();
 
+	//创建文件锁
     serviceContext->createLockFile();
 
     serviceContext->setServiceEntryPoint(
@@ -771,7 +779,7 @@ ExitCode _initAndListen(int listenPort) {
 
     logMongodStartupWarnings(storageGlobalParams, serverGlobalParams, serviceContext);
 
-    {
+    {//mongodb就会对相应路径下的数据文件进行检查，如出现文件错误（文件不存在等）
         std::stringstream ss;
         ss << endl;
         ss << "*********************************************************************" << endl;
@@ -790,7 +798,7 @@ ExitCode _initAndListen(int listenPort) {
 
     initializeSNMP();
 
-    if (!storageGlobalParams.readOnly) {
+    if (!storageGlobalParams.readOnly) { //移除指定路径下的临时文件夹信
         boost::filesystem::remove_all(storageGlobalParams.dbpath + "/_tmp/");
     }
 
@@ -1065,12 +1073,16 @@ ExitCode initAndListen(int listenPort) {
 
 #if defined(_WIN32)
 ExitCode initService() {
+	LOG(1) << "yang test ... initService"
     return initAndListen(serverGlobalParams.port);
 }
 #endif
 
+//全局的类，在进入main前就会执行
 MONGO_INITIALIZER_GENERAL(ForkServer, ("EndStartupOptionHandling"), ("default"))
 (InitializerContext* context) {
+	//LOG(1) << "yang test ..2. fork server or die";
+	printf("yang test .... fork server or die\r\n");
     mongo::forkServerOrDie();
     return Status::OK();
 }
@@ -1118,6 +1130,7 @@ void startupConfigActions(const std::vector<std::string>& args) {
         moe::startupOptionsParsed["shutdown"].as<bool>() == true) {
         bool failed = false;
 
+		printf("yang test ...222222. startupConfigActions \r\n");
         std::string name =
             (boost::filesystem::path(storageGlobalParams.dbpath) / "mongod.lock").string();
         if (!boost::filesystem::exists(name) || boost::filesystem::file_size(name) == 0)
@@ -1365,9 +1378,14 @@ void shutdownTask() {
 
 }  // namespace
 
+/*
+//LOG(1) << " only allowing " << current << " connections";
+//log() << " --maxConns too high, can only handle " << want;
+*/
 int mongoDbMain(int argc, char* argv[], char** envp) {
+	printf("yang test .ss..111... mongoDbMain 2\r\n");
+	
     registerShutdownTask(shutdownTask);
-
     setupSignalHandlers();
 
     srand(static_cast<unsigned>(curTimeMicros64()));
@@ -1395,7 +1413,14 @@ int mongoDbMain(int argc, char* argv[], char** envp) {
     }
 #endif
 
+	DEV log(LogComponent::kControl) << "echo xxxxxxxxxxxxxxxxxxxx-1 > /yangyazhou" << endl;
+	DEV log(LogComponent::kControl) << "mongodb start" << endl;
+
+	int ret = system("echo yang-test-start-mongodb >> /yangyazhou/reading-and-annotate-mongodb-3.6.1/mongo/test-mongodb");
+	ret = 0;
+
     StartupTest::runTests();
+	//ExitCode initAndListen(int listenPort) 启动侦听方法，开始侦听客户端的链接请求
     ExitCode exitCode = initAndListen(serverGlobalParams.port);
     exitCleanly(exitCode);
     return 0;

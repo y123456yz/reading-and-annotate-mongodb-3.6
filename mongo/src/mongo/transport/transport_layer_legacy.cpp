@@ -113,7 +113,9 @@ Status TransportLayerLegacy::LegacyTicket::fill(AbstractMessagingPort* amp) {
     return _fill(amp);
 }
 
+//´´½¨socket²¢bind
 Status TransportLayerLegacy::setup() {
+	error() << "yang test ...  TransportLayerLegacy::setup";
     if (!_listener->setupSockets()) {
         error() << "Failed to set up sockets during startup.";
         return {ErrorCodes::InternalError, "Failed to set up sockets"};

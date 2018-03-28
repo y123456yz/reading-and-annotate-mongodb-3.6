@@ -113,6 +113,7 @@ static bool forkServer() {
         cout.flush();
         cerr.flush();
 
+		//获取进程号
         serverGlobalParams.parentProc = ProcessId::getCurrent();
 
         // clear signal mask so that SIGUSR2 will always be caught and we can clean up the original
@@ -129,7 +130,7 @@ static bool forkServer() {
         if (child1 == -1) {
             cout << "ERROR: stage 1 fork() failed: " << errnoWithDescription();
             quickExit(EXIT_ABRUPT);
-        } else if (child1) {
+        } else if (child1) { //父进程
             // this is run in the original parent process
             int pstat;
             waitpid(child1, &pstat, 0);
@@ -183,7 +184,7 @@ static bool forkServer() {
                  << endl;
             return false;
         }
-
+		
         f = freopen("/dev/null", "w", stderr);
         if (f == NULL) {
             cout << "Cant reassign stderr while forking server process: " << strerror(errno)
@@ -201,6 +202,14 @@ static bool forkServer() {
     return true;
 }
 
+/*
+//MONGO_INITIALIZER_GENERAL(ForkServer, ("EndStartupOptionHandling"), ("default"))
+//(InitializerContext* context) {
+//    mongo::forkServerOrDie();
+//    return Status::OK();
+//}
+*/
+//s/server.cpp 和 db.cpp中调用
 void forkServerOrDie() {
     if (!forkServer())
         quickExit(EXIT_FAILURE);

@@ -46,6 +46,7 @@ class Client;
  *
  * The runner will create client objects that it passes to jobs to use.
  */
+//ServiceContext 类中包含该类成员
 class PeriodicRunner {
 public:
     using Job = stdx::function<void(Client* client)>;

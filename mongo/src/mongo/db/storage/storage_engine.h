@@ -54,6 +54,8 @@ class StorageEngineMetadata;
  * engine.  All StorageEngine(s) must be registered by calling registerFactory in order
  * to possibly be activated.
  */
+//所有的存储引起都注册到ServiceContextMongoD:FactoryMap，逻辑引擎存储到ServiceContextMongoD:_storageEngine
+//MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
 class StorageEngine {
 public:
     /**

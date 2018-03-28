@@ -102,7 +102,7 @@ public:
 
 private:
     struct NodeData {
-        InitializerFunction fn;
+        InitializerFunction fn; //赋值见InitializerDependencyGraph::addInitializer
         unordered_set<std::string> prerequisites;
     };
 
@@ -123,6 +123,7 @@ private:
      * added via addInitializer will either be absent from this map or be present with
      * NodeData::fn set to a false-ish value.
      */
+    //InitializerDependencyGraph::addInitializer 中添加,和测试相关的测试信息都存到这里面
     NodeMap _nodes;
 };
 

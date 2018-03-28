@@ -51,6 +51,7 @@
 
 namespace mongo {
 namespace {
+//class ServiceContextMongoD final : public ServiceContext {  生成一个ServiceContextMongoD类
 auto makeMongoDServiceContext() {
     auto service = stdx::make_unique<ServiceContextMongoD>();
     service->setServiceEntryPoint(stdx::make_unique<ServiceEntryPointMongod>(service.get()));
@@ -79,6 +80,7 @@ StorageEngine* ServiceContextMongoD::getGlobalStorageEngine() {
     return _storageEngine;
 }
 
+//_initAndListen调用，创建lockfile
 void ServiceContextMongoD::createLockFile() {
     try {
         _lockFile.reset(new StorageEngineLockFile(storageGlobalParams.dbpath));
@@ -92,8 +94,9 @@ void ServiceContextMongoD::createLockFile() {
     }
     bool wasUnclean = _lockFile->createdByUncleanShutdown();
     auto openStatus = _lockFile->open();
+	//#define ENOTDIR  20 /* Not a directory */    error_code("IllegalOperation", 20)
     if (storageGlobalParams.readOnly && openStatus == ErrorCodes::IllegalOperation) {
-        _lockFile.reset();
+        _lockFile.reset(); //智能指针包含了 reset() 方法，如果不传递参数（或者传递 NULL），则智能指针会释放当前管理的内存。
     } else {
         uassertStatusOK(openStatus);
     }
@@ -108,6 +111,7 @@ void ServiceContextMongoD::createLockFile() {
     }
 }
 
+//初始化存储引擎
 void ServiceContextMongoD::initializeGlobalStorageEngine() {
     // This should be set once.
     invariant(!_storageEngine);
@@ -221,6 +225,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
 }
 
 void ServiceContextMongoD::shutdownGlobalStorageEngineCleanly() {
+	//_storageEngine为StorageEngine类型
     invariant(_storageEngine);
     _storageEngine->cleanShutdown();
     if (_lockFile) {
@@ -262,6 +267,7 @@ const StorageEngine::Factory* StorageFactoriesIteratorMongoD::next() {
     return _curr++->second;
 }
 
+//生成一个OperationContext类
 std::unique_ptr<OperationContext> ServiceContextMongoD::_newOpCtx(Client* client, unsigned opId) {
     invariant(&cc() == client);
     auto opCtx = stdx::make_unique<OperationContext>(client, opId);

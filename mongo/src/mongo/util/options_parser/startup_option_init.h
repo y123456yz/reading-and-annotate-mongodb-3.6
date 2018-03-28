@@ -59,6 +59,7 @@
  *         return Status::OK();
  *     }
  */
+//mongos_options_init.cpp 和 mongod_options_init.cpp中调用
 #define MONGO_GENERAL_STARTUP_OPTIONS_REGISTER(fname)                    \
     MONGO_INITIALIZER_GENERAL(fname##_Register,                          \
                               ("BeginGeneralStartupOptionRegistration"), \

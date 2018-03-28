@@ -83,6 +83,8 @@ protected:
     virtual ~KillOpListenerInterface() = default;
 };
 
+//StorageFactoriesIteratorMongoD继承该类
+//上面的ServiceContextMongoD:makeStorageFactoriesIterator 使用到该类做遍历
 class StorageFactoriesIterator {
     MONGO_DISALLOW_COPYING(StorageFactoriesIterator);
 
@@ -102,7 +104,14 @@ protected:
  *
  * A ServiceContext is the root of a hierarchy of contexts.  A ServiceContext owns
  * zero or more Clients, which in turn each own OperationContexts.
+ ServiceContext->Clients->OperationContexts
  */
+ 
+//ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口
+//ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
+//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
+
+//ServiceContextMongoD->ServiceContext
 class ServiceContext : public Decorable<ServiceContext> {
     MONGO_DISALLOW_COPYING(ServiceContext);
 
@@ -110,9 +119,10 @@ public:
     /**
      * Special deleter used for cleaning up Client objects owned by a ServiceContext.
      * See UniqueClient, below.
-     */
+     */ //后面的UniqueClient会用到，用来清理Client对象
     class ClientDeleter {
     public:
+        //ServiceContext::ClientDeleter::operator()
         void operator()(Client* client) const;
     };
 
@@ -196,7 +206,7 @@ public:
 
     /**
      * This is the unique handle type for Clients created by a ServiceContext.
-     */
+     */ //ServiceContext::UniqueClient
     using UniqueClient = std::unique_ptr<Client, ClientDeleter>;
 
     /**
@@ -496,7 +506,7 @@ private:
     /**
      * A ClockSource implementation that may be less precise than the _preciseClockSource but
      * may be cheaper to call.
-     */
+     */ //setFastClockSource中赋值，见
     std::unique_ptr<ClockSource> _fastClockSource;
 
     /**

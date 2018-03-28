@@ -173,6 +173,11 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(FTSRegisterLanguageAliases, ("FTSAllLanguag
 // names are recognized by the StopWords class (as such, the language string "dan" in
 // TEXT_INDEX_VERSION_1 will generate the Danish stemmer and the empty stopword list).
 //
+/*
+InitializerDependencyGraph::topSort最终sortedNames中存储的是下面这些宏中定义的字符串信息:
+ MONGO_INITIALIZER   MONGO_INITIALIZER_WITH_PREREQUISITES MONGO_INITIALIZER_WITH_PREREQUISITES  
+ MONGO_INITIALIZER_GENERAL  MONGO_INITIALIZER_GROUP MONGO_FTS_LANGUAGE_DECLARE
+*/
 
 MONGO_FTS_LANGUAGE_DECLARE(languageNoneV1, "none", TEXT_INDEX_VERSION_1);
 MONGO_FTS_LANGUAGE_DECLARE(languageDaV1, "da", TEXT_INDEX_VERSION_1);

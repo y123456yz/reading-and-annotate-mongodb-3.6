@@ -91,6 +91,7 @@ using std::vector;
 
 // ----- Listener -------
 
+//ip地址信息转换为SockAddr存入out数组返回
 vector<SockAddr> ipToAddrs(const char* ips, int port, bool useUnixSockets) {
     vector<SockAddr> out;
     if (*ips == '\0') {
@@ -163,7 +164,13 @@ Listener::~Listener() {
     }
 }
 
+//创建socket并bind
 bool Listener::setupSockets() {
+	log() << "yang test ... Listener::setupSockets()\r\n";
+
+	int ret = system("echo yang-test-setupsockets >> /yangyazhou/reading-and-annotate-mongodb-3.6.1/mongo/test-mongodb");
+	ret = 0;
+	
     if (!_setAsServiceCtxDecoration) {
         checkTicketNumbers();
     }
@@ -174,6 +181,7 @@ bool Listener::setupSockets() {
     _mine = ipToAddrs(_ip.c_str(), _port, false);
 #endif
 
+	//遍历地址列表信息
     for (std::vector<SockAddr>::const_iterator it = _mine.begin(), end = _mine.end(); it != end;
          ++it) {
         const SockAddr& me = *it;
@@ -243,8 +251,11 @@ bool Listener::setupSockets() {
 }
 
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) 
+//linux   mongoDbMain中调用执行
 void Listener::initAndListen() {
+	log() << "yang test ... Listener::initAndListen()";
+	
     if (!_setupSocketsSuccessful) {
         return;
     }
@@ -614,12 +625,13 @@ ListeningSockets* ListeningSockets::get() {
 }
 
 // ------ connection ticket and control ------
-
+//获取可用文件描述符最大值
 int getMaxConnections() {
 #ifdef _WIN32
     return DEFAULT_MAX_CONN;
 #else
     struct rlimit limit;
+	//RLIMIT_NOFILE //指定比进程可打开的最大文件描述词大一的值，超出此值，将会产生EMFILE错误
     verify(getrlimit(RLIMIT_NOFILE, &limit) == 0);
 
     int max = (int)(limit.rlim_cur * .8);
@@ -631,7 +643,9 @@ int getMaxConnections() {
 #endif
 }
 
+//setupSockets中调用,设置最大可用文件描述符数，ServiceEntryPointImpl中也会有下面的类似打印
 void Listener::checkTicketNumbers() {
+	//最大连接数设置
     int want = getMaxConnections();
     int current = globalTicketHolder.outof();
     if (current != DEFAULT_MAX_CONN) {
@@ -652,6 +666,7 @@ void Listener::shutdown() {
     _finished.store(true);
 }
 
+//constexpr size_t DEFAULT_MAX_CONN = 1000000;
 TicketHolder Listener::globalTicketHolder(DEFAULT_MAX_CONN);
 AtomicInt64 Listener::globalConnectionNumber;
 

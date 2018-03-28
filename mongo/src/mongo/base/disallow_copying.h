@@ -42,6 +42,8 @@
  *        ...
  *    };
  */
+//C++11新特性Class分析:可以通过=default要求编译器合成默认的拷贝/赋值构造函数，也可以通过=delete禁止拷贝。
 #define MONGO_DISALLOW_COPYING(CLASS) \
     CLASS(const CLASS&) = delete;     \
     CLASS& operator=(const CLASS&) = delete
+    

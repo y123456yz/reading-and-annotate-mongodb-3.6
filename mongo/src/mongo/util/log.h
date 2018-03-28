@@ -169,6 +169,7 @@ inline bool shouldLog(logger::LogSeverity severity) {
 
 }  // namespace
 
+//命令行中-vvvvvv这样来设置日志级别，v越多，打印越多
 // MONGO_LOG uses log component from MongoLogDefaultComponent from current or global namespace.
 #define MONGO_LOG(DLEVEL)                                                              \
     if (!(::mongo::logger::globalLogDomain())                                          \

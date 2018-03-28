@@ -39,6 +39,7 @@ constexpr size_t DEFAULT_MAX_CONN = 1000000;
 
 enum class ClusterRole { None, ShardServer, ConfigServer };
 
+//存储到serverGlobalParams全局变量中
 struct ServerGlobalParams {
     std::string binaryName;  // mongod or mongos
     std::string cwd;         // cwd of when process started
@@ -94,6 +95,7 @@ struct ServerGlobalParams {
     int syslogFacility;             // Facility used when appending messages to the syslog.
 
 #ifndef _WIN32
+    //进程信息，赋值见forkServer
     ProcessId parentProc;  // --fork pid of initial process
     ProcessId leaderProc;  // --fork pid of leader process
 #endif
@@ -109,6 +111,8 @@ struct ServerGlobalParams {
     time_t started = ::time(0);
 
     BSONArray argvArray;
+
+    //printCommandLineOpts中打印
     BSONObj parsedOpts;
 
     enum AuthState { kEnabled, kDisabled, kUndefined };

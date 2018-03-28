@@ -75,6 +75,7 @@ MONGO_FP_DECLARE(checkForInterruptFail);
 
 }  // namespace
 
+//ServiceContextMongoD::_newOpCtx中会构造该类
 OperationContext::OperationContext(Client* client, unsigned int opId)
     : _client(client),
       _opId(opId),
