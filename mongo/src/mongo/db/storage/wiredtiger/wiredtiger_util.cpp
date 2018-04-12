@@ -331,6 +331,7 @@ int64_t WiredTigerUtil::getIdentSize(WT_SESSION* s, const std::string& uri) {
     return result.getValue();
 }
 
+//GB×ª»»ÎªMB
 size_t WiredTigerUtil::getCacheSizeMB(double requestedCacheSizeGB) {
     double cacheSizeMB;
     const double kMaxSizeCacheMB = 10 * 1000 * 1000;

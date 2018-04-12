@@ -45,7 +45,7 @@
 
 namespace mongo {
 namespace {
-//全局变量
+//全局变量 service_context_d.cpp:    makeMongoDServiceContext中初始化赋值
 ServiceContext* globalServiceContext = nullptr;
 stdx::mutex globalServiceContextMutex;
 stdx::condition_variable globalServiceContextCV;
@@ -215,10 +215,12 @@ void ServiceContext::setServiceEntryPoint(std::unique_ptr<ServiceEntryPoint> sep
     _serviceEntryPoint = std::move(sep);
 }
 
+//_initAndListen中执行
 void ServiceContext::setTransportLayer(std::unique_ptr<transport::TransportLayer> tl) {
     _transportLayer = std::move(tl);
 }
 
+//createWithConfig中执行
 void ServiceContext::setServiceExecutor(std::unique_ptr<transport::ServiceExecutor> exec) {
     _serviceExecutor = std::move(exec);
 }
@@ -240,6 +242,7 @@ void ServiceContext::ClientDeleter::operator()(Client* client) const {
 }
 
 ServiceContext::UniqueOperationContext ServiceContext::makeOperationContext(Client* client) {
+	//获取一个UniqueOperationContext类
     auto opCtx = _newOpCtx(client, _nextOpId.fetchAndAdd(1));
     auto observer = _clientObservers.begin();
     try {
@@ -264,6 +267,7 @@ ServiceContext::UniqueOperationContext ServiceContext::makeOperationContext(Clie
     return UniqueOperationContext(opCtx.release());
 };
 
+//消耗OperationContext
 void ServiceContext::OperationContextDeleter::operator()(OperationContext* opCtx) const {
     auto client = opCtx->getClient();
     auto service = client->getServiceContext();
@@ -383,11 +387,13 @@ void ServiceContext::registerKillOpListener(KillOpListenerInterface* listener) {
     _killOpListeners.push_back(listener);
 }
 
+//waitForStartupComplete和notifyStartupComplete配合
 void ServiceContext::waitForStartupComplete() {
     stdx::unique_lock<stdx::mutex> lk(_mutex);
     _startupCompleteCondVar.wait(lk, [this] { return _startupComplete; });
 }
 
+//waitForStartupComplete和notifyStartupComplete配合
 void ServiceContext::notifyStartupComplete() {
     stdx::unique_lock<stdx::mutex> lk(_mutex);
     _startupComplete = true;

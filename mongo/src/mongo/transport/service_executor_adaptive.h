@@ -47,7 +47,10 @@ namespace transport {
  * This is an ASIO-based adaptive ServiceExecutor. It guarantees that threads will not become stuck
  * or deadlocked longer that its configured timeout and that idle threads will terminate themselves
  * if they spend more than its configure idle threshold idle.
+ * 这是基于ASIO的异步自适应。它保证线程不会被卡住或死锁，如果配置超时和空闲线程超过空闲配置时间，线程将终止
+ * createWithConfig中构造使用
  */
+//ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式，他们的作用是处理链接相关的线程模型
 class ServiceExecutorAdaptive : public ServiceExecutor {
 public:
     struct Options {

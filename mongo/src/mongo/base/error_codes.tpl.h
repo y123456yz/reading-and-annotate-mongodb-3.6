@@ -49,10 +49,9 @@ enum class ErrorCategory {
  * This is a generated class containing a table of error codes and their corresponding error
  * strings. The class is derived from the definitions in src/mongo/base/error_codes.err file and the
  * src/mongo/base/error_codes.tpl.h template.
- *
+ * //mongo/base/error_codes.err
  * Do not update this file directly. Update src/mongo/base/error_codes.err instead.
  */
-//¼ûmongo/base/error_codes.err
 class ErrorCodes {
 public:
     // Explicitly 32-bits wide so that non-symbolic values,

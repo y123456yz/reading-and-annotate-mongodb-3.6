@@ -48,6 +48,7 @@ namespace {
 const std::string catalogInfo = "_mdb_catalog";
 }
 
+
 class KVStorageEngine::RemoveDBChange : public RecoveryUnit::Change {
 public:
     RemoveDBChange(KVStorageEngine* engine, StringData db, KVDatabaseCatalogEntryBase* entry)
@@ -73,7 +74,7 @@ KVStorageEngine::KVStorageEngine(
     stdx::function<KVDatabaseCatalogEntryFactory> databaseCatalogEntryFactory)
     : _databaseCatalogEntryFactory(std::move(databaseCatalogEntryFactory)),
       _options(options),
-      _engine(engine),
+      _engine(engine), 
       _supportsDocLocking(_engine->supportsDocLocking()),
       _supportsDBLocking(_engine->supportsDBLocking()) {
     uassert(28601,

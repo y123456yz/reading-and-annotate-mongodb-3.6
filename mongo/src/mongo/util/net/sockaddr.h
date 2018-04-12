@@ -67,6 +67,7 @@ std::string getAddrInfoStrError(int code);
 /**
  * Wrapper around os representation of network address.
  */
+//Ì×½Ó×ÖÏà¹Ø
 struct SockAddr {
     SockAddr();
 

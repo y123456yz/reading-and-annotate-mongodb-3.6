@@ -160,9 +160,10 @@ SockAddr::SockAddr(StringData target, int port, sa_family_t familyHint)
     _isValid = true;
 }
 
+//填充创建套接字时需要的sockaddr_storage结构
 std::vector<SockAddr> SockAddr::createAll(StringData target, int port, sa_family_t familyHint) {
     std::string hostOrIp = target.toString();
-    if (mongoutils::str::contains(hostOrIp, '/')) {
+    if (mongoutils::str::contains(hostOrIp, '/')) { //域套接字
         std::vector<SockAddr> ret = {SockAddr()};
         ret[0].initUnixDomainSocket(hostOrIp, port);
         // Currently, this is always valid since initUnixDomainSocket()

@@ -46,6 +46,26 @@ class ClockSource;
 namespace dur {
 
 /** the writeahead journal for durability */
+/*
+journal 是 MongoDB 存储引擎层的概念，目前 MongoDB主要支持 mmapv1、wiredtiger、mongorocks 等存储引擎，
+都支持配置journal。
+
+MongoDB 所有的数据写入、读取最终都是调存储引擎层的接口来存储、读取数据，journal 是存储引擎存储数据时的一种辅助机制。
+
+以wiredtiger 为例，如果不配置 journal，写入 wiredtiger 的数据，并不会立即持久化存储；而是每分钟会做一次
+全量的checkpoint（storage.syncPeriodSecs配置项，默认为1分钟），将所有的数据持久化。如果中间出现宕机，
+那么数据只能恢复到最近的一次checkpoint，这样最多可能丢掉1分钟的数据。
+
+所以建议「一定要开启journal」，开启 journal 后，每次写入会记录一条操作日志（通过journal可以重新构造出写入
+的数据）。这样即使出现宕机，启动时 Wiredtiger 会先将数据恢复到最近的一次checkpoint的点，然后重放后续的 
+journal 操作日志来恢复数据。
+
+MongoDB 里的 journal 行为 主要由2个参数控制，storage.journal.enabled 决定是否开启journal，
+storage.journal.commitInternalMs 决定 journal 刷盘的间隔，默认为100ms，用户也可以通过写入时指定 
+writeConcern 为 {j: ture} 来每次写入时都确保 journal 刷盘。
+
+oplog 与 journal 的关系:http://www.mongoing.com/archives/3988 一次写入，会对应数据、索引，oplog的修改，而这3个修改，会对应一条journal操作日志。
+*/
 class Journal {
 public:
     std::string dir;  // set by journalMakeDir() during initialization

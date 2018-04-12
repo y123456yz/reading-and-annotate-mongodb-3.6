@@ -70,8 +70,12 @@ class UnreplicatedWritesBlock;
  * and setRecoveryUnit. The operation context also keeps track of some transaction state
  * (RecoveryUnitState) to reduce complexity and duplication in the storage-engine specific
  * RecoveryUnit and to allow better invariant checking.
+ 这个类包含一个操作所需的所有状态，生命周期从一个网络操作被分派到其执行完成为止。注意每个“getmore”
+ 光标是一个单独的操作。一个OperationContext只能和一个客户端相关联。每个OperationContext会有一个RecoveryUnit
+ 和他相关联，但是生命周期不一样，可以参考releaseRecoveryUnit和setRecoveryUnit
  */
-//ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口
+//ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口， 
+//ServiceContext包含OperationContext成员，见UniqueOperationContext
 //ServiceContextMongoD::_newOpCtx 中会构造该类
 class OperationContext : public Decorable<OperationContext> {
     MONGO_DISALLOW_COPYING(OperationContext);
@@ -469,7 +473,8 @@ private:
 
     std::unique_ptr<Locker> _locker;
 
-    std::unique_ptr<RecoveryUnit> _recoveryUnit;
+    //OperationContext::_recoveryUnit为RecoveryUnit类类型
+    std::unique_ptr<RecoveryUnit> _recoveryUnit; 
     RecoveryUnitState _ruState = kNotInUnitOfWork;
 
     // Follows the values of ErrorCodes::Error. The default value is 0 (OK), which means the

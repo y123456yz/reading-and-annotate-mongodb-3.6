@@ -66,6 +66,158 @@ std::unique_ptr<KVDatabaseCatalogEntryBase> defaultDatabaseCatalogEntryFactory(
 
 using KVDatabaseCatalogEntryFactory = decltype(defaultDatabaseCatalogEntryFactory);
 
+
+/*
+DatabaseHolder
+DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象。
+
+C#
+
+class DatabaseHoler {
+public:
+Database* openDb(string dbname);
+void close(string dbname);
+Database* get(string dbname);
+pirate:
+map<string, Database*> dbs;
+};
+
+class DatabaseHoler {
+public:
+Database* openDb(string dbname);
+void close(string dbname);
+Database* get(string dbname);
+pirate:
+map<string, Database*> dbs;
+};
+Database
+Database对象代表Mongodb里的一个db，其提供关于集合操作的所有接口，包括创建、删除、重命名集合，创建
+Database时会根据mongod进程的storageEngine配置来决定使用哪个存储引擎。
+
+C#
+
+class Database {
+public:
+Collection* createCollection(string& coll_name);
+void dropCollection(string& coll_name);
+Collection* getCollection(string& coll_name);
+private:
+map<string, Collection*> _collections;
+};
+
+class Database {
+public:
+Collection* createCollection(string& coll_name);
+void dropCollection(string& coll_name);
+Collection* getCollection(string& coll_name);
+private:
+map<string, Collection*> _collections;
+};
+Collection
+Collection代表Mongodb里的一个集合，其提供关于文档增删改查的所有接口，这些接口最终会调用RecordStore里
+的相应接口实现。
+
+C#
+
+class Collection {
+public:
+insertDocument();
+deleteDocument();
+updateDocument();
+findDoc();
+private:
+RecordStore* _recordStore;
+};
+
+
+class Collection {
+public:
+insertDocument();
+deleteDocument();
+updateDocument();
+findDoc();
+private:
+RecordStore* _recordStore;
+};
+GlobalEnvironmentMongoD
+GlobalEnvironmentMongoD是mongod的全局运行环境信息，所有的存储引擎在启动时会先注册，mongd根据配置设置
+当前使用的存储引擎; 注册引擎时，提供引擎的名字（如mmapv1、wiredTiger）及用于创建引擎对象的工厂方法
+（工厂实现create的接口，用于创建StorageEngine对象）。
+
+class GlobalEnvironmentMongoD {
+pubic:
+void registerStorageEngine(const std::string& name,
+const StorageEngine::Factory* factory);
+void setGlobalStorageEngine(const std::string& name);
+StorageEngine* getGlobalStorageEngine();
+private:
+StorageEngine* _storageEngine; // 当前存储引擎
+FactoryMap _storageFactories;
+}；
+
+class GlobalEnvironmentMongoD {
+pubic:
+void registerStorageEngine(const std::string& name,
+const StorageEngine::Factory* factory);
+void setGlobalStorageEngine(const std::string& name);
+StorageEngine* getGlobalStorageEngine();
+private:
+StorageEngine* _storageEngine; // 当前存储引擎
+FactoryMap _storageFactories;
+}；
+StorageEngine
+StorageEngine定义了一系列Mongdb存储引擎需要实现的接口，是一个接口类，所有的存储引擎需继承这个类，实现
+自身的存储逻辑。 getDatabaseCatalogEntry接口用于获取一个DatabaseCatalogEntry对象，该对象实现了关于集合、
+文档操作的接口。
+
+C#
+
+class StorageEngine {
+    public:
+    DatabaseCatalogEntry* getDatabaseCatalogEntry(string& ns);
+    void listDatabases( std::vector<std::string>* out );
+};
+
+class DatabaseCatalogEntry {
+    public:
+    createCollection();
+    dropCollection();
+    getRecordStore(); / * 实现文档操作接口 * /
+};
+
+class StorageEngine {
+public:
+DatabaseCatalogEntry* getDatabaseCatalogEntry(string& ns);
+void listDatabases( std::vector<std::string>* out );
+};
+ 
+class DatabaseCatalogEntry {
+public:
+createCollection();
+dropCollection();
+getRecordStore(); / * 实现文档操作接口 * /
+};
+MMAPV1StorageEngine
+MMAPV1StorageEngine包含了mmapv1存储引擎的所有实现逻辑。
+
+KVStorageEngine
+KVStorageEngine实际上不是一个真正存储引擎的实现，只是为了方便接入wiredTiger、rocks等KV类型的存储引擎
+而增加的一个抽象层。 KVStorageEngine实现了StorageEngine的接口，但其实现由KVEngine类代理，wiredTiger等
+KV存储引擎接入mongdb时，只需实现KVEngine定义的接口即可。
+
+WiredTigerKVEngine
+WiredTigerKVEngine继承KVEngine，实现KVEngine的接口，其他的引擎如RocksEngine类似。
+
+见http://blog.jobbole.com/89351/
+*/
+
+/*
+KVStorageEngine
+KVStorageEngine实际上不是一个真正存储引擎的实现，只是为了方便接入wiredTiger、rocks等KV类型的存储引擎而增加
+的一个抽象层。 KVStorageEngine实现了StorageEngine的接口，但其实现由KVEngine类代理，wiredTiger等KV存储引擎
+接入mongdb时，只需实现KVEngine定义的接口即可。
+*/
+//WiredTigerFactory::create中new改类
 class KVStorageEngine final : public StorageEngine {
 public:
     /**
@@ -157,7 +309,8 @@ private:
     KVStorageEngineOptions _options;
 
     // This must be the first member so it is destroyed last.
-    std::unique_ptr<KVEngine> _engine;
+    //WiredTigerFactory::create->new KVStorageEngine(kv, options);中调用赋值
+    std::unique_ptr<KVEngine> _engine; //WiredTigerKVEngine类型
 
     const bool _supportsDocLocking;
     const bool _supportsDBLocking;

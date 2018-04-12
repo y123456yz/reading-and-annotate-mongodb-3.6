@@ -104,6 +104,7 @@ protected:
             }
     }
 
+    //在C++中，mutable也是为了突破const的限制而设置的。被mutable修饰的变量，将永远处于可变的状态，即使在一个const函数中。
     mutable bool dismissed_;
 
 public:

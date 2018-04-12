@@ -116,7 +116,7 @@ namespace for_debuggers {
 thread_local StringData threadName;
 }
 using for_debuggers::threadName;
-
+//设置线程名
 void setThreadName(StringData name) {
     invariant(mongoInitializersHaveRun);
     if (name.size() > kMaxThreadNameSize) {
@@ -142,7 +142,7 @@ void setThreadName(StringData name) {
     // Do not set thread name on the main() thread. Setting the name on main thread breaks
     // pgrep/pkill since these programs base this name on /proc/*/status which displays the thread
     // name, not the executable name.
-    if (getpid() != syscall(SYS_gettid)) {
+    if (getpid() != syscall(SYS_gettid)) { //不能为主线程
         //  Maximum thread name length supported on Linux is 16 including the null terminator.
         //  Ideally we use short and descriptive thread names that fit: this helps for log
         //  readability as well. Still, as the limit is so low and a few current names exceed the
@@ -159,7 +159,10 @@ void setThreadName(StringData name) {
         if (error) {
             log() << "Ignoring error from setting thread name: " << errnoWithDescription(error);
         }
+
+		log() << "yang test xxxx getpid = sys_getpid, main thread ";
     }
+	log() << "yang test xxxx getpid = s ss sys_getpid, main thread ";
 #endif
 }
 

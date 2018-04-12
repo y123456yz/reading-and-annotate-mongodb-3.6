@@ -98,6 +98,7 @@ CODE facilitynames[] = {{"auth", LOG_AUTH},     {"cron", LOG_CRON},     {"daemon
 
 }  // namespace
 
+//mongo.conf配置文件  命令行配置见 addMongodOptions和addMongodOptions->addGeneralServerOptions
 Status addGeneralServerOptions(moe::OptionSection* options) {
     StringBuilder portInfoBuilder;
     StringBuilder maxConnInfoBuilder;
@@ -763,6 +764,7 @@ Status setupServerOptions(const std::vector<std::string>& args) {
     return Status::OK();
 }
 
+//storeMongodOptions中调用
 Status storeServerOptions(const moe::Environment& params) {
     Status ret = setParsedOpts(params);
     if (!ret.isOK()) {

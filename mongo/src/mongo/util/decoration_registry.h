@@ -46,6 +46,7 @@ namespace mongo {
  * the decorations declared on r1, and a DecorationContainer constructed from r2 has instances
  * of the decorations declared on r2.
  */
+//declareDecoration÷–”√µΩ
 class DecorationRegistry {
     MONGO_DISALLOW_COPYING(DecorationRegistry);
 

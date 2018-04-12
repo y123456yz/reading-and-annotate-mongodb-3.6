@@ -138,6 +138,7 @@ struct ServerParameterOptions : public ServiceExecutorAdaptive::Options {
 thread_local ServiceExecutorAdaptive::ThreadState* ServiceExecutorAdaptive::_localThreadState =
     nullptr;
 
+//ServiceExecutorAdaptive类构造函数
 ServiceExecutorAdaptive::ServiceExecutorAdaptive(ServiceContext* ctx,
                                                  std::shared_ptr<asio::io_context> ioCtx)
     : ServiceExecutorAdaptive(ctx, std::move(ioCtx), stdx::make_unique<ServerParameterOptions>()) {}

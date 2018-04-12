@@ -111,7 +111,7 @@ void ServiceContextMongoD::createLockFile() {
     }
 }
 
-//初始化存储引擎
+//初始化存储引擎  _initAndListen中调用执行
 void ServiceContextMongoD::initializeGlobalStorageEngine() {
     // This should be set once.
     invariant(!_storageEngine);
@@ -122,10 +122,12 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
     invariant(_lockFile || storageGlobalParams.readOnly);
 
     const std::string dbpath = storageGlobalParams.dbpath;
+	//根据storage.bson构造StorageEngineMetadata类
     if (auto existingStorageEngine = StorageEngineMetadata::getStorageEngineForPath(dbpath)) {
+		//如果配置文件中有storage.engine配置，则为true
         if (storageGlobalParams.engineSetByUser) {
             // Verify that the name of the user-supplied storage engine matches the contents of
-            // the metadata file.
+            // the metadata file.   获取存储引擎，默认的WiredTiger存储引擎对应WiredTigerFactory
             const StorageEngine::Factory* factory =
                 mapFindWithDefault(_storageFactories,
                                    storageGlobalParams.engine,
@@ -141,7 +143,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
                                       << " specified storage engine was '"
                                       << factory->getCanonicalName()
                                       << "'.",
-                        factory->getCanonicalName() == *existingStorageEngine);
+                        factory->getCanonicalName() == *existingStorageEngine); //storage.bson文件中记录的存储引擎信息必须和配置一致
             }
         } else {
             // Otherwise set the active storage engine as the contents of the metadata file.
@@ -167,6 +169,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
                           << " is only supported by the mmapv1 storage engine",
             repairpath.empty() || repairpath == dbpath || storageGlobalParams.engine == "mmapv1");
 
+	//获取存储引擎，默认的WiredTiger存储引擎对应WiredTigerFactory
     const StorageEngine::Factory* factory = _storageFactories[storageGlobalParams.engine];
 
     uassert(18656,
@@ -183,6 +186,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
                 factory->supportsReadOnly());
     }
 
+	//根据storage.bson构造StorageEngineMetadata类
     std::unique_ptr<StorageEngineMetadata> metadata = StorageEngineMetadata::forPath(dbpath);
 
     if (storageGlobalParams.readOnly) {
@@ -194,6 +198,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
 
     // Validate options in metadata against current startup options.
     if (metadata.get()) {
+		//对storage.bson中的文件内容和storageGlobalParams配置做检查，看是否一致
         uassertStatusOK(factory->validateMetadata(*metadata, storageGlobalParams));
     }
 
@@ -203,6 +208,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
         }
     });
 
+	//WiredTigerFactory::create
     _storageEngine = factory->create(storageGlobalParams, _lockFile.get());
     _storageEngine->finishInit();
 

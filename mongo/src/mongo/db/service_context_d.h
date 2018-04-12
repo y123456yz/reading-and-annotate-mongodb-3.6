@@ -72,15 +72,16 @@ private:
     ////生成一个OperationContext类
     std::unique_ptr<OperationContext> _newOpCtx(Client* client, unsigned opId) override;
 
-    //createLockFile中创建lockfile
+    //createLockFile中创建lockfile ServiceContextMongoD::initializeGlobalStorageEngine()中close
     std::unique_ptr<StorageEngineLockFile> _lockFile;
 
     // logically owned here, but never deleted by anyone.
     //逻辑存储引擎  MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
+    //ServiceContextMongoD::initializeGlobalStorageEngine中赋值
     StorageEngine* _storageEngine = nullptr; //当前用的存储引擎
 
     // All possible storage engines are registered here through MONGO_INIT.
-    //所有的存储引起都注册到这里
+    //所有的存储引起都注册到这里 registerStorageEngine
     FactoryMap _storageFactories;
 };
 

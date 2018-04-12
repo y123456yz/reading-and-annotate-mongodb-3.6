@@ -30,6 +30,8 @@
 
 namespace mongo {
 namespace transport {
+//TransportLayerManager::createWithConfig中用到   同步方式还是异步方式,最终赋值给TransportLayerASIO::Options.transportMode
+// whether accepted sockets should be put into non-blocking mode after they're accepted
 enum class Mode { kAsynchronous = 0, kSynchronous = 1 };
 }  // namespace transport
 }  // namespace mongo

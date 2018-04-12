@@ -51,9 +51,11 @@
 namespace mongo {
 
 namespace {
+//Client::initThread中初始化赋值
 thread_local ServiceContext::UniqueClient currentClient;
 }  // namespace
 
+//ServiceContext::makeClient中创建client对象
 void Client::initThreadIfNotAlready(StringData desc) {
     if (currentClient)
         return;
@@ -129,6 +131,7 @@ ServiceContext::UniqueOperationContext Client::makeOperationContext() {
     return getServiceContext()->makeOperationContext(this);
 }
 
+//makeOperationContext中调用
 void Client::setOperationContext(OperationContext* opCtx) {
     // We can only set the OperationContext once before resetting it.
     invariant(opCtx != NULL && _opCtx == NULL);
@@ -174,3 +177,4 @@ void Client::setCurrent(ServiceContext::UniqueClient client) {
 }
 
 }  // namespace mongo
+

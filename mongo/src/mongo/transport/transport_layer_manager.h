@@ -51,6 +51,8 @@ namespace transport {
  * and not be concerned with which other TransportLayer implementations it holds
  * underneath.
  */
+ 
+//网络会话链接，消息处理管理相关的类，在createWithConfig构造该类存入_tls
 class TransportLayerManager final : public TransportLayer {
     MONGO_DISALLOW_COPYING(TransportLayerManager);
 
@@ -96,8 +98,10 @@ private:
     void _foreach(Callable&& cb) const;
 
     mutable stdx::mutex _tlsMutex;
+    //createWithConfig中赋值
     std::vector<std::unique_ptr<TransportLayer>> _tls;
 };
 
 }  // namespace transport
 }  // namespace mongo
+

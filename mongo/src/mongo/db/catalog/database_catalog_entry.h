@@ -47,6 +47,12 @@ class RecordStore;
 
 struct CollectionOptions;
 
+/*
+StorageEngine定义了一系列Mongdb存储引擎需要实现的接口，是一个接口类，所有的存储引擎需继承这个类，实现
+自身的存储逻辑。 getDatabaseCatalogEntry接口用于获取一个DatabaseCatalogEntry对象，该对象实现了关于集合、
+文档操作的接口。
+*/
+//StorageEngine::getDatabaseCatalogEntry获取该类
 class DatabaseCatalogEntry {
 public:
     DatabaseCatalogEntry(StringData name) : _name(name.toString()) {}

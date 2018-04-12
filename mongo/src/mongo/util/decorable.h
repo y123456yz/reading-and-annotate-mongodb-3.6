@@ -66,6 +66,7 @@
 namespace mongo {
 
 template <typename D>
+//
 class Decorable {
     MONGO_DISALLOW_COPYING(Decorable);
 
@@ -100,6 +101,7 @@ public:
         DecorationContainer::DecorationDescriptorWithType<T> _raw;
     };
 
+    //用法可以参考getReplicationCoordinator，保证不同的T有不同的实例
     template <typename T>
     static Decoration<T> declareDecoration() {
         return Decoration<T>(getRegistry()->declareDecoration<T>());

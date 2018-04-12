@@ -687,7 +687,11 @@ MONGO_FP_DECLARE(shutdownAtStartup);
 //ExitCode initAndListen(int listenPort)调用该函数
 ExitCode _initAndListen(int listenPort) {
 	//初始化一个名称“initandlisten”线程用于侦听客户端传来的操作信息
-    Client::initThread("initandlisten");
+	log() << "yang test .... _initAndListen 111111111";
+    Client::initThread("initandlisten"); //注意这个是main线程
+    #include <unistd.h>
+	sleep(10);
+	log() << "yang test .... _initAndListen 22222222222";
 
     initWireSpec();
 	//获取serviceContext类
@@ -702,6 +706,7 @@ ExitCode _initAndListen(int listenPort) {
         return std::unique_ptr<DBClientBase>(new DBDirectClient(opCtx));
     });
 
+	//获取//ReplicationCoordinatorImpl::_settings
     const repl::ReplSettings& replSettings =
         repl::ReplicationCoordinator::get(serviceContext)->getSettings();
 
@@ -732,13 +737,16 @@ ExitCode _initAndListen(int listenPort) {
 	//创建文件锁
     serviceContext->createLockFile();
 
+	//stdx::make_unique<ServiceEntryPointMongod>(serviceContext)对应ServiceEntryPointMongod->ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx)
     serviceContext->setServiceEntryPoint(
-        stdx::make_unique<ServiceEntryPointMongod>(serviceContext));
+        stdx::make_unique<ServiceEntryPointMongod>(serviceContext)); //构造ServiceEntryPointMongod类，然后调用setServiceEntryPoint
 
     {
+		//tl为TransportLayerManager类
         auto tl =
             transport::TransportLayerManager::createWithConfig(&serverGlobalParams, serviceContext);
-        auto res = tl->setup();
+		//创建套接字并bind
+		auto res = tl->setup(); //TransportLayerManager::setup->TransportLayerASIO::setup
         if (!res.isOK()) {
             error() << "Failed to set up listener: " << res;
             return EXIT_NET_ERROR;
@@ -1404,7 +1412,7 @@ int mongoDbMain(int argc, char* argv[], char** envp) {
 
     // Per SERVER-7434, startSignalProcessingThread() must run after any forks
     // (initializeServerGlobalState()) and before creation of any other threads.
-    startSignalProcessingThread();
+    startSignalProcessingThread(); //信号处理线程
 
 #if defined(_WIN32)
     if (ntservice::shouldStartService()) {
@@ -1413,7 +1421,6 @@ int mongoDbMain(int argc, char* argv[], char** envp) {
     }
 #endif
 
-	DEV log(LogComponent::kControl) << "echo xxxxxxxxxxxxxxxxxxxx-1 > /yangyazhou" << endl;
 	DEV log(LogComponent::kControl) << "mongodb start" << endl;
 
 	int ret = system("echo yang-test-start-mongodb >> /yangyazhou/reading-and-annotate-mongodb-3.6.1/mongo/test-mongodb");

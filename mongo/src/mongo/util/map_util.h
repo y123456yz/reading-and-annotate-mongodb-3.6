@@ -33,6 +33,7 @@ namespace mongo {
 
 /*
  *  If "myMap" contains "key", returns "myMap[key]".  Otherwise, returns "defaultValue."
+ *  ServiceContextMongoD::initializeGlobalStorageEngine中会调用
  */
 template <typename M, typename K, typename V = typename M::mapped_type>
 V mapFindWithDefault(const M& myMap, const K& key, const V& defaultValue = V()) {

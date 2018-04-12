@@ -45,7 +45,10 @@ class OperationContext;
 /**
  * A RecoveryUnit is responsible for ensuring that data is persisted.
  * All on-disk information must be mutated through this interface.
+ 一个recoveryunit负责确保数据持久化。所有磁盘上的信息都必须通过这个接口进行修改。
  */
+
+//OperationContext::_recoveryUnit为RecoveryUnit类类型
 class RecoveryUnit {
     MONGO_DISALLOW_COPYING(RecoveryUnit);
 

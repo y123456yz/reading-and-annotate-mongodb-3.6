@@ -35,14 +35,22 @@
 namespace mongo {
 
 /**
+  EntryPoint和TransportLayer的关系:
+  The TransportLayer moves Messages between transport::Endpoints and the database.
+  This class owns an Acceptor that generates new endpoints from which it can
+  source Messages.
+
  * This is the entrypoint from the transport layer into mongod or mongos.
  *
  * The ServiceEntryPoint accepts new Sessions from the TransportLayer, and is
  * responsible for running these Sessions in a get-Message, run-Message,
- * reply-with-Message loop.  It may not do this on the TransportLayer鈥檚 thread.
+ * reply-with-Message loop.  It may not do this on the TransportLayer’s thread.
  */ 
+//和TransportLayer相关的类，从TransportLayer接收新的session, 并负责处理这些session
+ 
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
+//ServiceContext:_serviceEntryPoint为该类型  setServiceEntryPoint让该类和ServiceContext关联起来
 class ServiceEntryPoint {
     MONGO_DISALLOW_COPYING(ServiceEntryPoint);
 

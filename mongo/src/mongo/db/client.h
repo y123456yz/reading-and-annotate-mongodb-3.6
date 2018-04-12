@@ -62,7 +62,7 @@ typedef long long ConnectionId;
 /**
  * The database's concept of an outside "client".
  * */
-//ServiceContext包含Client成员，见ServiceContext::UniqueClient
+//ServiceContext包含Client成员，见ServiceContext::UniqueClient, ServiceContext::makeClient中创建
 //class Client final : public Decorable<Client> {
 class Client: public Decorable<Client> {
 
@@ -226,7 +226,7 @@ private:
     explicit Client(std::string desc,
                     ServiceContext* serviceContext,
                     transport::SessionHandle session);
-
+    //该client所属的serverceContext
     ServiceContext* const _serviceContext;
     const transport::SessionHandle _session;
 

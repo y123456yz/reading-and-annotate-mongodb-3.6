@@ -35,7 +35,7 @@ namespace mongo {
 /**
  * Interface for objects generating ticks that roughly represents the passage of time.
  */
-//ServiceContext 类中包含该类成员
+//ServiceContext:_tickSource 类中包含该类成员
 class TickSource {
 public:
     using Tick = int64_t;

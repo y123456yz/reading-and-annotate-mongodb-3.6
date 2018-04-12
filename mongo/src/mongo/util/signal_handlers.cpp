@@ -161,6 +161,7 @@ void eventProcessingThread() {
 // The signals in asyncSignals will be processed by this thread only, in order to
 // ensure the db and log mutexes aren't held. Because this is run in a different thread, it does
 // not need to be safe to call in signal context.
+//信号处理线程
 sigset_t asyncSignals;
 void signalProcessingThread(LogFileStatus rotate) {
     setThreadName("signalProcessingThread");
@@ -227,6 +228,7 @@ void startSignalProcessingThread(LogFileStatus rotate) {
     // Mask signals in the current (only) thread. All new threads will inherit this mask.
     invariant(pthread_sigmask(SIG_SETMASK, &asyncSignals, 0) == 0);
     // Spawn a thread to capture the signals we just masked off.
+    //创建线程，回调为signalProcessingThread
     stdx::thread(signalProcessingThread, rotate).detach();
 #endif
 }

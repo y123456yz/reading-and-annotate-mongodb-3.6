@@ -83,7 +83,7 @@ struct TTLCollModInfo {
     std::string indexName;
 };
 
-//ServiceContext 类中包含该成员
+//ServiceContext:_opObserver 中包含该成员,OpObserverImpl继承该类
 class OpObserver {
     MONGO_DISALLOW_COPYING(OpObserver);
 

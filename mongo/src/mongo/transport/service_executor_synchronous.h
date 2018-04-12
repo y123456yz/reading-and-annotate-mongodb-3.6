@@ -42,7 +42,10 @@ namespace transport {
 /**
  * The passthrough service executor emulates a thread per connection.
  * Each connection has its own worker thread where jobs get scheduled.
+ * createWithConfig中构造使用
  */
+
+//ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式，他们的作用是处理链接相关的线程模型
 class ServiceExecutorSynchronous final : public ServiceExecutor {
 public:
     explicit ServiceExecutorSynchronous(ServiceContext* ctx);

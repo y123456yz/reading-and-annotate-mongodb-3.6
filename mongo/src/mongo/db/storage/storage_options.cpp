@@ -34,7 +34,7 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
-
+//addMongodOptions解析配置，然后通过storeMongodOptions把从命令行或者配置文件中解析出的配置信息存入storageGlobalParams全局信息中
 StorageGlobalParams storageGlobalParams;
 
 /**

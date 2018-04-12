@@ -60,7 +60,7 @@ public:
     }
 
     void onDestroyClient(Client* client) override {}
-
+	//ServiceContext::makeOperationContextÖÐµ÷ÓÃ
     void onCreateOperationContext(OperationContext* opCtx) override {}
     void onDestroyOperationContext(OperationContext* opCtx) override {}
 };

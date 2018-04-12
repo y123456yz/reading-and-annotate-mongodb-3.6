@@ -111,7 +111,8 @@ protected:
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 
-//ServiceContextMongoD->ServiceContext
+//ServiceContextMongoD->ServiceContext   
+//ServiceContext包含OperationContext成员，见UniqueOperationContext
 class ServiceContext : public Decorable<ServiceContext> {
     MONGO_DISALLOW_COPYING(ServiceContext);
 
@@ -120,7 +121,7 @@ public:
      * Special deleter used for cleaning up Client objects owned by a ServiceContext.
      * See UniqueClient, below.
      */ //后面的UniqueClient会用到，用来清理Client对象
-    class ClientDeleter {
+    class ClientDeleter { //下面的UniqueClient用到该deleter
     public:
         //ServiceContext::ClientDeleter::operator()
         void operator()(Client* client) const;
@@ -129,26 +130,26 @@ public:
     /**
      * Observer interface implemented to hook client and operation context creation and
      * destruction.
-     */
-    class ClientObserver {
+     */ //AuthzClientObserver继承该类    registerClientObserver
+    class ClientObserver { //客户端操作接口
     public:
         virtual ~ClientObserver() = default;
 
         /**
          * Hook called after a new client "client" is created on a service by
-         * service->makeClient().
+         * service->makeClient().  ServiceContext::makeClient中调用
          *
          * For a given client and registered instance of ClientObserver, if onCreateClient
          * returns without throwing an exception, onDestroyClient will be called when "client"
          * is deleted.
-         */
+         */ //makeClient中调用, 消耗接口为onDestroyClient，onCreateClient和onDestroyClient对应
         virtual void onCreateClient(Client* client) = 0;
 
         /**
          * Hook called on a "client" created by a service before deleting "client".
          *
          * Like a destructor, must not throw exceptions.
-         */
+         */ //onCreateClient和onDestroyClient对应
         virtual void onDestroyClient(Client* client) = 0;
 
         /**
@@ -158,7 +159,7 @@ public:
          * For a given operation context and registered instance of ClientObserver, if
          * onCreateOperationContext returns without throwing an exception,
          * onDestroyOperationContext will be called when "opCtx" is deleted.
-         */
+         */ //service->makeOperationContext(client)  or client->makeOperationContext().
         virtual void onCreateOperationContext(OperationContext* opCtx) = 0;
 
         /**
@@ -175,18 +176,18 @@ public:
      * Cursor for enumerating the live Client objects belonging to a ServiceContext.
      *
      * Lifetimes of this type are synchronized with client creation and destruction.
-     */
+     */ //记录属于某个ServiceContext的在线客户端的游标信息，这种类型的生命周期与客户端创建和销毁同步
     class LockedClientsCursor {
     public:
         /**
          * Constructs a cursor for enumerating the clients of "service", blocking "service" from
          * creating or destroying Client objects until this instance is destroyed.
-         */
+         */ //构造一个客户端游标锁，锁住service，避免在这个过程中创建和消耗client对象
         explicit LockedClientsCursor(ServiceContext* service);
 
         /**
          * Returns the next client in the enumeration, or nullptr if there are no more clients.
-         */
+         */ //获取下一个客户端
         Client* next();
 
     private:
@@ -198,20 +199,20 @@ public:
     /**
      * Special deleter used for cleaning up OperationContext objects owned by a ServiceContext.
      * See UniqueOperationContext, below.
-     */
-    class OperationContextDeleter {
+     */ //删除OperationContext，见ServiceContext::OperationContextDeleter::operator()
+    class OperationContextDeleter { //下面的UniqueOperationContext用到
     public:
         void operator()(OperationContext* opCtx) const;
     };
 
     /**
      * This is the unique handle type for Clients created by a ServiceContext.
-     */ //ServiceContext::UniqueClient
+     */ //ServiceContext::UniqueClient  ServiceContext::makeClient中赋值
     using UniqueClient = std::unique_ptr<Client, ClientDeleter>;
 
     /**
      * This is the unique handle type for OperationContexts created by a ServiceContext.
-     */
+     */ //ServiceContext::makeOperationContext中赋值
     using UniqueOperationContext = std::unique_ptr<OperationContext, OperationContextDeleter>;
 
     virtual ~ServiceContext();
@@ -224,16 +225,17 @@ public:
      * All calls to registerClientObserver must complete before ServiceContext
      * is used in multi-threaded operation, or is used to create clients via calls
      * to makeClient.
-     */
+     */ //把一个ClientObserver存入到_clientObservers成员
     void registerClientObserver(std::unique_ptr<ClientObserver> observer);
 
     /**
      * Creates a new Client object representing a client session associated with this
      * ServiceContext.
-     *
+     * 创建一个新的客户端对象，该对象与servicecontext关联
      * The "desc" string is used to set a descriptive name for the client, used in logging.
-     *
+     * desc为该Client的描述信息
      * If supplied, "session" is the transport::Session used for communicating with the client.
+     * session用来与客户端进行会话通信
      */
     UniqueClient makeClient(std::string desc, transport::SessionHandle session = nullptr);
 
@@ -242,7 +244,7 @@ public:
      *
      * "client" must not have an active operation context.
      *
-     */
+     */ //构建OperationContext对象
     UniqueOperationContext makeOperationContext(Client* client);
 
     //
@@ -253,7 +255,8 @@ public:
      * Register a storage engine.  Called from a MONGO_INIT that depends on initializiation of
      * the global environment.
      * Ownership of 'factory' is transferred to global environment upon registration.
-     */
+     */ //注册存储引擎，ServiceContextMongoD::registerStorageEngine
+     //例如wiredtiger_init.cpp, getGlobalServiceContext()->registerStorageEngine(kWiredTigerEngineName, new WiredTigerFactory());
     virtual void registerStorageEngine(const std::string& name,
                                        const StorageEngine::Factory* factory) = 0;
 
@@ -267,19 +270,20 @@ public:
      * Caller owns the returned object and is responsible for deleting when finished.
      *
      * Never returns nullptr.
-     */
+     */ 
+    //存储引擎遍历器
     virtual StorageFactoriesIterator* makeStorageFactoriesIterator() = 0;
-
+    //初始化存储引擎
     virtual void initializeGlobalStorageEngine() = 0;
 
     /**
      * Shuts down storage engine cleanly and releases any locks on mongod.lock.
-     */
+     */ //关闭全局存储引擎
     virtual void shutdownGlobalStorageEngineCleanly() = 0;
 
     /**
      * Return the storage engine instance we're using.
-     */
+     */ //获取我们正在使用的存储引擎
     virtual StorageEngine* getGlobalStorageEngine() = 0;
 
     //
@@ -287,9 +291,13 @@ public:
     // here.
     //
 
+    /*
+    MongoDB提供了killOp请求，用于干掉运行时间很长的请求，killOp通常需要与currentOp组合起来使用；
+    先根据currentOp查询到请求的opid，然后根据opid发送killOp的请求。
+    */
     /**
      * Signal all OperationContext(s) that they have been killed.
-     */
+     */ //向所有的已经被kill掉的OperationContext发送信号
     void setKillAllOperations();
 
     /**
@@ -311,6 +319,10 @@ public:
      *as
      * this service context.
      **/
+    /*
+    MongoDB提供了killOp请求，用于干掉运行时间很长的请求，killOp通常需要与currentOp组合起来使用；
+    先根据currentOp查询到请求的opid，然后根据opid发送killOp的请求。
+    */
     void killOperation(OperationContext* opCtx,
                        ErrorCodes::Error killCode = ErrorCodes::Interrupted);
 
@@ -342,7 +354,7 @@ public:
 
     /**
      * Returns a pointer to the global periodic runner owned by this service context.
-     */
+     */  //获取一个本serviceContext实例拥有的全局PeriodicRunner
     PeriodicRunner* getPeriodicRunner() const;
 
     //
@@ -377,7 +389,7 @@ public:
      * added/started.
      *
      * If startup is already complete this returns immediately.
-     */
+     */ //等待该ServiceContext的startup运行完成
     void waitForStartupComplete();
 
     /*
@@ -407,14 +419,14 @@ public:
     /**
      * Get a ClockSource implementation that may be less precise than the _preciseClockSource but
      * may be cheaper to call.
-     */
+     */ //没_preciseClockSource精确
     ClockSource* getFastClockSource() const {
         return _fastClockSource.get();
     }
 
     /**
      * Get a ClockSource implementation that is very precise but may be expensive to call.
-     */
+     */ //比较精确的clock
     ClockSource* getPreciseClockSource() const {
         return _preciseClockSource.get();
     }
@@ -471,18 +483,18 @@ private:
     virtual std::unique_ptr<OperationContext> _newOpCtx(Client* client, unsigned opId) = 0;
 
     /**
-     * The periodic runner.
+     * The periodic runner. 
      */
     std::unique_ptr<PeriodicRunner> _runner;
 
     /**
-     * The TransportLayer.
+     * The TransportLayer.  ServiceContext:_transportLayer
      */
     std::unique_ptr<transport::TransportLayer> _transportLayer;
 
     /**
      * The service entry point
-     */
+     */ 
     std::unique_ptr<ServiceEntryPoint> _serviceEntryPoint;
 
     /**
@@ -492,26 +504,30 @@ private:
 
     /**
      * Vector of registered observers.
-     */
+     */ 
+    //ServiceContext::registerClientObserver把一个ClientObserver存入到_clientObservers成员
+    //ServiceContext::makeClient中遍历该vector
     std::vector<std::unique_ptr<ClientObserver>> _clientObservers;
+    //ServiceContext::makeClient中插入
     ClientSet _clients;
 
     /**
      * The registered OpObserver.
      */
     std::unique_ptr<OpObserver> _opObserver;
-
+    //注意_tickSource  _fastClockSource  _preciseClockSource的区别
     std::unique_ptr<TickSource> _tickSource;
 
     /**
      * A ClockSource implementation that may be less precise than the _preciseClockSource but
      * may be cheaper to call.
-     */ //setFastClockSource中赋值，见
+     */ 
+    //setFastClockSource中赋值，_fastClockSource没_preciseClockSource精确
     std::unique_ptr<ClockSource> _fastClockSource;
 
     /**
      * A ClockSource implementation that is very precise but may be expensive to call.
-     */
+     */ //_fastClockSource没_preciseClockSource精确
     std::unique_ptr<ClockSource> _preciseClockSource;
 
     // Flag set to indicate that all operations are to be interrupted ASAP.
@@ -523,6 +539,7 @@ private:
     // Counter for assigning operation ids.
     AtomicUInt32 _nextOpId{1};
 
+    //等待startup完成相关的条件变量
     bool _startupComplete = false;
     stdx::condition_variable _startupCompleteCondVar;
 };
