@@ -50,14 +50,14 @@ struct StorageGlobalParams {
 
     // Default data directory for mongod when running as the config database of
     // a sharded cluster.
-    static const char* kDefaultConfigDbPath;
+    static const char* kDefaultConfigDbPath; 
 
     // --storageEngine
     // storage engine for this instance of mongod.
     std::string engine = "wiredTiger";
 
     // True if --storageEngine was passed on the command line, and false otherwise.
-    bool engineSetByUser = false;
+    bool engineSetByUser = false; //如果配置文件中有storage.engine配置，则为true，见storeMongodOptions
 
     // The directory where the mongod instance stores its data.
     std::string dbpath = kDefaultDbPath;
@@ -81,8 +81,12 @@ struct StorageGlobalParams {
     // The intention here is to enable the journal by default if we are running on a 64 bit system.
     bool dur = (sizeof(void*) == 8);  // --dur durability (now --journal)
 
+
     // --journalCommitInterval
     static const int kMaxJournalCommitIntervalMs;
+    /* MongoDB 里的 journal 行为 主要由2个参数控制，storage.journal.enabled 决定是否开启journal，
+    storage.journal.commitInternalMs 决定 journal 刷盘的间隔，默认为100ms，用户也可以通过写入时指定 
+    writeConcern 为 {j: ture} 来每次写入时都确保 journal 刷盘。 */
     AtomicInt32 journalCommitIntervalMs;
 
     // --notablescan

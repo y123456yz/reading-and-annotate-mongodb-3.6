@@ -128,6 +128,7 @@ void TransportLayerASIO::end(const SessionHandle& session) {
     asioSession->shutdown();
 }
 
+//创建套接字并bind, _initAndListen中执行
 Status TransportLayerASIO::setup() {
     std::vector<std::string> listenAddrs;
     if (_listenerOptions.ipList.empty()) {
@@ -152,6 +153,7 @@ Status TransportLayerASIO::setup() {
             continue;
         }
 
+		//填充创建套接字时需要的sockaddr_storage结构
         const auto addrs = SockAddr::createAll(
             ip, _listenerOptions.port, _listenerOptions.enableIPv6 ? AF_UNSPEC : AF_INET);
         if (addrs.empty()) {
@@ -185,7 +187,7 @@ Status TransportLayerASIO::setup() {
                 return errorCodeToStatus(ec);
             }
 
-            acceptor.bind(endpoint, ec);
+            acceptor.bind(endpoint, ec); //bind绑定
             if (ec) {
                 return errorCodeToStatus(ec);
             }

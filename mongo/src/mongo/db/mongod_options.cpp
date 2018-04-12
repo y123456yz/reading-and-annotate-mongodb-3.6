@@ -61,7 +61,9 @@ using std::string;
 MongodGlobalParams mongodGlobalParams;
 
 //mongos_options_init.cpp 和 mongod_options_init.cpp中调用
-//mongod -h的打印全部在这里
+
+//mongo.conf配置文件  命令行配置见 addMongodOptions和addMongodOptions->addGeneralServerOptions，
+//解析出的配置信息在storeMongodOptions中存入storageGlobalParams全局信息中
 Status addMongodOptions(moe::OptionSection* options) {
     moe::OptionSection general_options("General options");
 
@@ -928,7 +930,8 @@ Status canonicalizeMongodOptions(moe::Environment* params) {
 }
 
 //解析配置文件的值存入到 StorageGlobalParams 类，
-//mongos_options_init.cpp 和 mongod_options_init.cpp中使用
+//mongos_options_init.cpp 和 mongod_options_init.cpp中使用, 
+//addMongodOptions解析配置，然后通过storeMongodOptions把从命令行或者配置文件中解析出的配置信息存入storageGlobalParams全局信息中
 Status storeMongodOptions(const moe::Environment& params) {
     Status ret = storeServerOptions(params);
     if (!ret.isOK()) {
@@ -950,6 +953,7 @@ Status storeMongodOptions(const moe::Environment& params) {
     if (params.count("storage.engine")) {
         storageGlobalParams.engine = params["storage.engine"].as<string>();
         storageGlobalParams.engineSetByUser = true;
+		cout << "yang test .... storeMongodOptions engineSetByUser" << endl;
     }
 
     if (params.count("storage.dbPath")) {

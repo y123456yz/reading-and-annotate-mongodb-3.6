@@ -50,6 +50,10 @@ namespace mongo {
  *
  * The semantics for a const Database are that you can mutate individual collections but not add or
  * remove them.
+ * Database对象代表Mongodb里的一个db，其提供关于集合操作的所有接口，包括创建、删除、重命名集合，
+ * 创建Database时会根据mongod进程的storageEngine配置来决定使用哪个存储引擎。
+ * DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象
+ * Database代表一个DB库，Collection代表Mongodb里的一个集合
  */
 class Database {
 public:

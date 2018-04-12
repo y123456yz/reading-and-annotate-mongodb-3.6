@@ -52,6 +52,9 @@ using ConstSessionHandle = std::shared_ptr<const Session>;
  * This type contains data needed to associate Messages with connections
  * (on the transport side) and Messages with Client objects (on the database side).
  */
+
+//TransportLayer类用于从Acceptor接收消息，然后创建session对象，并把接收到的消息映射到各个endpoints.
+//这个新的session被传入到数据库(通过ServiceEntryPoint)，数据库会调用额外的方法来管理这个session
 class Session : public std::enable_shared_from_this<Session>, public Decorable<Session> {
     MONGO_DISALLOW_COPYING(Session);
 

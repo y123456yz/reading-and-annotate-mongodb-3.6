@@ -39,7 +39,8 @@ constexpr size_t DEFAULT_MAX_CONN = 1000000;
 
 enum class ClusterRole { None, ShardServer, ConfigServer };
 
-//存储到serverGlobalParams全局变量中
+//存储到serverGlobalParams全局变量中，默认赋值见addGeneralServerOptions
+//配置相关的官方文档说明https://docs.mongodb.com/manual/reference/configuration-options/
 struct ServerGlobalParams {
     std::string binaryName;  // mongod or mongos
     std::string cwd;         // cwd of when process started
@@ -78,7 +79,7 @@ struct ServerGlobalParams {
     std::string transportLayer;   // --transportLayer (must be either "asio" or "legacy")
 
     // --serviceExecutor ("adaptive", "synchronous")
-    std::string serviceExecutor;
+    std::string serviceExecutor; //默认synchronous
 
     size_t maxConns = DEFAULT_MAX_CONN;  // Maximum number of simultaneous open connections.
 

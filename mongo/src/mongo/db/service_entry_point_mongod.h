@@ -39,6 +39,8 @@ namespace mongo {
  
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
+
+//_initAndListen中构造使用该类
 class ServiceEntryPointMongod final : public ServiceEntryPointImpl {
     MONGO_DISALLOW_COPYING(ServiceEntryPointMongod);
 

@@ -44,6 +44,7 @@ namespace transport {
 /*
  * This is the interface for all ServiceExecutors.
  */
+//ServiceContext:_serviceExecutor成员为该类类型，setServiceExecutor中让它和ServiceContext关联在一起，线程池相关的类
 class ServiceExecutor {
 public:
     virtual ~ServiceExecutor() = default;

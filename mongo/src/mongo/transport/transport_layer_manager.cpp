@@ -125,12 +125,15 @@ Status TransportLayerManager::addAndStartTransportLayer(std::unique_ptr<Transpor
     return ptr->start();
 }
 
+//根据配置构造相应类信息
 std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
     const ServerGlobalParams* config, ServiceContext* ctx) {
     std::unique_ptr<TransportLayer> transportLayer;
     auto sep = ctx->getServiceEntryPoint();
     if (config->transportLayer == "asio") {
         transport::TransportLayerASIO::Options opts(config);
+
+		//同步方式还是异步方式，默认异步
         if (config->serviceExecutor == "adaptive") {
             opts.transportMode = transport::Mode::kAsynchronous;
         } else if (config->serviceExecutor == "synchronous") {
@@ -139,14 +142,17 @@ std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
             MONGO_UNREACHABLE;
         }
 
+		//构造TransportLayerASIO::ASIOSession类
         auto transportLayerASIO = stdx::make_unique<transport::TransportLayerASIO>(opts, sep);
 
-        if (config->serviceExecutor == "adaptive") {
+		//ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式
+        if (config->serviceExecutor == "adaptive") { //异步方式
             ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorAdaptive>(
                 ctx, transportLayerASIO->getIOContext()));
-        } else if (config->serviceExecutor == "synchronous") {
+        } else if (config->serviceExecutor == "synchronous") { //同步方式
             ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorSynchronous>(ctx));
         }
+		//transportLayerASIO转换为transportLayer类
         transportLayer = std::move(transportLayerASIO);
     } else if (serverGlobalParams.transportLayer == "legacy") {
         transport::TransportLayerLegacy::Options opts(config);
@@ -161,3 +167,4 @@ std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
 
 }  // namespace transport
 }  // namespace mongo
+

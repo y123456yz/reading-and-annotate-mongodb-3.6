@@ -59,6 +59,7 @@ namespace {
 class WiredTigerFactory : public StorageEngine::Factory {
 public:
     virtual ~WiredTigerFactory() {}
+	//ServiceContextMongoD::initializeGlobalStorageEngine()中调用执行，执行该WiredTigerFactory::create
     virtual StorageEngine* create(const StorageGlobalParams& params,
                                   const StorageEngineLockFile* lockFile) const {
         if (lockFile && lockFile->createdByUncleanShutdown()) {
@@ -84,7 +85,7 @@ public:
             }
         }
 #endif
-
+		//wiredTigerGlobalOptions.cacheSizeGB GB转换为MB
         size_t cacheMB = WiredTigerUtil::getCacheSizeMB(wiredTigerGlobalOptions.cacheSizeGB);
         const bool ephemeral = false;
         WiredTigerKVEngine* kv =
@@ -107,6 +108,8 @@ public:
         options.directoryPerDB = params.directoryperdb;
         options.directoryForIndexes = wiredTigerGlobalOptions.directoryForIndexes;
         options.forRepair = params.repair;
+
+		//WiredTigerFactory::create->new KVStorageEngine(kv, options);
         return new KVStorageEngine(kv, options);
     }
 
@@ -121,15 +124,17 @@ public:
     virtual Status validateIndexStorageOptions(const BSONObj& options) const {
         return WiredTigerIndex::parseIndexOptions(options).getStatus();
     }
-
+	
     virtual Status validateMetadata(const StorageEngineMetadata& metadata,
                                     const StorageGlobalParams& params) const {
-        Status status =
+		//StorageEngineMetadata::validateStorageEngineOption，检查storage.bson中的directoryPerDB字段的内容是否和预期的params.directoryperdb相同
+		Status status =
             metadata.validateStorageEngineOption("directoryPerDB", params.directoryperdb);
         if (!status.isOK()) {
             return status;
         }
 
+	//StorageEngineMetadata::validateStorageEngineOption，检查storage.bson中的directoryForIndexes字段的内容是否和预期的wiredTigerGlobalOptions.directoryForIndexes相同
         status = metadata.validateStorageEngineOption("directoryForIndexes",
                                                       wiredTigerGlobalOptions.directoryForIndexes);
         if (!status.isOK()) {

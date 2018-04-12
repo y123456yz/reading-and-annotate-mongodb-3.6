@@ -54,6 +54,7 @@ class WiredTigerRecordStore;
 class WiredTigerSessionCache;
 class WiredTigerSizeStorer;
 
+//WiredTigerFactory::create中new该类,然后存放到KVStorageEngine::_engine成员中
 class WiredTigerKVEngine final : public KVEngine {
 public:
     WiredTigerKVEngine(const std::string& canonicalName,

@@ -39,7 +39,10 @@
 #include "mongo/db/stats/fill_locker_info.h"
 
 namespace mongo {
-
+/*
+MongoDB提供了killOp请求，用于干掉运行时间很长的请求，killOp通常需要与currentOp组合起来使用；
+先根据currentOp查询到请求的opid，然后根据opid发送killOp的请求。
+*/
 class CurrentOpCommand final : public CurrentOpCommandBase {
     MONGO_DISALLOW_COPYING(CurrentOpCommand);
 

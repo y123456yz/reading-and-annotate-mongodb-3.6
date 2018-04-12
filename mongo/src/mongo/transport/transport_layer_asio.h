@@ -69,11 +69,12 @@ namespace transport {
 /**
  * A TransportLayer implementation based on ASIO networking primitives.
  */
+//TransportLayerASIO继承TransportLayer，对应Boost.Asio网络框架,和TransportLayerLegacy一起，选择是asio还是legacy配置，参考createWithConfig
 class TransportLayerASIO final : public TransportLayer {
     MONGO_DISALLOW_COPYING(TransportLayerASIO);
 
 public:
-    struct Options {
+    struct Options {  //TransportLayerASIO::Options
         explicit Options(const ServerGlobalParams* params);
 
         int port = ServerGlobalParams::DefaultDBPort;  // port to bind to
@@ -82,6 +83,7 @@ public:
         bool useUnixSockets = true;  // whether to allow UNIX sockets in ipList
 #endif
         bool enableIPv6 = false;                  // whether to allow IPv6 sockets in ipList
+        //同步还是异步，赋值见createWithConfig
         Mode transportMode = Mode::kSynchronous;  // whether accepted sockets should be put into
                                                   // non-blocking mode after they're accepted
         size_t maxConns = DEFAULT_MAX_CONN;       // maximum number of active connections
@@ -158,7 +160,7 @@ private:
 #ifdef MONGO_CONFIG_SSL
     std::unique_ptr<asio::ssl::context> _sslContext;
 #endif
-
+    //赋值见TransportLayerASIO::setup，创建套接字，然后bind
     std::vector<std::pair<SockAddr, GenericAcceptor>> _acceptors;
 
     // Only used if _listenerOptions.async is false.
@@ -166,6 +168,8 @@ private:
 
     ServiceEntryPoint* const _sep = nullptr;
     AtomicWord<bool> _running{false};
+
+    //生效使用见TransportLayerASIO::setup
     Options _listenerOptions;
 };
 

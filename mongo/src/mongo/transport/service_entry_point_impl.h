@@ -60,6 +60,7 @@ class ServiceEntryPointImpl : public ServiceEntryPoint {
     MONGO_DISALLOW_COPYING(ServiceEntryPointImpl);
 
 public:
+    //调整最大可用文件描述符fd，_initAndListen中调用执行
     explicit ServiceEntryPointImpl(ServiceContext* svcCtx);
 
     void startSession(transport::SessionHandle session) final;

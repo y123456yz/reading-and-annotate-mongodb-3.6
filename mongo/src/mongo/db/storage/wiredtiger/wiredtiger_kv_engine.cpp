@@ -673,10 +673,12 @@ RecoveryUnit* WiredTigerKVEngine::newRecoveryUnit() {
     return new WiredTigerRecoveryUnit(_sessionCache.get());
 }
 
+//WiredTigerFactory::create中赋值
 void WiredTigerKVEngine::setRecordStoreExtraOptions(const std::string& options) {
     _rsOptions = options;
 }
 
+//WiredTigerFactory::create中赋值
 void WiredTigerKVEngine::setSortedDataInterfaceExtraOptions(const std::string& options) {
     _indexOptions = options;
 }

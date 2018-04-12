@@ -56,6 +56,12 @@ class StorageEngineMetadata;
  */
 //所有的存储引起都注册到ServiceContextMongoD:FactoryMap，逻辑引擎存储到ServiceContextMongoD:_storageEngine
 //MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
+
+/*
+StorageEngine定义了一系列Mongdb存储引擎需要实现的接口，是一个接口类，所有的存储引擎需继承这个类，实现
+自身的存储逻辑。 getDatabaseCatalogEntry接口用于获取一个DatabaseCatalogEntry对象，该对象实现了关于集合、
+文档操作的接口。
+*/
 class StorageEngine {
 public:
     /**
@@ -65,6 +71,7 @@ public:
      * name) to the global environment, which then sets the global storage engine
      * according to the provided configuration parameter.
      */
+    //默认的WiredTiger存储引擎对应WiredTigerFactory,见initializeGlobalStorageEngine
     class Factory {
     public:
         virtual ~Factory() {}

@@ -95,6 +95,7 @@ extern const char* replAllDead;
  * with the rest of the system.  The public methods on ReplicationCoordinator are the public
  * API that the replication subsystem presents to the rest of the codebase.
  */
+//getReplicationCoordinator由该类而来，ReplicationCoordinatorImpl继承该类
 class ReplicationCoordinator : public SyncSourceSelector {
     MONGO_DISALLOW_COPYING(ReplicationCoordinator);
 

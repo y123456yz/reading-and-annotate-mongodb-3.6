@@ -46,7 +46,7 @@
 #endif
 
 namespace mongo {
-//调整最大可用文件描述符fd
+//调整最大可用文件描述符fd，_initAndListen中调用执行
 ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(svcCtx) {
 
     const auto supportedMax = [] {

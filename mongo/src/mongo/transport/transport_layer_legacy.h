@@ -53,6 +53,7 @@ namespace transport {
  * A TransportLayer implementation based on legacy networking primitives (the Listener,
  * AbstractMessagingPort).
  */
+//TransportLayerASIO TransportLayerLegacy继承TransportLayer，对应Boost.Asio网络框架,和TransportLayerLegacy一起，选择是asio还是legacy配置，参考createWithConfig
 class TransportLayerLegacy final : public TransportLayer {
     MONGO_DISALLOW_COPYING(TransportLayerLegacy);
 

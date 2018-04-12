@@ -78,9 +78,11 @@ bool fsyncFile(boost::filesystem::path path) {
 
 }  // namespace
 
-// static
+// static  下面的getStorageEngineForPath中调用该函数, initializeGlobalStorageEngine中调用该函数
 std::unique_ptr<StorageEngineMetadata> StorageEngineMetadata::forPath(const std::string& dbpath) {
     std::unique_ptr<StorageEngineMetadata> metadata;
+
+	//storage.bson是否存在，存在在读取里面的内容来构造StorageEngineMetadata类
     if (boost::filesystem::exists(boost::filesystem::path(dbpath) / kMetadataBasename)) {
         metadata.reset(new StorageEngineMetadata(dbpath));
         Status status = metadata->read();
@@ -92,9 +94,10 @@ std::unique_ptr<StorageEngineMetadata> StorageEngineMetadata::forPath(const std:
     return metadata;
 }
 
-// static
+// static  根据storage.bson构造StorageEngineMetadata类
 boost::optional<std::string> StorageEngineMetadata::getStorageEngineForPath(
     const std::string& dbpath) {
+    //storage.bson
     if (auto metadata = StorageEngineMetadata::forPath(dbpath)) {
         return {metadata->getStorageEngine()};
     }
@@ -276,6 +279,7 @@ Status StorageEngineMetadata::write() const {
     return Status::OK();
 }
 
+//validateMetadata中调用，检查storage.bson中的fieldName字段的内容是否和预期的expectedValue相同
 template <>
 Status StorageEngineMetadata::validateStorageEngineOption<bool>(
     StringData fieldName, bool expectedValue, boost::optional<bool> defaultValue) const {
