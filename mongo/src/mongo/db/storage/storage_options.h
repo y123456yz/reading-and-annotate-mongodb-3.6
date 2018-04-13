@@ -43,6 +43,8 @@
 
 namespace mongo {
 
+//注意StorageGlobalParams和ServerGlobalParams的区别:StorageGlobalParams中存储相关参数设置，ServerGlobalParams其他配置
+
 //变量赋值在storeMongodOptions
 struct StorageGlobalParams {
     // Default data directory for mongod when running in non-config server mode.

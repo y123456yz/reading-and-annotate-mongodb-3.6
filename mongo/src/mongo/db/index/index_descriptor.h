@@ -266,25 +266,33 @@ public:
 
 private:
     // Related catalog information of the parent collection
+    //所属的Collection
     Collection* _collection;
 
     // What access method should we use for this index?
     std::string _accessMethodName;
 
     // The BSONObj describing the index.  Accessed through the various members above.
-    const BSONObj _infoObj;
+    const BSONObj _infoObj; //配置管理信息
 
     // --- cached data from _infoObj
-
+    //索引字段数量，大于一个就是联合索引
     int64_t _numFields;  // How many fields are indexed?
+    //索引匹配串
     BSONObj _keyPattern;
+    //索引的名字，用户可以指定
     std::string _indexName;
     std::string _parentNS;
+    //索引的namespace，parentNs.$name
     std::string _indexNamespace;
+    //ID索引，如果索引字段只是_id则认为是IDIndex
     bool _isIdIndex;
+    //是否是稀疏索引，稀疏索引不包含NULL字段
     bool _sparse;
+    //是否是唯一索引
     bool _unique;
     bool _partial;
+    //数据结构版本号，0和1两个，参看btree_key_generator.h[cpp]
     IndexVersion _version;
 
     // only used by IndexCatalogEntryContainer to do caching for perf

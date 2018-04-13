@@ -47,6 +47,7 @@ class Environment;
 namespace moe = mongo::optionenvironment;
 
 struct MongodGlobalParams {
+    //是否禁用脚本引擎
     bool scriptingEnabled = true;  // --noscripting
 
     boost::optional<std::vector<std::string>> whitelistedClusterNetwork;

@@ -50,6 +50,7 @@ namespace mongo {
 namespace {
 
 const std::string kLockFileBasename = "mongod.lock";
+//文件内容刷到磁盘
 void flushMyDirectory(const boost::filesystem::path& file) {
 #ifdef __linux__  // this isn't needed elsewhere
     static bool _warnedAboutFilesystem = false;
@@ -96,6 +97,7 @@ void flushMyDirectory(const boost::filesystem::path& file) {
 }
 }  // namespace
 
+//StorageEngineLockFile类中包含该LockFileHandle类成员
 class StorageEngineLockFile::LockFileHandle {
 public:
     static const int kInvalidFd = -1;
@@ -193,14 +195,16 @@ void StorageEngineLockFile::close() {
     _lockFileHandle->clear();
 }
 
+//ServiceContextMongoD::initializeGlobalStorageEngine()中执行
+//把PID写入磁盘lockfile文件中，保证落盘
 Status StorageEngineLockFile::writePid() {
-    if (!_lockFileHandle->isValid()) {
+    if (!_lockFileHandle->isValid()) { //文件是否已经打开
         return Status(ErrorCodes::FileNotOpen,
                       str::stream() << "Unable to write process ID to " << _filespec
                                     << " because file has not been opened.");
     }
-
-    if (::ftruncate(_lockFileHandle->_fd, 0)) {
+	
+    if (::ftruncate(_lockFileHandle->_fd, 0)) { //清空文件内容
         int errorcode = errno;
         return Status(ErrorCodes::FileStreamFailed,
                       str::stream() << "Unable to write process id to file (ftruncate failed): "
@@ -209,7 +213,7 @@ Status StorageEngineLockFile::writePid() {
                                     << errnoWithDescription(errorcode));
     }
 
-    ProcessId pid = ProcessId::getCurrent();
+    ProcessId pid = ProcessId::getCurrent(); //获取PID
     std::stringstream ss;
     ss << pid << std::endl;
     std::string pidStr = ss.str();

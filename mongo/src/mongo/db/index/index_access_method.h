@@ -78,6 +78,12 @@ public:
      *
      * The behavior of the insertion can be specified through 'options'.
      */
+    /*
+    通过getKeys获得doc的所有key，然后进行迭代修改Index，修改成功后，会对numInserted++，计数，统计本次操
+    作修改索引次数。如果遇到失败情况，则要清理所有之前已经写入的数据，保证操作的原子性，即使失败，也要
+    保证恢复到操作之前的数据状态（索引结构可能会发生变化，但是数据集合是等价的）。 另外，background build index，
+    可能会重复插入索引，因为doc数据可能会在磁盘上移动，也就是会被重复扫描到。
+    */
     Status insert(OperationContext* opCtx,
                   const BSONObj& obj,
                   const RecordId& loc,
@@ -122,6 +128,9 @@ public:
      *
      * 'numInserted' will be set to the number of keys inserted into the index for the document.
      * 'numDeleted' will be set to the number of keys removed from the index for the document.
+     * 对比先后两个对象，计算出diff，包括需要删除的和需要增加的，然后批量提交修改。注意，这里可能会失败，
+     但是失败后索引没有再回滚到之前的数据集合。并且是先删除后增加，极端情况下会导致索引错误。思考：如果
+     是先增加后删除，是不是更合适一点？
      */
     Status update(OperationContext* opCtx,
                   const UpdateTicket& ticket,

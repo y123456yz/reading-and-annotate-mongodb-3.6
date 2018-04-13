@@ -112,6 +112,19 @@ Status WiredTigerGlobalOptions::add(moe::OptionSection* options) {
     return options->addSection(wiredTigerOptions);
 }
 
+/*
+storage:
+   wiredTiger:
+      engineConfig:
+         cacheSizeGB: <number>
+         journalCompressor: <string>
+         directoryForIndexes: <boolean>
+      collectionConfig:
+         blockCompressor: <string>
+      indexConfig:
+         prefixCompression: <boolean>
+*/
+//mongo.conf配置文件中的wiredTiger:相关的配置信息
 Status WiredTigerGlobalOptions::store(const moe::Environment& params,
                                       const std::vector<std::string>& args) {
     // WiredTiger storage engine options

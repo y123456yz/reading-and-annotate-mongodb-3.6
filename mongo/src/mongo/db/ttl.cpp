@@ -280,6 +280,11 @@ namespace {
 TTLMonitor* ttlMonitor = nullptr;
 }  // namespace
 
+/*
+创建索引时设置一个超时时间，超过时间后自动删除数据如:
+db.log.events.ensureIndex({"status:1"},{expireAfterS<span style="white-space:pre">              
+</span>    //econds:3600})。这里专门启动一个线程来做这件事。  
+*/
 void startTTLBackgroundJob() {
     ttlMonitor = new TTLMonitor();
     ttlMonitor->go();

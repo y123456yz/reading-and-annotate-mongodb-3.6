@@ -48,6 +48,7 @@ namespace mongo {
 class KVCatalog;
 class KVEngine;
 
+//WiredTigerFactory::create中会使用该结构
 struct KVStorageEngineOptions {
     bool directoryPerDB = false;
     bool directoryForIndexes = false;
@@ -217,7 +218,7 @@ KVStorageEngine实际上不是一个真正存储引擎的实现，只是为了方便接入wiredTiger、roc
 的一个抽象层。 KVStorageEngine实现了StorageEngine的接口，但其实现由KVEngine类代理，wiredTiger等KV存储引擎
 接入mongdb时，只需实现KVEngine定义的接口即可。
 */
-//WiredTigerFactory::create中new改类
+//WiredTigerFactory::create中new改类 
 class KVStorageEngine final : public StorageEngine {
 public:
     /**

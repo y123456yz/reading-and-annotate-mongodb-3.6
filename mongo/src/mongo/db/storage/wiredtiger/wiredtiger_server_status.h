@@ -39,6 +39,7 @@ class WiredTigerKVEngine;
 /**
  * Adds "wiredTiger" to the results of db.serverStatus().
  */
+//WiredTigerFactory::create÷–new∏√¿‡
 class WiredTigerServerStatusSection : public ServerStatusSection {
 public:
     WiredTigerServerStatusSection(WiredTigerKVEngine* engine);

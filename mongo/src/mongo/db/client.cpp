@@ -51,7 +51,7 @@
 namespace mongo {
 
 namespace {
-//Client::initThread中初始化赋值
+//Client::initThread中初始化赋值，获取方法参考serviceContext->makeOperationContext(&cc());
 thread_local ServiceContext::UniqueClient currentClient;
 }  // namespace
 
@@ -128,7 +128,8 @@ void Client::reportState(BSONObjBuilder& builder) {
 }
 
 ServiceContext::UniqueOperationContext Client::makeOperationContext() {
-    return getServiceContext()->makeOperationContext(this);
+	//获取一个UniqueOperationContext类
+    return getServiceContext()->makeOperationContext(this); //ServiceContext::makeOperationContext
 }
 
 //makeOperationContext中调用

@@ -90,6 +90,7 @@ private:
     bool _uncleanShutdown;
 
     class LockFileHandle;
+    //标记文件是否已打开，文件fd保存在LockFileHandle::fd中，可以参考StorageEngineLockFile::writePid
     std::unique_ptr<LockFileHandle> _lockFileHandle;
 };
 

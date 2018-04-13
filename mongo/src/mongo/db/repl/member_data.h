@@ -240,6 +240,7 @@ private:
     // Time of first successful heartbeat, if currently still up
     Date_t _upSince;
     // This is the last time we got a response from a heartbeat request to a given member.
+    //"lastHeartbeat"表示当前实例到此远端成员最近一次成功发送与接收心跳包的时间
     Date_t _lastHeartbeat;
     // This is the last time we got a heartbeat request from a given member.
     Date_t _lastHeartbeatRecv;
