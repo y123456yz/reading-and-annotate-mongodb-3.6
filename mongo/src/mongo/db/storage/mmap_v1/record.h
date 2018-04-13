@@ -147,6 +147,10 @@ public:
 #pragma pack()
 
 // TODO: this probably moves to record_store.h
+/*
+mongodb的最小数据存储单位是document,每当插入一条document时其内部分配空间,分配的空间除了
+document本身占用的内存外还有一个document头如下
+*/
 class DeletedRecord {
 public:
     int lengthWithHeaders() const {
@@ -169,10 +173,11 @@ public:
     }
 
 private:
+    //该条文档和头部总大小  
     int _lengthWithHeaders;
-
+    //该条文档所在的extent位置
     int _extentOfs;
-
+    //下一条文档所在位置  
     DiskLoc _nextDeleted;
 };
 

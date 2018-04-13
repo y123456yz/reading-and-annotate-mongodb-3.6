@@ -47,7 +47,13 @@ namespace repl {
  * represent a time_t and a counter), and a 64-bit Term number.  OpTime can be used to
  * label every op in an oplog with a unique identifier.
  */
-
+/*
+optime的值说明了本实例最近一次更改数据库的时间"t":
+1376816431以及每秒执行的操作数据库的次数"i" : 1。此字段的值实际上是从本实例上的
+local数据库中的oplog.rs集合上读取的，这个集合还详细记录了具体是什么操作，如插入
+语句、修改语句等。复制集中的每一个实例都会有一个这样的数据库和集合，如果复制集
+运行正常，理论上来说，每一个mcmgod实例上此集合中的记录应该相同
+*/
 class OpTime {
 public:
     static const char kTimestampFieldName[];

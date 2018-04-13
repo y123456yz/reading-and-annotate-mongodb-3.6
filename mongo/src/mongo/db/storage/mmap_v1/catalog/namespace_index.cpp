@@ -153,6 +153,7 @@ void NamespaceIndex::maybeMkdir() const {
                                            "create dir for db ");
 }
 
+//若其未初始化则调用_init初始化,初始化了则什么也不做,直接去到namespaceIndex::_init
 void NamespaceIndex::init(OperationContext* opCtx) {
     invariant(!_ht.get());
 

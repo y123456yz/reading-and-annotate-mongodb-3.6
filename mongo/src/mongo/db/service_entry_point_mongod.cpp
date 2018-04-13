@@ -902,11 +902,13 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
     return DbResponse{std::move(response)};
 }
 
+//下面的ServiceEntryPointMongod::handleRequest调用执行 
+//解析了接收到的数据,然后调用runQuery负责处理查询
 DbResponse receivedQuery(OperationContext* opCtx,
                          const NamespaceString& nss,
                          Client& c,
                          const Message& m) {
-    invariant(!nss.isCommand());
+    invariant(!nss.isCommand());//这里表明这是一个命令
     globalOpCounters.gotQuery();
 
     DbMessage d(m);
@@ -964,6 +966,7 @@ void receivedKillCursors(OperationContext* opCtx, const Message& m) {
     }
 }
 
+//插入 ServiceEntryPointMongod::handleRequest中调用
 void receivedInsert(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
     auto insertOp = InsertOp::parseLegacy(m);
     invariant(insertOp.getNamespace() == nsString);
@@ -977,6 +980,7 @@ void receivedInsert(OperationContext* opCtx, const NamespaceString& nsString, co
     performInserts(opCtx, insertOp);
 }
 
+//数据更新 ServiceEntryPointMongod::handleRequest中调用
 void receivedUpdate(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
     auto updateOp = UpdateOp::parseLegacy(m);
     auto& singleUpdate = updateOp.getUpdates()[0];
@@ -1000,6 +1004,7 @@ void receivedUpdate(OperationContext* opCtx, const NamespaceString& nsString, co
     performUpdates(opCtx, updateOp);
 }
 
+//删除 ServiceEntryPointMongod::handleRequest中调用
 void receivedDelete(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
     auto deleteOp = DeleteOp::parseLegacy(m);
     auto& singleDelete = deleteOp.getDeletes()[0];
@@ -1013,6 +1018,7 @@ void receivedDelete(OperationContext* opCtx, const NamespaceString& nsString, co
     performDeletes(opCtx, deleteOp);
 }
 
+//已经查询了数据,这里只是执行得到更多数据的入口   ServiceEntryPointMongod::handleRequest中调用执行
 DbResponse receivedGetMore(OperationContext* opCtx,
                            const Message& m,
                            CurOp& curop,
@@ -1095,6 +1101,7 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 //class ServiceEntryPointMongod final : public ServiceEntryPointImpl
+//mongod服务对于客户端请求的处理
 DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const Message& m) {
     // before we lock...
     NetworkOp op = m.operation();
@@ -1135,16 +1142,20 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 
     OpDebug& debug = currentOp.debug();
 
+	//启动的时候设置的参数默认是100ms,当操作超过了这个时间且启动时设置--profile为1或者2  
     long long logThresholdMs = serverGlobalParams.slowMS;
+	//时mongodb将记录这次慢操作,1为只记录慢操作,即操作时间大于了设置的slowMS,2表示记录所有操作  
     bool shouldLogOpDebug = shouldLog(logger::LogSeverity::Debug(1));
 
     DbResponse dbresponse;
+	//可通过--slowms设置slowMS 
     if (op == dbMsg || op == dbCommand || (op == dbQuery && isCommand)) {
         dbresponse = runCommands(opCtx, m);
     } else if (op == dbQuery) {
         invariant(!isCommand);
+		//真正的查询入口  
         dbresponse = receivedQuery(opCtx, nsString, c, m);
-    } else if (op == dbGetMore) {
+    } else if (op == dbGetMore) { //已经查询了数据,这里只是执行得到更多数据的入口  
         dbresponse = receivedGetMore(opCtx, m, currentOp, &shouldLogOpDebug);
     } else {
         // The remaining operations do not return any response. They are fire-and-forget.
@@ -1171,11 +1182,11 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
                 if (!nsString.isValid()) {
                     uassert(16257, str::stream() << "Invalid ns [" << ns << "]", false);
                 } else if (op == dbInsert) {
-                    receivedInsert(opCtx, nsString, m);
+                    receivedInsert(opCtx, nsString, m); //插入操作入口  
                 } else if (op == dbUpdate) {
-                    receivedUpdate(opCtx, nsString, m);
+                    receivedUpdate(opCtx, nsString, m); //更新操作入口  
                 } else if (op == dbDelete) {
-                    receivedDelete(opCtx, nsString, m);
+                    receivedDelete(opCtx, nsString, m); //删除操作入口  
                 } else {
                     invariant(false);
                 }
@@ -1207,6 +1218,11 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         log() << debug.report(&c, currentOp, lockerInfo.stats);
     }
 
+	/*
+	//该操作将被记录,原因可能有二:
+	一,启动时设置--profile 2,则所有操作将被记录.
+	二,启动时设置--profile 1,且操作时间超过了默认的slowMs,那么操作将被else {//这个地方if部分被删除了,就是在不能获取锁的状况下不记录该操作的代码  
+	*/
     if (currentOp.shouldDBProfile(shouldSample)) {
         // Performance profiling is on
         if (opCtx->lockState()->isReadLocked()) {

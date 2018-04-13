@@ -44,6 +44,7 @@ class OperationContext;
 /* NamespaceDetails : this is the "header" for a collection that has all its details.
    It's in the .ns file and this is a memory mapped region (thus the pack pragma above).
 */
+//每一个集合对应于一个NamespaceDetails结构,
 class NamespaceDetails {
 public:
     enum { NIndexesMax = 64, NIndexesExtra = 30, NIndexesBase = 10 };

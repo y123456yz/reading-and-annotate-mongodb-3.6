@@ -35,6 +35,7 @@ namespace mongo {
 /**
  * WT_CONNECTION::reconfigure get/setParameter support
  */
+//WiredTigerFactory::create÷–new∏√¿‡
 class WiredTigerEngineRuntimeConfigParameter : public ServerParameter {
     MONGO_DISALLOW_COPYING(WiredTigerEngineRuntimeConfigParameter);
 

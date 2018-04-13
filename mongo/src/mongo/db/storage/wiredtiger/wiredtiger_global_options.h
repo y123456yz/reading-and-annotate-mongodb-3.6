@@ -36,7 +36,7 @@
 namespace mongo {
 
 namespace moe = mongo::optionenvironment;
-
+//mongo.conf配置文件中的wiredTiger:相关的配置信息
 class WiredTigerGlobalOptions {
 public:
     WiredTigerGlobalOptions()

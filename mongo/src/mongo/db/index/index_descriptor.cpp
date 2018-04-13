@@ -144,6 +144,11 @@ const IndexCatalog* IndexDescriptor::getIndexCatalog() const {
     return _collection->getIndexCatalog();
 }
 
+/*
+检查是否是稀疏索引，是否是_ID索引，并且是否是唯一索引，注释里也说明了，不关心ID索
+引的排序顺序，因为升序或者降序，对查询来说，都是等价的，最后比较Options，注意version
+和ns是不比较的，background是创建时的参数，创建后就不再有意义
+*/
 bool IndexDescriptor::areIndexOptionsEquivalent(const IndexDescriptor* other) const {
     if (isSparse() != other->isSparse()) {
         return false;

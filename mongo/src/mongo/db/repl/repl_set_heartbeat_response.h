@@ -277,6 +277,7 @@ private:
     int _configVersion = -1;
     std::string _setName;
     std::string _hbmsg;
+    //该节点对应的主节点，如果是arbiter仲裁节点，则没有该信息，因为他不需要从主节点同步数据
     HostAndPort _syncingTo;
 
     bool _configSet = false;

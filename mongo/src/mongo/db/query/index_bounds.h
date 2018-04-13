@@ -79,6 +79,7 @@ struct OrderedIntervalList {
 /**
  * Tied to an index.  Permissible values for all fields in the index.  Requires the index to
  * interpret.  Previously known as FieldRangeVector.
+ * 索引兼职范围相关
  */
 struct IndexBounds {
     IndexBounds() : isSimpleRange(false), boundInclusion(BoundInclusion::kIncludeStartKeyOnly) {}

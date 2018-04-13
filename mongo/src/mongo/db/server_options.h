@@ -38,6 +38,7 @@ const int DEFAULT_UNIX_PERMS = 0700;
 constexpr size_t DEFAULT_MAX_CONN = 1000000;
 
 enum class ClusterRole { None, ShardServer, ConfigServer };
+//注意StorageGlobalParams和ServerGlobalParams的区别:StorageGlobalParams中存储相关参数设置，ServerGlobalParams其他配置
 
 //存储到serverGlobalParams全局变量中，默认赋值见addGeneralServerOptions
 //配置相关的官方文档说明https://docs.mongodb.com/manual/reference/configuration-options/

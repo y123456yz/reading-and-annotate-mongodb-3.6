@@ -273,7 +273,10 @@ Status restoreMissingFeatureCompatibilityVersionDocument(OperationContext* opCtx
     return Status::OK();
 }
 
+//startup_log集合表示的是mongod实例每一次的启动信息
 const NamespaceString startupLogCollectionName("local.startup_log");
+//system.replse集合保存的是复制集的成员配置信息，复制集上的命令rS.c〇nf()实际上是从这个集合取的数据返回的
+//MongoDB就是通过oplog.rs来实现复制集间数据同步的
 const NamespaceString kSystemReplSetCollection("local.system.replset");
 
 #ifdef _WIN32
@@ -777,6 +780,7 @@ ExitCode _initAndListen(int listenPort) {
             }
 
             // Warn if field name matches non-active registered storage engine.
+            //必须是指定的几种存储引擎
             if (serviceContext->isRegisteredStorageEngine(e.fieldName())) {
                 warning() << "Detected configuration for non-active storage engine "
                           << e.fieldName() << " when current storage engine is "
@@ -785,6 +789,7 @@ ExitCode _initAndListen(int listenPort) {
         }
     }
 
+	//配置做些检查，打印一些提示信息
     logMongodStartupWarnings(storageGlobalParams, serverGlobalParams, serviceContext);
 
     {//mongodb就会对相应路径下的数据文件进行检查，如出现文件错误（文件不存在等）
@@ -817,6 +822,7 @@ ExitCode _initAndListen(int listenPort) {
         ScriptEngine::setup();
     }
 
+	//&cc()获取currentClient
     auto startupOpCtx = serviceContext->makeOperationContext(&cc());
 
     bool canCallFCVSetIfCleanStartup = !storageGlobalParams.readOnly &&

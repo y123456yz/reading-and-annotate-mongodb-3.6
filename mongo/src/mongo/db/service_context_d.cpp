@@ -111,7 +111,7 @@ void ServiceContextMongoD::createLockFile() {
     }
 }
 
-//初始化存储引擎  _initAndListen中调用执行
+//初始化存储引擎  _initAndListen中调用执行  主要是根据params参数构造KVStorageEngine类，存到ServiceContextMongoD::_storageEngine
 void ServiceContextMongoD::initializeGlobalStorageEngine() {
     // This should be set once.
     invariant(!_storageEngine);
@@ -208,16 +208,17 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
         }
     });
 
-	//WiredTigerFactory::create
+	//WiredTigerFactory::create  //根据params参数构造KVStorageEngine类
     _storageEngine = factory->create(storageGlobalParams, _lockFile.get());
-    _storageEngine->finishInit();
+    _storageEngine->finishInit(); //void KVStorageEngine::finishInit() {}
 
-    if (_lockFile) {
+    if (_lockFile) {//把PID写入磁盘lockfile文件中，保证落盘
+		//StorageEngineLockFile::writePid()
         uassertStatusOK(_lockFile->writePid());
     }
 
     // Write a new metadata file if it is not present.
-    if (!metadata.get()) {
+    if (!metadata.get()) { //根据配置重新构建storage.bson文件
         invariant(!storageGlobalParams.readOnly);
         metadata.reset(new StorageEngineMetadata(storageGlobalParams.dbpath));
         metadata->setStorageEngine(factory->getCanonicalName().toString());
