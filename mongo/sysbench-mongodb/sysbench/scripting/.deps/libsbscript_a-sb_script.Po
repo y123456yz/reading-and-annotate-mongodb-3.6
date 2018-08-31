@@ -1,0 +1,494 @@
+libsbscript_a-sb_script.o: sb_script.c /usr/include/stdc-predef.h \
+ ../../config/config.h sb_script.h ../../sysbench/sysbench.h \
+ /usr/include/stdio.h /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
+ /usr/include/bits/stdio.h /usr/include/stdlib.h \
+ /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
+ /usr/include/xlocale.h /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/alloca.h /usr/include/bits/stdlib-float.h \
+ /usr/include/string.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/confname.h /usr/include/getopt.h \
+ /usr/include/pthread.h /usr/include/sched.h /usr/include/bits/sched.h \
+ /usr/include/bits/timex.h /usr/include/bits/setjmp.h \
+ ../../sysbench/sb_list.h ../../sysbench/sb_options.h \
+ ../../sysbench/sb_timer.h /usr/include/sys/time.h \
+ ../../sysbench/sb_logger.h ../../sysbench/sb_global.h \
+ ../../sysbench/tests/sb_cpu.h ../../sysbench/tests/sb_fileio.h \
+ ../../sysbench/tests/sb_memory.h ../../sysbench/tests/sb_threads.h \
+ ../../sysbench/tests/sb_mutex.h script_lua.h ../../sysbench/db_driver.h \
+ ../../sysbench/sysbench.h ../../sysbench/sb_percentile.h \
+ /usr/local/include/libbson-1.0/bson.h \
+ /usr/local/include/libbson-1.0/bson-compat.h \
+ /usr/local/include/libbson-1.0/bson-config.h \
+ /usr/local/include/libbson-1.0/bson-macros.h /usr/include/errno.h \
+ /usr/include/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
+ /usr/include/asm-generic/errno-base.h /usr/include/ctype.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/bits/fcntl-linux.h /usr/include/bits/uio.h \
+ /usr/include/bits/stat.h /usr/include/sys/stat.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/inttypes.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
+ /usr/local/include/libbson-1.0/bson-atomic.h \
+ /usr/local/include/libbson-1.0/bson-context.h \
+ /usr/local/include/libbson-1.0/bson-types.h \
+ /usr/local/include/libbson-1.0/bson-endian.h \
+ /usr/local/include/libbson-1.0/bson-clock.h \
+ /usr/local/include/libbson-1.0/bson-decimal128.h \
+ /usr/local/include/libbson-1.0/bson-error.h \
+ /usr/local/include/libbson-1.0/bson-iter.h \
+ /usr/local/include/libbson-1.0/bson.h \
+ /usr/local/include/libbson-1.0/bson-json.h \
+ /usr/local/include/libbson-1.0/bson-keys.h \
+ /usr/local/include/libbson-1.0/bson-md5.h \
+ /usr/local/include/libbson-1.0/bson-memory.h \
+ /usr/local/include/libbson-1.0/bson-oid.h \
+ /usr/local/include/libbson-1.0/bson-reader.h \
+ /usr/local/include/libbson-1.0/bson-string.h \
+ /usr/local/include/libbson-1.0/bson-utf8.h \
+ /usr/local/include/libbson-1.0/bson-value.h \
+ /usr/local/include/libbson-1.0/bson-version.h \
+ /usr/local/include/libbson-1.0/bson-version-functions.h \
+ /usr/local/include/libbson-1.0/bson-writer.h \
+ /usr/local/include/libbson-1.0/bcon.h \
+ /usr/local/include/libbson-1.0/bcon.h \
+ /usr/local/include/libmongoc-1.0/mongoc.h \
+ /usr/local/include/libmongoc-1.0/mongoc-macros.h \
+ /usr/local/include/libmongoc-1.0/mongoc-apm.h \
+ /usr/local/include/libmongoc-1.0/mongoc-host-list.h \
+ /usr/local/include/libmongoc-1.0/mongoc-server-description.h \
+ /usr/local/include/libmongoc-1.0/mongoc-read-prefs.h \
+ /usr/local/include/libmongoc-1.0/mongoc-config.h \
+ /usr/local/include/libmongoc-1.0/mongoc-topology-description.h \
+ /usr/local/include/libmongoc-1.0/mongoc-bulk-operation.h \
+ /usr/local/include/libmongoc-1.0/mongoc-write-concern.h \
+ /usr/local/include/libmongoc-1.0/mongoc-change-stream.h \
+ /usr/local/include/libmongoc-1.0/mongoc-client.h \
+ /usr/local/include/libmongoc-1.0/mongoc-collection.h \
+ /usr/local/include/libmongoc-1.0/mongoc-flags.h \
+ /usr/local/include/libmongoc-1.0/mongoc-cursor.h \
+ /usr/local/include/libmongoc-1.0/mongoc-index.h \
+ /usr/local/include/libmongoc-1.0/mongoc-read-concern.h \
+ /usr/local/include/libmongoc-1.0/mongoc-find-and-modify.h \
+ /usr/local/include/libmongoc-1.0/mongoc-database.h \
+ /usr/local/include/libmongoc-1.0/mongoc-gridfs.h \
+ /usr/local/include/libmongoc-1.0/mongoc-stream.h \
+ /usr/local/include/libmongoc-1.0/mongoc-iovec.h /usr/include/sys/uio.h \
+ /usr/local/include/libmongoc-1.0/mongoc-socket.h \
+ /usr/include/arpa/inet.h /usr/include/netinet/in.h \
+ /usr/include/sys/socket.h /usr/include/bits/socket.h \
+ /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
+ /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
+ /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
+ /usr/include/bits/in.h /usr/include/poll.h /usr/include/sys/poll.h \
+ /usr/include/bits/poll.h /usr/include/netdb.h /usr/include/rpc/netdb.h \
+ /usr/include/bits/siginfo.h /usr/include/bits/netdb.h \
+ /usr/include/netinet/tcp.h /usr/include/sys/un.h \
+ /usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h \
+ /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h \
+ /usr/local/include/libmongoc-1.0/mongoc-ssl.h \
+ /usr/local/include/libmongoc-1.0/mongoc-uri.h \
+ /usr/local/include/libmongoc-1.0/mongoc-client-pool.h \
+ /usr/local/include/libmongoc-1.0/mongoc-error.h \
+ /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-page.h \
+ /usr/local/include/libmongoc-1.0/mongoc-init.h \
+ /usr/local/include/libmongoc-1.0/mongoc-matcher.h \
+ /usr/local/include/libmongoc-1.0/mongoc-handshake.h \
+ /usr/local/include/libmongoc-1.0/mongoc-opcode.h \
+ /usr/local/include/libmongoc-1.0/mongoc-log.h \
+ /usr/local/include/libmongoc-1.0/mongoc-client-session.h \
+ /usr/local/include/libmongoc-1.0/mongoc-stream-buffered.h \
+ /usr/local/include/libmongoc-1.0/mongoc-stream-file.h \
+ /usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h \
+ /usr/local/include/libmongoc-1.0/mongoc-stream-socket.h \
+ /usr/local/include/libmongoc-1.0/mongoc-version.h \
+ /usr/local/include/libmongoc-1.0/mongoc-version-functions.h \
+ /usr/local/include/libmongoc-1.0/mongoc-rand.h \
+ /usr/local/include/libmongoc-1.0/mongoc-stream-tls.h
+
+/usr/include/stdc-predef.h:
+
+../../config/config.h:
+
+sb_script.h:
+
+../../sysbench/sysbench.h:
+
+/usr/include/stdio.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/wchar.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/bits/sys_errlist.h:
+
+/usr/include/bits/stdio.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/bits/waitflags.h:
+
+/usr/include/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/bits/byteswap-16.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/sys/sysmacros.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/bits/stdlib-float.h:
+
+/usr/include/string.h:
+
+/usr/include/bits/string.h:
+
+/usr/include/bits/string2.h:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/environments.h:
+
+/usr/include/bits/confname.h:
+
+/usr/include/getopt.h:
+
+/usr/include/pthread.h:
+
+/usr/include/sched.h:
+
+/usr/include/bits/sched.h:
+
+/usr/include/bits/timex.h:
+
+/usr/include/bits/setjmp.h:
+
+../../sysbench/sb_list.h:
+
+../../sysbench/sb_options.h:
+
+../../sysbench/sb_timer.h:
+
+/usr/include/sys/time.h:
+
+../../sysbench/sb_logger.h:
+
+../../sysbench/sb_global.h:
+
+../../sysbench/tests/sb_cpu.h:
+
+../../sysbench/tests/sb_fileio.h:
+
+../../sysbench/tests/sb_memory.h:
+
+../../sysbench/tests/sb_threads.h:
+
+../../sysbench/tests/sb_mutex.h:
+
+script_lua.h:
+
+../../sysbench/db_driver.h:
+
+../../sysbench/sysbench.h:
+
+../../sysbench/sb_percentile.h:
+
+/usr/local/include/libbson-1.0/bson.h:
+
+/usr/local/include/libbson-1.0/bson-compat.h:
+
+/usr/local/include/libbson-1.0/bson-config.h:
+
+/usr/local/include/libbson-1.0/bson-macros.h:
+
+/usr/include/errno.h:
+
+/usr/include/bits/errno.h:
+
+/usr/include/linux/errno.h:
+
+/usr/include/asm/errno.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/ctype.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/bits/posix1_lim.h:
+
+/usr/include/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/bits/posix2_lim.h:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/fcntl.h:
+
+/usr/include/bits/fcntl.h:
+
+/usr/include/bits/fcntl-linux.h:
+
+/usr/include/bits/uio.h:
+
+/usr/include/bits/stat.h:
+
+/usr/include/sys/stat.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/include/inttypes.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
+
+/usr/local/include/libbson-1.0/bson-atomic.h:
+
+/usr/local/include/libbson-1.0/bson-context.h:
+
+/usr/local/include/libbson-1.0/bson-types.h:
+
+/usr/local/include/libbson-1.0/bson-endian.h:
+
+/usr/local/include/libbson-1.0/bson-clock.h:
+
+/usr/local/include/libbson-1.0/bson-decimal128.h:
+
+/usr/local/include/libbson-1.0/bson-error.h:
+
+/usr/local/include/libbson-1.0/bson-iter.h:
+
+/usr/local/include/libbson-1.0/bson.h:
+
+/usr/local/include/libbson-1.0/bson-json.h:
+
+/usr/local/include/libbson-1.0/bson-keys.h:
+
+/usr/local/include/libbson-1.0/bson-md5.h:
+
+/usr/local/include/libbson-1.0/bson-memory.h:
+
+/usr/local/include/libbson-1.0/bson-oid.h:
+
+/usr/local/include/libbson-1.0/bson-reader.h:
+
+/usr/local/include/libbson-1.0/bson-string.h:
+
+/usr/local/include/libbson-1.0/bson-utf8.h:
+
+/usr/local/include/libbson-1.0/bson-value.h:
+
+/usr/local/include/libbson-1.0/bson-version.h:
+
+/usr/local/include/libbson-1.0/bson-version-functions.h:
+
+/usr/local/include/libbson-1.0/bson-writer.h:
+
+/usr/local/include/libbson-1.0/bcon.h:
+
+/usr/local/include/libbson-1.0/bcon.h:
+
+/usr/local/include/libmongoc-1.0/mongoc.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-macros.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-apm.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-host-list.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-server-description.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-read-prefs.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-config.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-topology-description.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-bulk-operation.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-write-concern.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-change-stream.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-client.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-collection.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-flags.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-cursor.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-index.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-read-concern.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-find-and-modify.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-database.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-gridfs.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-stream.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-iovec.h:
+
+/usr/include/sys/uio.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-socket.h:
+
+/usr/include/arpa/inet.h:
+
+/usr/include/netinet/in.h:
+
+/usr/include/sys/socket.h:
+
+/usr/include/bits/socket.h:
+
+/usr/include/bits/socket_type.h:
+
+/usr/include/bits/sockaddr.h:
+
+/usr/include/asm/socket.h:
+
+/usr/include/asm-generic/socket.h:
+
+/usr/include/asm/sockios.h:
+
+/usr/include/asm-generic/sockios.h:
+
+/usr/include/bits/in.h:
+
+/usr/include/poll.h:
+
+/usr/include/sys/poll.h:
+
+/usr/include/bits/poll.h:
+
+/usr/include/netdb.h:
+
+/usr/include/rpc/netdb.h:
+
+/usr/include/bits/siginfo.h:
+
+/usr/include/bits/netdb.h:
+
+/usr/include/netinet/tcp.h:
+
+/usr/include/sys/un.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-ssl.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-uri.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-client-pool.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-error.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-gridfs-file-page.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-init.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-matcher.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-handshake.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-opcode.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-log.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-client-session.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-stream-buffered.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-stream-file.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-stream-socket.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-version.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-version-functions.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-rand.h:
+
+/usr/local/include/libmongoc-1.0/mongoc-stream-tls.h:

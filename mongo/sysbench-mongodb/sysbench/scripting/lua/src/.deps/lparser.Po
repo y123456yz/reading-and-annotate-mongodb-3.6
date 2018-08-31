@@ -1,0 +1,136 @@
+lparser.o: lparser.c /usr/include/stdc-predef.h /usr/include/string.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/include/xlocale.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/bits/byteswap-16.h /usr/include/stdlib.h lua.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ luaconf.h ../../../../config/config.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ /usr/include/bits/stdio_lim.h /usr/include/math.h \
+ /usr/include/bits/huge_val.h /usr/include/bits/huge_valf.h \
+ /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
+ /usr/include/bits/nan.h /usr/include/bits/mathdef.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h lcode.h \
+ llex.h lobject.h llimits.h lzio.h lmem.h lopcodes.h lparser.h ldebug.h \
+ lstate.h ltm.h ldo.h lfunc.h lstring.h lgc.h ltable.h
+
+/usr/include/stdc-predef.h:
+
+/usr/include/string.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/bits/string.h:
+
+/usr/include/bits/string2.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/bits/byteswap-16.h:
+
+/usr/include/stdlib.h:
+
+lua.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+
+luaconf.h:
+
+../../../../config/config.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+
+/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/bits/posix1_lim.h:
+
+/usr/include/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/bits/posix2_lim.h:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/math.h:
+
+/usr/include/bits/huge_val.h:
+
+/usr/include/bits/huge_valf.h:
+
+/usr/include/bits/huge_vall.h:
+
+/usr/include/bits/inf.h:
+
+/usr/include/bits/nan.h:
+
+/usr/include/bits/mathdef.h:
+
+/usr/include/bits/mathcalls.h:
+
+/usr/include/bits/mathinline.h:
+
+lcode.h:
+
+llex.h:
+
+lobject.h:
+
+llimits.h:
+
+lzio.h:
+
+lmem.h:
+
+lopcodes.h:
+
+lparser.h:
+
+ldebug.h:
+
+lstate.h:
+
+ltm.h:
+
+ldo.h:
+
+lfunc.h:
+
+lstring.h:
+
+lgc.h:
+
+ltable.h:
