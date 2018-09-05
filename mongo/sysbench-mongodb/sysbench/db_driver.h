@@ -350,7 +350,7 @@ void mongodb_bulk_insert(db_conn_t *, const char *, const char *, bson_t *);
 void mongodb_bulk_execute(void);
 void mongodb_fake_commit(db_conn_t *);
 bool mongodb_drop_collection(db_conn_t *, const char *, const char *);
-bool mongodb_create_index(db_conn_t *, const char *, const char *, const char *);
+bool mongodb_create_index(db_conn_t *, const char *, const char *, const char *, const char *);
 bool mongodb_point_select(db_conn_t *, const char *, const char *, const int);
 bool mongodb_simple_range(db_conn_t *, const char *, const char *, const int, const int);
 bool mongodb_sum_range(db_conn_t *, const char *, const char *, const int, const int);

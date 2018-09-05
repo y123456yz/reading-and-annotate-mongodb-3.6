@@ -37,6 +37,7 @@
 #include "db_driver.h"
 #include "sb_rnd.h"
 
+//lua脚本中实现这些方法  lua_getglobal注册到代码中，通过CALL_ERROR执行
 #define EVENT_FUNC "event"
 #define PREPARE_FUNC "prepare"
 #define CLEANUP_FUNC "cleanup"
@@ -104,7 +105,7 @@ static sb_operations_t lua_ops = {
    NULL,
    NULL,
    &sb_lua_get_request,
-   &sb_lua_op_execute_request,
+   &sb_lua_op_execute_request, //worker_thread中执行
    NULL,
    NULL,
    NULL,
@@ -272,6 +273,7 @@ sb_request_t sb_lua_get_request(int thread_id)
   return req;
 }
 
+//worker_thread
 int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
 {
   log_msg_t           msg;
@@ -291,12 +293,13 @@ int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
   {
     restart = 0;
 
+    //获取函数
     lua_getglobal(L, EVENT_FUNC);
-    
+    //传递该函数的参数
     lua_pushnumber(L, thread_id);
 
-    if (lua_pcall(L, 1, 1, 0))
-    {
+    if (lua_pcall(L, 1, 1, 0)) //执行
+    { //异常
       if (lua_gettop(L) && lua_isnumber(L, -1) &&
           lua_tonumber(L, -1) == SB_DB_ERROR_RESTART_TRANSACTION)
       {
@@ -358,6 +361,7 @@ int sb_lua_op_thread_done(int thread_id)
   return 0;
 }
 
+//定时打印report  配合report_thread_proc
 void sb_lua_op_print_stats(sb_stat_t type)
 {
   /* check if db driver has been initialized */
@@ -431,6 +435,7 @@ lua_State *sb_lua_new_state(const char *scriptname, int thread_id)
   }
   
   /* Export functions */
+  //lua脚本中执行sb_rand函数，就会调用sb_lua_rand函数
   lua_pushcfunction(state, sb_lua_rand);
   lua_setglobal(state, "sb_rand");
 
@@ -1276,13 +1281,15 @@ int sb_lua_mongodb_create_index(lua_State *L)
   sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
   const char *collection_name;
   const char *indexed_field_name;
+  const char *indexed_field_name2;
   assert(lua_isstring(L,1));
   assert(lua_isstring(L,2));
   collection_name = lua_tostring(L,1); 
   indexed_field_name = lua_tostring(L,2);
+  indexed_field_name2 = lua_tostring(L,3);
   assert(ctxt->con!=NULL);
   assert(ctxt->con->ptr!=NULL);
-  return mongodb_create_index(ctxt->con, sb_get_value_string("mongo-database-name"), collection_name, indexed_field_name);
+  return mongodb_create_index(ctxt->con, sb_get_value_string("mongo-database-name"), collection_name, indexed_field_name, indexed_field_name2);
 }
 
 int sb_lua_mongodb_insert(lua_State *L)
@@ -1311,7 +1318,9 @@ int sb_lua_mongodb_oltp_insert(lua_State *L)
 {
   sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
   bson_t *doc;
-  const char *c, *pad, *col;
+  const char *c, *pad,*pad1,*pad2, *col;
+  //例如mongodb_oltp_insert("sbtest" .. sb_rand(1, oltp_tables_count), sb_rand(oltp_table_size*2, oltp_table_size*3) + thread_id, sb_rand(1, oltp_table_size), c_val, pad_val)
+  //lua_isstring(L,x)分别获取对应第x个参数
   assert(lua_isstring(L,1));
   assert(lua_isnumber(L,2));
   assert(lua_isnumber(L,3));
@@ -1322,7 +1331,12 @@ int sb_lua_mongodb_oltp_insert(lua_State *L)
   const int k = lua_tonumber(L,3);
   c = lua_tostring(L,4);
   pad = lua_tostring(L,5);
-  doc = BCON_NEW("_id", BCON_INT32(id), "k", BCON_INT32(k), "c", BCON_UTF8(c), "pad", BCON_UTF8(pad));
+  pad1 = lua_tostring(L,5);
+  pad2 = lua_tostring(L,5); 
+  
+  //该结构对应的bson内容为:
+  //{ "_id" : 120333738, "k" : 17320087, "c" : "     83920826771-75851334403-47642163465-46478743738-61823424291-80161037234-99069099876-33117729199-40500918569-01122484432", "pad" : "     24495195069-93680011483-24014912776-73910544579-81843393778" }
+  doc = BCON_NEW("_id", BCON_INT32(id), "k", BCON_INT32(k), "c", BCON_UTF8(c), "pad", BCON_UTF8(pad), "yangtest1", BCON_UTF8(pad1), "yangtest2", BCON_UTF8(pad2));
   assert(ctxt->con!=NULL);
   assert(ctxt->con->ptr!=NULL);
   assert(doc!=NULL);
