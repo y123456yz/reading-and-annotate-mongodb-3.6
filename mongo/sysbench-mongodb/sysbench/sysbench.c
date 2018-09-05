@@ -121,6 +121,22 @@ static pthread_mutex_t    report_interval_mutex;
 static int thread_stack_size;
 
 /* General options */
+/*
+--test：指定测试模式对应的lua文件，这个装好sysbench就有且这是0.5新增，0.4只需直接--test=oltp即可。  
+--oltp_table_count=1：指定测试过程中表的个数，0.5新增，0.4整个测试过程只有一个表。  
+--oltp-table-size=：指定表的大小，如果指定1000，那么它会往表里初始化1000条数据  
+--rand-init=on：是否随机初始化数据，如果不随机化那么初始好的数据每行内容除了主键不同外其他完全相同。  
+--num-threads=：测试过程中并发线程数，看测试要求来定并发压力。  
+--otlp-read-only=off：知否只读测试  
+ --report-interval=10：每隔多久打印一次统计信息，单位秒，0.5新增  
+ --rand-type=special：数据分布模式，special表示存在热点数据，uniform表示非热点数据模式，还有其他几个选项。  
+ --rand-spec-pct=5：这个与上面那个选项相关，热点数据的百分比，我们公司的一个应用测试出来是4.9%的热点数据。  
+ --mysql-table-engine=$type：表的存储引擎类型，innodb/myisam/tokudb/这些都可以。  
+ --max-time=8000：这个命令跑多长时间，单位秒，与之相反的是指定请求数--max-requests  
+ --mysql-host=$host --mysql-port=$port  --mysql-user=test --mysql-password=test --mysql-db=test1  这几个表示被测试的MySQL实例信息，因为需要连数据库  
+ --max-requests：刚说了，可以两者形式指定命令运行多长时间。
+*/
+//sysbench -h中显示的mongodb部分
 sb_arg_t general_args[] =
 {
   {"num-threads", "number of threads to use", SB_ARG_TYPE_INT, "1"},
@@ -154,8 +170,10 @@ sb_arg_t general_args[] =
   {"rand-pareto-h", "parameter h for pareto distibution", SB_ARG_TYPE_FLOAT,
    "0.2"},
   {"config-file", "File containing command line options", SB_ARG_TYPE_FILE, NULL},
+  //命令行中通过这个指定mongo相关配置
   {"mongo-database-name", "MongoDB Database Name", SB_ARG_TYPE_STRING, NULL},
   {"mongo-url", "MongoDB Connection URL", SB_ARG_TYPE_STRING, NULL},
+  //MongoDB应答机制配置，是否应答，是否写入成功后才应答等
   {"mongo-write-concern", "MongoDB Write Concern", SB_ARG_TYPE_INT, NULL},
   {"mongo-journal", "MongoDB Journal value to be used with the Write Concern", SB_ARG_TYPE_INT, NULL},
   {NULL, NULL, SB_ARG_TYPE_NULL, NULL}
@@ -475,6 +493,45 @@ void print_run_mode(sb_test_t *test)
 
 /* Main worker test thread */
 
+static void *worker_thread(void *arg)
+{
+  ......
+  do
+  {
+    ......
+    request = get_request(test, thread_id);
+
+    /* check if we shall execute it */
+    if (request.type != SB_REQ_TYPE_NULL)
+    { 
+      //对应lua回调sb_lua_op_execute_request
+      if (execute_request(test, &request, thread_id))
+        break; /* break if error returned (terminates only one thread) */
+    }
+
+    if (sb_globals.tx_rate > 0)
+    {
+      pthread_mutex_lock(&event_queue_mutex);
+      sb_globals.concurrency--;
+      pthread_mutex_unlock(&event_queue_mutex);
+    }
+
+    /* Check if we have a time limit */
+    if (sb_globals.max_time != 0 &&
+        sb_timer_value(&sb_globals.exec_timer) >= SEC2NS(sb_globals.max_time))
+    {
+      log_text(LOG_INFO, "Time limit exceeded, exiting...");
+      break;
+    }
+
+  } while ((request.type != SB_REQ_TYPE_NULL) && (!sb_globals.error) );
+
+  if (test->ops.thread_done != NULL)
+    test->ops.thread_done(thread_id);
+
+  return NULL;
+}
+
 
 static void *worker_thread(void *arg)
 {
@@ -646,7 +703,7 @@ static void *eventgen_thread_proc(void *arg)
 }
 
 /* Intermediate reports thread */
-
+//定时打印report
 static void *report_thread_proc(void *arg)
 {
   unsigned long long       pause_ns;
@@ -672,6 +729,7 @@ static void *report_thread_proc(void *arg)
 
   pause_ns = interval_ns;
   prev_ns = sb_timer_value(&sb_globals.exec_timer) + interval_ns;
+  //定时打印
   for (;;)
   {
     usleep(pause_ns / 1000);
@@ -680,7 +738,7 @@ static void *report_thread_proc(void *arg)
       to silence report at the end of the test
     */
     pthread_mutex_lock(&report_interval_mutex);
-    if (sb_globals.report_interval > 0)
+    if (sb_globals.report_interval > 0) //打印report报告
       current_test->ops.print_stats(SB_STAT_INTERMEDIATE);
     pthread_mutex_unlock(&report_interval_mutex);
 

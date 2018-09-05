@@ -833,7 +833,8 @@ void db_bulk_insert_done(db_conn_t *con)
 }
 
 /* Print database-specific test stats */
-
+//定时打印report 
+//定时打印report 配合report_thread_proc
 void db_print_stats(sb_stat_t type)
 {
   double        seconds;
@@ -870,7 +871,8 @@ void db_print_stats(sb_stat_t type)
                   "response time: %4.2fms (%u%%), errors: %4.2f, "
                   "reconnects: %5.2f",
                   sb_globals.num_running,
-                  (transactions - last_transactions) / seconds,
+                  
+                  (transactions - last_transactions) / seconds, //本事件端内的事务数
                   (read_ops - last_read_ops) / seconds,
                   (write_ops - last_write_ops) / seconds,
                   NS2MS(sb_percentile_calculate(&local_percentile,
@@ -1073,6 +1075,7 @@ void mongodb_init_driver()
     pthread_mutex_init(&thread_stats[i].stat_mutex, NULL);
 
   mongodb_write_concern = mongoc_write_concern_new();  
+  //MongoDB应答机制
   wc = sb_get_value_int("mongo-write-concern");
   journal = sb_get_value_int("mongo-journal");
   log_text(LOG_NOTICE,"setting write concern to %d",wc);
@@ -1192,6 +1195,11 @@ bool mongodb_drop_collection(db_conn_t *con, const char *database_name, const ch
 }
 
 // db.sbtest8.find({_id: 554312}, {c: 1, _id: 0})
+/*
+ db.sbtest8.find({_id: 143957032}, {c: 1, _id: 0})
+{ "c" : "     96637995082-42380085172-10959858174-35761814609-10176175166-59898328161-02172560585-62208436428-15239205230-12697175383" }
+
+*/
 bool mongodb_point_select(db_conn_t *con, const char *database_name, const char *collection_name, const int id)
 {
   mongoc_collection_t *collection = mongoc_client_get_collection(con->ptr, database_name, collection_name);
@@ -1219,6 +1227,7 @@ bool mongodb_point_select(db_conn_t *con, const char *database_name, const char 
 
 bool mongodb_generic_query(db_conn_t *con, const char *database_name, const char *collection_name, const char *query, const char *fields)
 {
+
   mongoc_collection_t *collection = mongoc_client_get_collection(con->ptr, database_name, collection_name);
   mongoc_cursor_t *rs;
   bson_error_t error;
@@ -1370,6 +1379,21 @@ bool mongodb_sum_range(db_conn_t *con, const char *database_name, const char *co
 //		     "$orderby", "{", "c", BCON_INT32(1), "}", "}"); 
 // I get (Cannot mix top-level query with dollar keys such as $orderby. Use {$query: {},...} instead.)
 // and I have been unable to find the right syntax for this now. 
+/*
+如下是 inventory 集合的数据
+
+{ "_id": 1, "dept": "A", "item": { "sku": "111", "color": "red" }, "sizes": [ "S", "M" ] }
+
+{ "_id": 2, "dept": "A", "item": { "sku": "111", "color": "blue" }, "sizes": [ "M", "L" ] }
+
+{ "_id": 3, "dept": "B", "item": { "sku": "222", "color": "blue" }, "sizes": "S" }
+
+{ "_id": 4, "dept": "A", "item": { "sku": "333", "color": "black" }, "sizes": [ "S" ] }
+
+
+>  db.inventory.distinct(“dept”)  //获取dept字段的不重复值
+
+*/
 
 bool mongodb_distinct_range(db_conn_t *con, const char *database_name, const char *collection_name, const int start, const int end)
 {
@@ -1441,10 +1465,12 @@ bool mongodb_non_index_update(db_conn_t *con, const char *database_name, const c
   return res;
 }
 
-bool mongodb_create_index(db_conn_t *con, const char *database_name, const char *collection_name, const char *indexed_field_name)
+//doc = BCON_NEW("_id", BCON_INT32(id), "k", BCON_INT32(k), "c", BCON_UTF8(c), "pad", BCON_UTF8(pad), "yangtest1", BCON_UTF8(pad1), "yangtest2", BCON_UTF8(pad2));
+  
+bool mongodb_create_index(db_conn_t *con, const char *database_name, const char *collection_name, const char *indexed_field_name, const char *indexed_field_name2)
 {
   mongoc_collection_t *collection = mongoc_client_get_collection(con->ptr, database_name, collection_name);
-  bson_t *keys = BCON_NEW(indexed_field_name,BCON_INT32(1));
+  bson_t *keys = BCON_NEW(indexed_field_name,BCON_INT32(1), indexed_field_name2,BCON_INT32(1));
   mongoc_index_opt_t *opt = calloc(1, sizeof(mongoc_index_opt_t));
   bson_error_t error;
   bool res;

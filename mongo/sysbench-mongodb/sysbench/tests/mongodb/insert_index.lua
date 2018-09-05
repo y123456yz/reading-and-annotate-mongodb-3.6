@@ -6,10 +6,10 @@ dofile(pathtest .. "common.lua")
 function thread_init(thread_id)
          db_connect()
 	 set_vars()
---         for i=1, oltp_tables_count do
- --              print("Creating index on sbtest" .. i .. "(k)" )
-  --             mongodb_create_index("sbtest" .. i, "k", "c")
-   --      end
+         for i=1, oltp_tables_count do
+               print("Creating index on sbtest" .. i .. "(k)" )
+               mongodb_create_index("sbtest" .. i, "k", "c")
+         end
 end
 
 function event(thread_id)

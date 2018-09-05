@@ -357,7 +357,7 @@ char *sb_opt_to_string(option_t *opt)
   return NULL;
 }
 
-
+//获取命令行中的name对应的配置项值 例如命令行携带--mongo-database-name=xxx, 压测创建的库名为xxx
 char *sb_get_value_string(const char *name)
 {
   option_t       *opt;

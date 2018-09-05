@@ -132,7 +132,7 @@ typedef struct
 } sb_commands_t;
 
 /* Test operations structure definition */
-
+//lua_ops等
 typedef struct
 {
   sb_op_init            *init;            /* initialization function */
@@ -143,6 +143,7 @@ typedef struct
   sb_op_print_mode      *print_mode;      /* print mode function */
   sb_op_get_request     *get_request;     /* request generation function */
   sb_op_execute_request *execute_request; /* request execution function */
+  //打印report报告，见report_thread_proc  sb_lua_op_print_stats
   sb_op_print_stats     *print_stats;     /* stats generation function */
   sb_op_thread_done     *thread_done;     /* thread finalize function */
   sb_op_cleanup         *cleanup;         /* called after exit from thread,
