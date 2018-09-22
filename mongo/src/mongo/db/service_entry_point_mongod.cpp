@@ -968,10 +968,12 @@ void receivedKillCursors(OperationContext* opCtx, const Message& m) {
 
 //插入 ServiceEntryPointMongod::handleRequest中调用
 void receivedInsert(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
-    auto insertOp = InsertOp::parseLegacy(m);
+	//获取m对应的write_ops::Insert类   
+	auto insertOp = InsertOp::parseLegacy(m);
+	//insert::getNamespace
     invariant(insertOp.getNamespace() == nsString);
 
-    for (const auto& obj : insertOp.getDocuments()) {
+    for (const auto& obj : insertOp.getDocuments()) {//insert::getDocuments 批量操作相关
         Status status =
             AuthorizationSession::get(opCtx->getClient())->checkAuthForInsert(opCtx, nsString, obj);
         audit::logInsertAuthzCheck(opCtx->getClient(), nsString, obj, status.code());
@@ -1101,14 +1103,15 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 //class ServiceEntryPointMongod final : public ServiceEntryPointImpl
-//mongod服务对于客户端请求的处理
+//mongod服务对于客户端请求的处理  ServiceStateMachine::_processMessage或者loopbackBuildResponse中调用
 DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const Message& m) {
     // before we lock...
     NetworkOp op = m.operation();
     bool isCommand = false;
+	log() << "	yang test ...........   ServiceEntryPointMongod::handleRequest ";
 
     DbMessage dbmsg(m);
-
+	
     Client& c = *opCtx->getClient();
     if (c.isInDirectClient()) {
         invariant(!opCtx->lockState()->inAWriteUnitOfWork());

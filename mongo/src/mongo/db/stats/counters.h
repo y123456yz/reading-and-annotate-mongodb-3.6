@@ -81,6 +81,7 @@ public:
 private:
     void _checkWrap();
 
+    //各种操作统计信息
     CacheAligned<AtomicUInt32> _insert;
     CacheAligned<AtomicUInt32> _query;
     CacheAligned<AtomicUInt32> _update;

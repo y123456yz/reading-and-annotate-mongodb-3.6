@@ -496,7 +496,7 @@ void print_run_mode(sb_test_t *test)
 static void *worker_thread(void *arg)
 {
   ......
-  do
+  do //线程while函数体
   {
     ......
     request = get_request(test, thread_id);
@@ -504,26 +504,12 @@ static void *worker_thread(void *arg)
     /* check if we shall execute it */
     if (request.type != SB_REQ_TYPE_NULL)
     { 
-      //对应lua回调sb_lua_op_execute_request
+      //对应执行lua回调sb_lua_op_execute_request
       if (execute_request(test, &request, thread_id))
         break; /* break if error returned (terminates only one thread) */
     }
-
-    if (sb_globals.tx_rate > 0)
-    {
-      pthread_mutex_lock(&event_queue_mutex);
-      sb_globals.concurrency--;
-      pthread_mutex_unlock(&event_queue_mutex);
-    }
-
-    /* Check if we have a time limit */
-    if (sb_globals.max_time != 0 &&
-        sb_timer_value(&sb_globals.exec_timer) >= SEC2NS(sb_globals.max_time))
-    {
-      log_text(LOG_INFO, "Time limit exceeded, exiting...");
-      break;
-    }
-
+    
+    ......
   } while ((request.type != SB_REQ_TYPE_NULL) && (!sb_globals.error) );
 
   if (test->ops.thread_done != NULL)

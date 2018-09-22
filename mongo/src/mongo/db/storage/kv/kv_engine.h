@@ -50,6 +50,7 @@ class RecoveryUnit;
 class SortedDataInterface;
 class SnapshotManager;
 
+//如果用wiredtiger存储引擎，则WiredTigerKVEngine实现该类
 class KVEngine {
 public:
     virtual RecoveryUnit* newRecoveryUnit() = 0;

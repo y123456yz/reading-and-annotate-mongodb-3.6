@@ -71,6 +71,7 @@ stdx::function<decltype(dropAllDatabasesExceptLocal)> dropAllDatabasesExceptLoca
 }  // namespace
 }  // namespace mongo
 
+//创建集合
 auto mongo::userCreateNS(OperationContext* const opCtx,
                          Database* const db,
                          const StringData ns,

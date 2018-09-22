@@ -51,7 +51,7 @@ namespace mongo {
  * lifecycle of each user request as a state machine. It is the glue between the stateless
  * ServiceEntryPoint and TransportLayer that ties network and database logic together for a
  * user.
- */
+ */ //ServiceEntryPointImpl::startSession中有新链接的时候构造一个该类
 class ServiceStateMachine : public std::enable_shared_from_this<ServiceStateMachine> {
     ServiceStateMachine(ServiceStateMachine&) = delete;
     ServiceStateMachine& operator=(ServiceStateMachine&) = delete;
@@ -213,6 +213,7 @@ private:
 
     AtomicWord<State> _state{State::Created};
 
+    //ServiceEntryPointMongod 
     ServiceEntryPoint* _sep;
     transport::Mode _transportMode;
 

@@ -442,7 +442,7 @@ Message makeGetMoreMessage(StringData ns, long long cursorId, int nToReturn, int
  * A response to a DbMessage.
  *
  * Order of fields makes DbResponse{funcReturningMessage()} valid.
- */
+ */ //请求应答处理见ServiceStateMachine::_processMessage
 struct DbResponse {
     Message response;       // If empty, nothing will be returned to the client.
     std::string exhaustNS;  // Namespace of cursor if exhaust mode, else "".

@@ -45,6 +45,7 @@ class OperationContext;
 /**
  * Registry of opened databases.
  * DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象。
+ * DatabaseHolderImpl实现该类
  */
 class DatabaseHolder {
 public:

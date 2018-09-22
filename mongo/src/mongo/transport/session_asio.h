@@ -50,7 +50,7 @@ namespace transport {
 
 using GenericSocket = asio::generic::stream_protocol::socket;
 
-//createWithConfig中根据配置构造使用
+//createWithConfig  TransportLayerASIO::_acceptConnection中根据配置构造使用
 class TransportLayerASIO::ASIOSession : public Session {
     MONGO_DISALLOW_COPYING(ASIOSession);
 

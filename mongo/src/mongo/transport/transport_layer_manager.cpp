@@ -86,9 +86,11 @@ void TransportLayerManager::end(const SessionHandle& session) {
 
 // TODO Right now this and setup() leave TLs started if there's an error. In practice the server
 // exits with an error and this isn't an issue, but we should make this more robust.
+//TransportLayerASIO::start  accept处理
+//TransportLayerASIO::setup() listen监听
 Status TransportLayerManager::start() {
     for (auto&& tl : _tls) {
-        auto status = tl->start();
+        auto status = tl->start(); //TransportLayerASIO::start  accept处理
         if (!status.isOK()) {
             _tls.clear();
             return status;
@@ -102,11 +104,13 @@ void TransportLayerManager::shutdown() {
     _foreach([](TransportLayer* tl) { tl->shutdown(); });
 }
 
+//TransportLayerASIO::start  accept处理
+//TransportLayerASIO::setup() listen监听
 // TODO Same comment as start() 
 //runMongosServer _initAndListen中运行
 Status TransportLayerManager::setup() {
     for (auto&& tl : _tls) {
-        auto status = tl->setup();
+        auto status = tl->setup(); //TransportLayerASIO::setup() listen监听
         if (!status.isOK()) {
             _tls.clear();
             return status;

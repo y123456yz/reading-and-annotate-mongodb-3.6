@@ -500,6 +500,11 @@ private:
     /**
      * The ServiceExecutor
      */
+    /*
+    "adaptive") : <ServiceExecutorAdaptive>( 
+    "synchronous"): <ServiceExecutorSynchronous>(ctx));
+    }
+    */
     std::unique_ptr<transport::ServiceExecutor> _serviceExecutor;
 
     /**

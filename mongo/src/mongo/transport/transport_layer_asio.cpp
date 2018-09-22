@@ -128,7 +128,10 @@ void TransportLayerASIO::end(const SessionHandle& session) {
     asioSession->shutdown();
 }
 
-//创建套接字并bind, _initAndListen中执行
+//TransportLayerASIO::start  accept处理
+//TransportLayerASIO::setup() listen监听
+
+//创建套接字并bind, TransportLayerManager::setup中执行
 Status TransportLayerASIO::setup() {
     std::vector<std::string> listenAddrs;
     if (_listenerOptions.ipList.empty()) {
@@ -227,6 +230,7 @@ Status TransportLayerASIO::setup() {
     return Status::OK();
 }
 
+//TransportLayerManager::start中执行   参考boost::ASIO
 Status TransportLayerASIO::start() {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     _running.store(true);
@@ -242,11 +246,15 @@ Status TransportLayerASIO::start() {
                 fassertFailed(40491);
             }
         }
-    });
+    }); //创建listener线程
 
-    for (auto& acceptor : _acceptors) {
+	/*
+	mongod为每个连接创建一个线程，创建时做了一定优化，将栈空间设置为1M，减少了线程的内存开销。
+	当线程太多时，线程切换的开销也会变大，但因为mongdb后端是持久化的存储，切换开销相比IO的开销还是要小得多。
+	*/
+    for (auto& acceptor : _acceptors) { //bind绑定的时候赋值，见TransportLayerASIO::setup
         acceptor.second.listen(serverGlobalParams.listenBacklog);
-        _acceptConnection(acceptor.second);
+        _acceptConnection(acceptor.second);  
     }
 
     const char* ssl = "";
@@ -309,8 +317,9 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
 
         std::shared_ptr<ASIOSession> session(new ASIOSession(this, std::move(peerSocket)));
 
+		//新的链接处理ServiceEntryPointImpl::startSession
         _sep->startSession(std::move(session));
-        _acceptConnection(acceptor);
+        _acceptConnection(acceptor); //递归，知道处理完所有的网络accept事件
     };
 
     acceptor.async_accept(*_workerIOContext, std::move(acceptCb));

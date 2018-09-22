@@ -115,7 +115,7 @@ const int64_t insertVectorMaxBytes = 256 * 1024;
 
 // The number of bytes to buffer at once during a $facet stage.
 extern AtomicInt32 internalQueryFacetBufferSizeBytes;
-
+//AtomicInt32类型变量通过internalInsertMaxBatchSize.load()访问
 extern AtomicInt32 internalInsertMaxBatchSize;
 
 extern AtomicInt32 internalDocumentSourceCursorBatchSizeBytes;

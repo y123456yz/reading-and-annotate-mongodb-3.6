@@ -183,10 +183,16 @@ transport::TransportLayer* ServiceContext::getTransportLayer() const {
     return _transportLayer.get();
 }
 
+//ServiceEntryPointMongod或者ServiceEntryPointMongos
 ServiceEntryPoint* ServiceContext::getServiceEntryPoint() const {
     return _serviceEntryPoint.get();
 }
 
+/*
+"adaptive") : <ServiceExecutorAdaptive>( 
+"synchronous"): <ServiceExecutorSynchronous>(ctx));
+}
+*/
 transport::ServiceExecutor* ServiceContext::getServiceExecutor() const {
     return _serviceExecutor.get();
 }
@@ -220,6 +226,14 @@ void ServiceContext::setTransportLayer(std::unique_ptr<transport::TransportLayer
     _transportLayer = std::move(tl);
 }
 
+/*
+if (config->serviceExecutor == "adaptive") { //异步方式
+    ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorAdaptive>(
+        ctx, transportLayerASIO->getIOContext()));
+} else if (config->serviceExecutor == "synchronous") { //同步方式
+    ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorSynchronous>(ctx));
+}
+*/
 //createWithConfig中执行
 void ServiceContext::setServiceExecutor(std::unique_ptr<transport::ServiceExecutor> exec) {
     _serviceExecutor = std::move(exec);

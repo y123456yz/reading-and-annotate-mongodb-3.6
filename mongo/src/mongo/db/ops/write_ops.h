@@ -58,7 +58,8 @@ namespace write_ops {
 // attempt to avoid a large number of errors resulting in a reply that exceeds 16MB. It doesn't
 // fully ensure that goal, but it reduces the probability of it happening. This limit should not be
 // used if the protocol changes to avoid the 16MB limit on reply size.
-constexpr size_t kMaxWriteBatchSize = 100'000;
+//constexpr size_t kMaxWriteBatchSize = 100'000;
+constexpr size_t kMaxWriteBatchSize = 100000;
 
 /**
  * Retrieves the statement id for the write at the specified position in the write batch entries

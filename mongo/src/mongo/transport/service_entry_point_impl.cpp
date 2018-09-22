@@ -74,6 +74,7 @@ ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(s
     _maxNumConnections = supportedMax;
 }
 
+//新的链接到来或者关闭都要走到这里  TransportLayerASIO::_acceptConnection中执行
 void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
     // Setup the restriction environment on the Session, if the Session has local/remote Sockaddrs
     const auto& remoteAddr = session->remote().sockAddr();
@@ -87,13 +88,20 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
 
     const bool quiet = serverGlobalParams.quiet.load();
     size_t connectionCount;
+/*
+"adaptive") : <ServiceExecutorAdaptive>( 
+"synchronous"): <ServiceExecutorSynchronous>(ctx));
+}
+*/ //kAsynchronous  kSynchronous
     auto transportMode = _svcCtx->getServiceExecutor()->transportMode();
 
+	//ServiceStateMachine::ServiceStateMachine
     auto ssm = ServiceStateMachine::create(_svcCtx, session, transportMode);
     {
         stdx::lock_guard<decltype(_sessionsMutex)> lk(_sessionsMutex);
-        connectionCount = _sessions.size() + 1;
+        connectionCount = _sessions.size() + 1; //连接数自增
         if (connectionCount <= _maxNumConnections) {
+			//新来的链接对应的session保存到_sessions链表
             ssmIt = _sessions.emplace(_sessions.begin(), ssm);
             _currentConnections.store(connectionCount);
             _createdConnections.addAndFetch(1);
@@ -102,16 +110,16 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
 
     // Checking if we successfully added a connection above. Separated from the lock so we don't log
     // while holding it.
-    if (connectionCount > _maxNumConnections) {
+    if (connectionCount > _maxNumConnections) { //链接超限
         if (!quiet) {
             log() << "connection refused because too many open connections: " << connectionCount;
         }
         return;
     }
-
-    if (!quiet) {
+ 
+    if (!quiet) { //建链接打印
         const auto word = (connectionCount == 1 ? " connection"_sd : " connections"_sd);
-        log() << "connection accepted from " << session->remote() << " #" << session->id() << " ("
+        log() << "connection accepted from 1 " << session->remote() << " #" << session->id() << " ("
               << connectionCount << word << " now open)";
     }
 
@@ -125,8 +133,10 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
             _currentConnections.store(connectionCount);
         }
         _shutdownCondition.notify_one();
+
+		//关链接打印
         const auto word = (connectionCount == 1 ? " connection"_sd : " connections"_sd);
-        log() << "end connection " << remote << " (" << connectionCount << word << " now open)";
+        log() << "end connection 1 " << remote << " (" << connectionCount << word << " now open)";
 
     });
 
@@ -134,6 +144,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
     if (transportMode == transport::Mode::kSynchronous) {
         ownership = ServiceStateMachine::Ownership::kStatic;
     }
+	//ServiceStateMachine::start
     ssm->start(ownership);
 }
 

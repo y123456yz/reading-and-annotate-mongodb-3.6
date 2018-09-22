@@ -48,7 +48,7 @@ using namespace mongoutils;
 namespace {
 /**
  * Validates the nesting depth of 'obj', returning a non-OK status if it exceeds the limit.
- */
+ */ //嵌套文档深度检查
 Status validateDepth(const BSONObj& obj) {
     std::vector<BSONObjIterator> frames;
     frames.reserve(16);
@@ -77,8 +77,9 @@ Status validateDepth(const BSONObj& obj) {
 }
 }  // namespace
 
+//对doc文档做检查，返回新的BSONObj
 StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj& doc) {
-    if (doc.objsize() > BSONObjMaxUserSize)
+    if (doc.objsize() > BSONObjMaxUserSize) //一个文档最多16M
         return StatusWith<BSONObj>(ErrorCodes::BadValue,
                                    str::stream() << "object to insert too large"
                                                  << ". size in bytes: "
@@ -86,7 +87,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
                                                  << ", max size: "
                                                  << BSONObjMaxUserSize);
 
-    auto depthStatus = validateDepth(doc);
+    auto depthStatus = validateDepth(doc);//嵌套文档深度检查
     if (!depthStatus.isOK()) {
         return depthStatus;
     }
@@ -96,7 +97,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
     bool hadId = false;
     {
         BSONObjIterator i(doc);
-        for (bool isFirstElement = true; i.more(); isFirstElement = false) {
+        for (bool isFirstElement = true; i.more(); isFirstElement = false) { //文档里面的各个key字段检查
             BSONElement e = i.next();
 
             if (e.type() == bsonTimestamp && e.timestampValue() == 0) {
@@ -192,7 +193,7 @@ Status userAllowedWriteNS(StringData db, StringData coll) {
     return userAllowedCreateNS(db, coll);
 }
 
-Status userAllowedCreateNS(StringData db, StringData coll) {
+Status userAllowedCreateNS(StringData db, StringData coll) { //库 集合
     // validity checking
 
     if (db.size() == 0)

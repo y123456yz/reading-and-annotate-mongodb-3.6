@@ -177,12 +177,14 @@ void assertCanWrite_inlock(OperationContext* opCtx, const NamespaceString& ns) {
     CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
 }
 
+//创建集合
 void makeCollection(OperationContext* opCtx, const NamespaceString& ns) {
     writeConflictRetry(opCtx, "implicit collection creation", ns.ns(), [&opCtx, &ns] {
         AutoGetOrCreateDb db(opCtx, ns.db(), MODE_X);
         assertCanWrite_inlock(opCtx, ns);
         if (!db.getDb()->getCollection(opCtx, ns)) {  // someone else may have beat us to it.
             WriteUnitOfWork wuow(opCtx);
+			//创建新集合
             uassertStatusOK(userCreateNS(opCtx, db.getDb(), ns.ns(), BSONObj()));
             wuow.commit();
         }
@@ -350,10 +352,10 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             }
 
             collection.emplace(opCtx, wholeOp.getNamespace(), MODE_IX);
-            if (collection->getCollection())
+            if (collection->getCollection()) //已经有该集合了
                 break;
 
-            collection.reset();  // unlock.
+            collection.reset();  // unlock.  没有则创建集合
             makeCollection(opCtx, wholeOp.getNamespace());
         }
 
@@ -362,7 +364,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
     };
 
     try {
-        acquireCollection();
+        acquireCollection(); //执行上面定义的函数
         if (!collection->getCollection()->isCapped() && batch.size() > 1) {
             // First try doing it all together. If all goes well, this is all we need to do.
             // See Collection::_insertDocuments for why we do all capped inserts one-at-a-time.
@@ -386,14 +388,17 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
 
     // Try to insert the batch one-at-a-time. This path is executed both for singular batches, and
     // for batches that failed all-at-once inserting.
+    //一次性插入
     for (auto it = batch.begin(); it != batch.end(); ++it) {
-        globalOpCounters.gotInsert();
+        globalOpCounters.gotInsert(); //操作计数
         try {
+			log() << "yang test ............getNamespace().ns():" << wholeOp.getNamespace().ns();
+			//writeConflictRetry里面会执行{}中的函数体
             writeConflictRetry(opCtx, "insert", wholeOp.getNamespace().ns(), [&] {
                 try {
                     if (!collection)
-                        acquireCollection();
-                    lastOpFixer->startingOp();
+                        acquireCollection(); //执行上面定义的函数
+                    lastOpFixer->startingOp(); //记录本次操作的时间
                     insertDocuments(opCtx, collection->getCollection(), it, it + 1);
                     lastOpFixer->finishedOpSuccessfully();
                     SingleWriteResult result;
@@ -459,9 +464,12 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
         curOp.debug().ninserted = 0;
     }
 
-    uassertStatusOK(userAllowedWriteNS(wholeOp.getNamespace()));
-
-    if (wholeOp.getNamespace().isSystemDotIndexes()) {
+	//log() << "yang test ................... getnamespace:" << wholeOp.getNamespace() << wholeOp.getDbName();
+	//例如use test;db.test.insert({"yang":1, "ya":2}),则_nss为test.test, _dbname为test
+	uassertStatusOK(userAllowedWriteNS(wholeOp.getNamespace())); //对集合做检查
+	
+    if (wholeOp.getNamespace().isSystemDotIndexes()) { 
+		//3.6.3开始的版本，不会有system.index库了，index而是记录到_mdb_catalog.wt，所以这里永远不会进来
         return performCreateIndexes(opCtx, wholeOp);
     }
 
@@ -474,14 +482,16 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
 
     size_t stmtIdIndex = 0;
     size_t bytesInBatch = 0;
-    std::vector<InsertStatement> batch;
+    std::vector<InsertStatement> batch; //数组
     const size_t maxBatchSize = internalInsertMaxBatchSize.load();
+	//确定InsertStatement类型数组的总长度
     batch.reserve(std::min(wholeOp.getDocuments().size(), maxBatchSize));
 
     for (auto&& doc : wholeOp.getDocuments()) {
         const bool isLastDoc = (&doc == &wholeOp.getDocuments().back());
+		//对doc文档做检查，返回新的BSONObj
         auto fixedDoc = fixDocumentForInsert(opCtx->getServiceContext(), doc);
-        if (!fixedDoc.isOK()) {
+        if (!fixedDoc.isOK()) { //如果这个文档检测有异常，则跳过这个文档，进行下一个文档操作
             // Handled after we insert anything in the batch to be sure we report errors in the
             // correct order. In an ordered insert, if one of the docs ahead of us fails, we should
             // behave as-if we never got to this document.
@@ -497,12 +507,15 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
             }
 
             BSONObj toInsert = fixedDoc.getValue().isEmpty() ? doc : std::move(fixedDoc.getValue());
+			//把文档插入到batch数组
             batch.emplace_back(stmtId, toInsert);
             bytesInBatch += batch.back().doc.objsize();
+			//这里continue，就是为了把批量插入的文档组成到一个batch数组中，到达一定量一次性插入
             if (!isLastDoc && batch.size() < maxBatchSize && bytesInBatch < insertVectorMaxBytes)
                 continue;  // Add more to batch before inserting.
         }
 
+		//把batch数组中的doc文档写入存储引擎
         bool canContinue = insertBatchAndHandleErrors(opCtx, wholeOp, batch, &lastOpFixer, &out);
         batch.clear();  // We won't need the current batch any more.
         bytesInBatch = 0;

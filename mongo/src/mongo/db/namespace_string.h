@@ -183,7 +183,12 @@ public:
     bool isLocal() const {
         return db() == "local";
     }
-    bool isSystemDotIndexes() const {
+
+    /*
+    _mdb_catalog.wt里存储了所有集合的元数据，包括集合对应的WT table名字，集合的创建选项，集合的
+    索引信息等，WT存储引擎初始化时，会从_mdb_catalog.wt里读取所有的集合信息，并加载元信息到内存。
+    */ //3.6版本不会有该集合了，二十记录到
+    bool isSystemDotIndexes() const { //是否有创建索引_mdb_catalog.wt文件
         return coll() == "system.indexes";
     }
     bool isSystemDotProfile() const {
@@ -399,7 +404,7 @@ public:
     static bool validCollectionName(StringData coll);
 
 private:
-    std::string _ns;
+    std::string _ns; //集合名，如test库下的test集合，对应的_ns为test.test
     size_t _dotIndex;
 };
 

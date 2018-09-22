@@ -691,13 +691,14 @@ MONGO_FP_DECLARE(shutdownAtStartup);
 ExitCode _initAndListen(int listenPort) {
 	//初始化一个名称“initandlisten”线程用于侦听客户端传来的操作信息
 	log() << "yang test .... _initAndListen 111111111";
-    Client::initThread("initandlisten"); //注意这个是main线程
+	//消息处理见ServiceEntryPointMongod::handleRequest  ServiceEntryPointMongos::handleRequest
+    Client::initThread("initandlisten"); //注意这个是main线程，设置当前线程的名
     #include <unistd.h>
 	sleep(10);
 	log() << "yang test .... _initAndListen 22222222222";
 
     initWireSpec();
-	//获取serviceContext类
+	//获取serviceContext类,例如mongod进程对应ServiceContextMongoD类
     auto serviceContext = checked_cast<ServiceContextMongoD*>(getGlobalServiceContext());
 
     serviceContext->setFastClockSource(FastClockSourceFactory::create(Milliseconds(10)));
@@ -822,7 +823,7 @@ ExitCode _initAndListen(int listenPort) {
         ScriptEngine::setup();
     }
 
-	//&cc()获取currentClient
+	//&cc()获取currentClient    ServiceContext::makeOperationContext
     auto startupOpCtx = serviceContext->makeOperationContext(&cc());
 
     bool canCallFCVSetIfCleanStartup = !storageGlobalParams.readOnly &&
@@ -1035,12 +1036,17 @@ ExitCode _initAndListen(int listenPort) {
     // operation context anymore
     startupOpCtx.reset();
 
+	/*
+	ServiceExecutorAdaptive::start  同步
+	ServiceExecutorSynchronous::start 异步
+	*/
     auto start = serviceContext->getServiceExecutor()->start();
     if (!start.isOK()) {
         error() << "Failed to start the service executor: " << start;
         return EXIT_NET_ERROR;
     }
 
+	//TransportLayerManager::start->TransportLayerASIO::start   监听listen
     start = serviceContext->getTransportLayer()->start();
     if (!start.isOK()) {
         error() << "Failed to start the listener: " << start.toString();

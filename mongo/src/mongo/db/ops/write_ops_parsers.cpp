@@ -38,6 +38,7 @@
 
 namespace mongo {
 
+//在build目录中定义实现
 using write_ops::Insert;
 using write_ops::Update;
 using write_ops::Delete;
@@ -134,6 +135,7 @@ write_ops::Insert InsertOp::parse(const OpMsgRequest& request) {
     return insertOp;
 }
 
+//receivedInsert中调用
 write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
     DbMessage msg(msgRaw);
 
@@ -150,7 +152,7 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
 
     op.setDocuments([&] {
         std::vector<BSONObj> documents;
-        while (msg.moreJSObjs()) {
+        while (msg.moreJSObjs()) { //有可能是批量写，所以用了while，全部存入documents
             documents.push_back(msg.nextJsObj());
         }
 
