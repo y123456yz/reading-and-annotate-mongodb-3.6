@@ -1089,13 +1089,15 @@ void WiredTigerRecordStore::reclaimOplog(OperationContext* opCtx) {
            << " records totaling to " << _dataSize.load() << " bytes";
 }
 
+//CollectionImpl::_insertDocuments中执行   
+//WiredTigerRecordStore::insertRecords  id索引擦入wiredtiger  IndexCatalogImpl::indexRecords 其他索引插入
 Status WiredTigerRecordStore::insertRecords(OperationContext* opCtx,
                                             std::vector<Record>* records,
                                             std::vector<Timestamp>* timestamps,
                                             bool enforceQuota) {
     return _insertRecords(opCtx, records->data(), timestamps->data(), records->size());
 }
-
+//WiredTigerRecordStore::insertRecords
 Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
                                              Record* records,
                                              const Timestamp* timestamps,
@@ -1110,6 +1112,8 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
     if (_isCapped && totalLength > _cappedMaxSize)
         return Status(ErrorCodes::BadValue, "object to insert exceeds cappedMaxSize");
 
+
+	//以下是写入wiredtiger存储引擎
     WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
     curwrap.assertInActiveTxn();
     WT_CURSOR* c = curwrap.get();
@@ -1135,6 +1139,12 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
     }
 
     for (size_t i = 0; i < nRecords; i++) {
+		/*
+		struct Record {
+		    RecordId id;
+		    RecordData data;
+		};
+		*/
         auto& record = records[i];
         Timestamp ts;
         if (timestamps[i].isNull() && _isOplog) {
@@ -1149,6 +1159,8 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
             LOG(4) << "inserting record with timestamp " << ts;
             fassertStatusOK(39001, opCtx->recoveryUnit()->setTimestamp(ts));
         }
+
+		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
         c->set_value(c, value.Get());

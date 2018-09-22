@@ -68,6 +68,14 @@ bool TicketHolder::tryAcquire() {
     return true;
 }
 
+/*
+ticket是引擎可以设置的一个限制。正常情况下，如果没有锁竞争，所有的读写请求都会被pass到引擎层，这样就有个问题，
+你请求到了引擎层面，还是得排队执行，而且不同引擎处理能力肯定也不同，于是引擎层就可以通过设置这个ticket，来限
+制一下传到引擎层面的最大并发数。比如
+
+wiredtiger设置了读写ticket均为128，也就是说wiredtiger引擎层最多支持128的读写并发（这个值经过测试是非常合理的经验值，无需修改）。
+*/
+//LockerImpl<IsForMMAPV1>::_lockGlobalBegin中调用
 void TicketHolder::waitForTicket() {
     while (0 != sem_wait(&_sem)) {
         if (errno != EINTR)

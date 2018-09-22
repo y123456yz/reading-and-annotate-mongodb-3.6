@@ -297,6 +297,7 @@ WriteResult performCreateIndexes(OperationContext* opCtx, const write_ops::Inser
     return out;
 }
 
+//insertBatchAndHandleErrors中调用执行
 void insertDocuments(OperationContext* opCtx,
                      Collection* collection,
                      std::vector<InsertStatement>::iterator begin,
@@ -311,7 +312,7 @@ void insertDocuments(OperationContext* opCtx,
     // physically written in timestamp order, so we defer optime assignment until the oplog is about
     // to be written.
     auto batchSize = std::distance(begin, end);
-    if (supportsDocLocking()) {
+    if (supportsDocLocking()) {////wiredtiger是支持的，见 WiredTigerKVEngine::supportsDocLocking
         auto replCoord = repl::ReplicationCoordinator::get(opCtx);
         if (!replCoord->isOplogDisabledFor(opCtx, collection->ns())) {
             // Populate 'slots' with new optimes for each insert.
@@ -324,6 +325,7 @@ void insertDocuments(OperationContext* opCtx,
         }
     }
 
+	//CollectionImpl::insertDocuments
     uassertStatusOK(collection->insertDocuments(
         opCtx, begin, end, &CurOp::get(opCtx)->debug(), /*enforceQuota*/ true));
     wuow.commit();
@@ -331,7 +333,7 @@ void insertDocuments(OperationContext* opCtx,
 
 /**
  * Returns true if caller should try to insert more documents. Does nothing else if batch is empty.
- */
+ */ //performInserts中调用
 bool insertBatchAndHandleErrors(OperationContext* opCtx,
                                 const write_ops::Insert& wholeOp,
                                 std::vector<InsertStatement>& batch,
@@ -388,7 +390,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
 
     // Try to insert the batch one-at-a-time. This path is executed both for singular batches, and
     // for batches that failed all-at-once inserting.
-    //一次性插入
+    //一次性一条一条插入
     for (auto it = batch.begin(); it != batch.end(); ++it) {
         globalOpCounters.gotInsert(); //操作计数
         try {
@@ -397,8 +399,9 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             writeConflictRetry(opCtx, "insert", wholeOp.getNamespace().ns(), [&] {
                 try {
                     if (!collection)
-                        acquireCollection(); //执行上面定义的函数
+                        acquireCollection(); //执行上面定义的函数  创建集合
                     lastOpFixer->startingOp(); //记录本次操作的时间
+                    //把该条文档插入
                     insertDocuments(opCtx, collection->getCollection(), it, it + 1);
                     lastOpFixer->finishedOpSuccessfully();
                     SingleWriteResult result;

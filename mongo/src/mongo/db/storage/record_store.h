@@ -282,7 +282,7 @@ public:
  * This class must be thread-safe for document-level locking storage engines. In addition, for
  * storage engines implementing the KVEngine some methods must be thread safe, see KVCatalog. Only
  * for MMAPv1 is this class not thread-safe.
- */
+ */ //CollectionImpl._recordStore
 class RecordStore {
     MONGO_DISALLOW_COPYING(RecordStore);
 

@@ -72,7 +72,25 @@ public:
 
     /**
      * State for reporting the number of active and queued reader and writer clients.
-     */
+     */ 
+    // 枚举常量，标识Client的当前状态
+     /*
+    serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
+    
+    Wiredtiger限制传递到引擎层面的最大读写并发数均为128（合理的经验值，通常无需调整），如果超过
+    这个阈值，排队的请求就会体现在globalLock.currentQueue.readers/writers里。
+
+    如果globalLock.currentQueue.readers/writers个值长时间都不为0（此时globalLock.activeClients.readers/writers
+    肯定是持续接近或等于128的），说明你的系统并发太高（或者有长时间占用互斥锁的请求比如前台建索引），可以
+    通过优化单个请求的处理时间（比如建索引来减少COLLSCAN或SORT），或升级后端资源（内存、磁盘IO能力、CPU）来优化。
+
+    */
+    /*
+    Mongod上每个连接会对应一个Client对象，Client里包含当前锁的状态，初始为 kInactive，根据请求及并发状况
+    的不同，会进入到其他的状态，核心逻辑在 lockGlobalBegin 里实现。
+    */  //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
+    //Locker._clientState为该类型，赋值见LockerImpl<IsForMMAPV1>::_lockGlobalBegin  
+    //获取客户端链接状态见LockerImpl<IsForMMAPV1>::getClientState    
     enum ClientState { kInactive, kActiveReader, kActiveWriter, kQueuedReader, kQueuedWriter };
 
     /**

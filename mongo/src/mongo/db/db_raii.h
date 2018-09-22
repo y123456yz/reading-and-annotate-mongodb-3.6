@@ -134,7 +134,7 @@ private:
     const ViewMode _viewMode;
     const AutoGetDb _autoDb;
     const Lock::CollectionLock _collLock;
-    Collection* const _coll;
+    Collection* const _coll; //¼¯ºÏÃû
 
     friend class AutoGetCollectionOrView;
     friend class AutoGetCollectionForRead;

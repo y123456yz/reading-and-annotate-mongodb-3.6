@@ -77,7 +77,7 @@ Status validateDepth(const BSONObj& obj) {
 }
 }  // namespace
 
-//对doc文档做检查，返回新的BSONObj
+//对doc文档做检查，返回新的BSONObj  添加ID
 StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj& doc) {
     if (doc.objsize() > BSONObjMaxUserSize) //一个文档最多16M
         return StatusWith<BSONObj>(ErrorCodes::BadValue,
@@ -159,7 +159,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
         if (e.type()) {
             b.append(e);
         } else {
-            b.appendOID("_id", NULL, true);
+            b.appendOID("_id", NULL, true); 
         }
     }
 

@@ -84,6 +84,7 @@ void setGlobalServiceContext(std::unique_ptr<ServiceContext>&& serviceContext) {
     globalServiceContext = serviceContext.release();
 }
 
+//wiredtiger是支持的，见 WiredTigerKVEngine::supportsDocLocking
 bool _supportsDocLocking = false;
 
 bool supportsDocLocking() {

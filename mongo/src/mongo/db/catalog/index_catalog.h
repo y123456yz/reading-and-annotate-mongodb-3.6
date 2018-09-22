@@ -53,6 +53,7 @@ struct InsertDeleteOptions;
  * how many: 1 per Collection.
  * lifecycle: attached to a Collection.
  */
+//CollectionImpl._indexCatalog成员为该类
 class IndexCatalog {
 public:
     class IndexIterator {
@@ -318,7 +319,9 @@ public:
         return this->_impl().getDefaultIdIndexSpec(featureCompatibilityVersion);
     }
 
+    //获取ID索引对应的IndexDescriptor
     inline IndexDescriptor* findIdIndex(OperationContext* const opCtx) const {
+        //IndexCatalogImpl::findIdIndex
         return this->_impl().findIdIndex(opCtx);
     }
 
@@ -439,7 +442,7 @@ public:
      * Call this only on an empty collection from inside a WriteUnitOfWork. Index creation on an
      * empty collection can be rolled back as part of a larger WUOW. Returns the full specification
      * of the created index, as it is stored in this index catalog.
-     */
+     */ //给集合建索引
     inline StatusWith<BSONObj> createIndexOnEmptyCollection(OperationContext* const opCtx,
                                                             const BSONObj spec) {
         return this->_impl().createIndexOnEmptyCollection(opCtx, spec);
