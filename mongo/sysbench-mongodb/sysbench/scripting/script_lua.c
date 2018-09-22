@@ -273,6 +273,48 @@ sb_request_t sb_lua_get_request(int thread_id)
   return req;
 }
 
+int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
+{
+  ......
+  /* Prepare log message */
+  msg.type = LOG_MSG_TYPE_OPER;
+  msg.data = &op_msg;
+  
+  LOG_EVENT_START(msg, thread_id);
+
+  do
+  {
+    restart = 0;
+
+    //获取函数
+    lua_getglobal(L, EVENT_FUNC);
+    //传递该函数的参数,对应脚本中event(thread_id)
+    lua_pushnumber(L, thread_id);
+
+    if (lua_pcall(L, 1, 1, 0)) //执行lua脚本中的event函数体
+    { //异常
+      if (lua_gettop(L) && lua_isnumber(L, -1) &&
+          lua_tonumber(L, -1) == SB_DB_ERROR_RESTART_TRANSACTION)
+      {
+        log_text(LOG_DEBUG,
+                 "Ignored error encountered, restarting transaction");
+        restart = 1; 
+      }
+      else
+      {
+        CALL_ERROR(L, EVENT_FUNC);
+        sb_globals.error = 1;
+        return 1;
+        
+      }
+    }
+    lua_pop(L, 1);
+  } while (restart);
+
+  return 0;
+}
+
+
 //worker_thread
 int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
 {

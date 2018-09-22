@@ -71,6 +71,7 @@ void Client::initThread(StringData desc, transport::SessionHandle session) {
     initThread(desc, getGlobalServiceContext(), std::move(session));
 }
 
+//设置当前线程名，参考_initAndListen
 void Client::initThread(StringData desc,
                         ServiceContext* service,
                         transport::SessionHandle session) {

@@ -158,6 +158,7 @@ ServiceExecutorAdaptive::~ServiceExecutorAdaptive() {
 Status ServiceExecutorAdaptive::start() {
     invariant(!_isRunning.load());
     _isRunning.store(true);
+	//线程回调ServiceExecutorAdaptive::_controllerThreadRoutine
     _controllerThread = stdx::thread(&ServiceExecutorAdaptive::_controllerThreadRoutine, this);
     for (auto i = 0; i < _config->reservedThreads(); i++) {
         _startWorkerThread();

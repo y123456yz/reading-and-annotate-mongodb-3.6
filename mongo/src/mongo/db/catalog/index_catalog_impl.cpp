@@ -1321,6 +1321,7 @@ Status IndexCatalogImpl::_indexFilteredRecords(OperationContext* opCtx,
     for (auto bsonRecord : bsonRecords) {
         int64_t inserted;
         invariant(bsonRecord.id != RecordId());
+		//IndexAccessMethod::insert
         Status status = index->accessMethod()->insert(
             opCtx, *bsonRecord.docPtr, bsonRecord.id, options, &inserted);
         if (!status.isOK())

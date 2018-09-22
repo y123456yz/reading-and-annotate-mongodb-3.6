@@ -35,7 +35,7 @@ namespace mongo {
  * Controls the maximum BSON depth tolerated by the server.
  */
 struct BSONDepth {
-    // The default BSON depth nesting limit.
+    // The default BSON depth nesting limit.  
     static constexpr std::int32_t kDefaultMaxAllowableDepth = 200;
 
     // The minimum allowable value for the BSON depth parameter.

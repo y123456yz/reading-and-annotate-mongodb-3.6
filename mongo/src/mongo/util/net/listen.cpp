@@ -164,7 +164,7 @@ Listener::~Listener() {
     }
 }
 
-//创建socket并bind
+//创建socket并bind  TransportLayerLegacy::setup中调用
 bool Listener::setupSockets() {
 	log() << "yang test ... Listener::setupSockets()\r\n";
 
@@ -252,10 +252,12 @@ bool Listener::setupSockets() {
 
 
 #if !defined(_WIN32) 
-//linux   mongoDbMain中调用执行
+//listen对应的监听TransportLayerManager::setup   accept回调在TransportLayerASIO::start，而不是这里的initAndListen
 void Listener::initAndListen() {
 	log() << "yang test ... Listener::initAndListen()";
-	
+	int ret = system("echo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx > ./text.xx");
+	ret = 0;
+	printf("yang test initAndListen 11111111111111111111111111\r\n");
     if (!_setupSocketsSuccessful) {
         return;
     }
@@ -439,6 +441,9 @@ void Listener::initAndListen() {
     if (!_setupSocketsSuccessful) {
         return;
     }
+	printf("yang test initAndListen 222222222222222\r\n");
+	int ret = system("echo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxcc > ./text.xx");
+	ret = 0;
 
     for (unsigned i = 0; i < _socks.size(); i++) {
         if (::listen(_socks[i], serverGlobalParams.listenBacklog) != 0) {

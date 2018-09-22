@@ -336,8 +336,10 @@ void ServiceStateMachine::_sinkCallback(Status status) {
                                       ServiceExecutor::kMayYieldBeforeSchedule);
 }
 
+//新链接或者消息处理都会走到这里
 void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     invariant(!_inMessage.empty());
+	log() << "	yang test ...........	_processMessage ";
 
     auto& compressorMgr = MessageCompressorManager::forSession(_session());
 
@@ -357,6 +359,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
 
     // The handleRequest is implemented in a subclass for mongod/mongos and actually all the
     // database work for this request.
+    //ServiceEntryPointMongod::handleRequest 请求处理
     DbResponse dbresponse = _sep->handleRequest(opCtx.get(), _inMessage);
 
     // opCtx must be destroyed here so that the operation cannot show
@@ -365,7 +368,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
 
     // Format our response, if we have one
     Message& toSink = dbresponse.response;
-    if (!toSink.empty()) {
+    if (!toSink.empty()) { //应答处理
         invariant(!OpMsg::isFlagSet(_inMessage, OpMsg::kMoreToCome));
         toSink.header().setId(nextMessageId());
         toSink.header().setResponseToMsgId(_inMessage.header().getId());
@@ -398,6 +401,7 @@ void ServiceStateMachine::runNext() {
     return _runNextInGuard(ThreadGuard(this));
 }
 
+//ServiceStateMachine::_scheduleNextWithGuard中执行
 void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     auto curState = state();
     dassert(curState != State::Ended);
@@ -411,7 +415,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     // Make sure the current Client got set correctly
     dassert(Client::getCurrent() == _dbClientPtr);
     try {
-        switch (curState) {
+        switch (curState) { //客户端过来的信息处理
             case State::Source:
                 _sourceMessage(std::move(guard));
                 break;
@@ -441,11 +445,13 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     _cleanupSession(std::move(guard));
 }
 
+//ServiceEntryPointImpl::startSession中执行
 void ServiceStateMachine::start(Ownership ownershipModel) {
     _scheduleNextWithGuard(
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
 }
 
+//上面的ServiceStateMachine::start中执行
 void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {
@@ -456,6 +462,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
         ssm->_runNextInGuard(std::move(guard));
     };
     guard.release();
+	//ServiceExecutorAdaptive::schedule
     Status status = _serviceContext->getServiceExecutor()->schedule(std::move(func), flags);
     if (status.isOK()) {
         return;

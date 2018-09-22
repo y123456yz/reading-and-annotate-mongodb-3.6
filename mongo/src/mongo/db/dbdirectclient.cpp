@@ -139,6 +139,7 @@ DbResponse loopbackBuildResponse(OperationContext* const opCtx,
 
     LastError::get(opCtx->getClient()).startRequest();
     CurOp curOp(opCtx);
+	log() << "	yang test ...........	loopbackBuildResponse ";
 
     toSend.header().setId(nextMessageId());
     toSend.header().setResponseToMsgId(0);
