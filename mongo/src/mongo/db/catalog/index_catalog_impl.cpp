@@ -1162,7 +1162,7 @@ void IndexCatalogImpl::IndexIteratorImpl::_advance() {
     }
 }
 
-
+//查找ID索引
 IndexDescriptor* IndexCatalogImpl::findIdIndex(OperationContext* opCtx) const {
     IndexIterator ii = _this->getIndexIterator(opCtx, false);
     while (ii.more()) {
@@ -1173,6 +1173,7 @@ IndexDescriptor* IndexCatalogImpl::findIdIndex(OperationContext* opCtx) const {
     return nullptr;
 }
 
+//根据索引名查找
 IndexDescriptor* IndexCatalogImpl::findIndexByName(OperationContext* opCtx,
                                                    StringData name,
                                                    bool includeUnfinishedIndexes) const {
@@ -1384,7 +1385,7 @@ Status IndexCatalogImpl::_unindexRecord(OperationContext* opCtx,
     return Status::OK();
 }
 
-
+//WiredTigerRecordStore::insertRecords  id索引擦入wiredtiger  IndexCatalogImpl::indexRecords 其他索引插入
 Status IndexCatalogImpl::indexRecords(OperationContext* opCtx,
                                       const std::vector<BsonRecord>& bsonRecords,
                                       int64_t* keysInsertedOut) {

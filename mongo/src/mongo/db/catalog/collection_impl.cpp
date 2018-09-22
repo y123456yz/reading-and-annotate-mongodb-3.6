@@ -323,7 +323,8 @@ Status CollectionImpl::insertDocumentsForOplog(OperationContext* opCtx,
     return status;
 }
 
-
+//insertDocuments中执行
+//写入存储引擎
 Status CollectionImpl::insertDocuments(OperationContext* opCtx,
                                        const vector<InsertStatement>::const_iterator begin,
                                        const vector<InsertStatement>::const_iterator end,
@@ -345,10 +346,11 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
     }
 
     // Should really be done in the collection object at creation and updated on index create.
-    const bool hasIdIndex = _indexCatalog.findIdIndex(opCtx);
-
+    const bool hasIdIndex = _indexCatalog.findIdIndex(opCtx); 
+	log() << "yang test ....................:" << hasIdIndex;
+		
     for (auto it = begin; it != end; it++) {
-        if (hasIdIndex && it->doc["_id"].eoo()) {
+        if (hasIdIndex && it->doc["_id"].eoo()) { //如果有id索引，则kv不能携带_id
             return Status(ErrorCodes::InternalError,
                           str::stream()
                               << "Collection::insertDocument got document without _id for ns:"
@@ -362,6 +364,7 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
 
     const SnapshotId sid = opCtx->recoveryUnit()->getSnapshotId();
 
+	//插入wiredtiger
     Status status = _insertDocuments(opCtx, begin, end, enforceQuota, opDebug);
     if (!status.isOK())
         return status;
@@ -458,7 +461,7 @@ Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
         // be indexed.
         // TODO SERVER-21512 It would be better to handle this here by just doing single inserts.
         return {ErrorCodes::OperationCannotBeBatched,
-                "Can't batch inserts into indexed capped collections"};
+                "Can't batch inserts into indexed capped collections"}; //固定集合
     }
 
     if (_needCappedLock) {
@@ -480,7 +483,10 @@ Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
         Timestamp timestamp = Timestamp(it->oplogSlot.opTime.getTimestamp());
         timestamps.push_back(timestamp);
     }
-    Status status =
+
+	//ID索引写入在这里，其他索引写入在后面的_indexCatalog.indexRecords
+	
+    Status status = //WiredTigerRecordStore::insertRecords  擦入wiredtiger  
         _recordStore->insertRecords(opCtx, &records, &timestamps, _enforceQuota(enforceQuota));
     if (!status.isOK())
         return status;
@@ -497,7 +503,9 @@ Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
         bsonRecords.push_back(bsonRecord);
     }
 
+	//写索引
     int64_t keysInserted;
+	//IndexCatalogImpl::indexRecords
     status = _indexCatalog.indexRecords(opCtx, bsonRecords, &keysInserted);
     if (opDebug) {
         opDebug->keysInserted += keysInserted;

@@ -49,6 +49,7 @@ public:
         return true;
     }
 
+	//客户端链接对应的锁状态，配合LockerImpl<IsForMMAPV1>::_lockGlobalBegin阅读
     virtual BSONObj generateSection(OperationContext* opCtx,
                                     const BSONElement& configElement) const {
         std::valarray<int> clientStatusCounts(5);
@@ -69,8 +70,17 @@ public:
         // Construct the actual return value out of the mutex
         BSONObjBuilder ret;
 
+		/*
+		globalLock.totalTime = 进程启动后经历的时间
+		globalLock.currentQueue.total = 下面2者之和
+		globalLock.currentQueue.readers = kQueuedReader 状态Client总数
+		globalLock.currentQueue.writers = kQueuedWriter 状态Client总数
+		globalLock.activerClients.totol = 下面2者之和 + 系统内部的一些Client（比如同步线程）
+		globalLock.activerClients.readers = kActiveReader 状态Client总数
+		globalLock.activerClients.writers = kActiveWriter 状态Client总数
+		*/
         ret.append("totalTime", (long long)(1000 * (curTimeMillis64() - _started)));
-
+		//客户端链接对应的锁状态
         {
             BSONObjBuilder currentQueueBuilder(ret.subobjStart("currentQueue"));
 

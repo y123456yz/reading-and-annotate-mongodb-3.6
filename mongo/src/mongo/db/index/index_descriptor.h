@@ -53,7 +53,7 @@ class IndexCatalogEntryContainer;
  *
  * All synchronization is the responsibility of the caller.
  */
-class IndexDescriptor {
+class IndexDescriptor { //索引信息通过该类表达   如ID索引  唯一索引等都是通过该类表达
 public:
     enum class IndexVersion { kV0 = 0, kV1 = 1, kV2 = 2 };
     static constexpr IndexVersion kLatestIndexVersion = IndexVersion::kV2;

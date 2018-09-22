@@ -82,7 +82,7 @@ private:
  * @param IsForMMAPV1 Whether to compile-in the flush lock functionality, which is specific to
  *          the way the MMAP V1 (legacy) storag engine does commit concurrency control.
  */
-template <bool IsForMMAPV1>
+template <bool IsForMMAPV1>  
 class LockerImpl : public Locker {
 public:
     /**
@@ -229,6 +229,7 @@ private:
     LockMode _modeForTicket = MODE_NONE;
 
     // Indicates whether the client is active reader/writer or is queued.
+    //¸³Öµ¼ûLockerImpl<IsForMMAPV1>::_lockGlobalBegin
     AtomicWord<ClientState> _clientState{kInactive};
 
     // Track the thread who owns the lock for debugging purposes

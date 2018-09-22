@@ -38,6 +38,8 @@ namespace mongo {
 class IndexConsistency;
 class IndexObserver;
 class UUIDCatalog;
+
+
 class CollectionImpl final : virtual public Collection::Impl,
                              virtual CappedCallback,
                              virtual UpdateNotifier {
@@ -441,10 +443,12 @@ private:
     const NamespaceString _ns;
     OptionalCollectionUUID _uuid;
     CollectionCatalogEntry* const _details;
+    //对应WiredTigerRecordStore 
     RecordStore* const _recordStore;
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
     CollectionInfoCache _infoCache;
+    //CollectionImpl._indexCatalog 索引相关   CollectionImpl::CollectionImpl中初始化
     IndexCatalog _indexCatalog;
 
     mutable stdx::mutex _indexObserverMutex;

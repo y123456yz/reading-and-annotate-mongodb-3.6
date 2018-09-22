@@ -44,10 +44,50 @@ class Locker;
 struct LockHead;
 struct PartitionedLockHead;
 
+/*
+MongoDB 加锁时，有四种模式【MODE_IS、MODE_IX、MODE_S、MODE_X】，MODE_S， MODE_X 很容易理解，分别是互斥读锁、
+互斥写锁，MODE_IS、MODE_IX是为了实现层次锁模型引入的，称为意向读锁、意向写锁，锁之间的竞争情况如上图所示。
+
+MongoDB在加锁时，是一个层次性的管理方式，从 globalLock ==> DBLock ==> CollecitonLock … ，比如我们都知道
+MongoDB wiredtiger是文档级别锁，那么读写并发时，加锁就类似如下
+
+写操作
+
+1. globalLock  (这一层只关注是读还是写，不关注具体是什么LOCK)
+2. DBLock MODE_IX
+3. Colleciotn MODE_IX
+4. pass request to wiredtiger
+
+读操作
+1. globalLock MODE_IS  (这一层只关注是读还是写，不关注具体是什么LOCK)
+2. DBLock MODE_IS
+3. Colleciton MODE_IS
+4. pass request to wiredtiger
+根据上图的竞争情况，IS和IX是无需竞争的，所以读写请求可以在没有竞争的情况下，同时传到wiredtiger引擎去处理。
+
+再举个栗子，如果一个前台建索引的操作跟一个读请求并发了
+
+前台建索引操作
+
+1. globalLock MODE_IX (这一层只关注是读还是写，不关注具体是什么LOCK)
+2. DBLock MODE_X
+3. pass to wiredtiger
+
+读操作
+1. globalLock MODE_IS (这一层只关注是读还是写，不关注具体是什么LOCK)
+2. DBLock MODE_IS
+3. Colleciton MODE_IS
+4. pass request to wiredtiger
+根据竞争表，MODE_X和MODE_IS是要竞争的，这也就是为什么前台建索引的过程中读是被阻塞的。
+
+我们今天介绍的 globalLock 对应上述的第一步，在globalLock这一层，只关心是读锁、还是写锁，不关心是互斥锁还是意向锁，
+所以 globalLock 这一层是不存在竞争的。
+http://www.mongoing.com/archives/4768
+*/
 /**
  * Lock modes.
  *
- * Compatibility Matrix
+ * Compatibility Matrix  相容性关系 +相容共存  
  *                                          Granted mode
  *   ---------------.--------------------------------------------------------.
  *   Requested Mode | MODE_NONE  MODE_IS   MODE_IX  MODE_S   MODE_X  |
