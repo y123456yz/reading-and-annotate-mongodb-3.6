@@ -486,7 +486,7 @@ Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
 
 	//ID索引写入在这里，其他索引写入在后面的_indexCatalog.indexRecords
 	
-    Status status = //WiredTigerRecordStore::insertRecords  擦入wiredtiger  
+    Status status = //WiredTigerRecordStore::insertRecords  擦入wiredtiger  数据插入走这里
         _recordStore->insertRecords(opCtx, &records, &timestamps, _enforceQuota(enforceQuota));
     if (!status.isOK())
         return status;
@@ -503,7 +503,7 @@ Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
         bsonRecords.push_back(bsonRecord);
     }
 
-	//写索引
+	//写索引插入走这里
     int64_t keysInserted;
 	//IndexCatalogImpl::indexRecords
     status = _indexCatalog.indexRecords(opCtx, bsonRecords, &keysInserted);

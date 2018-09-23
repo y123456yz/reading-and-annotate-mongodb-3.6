@@ -111,6 +111,19 @@ private:
     const IndexVersion _version;
 };
 
+/*
+调用地方见
+2d_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Btree_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Fts_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree), _ftsSpec(btreeState->descriptor()->infoObj()) {}
+Hash_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Haystack_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Index_access_method.cpp (src\mongo\db\index):IndexAccessMethod::IndexAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree)
+Index_access_method.h (src\mongo\db\index):    IndexAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree);
+Index_access_method.h (src\mongo\db\index):    virtual ~IndexAccessMethod() {}
+Index_descriptor.h (src\mongo\db\index):    // "Internals" of accessing the index, used by IndexAccessMethod(s).
+S2_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+*/
 IndexAccessMethod::IndexAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree)
     : _btreeState(btreeState), _descriptor(btreeState->descriptor()), _newInterface(btree) {
     verify(IndexDescriptor::isIndexVersionSupported(_descriptor->version()));
@@ -125,6 +138,7 @@ bool IndexAccessMethod::ignoreKeyTooLong(OperationContext* opCtx) {
 }
 
 // Find the keys for obj, put them in the tree pointing to loc
+//IndexCatalogImpl::_indexFilteredRecords
 Status IndexAccessMethod::insert(OperationContext* opCtx,
                                  const BSONObj& obj,
                                  const RecordId& loc,
@@ -141,6 +155,7 @@ Status IndexAccessMethod::insert(OperationContext* opCtx,
 
     Status ret = Status::OK();
     for (BSONObjSet::const_iterator i = keys.begin(); i != keys.end(); ++i) {
+		//SortedDataInterface    WiredTigerIndex::insert
         Status status = _newInterface->insert(opCtx, *i, loc, options.dupsAllowed);
 
         // Everything's OK, carry on.

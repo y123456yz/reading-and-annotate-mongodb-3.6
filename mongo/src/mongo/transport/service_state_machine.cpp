@@ -339,7 +339,7 @@ void ServiceStateMachine::_sinkCallback(Status status) {
 //新链接或者消息处理都会走到这里
 void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     invariant(!_inMessage.empty());
-	log() << "	yang test ...........	_processMessage ";
+	//log() << "	yang test ...........	_processMessage ";
 
     auto& compressorMgr = MessageCompressorManager::forSession(_session());
 

@@ -59,6 +59,23 @@ struct InsertDeleteOptions;
  * We assume the caller has whatever locks required.  This interface is not thread safe.
  *
  */
+/*
+IndexAccessMethod初始化实现见:  下面的这些文件中的类都继承自IndexAccessMethod
+以下类都在IndexAccessMethod* KVDatabaseCatalogEntry::getIndex中实现，参考IndexAccessMethod* KVDatabaseCatalogEntry::getIndex
+
+2d_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Btree_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Fts_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree), _ftsSpec(btreeState->descriptor()->infoObj()) {}
+Hash_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Haystack_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+Index_access_method.cpp (src\mongo\db\index):IndexAccessMethod::IndexAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree)
+Index_access_method.h (src\mongo\db\index):    IndexAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree);
+Index_access_method.h (src\mongo\db\index):    virtual ~IndexAccessMethod() {}
+Index_descriptor.h (src\mongo\db\index):    // "Internals" of accessing the index, used by IndexAccessMethod(s).
+S2_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, btree) {
+*/ //操作接口，CRUD方法，注意是非线程安全的。对调用者来说，需要考虑底层的所以结构，接口的行为是不透明的。
+//参考http://www.mongoing.com/archives/1462，注意3.6代码结构有很大的变化
+//btree_key_generator.h[cpp] 该对象封装了一套解析解析算法，目的是解析出obj中的索引key
 class IndexAccessMethod {
     MONGO_DISALLOW_COPYING(IndexAccessMethod);
 
@@ -324,6 +341,7 @@ private:
                       const RecordId& loc,
                       bool dupsAllowed);
 
+    //IndexAccessMethod::IndexAccessMethod中初始化赋值，最终赋值在IndexAccessMethod* KVDatabaseCatalogEntry::getIndex
     const std::unique_ptr<SortedDataInterface> _newInterface;
 };
 

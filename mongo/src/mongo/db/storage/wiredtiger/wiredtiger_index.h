@@ -76,6 +76,7 @@ public:
      */
     static int Create(OperationContext* opCtx, const std::string& uri, const std::string& config);
 
+    //WiredTigerIndex::WiredTigerIndex
     WiredTigerIndex(OperationContext* ctx,
                     const std::string& uri,
                     const IndexDescriptor* desc,

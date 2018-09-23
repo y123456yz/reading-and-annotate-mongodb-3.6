@@ -39,7 +39,7 @@ namespace mongo {
 /**
  * A replacement for the Record class. This class represents data in a record store.
  * The _ownedData attribute is used to manage memory ownership.
- */
+ */ //struct Record{}结构体包含该结构成员
 class RecordData {
 public:
     RecordData() : _data(NULL), _size(0) {}
@@ -94,6 +94,7 @@ public:
     }
 
 private:
+    //对应到wiredtiger就是value部分
     const char* _data;
     int _size;
     SharedBuffer _ownedData;

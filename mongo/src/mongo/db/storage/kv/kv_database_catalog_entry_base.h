@@ -95,8 +95,8 @@ protected:
     class RemoveCollectionChange;
 
     typedef std::map<std::string, KVCollectionCatalogEntry*> CollectionMap;
-
-
+    
+    //KVDatabaseCatalogEntryBase::KVDatabaseCatalogEntryBase, wiredtiger∂‘”¶WiredTigerKVEngine
     KVStorageEngine* const _engine;  // not owned here
     CollectionMap _collections;
 };

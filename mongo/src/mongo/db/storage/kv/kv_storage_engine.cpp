@@ -48,6 +48,7 @@ namespace {
 const std::string catalogInfo = "_mdb_catalog";
 }
 
+//wiredtiger∂‘”¶WiredTigerKVEngine
 class KVStorageEngine::RemoveDBChange : public RecoveryUnit::Change {
 public:
     RemoveDBChange(KVStorageEngine* engine, StringData db, KVDatabaseCatalogEntryBase* entry)

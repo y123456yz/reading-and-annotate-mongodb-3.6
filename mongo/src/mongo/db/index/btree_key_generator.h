@@ -45,6 +45,42 @@ class CollatorInterface;
  * Internal class used by BtreeAccessMethod to generate keys for indexed documents.
  * This class is meant to be kept under the index access layer.
  */
+/*
+btree_key_generator.h[cpp]
+该对象封装了一套解析解析算法，目的是解析出obj中的索引key，MongoDB相比较于传统的DB系统，
+在索引创建上支持Array结构，Array数据内容会根据索引扩展出来。
+
+例如：
+
+索引Pattern：{a: 1, b: 1}
+被索引OBJ：{a: [1, 2, 3], b: 2}，
+解析出来的IndexKeys：{'': 1, '': 2}{'': 2, '': 2}{'': 3, '': 2}
+
+
+实际上，MongoDB这里提供了两个版本的算法，V0和V1，2.0以后的MongoDB默认采用了V1，V0与WT存储引擎上还有写兼容性问题，参见：SERVER-16893
+所以，MongoDB现在只在mmap上支持V0算法，相关的检验代码：
+
+catalog_index.cpp
+
+if (v == 0 && !getGlobalEnvironment()->getGlobalStorageEngine()->isMmapV1()) {
+    return Status( ErrorCodes::CannotCreateIndex,
+                  str::stream() 
+                  << "use of v0 indexes is only allowed with the " 
+                  << "mmapv1 storage engine");
+}
+V1和V0的不同点也集中在数组的处理上，V0版本，过于简单，很多数组结构索引解析出来的结果不完整，主要体现在了NULL的处理。
+例如：
+
+PATTERN	OBJ	V0	V1
+{‘a.b.c’:1}	    {a:[1,2,{b:{c:[3,4]}}]}	[{:3 }{:4}]	               [{:null}{:3}{:4}]
+{‘a’:1,’a.b’:1} {a:[{b:1}]}	            [{:[{b:1} ],:1}]	        [{:{b:1},:1}]
+{a:1,a:1}	        {a:[1,2]}	            [{:1,:[ 1,2]}{:2,:[1,2]}]	[{:1,:1}{:2,:2}]
+更多的数据测试可以参考btreekeygenerator_test.cpp中的测试case。
+
+虽然官方在ReleaseNote里说明：V1版本的索引更快，更节省空间，但实际上是V0版本算法漏洞太多。
+
+参考http://www.mongoing.com/archives/1462
+*/
 class BtreeKeyGenerator {
 public:
     BtreeKeyGenerator(std::vector<const char*> fieldNames,

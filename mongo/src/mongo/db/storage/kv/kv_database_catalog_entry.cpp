@@ -60,9 +60,11 @@ IndexAccessMethod* KVDatabaseCatalogEntry::getIndex(OperationContext* opCtx,
 
     const std::string& type = desc->getAccessMethodName();
 
+	//KVCatalog::getIndexIdent  获取index索引字符串信息
     std::string ident =
         _engine->getCatalog()->getIndexIdent(opCtx, collection->ns().ns(), desc->indexName());
 
+	//WiredTigerKVEngine::getGroupedSortedDataInterface
     SortedDataInterface* sdi =
         _engine->getEngine()->getGroupedSortedDataInterface(opCtx, ident, desc, index->getPrefix());
 
