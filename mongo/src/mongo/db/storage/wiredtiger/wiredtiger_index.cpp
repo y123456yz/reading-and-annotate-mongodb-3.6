@@ -279,6 +279,8 @@ WiredTigerIndex::WiredTigerIndex(OperationContext* ctx,
     }
 }
 
+//数据插入走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
+//IndexAccessMethod::insert调用执行
 Status WiredTigerIndex::insert(OperationContext* opCtx,
                                const BSONObj& key,
                                const RecordId& id,
@@ -309,6 +311,7 @@ void WiredTigerIndex::unindex(OperationContext* opCtx,
     WT_CURSOR* c = curwrap.get();
     invariant(c);
 
+	//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
     _unindex(c, key, id, dupsAllowed);
 }
 
@@ -1121,6 +1124,7 @@ SortedDataBuilderInterface* WiredTigerIndexUnique::getBulkBuilder(OperationConte
     return new UniqueBulkBuilder(this, opCtx, dupsAllowed, _prefix);
 }
 
+////唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
                                       const BSONObj& key,
                                       const RecordId& id,
@@ -1310,6 +1314,7 @@ SortedDataBuilderInterface* WiredTigerIndexStandard::getBulkBuilder(OperationCon
     return new StandardBulkBuilder(this, opCtx, _prefix);
 }
 
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
                                         const BSONObj& keyBson,
                                         const RecordId& id,

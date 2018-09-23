@@ -42,7 +42,7 @@ class IndexDescriptor;
 /**
  * The IndexAccessMethod for a Btree index.
  * Any index created with {field: 1} or {field: -1} uses this.
- */
+ */ //继承自IndexAccessMethod，声明getKeys，交给由子类实现，是个Adapter模式。
 class BtreeAccessMethod : public IndexAccessMethod {
 public:
     BtreeAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree);
@@ -51,6 +51,7 @@ private:
     void doGetKeys(const BSONObj& obj, BSONObjSet* keys, MultikeyPaths* multikeyPaths) const final;
 
     // Our keys differ for V0 and V1.
+    //btree_key_generator.h[cpp]该对象封装了一套解析解析算法，目的是解析出obj中的索引key
     std::unique_ptr<BtreeKeyGenerator> _keyGenerator;
 };
 

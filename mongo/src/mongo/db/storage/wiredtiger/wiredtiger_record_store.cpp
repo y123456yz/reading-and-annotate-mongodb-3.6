@@ -1098,6 +1098,8 @@ Status WiredTigerRecordStore::insertRecords(OperationContext* opCtx,
     return _insertRecords(opCtx, records->data(), timestamps->data(), records->size());
 }
 //WiredTigerRecordStore::insertRecords
+
+//数据插入走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
 Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
                                              Record* records,
                                              const Timestamp* timestamps,
@@ -1163,6 +1165,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
+		log() << "yang test ......WiredTigerRecordStore::_insertRecords .......... key:" << record.id << " value:" << record.data.data();
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

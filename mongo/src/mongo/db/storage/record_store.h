@@ -82,6 +82,29 @@ public:
                                                    const RecordId& loc) = 0;
 };
 
+/*
+比如，往某个集合插入一组元素
+db.coll.insert({_id: "apple", count: 100});
+db.coll.insert({_id: "peach", count: 200});
+db.coll.insert({_id: "grape", count: 300});
+
+对应一个coll的数据集合，其对应的WT数据类似于KEY	VALUE
+1	{_id: “apple”, count: 100}
+2	{_id: “peach”, count: 200}
+3	{_id; “grape”, count: 300}
+
+以及基于id的索引集合，其对应的WT数据类似于KEY	VALUE
+“apple”	1    //1对应数据集合中的{_id: “apple”, count: 100}
+“peach”	2
+“grape”	3
+
+接下来如果在count上建索引，索引会存储在新的WT table里，数据类似于db.coll.ensureIndex({count: -1})KEY	VALUE
+300	3    //3对应数据集合中的{_id; “grape”, count: 300}
+200	2
+100	1
+
+https://blog.csdn.net/zhuangtim1987/article/details/53431339?utm_source=copy 
+*/
 /**
  * The data items stored in a RecordStore.
  */

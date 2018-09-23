@@ -1311,7 +1311,7 @@ const IndexDescriptor* IndexCatalogImpl::refreshEntry(OperationContext* opCtx,
 }
 
 // ---------------------------
-
+//IndexCatalogImpl::_indexRecords
 Status IndexCatalogImpl::_indexFilteredRecords(OperationContext* opCtx,
                                                IndexCatalogEntry* index,
                                                const std::vector<BsonRecord>& bsonRecords,
@@ -1335,6 +1335,7 @@ Status IndexCatalogImpl::_indexFilteredRecords(OperationContext* opCtx,
     return Status::OK();
 }
 
+//IndexCatalogImpl::indexRecords
 Status IndexCatalogImpl::_indexRecords(OperationContext* opCtx,
                                        IndexCatalogEntry* index,
                                        const std::vector<BsonRecord>& bsonRecords,
@@ -1385,6 +1386,7 @@ Status IndexCatalogImpl::_unindexRecord(OperationContext* opCtx,
     return Status::OK();
 }
 
+//CollectionImpl::_insertDocuments中调用执行
 //WiredTigerRecordStore::insertRecords  id索引擦入wiredtiger  IndexCatalogImpl::indexRecords 其他索引插入
 Status IndexCatalogImpl::indexRecords(OperationContext* opCtx,
                                       const std::vector<BsonRecord>& bsonRecords,

@@ -1108,7 +1108,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     // before we lock...
     NetworkOp op = m.operation();
     bool isCommand = false;
-	log() << "	yang test ...........   ServiceEntryPointMongod::handleRequest ";
+	//log() << "	yang test ...........   ServiceEntryPointMongod::handleRequest ";
 
     DbMessage dbmsg(m);
 	
