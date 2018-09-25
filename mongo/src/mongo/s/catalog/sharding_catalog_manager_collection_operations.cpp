@@ -324,6 +324,7 @@ void ShardingCatalogManager::shardCollection(OperationContext* opCtx,
         .transitional_ignore();
 }
 
+//SetFeatureCompatibilityVersionCommand::run÷–÷¥––
 void ShardingCatalogManager::generateUUIDsForExistingShardedCollections(OperationContext* opCtx) {
     // Retrieve all collections in config.collections that do not have a UUID. Some collections
     // may already have a UUID if an earlier upgrade attempt failed after making some progress.

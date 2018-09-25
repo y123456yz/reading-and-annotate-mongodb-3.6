@@ -484,7 +484,7 @@ void UpdateStage::doInsert() {
 
         // Technically, we should save/restore state here, but since we are going to return
         // immediately after, it would just be wasted work.
-        wunit.commit();
+        wunit.commit(); //WriteUnitOfWork::commit
     });
 }
 

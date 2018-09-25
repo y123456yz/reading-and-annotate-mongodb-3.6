@@ -74,9 +74,16 @@ class UnreplicatedWritesBlock;
  光标是一个单独的操作。一个OperationContext只能和一个客户端相关联。每个OperationContext会有一个RecoveryUnit
  和他相关联，但是生命周期不一样，可以参考releaseRecoveryUnit和setRecoveryUnit
  */
+
+ /*
+ 客户端的每个请求（insert/update/delete/find/getmore），会生成一个唯一的OperationContext记录执行的上下文，
+ OperationContext从请求解析时创建，到请求执行完成时释放。一般情况下，其生命周期等同于一个操作执行的生命周期。
+ OperationContext创建时，会初始化RecoveryUnit。
+ */
+//RecoveryUnit，OperationContext, WriteUnitOfWork三个的关系见http://www.mongoing.com/archives/5476
 //ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口， 
 //ServiceContext包含OperationContext成员，见UniqueOperationContext
-//ServiceContextMongoD::_newOpCtx 中会构造该类
+//ServiceContextMongoD::_newOpCtx 中会构造该类  WriteUnitOfWork._opCtx为该类类型
 class OperationContext : public Decorable<OperationContext> {
     MONGO_DISALLOW_COPYING(OperationContext);
 
@@ -473,7 +480,7 @@ private:
 
     std::unique_ptr<Locker> _locker;
 
-    //OperationContext::_recoveryUnit为RecoveryUnit类类型
+    //OperationContext::_recoveryUnit为RecoveryUnit类类型，对应WiredTigerRecoveryUnit类
     std::unique_ptr<RecoveryUnit> _recoveryUnit; 
     RecoveryUnitState _ruState = kNotInUnitOfWork;
 
@@ -514,6 +521,8 @@ private:
     bool _writesAreReplicated = true;
 };
 
+//WriteUnitOfWork 是事务框架提供给server层，方便执行事务的API。它是对OperationContext和RecoveryUnit的封装。
+//http://www.mongoing.com/archives/5476
 class WriteUnitOfWork {
     MONGO_DISALLOW_COPYING(WriteUnitOfWork);
 

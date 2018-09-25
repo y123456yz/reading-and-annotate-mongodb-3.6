@@ -144,6 +144,7 @@ private:
     UniqueWiredTigerSession _session;
     bool _areWriteUnitOfWorksBanned = false;
     bool _inUnitOfWork;
+    //WiredTigerRecoveryUnit::_txnOpen¸³Öµtrue£¬ RecoveryUnit::_txnClose¸³Öµfalse
     bool _active;
     bool _isTimestamped = false;
     uint64_t _mySnapshotId;

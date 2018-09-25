@@ -85,7 +85,7 @@ struct CollectionOptions {
     // ----
 
     // Collection UUID. Will exist if featureCompatibilityVersion >= 3.6.
-    OptionalCollectionUUID uuid;
+    OptionalCollectionUUID uuid; //每个collection会对应一个uuid，见DatabaseImpl::createCollection，只有3.6以上版本有该uuid
 
     bool capped = false;
     long long cappedSize = 0;

@@ -108,6 +108,11 @@ public:
         int64_t cappedMaxSize;
         int64_t cappedMaxDocs;
         CappedCallback* cappedCallback;
+        /*
+        sizeStorer.wt里存储所有集合的容量信息，如文档数、文档总大小等，当插入、删除、更新文档时，这些信息
+        会先cache到内存，没操作1000次会刷盘一次；mongod进程crash可能导致sizeStorer.wt里的数据与实际信息不匹配，
+        可通过validate()命令来重新扫描集合以订正统计信息。
+        */
         WiredTigerSizeStorer* sizeStorer;
         bool isReadOnly;
     };

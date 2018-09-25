@@ -694,7 +694,7 @@ ExitCode _initAndListen(int listenPort) {
 	//消息处理见ServiceEntryPointMongod::handleRequest  ServiceEntryPointMongos::handleRequest
     Client::initThread("initandlisten"); //注意这个是main线程，设置当前线程的名
     #include <unistd.h>
-	sleep(10);
+	//sleep(10);
 	log() << "yang test .... _initAndListen 22222222222";
 
     initWireSpec();

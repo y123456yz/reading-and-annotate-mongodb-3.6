@@ -58,7 +58,8 @@
 #include "mongo/util/log.h"
 #include "mongo/util/mongoutils/str.h"
 
-#define TRACING_ENABLED 0
+//#define TRACING_ENABLED 0  yang change
+#define TRACING_ENABLED 1
 
 #if TRACING_ENABLED
 #define TRACE_CURSOR log() << "WT index (" << (const void*)&_idx << ") "
@@ -158,7 +159,10 @@ StatusWith<std::string> WiredTigerIndex::parseIndexOptions(const BSONObj& option
     return StatusWith<std::string>(ss.str());
 }
 
-// static
+//WiredTigerRecordStore::generateCreateString获取创建wiredtiger表的uri
+//WiredTigerIndex::generateCreateString获取创建wiredtiger索引的uri
+
+// static  获取wiredtiger创建索引时候的参数  WiredTigerKVEngine::createGroupedSortedDataInterface中执行
 StatusWith<std::string> WiredTigerIndex::generateCreateString(const std::string& engineName,
                                                               const std::string& sysIndexConfig,
                                                               const std::string& collIndexConfig,
@@ -228,10 +232,17 @@ StatusWith<std::string> WiredTigerIndex::generateCreateString(const std::string&
         ss << "log=(enabled=false)";
     }
 
+	/*
+	2018-09-25T17:06:01.582+0800 D STORAGE	[conn1] index create string: type=file,internal_page_max=16k,
+	leaf_page_max=16k,checksum=on,prefix_compression=true,block_compressor=,,,,key_format=u,value_format=u,
+	app_metadata=(formatVersion=8,infoObj={ "v" : 2, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "test.test" }),
+	log=(enabled=true)
+	*/ 
     LOG(3) << "index create string: " << ss.ss.str();
     return StatusWith<std::string>(ss);
 }
 
+//建wiredtiger索引  WiredTigerKVEngine::createGroupedSortedDataInterface中调用
 int WiredTigerIndex::Create(OperationContext* opCtx,
                             const std::string& uri,
                             const std::string& config) {
@@ -296,6 +307,7 @@ Status WiredTigerIndex::insert(OperationContext* opCtx,
     curwrap.assertInActiveTxn();
     WT_CURSOR* c = curwrap.get();
 
+	//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
     return _insert(c, key, id, dupsAllowed);
 }
 
@@ -311,7 +323,7 @@ void WiredTigerIndex::unindex(OperationContext* opCtx,
     WT_CURSOR* c = curwrap.get();
     invariant(c);
 
-	//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+	
     _unindex(c, key, id, dupsAllowed);
 }
 
@@ -1124,6 +1136,7 @@ SortedDataBuilderInterface* WiredTigerIndexUnique::getBulkBuilder(OperationConte
     return new UniqueBulkBuilder(this, opCtx, dupsAllowed, _prefix);
 }
 
+//WiredTigerIndex::insert中执行
 ////唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
                                       const BSONObj& key,
@@ -1314,6 +1327,7 @@ SortedDataBuilderInterface* WiredTigerIndexStandard::getBulkBuilder(OperationCon
     return new StandardBulkBuilder(this, opCtx, _prefix);
 }
 
+//WiredTigerIndex::insert中执行
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
                                         const BSONObj& keyBson,
