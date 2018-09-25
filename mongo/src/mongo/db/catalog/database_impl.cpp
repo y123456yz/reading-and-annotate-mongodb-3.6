@@ -211,14 +211,16 @@ Status DatabaseImpl::validateDBName(StringData dbname) {
     return Status::OK();
 }
 
+//查找collection类，找到直接返回，没找到构造一个新的collection类  DatabaseImpl::createCollection调用
 Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx,
                                                          const NamespaceString& nss) {
     Collection* collection = getCollection(opCtx, nss);
 
-    if (collection) {
+    if (collection) { //找到直接返回
         return collection;
     }
 
+	//没找到则构造一个新collection类
     unique_ptr<CollectionCatalogEntry> cce(_dbEntry->getCollectionCatalogEntry(nss.ns()));
     auto uuid = cce->getCollectionOptions(opCtx).uuid;
 
@@ -643,12 +645,14 @@ void DatabaseImpl::_clearCollectionCache(OperationContext* opCtx,
     _collections.erase(it);
 }
 
+//DatabaseImpl::_getOrCreateCollectionInstance中调用
 Collection* DatabaseImpl::getCollection(OperationContext* opCtx, StringData ns) const {
     NamespaceString nss(ns);
     invariant(_name == nss.db());
     return getCollection(opCtx, nss);
 }
 
+//DatabaseImpl::getCollection中调用
 Collection* DatabaseImpl::getCollection(OperationContext* opCtx, const NamespaceString& nss) const {
     dassert(!cc().getOperationContext() || opCtx == cc().getOperationContext());
     CollectionMap::const_iterator it = _collections.find(nss.ns());
@@ -802,6 +806,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
     _checkCanCreateCollection(opCtx, nss, optionsWithUUID);
     audit::logCreateCollection(&cc(), ns);
 
+	//createCollection: test.test with generated UUID: 43e959f4-7bb4-4cd1-ba10-5075df67fa44
     if (optionsWithUUID.uuid) {
         log() << "createCollection: " << ns << " with "
               << (generatedUUID ? "generated" : "provided")
@@ -814,6 +819,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
         _dbEntry->createCollection(opCtx, ns, optionsWithUUID, true /*allocateDefaultSpace*/));
 
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns));
+	//查找collection类，找到直接返回，没找到构造一个新的collection类
     Collection* collection = _getOrCreateCollectionInstance(opCtx, nss);
     invariant(collection);
     _collections[ns] = collection;
@@ -988,6 +994,7 @@ void mongo::dropAllDatabasesExceptLocalImpl(OperationContext* opCtx) {
     }
 }
 
+//mongo::userCreateNS中执行，创建集合
 auto mongo::userCreateNSImpl(OperationContext* opCtx,
                              Database* db,
                              StringData ns,
@@ -1102,7 +1109,7 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
     if (collectionOptions.isView()) {
         invariant(parseKind == CollectionOptions::parseForCommand);
         uassertStatusOK(db->createView(opCtx, ns, collectionOptions));
-    } else {
+    } else { //DatabaseImpl::createCollection
         invariant(
             db->createCollection(opCtx, ns, collectionOptions, createDefaultIndexes, idIndex));
     }

@@ -160,9 +160,9 @@ void setThreadName(StringData name) {
             log() << "Ignoring error from setting thread name: " << errnoWithDescription(error);
         }
 
-		log() << "yang test xxxx getpid = sys_getpid, main thread ";
+		//log() << "yang test xxxx getpid = sys_getpid, main thread ";
     }
-	log() << "yang test xxxx getpid = s ss sys_getpid, main thread ";
+	//log() << "yang test xxxx getpid = s ss sys_getpid, main thread ";
 #endif
 }
 

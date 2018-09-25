@@ -683,6 +683,10 @@ void WiredTigerKVEngine::setSortedDataInterfaceExtraOptions(const std::string& o
     _indexOptions = options;
 }
 
+/* 调用的地方如下:
+KVDatabaseCatalogEntryBase::createCollection
+KVStorageEngine::KVStorageEngine
+*/
 Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
                                                     StringData ns,
                                                     StringData ident,
@@ -700,9 +704,16 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     std::string config = result.getValue();
 
     string uri = _uri(ident);
+
+	//对应open_session
     WT_SESSION* s = session.getSession();
+	
+	// WiredTigerKVEngine::createRecordStore ns: test.test uri: table:test/collection/4--6382651395048738792 
+	//config: type=file,memory_page_max=10m,split_pct=90,leaf_value_max=64MB,checksum=on,block_compressor=snappy,
+	//,key_format=q,value_format=u,app_metadata=(formatVersion=1),log=(enabled=true)
     LOG(2) << "WiredTigerKVEngine::createRecordStore ns: " << ns << " uri: " << uri
            << " config: " << config;
+	//对应wiredtiger session->create
     return wtRCToStatus(s->create(s, uri.c_str(), config.c_str()));
 }
 
@@ -750,6 +761,7 @@ string WiredTigerKVEngine::_uri(StringData ident) const {
     return string("table:") + ident.toString();
 }
 
+//创建wiredtiger索引
 Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* opCtx,
                                                             StringData ident,
                                                             const IndexDescriptor* desc,
@@ -781,6 +793,12 @@ Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* op
 
     std::string config = result.getValue();
 
+	/*
+	2018-09-25T17:06:01.582+0800 D STORAGE	[conn1] WiredTigerKVEngine::createSortedDataInterface ns: test.test 
+	ident: test/index/5--6382651395048738792 config: type=file,internal_page_max=16k,leaf_page_max=16k,checksum=on,
+	prefix_compression=true,block_compressor=,,,,key_format=u,value_format=u,app_metadata=(formatVersion=8,infoObj=
+	{ "v" : 2, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "test.test" }),log=(enabled=true)
+	*/
     LOG(2) << "WiredTigerKVEngine::createSortedDataInterface ns: " << collection->ns()
            << " ident: " << ident << " config: " << config;
     return wtRCToStatus(WiredTigerIndex::Create(opCtx, _uri(ident), config));

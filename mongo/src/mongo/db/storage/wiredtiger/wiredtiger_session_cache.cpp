@@ -48,6 +48,7 @@
 
 namespace mongo {
 
+//WiredTigerSessionCache::getSession中执行
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64_t cursorEpoch)
     : _epoch(epoch),
       _cursorEpoch(cursorEpoch),
@@ -58,6 +59,7 @@ WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64
     invariantWTOK(conn->open_session(conn, NULL, "isolation=snapshot", &_session));
 }
 
+//WiredTigerSessionCache::getSession中执行
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn,
                                      WiredTigerSessionCache* cache,
                                      uint64_t epoch,
@@ -309,6 +311,16 @@ bool WiredTigerSessionCache::isEphemeral() {
     return _engine && _engine->isEphemeral();
 }
 
+/*
+以下接口调用getSession
+WiredTigerKVEngine::flushAllFiles
+WiredTigerKVEngine::WiredTigerCheckpointThread
+WiredTigerKVEngine::WiredTigerCheckpointThread
+WiredTigerKVEngine::WiredTigerJournalFlusher
+WiredTigerOplogManager::_oplogJournalThreadLoop
+WiredTigerRecoveryUnit::waitUntilDurable
+MultiIndexBlockImpl::init
+*/
 UniqueWiredTigerSession WiredTigerSessionCache::getSession() {
     // We should never be able to get here after _shuttingDown is set, because no new
     // operations should be allowed to start.

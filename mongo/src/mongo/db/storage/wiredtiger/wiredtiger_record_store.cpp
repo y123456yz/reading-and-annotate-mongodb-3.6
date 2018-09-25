@@ -529,7 +529,8 @@ private:
     const std::string _config;
 };
 
-
+//WiredTigerRecordStore::generateCreateString获取创建wiredtiger表的uri
+//WiredTigerIndex::generateCreateString获取创建wiredtiger索引的uri
 // static
 StatusWith<std::string> WiredTigerRecordStore::generateCreateString(
     const std::string& engineName,
@@ -1165,7 +1166,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
-		log() << "yang test ......WiredTigerRecordStore::_insertRecords .......... key:" << record.id << " value:" << record.data.data();
+		log() << "yang test ......WiredTigerRecordStore::_insertRecords .......... nrecord:" <<nRecords <<" key:" << record.id << " value:" << record.data.data() << "\r\n";
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

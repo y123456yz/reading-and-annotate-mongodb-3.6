@@ -189,6 +189,10 @@ void* WiredTigerRecoveryUnit::writingPtr(void* data, size_t len) {
     MONGO_UNREACHABLE;
 }
 
+/*
+RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 
+RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
+*/
 void WiredTigerRecoveryUnit::_txnClose(bool commit) {
     invariant(_active);
     WT_SESSION* s = _session->getSession();
@@ -244,6 +248,11 @@ boost::optional<Timestamp> WiredTigerRecoveryUnit::getMajorityCommittedSnapshot(
     return _majorityCommittedSnapshot;
 }
 
+//WiredTigerRecoveryUnit::getSession中执行,获取一个session,并begin_transaction
+/*
+RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 
+RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
+*/
 void WiredTigerRecoveryUnit::_txnOpen() {
     invariant(!_active);
     _ensureSession();

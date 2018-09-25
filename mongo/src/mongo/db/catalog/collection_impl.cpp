@@ -323,8 +323,8 @@ Status CollectionImpl::insertDocumentsForOplog(OperationContext* opCtx,
     return status;
 }
 
-//insertDocuments中执行
-//写入存储引擎
+//write_ops_exec.cpp中的insertDocuments中执行
+//写入存储引擎  
 Status CollectionImpl::insertDocuments(OperationContext* opCtx,
                                        const vector<InsertStatement>::const_iterator begin,
                                        const vector<InsertStatement>::const_iterator end,
@@ -347,7 +347,6 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
 
     // Should really be done in the collection object at creation and updated on index create.
     const bool hasIdIndex = _indexCatalog.findIdIndex(opCtx); 
-	log() << "yang test ....................:" << hasIdIndex;
 		
     for (auto it = begin; it != end; it++) {
         if (hasIdIndex && it->doc["_id"].eoo()) { //如果有id索引，则kv不能携带_id
@@ -364,12 +363,21 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
 
     const SnapshotId sid = opCtx->recoveryUnit()->getSnapshotId();
 
-	//插入wiredtiger
+	/*  http://www.mongoing.com/archives/5476
+	mongodb对某一行的写操作，会产生三个动作
+	
+	1 对wt层的数据段btree（上图中的Data Ident）执行写操作
+	2 对wt层索引段的每个索引btree执行写操作
+	3 对oplog表执行写操作
+	*/
+
+	//插入wiredtiger  1  2步骤
     Status status = _insertDocuments(opCtx, begin, end, enforceQuota, opDebug);
     if (!status.isOK())
         return status;
     invariant(sid == opCtx->recoveryUnit()->getSnapshotId());
 
+	// 更新Oplog
     getGlobalServiceContext()->getOpObserver()->onInserts(
         opCtx, ns(), uuid(), begin, end, fromMigrate);
 
@@ -447,6 +455,7 @@ Status CollectionImpl::insertDocument(OperationContext* opCtx,
     return loc.getStatus();
 }
 
+//CollectionImpl::insertDocuments
 Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
                                         const vector<InsertStatement>::const_iterator begin,
                                         const vector<InsertStatement>::const_iterator end,
@@ -484,8 +493,30 @@ Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
         timestamps.push_back(timestamp);
     }
 
-	//ID索引写入在这里，其他索引写入在后面的_indexCatalog.indexRecords
-	
+	/*
+	比如，往某个集合插入一组元素
+	db.coll.insert({_id: "apple", count: 100});
+	db.coll.insert({_id: "peach", count: 200});
+	db.coll.insert({_id: "grape", count: 300});
+
+	对应一个coll的数据集合，其对应的WT数据类似于KEY	VALUE
+	1	{_id: “apple”, count: 100}
+	2	{_id: “peach”, count: 200}
+	3	{_id; “grape”, count: 300}
+
+	以及基于id的索引集合，其对应的WT数据类似于KEY	VALUE
+	“apple”	1    //1对应数据集合中的{_id: “apple”, count: 100}
+	“peach”	2
+	“grape”	3
+
+	接下来如果在count上建索引，索引会存储在新的WT table里，数据类似于db.coll.ensureIndex({count: -1})KEY	VALUE
+	300	3    //3对应数据集合中的{_id; “grape”, count: 300}
+	200	2
+	100	1
+
+	https://blog.csdn.net/zhuangtim1987/article/details/53431339?utm_source=copy 
+	*/
+	//普通写入在这里，其他索引写入在后面的_indexCatalog.indexRecords
     Status status = //WiredTigerRecordStore::insertRecords  擦入wiredtiger  数据插入走这里
         _recordStore->insertRecords(opCtx, &records, &timestamps, _enforceQuota(enforceQuota));
     if (!status.isOK())

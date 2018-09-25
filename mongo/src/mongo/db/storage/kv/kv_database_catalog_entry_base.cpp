@@ -216,6 +216,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 
     string ident = _engine->getCatalog()->getCollectionIdent(ns);
 
+	//WiredTigerKVEngine::createGroupedRecordStore
     status = _engine->getEngine()->createGroupedRecordStore(opCtx, ns, ident, options, prefix);
     if (!status.isOK())
         return status;

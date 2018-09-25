@@ -47,8 +47,11 @@ class OperationContext;
  * All on-disk information must be mutated through this interface.
  一个recoveryunit负责确保数据持久化。所有磁盘上的信息都必须通过这个接口进行修改。
  */
-
-//OperationContext::_recoveryUnit为RecoveryUnit类类型
+/*
+RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 
+RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
+*/
+//OperationContext::_recoveryUnit为RecoveryUnit类类型, WiredTigerRecoveryUnit继承该类
 class RecoveryUnit {
     MONGO_DISALLOW_COPYING(RecoveryUnit);
 

@@ -325,7 +325,7 @@ void insertDocuments(OperationContext* opCtx,
         }
     }
 
-	//CollectionImpl::insertDocuments
+	//CollectionImpl::insertDocuments   
     uassertStatusOK(collection->insertDocuments(
         opCtx, begin, end, &CurOp::get(opCtx)->debug(), /*enforceQuota*/ true));
     wuow.commit();
@@ -391,10 +391,11 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
     // Try to insert the batch one-at-a-time. This path is executed both for singular batches, and
     // for batches that failed all-at-once inserting.
     //一次性一条一条插入
+    log() << "yang test ...insertBatchAndHandleErrors.........getNamespace().ns():" << wholeOp.getNamespace().ns();
     for (auto it = batch.begin(); it != batch.end(); ++it) {
         globalOpCounters.gotInsert(); //操作计数
         try {
-			log() << "yang test ............getNamespace().ns():" << wholeOp.getNamespace().ns();
+			//log() << "yang test ............getNamespace().ns():" << wholeOp.getNamespace().ns();
 			//writeConflictRetry里面会执行{}中的函数体
             writeConflictRetry(opCtx, "insert", wholeOp.getNamespace().ns(), [&] {
                 try {
@@ -441,6 +442,7 @@ SingleWriteResult makeWriteResultForInsertOrDeleteRetry() {
 
 }  // namespace
 
+//receivedInsert中执行
 WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     auto& curOp = *CurOp::get(opCtx);

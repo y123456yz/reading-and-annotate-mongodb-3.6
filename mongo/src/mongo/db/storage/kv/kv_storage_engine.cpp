@@ -44,6 +44,18 @@ namespace mongo {
 using std::string;
 using std::vector;
 
+/*
+_mdb_catalog.wt里存储了所有集合的元数据，包括集合对应的WT table名字，集合的创建选项，集合的索引信息等，
+WT存储引擎初始化时，会从_mdb_catalog.wt里读取所有的集合信息，并加载元信息到内存。
+集合名与WT table名的对应关系可以通过db.collection.stats()获取
+
+mongo-9552:PRIMARY> db.system.users.stats().wiredTiger.uri
+statistics:table:admin/collection-10--1436312956560417970
+也可以直接dump出_mdb_catalog.wt里的内容查看，dump出的内容为BSON格式，阅读起来不是很方便。
+
+wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]" -h . dump table:_mdb_catalog
+
+*/
 namespace {
 const std::string catalogInfo = "_mdb_catalog";
 }
@@ -95,6 +107,7 @@ KVStorageEngine::KVStorageEngine(
     if (!catalogExists) {
         WriteUnitOfWork uow(&opCtx);
 
+		//WiredTigerKVEngine::createGroupedRecordStore
         Status status = _engine->createGroupedRecordStore(
             &opCtx, catalogInfo, catalogInfo, CollectionOptions(), KVPrefix::kNotPrefixed);
         // BadValue is usually caused by invalid configuration string.

@@ -1,0 +1,40 @@
+processManagement:
+  fork: true
+systemLog:
+  destination: file
+  path: /data/db/logs/mongod.log
+  logAppend: true
+storage:
+  journal:
+    enabled: true
+  dbPath: /data/db/data/
+  directoryPerDB: true
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 2
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: snappy
+    indexConfig:
+      prefixCompression: true
+net:
+   port: 27017
+   maxIncomingConnections: 10000
+   bindIpAll: true
+operationProfiling:
+   slowOpThresholdMs: 100
+   mode: slowOp
+
+#replication:
+#   oplogSizeMB: 10240
+#   replSetName: featdoc
+
+#security:
+#   keyFile: /home/yyz/mongodb-test/mongo1/keys/keyfile
+#   clusterAuthMode: keyFile
+#   authorization: enabled
+
+#sharding:
+#   clusterRole: shardsvr
+#   archiveMovedChunks: true
