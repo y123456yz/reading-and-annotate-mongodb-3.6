@@ -261,6 +261,7 @@ void KVCatalog::FeatureTracker::putInfo(OperationContext* opCtx, const FeatureBi
     }
 }
 
+////KVStorageEngine::KVStorageEngine中构造初始化
 KVCatalog::KVCatalog(RecordStore* rs, bool directoryPerDb, bool directoryForIndexes)
     : _rs(rs),
       _directoryPerDb(directoryPerDb),
@@ -284,6 +285,8 @@ bool KVCatalog::_hasEntryCollidingWithRand() const {
     return false;
 }
 
+//KVCatalog::newCollection   KVCatalog::putMetaData中调用
+//_newUniqueIdent()函数获得collection对应的文件名字（ident）
 std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     // If this changes to not put _rand at the end, _hasEntryCollidingWithRand will need fixing.
     StringBuilder buf;
@@ -293,6 +296,8 @@ std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     buf << kind;
     buf << (_directoryForIndexes ? '/' : '-');
     buf << _next.fetchAndAdd(1) << '-' << _rand;
+
+	log() << "yang test ......... KVCatalog::_newUniqueIdent, bufstr:" << buf.str();
     return buf.str();
 }
 
@@ -330,6 +335,10 @@ void KVCatalog::init(OperationContext* opCtx) {
     }
 }
 
+/*
+//由于每个collection创建时都会存储到元数据文件_mdb_catalog中，
+//因此，可以直接从这个文件中得到所有已创建的collection。
+*/
 void KVCatalog::getAllCollections(std::vector<std::string>* out) const {
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
     for (NSToIdentMap::const_iterator it = _idents.begin(); it != _idents.end(); ++it) {
@@ -337,6 +346,10 @@ void KVCatalog::getAllCollections(std::vector<std::string>* out) const {
     }
 }
 
+/*
+KVCatalog::newCollection()函数会调用_newUniqueIdent()函数获得collection对应的文件名字（ident），并且，
+会将collection的ns、ident存储到元数据文件_mdb_catalog中。
+*/
 Status KVCatalog::newCollection(OperationContext* opCtx,
                                 StringData ns,
                                 const CollectionOptions& options,
@@ -367,13 +380,14 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
     }
     const bool enforceQuota = false;
     // TODO SERVER-30638: using timestamp 0 for these inserts.
-    StatusWith<RecordId> res =
+    StatusWith<RecordId> res = 
+    	//WiredTigerRecordStore::_insertRecords
         _rs->insertRecord(opCtx, obj.objdata(), obj.objsize(), Timestamp(), enforceQuota);
     if (!res.isOK())
         return res.getStatus();
 
     old = Entry(ident, res.getValue());
-    LOG(1) << "stored meta data for " << ns << " @ " << res.getValue();
+    LOG(1) << "stored meta data for " << ns << " @ " << res.getValue() << " obj:" << redact(obj);;
     return Status::OK();
 }
 

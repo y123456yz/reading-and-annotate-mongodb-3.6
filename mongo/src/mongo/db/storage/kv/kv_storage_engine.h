@@ -219,7 +219,7 @@ KVStorageEngine实际上不是一个真正存储引擎的实现，只是为了方便接入wiredTiger、roc
 接入mongdb时，只需实现KVEngine定义的接口即可。
 */
 //WiredTigerFactory::create中new改类 
-class KVStorageEngine final : public StorageEngine {
+class KVStorageEngine final : public StorageEngine { 
 public:
     /**
      * @param engine - ownership passes to me
@@ -317,6 +317,7 @@ private:
     const bool _supportsDBLocking;
 
     std::unique_ptr<RecordStore> _catalogRecordStore;
+    //KVStorageEngine::KVStorageEngine中初始化
     std::unique_ptr<KVCatalog> _catalog;
 
     typedef std::map<std::string, KVDatabaseCatalogEntryBase*> DBMap;

@@ -312,6 +312,7 @@ stdx::function<bool(StringData)> initRsOplogBackgroundThreadCallback = [](String
 };
 }  // namespace
 
+
 WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
                                        const std::string& path,
                                        ClockSource* cs,
@@ -658,11 +659,13 @@ void WiredTigerKVEngine::endBackup(OperationContext* opCtx) {
     _backupSession.reset();
 }
 
+//参考http://www.mongoing.com/archives/5476  同步内存中的size到磁盘
 void WiredTigerKVEngine::syncSizeInfo(bool sync) const {
     if (!_sizeStorer)
         return;
 
     try {
+		//WiredTigerSizeStorer::syncCache
         _sizeStorer->syncCache(sync);
     } catch (const WriteConflictException&) {
         // ignore, we'll try again later.
@@ -703,6 +706,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     }
     std::string config = result.getValue();
 
+    //ident是类似这种形式：6--4057196034770697536.wt，_uri(ident)返回的是string("table:") + ident.toString();
     string uri = _uri(ident);
 
 	//对应open_session
@@ -871,7 +875,7 @@ bool WiredTigerKVEngine::haveDropsQueued() const {
     Date_t now = _clockSource->now();
     Milliseconds delta = now - _previousCheckedDropsQueued;
 
-    if (!_readOnly && _sizeStorerSyncTracker.intervalHasElapsed()) {
+    if (!_readOnly && _sizeStorerSyncTracker.intervalHasElapsed()) { //定时时间到
         _sizeStorerSyncTracker.resetLastTime();
         syncSizeInfo(false);
     }

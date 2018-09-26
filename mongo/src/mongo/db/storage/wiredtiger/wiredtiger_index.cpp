@@ -1119,6 +1119,7 @@ public:
 
 }  // namespace
 
+//WiredTigerKVEngine::getGroupedSortedDataInterface中new该类
 WiredTigerIndexUnique::WiredTigerIndexUnique(OperationContext* ctx,
                                              const std::string& uri,
                                              const IndexDescriptor* desc,
@@ -1307,7 +1308,7 @@ void WiredTigerIndexUnique::_unindex(WT_CURSOR* c,
 }
 
 // ------------------------------
-
+//WiredTigerKVEngine::getGroupedSortedDataInterface中new该类
 WiredTigerIndexStandard::WiredTigerIndexStandard(OperationContext* ctx,
                                                  const std::string& uri,
                                                  const IndexDescriptor* desc,

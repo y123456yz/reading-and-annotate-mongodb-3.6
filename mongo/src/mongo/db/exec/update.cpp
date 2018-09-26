@@ -447,6 +447,7 @@ BSONObj UpdateStage::applyUpdateOpsForInsert(OperationContext* opCtx,
     return newObj;
 }
 
+
 void UpdateStage::doInsert() {
     _specificStats.inserted = true;
 
@@ -473,6 +474,7 @@ void UpdateStage::doInsert() {
     }
 
     writeConflictRetry(getOpCtx(), "upsert", _collection->ns().ns(), [&] {
+		//server层执行一个写操作的事务   http://www.mongoing.com/archives/5476
         WriteUnitOfWork wunit(getOpCtx());
         invariant(_collection);
         const bool enforceQuota = !request->isGod();
@@ -484,7 +486,7 @@ void UpdateStage::doInsert() {
 
         // Technically, we should save/restore state here, but since we are going to return
         // immediately after, it would just be wasted work.
-        wunit.commit(); //WriteUnitOfWork::commit
+        wunit.commit(); //WriteUnitOfWork::commit   相当于Wt_session.commit_transaction
     });
 }
 
