@@ -39,8 +39,9 @@ namespace mongo {
 class ClockSource;
 
 /** Keep track of elapsed time. After a set amount of time, tells you to do something. */
-class ElapsedTracker {
+class ElapsedTracker { //定时器相关 http://www.mongoing.com/archives/5476
 public:
+    //
     ElapsedTracker(ClockSource* cs, int32_t hitsBetweenMarks, Milliseconds msBetweenMarks);
 
     /**

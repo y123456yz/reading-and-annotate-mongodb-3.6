@@ -287,9 +287,11 @@ private:
     std::string _canonicalName;
     std::string _path;
     std::string _wtOpenConfig;
-
+    
     std::unique_ptr<WiredTigerSizeStorer> _sizeStorer;
     std::string _sizeStorerUri;
+    //WiredTigerKVEngine::WiredTigerKVEngine中赋值
+    //例如内存数据的落地通过_sizeStorerSyncTracker(cs, 100000, Seconds(60))定时器触发
     mutable ElapsedTracker _sizeStorerSyncTracker;
 
     bool _durable;

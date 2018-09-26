@@ -48,7 +48,11 @@ sizeStorer.wtÀï´æ´¢ËùÓĞ¼¯ºÏµÄÈİÁ¿ĞÅÏ¢£¬ÈçÎÄµµÊı¡¢ÎÄµµ×Ü´óĞ¡µÈ£¬µ±²åÈë¡¢É¾³ı¡¢¸üĞ
 »áÏÈcacheµ½ÄÚ´æ£¬Ã»²Ù×÷1000´Î»áË¢ÅÌÒ»´Î£»mongod½ø³Ìcrash¿ÉÄÜµ¼ÖÂsizeStorer.wtÀïµÄÊı¾İÓëÊµ¼ÊĞÅÏ¢²»Æ¥Åä£¬
 ¿ÉÍ¨¹ıvalidate()ÃüÁîÀ´ÖØĞÂÉ¨Ãè¼¯ºÏÒÔ¶©ÕıÍ³¼ÆĞÅÏ¢¡£
 */
-//WiredTigerRecordStoreÀàÖĞ°üº¬¸ÃÀàĞÍ³ÉÔ±
+/*
+mongodbÊ¹ÓÃWiredTigerSizeStorer×ö±íµÄ¸¨ÖúĞÅÏ¢µÄÄÚ´æ»º´æ¡£DML²Ù×÷ÒıÆğµÄ¸¨ÖúĞÅÏ¢±ä»¯£¬²»»áÖ±½Ó·´À¡µ½WiredTiger²ã¡£
+¶øÊÇcacheÔÚÄÚ´æÀï£¬±ê¼ÇÎªdirty¡£db.coll.count()²Ù×÷Ò²Ö»ÊÇ¶ÁÄÚ´æÊı¾İ¡£
+*/ 
+//WiredTigerRecordStoreÀàÖĞ°üº¬¸ÃÀàĞÍ³ÉÔ±   //WiredTigerKVEngine._sizeStorer   WiredTigerSizeStorer.sizeStorer
 class WiredTigerSizeStorer {
 public:
     WiredTigerSizeStorer(WT_CONNECTION* conn,
@@ -77,11 +81,11 @@ public:
 private:
     void _checkMagic() const;
 
-    struct Entry {
+    struct Entry { //ÏÂÃæµÄMap _entries;ÓÃµ½¸Ã½á¹¹
         Entry() : numRecords(0), dataSize(0), dirty(false), rs(NULL) {}
         long long numRecords;
         long long dataSize;
-        bool dirty;
+        bool dirty; //±ê¼ÇÊÇ·ñÓĞdirtyÊı¾İ£¬synµ½´ÅÅÌºóÖ°Î»false
         WiredTigerRecordStore* rs;  // not owned
     };
 
@@ -93,6 +97,8 @@ private:
     WT_CURSOR* _cursor;  // pointer is const after constructor
 
     typedef std::map<std::string, Entry> Map;
+    //_entries map±íÖĞµÄÄÚ´æÄÚÈİÔÚWiredTigerSizeStorer::syncCacheÖĞÍ¬²½µ½wiredtiger²ã
+    //Ã¿¸ô60ÃëÍ¬²½Ò»´Î¡£½«dirty entry¸üĞÂµ½wt²ã,¶¨Ê±Æ÷ÊµÏÖ¼û_sizeStorerSyncTracker
     Map _entries;
     mutable stdx::mutex _entriesMutex;
 };

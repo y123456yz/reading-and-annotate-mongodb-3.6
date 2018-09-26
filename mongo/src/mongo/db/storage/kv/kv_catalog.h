@@ -46,7 +46,8 @@ namespace mongo {
 class OperationContext;
 class RecordStore;
 
-class KVCatalog {
+//KVStorageEngine::KVStorageEngine中构造初始化，赋值给_catalog.KVStorageEngine.
+class KVCatalog { //collection对应的文件名字相关
 public:
     class FeatureTracker;
 
@@ -114,7 +115,7 @@ private:
     static std::string _newRand();
     bool _hasEntryCollidingWithRand() const;
 
-    RecordStore* _rs;  // not owned
+    RecordStore* _rs;  // not owned   对应WiredTigerRecordStore
     const bool _directoryPerDb;
     const bool _directoryForIndexes;
 
@@ -125,10 +126,11 @@ private:
     struct Entry {
         Entry() {}
         Entry(std::string i, RecordId l) : ident(i), storedLoc(l) {}
-        std::string ident;
+        std::string ident; //collection对应的文件名字（ident）  _newUniqueIdent生成
         RecordId storedLoc;
     };
     typedef std::map<std::string, Entry> NSToIdentMap;
+    //所有集合信息存到这里面
     NSToIdentMap _idents;
     mutable stdx::mutex _identsLock;
 

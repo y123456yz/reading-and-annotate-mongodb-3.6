@@ -68,6 +68,8 @@ class WiredTigerSizeStorer;
 
 extern const std::string kWiredTigerEngineName;
 
+//WiredTigerSizeStorer.Entry *rs为该类型
+//StandardWiredTigerRecordStore和PrefixedWiredTigerRecordStore继承该类
 class WiredTigerRecordStore : public RecordStore {
     friend class WiredTigerRecordStoreCursorBase;
 

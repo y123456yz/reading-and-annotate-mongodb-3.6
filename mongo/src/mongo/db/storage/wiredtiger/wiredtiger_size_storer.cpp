@@ -117,7 +117,7 @@ void WiredTigerSizeStorer::onDestroy(WiredTigerRecordStore* rs) {
     entry.rs = NULL;
 }
 
-
+//修改_entries[uri]的值，也就是修改内存中的值
 void WiredTigerSizeStorer::storeToCache(StringData uri, long long numRecords, long long dataSize) {
     _checkMagic();
     stdx::lock_guard<stdx::mutex> lk(_entriesMutex);
@@ -126,7 +126,8 @@ void WiredTigerSizeStorer::storeToCache(StringData uri, long long numRecords, lo
     entry.dataSize = dataSize;
     entry.dirty = true;
 }
-
+ 
+//获取_entries[uri]的内容返回  WiredTigerRecordStore::postConstructorInit中调用
 void WiredTigerSizeStorer::loadFromCache(StringData uri,
                                          long long* numRecords,
                                          long long* dataSize) const {
@@ -179,6 +180,8 @@ void WiredTigerSizeStorer::fillCache() {
     _entries.swap(m);
 }
 
+//同步到wiredtiger层  参考http://www.mongoing.com/archives/5476
+//WiredTigerKVEngine::syncSizeInfo中调用
 void WiredTigerSizeStorer::syncCache(bool syncToDisk) {
     stdx::lock_guard<stdx::mutex> cursorLock(_cursorMutex);
     _checkMagic();
@@ -209,6 +212,7 @@ void WiredTigerSizeStorer::syncCache(bool syncToDisk) {
     if (myMap.empty())
         return;  // Nothing to do.
 
+	//把numRecords和datasize更新到wiredtiger
     WT_SESSION* session = _session.getSession();
     invariantWTOK(session->begin_transaction(session, syncToDisk ? "sync=true" : ""));
     ScopeGuard rollbacker = MakeGuard(session->rollback_transaction, session, "");

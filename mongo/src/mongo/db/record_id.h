@@ -42,7 +42,7 @@ namespace mongo {
 
 /**
  * The key that uniquely identifies a Record in a Collection or RecordStore.
- */ //struct Record{}结构体包含该结构成员  记录"_id"
+ */ //struct Record{}结构体包含该结构成员  
 class RecordId {
 public:
     /**

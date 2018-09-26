@@ -45,6 +45,7 @@ ElapsedTracker::ElapsedTracker(ClockSource* cs,
       _pings(0),
       _last(cs->now()) {}
 
+//定时时间到  参考WiredTigerKVEngine::haveDropsQueued
 bool ElapsedTracker::intervalHasElapsed() {
     if (++_pings >= _hitsBetweenMarks) {
         _pings = 0;
