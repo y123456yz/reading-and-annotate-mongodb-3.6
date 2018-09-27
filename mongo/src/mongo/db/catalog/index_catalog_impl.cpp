@@ -332,6 +332,11 @@ StatusWith<BSONObj> IndexCatalogImpl::prepareSpecForCreate(OperationContext* opC
     return fixed;
 }
 
+/*
+db/catalog/collection_impl.cpp:        status = _indexCatalog.createIndexOnEmptyCollection(opCtx, indexSpecs[i]).getStatus();
+db/catalog/database_impl.cpp:                fullIdIndexSpec = uassertStatusOK(ic->createIndexOnEmptyCollection(
+
+*/ //DatabaseImpl::createCollection  CollectionImpl::truncate中调用执行
 StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationContext* opCtx,
                                                                    BSONObj spec) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().toString(), MODE_X));
@@ -357,7 +362,7 @@ StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationCont
 
     // now going to touch disk
     IndexBuildBlock indexBuildBlock(opCtx, _collection, spec);
-    status = indexBuildBlock.init();
+    status = indexBuildBlock.init(); //建索引
     if (!status.isOK())
         return status;
 
@@ -391,6 +396,7 @@ IndexCatalogImpl::IndexBuildBlock::IndexBuildBlock(OperationContext* opCtx,
     invariant(collection);
 }
 
+//DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 Status IndexCatalogImpl::IndexBuildBlock::init() {
     // need this first for names, etc...
     BSONObj keyPattern = _spec.getObjectField("key");
@@ -402,6 +408,7 @@ Status IndexCatalogImpl::IndexBuildBlock::init() {
 
     /// ----------   setup on disk structures ----------------
 
+	//KVCollectionCatalogEntry::prepareForIndexBuild
     Status status = _collection->getCatalogEntry()->prepareForIndexBuild(_opCtx, descriptor.get());
     if (!status.isOK())
         return status;
@@ -437,6 +444,7 @@ void IndexCatalogImpl::IndexBuildBlock::fail() {
     }
 }
 
+//IndexCatalogImpl::createIndexOnEmptyCollection调用  检查索引是否创建成功
 void IndexCatalogImpl::IndexBuildBlock::success() {
     Collection* collection = _catalog->_getCollection();
     fassert(17207, collection->ok());

@@ -1219,14 +1219,14 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     if (shouldLogOpDebug || (shouldSample && debug.executionTimeMicros > logThresholdMs * 1000LL)) {
         Locker::LockerInfo lockerInfo;
         opCtx->lockState()->getLockerInfo(&lockerInfo);
-        log() << debug.report(&c, currentOp, lockerInfo.stats);
+        log() << debug.report(&c, currentOp, lockerInfo.stats); //记录慢日志到日志文件
     }
 
 	/*
 	//该操作将被记录,原因可能有二:
 	一,启动时设置--profile 2,则所有操作将被记录.
 	二,启动时设置--profile 1,且操作时间超过了默认的slowMs,那么操作将被else {//这个地方if部分被删除了,就是在不能获取锁的状况下不记录该操作的代码  
-	*/
+	*/ 
     if (currentOp.shouldDBProfile(shouldSample)) {
         // Performance profiling is on
         if (opCtx->lockState()->isReadLocked()) {
@@ -1238,7 +1238,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         } else if (storageGlobalParams.readOnly) {
             LOG(1) << "note: not profiling because server is read-only";
         } else {
-            profile(opCtx, op);
+            profile(opCtx, op); //db.system.profile.find().pretty()中查看，记录慢日志到这个集合
         }
     }
 

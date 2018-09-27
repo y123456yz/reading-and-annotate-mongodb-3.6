@@ -177,7 +177,7 @@ void assertCanWrite_inlock(OperationContext* opCtx, const NamespaceString& ns) {
     CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
 }
 
-//创建集合
+//创建集合 //insertBatchAndHandleErrors->makeCollection
 void makeCollection(OperationContext* opCtx, const NamespaceString& ns) {
     writeConflictRetry(opCtx, "implicit collection creation", ns.ns(), [&opCtx, &ns] {
         AutoGetOrCreateDb db(opCtx, ns.db(), MODE_X);
@@ -358,7 +358,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
                 break;
 
             collection.reset();  // unlock.  没有则创建集合
-            makeCollection(opCtx, wholeOp.getNamespace());
+            makeCollection(opCtx, wholeOp.getNamespace()); 
         }
 
         curOp.raiseDbProfileLevel(collection->getDb()->getProfilingLevel());

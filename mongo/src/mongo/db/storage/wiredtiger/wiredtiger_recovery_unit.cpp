@@ -317,7 +317,7 @@ void WiredTigerRecoveryUnit::beginIdle() {
 }
 
 // ---------------------
-
+//例如WiredTigerRecordStore::_insertRecords会调用
 WiredTigerCursor::WiredTigerCursor(const std::string& uri,
                                    uint64_t tableId,
                                    bool forRecordStore,

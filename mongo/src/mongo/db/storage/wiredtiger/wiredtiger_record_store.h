@@ -302,7 +302,7 @@ private:
     RecordData _getData(const WiredTigerCursor& cursor) const;
 
 
-    const std::string _uri;
+    const std::string _uri; //∂‘”¶table√˚
     const uint64_t _tableId;  // not persisted
 
     // Canonical engine name to use for retrieving options

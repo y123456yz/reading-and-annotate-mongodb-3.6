@@ -155,7 +155,7 @@ Status IndexAccessMethod::insert(OperationContext* opCtx,
 
     Status ret = Status::OK();
     for (BSONObjSet::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		//SortedDataInterface    WiredTigerIndex::insert
+		//SortedDataInterface    WiredTigerIndex::insert  Ð´Èëwiredtiger
         Status status = _newInterface->insert(opCtx, *i, loc, options.dupsAllowed);
 
         // Everything's OK, carry on.

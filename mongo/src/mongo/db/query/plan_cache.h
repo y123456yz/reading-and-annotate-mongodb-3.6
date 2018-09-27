@@ -287,7 +287,7 @@ public:
  * mapping, the cache contains information on why that mapping was made and statistics on the
  * cache entry's actual performance on subsequent runs.
  *
- */
+ */ //plancacheø…“‘≤Œøºhttps://segmentfault.com/a/1190000015236644   CollectionInfoCacheImpl._planCache
 class PlanCache {
 private:
     MONGO_DISALLOW_COPYING(PlanCache);

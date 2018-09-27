@@ -192,6 +192,10 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
     return it->second->getRecordStore();
 }
 
+
+//insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
+//->DatabaseImpl::createCollection->Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection
+// Collection* createCollection调用
 Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
                                                     StringData ns,
                                                     const CollectionOptions& options,
@@ -209,14 +213,17 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 
     KVPrefix prefix = KVPrefix::getNextPrefix(NamespaceString(ns));
 
-    // need to create it
+	//将collection的ns、ident存储到元数据文件_mdb_catalog中。
+    // need to create it  调用KVCatalog::newCollection 创建wiredtiger 数据文件
     Status status = _engine->getCatalog()->newCollection(opCtx, ns, options, prefix);
     if (!status.isOK())
         return status;
 
-    string ident = _engine->getCatalog()->getCollectionIdent(ns);
-
-	//WiredTigerKVEngine::createGroupedRecordStore
+    string ident = _engine->getCatalog()->getCollectionIdent(ns); //获取文件名
+	
+	//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  
+	//WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
+	//创建集合对应的wiredtiger .wt文件，同时创建对应的目录
     status = _engine->getEngine()->createGroupedRecordStore(opCtx, ns, ident, options, prefix);
     if (!status.isOK())
         return status;
@@ -236,6 +243,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
     invariant(rs);
 
+	//存到mapp表中
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 

@@ -98,6 +98,7 @@ protected:
     
     //KVDatabaseCatalogEntryBase::KVDatabaseCatalogEntryBase, wiredtiger对应WiredTigerKVEngine
     KVStorageEngine* const _engine;  // not owned here
+    //KVDatabaseCatalogEntryBase::createCollection中赋值，对应集合信息
     CollectionMap _collections;
 };
 }  // namespace mongo

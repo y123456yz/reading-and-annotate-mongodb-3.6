@@ -126,7 +126,7 @@ private:
     struct Entry {
         Entry() {}
         Entry(std::string i, RecordId l) : ident(i), storedLoc(l) {}
-        std::string ident; //collection对应的文件名字（ident）  _newUniqueIdent生成
+        std::string ident; //collection对应的文件名字（ident）   _newUniqueIdent生成
         RecordId storedLoc;
     };
     typedef std::map<std::string, Entry> NSToIdentMap;

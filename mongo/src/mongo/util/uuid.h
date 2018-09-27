@@ -49,7 +49,7 @@ class OplogEntryBase;
  * A UUID is a 128-bit unique identifier, per RFC 4122, v4, using
  * a secure random number generator.
  */
-class UUID {
+class UUID { ////NamespaceUUIDCache._cache
     using UUIDStorage = std::array<unsigned char, 16>;
 
     // Make the IDL generated parser a friend

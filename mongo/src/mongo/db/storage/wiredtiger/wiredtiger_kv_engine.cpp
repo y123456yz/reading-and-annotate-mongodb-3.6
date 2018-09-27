@@ -689,7 +689,9 @@ void WiredTigerKVEngine::setSortedDataInterfaceExtraOptions(const std::string& o
 /* 调用的地方如下:
 KVDatabaseCatalogEntryBase::createCollection
 KVStorageEngine::KVStorageEngine
-*/
+*/ 
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
+//创建集合对应的wiredtiger .wt文件，同时创建对应的目录
 Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
                                                     StringData ns,
                                                     StringData ident,
@@ -715,7 +717,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
 	// WiredTigerKVEngine::createRecordStore ns: test.test uri: table:test/collection/4--6382651395048738792 
 	//config: type=file,memory_page_max=10m,split_pct=90,leaf_value_max=64MB,checksum=on,block_compressor=snappy,
 	//,key_format=q,value_format=u,app_metadata=(formatVersion=1),log=(enabled=true)
-    LOG(2) << "WiredTigerKVEngine::createRecordStore ns: " << ns << " uri: " << uri
+    LOG(2) << "WiredTigerKVEngine::createGroupedRecordStore ns: " << ns << " uri: " << uri
            << " config: " << config;
 	//对应wiredtiger session->create
     return wtRCToStatus(s->create(s, uri.c_str(), config.c_str()));
@@ -765,7 +767,10 @@ string WiredTigerKVEngine::_uri(StringData ident) const {
     return string("table:") + ident.toString();
 }
 
-//创建wiredtiger索引
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
+//创建wiredtiger索引文件
+//DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
+//->KVCollectionCatalogEntry::prepareForIndexBuild中执行
 Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* opCtx,
                                                             StringData ident,
                                                             const IndexDescriptor* desc,
@@ -805,6 +810,7 @@ Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* op
 	*/
     LOG(2) << "WiredTigerKVEngine::createSortedDataInterface ns: " << collection->ns()
            << " ident: " << ident << " config: " << config;
+	//WiredTigerIndex::Create
     return wtRCToStatus(WiredTigerIndex::Create(opCtx, _uri(ident), config));
 }
 
@@ -986,6 +992,11 @@ int WiredTigerKVEngine::reconfigure(const char* str) {
     return _conn->reconfigure(_conn, str);
 }
 
+/*
+2018-09-27T11:41:42.574+0800 D STORAGE  [conn1] creating subdirectory: test
+2018-09-27T11:41:42.575+0800 D STORAGE  [conn1] creating subdirectory: test/collection
+*/
+//创建目录，根据ident创建
 void WiredTigerKVEngine::_checkIdentPath(StringData ident) {
     size_t start = 0;
     size_t idx;

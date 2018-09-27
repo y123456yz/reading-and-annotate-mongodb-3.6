@@ -63,7 +63,7 @@ public:
 
     OperationContext* const _opCtx;
     KVCollectionCatalogEntry* const _cce;
-    const std::string _ident;
+    const std::string _ident; //.wt文件名
 };
 
 class KVCollectionCatalogEntry::RemoveIndexChange : public RecoveryUnit::Change {
@@ -83,7 +83,7 @@ public:
     const std::string _ident;
 };
 
-
+//KVDatabaseCatalogEntryBase::createCollection中new对象
 KVCollectionCatalogEntry::KVCollectionCatalogEntry(KVEngine* engine,
                                                    KVCatalog* catalog,
                                                    StringData ns,
@@ -177,6 +177,9 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
     return Status::OK();
 }
 
+//
+//DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
+//->KVCollectionCatalogEntry::prepareForIndexBuild
 Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
                                                       const IndexDescriptor* spec) {
     MetaData md = _getMetaData(opCtx);

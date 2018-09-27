@@ -349,7 +349,12 @@ void KVCatalog::getAllCollections(std::vector<std::string>* out) const {
 /*
 KVCatalog::newCollection()函数会调用_newUniqueIdent()函数获得collection对应的文件名字（ident），并且，
 会将collection的ns、ident存储到元数据文件_mdb_catalog中。
-*/
+*/ 
+//insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
+//->DatabaseImpl::createCollection->Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection
+
+//CollectionImpl::_insertDocuments(插入数据)   KVCatalog::newCollection(记录集合元数据到_mdb_catalog.wt)中执行  
+//KVDatabaseCatalogEntryBase::createCollection中执行                                      
 Status KVCatalog::newCollection(OperationContext* opCtx,
                                 StringData ns,
                                 const CollectionOptions& options,
@@ -381,7 +386,11 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
     const bool enforceQuota = false;
     // TODO SERVER-30638: using timestamp 0 for these inserts.
     StatusWith<RecordId> res = 
-    	//WiredTigerRecordStore::_insertRecords
+    	//WiredTigerRecordStore::_insertRecords  记录collection元数据到_mdb_catalog.wt，数据内容如下:
+    	/*
+		stored meta data for test.coll @ RecordId(4) 
+		obj:{ ns: "test.coll", ident: "test/collection/4-7637131936287447509", md: { ns: "test.coll", options: { uuid: UUID("440d1a2b-5122-40e9-b0c0-7ec58f072055") }, indexes: [], prefix: -1 } }
+	    */
         _rs->insertRecord(opCtx, obj.objdata(), obj.objsize(), Timestamp(), enforceQuota);
     if (!res.isOK())
         return res.getStatus();
@@ -391,6 +400,7 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
+//获取wt文件名
 std::string KVCatalog::getCollectionIdent(StringData ns) const {
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
     NSToIdentMap::const_iterator it = _idents.find(ns.toString());

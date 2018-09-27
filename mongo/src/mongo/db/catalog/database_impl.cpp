@@ -105,6 +105,7 @@ void uassertNamespaceNotIndex(StringData ns, StringData caller) {
             NamespaceString::normal(ns));
 }
 
+//DatabaseImpl::createCollection中new该类
 class DatabaseImpl::AddCollectionChange : public RecoveryUnit::Change {
 public:
     AddCollectionChange(OperationContext* opCtx, DatabaseImpl* db, StringData ns)
@@ -767,6 +768,8 @@ Status DatabaseImpl::createView(OperationContext* opCtx,
     return _views.createView(opCtx, nss, viewOnNss, BSONArray(options.pipeline), options.collation);
 }
 
+//insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl->DatabaseImpl::createCollection
+//在wiredtiger创建集合和索引
 Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
                                            StringData ns,
                                            const CollectionOptions& options,
@@ -815,6 +818,8 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
         log() << "createCollection: " << ns << " with no UUID.";
     }
 
+	//Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection 
+	//通知wiredtiger创建collection对应的目录文件 
     massertStatusOK(
         _dbEntry->createCollection(opCtx, ns, optionsWithUUID, true /*allocateDefaultSpace*/));
 
@@ -833,6 +838,8 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
                 const auto featureCompatibilityVersion =
                     serverGlobalParams.featureCompatibility.getVersion();
                 IndexCatalog* ic = collection->getIndexCatalog();
+				//IndexCatalogImpl::createIndexOnEmptyCollection
+				//建id索引
                 fullIdIndexSpec = uassertStatusOK(ic->createIndexOnEmptyCollection(
                     opCtx,
                     !idIndex.isEmpty() ? idIndex
@@ -994,6 +1001,7 @@ void mongo::dropAllDatabasesExceptLocalImpl(OperationContext* opCtx) {
     }
 }
 
+//insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
 //mongo::userCreateNS中执行，创建集合
 auto mongo::userCreateNSImpl(OperationContext* opCtx,
                              Database* db,
@@ -1109,7 +1117,7 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
     if (collectionOptions.isView()) {
         invariant(parseKind == CollectionOptions::parseForCommand);
         uassertStatusOK(db->createView(opCtx, ns, collectionOptions));
-    } else { //DatabaseImpl::createCollection
+    } else { //DatabaseImpl::createCollection 创建集合
         invariant(
             db->createCollection(opCtx, ns, collectionOptions, createDefaultIndexes, idIndex));
     }

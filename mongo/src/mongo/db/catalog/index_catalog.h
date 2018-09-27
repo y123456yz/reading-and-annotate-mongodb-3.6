@@ -442,7 +442,7 @@ public:
      * Call this only on an empty collection from inside a WriteUnitOfWork. Index creation on an
      * empty collection can be rolled back as part of a larger WUOW. Returns the full specification
      * of the created index, as it is stored in this index catalog.
-     */ //给集合建索引
+     */ //给集合建索引 IndexCatalogImpl::createIndexOnEmptyCollection
     inline StatusWith<BSONObj> createIndexOnEmptyCollection(OperationContext* const opCtx,
                                                             const BSONObj spec) {
         return this->_impl().createIndexOnEmptyCollection(opCtx, spec);

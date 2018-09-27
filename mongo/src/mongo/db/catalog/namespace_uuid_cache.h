@@ -45,7 +45,7 @@ extern bool debugCollectionUUIDs;
 using CollectionUUID = UUID;
 class Database;
 
-class NamespaceUUIDCache {
+class NamespaceUUIDCache { 
     MONGO_DISALLOW_COPYING(NamespaceUUIDCache);
 
 public:
@@ -82,6 +82,7 @@ public:
     }
 
 private:
+    //记录collection和UUID的对应关系
     using CollectionUUIDMap = StringMap<CollectionUUID>;
     CollectionUUIDMap _cache;
 };

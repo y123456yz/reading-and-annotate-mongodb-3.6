@@ -190,6 +190,7 @@ StatusWith<BSONObj> WiredTigerUtil::getApplicationMetadata(OperationContext* opC
     return StatusWith<BSONObj>(bob.obj());
 }
 
+//版本检查 WiredTigerIndex::WiredTigerIndex  WiredTigerRecordStore::WiredTigerRecordStore中调用执行
 StatusWith<int64_t> WiredTigerUtil::checkApplicationMetadataFormatVersion(OperationContext* opCtx,
                                                                           StringData uri,
                                                                           int64_t minimumVersion,

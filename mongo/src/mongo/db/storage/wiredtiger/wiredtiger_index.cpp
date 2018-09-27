@@ -253,6 +253,7 @@ int WiredTigerIndex::Create(OperationContext* opCtx,
     return s->create(s, uri.c_str(), config.c_str());
 }
 
+//WiredTigerIndexUnique::WiredTigerIndexUnique中初始化调用
 WiredTigerIndex::WiredTigerIndex(OperationContext* ctx,
                                  const std::string& uri,
                                  const IndexDescriptor* desc,
@@ -290,7 +291,7 @@ WiredTigerIndex::WiredTigerIndex(OperationContext* ctx,
     }
 }
 
-//数据插入走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
+//数据插入(包括元数据文件_mdb_catalog.wt和普通集合数据文件)走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
 //IndexAccessMethod::insert调用执行
 Status WiredTigerIndex::insert(OperationContext* opCtx,
                                const BSONObj& key,
@@ -1149,7 +1150,8 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
     KeyString value(keyStringVersion(), id);
     if (!data.getTypeBits().isAllZeros())
         value.appendTypeBits(data.getTypeBits());
-
+	log(1) << "yang test WiredTigerIndexUnique::_insert key: " << redact(key);  
+	
     WiredTigerItem valueItem(value.getBuffer(), value.getSize());
     setKey(c, keyItem.Get());
     c->set_value(c, valueItem.Get());
@@ -1337,7 +1339,8 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
     invariant(dupsAllowed);
 
     TRACE_INDEX << " key: " << keyBson << " id: " << id;
-
+	log() << "WT index (" << (const void*)this << ") "
+	log(1) << "yang test WiredTigerIndexStandard::_insert key: " << redact(keyBson);
     KeyString key(keyStringVersion(), keyBson, _ordering, id);
     WiredTigerItem keyItem(key.getBuffer(), key.getSize());
 

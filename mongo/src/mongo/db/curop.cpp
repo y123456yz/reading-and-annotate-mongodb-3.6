@@ -417,6 +417,10 @@ StringData getProtoString(int op) {
     if (x)                            \
     s << " " #x ":" << (x)
 
+/*
+command test.coll appName: "MongoDB Shell" command: insert { insert: "coll", ordered: true, $db: "test" } ninserted:1 keysInserted:1 numYields:0 reslen:29 locks:{ Global: { acquireCount: { r: 3, w: 3 } }, Database: { acquireCount: { w: 2, W: 1 } }, Collection: { acquireCount: { w: 2 } } } protocol:op_msg 109ms
+慢日志记录 
+*/ //ServiceEntryPointMongod::handleRequest中执行，拼接日志字符串
 string OpDebug::report(Client* client,
                        const CurOp& curop,
                        const SingleThreadedLockStats& lockStats) const {
