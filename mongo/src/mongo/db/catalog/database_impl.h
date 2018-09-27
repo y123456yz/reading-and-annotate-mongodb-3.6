@@ -276,7 +276,7 @@ private:
     class RemoveCollectionChange;
 
     const std::string _name;  // "dbname"
-
+    //DatabaseImpl::DatabaseImpl
     DatabaseCatalogEntry* _dbEntry;  // not owned here
 
     const std::string _profileName;      // "dbname.system.profile"

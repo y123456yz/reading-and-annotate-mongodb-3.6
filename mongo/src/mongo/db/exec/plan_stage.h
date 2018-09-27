@@ -102,7 +102,7 @@ class RecordId;
  *         stage->restoreState();
  *     }
  * }
- */
+ */ //CachedPlanStage»ù´¡¸ÃÀà
 class PlanStage {
 public:
     PlanStage(const char* typeName, OperationContext* opCtx)

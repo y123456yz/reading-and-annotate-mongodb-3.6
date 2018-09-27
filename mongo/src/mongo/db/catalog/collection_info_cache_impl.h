@@ -124,7 +124,7 @@ private:
     bool _keysComputed;
     UpdateIndexData _indexedPaths;
 
-    // A cache for query plans.
+    // A cache for query plans.  
     std::unique_ptr<PlanCache> _planCache;
 
     // Query settings.

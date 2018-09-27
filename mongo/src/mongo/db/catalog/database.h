@@ -287,11 +287,14 @@ public:
         return this->_impl().dropView(opCtx, fullns);
     }
 
+    ////DatabaseImpl::createCollection调用该接口
     inline Collection* createCollection(OperationContext* const opCtx,
                                         StringData ns,
                                         const CollectionOptions& options = CollectionOptions(),
                                         const bool createDefaultIndexes = true,
                                         const BSONObj& idIndex = BSONObj()) {
+        //KVDatabaseCatalogEntryBase::createCollection
+        //KVDatabaseCatalogEntryBase::createCollection  
         return this->_impl().createCollection(opCtx, ns, options, createDefaultIndexes, idIndex);
     }
 

@@ -43,6 +43,8 @@ namespace mongo {
 class IndexDescriptor;
 class OperationContext;
 
+//KVCollectionCatalogEntryºÃ≥–BSONCollectionCatalogEntry£¨BSONCollectionCatalogEntryºÃ≥–CollectionCatalogEntry
+//NamespaceDetailsCollectionCatalogEntryºÃ≥–∏√¿‡
 class CollectionCatalogEntry {
 public:
     CollectionCatalogEntry(StringData ns) : _ns(ns) {}

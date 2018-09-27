@@ -142,6 +142,7 @@ void profile(OperationContext* opCtx, NetworkOp op) {
             if (coll) {
                 WriteUnitOfWork wuow(opCtx);
                 OpDebug* const nullOpDebug = nullptr;
+				//写入system.profile慢日志集合
                 coll->insertDocument(opCtx, InsertStatement(p), nullOpDebug, false)
                     .transitional_ignore();
                 wuow.commit();

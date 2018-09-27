@@ -1090,7 +1090,7 @@ void WiredTigerRecordStore::reclaimOplog(OperationContext* opCtx) {
            << " records totaling to " << _dataSize.load() << " bytes";
 }
 
-//CollectionImpl::_insertDocuments中执行   
+//CollectionImpl::_insertDocuments(插入数据)   KVCatalog::newCollection(记录集合元数据到_mdb_catalog.wt)中执行   
 //WiredTigerRecordStore::insertRecords  id索引擦入wiredtiger  IndexCatalogImpl::indexRecords 其他索引插入
 Status WiredTigerRecordStore::insertRecords(OperationContext* opCtx,
                                             std::vector<Record>* records,
@@ -1100,7 +1100,8 @@ Status WiredTigerRecordStore::insertRecords(OperationContext* opCtx,
 }
 //WiredTigerRecordStore::insertRecords
 
-//数据插入走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
+//数据插入(包括元数据文件_mdb_catalog.wt和普通集合数据文件)走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
+//写数据文件 索引文件
 Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
                                              Record* records,
                                              const Timestamp* timestamps,
@@ -1166,7 +1167,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
-		log() << "yang test ......WiredTigerRecordStore::_insertRecords .......... nrecord:" <<nRecords <<" key:" << record.id << " value:" << record.data.data() << "\r\n";
+		log() << "yang test ......WiredTigerRecordStore::_insertRecords .......... _uri:" << _uri <<" key:" << record.id << "\r\n";
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

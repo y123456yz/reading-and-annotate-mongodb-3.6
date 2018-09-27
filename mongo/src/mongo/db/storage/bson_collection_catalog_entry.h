@@ -42,7 +42,7 @@ namespace mongo {
 /**
  * This is a helper class for any storage engine that wants to store catalog information
  * as BSON. It is totally optional to use this.
- */
+ */ //KVCollectionCatalogEntry¼Ì³ÐBSONCollectionCatalogEntry£¬BSONCollectionCatalogEntry¼Ì³ÐCollectionCatalogEntry
 class BSONCollectionCatalogEntry : public CollectionCatalogEntry {
 public:
     BSONCollectionCatalogEntry(StringData ns);

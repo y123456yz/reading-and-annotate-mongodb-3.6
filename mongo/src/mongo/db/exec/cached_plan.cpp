@@ -71,6 +71,24 @@ CachedPlanStage::CachedPlanStage(OperationContext* opCtx,
     _children.emplace_back(root);
 }
 
+/*
+MongoDB是如何选择索引最后生成最优的执行计划，那MongoDB会将最优的执行计划缓存到cache中，
+等待下次同样的SQL执行的时候会采用cache中的执行计划，但是在MongoDB中， 它并不是直接就采用了
+cache中的计划，而是有一些条件去判断，下面我们来看看MongoDB是如何判断的？
+
+在CachedPlanStage::pickBestPlan方法中，MongoDB会决定该SQL是继续采用cache中的执行计划，还是需要重新生成执行计划。
+
+CachedPlanStage::pickBestPlan主要逻辑如下：
+
+以Cache中执行计划的索引命中数量（works）*10=需要扫描的数量（B次）
+继续用该索引扫描B次,扫描的过程中有如下几种情况：
+索引每次扫描出来会去扫描collection，collection根据筛选条件如果能拿到记录，则返回advanced，如果返回的advanced累积次数超过101次，则继续用该执行计划。
+索引扫描该字段的命中数量少于B次，则最终肯定会达到IS_EOF状态，这个时候还是继续用缓存中的执行计划。
+如果扫描完了B次，但是发现返回advanced累积次数没有达到101次，则会重新生成执行计划
+如果在扫描过程遇见错误，则会返回FAILURE，也会触发重新生成执行计划
+
+参考:https://segmentfault.com/a/1190000015236644
+*/
 Status CachedPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // Adds the amount of time taken by pickBestPlan() to executionTimeMillis. There's lots of
     // execution work that happens here, so this is needed for the time accounting to

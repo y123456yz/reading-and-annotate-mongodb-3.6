@@ -42,6 +42,7 @@ namespace mongo {
 class KVCatalog;
 class KVEngine;
 
+//KVDatabaseCatalogEntryBase::createCollection中new改对象  KVDatabaseCatalogEntryBase._collections
 class KVCollectionCatalogEntry final : public BSONCollectionCatalogEntry {
 public:
     KVCollectionCatalogEntry(KVEngine* engine,
