@@ -192,9 +192,12 @@ Status verifySystemIndexes(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//DatabaseImpl::createCollection中执行
+//wiredtiger创建普通索引文件
 void createSystemIndexes(OperationContext* opCtx, Collection* collection) {
     invariant(collection);
     const NamespaceString& ns = collection->ns();
+	log() << "yang test ..... createSystemIndexes";
     if (ns == AuthorizationManager::usersCollectionNamespace) {
         auto indexSpec = fassertStatusOK(
             40455,
@@ -203,7 +206,7 @@ void createSystemIndexes(OperationContext* opCtx, Collection* collection) {
                                                   ns,
                                                   serverGlobalParams.featureCompatibility));
 
-        fassertStatusOK(
+        fassertStatusOK( //IndexCatalogImpl::createIndexOnEmptyCollection
             40456, collection->getIndexCatalog()->createIndexOnEmptyCollection(opCtx, indexSpec));
     } else if (ns == AuthorizationManager::rolesCollectionNamespace) {
         auto indexSpec = fassertStatusOK(
@@ -213,7 +216,7 @@ void createSystemIndexes(OperationContext* opCtx, Collection* collection) {
                                                   ns,
                                                   serverGlobalParams.featureCompatibility));
 
-        fassertStatusOK(
+        fassertStatusOK( //IndexCatalogImpl::createIndexOnEmptyCollection
             40458, collection->getIndexCatalog()->createIndexOnEmptyCollection(opCtx, indexSpec));
     }
 }
