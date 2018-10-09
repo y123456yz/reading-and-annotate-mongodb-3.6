@@ -1098,6 +1098,10 @@ Status WiredTigerRecordStore::insertRecords(OperationContext* opCtx,
                                             bool enforceQuota) {
     return _insertRecords(opCtx, records->data(), timestamps->data(), records->size());
 }
+
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
+
 //WiredTigerRecordStore::insertRecords
 
 //数据插入(包括元数据文件_mdb_catalog.wt和普通集合数据文件)走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
@@ -1167,7 +1171,8 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
-		log() << "yang test ......WiredTigerRecordStore::_insertRecords .......... _uri:" << _uri <<" key:" << record.id << "\r\n";
+		log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id
+				<< " value:" << redact(record.data.toBson());
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

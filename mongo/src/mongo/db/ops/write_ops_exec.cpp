@@ -177,7 +177,7 @@ void assertCanWrite_inlock(OperationContext* opCtx, const NamespaceString& ns) {
     CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
 }
 
-//创建集合 //insertBatchAndHandleErrors->makeCollection
+// 没有则创建集合及相关的索引文件 //insertBatchAndHandleErrors->makeCollection
 void makeCollection(OperationContext* opCtx, const NamespaceString& ns) {
     writeConflictRetry(opCtx, "implicit collection creation", ns.ns(), [&opCtx, &ns] {
         AutoGetOrCreateDb db(opCtx, ns.db(), MODE_X);
@@ -357,7 +357,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             if (collection->getCollection()) //已经有该集合了
                 break;
 
-            collection.reset();  // unlock.  没有则创建集合
+            collection.reset();  // unlock.  没有则创建集合及相关的索引文件
             makeCollection(opCtx, wholeOp.getNamespace()); 
         }
 
@@ -512,6 +512,9 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
             }
 
             BSONObj toInsert = fixedDoc.getValue().isEmpty() ? doc : std::move(fixedDoc.getValue());
+			// db.collname.insert({"name":"yangyazhou1", "age":22})
+			//yang test performInserts... doc:{ _id: ObjectId('5badf00412ee982ae019e0c1'), name: "yangyazhou1", age: 22.0 }
+			//log() << "yang test performInserts... doc:" << redact(toInsert);
 			//把文档插入到batch数组
             batch.emplace_back(stmtId, toInsert);
             bytesInBatch += batch.back().doc.objsize();

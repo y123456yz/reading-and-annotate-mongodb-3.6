@@ -42,7 +42,15 @@ namespace mongo {
 
 /**
  * The key that uniquely identifies a Record in a Collection or RecordStore.
- */ //struct Record{}结构体包含该结构成员   同一个文件没插入一条心数据ID会加1，打印方法参考WiredTigerRecordStore::_insertRecords
+ */
+/*
+struct Record {
+    RecordId id;
+    RecordData data;
+};
+*/
+
+ //struct Record{}结构体包含该结构成员   同一个文件没插入一条心数据ID会加1，打印方法参考WiredTigerRecordStore::_insertRecords
 class RecordId {
 public:
     /**

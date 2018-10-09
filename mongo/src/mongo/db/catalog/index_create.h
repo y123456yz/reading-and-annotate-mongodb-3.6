@@ -58,9 +58,9 @@ class OperationContext;
  * destructed from inside of a WriteUnitOfWork as any cleanup needed should never be rolled back
  * (as it is itself essentially a form of rollback, you don't want to "rollback the rollback").
  */
-class MultiIndexBlock {
+class MultiIndexBlock { 
 public:
-    class Impl {
+    class Impl { //MultiIndexBlockImplºÃ≥– µœ÷
     public:
         virtual ~Impl() = 0;
 

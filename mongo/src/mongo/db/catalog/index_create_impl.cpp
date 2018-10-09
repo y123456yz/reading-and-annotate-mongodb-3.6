@@ -183,17 +183,25 @@ void MultiIndexBlockImpl::removeExistingIndexes(std::vector<BSONObj>* specs) con
     }
 }
 
-StatusWith<std::vector<BSONObj>> MultiIndexBlockImpl::init(const BSONObj& spec) {
+//创建集合的时候或者程序重启的时候建索引:DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
+//MultiIndexBlockImpl::init->IndexCatalogImpl::IndexBuildBlock::init  程序运行过程中，并且集合已经存在的时候建索引
+
+//IndexCatalogImpl::createIndexOnEmptyCollection中调用
+StatusWith<std::vector<BSONObj>> 
+MultiIndexBlockImpl::init(const BSONObj& spec) {
     const auto indexes = std::vector<BSONObj>(1, spec);
-    return init(indexes);
+    return init(indexes); //MultiIndexBlockImpl::init
 }
 
-StatusWith<std::vector<BSONObj>> MultiIndexBlockImpl::init(const std::vector<BSONObj>& indexSpecs) {
+//MultiIndexBlockImpl::init中调用
+StatusWith<std::vector<BSONObj>> 
+MultiIndexBlockImpl::init(const std::vector<BSONObj>& indexSpecs) {
     WriteUnitOfWork wunit(_opCtx);
 
     invariant(_indexes.empty());
     _opCtx->recoveryUnit()->registerChange(new CleanupIndexesVectorOnRollback(this));
-
+	log() << "yang test ...MultiIndexBlockImpl::init";
+	
     const string& ns = _collection->ns().ns();
 
     const auto idxCat = _collection->getIndexCatalog();
@@ -206,6 +214,14 @@ StatusWith<std::vector<BSONObj>> MultiIndexBlockImpl::init(const std::vector<BSO
     for (size_t i = 0; i < indexSpecs.size(); i++) {
         BSONObj info = indexSpecs[i];
 
+/*db.coll.ensureIndex({"name" : 1}) 
+	yang test(MultiIndexBlockImpl::init) ... info:{ ns: "test.coll", v: 2, key: { name: 1.0 }, name: "name_1" }
+db.world.ensureIndex({"geometry" : "2dsphere"}) 
+	yang test(MultiIndexBlockImpl::init) ... info:{ ns: "test.world", v: 2, key: { geometry: "2dsphere" }, name: "geometry_2dsphere" }
+db.things.ensureIndex({name:1}, {background:true}); 
+	yang test(MultiIndexBlockImpl::init) ... info:{ ns: "test.things", v: 2, key: { name: 1.0 }, name: "name_1", background: true }
+*/
+	log() << " yang test(MultiIndexBlockImpl::init) ... info:" << redact(info);
         string pluginName = IndexNames::findPluginName(info["key"].Obj());
         if (pluginName.size()) {
             Status s = _collection->getIndexCatalog()->_upgradeDatabaseMinorVersionIfNeeded(
@@ -214,6 +230,7 @@ StatusWith<std::vector<BSONObj>> MultiIndexBlockImpl::init(const std::vector<BSO
                 return s;
         }
 
+		//是否后台运行
         // Any foreground indexes make all indexes be built in the foreground.
         _buildInBackground = (_buildInBackground && info["background"].trueValue());
     }
@@ -239,7 +256,7 @@ StatusWith<std::vector<BSONObj>> MultiIndexBlockImpl::init(const std::vector<BSO
 
         IndexToBuild index;
         index.block.reset(new IndexCatalogImpl::IndexBuildBlock(_opCtx, _collection, info));
-        status = index.block->init();
+        status = index.block->init(); //IndexCatalogImpl::IndexBuildBlock::init 开始真正的建索引
         if (!status.isOK())
             return status;
 
@@ -262,6 +279,7 @@ StatusWith<std::vector<BSONObj>> MultiIndexBlockImpl::init(const std::vector<BSO
             index.options.getKeysMode = IndexAccessMethod::GetKeysMode::kRelaxConstraints;
         }
 
+		//build index on: test.world properties: { v: 2, key: { geometry: "2dsphere" }, name: "geometry_2dsphere", ns: "test.world", 2dsphereIndexVersion: 3 }
         log() << "build index on: " << ns << " properties: " << descriptor->toString();
         if (index.bulk)
             log() << "\t building index using bulk method; build may temporarily use up to "

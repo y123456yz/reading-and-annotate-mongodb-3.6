@@ -276,6 +276,12 @@ public:
     inline IndexCatalog& operator=(IndexCatalog&&) = delete;
 
     // Must be called before used.
+     /*
+    对应
+    IndexCatalogEntry
+    IndexCatalogImpl::IndexBuildBlock::init
+    MultiIndexBlockImpl::init
+    */
     inline Status init(OperationContext* const opCtx) {
         return this->_impl().init(opCtx);
     }
@@ -630,6 +636,12 @@ private:
         return *this->_pimpl;
     }
 
+    /*
+    对应
+    friend IndexCatalogEntry;
+    friend class IndexCatalogImpl;
+    friend class MultiIndexBlockImpl;
+    */
     std::unique_ptr<Impl> _pimpl;
 
     friend IndexCatalogEntry;

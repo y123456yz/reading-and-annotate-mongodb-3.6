@@ -831,6 +831,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
 
     BSONObj fullIdIndexSpec;
 
+	//id索引创建
     if (createIdIndex) {
         if (collection->requiresIdIndex()) {
             if (optionsWithUUID.autoIndexId == CollectionOptions::YES ||
@@ -847,7 +848,8 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
             }
         }
 
-        if (nss.isSystem()) {
+		//普通索引创建
+        if (nss.isSystem()) { //wiredtiger创建普通索引文件
             createSystemIndexes(opCtx, collection);
         }
     }

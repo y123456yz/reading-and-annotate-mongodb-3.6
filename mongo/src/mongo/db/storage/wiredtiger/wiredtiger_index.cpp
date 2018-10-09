@@ -1138,8 +1138,12 @@ SortedDataBuilderInterface* WiredTigerIndexUnique::getBulkBuilder(OperationConte
     return new UniqueBulkBuilder(this, opCtx, dupsAllowed, _prefix);
 }
 
+
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
+
 //WiredTigerIndex::insert中执行
-////唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//默认的_id索引就是唯一索引
 Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
                                       const BSONObj& key,
                                       const RecordId& id,
@@ -1150,17 +1154,23 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
     KeyString value(keyStringVersion(), id);
     if (!data.getTypeBits().isAllZeros())
         value.appendTypeBits(data.getTypeBits());
-	log(1) << "yang test WiredTigerIndexUnique::_insert key: " << redact(key);  
-	
-    WiredTigerItem valueItem(value.getBuffer(), value.getSize());
-    setKey(c, keyItem.Get());
-    c->set_value(c, valueItem.Get());
-    int ret = WT_OP_CHECK(c->insert(c));
+//	log(1) << "yang test WiredTigerIndexUnique::_insert key: " << redact(&key);  
+	log() << "yang test WiredTigerIndexUnique::_insert";
 
-    if (ret != WT_DUPLICATE_KEY) {
+	auto& record = key;
+		log() << "yang test WiredTigerIndexUnique::_insert" << " value:" << redact(record);;
+
+
+    WiredTigerItem valueItem(value.getBuffer(), value.getSize());
+    setKey(c, keyItem.Get()); //先获取原理的唯一key
+    c->set_value(c, valueItem.Get());
+    int ret = WT_OP_CHECK(c->insert(c)); //插入
+
+    if (ret != WT_DUPLICATE_KEY) { //说明是第一次插入该唯一key
         return wtRCToStatus(ret);
     }
 
+	//说明重复了，以前已经有该唯一key在wiredtiger索引文件中
     // we might be in weird mode where there might be multiple values
     // we put them all in the "list"
     // Note that we can't omit AllZeros when there are multiple ids for a value. When we remove
@@ -1191,7 +1201,7 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
         value.appendTypeBits(KeyString::TypeBits::fromBuffer(keyStringVersion(), &br));
     }
 
-    if (!dupsAllowed)
+    if (!dupsAllowed) //不允许重复，则报错
         return dupKeyError(key);
 
     if (!insertedId) {
@@ -1199,6 +1209,8 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
         value.appendRecordId(id);
         value.appendTypeBits(data.getTypeBits());
     }
+
+	//做更新，则该唯一key的value为新的value
 
     valueItem = WiredTigerItem(value.getBuffer(), value.getSize());
     c->set_value(c, valueItem.Get());
@@ -1330,6 +1342,10 @@ SortedDataBuilderInterface* WiredTigerIndexStandard::getBulkBuilder(OperationCon
     return new StandardBulkBuilder(this, opCtx, _prefix);
 }
 
+
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
+
 //WiredTigerIndex::insert中执行
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
@@ -1339,8 +1355,13 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
     invariant(dupsAllowed);
 
     TRACE_INDEX << " key: " << keyBson << " id: " << id;
-	log() << "WT index (" << (const void*)this << ") "
-	log(1) << "yang test WiredTigerIndexStandard::_insert key: " << redact(keyBson);
+	log() << "WT index (" << (const void*)this << ") ";
+	//log(1) << "yang test WiredTigerIndexStandard::_insert key: " << redact(&keyBson);
+
+
+	auto& keyBson1 = keyBson;
+	log() << "yang test WiredTigerIndexStandard::_insert" << " value:" << redact(keyBson1);
+	
     KeyString key(keyStringVersion(), keyBson, _ordering, id);
     WiredTigerItem keyItem(key.getBuffer(), key.getSize());
 

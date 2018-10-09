@@ -210,7 +210,7 @@ private:
     Collection* _collection;
     OperationContext* _opCtx;
 
-    bool _buildInBackground;
+    bool _buildInBackground; //后台建索引
     bool _allowInterruption;
     bool _ignoreUnique;
 

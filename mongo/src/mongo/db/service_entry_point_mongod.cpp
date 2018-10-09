@@ -1109,7 +1109,10 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     // before we lock...
     NetworkOp op = m.operation();
     bool isCommand = false;
-	log() << "	yang test ...........   ServiceEntryPointMongod::handleRequest ";
+
+	str::stream s;
+	s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
+	log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
 
     DbMessage dbmsg(m);
 	
@@ -1154,7 +1157,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     DbResponse dbresponse;
 	//可通过--slowms设置slowMS 
     if (op == dbMsg || op == dbCommand || (op == dbQuery && isCommand)) {
-        dbresponse = runCommands(opCtx, m); ////mongodb语句解析
+        dbresponse = runCommands(opCtx, m);  
     } else if (op == dbQuery) {
         invariant(!isCommand);
 		//真正的查询入口  

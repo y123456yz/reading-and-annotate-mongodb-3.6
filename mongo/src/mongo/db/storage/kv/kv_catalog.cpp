@@ -416,6 +416,7 @@ std::string KVCatalog::getIndexIdent(OperationContext* opCtx,
     return idxIdent[idxName].String();
 }
 
+//_mdb_catalog.wt÷–≤È’“
 BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* out) const {
     RecordId dl;
     {
