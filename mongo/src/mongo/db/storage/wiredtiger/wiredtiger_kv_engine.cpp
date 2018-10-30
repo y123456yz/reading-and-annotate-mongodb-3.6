@@ -690,7 +690,7 @@ void WiredTigerKVEngine::setSortedDataInterfaceExtraOptions(const std::string& o
 KVDatabaseCatalogEntryBase::createCollection
 KVStorageEngine::KVStorageEngine
 */ 
-//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
 //创建集合对应的wiredtiger .wt文件，同时创建对应的目录
 Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
                                                     StringData ns,
@@ -767,7 +767,7 @@ string WiredTigerKVEngine::_uri(StringData ident) const {
     return string("table:") + ident.toString();
 }
 
-//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
 //创建wiredtiger索引文件
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild中执行

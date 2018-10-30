@@ -37,7 +37,7 @@
 #include "mongo/db/service_context.h"
 
 namespace mongo {
-
+//MultiPlanStage::workAllPlans÷–÷¥––
 PlanStage::StageState PlanStage::work(WorkingSetID* out) {
     invariant(_opCtx);
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);

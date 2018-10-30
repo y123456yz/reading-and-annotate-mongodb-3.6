@@ -114,6 +114,7 @@ bool shouldSaveCursorGetMore(PlanExecutor::ExecState finalState,
     return !exec->isEOF();
 }
 
+//根据opCtx及其他信息构建curop  runQuery会调用
 void beginQueryOp(OperationContext* opCtx,
                   const NamespaceString& nss,
                   const BSONObj& queryObj,
@@ -509,13 +510,17 @@ Message getMore(OperationContext* opCtx,
     return Message(bb.release());
 }
 
+//参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4 MongoDB 执行计划 & 优化器简介 (上)
+//https://yq.aliyun.com/articles/74635  MongoDB查询优化：从 10s 到 10ms
+//执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache
 std::string runQuery(OperationContext* opCtx,
                      QueryMessage& q,
                      const NamespaceString& nss,
                      Message& result) {
     CurOp& curOp = *CurOp::get(opCtx);
-    curOp.ensureStarted();
+    curOp.ensureStarted(); //确定该操作的起始时间
 
+	LOG(2) << "yang test Running query: ";
     uassert(ErrorCodes::InvalidNamespace,
             str::stream() << "Invalid ns [" << nss.ns() << "]",
             nss.isValid());
@@ -526,7 +531,8 @@ std::string runQuery(OperationContext* opCtx,
 
     // Parse the qm into a CanonicalQuery.
     const boost::intrusive_ptr<ExpressionContext> expCtx;
-    auto statusWithCQ =
+    auto statusWithCQ = //规范查询
+    	// Query会进行简单的处理(标准化)，并构造一些上下文数据结构变成CanonicalQuery(标准化Query)。
         CanonicalQuery::canonicalize(opCtx,
                                      q,
                                      expCtx,

@@ -44,7 +44,7 @@ namespace rpc {
 
 /**
  * Constructs an RPC Reply.
- */
+ */ //¼ûmakeReplyBuilder
 class ReplyBuilderInterface {
     MONGO_DISALLOW_COPYING(ReplyBuilderInterface);
 

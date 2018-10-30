@@ -64,7 +64,8 @@ namespace mongo {
 using std::endl;
 using std::vector;
 
-// static
+//选择适合的索引  MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
+// static MultiPlanStage::workAllPlans
 size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why) {
     invariant(!candidates.empty());
     invariant(why);
@@ -97,7 +98,12 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
                << redact(Explain::statsToBSON(*statTrees[i]).jsonString(Strict, true));
         LOG(2) << "Scoring query plan: " << redact(Explain::getPlanSummary(candidates[i].root))
                << " planHitEOF=" << statTrees[i]->common.isEOF;
+		/*
+		Mongodb是如何为查询选取认为合适的索引的呢？
 
+		粗略来说，会先选几个候选的查询计划，然后会为这些查询计划按照某个规则来打分，分数最高的
+		查询计划就是合适的查询计划，这个查询计划里面使用的索引就是认为合适的索引。
+		*/
         double score = scoreTree(statTrees[i].get());
         LOG(5) << "score = " << score;
         if (statTrees[i]->common.isEOF) {
@@ -187,7 +193,20 @@ bool hasStage(const StageType type, const PlanStageStats* stats) {
     return false;
 }
 
-// static
+/*
+Mongodb是如何为查询选取认为合适的索引的呢？
+
+粗略来说，会先选几个候选的查询计划，然后会为这些查询计划按照某个规则来打分，分数最高的
+查询计划就是合适的查询计划，这个查询计划里面使用的索引就是认为合适的索引。
+*/ //scoreTree里面就是计算每个查询计划的得分
+/*
+scoreTree并没有执行查询，只是根据已有的PlanStageStats* stats来进行计算。那么，
+是什么时候执行查询来获取查询计划的PlanStageStats* stats的呢？
+
+在mongo::MultiPlanStage::pickBestPlan（代码位于src/mongo/db/exec/multi_plan.cpp）中，会
+调用workAllPlans来执行所有的查询计划，最多会调用numWorks次
+*/ //PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)中调用
+// static    stats在workAllPlans中获取stats
 double PlanRanker::scoreTree(const PlanStageStats* stats) {
     // We start all scores at 1.  Our "no plan selected" score is 0 and we want all plans to
     // be greater than that.

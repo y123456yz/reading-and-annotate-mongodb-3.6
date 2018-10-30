@@ -173,7 +173,7 @@ private:
  * A tree of stages may be built from a QuerySolution.  The QuerySolution must outlive the tree
  * of stages.
  */
-struct QuerySolution {
+struct QuerySolution { //执行计划，可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
     QuerySolution() : hasBlockingStage(false), indexFilterApplied(false) {}
 
     // Owned here.

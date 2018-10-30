@@ -38,7 +38,7 @@ namespace mongo {
 //
 
 // Max number of times we call work() on plans before comparing them,
-// for small collections.
+// for small collections.  getTrialPeriodWorks÷– π”√
 extern AtomicInt32 internalQueryPlanEvaluationWorks;
 
 // For large collections, the number times we work() candidate plans is

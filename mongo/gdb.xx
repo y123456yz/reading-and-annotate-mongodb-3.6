@@ -1,0 +1,113 @@
+[root@bogon mongo]# !rm
+rm -rf /data/logs/mongod.log  && rm -rf /data/db/* && ./mongod -f mongo.conf -vv
+yang test .ss..111... mongoDbMain 2
+yang test .... storeMongodOptions engineSetByUser
+yang test .... fork server or die
+about to fork child process, waiting until server is ready for connections.
+forked process: 22420
+child process started successfully, parent exiting
+[root@bogon mongo]# gdb attach 22420
+GNU gdb (GDB) Red Hat Enterprise Linux 7.6.1-80.el7
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+attach: No such file or directory.
+Attaching to process 22420
+Reading symbols from /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod...done.
+Reading symbols from /lib64/libresolv.so.2...(no debugging symbols found)...done.
+Loaded symbols for /lib64/libresolv.so.2
+Reading symbols from /lib64/librt.so.1...(no debugging symbols found)...done.
+Loaded symbols for /lib64/librt.so.1
+Reading symbols from /lib64/libdl.so.2...(no debugging symbols found)...done.
+Loaded symbols for /lib64/libdl.so.2
+Reading symbols from /usr/local/lib64/libstdc++.so.6...done.
+Loaded symbols for /usr/local/lib64/libstdc++.so.6
+Reading symbols from /lib64/libm.so.6...(no debugging symbols found)...done.
+Loaded symbols for /lib64/libm.so.6
+Reading symbols from /usr/local/lib64/libgcc_s.so.1...done.
+Loaded symbols for /usr/local/lib64/libgcc_s.so.1
+Reading symbols from /lib64/libpthread.so.0...(no debugging symbols found)...done.
+[New LWP 22443]
+[New LWP 22442]
+[New LWP 22441]
+[New LWP 22440]
+[New LWP 22439]
+[New LWP 22438]
+[New LWP 22437]
+[New LWP 22436]
+[New LWP 22435]
+[New LWP 22434]
+[New LWP 22433]
+[New LWP 22432]
+[New LWP 22431]
+[New LWP 22430]
+[New LWP 22429]
+[New LWP 22428]
+[New LWP 22427]
+[New LWP 22426]
+[New LWP 22425]
+[New LWP 22424]
+[New LWP 22423]
+[New LWP 22421]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib64/libthread_db.so.1".
+Loaded symbols for /lib64/libpthread.so.0
+Reading symbols from /lib64/libc.so.6...(no debugging symbols found)...done.
+Loaded symbols for /lib64/libc.so.6
+Reading symbols from /lib64/ld-linux-x86-64.so.2...(no debugging symbols found)...done.
+Loaded symbols for /lib64/ld-linux-x86-64.so.2
+0x00007fec3c894945 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libpthread.so.0
+warning: File "/home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/.gdbinit" auto-loading has been declined by your `auto-load safe-path' set to "$debugdir:$datadir/auto-load:/usr/bin/mono-gdb.py:/usr/lib/golang/src/pkg/runtime/runtime-gdb.py".
+To enable execution of this file add
+        add-auto-load-safe-path /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/.gdbinit
+line to your configuration file "/root/.gdbinit".
+To completely disable this security protection add
+        set auto-load safe-path /
+line to your configuration file "/root/.gdbinit".
+For more information about this security protection see the
+"Auto-loading safe path" section in the GDB manual.  E.g., run from the shell:
+        info "(gdb)Auto-loading safe path"
+warning: File "/usr/local/lib64/libstdc++.so.6.0.21-gdb.py" auto-loading has been declined by your `auto-load safe-path' set to "$debugdir:$datadir/auto-load:/usr/bin/mono-gdb.py:/usr/lib/golang/src/pkg/runtime/runtime-gdb.py".
+Missing separate debuginfos, use: debuginfo-install glibc-2.17-196.el7_4.2.x86_64
+(gdb) attach /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/src/mongo/db/service_entry_point_mongod.cpp:1120
+A program is being debugged already.  Kill it? (y or n) n
+Not killed.
+(gdb) break /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/src/mongo/db/service_entry_point_mongod.cpp:1120
+Breakpoint 1 at 0x7fec3e723ed1: file src/mongo/db/service_entry_point_mongod.cpp, line 1120.
+(gdb) c
+Continuing.
+[New Thread 0x7fec3db76700 (LWP 22504)]
+[Switching to Thread 0x7fec3db76700 (LWP 22504)]
+
+Breakpoint 1, mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7fec44eafdc0, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1121
+1121        if (c.isInDirectClient()) {
+(gdb) bt
+#0  mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7fec44eafdc0, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1121
+#1  0x00007fec3e730a6a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7fec41799350, guard=...) at src/mongo/transport/service_state_machine.cpp:363
+#2  0x00007fec3e72bbaf in mongo::ServiceStateMachine::_runNextInGuard (this=0x7fec41799350, guard=...) at src/mongo/transport/service_state_machine.cpp:423
+#3  0x00007fec3e72f5ee in operator() (__closure=0x7fec4179ede0) at src/mongo/transport/service_state_machine.cpp:462
+#4  std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#5  0x00007fec3f66b742 in operator() (this=0x7fec3db75550) at /usr/local/include/c++/5.4.0/functional:2267
+#6  mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7fec41796480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:118
+#7  0x00007fec3e72a7ad in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7fec41799350, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:466
+#8  0x00007fec3e72d141 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7fec41799350, status=...) at src/mongo/transport/service_state_machine.cpp:291
+#9  0x00007fec3e72dd3b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7fec41799350, guard=...) at src/mongo/transport/service_state_machine.cpp:250
+#10 0x00007fec3e72bc41 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7fec41799350, guard=...) at src/mongo/transport/service_state_machine.cpp:420
+#11 0x00007fec3e72f5ee in operator() (__closure=0x7fec4179ec80) at src/mongo/transport/service_state_machine.cpp:462
+#12 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#13 0x00007fec3f66bca5 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#14 operator() (__closure=0x7fec4159f170) at src/mongo/transport/service_executor_synchronous.cpp:135
+#15 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#16 0x00007fec3fbbb7f4 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#17 mongo::(anonymous namespace)::runFunc (ctx=0x7fec4179ed40) at src/mongo/transport/service_entry_point_utils.cpp:55
+#18 0x00007fec3c890e25 in start_thread () from /lib64/libpthread.so.0
+#19 0x00007fec3c5be34d in clone () from /lib64/libc.so.6
+(gdb) 
