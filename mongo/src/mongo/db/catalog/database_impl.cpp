@@ -212,7 +212,8 @@ Status DatabaseImpl::validateDBName(StringData dbname) {
     return Status::OK();
 }
 
-//查找collection类，找到直接返回，没找到构造一个新的collection类  DatabaseImpl::createCollection调用
+//查找collection类，找到直接返回，没找到构造一个新的collection类  
+//DatabaseImpl::createCollection DatabaseImpl::init 调用
 Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx,
                                                          const NamespaceString& nss) {
     Collection* collection = getCollection(opCtx, nss);

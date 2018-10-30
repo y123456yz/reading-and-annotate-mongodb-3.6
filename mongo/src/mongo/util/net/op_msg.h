@@ -38,7 +38,8 @@
 
 namespace mongo {
 
-struct OpMsg {
+//内容来源见OpMsg::parse
+struct OpMsg { //OpMsgRequest继承该类
     struct DocumentSequence {
         std::string name;
         std::vector<BSONObj> objs;
@@ -104,8 +105,8 @@ struct OpMsg {
         return it == sequences.end() ? nullptr : &*it;
     }
 
-    BSONObj body;
-    std::vector<DocumentSequence> sequences;
+    BSONObj body; //赋值见OpMsg::parse   输出打印通过:c->getRedactedCopyForLogging(request.body);
+    std::vector<DocumentSequence> sequences; //赋值见OpMsg::parse
 };
 
 /**
@@ -117,7 +118,9 @@ struct OpMsgRequest : public OpMsg {
     OpMsgRequest() = default;
     explicit OpMsgRequest(OpMsg&& generic) : OpMsg(std::move(generic)) {}
 
+    //opMsgRequestFromAnyProtocol->OpMsgRequest::parse
     static OpMsgRequest parse(const Message& message) {
+        //OpMsg::parse
         return OpMsgRequest(OpMsg::parse(message));
     }
 
@@ -223,6 +226,7 @@ public:
 private:
     friend class DocSequenceBuilder;
 
+    //赋值见OpMsg::parse，对应msg解析的几个阶段
     enum State {
         kEmpty,
         kDocSequence,

@@ -276,7 +276,7 @@ void WiredTigerRecoveryUnit::_txnOpen() {
         invariantWTOK(session->begin_transaction(session, NULL));
     }
 
-    LOG(3) << "WT begin_transaction for snapshot id " << _mySnapshotId;
+    LOG(3) << "WiredTigerRecoveryUnit::_txnOpen WT begin_transaction for snapshot id " << _mySnapshotId;
     _active = true;
 }
 

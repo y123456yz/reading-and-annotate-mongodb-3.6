@@ -48,7 +48,7 @@ namespace mongo {
  * Preconditions: Valid RecordId.
  *
  * Owns the query solutions and PlanStage roots for all candidate plans.
- */
+ */ //执行计划相关 参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
 class MultiPlanStage final : public PlanStage {
 public:
     /**

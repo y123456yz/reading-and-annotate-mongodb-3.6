@@ -810,9 +810,9 @@ void execCommandDatabase(OperationContext* opCtx,
 
 /**
  * Fills out CurOp / OpDebug with basic command info.
- */
+ */ //可以直接通过CurOp::get(opCtx)获取该类
 void curOpCommandSetup(OperationContext* opCtx, const OpMsgRequest& request) {
-    auto curop = CurOp::get(opCtx);
+    auto curop = CurOp::get(opCtx); //CurOp::get
     curop->debug().iscommand = true;
 
     // We construct a legacy $cmd namespace so we can fill in curOp using
@@ -867,7 +867,7 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
             }
 
             LOG(2) << "run command " << request.getDatabase() << ".$cmd" << ' '
-                   << c->getRedactedCopyForLogging(request.body);
+                   << c->getRedactedCopyForLogging(request.body) << ' ' << request.getCommandName();
 
             {
                 // Try to set this as early as possible, as soon as we have figured out the command.
@@ -918,6 +918,7 @@ DbResponse receivedQuery(OperationContext* opCtx,
     CurOp& op = *CurOp::get(opCtx);
     DbResponse dbResponse;
 
+	LOG(1) << "yang test ... receivedQuery";
     try {
         Client* client = opCtx->getClient();
         Status status = AuthorizationSession::get(client)->checkAuthForFind(nss, false);
@@ -1157,7 +1158,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     DbResponse dbresponse;
 	//可通过--slowms设置slowMS 
     if (op == dbMsg || op == dbCommand || (op == dbQuery && isCommand)) {
-        dbresponse = runCommands(opCtx, m);  
+        dbresponse = runCommands(opCtx, m);   //runCommands
     } else if (op == dbQuery) {
         invariant(!isCommand);
 		//真正的查询入口  

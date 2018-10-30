@@ -102,7 +102,7 @@ class RecordId;
  *         stage->restoreState();
  *     }
  * }
- */ //CachedPlanStage基础该类
+ */ //CachedPlanStage基础该类  MultiPlanStage类继承该类
 class PlanStage {
 public:
     PlanStage(const char* typeName, OperationContext* opCtx)
@@ -393,6 +393,7 @@ protected:
     }
 
     Children _children;
+    //赋值见PlanStage::work
     CommonStats _commonStats;
 
 private:

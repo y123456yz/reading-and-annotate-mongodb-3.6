@@ -246,6 +246,7 @@ AutoGetCollectionForReadCommand::AutoGetCollectionForReadCommand(
     : AutoGetCollectionForReadCommand(
           opCtx, nss, viewMode, Lock::DBLock(opCtx, nss.db(), MODE_IS)) {}
 
+//runQuery中构造使用
 AutoGetCollectionOrViewForReadCommand::AutoGetCollectionOrViewForReadCommand(
     OperationContext* opCtx, const NamespaceString& nss)
     : AutoGetCollectionForReadCommand(opCtx, nss, AutoGetCollection::ViewMode::kViewsPermitted),

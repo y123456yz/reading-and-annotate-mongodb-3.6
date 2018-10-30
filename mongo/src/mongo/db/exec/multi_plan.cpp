@@ -167,17 +167,26 @@ Status MultiPlanStage::tryYield(PlanYieldPolicy* yieldPolicy) {
     return Status::OK();
 }
 
-// static
+//参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
+//MultiPlanStage::pickBestPlan中执行
+// static   
 size_t MultiPlanStage::getTrialPeriodWorks(OperationContext* opCtx, const Collection* collection) {
     // Run each plan some number of times. This number is at least as great as
     // 'internalQueryPlanEvaluationWorks', but may be larger for big collections.
     size_t numWorks = internalQueryPlanEvaluationWorks.load();
     if (NULL != collection) {
+		/*
+		internalQueryPlanEvaluationWorks=10000
+		fraction=0.29
+		collection-&gt;numRecords(txn) 则为collection的总记录数
+		那就是collection的总记录数*0.29如果比10000小就扫描10000次，如果比10000大那么就扫描collection数量*0.29次。
+		*/
         // For large collections, the number of works is set to be this
         // fraction of the collection size.
         double fraction = internalQueryPlanEvaluationCollFraction;
 
         numWorks = std::max(static_cast<size_t>(internalQueryPlanEvaluationWorks.load()),
+							// WiredTigerRecordStore::numRecords   collection的总记录数
                             static_cast<size_t>(fraction * collection->numRecords(opCtx)));
     }
 
@@ -199,6 +208,25 @@ size_t MultiPlanStage::getTrialPeriodNumToReturn(const CanonicalQuery& query) {
     return numResults;
 }
 
+//MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
+/*
+lldb调用栈
+mongo::PlanRanker::scoreTree
+mongo::PlanRanker::pickBestPlan
+mongo::MultiPlanStage::pickBestPlan
+mongo::PlanExecutor::pickBestPlan
+mongo::PlanExecutor::make
+mongo::PlanExecutor::make
+mongo::getExecutor
+mongo::getExecutorFind
+mongo::FindCmd::explain
+*/
+/*
+Mongodb是如何为查询选取认为合适的索引的呢？
+
+粗略来说，会先选几个候选的查询计划，然后会为这些查询计划按照某个规则来打分，分数最高
+的查询计划就是合适的查询计划，这个查询计划里面使用的索引就是认为合适的索引。
+*/ //https://yq.aliyun.com/articles/74635
 Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // Adds the amount of time taken by pickBestPlan() to executionTimeMillis. There's lots of
     // execution work that happens here, so this is needed for the time accounting to
@@ -211,6 +239,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // Work the plans, stopping when a plan hits EOF or returns some
     // fixed number of results.
     for (size_t ix = 0; ix < numWorks; ++ix) {
+		//workAllPlans执行所有的查询计划，MultiPlanStage::pickBestPlan最多会调用numWorks次
         bool moreToDo = workAllPlans(numResults, yieldPolicy);
         if (!moreToDo) {
             break;
@@ -226,6 +255,8 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // After picking best plan, ranking will own plan stats from
     // candidate solutions (winner and losers).
     std::unique_ptr<PlanRankingDecision> ranking(new PlanRankingDecision);
+	//MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用
+	//PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
     _bestPlanIdx = PlanRanker::pickBestPlan(_candidates, ranking.get());
     verify(_bestPlanIdx >= 0 && _bestPlanIdx < static_cast<int>(_candidates.size()));
 
@@ -335,6 +366,8 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     return Status::OK();
 }
 
+//MultiPlanStage::pickBestPlan  https://yq.aliyun.com/articles/74635
+//workAllPlans执行所有的查询计划，MultiPlanStage::pickBestPlan最多会调用numWorks次
 bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolicy) {
     bool doneWorking = false;
 

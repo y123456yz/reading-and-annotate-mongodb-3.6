@@ -73,6 +73,7 @@ struct CandidatePlan {
         : solution(s), root(r), ws(w), failed(false) {}
 
     std::unique_ptr<QuerySolution> solution;
+    //MultiPlanStage::workAllPlans÷¥––work
     PlanStage* root;  // Not owned here.
     WorkingSet* ws;   // Not owned here.
 

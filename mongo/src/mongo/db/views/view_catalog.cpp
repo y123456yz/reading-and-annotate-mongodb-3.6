@@ -126,15 +126,18 @@ Status validInViewUnder34FeatureCompatibility(const boost::intrusive_ptr<Express
 
 }  // namespace
 
+//DatabaseImpl::init中调用
 Status ViewCatalog::reloadIfNeeded(OperationContext* opCtx) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     return _reloadIfNeeded_inlock(opCtx);
 }
 
+//ViewCatalog::reloadIfNeeded中调用  没创建一个集合或者像集合中写入数据，都会查找_mdb_catalog.wt元数据文件中该集合对应的uri文件路径，没有则记录新集合对应的uri等信息到这个元数据文件
 Status ViewCatalog::_reloadIfNeeded_inlock(OperationContext* opCtx) {
     if (_valid.load())
         return Status::OK();
 
+	//reloading view catalog for database test
     LOG(1) << "reloading view catalog for database " << _durable->getName();
 
     // Need to reload, first clear our cache.

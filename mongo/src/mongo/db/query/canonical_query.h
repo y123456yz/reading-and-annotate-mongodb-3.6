@@ -42,6 +42,8 @@ namespace mongo {
 
 class OperationContext;
 
+//执行计划 优化器可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
+//规范查询，见runQuery  
 class CanonicalQuery {
 public:
     /**
@@ -192,10 +194,12 @@ private:
     std::unique_ptr<QueryRequest> _qr;
 
     // _root points into _qr->getFilter()
+    //MatchExpression是将filter算子里每个逻辑运算转换成各个类型的表达式(GT,ET,LT,AND,OR...)，构成一个表达式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
     std::unique_ptr<MatchExpression> _root;
 
     std::unique_ptr<ParsedProjection> _proj;
 
+    //collator是用户可以自定义的除了ByteComparator(逐字节比较排序)之外的比较方法，比如内置的中文比较。collator需要和filter里的逻辑表达式相关联(比如$gt大于运算)。
     std::unique_ptr<CollatorInterface> _collator;
 
     bool _canHaveNoopMatchNodes = false;

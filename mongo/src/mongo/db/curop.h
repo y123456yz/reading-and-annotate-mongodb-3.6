@@ -458,7 +458,7 @@ private:
     Command* _command{nullptr};
 
     // The time at which this CurOp instance was marked as started.
-    long long _start{0};
+    long long _start{0}; //该操作的起始时间 CurOp::ensureStarted
 
     // The time at which this CurOp instance was marked as done.
     long long _end{0};
@@ -480,6 +480,7 @@ private:
     bool _isCommand{false};
     int _dbprofile{0};  // 0=off, 1=slow, 2=all
     std::string _ns;
+    //赋值见curOpCommandSetup->setOpDescription_inlock,对应OpMsg.body
     BSONObj _opDescription;
     BSONObj _originatingCommand;  // Used by getMore to display original command.
     OpDebug _debug;

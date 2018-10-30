@@ -691,6 +691,7 @@ MONGO_FP_DECLARE(shutdownAtStartup);
 ExitCode _initAndListen(int listenPort) {
 	//初始化一个名称“initandlisten”线程用于侦听客户端传来的操作信息
 	log() << "yang test .... _initAndListen 111111111";
+	//listen对应的监听TransportLayerManager::setup   accept回调在TransportLayerASIO::start
 	//消息处理见ServiceEntryPointMongod::handleRequest  ServiceEntryPointMongos::handleRequest
     Client::initThread("initandlisten"); //注意这个是main线程，设置当前线程的名
     #include <unistd.h>

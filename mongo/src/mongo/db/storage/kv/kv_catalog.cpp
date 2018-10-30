@@ -297,6 +297,7 @@ std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     buf << (_directoryForIndexes ? '/' : '-');
     buf << _next.fetchAndAdd(1) << '-' << _rand;
 
+	//yang test ......... KVCatalog::_newUniqueIdent, bufstr:test/collection/7--3550907941469880053
 	log() << "yang test ......... KVCatalog::_newUniqueIdent, bufstr:" << buf.str();
     return buf.str();
 }
@@ -388,6 +389,8 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
     StatusWith<RecordId> res = 
     	//WiredTigerRecordStore::_insertRecords  记录collection元数据到_mdb_catalog.wt，数据内容如下:
     	/*
+        yang test ...WiredTigerRecordStore::_insertRecords . _uri:table:_mdb_catalog key:RecordId(5) value:{ ns: "test.yangyazhou", ident: "test/collection/7--3550907941469880053", md: { ns: "test.yangyazhou", options: { uuid: UUID("13867264-68f8-422d-a13c-2d92a0d43e8e") }, indexes: [], prefix: -1 } }
+    	
 		stored meta data for test.coll @ RecordId(4) 
 		obj:{ ns: "test.coll", ident: "test/collection/4-7637131936287447509", md: { ns: "test.coll", options: { uuid: UUID("440d1a2b-5122-40e9-b0c0-7ec58f072055") }, indexes: [], prefix: -1 } }
 	    */
@@ -396,6 +399,7 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
         return res.getStatus();
 
     old = Entry(ident, res.getValue());
+	//集合元数据信息存入_mdb_catalog.wt
     LOG(1) << "stored meta data for " << ns << " @ " << res.getValue() << " obj:" << redact(obj);;
     return Status::OK();
 }
@@ -442,9 +446,12 @@ BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* 
     return data.releaseToBson().getOwned();
 }
 
+//从元数据文件中查找对应的集合相关的数据文件 索引文件等信息
 const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationContext* opCtx,
                                                                   StringData ns) {
     BSONObj obj = _findEntry(opCtx, ns);
+//[conn1] returning metadata: md: { ns: "test.yangyazhou", options: { uuid: UUID("38145b44-6a9d-4a50-8b03-a0dfedc7597f") }, 
+//indexes: [ { spec: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.yangyazhou" }, ready: true, multikey: false, multikeyPaths: { _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }
     LOG(3) << " fetched CCE metadata: " << obj;
     BSONCollectionCatalogEntry::MetaData md;
     const BSONElement mdElement = obj["md"];
@@ -455,6 +462,7 @@ const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationConte
     return md;
 }
 
+//集合相关的元数据信息记录到_mdb_catalog.wt 如创建某个集合对应的数据文件在哪里，索引文件在哪里
 void KVCatalog::putMetaData(OperationContext* opCtx,
                             StringData ns,
                             BSONCollectionCatalogEntry::MetaData& md) {
@@ -488,7 +496,12 @@ void KVCatalog::putMetaData(OperationContext* opCtx,
         b.appendElementsUnique(obj);
         obj = b.obj();
     }
-
+	
+	//[initandlisten] recording new metadata: { md: { ns: "admin.system.version", options: 
+	//{ uuid: UUID("d24324d6-5465-4634-9f8a-3d6c6f6af801") }, indexes: [ { spec: { v: 2, key: { _id: 1 }, 
+	//name: "_id_", ns: "admin.system.version" }, ready: true, multikey: false, multikeyPaths: 
+	//{ _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "admin/index/1--9034870482849730886" }, 
+	//ns: "admin.system.version", ident: "admin/collection/0--9034870482849730886" }
     LOG(3) << "recording new metadata: " << obj;
     Status status = _rs->updateRecord(opCtx, loc, obj.objdata(), obj.objsize(), false, NULL);
     fassert(28521, status.isOK());
