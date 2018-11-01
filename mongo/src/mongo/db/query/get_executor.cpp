@@ -218,6 +218,7 @@ void fillOutPlannerParams(OperationContext* opCtx,
 
 namespace {
 
+//prepareExecution中调用初始化该结构
 struct PrepareExecutionResult {
     PrepareExecutionResult(unique_ptr<CanonicalQuery> canonicalQuery,
                            unique_ptr<QuerySolution> querySolution,
@@ -243,6 +244,28 @@ struct PrepareExecutionResult {
  *
  * If an execution tree could not be created, returns an error Status.
  */
+/*
+#0  mongo::QueryPlanner::plan (query=..., params=..., out=out@entry=0x7f2a4c4e8460) at src/mongo/db/query/query_planner.cpp:547
+#1  0x00007f2a4d474225 in mongo::(anonymous namespace)::prepareExecution (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, ws=0x7f2a5461f580, canonicalQuery=..., plannerOptions=plannerOptions@entry=0)
+    at src/mongo/db/query/get_executor.cpp:385
+#2  0x00007f2a4d47927e in mongo::getExecutor (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=plannerOptions@entry=0) at src/mongo/db/query/get_executor.cpp:476
+#3  0x00007f2a4d4794fb in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=0) at src/mongo/db/query/get_executor.cpp:674
+#4  0x00007f2a4d0ec613 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7f2a54621900, dbname=..., cmdObj=..., result=...)
+    at src/mongo/db/commands/find_cmd.cpp:311
+#5  0x00007f2a4e11fb36 in mongo::BasicCommand::enhancedRun (this=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7f2a54621900, request=..., result=...) at src/mongo/db/commands.cpp:416
+#6  0x00007f2a4e11c2df in mongo::Command::publicRun (this=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7f2a54621900, request=..., result=...) at src/mongo/db/commands.cpp:354
+#7  0x00007f2a4d0981f4 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f2a5487e8d0, request=..., command=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7f2a54621900)
+    at src/mongo/db/service_entry_point_mongod.cpp:481
+#8  mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f2a54621900, command=command@entry=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:757
+#9  0x00007f2a4d09936f in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f2a4c4e9400) at src/mongo/db/service_entry_point_mongod.cpp:878
+#10 0x00007f2a4d09936f in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#11 0x00007f2a4d09a1d1 in runCommands (message=..., opCtx=0x7f2a54621900) at src/mongo/db/service_entry_point_mongod.cpp:888
+#12 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f2a54621900, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1161
+#13 0x00007f2a4d0a6b0a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:363
+*/ //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中执行
 StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
                                                     Collection* collection,
                                                     WorkingSet* ws,
@@ -284,7 +307,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         root = make_unique<IDHackStage>(opCtx, collection, canonicalQuery.get(), ws, descriptor);
 
         // Might have to filter out orphaned docs.
-        if (plannerParams.options & QueryPlannerParams::INCLUDE_SHARD_FILTER) {
+        if (plannerParams.options & QueryPlannerParams::INCLUDE_SHARD_FILTER) { 
             root = make_unique<ShardFilterStage>(
                 opCtx,
                 CollectionShardingState::get(opCtx, canonicalQuery->nss())->getMetadata(),
@@ -382,7 +405,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     }
 
     vector<QuerySolution*> solutions;
-    Status status = QueryPlanner::plan(*canonicalQuery, plannerParams, &solutions);
+    Status status = QueryPlanner::plan(*canonicalQuery, plannerParams, &solutions); //获取满足条件的plan存入solutions
     if (!status.isOK()) {
         return Status(ErrorCodes::BadValue,
                       "error processing query: " + canonicalQuery->toString() +
@@ -424,7 +447,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         }
     }
 
-    if (1 == solutions.size()) {
+    if (1 == solutions.size()) { //只有一个plan
         // Only one possible plan.  Run it.  Build the stages from the solution.
         PlanStage* rawRoot;
         verify(
@@ -438,7 +461,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         querySolution.reset(solutions[0]);
         return PrepareExecutionResult(
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
-    } else {
+    } else { //多个plan满足要求
         // Many solutions. Create a MultiPlanStage to pick the best, update the cache,
         // and so on. The working set will be shared by all candidate plans.
         auto multiPlanStage = make_unique<MultiPlanStage>(opCtx, collection, canonicalQuery.get());
@@ -465,7 +488,8 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
 }  // namespace
 
-StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor(
+StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
+	getExecutor(
     OperationContext* opCtx,
     Collection* collection,
     unique_ptr<CanonicalQuery> canonicalQuery,
@@ -479,7 +503,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor(
     }
     invariant(executionResult.getValue().root);
     // We must have a tree of stages in order to have a valid plan executor, but the query
-    // solution may be null.
+    // solution may be null.   PlanExecutor::PlanExecutor
     return PlanExecutor::make(opCtx,
                               std::move(ws),
                               std::move(executionResult.getValue().root),
@@ -656,6 +680,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getOplogStartHack(
 
 }  // namespace
 
+//FindCmd::run中调用
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind(
     OperationContext* opCtx,
     Collection* collection,

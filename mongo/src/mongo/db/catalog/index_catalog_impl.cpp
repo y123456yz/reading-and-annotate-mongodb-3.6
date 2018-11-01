@@ -1124,9 +1124,32 @@ auto IndexCatalogImpl::IndexIteratorImpl::clone_impl() const -> IndexIteratorImp
     return new IndexIteratorImpl(*this);
 }
 
+/*
+插入数据的时候调用栈
+
+Breakpoint 1, mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400, opCtx=0x7fe69d14db80) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+309         return _catalog->getMetaData(opCtx, ns().toString());
+(gdb) bt
+#0  mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400, opCtx=0x7fe69d14db80) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+#1  0x00007fe69567c7e2 in mongo::BSONCollectionCatalogEntry::isIndexReady (this=<optimized out>, opCtx=<optimized out>, indexName=...) at src/mongo/db/storage/bson_collection_catalog_entry.cpp:172
+#2  0x00007fe69585e4a6 in _catalogIsReady (opCtx=<optimized out>, this=0x7fe699a36500) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:332
+#3  mongo::IndexCatalogEntryImpl::isReady (this=0x7fe699a36500, opCtx=<optimized out>) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:167
+#4  0x00007fe695854ee9 in isReady (opCtx=0x7fe69d14db80, this=0x7fe699a5b3b8) at src/mongo/db/catalog/index_catalog_entry.h:224
+#5  mongo::IndexCatalogImpl::IndexIteratorImpl::_advance (this=this@entry=0x7fe69d3d3680) at src/mongo/db/catalog/index_catalog_impl.cpp:1170
+#6  0x00007fe695855047 in mongo::IndexCatalogImpl::IndexIteratorImpl::more (this=0x7fe69d3d3680) at src/mongo/db/catalog/index_catalog_impl.cpp:1129
+#7  0x00007fe69585315d in more (this=<synthetic pointer>) at src/mongo/db/catalog/index_catalog.h:104
+#8  mongo::IndexCatalogImpl::findIdIndex (this=<optimized out>, opCtx=<optimized out>) at src/mongo/db/catalog/index_catalog_impl.cpp:1182
+#9  0x00007fe69583af61 in findIdIndex (opCtx=0x7fe69d14db80, this=0x7fe69984c038) at src/mongo/db/catalog/index_catalog.h:331
+#10 mongo::CollectionImpl::insertDocuments (this=0x7fe69984bfc0, opCtx=0x7fe69d14db80, begin=..., end=..., opDebug=0x7fe69d145938, enforceQuota=true, fromMigrate=false) at src/mongo/db/catalog/collection_impl.cpp:350
+#11 0x00007fe6957ce352 in insertDocuments (fromMigrate=false, enforceQuota=true, opDebug=<optimized out>, end=..., begin=..., opCtx=0x7fe69d14db80, this=<optimized out>) at src/mongo/db/catalog/collection.h:498
+#12 mongo::(anonymous namespace)::insertDocuments (opCtx=0x7fe69d14db80, collection=<optimized out>, begin=begin@entry=..., end=end@entry=...) at src/mongo/db/ops/write_ops_exec.cpp:329
+#13 0x00007fe6957d4026 in operator() (__closure=<optimized out>) at src/mongo/db/ops/write_ops_exec.cpp:406
+#14 writeConflictRetry<mongo::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::Insert&, std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*, mongo::WriteResult*)::<lambda()> > (f=<optimized out>, ns=..., opStr=..., opCtx=0x7fe69d14db80) at src/mongo/db/concurrency/write_conflict_exception.h:91
+*/
+
 bool IndexCatalogImpl::IndexIteratorImpl::more() {
     if (_start) {
-        _advance();
+        _advance(); //IndexCatalogImpl::IndexIteratorImpl::_advance
         _start = false;
     }
     return _next != nullptr;
@@ -1167,7 +1190,7 @@ void IndexCatalogImpl::IndexIteratorImpl::_advance() {
                 }
             }
 
-            if (!entry->isReady(_opCtx))
+            if (!entry->isReady(_opCtx)) //IndexCatalogEntryImpl::isReady
                 continue;
         }
 
@@ -1176,9 +1199,33 @@ void IndexCatalogImpl::IndexIteratorImpl::_advance() {
     }
 }
 
+/*
+插入数据的时候调用栈
+
+Breakpoint 1, mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400, opCtx=0x7fe69d14db80) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+309         return _catalog->getMetaData(opCtx, ns().toString());
+(gdb) bt
+#0  mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400, opCtx=0x7fe69d14db80) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+#1  0x00007fe69567c7e2 in mongo::BSONCollectionCatalogEntry::isIndexReady (this=<optimized out>, opCtx=<optimized out>, indexName=...) at src/mongo/db/storage/bson_collection_catalog_entry.cpp:172
+#2  0x00007fe69585e4a6 in _catalogIsReady (opCtx=<optimized out>, this=0x7fe699a36500) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:332
+#3  mongo::IndexCatalogEntryImpl::isReady (this=0x7fe699a36500, opCtx=<optimized out>) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:167
+#4  0x00007fe695854ee9 in isReady (opCtx=0x7fe69d14db80, this=0x7fe699a5b3b8) at src/mongo/db/catalog/index_catalog_entry.h:224
+#5  mongo::IndexCatalogImpl::IndexIteratorImpl::_advance (this=this@entry=0x7fe69d3d3680) at src/mongo/db/catalog/index_catalog_impl.cpp:1170
+#6  0x00007fe695855047 in mongo::IndexCatalogImpl::IndexIteratorImpl::more (this=0x7fe69d3d3680) at src/mongo/db/catalog/index_catalog_impl.cpp:1129
+#7  0x00007fe69585315d in more (this=<synthetic pointer>) at src/mongo/db/catalog/index_catalog.h:104
+#8  mongo::IndexCatalogImpl::findIdIndex (this=<optimized out>, opCtx=<optimized out>) at src/mongo/db/catalog/index_catalog_impl.cpp:1182
+#9  0x00007fe69583af61 in findIdIndex (opCtx=0x7fe69d14db80, this=0x7fe69984c038) at src/mongo/db/catalog/index_catalog.h:331
+#10 mongo::CollectionImpl::insertDocuments (this=0x7fe69984bfc0, opCtx=0x7fe69d14db80, begin=..., end=..., opDebug=0x7fe69d145938, enforceQuota=true, fromMigrate=false) at src/mongo/db/catalog/collection_impl.cpp:350
+#11 0x00007fe6957ce352 in insertDocuments (fromMigrate=false, enforceQuota=true, opDebug=<optimized out>, end=..., begin=..., opCtx=0x7fe69d14db80, this=<optimized out>) at src/mongo/db/catalog/collection.h:498
+#12 mongo::(anonymous namespace)::insertDocuments (opCtx=0x7fe69d14db80, collection=<optimized out>, begin=begin@entry=..., end=end@entry=...) at src/mongo/db/ops/write_ops_exec.cpp:329
+#13 0x00007fe6957d4026 in operator() (__closure=<optimized out>) at src/mongo/db/ops/write_ops_exec.cpp:406
+#14 writeConflictRetry<mongo::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::Insert&, std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*, mongo::WriteResult*)::<lambda()> > (f=<optimized out>, ns=..., opStr=..., opCtx=0x7fe69d14db80) at src/mongo/db/concurrency/write_conflict_exception.h:91
+*/
+
 //查找ID索引
+//CollectionImpl::insertDocuments中执行
 IndexDescriptor* IndexCatalogImpl::findIdIndex(OperationContext* opCtx) const {
-    IndexIterator ii = _this->getIndexIterator(opCtx, false);
+    IndexIterator ii = _this->getIndexIterator(opCtx, false); //IndexCatalogImpl::IndexIteratorImpl::more
     while (ii.more()) {
         IndexDescriptor* desc = ii.next();
         if (desc->isIdIndex())

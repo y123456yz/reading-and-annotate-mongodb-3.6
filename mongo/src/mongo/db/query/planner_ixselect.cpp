@@ -172,7 +172,7 @@ void QueryPlannerIXSelect::getFields(const MatchExpression* node,
     }
 }
 
-// static
+// static  获取满足条件的索引，QueryPlanner::plan中执行
 void QueryPlannerIXSelect::findRelevantIndices(const unordered_set<string>& fields,
                                                const vector<IndexEntry>& allIndices,
                                                vector<IndexEntry>* out) {

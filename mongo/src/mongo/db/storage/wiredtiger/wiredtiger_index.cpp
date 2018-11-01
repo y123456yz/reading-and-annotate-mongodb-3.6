@@ -495,7 +495,7 @@ bool WiredTigerIndex::isDup(WT_CURSOR* c, const BSONObj& key, const RecordId& id
     WiredTigerItem item(data.getBuffer(), data.getSize());
     setKey(c, item.Get());
 
-    int ret = WT_READ_CHECK(c->search(c));
+    int ret = WT_READ_CHECK(c->search(c)); //先查找是否存在，不存在直接返回
     if (ret == WT_NOTFOUND) {
         return false;
     }
@@ -504,7 +504,7 @@ bool WiredTigerIndex::isDup(WT_CURSOR* c, const BSONObj& key, const RecordId& id
     // If the key exists, check if we already have this id at this key. If so, we don't
     // consider that to be a dup.
     WT_ITEM value;
-    invariantWTOK(c->get_value(c, &value));
+    invariantWTOK(c->get_value(c, &value)); //获取key对应的value
     BufReader br(value.data, value.size);
     while (br.remaining()) {
         if (KeyString::decodeRecordId(&br) == id)
@@ -758,6 +758,7 @@ public:
         return curr(parts);
     }
 
+	//CountScan::doWork   IndexScan::initIndexScan中执行
     void setEndPosition(const BSONObj& key, bool inclusive) override {
         TRACE_CURSOR << "setEndPosition inclusive: " << inclusive << ' ' << key;
         if (key.isEmpty()) {
@@ -774,6 +775,7 @@ public:
         _endPosition->resetToKey(stripFieldNames(key), _idx.ordering(), discriminator);
     }
 
+	//IndexScan::initIndexScan中调用执行
     boost::optional<IndexKeyEntry> seek(const BSONObj& key,
                                         bool inclusive,
                                         RequestedInfo parts) override {
@@ -886,6 +888,20 @@ protected:
         return _prefix.repr() != prefix;
     }
 
+	/*
+(gdb) bt
+#0  mongo::(anonymous namespace)::WiredTigerIndexCursorBase::curr (this=this@entry=0x7f8832364000, parts=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_index.cpp:894
+#1  0x00007f882a597a32 in mongo::(anonymous namespace)::WiredTigerIndexCursorBase::seek (this=0x7f8832364000, key=..., inclusive=<optimized out>, parts=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_index.cpp:789
+#2  0x00007f882ae81477 in mongo::IndexScan::initIndexScan (this=this@entry=0x7f88328f8300) at src/mongo/db/exec/index_scan.cpp:120
+#3  0x00007f882ae8172f in mongo::IndexScan::doWork (this=0x7f88328f8300, out=0x7f8829bcb918) at src/mongo/db/exec/index_scan.cpp:138
+#4  0x00007f882ae952cb in mongo::PlanStage::work (this=0x7f88328f8300, out=out@entry=0x7f8829bcb918) at src/mongo/db/exec/plan_stage.cpp:46
+#5  0x00007f882ae70855 in mongo::FetchStage::doWork (this=0x7f8832110c00, out=0x7f8829bcb9e0) at src/mongo/db/exec/fetch.cpp:86
+#6  0x00007f882ae952cb in mongo::PlanStage::work (this=0x7f8832110c00, out=out@entry=0x7f8829bcb9e0) at src/mongo/db/exec/plan_stage.cpp:46
+#7  0x00007f882ab6a823 in mongo::PlanExecutor::getNextImpl (this=0x7f8832413500, objOut=objOut@entry=0x7f8829bcba70, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:546
+#8  0x00007f882ab6b16b in mongo::PlanExecutor::getNext (this=<optimized out>, objOut=objOut@entry=0x7f8829bcbb80, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:406
+#9  0x00007f882a7cfc3d in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7f882caac740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7f883216fdc0, dbname=..., cmdObj=..., result=...)
+    at src/mongo/db/commands/find_cmd.cpp:366
+	*/
     boost::optional<IndexKeyEntry> curr(RequestedInfo parts) const {
         if (_eof)
             return {};
@@ -941,12 +957,12 @@ protected:
         _cursorAtEof = false;
     }
 
-    // Seeks to query. Returns true on exact match.
+    // Seeks to query. Returns true on exact match. 查找query对应的key是否存在
     bool seekWTCursor(const KeyString& query) {
         WT_CURSOR* c = _cursor->get();
 
         int cmp = -1;
-        const WiredTigerItem keyItem(query.getBuffer(), query.getSize());
+        const WiredTigerItem keyItem(query.getBuffer(), query.getSize()); //query转换为WiredTigerItem
         setKey(c, keyItem.Get());
 
         int ret = WT_READ_CHECK(c->search_near(c, &cmp));
@@ -1036,8 +1052,8 @@ protected:
     // These are where this cursor instance is. They are not changed in the face of a failing
     // next().
     KeyString _key;
-    KeyString::TypeBits _typeBits;
-    RecordId _id;
+    KeyString::TypeBits _typeBits; //赋值见updateIdAndTypeBits
+    RecordId _id; //赋值见updateIdAndTypeBits
     bool _eof = true;
 
     // This differs from _eof in that it always reflects the result of the most recent call to
@@ -1054,6 +1070,7 @@ protected:
     std::unique_ptr<KeyString> _endPosition;
 };
 
+//普通索引相关WiredTigerIndexStandardCursor  唯一索引相关WiredTigerIndexUniqueCursor
 class WiredTigerIndexStandardCursor final : public WiredTigerIndexCursorBase {
 public:
     WiredTigerIndexStandardCursor(const WiredTigerIndex& idx,
@@ -1073,6 +1090,7 @@ public:
     }
 };
 
+//普通索引相关WiredTigerIndexStandardCursor  唯一索引相关WiredTigerIndexUniqueCursor
 class WiredTigerIndexUniqueCursor final : public WiredTigerIndexCursorBase {
 public:
     WiredTigerIndexUniqueCursor(const WiredTigerIndex& idx,

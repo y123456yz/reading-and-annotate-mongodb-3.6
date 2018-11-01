@@ -75,8 +75,8 @@ extern const OperationContext::Decoration<repl::OpTime> clientsLastKnownCommitte
  * and/or the query optimizer.
  *
  * Executes a plan. Calls work() on a plan until a result is produced. Stops when the plan is
- * EOF or if the plan errors.
- */
+ * EOF or if the plan errors. 参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
+ */ //PlanExecutor按照执行计划一步一步迭代，获得最终的数据(或执行update修改数据)。 使用地方可以参考FindCmd::run
 class PlanExecutor {
 public:
     enum ExecState {
@@ -232,6 +232,7 @@ public:
      * The constructor for the normal case, when you have a collection, a canonical query, and a
      * query solution.
      */
+    
     static StatusWith<std::unique_ptr<PlanExecutor, PlanExecutor::Deleter>> make(
         OperationContext* opCtx,
         std::unique_ptr<WorkingSet> ws,
@@ -448,7 +449,7 @@ public:
         _registrationToken = token;
     }
 
-    bool isMarkedAsKilled() const {
+    bool isMarkedAsKilled() const { //该操作被kill
         return static_cast<bool>(_killReason);
     }
 
@@ -558,7 +559,7 @@ private:
     std::unique_ptr<PlanStage> _root;
 
     // If _killReason has a value, then we have been killed and the value represents the reason for
-    // the kill.
+    // the kill.  操作被kill了  isMarkedAsKilled
     boost::optional<std::string> _killReason;
 
     // What namespace are we operating over?

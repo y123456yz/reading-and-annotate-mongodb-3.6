@@ -381,7 +381,8 @@ PlanStage* buildStages(OperationContext* opCtx,
     return nullptr;
 }
 
-// static (this one is used for Cached and MultiPlanStage)
+//prepareExecution÷–÷¥––
+// static (this one is used for Cached and MultiPlanStage) 
 bool StageBuilder::build(OperationContext* opCtx,
                          Collection* collection,
                          const CanonicalQuery& cq,

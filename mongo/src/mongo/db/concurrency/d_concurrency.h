@@ -200,6 +200,7 @@ public:
         ~GlobalLock() {
             if (_result != LOCK_INVALID) {
                 if (isLocked() && _isOutermostLock) {
+                    //WiredTigerRecoveryUnit::abandonSnapshot
                     _opCtx->recoveryUnit()->abandonSnapshot();
                 }
                 _unlock();

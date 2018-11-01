@@ -168,6 +168,27 @@ RecordId BSONCollectionCatalogEntry::getIndexHead(OperationContext* opCtx,
     return md.indexes[offset].head;
 }
 
+/* 写数据流程
+Breakpoint 1, mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400, opCtx=0x7fe69d14db80) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+309         return _catalog->getMetaData(opCtx, ns().toString());
+(gdb) bt
+#0  mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400, opCtx=0x7fe69d14db80) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+#1  0x00007fe69567c7e2 in mongo::BSONCollectionCatalogEntry::isIndexReady (this=<optimized out>, opCtx=<optimized out>, indexName=...) at src/mongo/db/storage/bson_collection_catalog_entry.cpp:172
+#2  0x00007fe69585e4a6 in _catalogIsReady (opCtx=<optimized out>, this=0x7fe699a36500) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:332
+#3  mongo::IndexCatalogEntryImpl::isReady (this=0x7fe699a36500, opCtx=<optimized out>) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:167
+#4  0x00007fe695854ee9 in isReady (opCtx=0x7fe69d14db80, this=0x7fe699a5b3b8) at src/mongo/db/catalog/index_catalog_entry.h:224
+#5  mongo::IndexCatalogImpl::IndexIteratorImpl::_advance (this=this@entry=0x7fe69d3d3680) at src/mongo/db/catalog/index_catalog_impl.cpp:1170
+#6  0x00007fe695855047 in mongo::IndexCatalogImpl::IndexIteratorImpl::more (this=0x7fe69d3d3680) at src/mongo/db/catalog/index_catalog_impl.cpp:1129
+#7  0x00007fe69585315d in more (this=<synthetic pointer>) at src/mongo/db/catalog/index_catalog.h:104
+#8  mongo::IndexCatalogImpl::findIdIndex (this=<optimized out>, opCtx=<optimized out>) at src/mongo/db/catalog/index_catalog_impl.cpp:1182
+#9  0x00007fe69583af61 in findIdIndex (opCtx=0x7fe69d14db80, this=0x7fe69984c038) at src/mongo/db/catalog/index_catalog.h:331
+#10 mongo::CollectionImpl::insertDocuments (this=0x7fe69984bfc0, opCtx=0x7fe69d14db80, begin=..., end=..., opDebug=0x7fe69d145938, enforceQuota=true, fromMigrate=false) at src/mongo/db/catalog/collection_impl.cpp:350
+#11 0x00007fe6957ce352 in insertDocuments (fromMigrate=false, enforceQuota=true, opDebug=<optimized out>, end=..., begin=..., opCtx=0x7fe69d14db80, this=<optimized out>) at src/mongo/db/catalog/collection.h:498
+#12 mongo::(anonymous namespace)::insertDocuments (opCtx=0x7fe69d14db80, collection=<optimized out>, begin=begin@entry=..., end=end@entry=...) at src/mongo/db/ops/write_ops_exec.cpp:329
+#13 0x00007fe6957d4026 in operator() (__closure=<optimized out>) at src/mongo/db/ops/write_ops_exec.cpp:406
+#14 writeConflictRetry<mongo::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::Insert&, 
+std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*, mongo::WriteResult*)::<lambda()> > (f=<optimized out>, ns=..., opStr=..., opCtx=0x7fe69d14db80) at src/mongo/db/concurrency/write_conflict_exception.h:91
+*/
 bool BSONCollectionCatalogEntry::isIndexReady(OperationContext* opCtx, StringData indexName) const {
     MetaData md = _getMetaData(opCtx);
 
@@ -176,6 +197,44 @@ bool BSONCollectionCatalogEntry::isIndexReady(OperationContext* opCtx, StringDat
     return md.indexes[offset].ready;
 }
 
+/*
+读数据流程走这里
+(gdb) bt
+#0  mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d7d6580, opCtx=0x7fe69d3a7280) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:309
+#1  0x00007fe69567ca22 in mongo::BSONCollectionCatalogEntry::getIndexPrefix (this=<optimized out>, opCtx=<optimized out>, indexName=...) at src/mongo/db/storage/bson_collection_catalog_entry.cpp:181
+#2  0x00007fe69585eac8 in mongo::IndexCatalogEntryImpl::IndexCatalogEntryImpl (this=0x7fe69d8061c0, this_=0x7fe699a5b5f0, opCtx=0x7fe69d3a7280, ns=..., collection=0x7fe69d7d6580, descriptor=..., infoCache=0x7fe69d7df3f0)
+    at src/mongo/db/catalog/index_catalog_entry_impl.cpp:103
+#3  0x00007fe69585f396 in make_unique<mongo::IndexCatalogEntryImpl, mongo::IndexCatalogEntry* const&, mongo::OperationContext* const&, mongo::StringData const&, mongo::CollectionCatalogEntry* const&, std::unique_ptr<mongo::IndexDescriptor, std::default_delete<mongo::IndexDescriptor> >, mongo::CollectionInfoCache* const&> () at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:765
+#4  operator() (__closure=<optimized out>, infoCache=0x7fe69d7df3f0, descriptor=..., collection=0x7fe69d7d6580, ns=..., opCtx=<optimized out>, this_=<optimized out>) at src/mongo/db/catalog/index_catalog_entry_impl.cpp:65
+#5  std::_Function_handler<std::unique_ptr<mongo::IndexCatalogEntry::Impl, std::default_delete<mongo::IndexCatalogEntry::Impl> >(mongo::IndexCatalogEntry*, mongo::OperationContext*, mongo::StringData, mongo::CollectionCatalogEntry*, std::unique_ptr<mongo::IndexDescriptor, std::default_delete<mongo::IndexDescriptor> >, mongo::CollectionInfoCache*), mongo::(anonymous namespace)::_mongoInitializerFunction_InitializeIndexCatalogEntryFactory(mongo::InitializerContext*)::<lambda(mongo::IndexCatalogEntry*, mongo::OperationContext*, mongo::StringData, mongo::CollectionCatalogEntry*, std::unique_ptr<mongo::IndexDescriptor, std::default_delete<mongo::IndexDescriptor> >, mongo::CollectionInfoCache*)> >::_M_invoke(const std::_Any_data &, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b666e>, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b6673>, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b6678>, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b667d>, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b6682>, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b6687>) (__functor=..., __args#0=<optimized out>, 
+    __args#1=<optimized out>, __args#2=<optimized out>, __args#3=<optimized out>, __args#4=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b6682>, 
+    __args#5=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x83c9767, DIE 0x84b6687>) at /usr/local/include/c++/5.4.0/functional:1857
+#6  0x00007fe695af6ab3 in operator() (__args#5=0x7fe69d7df3f0, __args#4=..., __args#3=0x7fe69d7d6580, __args#2=..., __args#1=0x7fe69d3a7280, __args#0=0x7fe699a5b5f0, this=0x7fe697a31820 <mongo::(anonymous namespace)::factory>)
+    at /usr/local/include/c++/5.4.0/functional:2267
+#7  mongo::IndexCatalogEntry::makeImpl (this_=<optimized out>, opCtx=<optimized out>, ns=..., collection=<optimized out>, descriptor=..., infoCache=0x7fe69d7df3f0) at src/mongo/db/catalog/index_catalog_entry.cpp:55
+#8  0x00007fe695af6c05 in mongo::IndexCatalogEntry::IndexCatalogEntry (this=<optimized out>, opCtx=<optimized out>, ns=..., collection=<optimized out>, descriptor=..., infoCache=0x7fe69d7df3f0)
+    at src/mongo/db/catalog/index_catalog_entry.cpp:65
+#9  0x00007fe69585cf52 in make_unique<mongo::IndexCatalogEntry, mongo::OperationContext*&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, mongo::CollectionCatalogEntry*, std::unique_ptr<mongo::IndexDescriptor, std::default_delete<mongo::IndexDescriptor> >, mongo::CollectionInfoCache*> () at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:765
+#10 mongo::IndexCatalogImpl::_setupInMemoryStructures (this=0x7fe6998451e0, opCtx=0x7fe69d3a7280, descriptor=..., initFromDisk=<optimized out>) at src/mongo/db/catalog/index_catalog_impl.cpp:182
+#11 0x00007fe696b7fcbe in mongo::IndexCatalog::_setupInMemoryStructures (this=<optimized out>, opCtx=<optimized out>, descriptor=..., initFromDisk=initFromDisk@entry=false) at src/mongo/db/catalog/index_catalog.cpp:60
+#12 0x00007fe695854c98 in _setupInMemoryStructures (initFromDisk=false, descriptor=..., opCtx=<optimized out>, this_=<optimized out>) at src/mongo/db/catalog/index_catalog_impl.h:460
+#13 mongo::IndexCatalogImpl::IndexBuildBlock::init (this=0x7fe69cea7cc0) at src/mongo/db/catalog/index_catalog_impl.cpp:425
+#14 0x00007fe69586716e in mongo::MultiIndexBlockImpl::init (this=0x7fe69d3d3080, indexSpecs=...) at src/mongo/db/catalog/index_create_impl.cpp:259
+#15 0x00007fe695725b31 in init (specs=..., this=0x7fe689c84490) at src/mongo/db/catalog/index_create.h:180
+#16 operator() (__closure=0x7fe689c845c0) at src/mongo/db/commands/create_indexes.cpp:331
+#17 mongo::writeConflictRetry<mongo::CmdCreateIndex::errmsgRun(mongo::OperationContext*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, mongo::BSONObj const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, mongo::BSONObjBuilder&)::{lambda()#3}>(mongo::OperationContext*, mongo::StringData, mongo::CmdCreateIndex::errmsgRun(mongo::OperationContext*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, mongo::BSONObj const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, mongo::BSONObjBuilder&)::{lambda()#3}, mongo::CmdCreateIndex::errmsgRun(mongo::OperationContext*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, mongo::BSONObj const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, mongo::BSONObjBuilder&)::{lambda()#3}&&) (opCtx=0x7fe69d3a7280, opStr=..., ns=..., f=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x3dac431, DIE 0x3ec798b>) at src/mongo/db/concurrency/write_conflict_exception.h:91
+#18 0x00007fe695729809 in mongo::CmdCreateIndex::errmsgRun (this=<optimized out>, opCtx=0x7fe69d3a7280, dbname=..., cmdObj=..., errmsg=..., result=...) at src/mongo/db/commands/create_indexes.cpp:332
+#19 0x00007fe69677e366 in mongo::ErrmsgCommandDeprecated::run (this=this@entry=0x7fe697a282e0 <mongo::cmdCreateIndex>, opCtx=opCtx@entry=0x7fe69d3a7280, db=..., cmdObj=..., result=...) at src/mongo/db/commands.cpp:424
+#20 0x00007fe69677fb36 in mongo::BasicCommand::enhancedRun (this=0x7fe697a282e0 <mongo::cmdCreateIndex>, opCtx=0x7fe69d3a7280, request=..., result=...) at src/mongo/db/commands.cpp:416
+#21 0x00007fe69677c2df in mongo::Command::publicRun (this=0x7fe697a282e0 <mongo::cmdCreateIndex>, opCtx=0x7fe69d3a7280, request=..., result=...) at src/mongo/db/commands.cpp:354
+#22 0x00007fe6956f8804 in runCommandImpl (startOperationTime=..., replyBuilder=0x7fe699843780, request=..., command=0x7fe697a282e0 <mongo::cmdCreateIndex>, opCtx=0x7fe69d3a7280) at src/mongo/db/service_entry_point_mongod.cpp:504
+#23 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7fe69d3a7280, command=command@entry=0x7fe697a282e0 <mongo::cmdCreateIndex>, request=..., replyBuilder=<optimized out>) at src/mongo/db/service_entry_point_mongod.cpp:757
+#24 0x00007fe6956f936f in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7fe689c84a00) at src/mongo/db/service_entry_point_mongod.cpp:878
+#25 0x00007fe6956f936f in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#26 0x00007fe6956fa1d1 in runCommands (message=..., opCtx=0x7fe69d3a7280) at src/mongo/db/service_entry_point_mongod.cpp:888
+#27 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7fe69d3a7280, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1161
+
+*/
 KVPrefix BSONCollectionCatalogEntry::getIndexPrefix(OperationContext* opCtx,
                                                     StringData indexName) const {
     MetaData md = _getMetaData(opCtx);
