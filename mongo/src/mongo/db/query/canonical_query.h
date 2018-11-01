@@ -43,7 +43,7 @@ namespace mongo {
 class OperationContext;
 
 //执行计划 优化器可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
-//规范查询，见runQuery  
+//规范查询，见FindCmd::run  
 class CanonicalQuery {
 public:
     /**

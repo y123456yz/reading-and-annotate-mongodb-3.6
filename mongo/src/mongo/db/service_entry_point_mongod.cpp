@@ -423,6 +423,7 @@ LogicalTime computeOperationTime(OperationContext* opCtx,
     return operationTime;
 }
 
+//runCommands->execCommandDatabase->runCommandImpl调用
 bool runCommandImpl(OperationContext* opCtx,
                     Command* command,
                     const OpMsgRequest& request,
@@ -478,6 +479,7 @@ bool runCommandImpl(OperationContext* opCtx,
             return result;
         }
 
+		//Command::publicRun
         result = command->publicRun(opCtx, request, inPlaceReplyBob);
     } else {
         auto wcResult = extractWriteConcern(opCtx, cmd, db);
@@ -560,7 +562,7 @@ MONGO_FP_DECLARE(skipCheckingForNotMasterInCommandDispatch);
  * also checks that the command is permissible to run on the node given its current
  * replication state. All the logic here is independent of any particular command; any
  * functionality relevant to a specific command should be confined to its run() method.
- */
+ */ //runCommands->execCommandDatabase调用
 void execCommandDatabase(OperationContext* opCtx,
                          Command* command,
                          const OpMsgRequest& request,
@@ -1161,7 +1163,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         dbresponse = runCommands(opCtx, m);   //runCommands
     } else if (op == dbQuery) {
         invariant(!isCommand);
-		//真正的查询入口  
+		//真正的查询入口  实际上新版本走的是FindCmd::run，不在走这里
         dbresponse = receivedQuery(opCtx, nsString, c, m);
     } else if (op == dbGetMore) { //已经查询了数据,这里只是执行得到更多数据的入口  
         dbresponse = receivedGetMore(opCtx, m, currentOp, &shouldLogOpDebug);

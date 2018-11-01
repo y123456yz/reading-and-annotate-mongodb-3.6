@@ -533,16 +533,77 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
     return Status::OK();
 }
 
-// static
+/*
+(gdb) bt
+#0  mongo::QueryPlanner::plan (query=..., params=..., out=out@entry=0x7f2a4c4e8460) at src/mongo/db/query/query_planner.cpp:547
+#1  0x00007f2a4d474225 in mongo::(anonymous namespace)::prepareExecution (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, ws=0x7f2a5461f580, canonicalQuery=..., plannerOptions=plannerOptions@entry=0)
+    at src/mongo/db/query/get_executor.cpp:385
+#2  0x00007f2a4d47927e in mongo::getExecutor (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=plannerOptions@entry=0) at src/mongo/db/query/get_executor.cpp:476
+#3  0x00007f2a4d4794fb in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=0) at src/mongo/db/query/get_executor.cpp:674
+#4  0x00007f2a4d0ec613 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7f2a54621900, dbname=..., cmdObj=..., result=...)
+    at src/mongo/db/commands/find_cmd.cpp:311
+#5  0x00007f2a4e11fb36 in mongo::BasicCommand::enhancedRun (this=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7f2a54621900, request=..., result=...) at src/mongo/db/commands.cpp:416
+#6  0x00007f2a4e11c2df in mongo::Command::publicRun (this=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7f2a54621900, request=..., result=...) at src/mongo/db/commands.cpp:354
+#7  0x00007f2a4d0981f4 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f2a5487e8d0, request=..., command=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7f2a54621900)
+    at src/mongo/db/service_entry_point_mongod.cpp:481
+#8  mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f2a54621900, command=command@entry=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:757
+#9  0x00007f2a4d09936f in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f2a4c4e9400) at src/mongo/db/service_entry_point_mongod.cpp:878
+#10 0x00007f2a4d09936f in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#11 0x00007f2a4d09a1d1 in runCommands (message=..., opCtx=0x7f2a54621900) at src/mongo/db/service_entry_point_mongod.cpp:888
+#12 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f2a54621900, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1161
+#13 0x00007f2a4d0a6b0a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:363
+#14 0x00007f2a4d0a1c4f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:423
+#15 0x00007f2a4d0a568e in operator() (__closure=0x7f2a546690a0) at src/mongo/transport/service_state_machine.cpp:462
+#16 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#17 0x00007f2a4dfe17e2 in operator() (this=0x7f2a4c4eb550) at /usr/local/include/c++/5.4.0/functional:2267
+#18 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f2a50ddc480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:118
+#19 0x00007f2a4d0a084d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f2a5460a510, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:466
+#20 0x00007f2a4d0a31e1 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f2a5460a510, status=...) at src/mongo/transport/service_state_machine.cpp:291
+#21 0x00007f2a4d0a3ddb in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:250
+#22 0x00007f2a4d0a1ce1 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:420
+#23 0x00007f2a4d0a568e in operator() (__closure=0x7f2a50de5da0) at src/mongo/transport/service_state_machine.cpp:462
+#24 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#25 0x00007f2a4dfe1d45 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#26 operator() (__closure=0x7f2a545dfbf0) at src/mongo/transport/service_executor_synchronous.cpp:135
+#27 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#28 0x00007f2a4e531894 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#29 mongo::(anonymous namespace)::runFunc (ctx=0x7f2a546694c0) at src/mongo/transport/service_entry_point_utils.cpp:55
+#30 0x00007f2a4b206e25 in start_thread () from /lib64/libpthread.so.0
+#31 0x00007f2a4af3434d in clone () from /lib64/libc.so.6
+*/
+//参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4 MongoDB 执行计划 & 优化器简介 (上)
+//https://yq.aliyun.com/articles/74635	MongoDB查询优化：从 10s 到 10ms
+//执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache
+
+// static   prepareExecution中调用
 Status QueryPlanner::plan(const CanonicalQuery& query,
                           const QueryPlannerParams& params,
                           std::vector<QuerySolution*>* out) {
-    LOG(5) << "Beginning planning..." << endl
+	/*
+	2018-10-31T15:18:19.172+0800 D QUERY    [conn1] Beginning planning...
+	=============================
+	Options = INDEX_INTERSECTION SPLIT_LIMITED_SORT CANNOT_TRIM_IXISECT 
+	Canonical query:
+	ns=sbtest.sbtest1Tree: k == 2927256.0
+	Sort: {}
+	Proj: {}
+	=============================
+	*/
+	LOG(5) << "Beginning planning..." << endl
            << "=============================" << endl
            << "Options = " << optionString(params.options) << endl
            << "Canonical query:" << endl
            << redact(query.toString()) << "=============================";
 
+	//打印出索引信息
+	//2018-10-31T15:18:25.315+0800 D QUERY    [conn1] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "sbtest.sbtest1" }
+	//2018-10-31T15:18:25.315+0800 D QUERY    [conn1] Index 1 is kp: { k: 1.0 } name: 'k_1' io: { v: 2, key: { k: 1.0 }, name: "k_1", ns: "sbtest.sbtest1" }
     for (size_t i = 0; i < params.indices.size(); ++i) {
         LOG(5) << "Index " << i << " is " << params.indices[i].toString();
     }
@@ -595,7 +656,8 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     QueryPlannerIXSelect::getFields(query.root(), "", &fields);
 
     for (unordered_set<string>::const_iterator it = fields.begin(); it != fields.end(); ++it) {
-        LOG(5) << "Predicate over field '" << *it << "'";
+        LOG(5) << "Predicate over field '" << *it << "'"; 
+		//查找的条件，如db.sbtest1.find({"k":2927256})，这里为 Predicate over field 'k'
     }
 
     // Filter our indices so we only look at indices that are over our predicates.
@@ -606,7 +668,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // the allowed indices for planning, we should not use the hinted index
     // requested in the query.
     BSONObj hintIndex;
-    if (!params.indexFiltersApplied) {
+    if (!params.indexFiltersApplied) { //hint指定了固定的索引
         hintIndex = query.getQueryRequest().getHint();
     }
 
@@ -646,7 +708,8 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     boost::optional<size_t> hintIndexNumber;
 
-    if (hintIndex.isEmpty()) {
+    if (hintIndex.isEmpty()) { //如果没有强制指定索引
+		//获取满足条件的索引
         QueryPlannerIXSelect::findRelevantIndices(fields, params.indices, &relevantIndices);
     } else {
         // Sigh.  If the hint is specified it might be using the index name.
@@ -785,6 +848,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     for (size_t i = 0; i < relevantIndices.size(); ++i) {
+		//Relevant index 0 is kp: { k: 1.0 } name: 'k_1' io: { v: 2, key: { k: 1.0 }, name: "k_1", ns: "sbtest.sbtest1" }
         LOG(2) << "Relevant index " << i << " is " << relevantIndices[i].toString();
     }
 
@@ -917,7 +981,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // Don't leave tags on query tree.
     query.root()->resetTag();
 
-    LOG(5) << "Planner: outputted " << out->size() << " indexed solutions.";
+    LOG(5) << "Planner: outputted " << out->size() << " indexed solutions."; //满足条件的索引个数
 
     // Produce legible error message for failed OR planning with a TEXT child.
     // TODO: support collection scan for non-TEXT children of OR.

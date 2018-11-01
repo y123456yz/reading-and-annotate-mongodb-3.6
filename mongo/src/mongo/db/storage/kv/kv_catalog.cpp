@@ -420,7 +420,7 @@ std::string KVCatalog::getIndexIdent(OperationContext* opCtx,
     return idxIdent[idxName].String();
 }
 
-//_mdb_catalog.wt中查找
+//_mdb_catalog.wt中查找   KVCatalog::getMetaData中执行
 BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* out) const {
     RecordId dl;
     {
@@ -447,6 +447,9 @@ BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* 
 }
 
 //从元数据文件中查找对应的集合相关的数据文件 索引文件等信息
+//KVCollectionCatalogEntry::_getMetaData  KVDatabaseCatalogEntryBase::initCollection
+//KVDatabaseCatalogEntryBase::renameCollection  
+//KVStorageEngine::reconcileCatalogAndIdents    KVStorageEngine::KVStorageEngine
 const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationContext* opCtx,
                                                                   StringData ns) {
     BSONObj obj = _findEntry(opCtx, ns);

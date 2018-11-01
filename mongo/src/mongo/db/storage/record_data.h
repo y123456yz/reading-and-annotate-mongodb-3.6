@@ -40,7 +40,7 @@ namespace mongo {
  * A replacement for the Record class. This class represents data in a record store.
  * The _ownedData attribute is used to manage memory ownership.
  */ 
-/*
+/* 打印可以参考WiredTigerRecordStore::_insertRecords
 struct Record {
     RecordId id;
     RecordData data;

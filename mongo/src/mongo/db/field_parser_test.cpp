@@ -39,6 +39,7 @@ namespace {
 
 using mongo::BSONArray;
 using mongo::BSONField;
+//输出方法LOG() << WorkingSetCommon::toStatusString(obj),见FindCmd::run
 using mongo::BSONObj;
 using mongo::BSONObjBuilder;
 using mongo::Date_t;

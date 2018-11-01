@@ -43,6 +43,7 @@ class IndexAccessMethod;
 class RecordFetcher;
 class WorkingSetMember;
 
+//»ñÈ¡ID¼ûIndexScan::doWork
 typedef size_t WorkingSetID;
 
 /**

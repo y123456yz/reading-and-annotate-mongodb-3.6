@@ -347,6 +347,7 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
     }
 
     // Should really be done in the collection object at creation and updated on index create.
+    //IndexCatalogImpl::findIdIndex
     const bool hasIdIndex = _indexCatalog.findIdIndex(opCtx); 
 		
     for (auto it = begin; it != end; it++) {

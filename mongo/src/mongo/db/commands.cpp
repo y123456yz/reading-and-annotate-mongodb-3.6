@@ -347,11 +347,12 @@ Status Command::checkAuthorization(Command* c,
     return status;
 }
 
+//runCommands->execCommandDatabase->runCommandImpl->Command::publicRun调用
 bool Command::publicRun(OperationContext* opCtx,
                         const OpMsgRequest& request,
                         BSONObjBuilder& result) {
     try {
-        return enhancedRun(opCtx, request, result);
+        return enhancedRun(opCtx, request, result); //BasicCommand::enhancedRun
     } catch (const DBException& e) {
         if (e.code() == ErrorCodes::Unauthorized) {
             audit::logCommandAuthzCheck(
@@ -409,13 +410,16 @@ void BasicCommand::uassertNoDocumentSequences(const OpMsgRequest& request) {
             request.sequences.empty());
 }
 
+//Command::publicRun中调用
 bool BasicCommand::enhancedRun(OperationContext* opCtx,
                                const OpMsgRequest& request,
                                BSONObjBuilder& result) {
     uassertNoDocumentSequences(request);
+	//ErrmsgCommandDeprecated::run   FindCmd::run
     return run(opCtx, request.getDatabase().toString(), request.body, result);
 }
 
+//BasicCommand::enhancedRun中调用
 bool ErrmsgCommandDeprecated::run(OperationContext* opCtx,
                                   const std::string& db,
                                   const BSONObj& cmdObj,

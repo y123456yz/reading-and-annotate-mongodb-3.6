@@ -328,6 +328,7 @@ void IndexCatalogEntryImpl::setMultikey(OperationContext* opCtx,
 
 // ----
 
+//BSONCollectionCatalogEntry::isIndexReady
 bool IndexCatalogEntryImpl::_catalogIsReady(OperationContext* opCtx) const {
     return _collection->isIndexReady(opCtx, _descriptor->indexName());
 }

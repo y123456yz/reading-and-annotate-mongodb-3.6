@@ -170,6 +170,13 @@ WiredTigerSession* WiredTigerRecoveryUnit::getSessionNoTxn() {
     return _session.get();
 }
 
+/*
+#0  mongo::WiredTigerRecoveryUnit::_txnClose (this=this@entry=0x7fb1db1afd80, commit=commit@entry=false) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:199
+#1  0x00007fb1d44455bf in mongo::WiredTigerRecoveryUnit::abandonSnapshot (this=0x7fb1db1afd80) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:177
+#2  0x00007fb1d5a71767 in ~GlobalLock (this=0x7fb1d3a5b100, __in_chrg=<optimized out>) at src/mongo/db/concurrency/d_concurrency.h:203
+#3  mongo::Lock::DBLock::~DBLock (this=0x7fb1d3a5b0c8, __in_chrg=<optimized out>) at src/mongo/db/concurrency/d_concurrency.cpp:221
+#4  0x00007fb1d465e659 in mongo::(anonymous namespace)::FindCmd::run
+*/
 void WiredTigerRecoveryUnit::abandonSnapshot() {
     invariant(!_inUnitOfWork);
     if (_active) {
@@ -188,6 +195,14 @@ void* WiredTigerRecoveryUnit::writingPtr(void* data, size_t len) {
     // This API should not be used for anything other than the MMAP V1 storage engine
     MONGO_UNREACHABLE;
 }
+
+/*
+#0  mongo::WiredTigerRecoveryUnit::_txnClose (this=this@entry=0x7fb1db1afd80, commit=commit@entry=false) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:199
+#1  0x00007fb1d44455bf in mongo::WiredTigerRecoveryUnit::abandonSnapshot (this=0x7fb1db1afd80) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:177
+#2  0x00007fb1d5a71767 in ~GlobalLock (this=0x7fb1d3a5b100, __in_chrg=<optimized out>) at src/mongo/db/concurrency/d_concurrency.h:203
+#3  mongo::Lock::DBLock::~DBLock (this=0x7fb1d3a5b0c8, __in_chrg=<optimized out>) at src/mongo/db/concurrency/d_concurrency.cpp:221
+#4  0x00007fb1d465e659 in mongo::(anonymous namespace)::FindCmd::run
+*/
 
 /*
 RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 

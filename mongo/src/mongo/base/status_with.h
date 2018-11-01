@@ -61,6 +61,7 @@ namespace mongo {
  * }
  */
 template <typename T>
+//还原可以参考FindCmd::run
 class MONGO_WARN_UNUSED_RESULT_CLASS StatusWith {
     MONGO_STATIC_ASSERT_MSG(!(std::is_same<T, mongo::Status>::value),
                             "StatusWith<Status> is banned.");

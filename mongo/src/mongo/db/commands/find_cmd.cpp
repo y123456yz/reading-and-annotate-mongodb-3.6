@@ -219,8 +219,32 @@ public:
      *   --Generate the first batch.
      *   --Save state for getMore, transferring ownership of the executor to a ClientCursor.
      *   --Generate response to send to the client.
-     */
-    bool run(OperationContext* opCtx,
+     */ 
+	/*
+	查询过程调用栈
+#4  0x00007fc81c0a4613 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7fc81e381740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7fc824b30dc0, dbname=..., cmdObj=..., result=...)
+at src/mongo/db/commands/find_cmd.cpp:311
+#5  0x00007fc81d0d7b36 in mongo::BasicCommand::enhancedRun (this=0x7fc81e381740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7fc824b30dc0, request=..., result=...) at src/mongo/db/commands.cpp:416
+#6  0x00007fc81d0d42df in mongo::Command::publicRun (this=0x7fc81e381740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7fc824b30dc0, request=..., result=...) at src/mongo/db/commands.cpp:354
+#7  0x00007fc81c0501f4 in runCommandImpl (startOperationTime=..., replyBuilder=0x7fc824ac1330, request=..., command=0x7fc81e381740 <mongo::(anonymous namespace)::findCmd>, opCtx=0x7fc824b30dc0)
+    at src/mongo/db/service_entry_point_mongod.cpp:481
+#8  mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7fc824b30dc0, command=command@entry=0x7fc81e381740 <mongo::(anonymous namespace)::findCmd>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:757
+#9  0x00007fc81c05136f in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7fc81b4a1400) at src/mongo/db/service_entry_point_mongod.cpp:878
+#10 0x00007fc81c05136f in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#11 0x00007fc81c0521d1 in runCommands (message=..., opCtx=0x7fc824b30dc0) at src/mongo/db/service_entry_point_mongod.cpp:888
+	*/
+	/* 参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
+	1). Query会进行简单的处理(标准化)，并构造一些上下文数据结构变成CanonicalQuery(标准化Query)。
+	2). Plan模块会负责生成该Query的多个执行计划，然后丢给Optimizer去选择最优的，丢给PlanExecutor。
+	3). PlanExecutor按照执行计划一步一步迭代，获得最终的数据(或执行update修改数据)。
+	在此流程中：
+
+	Plan如果只关联到单个或零个索引，这只生成一个执行计划，如果发现有多个索引或者索引有重叠，这可能生成多个执行计划。
+	Optimizer只在多个执行计划时，才会介入。
+	*/
+	//也就是FindCmd::run，查询请求会走这里
+    bool run(OperationContext* opCtx,  
              const std::string& dbname,
              const BSONObj& cmdObj,
              BSONObjBuilder& result) override {
@@ -267,6 +291,7 @@ public:
         ExtensionsCallbackReal extensionsCallback(opCtx, &nss);
         const boost::intrusive_ptr<ExpressionContext> expCtx;
         auto statusWithCQ =
+			// Query会进行简单的处理(标准化)，并构造一些上下文数据结构变成CanonicalQuery(标准化Query)。
             CanonicalQuery::canonicalize(opCtx,
                                          std::move(qr),
                                          expCtx,
@@ -278,6 +303,7 @@ public:
         }
         std::unique_ptr<CanonicalQuery> cq = std::move(statusWithCQ.getValue());
 
+		//std::move(dbSLock)对应DBLock::~DBLock
         AutoGetCollectionOrViewForReadCommand ctx(opCtx, nss, std::move(dbSLock));
         Collection* collection = ctx.getCollection();
         if (ctx.getView()) {
@@ -307,7 +333,8 @@ public:
         }
 
         // Get the execution plan for the query.
-        auto statusWithPlanExecutor =
+        //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind,这里面会调用QueryPlanner::plan，获取对应的plan
+        auto statusWithPlanExecutor = //获取std::unique_ptr<PlanExecutor, PlanExecutor::Deleter>
             getExecutorFind(opCtx, collection, nss, std::move(cq), PlanExecutor::YIELD_AUTO);
         if (!statusWithPlanExecutor.isOK()) {
             return appendCommandStatus(result, statusWithPlanExecutor.getStatus());
@@ -337,16 +364,26 @@ public:
         BSONObj obj;
         PlanExecutor::ExecState state = PlanExecutor::ADVANCED;
         long long numResults = 0;
+		
+		//获取obj信息，PlanExecutor::getNext->PlanExecutor::getNextImpl->PlanStage::work->FetchStage::doWork->PlanStage::work
+		//->IndexScan::doWork->IndexScan::initIndexScan
         while (!FindCommon::enoughForFirstBatch(originalQR, numResults) &&
+			   //获取满足条件的数据
                PlanExecutor::ADVANCED == (state = exec->getNext(&obj, NULL))) {
             // If we can't fit this result inside the current batch, then we stash it for later.
             if (!FindCommon::haveSpaceForNext(obj, numResults, firstBatch.bytesUsed())) {
-                exec->enqueue(obj);
+                exec->enqueue(obj); //PlanExecutor::enqueue  先enque，下次发送给客户端
                 break;
             }
-
+/*
+2018-11-01T15:50:35.766+0800 I QUERY	[conn1] yang test....FindCmd::run,OBJ:{ _id: 296446204, k: 2927256, c: "	 
+57107967939-44137227834-24587740032-15980392750-15036476717-35100161171-04316050421-66523371550-06261438843-50432265427", 
+pad: "	  13080577566-76793693218-00011035587-01443926745-80818518372", yangtest1: "	 13080577566-76793693218-00011035587
+-01443926745-80818518372", yangtest2: " 	13080577566-76793693218-00011035587-01443926745-80818518372" }
+*/
+			log() << "yang test....FindCmd::run,OBJ:"<< (obj); //obj为按照PlanExecutor获取到的结果
             // Add result to output buffer.
-            firstBatch.append(obj);
+            firstBatch.append(obj); //添加到firstBatch，在后面通过firstBatch.done返回客户端
             numResults++;
         }
 
@@ -383,6 +420,7 @@ public:
             cursorId = pinnedCursor.getCursor()->cursorid();
 
             invariant(!exec);
+			//PlanExecutor按照执行计划一步一步迭代，获得最终的数据(或执行update修改数据)。
             PlanExecutor* cursorExec = pinnedCursor.getCursor()->getExecutor();
 
             // State will be restored on getMore.
@@ -404,7 +442,7 @@ public:
         }
 
         // Generate the response object to send to the client.
-        firstBatch.done(cursorId, nss.ns());
+        firstBatch.done(cursorId, nss.ns());//CursorResponseBuilder::done 返回给客户端对应的数据
         return true;
     }
 
