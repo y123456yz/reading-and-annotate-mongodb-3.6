@@ -9,27 +9,24 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
 
 阅读过程  
 ===================================   
-截止18.3.29:    
-	.提交mongo官方代码    
-	.主要类结构,宏定义代码梳理注释  
-	.主流程简单分析  
-	
-18.4.15   
-    .mongodb存储引擎wiredtiger代码架构梳理    
-	.wiredtiger源码分析    
-	.mongodb高性能存储引擎wiredtiger源码分析:https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0   
-
-18.8.31    
-    .添加mongodb压测工具，sysbench-mongodb    
-  
 18.10.8  
+    .提交mongo官方代码    
+    .主要类结构,宏定义代码梳理注释  
+    .主流程简单分析  
+    .mongodb存储引擎wiredtiger代码架构梳理    
+    .wiredtiger源码分析    
+    .mongodb高性能存储引擎wiredtiger源码分析:https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0   
+    .添加mongodb压测工具，sysbench-mongodb    
     .网络收发处理过程完整分析  
-	.网络线程模型分析  
-	.集合创建过程分析  
-	.insert插入过程整个过程完整分析  
-	.全局锁原理分析  
-	.mongodb实现wiredtier接口实现过程分析  
-	.唯一索引、普通索引完整分析，分支点路径分析  
+    .网络线程模型分析  
+    .集合创建过程分析  
+    .insert插入过程整个过程完整分析  
+    .全局锁原理分析  
+    .mongodb实现wiredtier接口实现过程分析  
+    .数据插入过程分析  
+    .唯一索引、普通索引完整分析，分支点路径分析  
 
-	
-	
+18.10.29  
+    .KVCatalog分析，_mdb_catalog.wt元数据文件写入读取过程分析  
+    ._mdb_catalog.wt文件作用分析  
+    .FindCmd::run查找过程简要分析  
