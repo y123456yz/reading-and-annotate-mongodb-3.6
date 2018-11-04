@@ -339,7 +339,7 @@ WiredTigerCursor::WiredTigerCursor(const std::string& uri,
                                    OperationContext* opCtx) {
     _tableID = tableId;
     _ru = WiredTigerRecoveryUnit::get(opCtx);
-    _session = _ru->getSession();
+    _session = _ru->getSession(); //WiredTigerRecoveryUnit::getSession
     _cursor = _session->getCursor(uri, tableId, forRecordStore);
     if (!_cursor) {
         error() << "no cursor for uri: " << uri;

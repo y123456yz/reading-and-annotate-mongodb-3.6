@@ -26,6 +26,8 @@
  *    it in the license file.
  */
 
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kQuery
+
 #include "mongo/platform/basic.h"
 
 #include "mongo/db/query/plan_executor.h"
@@ -54,6 +56,7 @@
 #include "mongo/util/fail_point_service.h"
 #include "mongo/util/scopeguard.h"
 #include "mongo/util/stacktrace.h"
+#include "mongo/util/log.h"
 
 namespace mongo {
 
@@ -179,7 +182,8 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> PlanExecutor::make(
                               yieldPolicy);
 }
 
-// static   getExecutor中执行
+// static   getExecutor中执行  这里面会pickBestPlan选取最优的plan
+//初始化PlanExecutor类型,并且调用pickBestPlan选取最优的Plan.里面包含了很多不同类型的PlanStage
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
    PlanExecutor::make(
     OperationContext* opCtx,
@@ -431,7 +435,7 @@ void PlanExecutor::invalidate(OperationContext* opCtx, const RecordId& dl, Inval
 #12 0x00007f882a76fc08 in mongo::TTLMonitor::run (this=0x7f882e8cdfc0) at src/mongo/db/ttl.cpp:111
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
-
+////FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
 PlanExecutor::ExecState PlanExecutor::getNext(BSONObj* objOut, RecordId* dlOut) {
     Snapshotted<BSONObj> snapshotted;
     ExecState state = getNextImpl(objOut ? &snapshotted : NULL, dlOut);
@@ -449,7 +453,6 @@ PlanExecutor::ExecState PlanExecutor::getNextSnapshotted(Snapshotted<BSONObj>* o
     invariant(!_everDetachedFromOperationContext);
     return getNextImpl(objOut, dlOut);
 }
-
 
 bool PlanExecutor::shouldWaitForInserts() {
     // If this is an awaitData-respecting operation and we have time left and we're not interrupted,
@@ -540,7 +543,7 @@ PlanExecutor::ExecState PlanExecutor::waitForInserts(CappedInsertNotifierData* n
 #12 0x00007f882a76fc08 in mongo::TTLMonitor::run (this=0x7f882e8cdfc0) at src/mongo/db/ttl.cpp:111
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
-
+//FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
 PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, RecordId* dlOut) {
     if (MONGO_FAIL_POINT(planExecutorAlwaysFails)) {
         Status status(ErrorCodes::OperationFailed,
@@ -585,6 +588,8 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
     if (shouldWaitForInserts()) {
         cappedInsertNotifierData.notifier = getCappedInsertNotifier();
     }
+
+	//这里面获取查下到的结果
     for (;;) {
         // These are the conditions which can cause us to yield:
         //   1) The yield policy's timer elapsed, or
@@ -609,7 +614,7 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
         if (code != PlanStage::NEED_YIELD)
             writeConflictsInARow = 0;
 
-		LOG(1) << "yang test PlanExecutor::getNextImpl:" << (int)code;
+		log() << "yang test PlanExecutor::getNextImpl:" << (int)code;
         if (PlanStage::ADVANCED == code) {
             WorkingSetMember* member = _workingSet->get(id); 
             bool hasRequestedData = true;

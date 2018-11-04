@@ -51,7 +51,7 @@ struct Record {
 */
 
  //struct Record{}结构体包含该结构成员   同一个文件没插入一条心数据ID会加1，打印方法参考WiredTigerRecordStore::_insertRecords
-class RecordId {
+class RecordId {//对应"_id" : xxx
 public:
     /**
      * Constructs a Null RecordId.

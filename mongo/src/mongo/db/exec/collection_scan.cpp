@@ -55,6 +55,21 @@ using stdx::make_unique;
 // static
 const char* CollectionScan::kStageType = "COLLSCAN";
 
+/*
+(gdb) bt
+#0  mongo::CollectionScan::CollectionScan (this=0x7f644e182000, opCtx=<optimized out>, params=..., workingSet=<optimized out>, filter=<optimized out>) at src/mongo/db/exec/collection_scan.cpp:71
+#1  0x00007f6445ab30d6 in mongo::buildStages (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, cq=..., qsol=..., root=<optimized out>, ws=ws@entry=0x7f644d32b180) at src/mongo/db/query/stage_builder.cpp:85
+#2  0x00007f6445ab38df in mongo::buildStages (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, cq=..., qsol=..., root=0x7f644e149230, ws=ws@entry=0x7f644d32b180) at src/mongo/db/query/stage_builder.cpp:165
+#3  0x00007f6445ab54b7 in mongo::StageBuilder::build (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, cq=..., solution=..., wsIn=wsIn@entry=0x7f644d32b180, rootOut=rootOut@entry=0x7f6444b0a400)
+    at src/mongo/db/query/stage_builder.cpp:406
+#4  0x00007f6445a9705b in mongo::(anonymous namespace)::prepareExecution (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, ws=0x7f644d32b180, canonicalQuery=..., plannerOptions=plannerOptions@entry=0)
+    at src/mongo/db/query/get_executor.cpp:460
+#5  0x00007f6445a9b3de in mongo::getExecutor (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=plannerOptions@entry=0) at src/mongo/db/query/get_executor.cpp:524
+#6  0x00007f6445a9b65b in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=0) at src/mongo/db/query/get_executor.cpp:729
+#7  0x00007f644570e623 in mongo::(anonymous namespace)::FindCmd::run
+*/ //buildStages
 CollectionScan::CollectionScan(OperationContext* opCtx,
                                const CollectionScanParams& params,
                                WorkingSet* workingSet,
@@ -78,6 +93,28 @@ CollectionScan::CollectionScan(OperationContext* opCtx,
     }
 }
 
+/*
+#0  mongo::CollectionScan::doWork (this=0x7ffa9a401140, out=0x7ffa913668d0) at src/mongo/db/exec/collection_scan.cpp:82
+#1  0x00007ffa9263064b in mongo::PlanStage::work (this=0x7ffa9a401140, out=out@entry=0x7ffa913668d0) at src/mongo/db/exec/plan_stage.cpp:73
+#2  0x00007ffa923059da in mongo::PlanExecutor::getNextImpl (this=0x7ffa9a403e00, objOut=objOut@entry=0x7ffa913669d0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:611
+#3  0x00007ffa923064eb in mongo::PlanExecutor::getNext (this=<optimized out>, objOut=objOut@entry=0x7ffa91366af0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:440
+#4  0x00007ffa91f6ac55 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7ffa94247740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7ffa9a401640, dbname=..., cmdObj=..., result=...)
+    at src/mongo/db/commands/find_cmd.cpp:370
+
+
+#0  mongo::CollectionScan::CollectionScan (this=0x7f644e182000, opCtx=<optimized out>, params=..., workingSet=<optimized out>, filter=<optimized out>) at src/mongo/db/exec/collection_scan.cpp:71
+#1  0x00007f6445ab30d6 in mongo::buildStages (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498cde80, cq=..., qsol=..., root=<optimized out>, ws=ws@entry=0x7f644d32b600) at src/mongo/db/query/stage_builder.cpp:85
+#2  0x00007f6445ab38df in mongo::buildStages (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498cde80, cq=..., qsol=..., root=0x7f644e13d080, ws=ws@entry=0x7f644d32b600) at src/mongo/db/query/stage_builder.cpp:165
+#3  0x00007f6445ab54b7 in mongo::StageBuilder::build (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498cde80, cq=..., solution=..., wsIn=wsIn@entry=0x7f644d32b600, rootOut=rootOut@entry=0x7f6444b0a400)
+    at src/mongo/db/query/stage_builder.cpp:406
+#4  0x00007f6445a9705b in mongo::(anonymous namespace)::prepareExecution (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498cde80, ws=0x7f644d32b600, canonicalQuery=..., plannerOptions=plannerOptions@entry=0)
+    at src/mongo/db/query/get_executor.cpp:460
+#5  0x00007f6445a9b3de in mongo::getExecutor (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498cde80, canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=plannerOptions@entry=0) at src/mongo/db/query/get_executor.cpp:524
+#6  0x00007f6445a9b65b in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498cde80, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=0) at src/mongo/db/query/get_executor.cpp:729
+#7  0x00007f644570e623 in mongo::(anonymous namespace)::FindCmd::run
+*/ //全表扫描走这里面  //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
 PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
     if (_isDead) {
         Status status(
@@ -120,6 +157,7 @@ PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
                     getOpCtx());
             }
 
+			//初始化CollectionScan的游标_cursor成员变量  Collection的getCursor函数得到的游标
             _cursor = _params.collection->getCursor(getOpCtx(), forward);
 
             if (!_lastSeenId.isNull()) {
@@ -130,7 +168,9 @@ PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
                 // we want to return the record *after* this one since we have already returned
                 // this one. This is only possible in the tailing case because that is the only
                 // time we'd need to create a cursor after already getting a record out of it.
-                if (!_cursor->seekExact(_lastSeenId)) {
+                //调用_cursor的seekExact函数得到一条记录,将记录的_id字段记录到_lastSeenId成员变量(下面的_lastSeenId = record->id;),
+                //以便下次从这个记录之后取值,对于wiredtiger引擎直接调用_cursor->next()获取下一个值.
+                if (!_cursor->seekExact(_lastSeenId)) {//WiredTigerRecordStoreCursorBase::seekExact //后去一行记录
                     _isDead = true;
                     Status status(ErrorCodes::CappedPositionLost,
                                   str::stream() << "CollectionScan died due to failure to restore "
@@ -146,11 +186,12 @@ PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
         }
 
         if (_lastSeenId.isNull() && !_params.start.isNull()) {
-            record = _cursor->seekExact(_params.start);
+			//后去一行记录
+            record = _cursor->seekExact(_params.start);//WiredTigerRecordStoreCursorBase::seekExact
         } else {
             // See if the record we're about to access is in memory. If not, pass a fetch
             // request up.
-            if (auto fetcher = _cursor->fetcherForNext()) {
+            if (auto fetcher = _cursor->fetcherForNext()) { 
                 // Pass the RecordFetcher up.
                 WorkingSetMember* member = _workingSet->get(_wsidForFetch);
                 member->setFetcher(fetcher.release());
@@ -158,7 +199,8 @@ PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
                 return PlanStage::NEED_YIELD;
             }
 
-            record = _cursor->next();
+			//WiredTigerRecordStoreCursorBase::next
+            record = _cursor->next(); //获取一行记录信息
         }
     } catch (const WriteConflictException&) {
         // Leave us in a state to try again next time.
@@ -190,12 +232,17 @@ PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
         }
     }
 
+	//在WorkingSet集合中找到一个可用的位置来存放这条记录,WorkingSetMember的loc字段为记录的id字段,
+	//obj字段记录的bson文档
     WorkingSetID id = _workingSet->allocate();
     WorkingSetMember* member = _workingSet->get(id);
     member->recordId = record->id;
+	//WiredTigerRecoveryUnit::getSnapshotId
     member->obj = {getOpCtx()->recoveryUnit()->getSnapshotId(), record->data.releaseToBson()};
     _workingSet->transitionToRecordIdAndObj(id);
 
+	//最后调用returnIfMatches,查看这条全表扫描的记录是否符合我们的CollectionScan这个PlanStage的filter.
+	//如果符合则返回给PlanExecutor的getNext函数,否则继续往后遍历.
     return returnIfMatches(member, id, out);
 }
 

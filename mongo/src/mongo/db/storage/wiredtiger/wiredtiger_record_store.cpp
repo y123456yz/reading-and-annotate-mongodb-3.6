@@ -775,6 +775,7 @@ int64_t WiredTigerRecordStore::storageSize(OperationContext* opCtx,
     return size;
 }
 
+//WiredTigerRecordStore::dataFor    WiredTigerRecordStore::findRecord
 // Retrieve the value from a positioned cursor.
 RecordData WiredTigerRecordStore::_getData(const WiredTigerCursor& cursor) const {
     WT_ITEM value;
@@ -1737,6 +1738,7 @@ boost::optional<Record> WiredTigerRecordStoreCursorBase::next() {
     return {{id, {static_cast<const char*>(value.data), static_cast<int>(value.size)}}};
 }
 
+//获取ID对应的一行记录
 boost::optional<Record> WiredTigerRecordStoreCursorBase::seekExact(const RecordId& id) {
     _skipNextAdvance = false;
     WT_CURSOR* c = _cursor->get();
@@ -2043,3 +2045,4 @@ Status WiredTigerRecordStore::updateCappedSize(OperationContext* opCtx, long lon
 }
 
 }  // namespace mongo
+

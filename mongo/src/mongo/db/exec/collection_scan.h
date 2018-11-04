@@ -91,9 +91,13 @@ private:
      * extracted.
      */
     Status setLatestOplogEntryTimestamp(const Record& record);
-
+    /*
+    WorkingSetID id = _workingSet->allocate();
+    WorkingSetMember* member = _workingSet->get(id);
+    参考CollectionScan::doWork
+    */
     // WorkingSet is not owned by us.
-    WorkingSet* _workingSet;
+    WorkingSet* _workingSet; //WorkingSet::allocate获取一个可用set
 
     // The filter is not owned by us.
     const MatchExpression* _filter;

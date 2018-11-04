@@ -189,7 +189,7 @@ public:
         _ru->assertInActiveTxn();
     }
 
-private:
+private: //成员变量初始化赋值见WiredTigerCursor::WiredTigerCursor
     uint64_t _tableID;
     WiredTigerRecoveryUnit* _ru;  // not owned
     WiredTigerSession* _session;

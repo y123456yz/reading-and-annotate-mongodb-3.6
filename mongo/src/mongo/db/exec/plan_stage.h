@@ -100,10 +100,10 @@ class RecordId;
  *         stage->saveState();
  *         // Do work that requires a yield here (execute other plans, insert, delete, etc.).
  *         stage->restoreState();
- *     }
- * }
+ *     } //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
+ * } 每个查询计划QuerySolution对应一个计划阶段PlanStage. 见getExecutor
  */ //CachedPlanStage基础该类  MultiPlanStage类继承该类
-class PlanStage {
+class PlanStage { //CollectionScan继承该类
 public:
     PlanStage(const char* typeName, OperationContext* opCtx)
         : _commonStats(typeName), _opCtx(opCtx) {}
@@ -344,7 +344,7 @@ public:
 protected:
     /**
      * Performs one unit of work.  See comment at work() above.
-     */
+     */ //对应//IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
     virtual StageState doWork(WorkingSetID* out) = 0;
 
     /**

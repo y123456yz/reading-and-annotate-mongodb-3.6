@@ -26,7 +26,7 @@
  *    it in the license file.
  */
 
-#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kQuery
+//#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kQuery
 
 #include "mongo/platform/basic.h"
 
@@ -35,6 +35,10 @@
 #include "mongo/db/exec/scoped_timer.h"
 #include "mongo/db/operation_context.h"
 #include "mongo/db/service_context.h"
+
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kQuery
+#include "mongo/util/log.h"
+
 
 namespace mongo {
 	/*
@@ -64,13 +68,22 @@ namespace mongo {
 #11 0x00007f882a76f5e0 in mongo::TTLMonitor::doTTLPass (this=this@entry=0x7f882e8cdfc0) at src/mongo/db/ttl.cpp:158
 #12 0x00007f882a76fc08 in mongo::TTLMonitor::run (this=0x7f882e8cdfc0) at src/mongo/db/ttl.cpp:111
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
-	*/
-PlanStage::StageState PlanStage::work(WorkingSetID* out) {
+
+	(gdb) bt
+#0  mongo::CollectionScan::doWork (this=0x7ffa9a401140, out=0x7ffa913668d0) at src/mongo/db/exec/collection_scan.cpp:82
+#1  0x00007ffa9263064b in mongo::PlanStage::work (this=0x7ffa9a401140, out=out@entry=0x7ffa913668d0) at src/mongo/db/exec/plan_stage.cpp:73
+#2  0x00007ffa923059da in mongo::PlanExecutor::getNextImpl (this=0x7ffa9a403e00, objOut=objOut@entry=0x7ffa913669d0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:611
+#3  0x00007ffa923064eb in mongo::PlanExecutor::getNext (this=<optimized out>, objOut=objOut@entry=0x7ffa91366af0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:440
+#4  0x00007ffa91f6ac55 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7ffa94247740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7ffa9a401640, dbname=..., cmdObj=..., result=...)
+		at src/mongo/db/commands/find_cmd.cpp:370
+	*/ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
+PlanStage::StageState PlanStage::work(WorkingSetID* out) {  
     invariant(_opCtx);
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
     ++_commonStats.works;
 
-    StageState workResult = doWork(out); //IndexScan::doWork
+	log() << "yang test PlanStage::work";
+    StageState workResult = doWork(out); //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
 
     if (StageState::ADVANCED == workResult) {
         ++_commonStats.advanced;
