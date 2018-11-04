@@ -85,7 +85,7 @@ StatusWith<std::unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor(
  * PlanExecutor.
  *
  * If the query cannot be executed, returns a Status indicating why.
- */ //FindCmd::run中调用
+ */ //FindCmd::run中调用  getExecutorFind函数,得到PlanExecutor.
 StatusWith<std::unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind(
     OperationContext* opCtx,
     Collection* collection,

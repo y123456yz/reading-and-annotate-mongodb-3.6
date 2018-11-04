@@ -581,7 +581,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
 //https://yq.aliyun.com/articles/74635	MongoDB查询优化：从 10s 到 10ms
 //执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache
 
-// static   prepareExecution中调用
+// static   prepareExecution中调用  调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
 Status QueryPlanner::plan(const CanonicalQuery& query,
                           const QueryPlannerParams& params,
                           std::vector<QuerySolution*>* out) {

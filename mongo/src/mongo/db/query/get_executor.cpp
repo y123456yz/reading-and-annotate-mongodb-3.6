@@ -218,7 +218,7 @@ void fillOutPlannerParams(OperationContext* opCtx,
 
 namespace {
 
-//prepareExecution中调用初始化该结构
+//prepareExecution中调用初始化该结构  用于生成执行QuerySolution和PlanStage.
 struct PrepareExecutionResult {
     PrepareExecutionResult(unique_ptr<CanonicalQuery> canonicalQuery,
                            unique_ptr<QuerySolution> querySolution,
@@ -265,7 +265,9 @@ struct PrepareExecutionResult {
 #11 0x00007f2a4d09a1d1 in runCommands (message=..., opCtx=0x7f2a54621900) at src/mongo/db/service_entry_point_mongod.cpp:888
 #12 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f2a54621900, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1161
 #13 0x00007f2a4d0a6b0a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:363
-*/ //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中执行
+*/ 
+//StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中执行
+//调用prepareExecution函数通过CanonicalQuery类得到的表达式树得到大于等于一个查询计划和
 StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
                                                     Collection* collection,
                                                     WorkingSet* ws,
@@ -367,6 +369,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         // We have a CachedSolution.  Have the planner turn it into a QuerySolution.
         unique_ptr<CachedSolution> cs(rawCS);
         QuerySolution* qs;
+		//从plan cache中获取QuerySolution
         Status status = QueryPlanner::planFromCache(*canonicalQuery, plannerParams, *cs, &qs);
 
         if (status.isOK()) {
@@ -375,6 +378,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
             }
 
             PlanStage* rawRoot;
+			//调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
             verify(StageBuilder::build(opCtx, collection, *canonicalQuery, *qs, ws, &rawRoot));
 
             // Add a CachedPlanStage on top of the previous root.
@@ -405,6 +409,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     }
 
     vector<QuerySolution*> solutions;
+	//调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
     Status status = QueryPlanner::plan(*canonicalQuery, plannerParams, &solutions); //获取满足条件的plan存入solutions
     if (!status.isOK()) {
         return Status(ErrorCodes::BadValue,
@@ -433,6 +438,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
                 // We're not going to cache anything that's fast count.
                 PlanStage* rawRoot;
+				//调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
                 verify(StageBuilder::build(
                     opCtx, collection, *canonicalQuery, *solutions[i], ws, &rawRoot));
                 root.reset(rawRoot);
@@ -450,6 +456,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     if (1 == solutions.size()) { //只有一个plan
         // Only one possible plan.  Run it.  Build the stages from the solution.
         PlanStage* rawRoot;
+		//调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
         verify(
             StageBuilder::build(opCtx, collection, *canonicalQuery, *solutions[0], ws, &rawRoot));
         root.reset(rawRoot);
@@ -488,6 +495,20 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
 }  // namespace
 
+/*
+#0  mongo::QueryPlanner::plan (query=..., params=..., out=out@entry=0x7f2a4c4e8460) at src/mongo/db/query/query_planner.cpp:547
+#1  0x00007f2a4d474225 in mongo::(anonymous namespace)::prepareExecution (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, ws=0x7f2a5461f580, canonicalQuery=..., plannerOptions=plannerOptions@entry=0)
+    at src/mongo/db/query/get_executor.cpp:385
+#2  0x00007f2a4d47927e in mongo::getExecutor (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=plannerOptions@entry=0) at src/mongo/db/query/get_executor.cpp:476
+#3  0x00007f2a4d4794fb in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f2a54621900, collection=collection@entry=0x7f2a50bdf340, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=0) at src/mongo/db/query/get_executor.cpp:674
+#4  0x00007f2a4d0ec613 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7f2a4f3c9740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7f2a54621900, dbname=..., cmdObj=..., result=...)
+    at src/mongo/db/commands/find_cmd.cpp:311
+*/
+//根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
+
+//getExecutorFind中调用
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
 	getExecutor(
     OperationContext* opCtx,
@@ -495,15 +516,23 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
     unique_ptr<CanonicalQuery> canonicalQuery,
     PlanExecutor::YieldPolicy yieldPolicy,
     size_t plannerOptions) {
+    
     unique_ptr<WorkingSet> ws = make_unique<WorkingSet>();
+
+	//调用prepareExecution函数通过CanonicalQuery类得到的表达式树得到大于等于一个查询计划和
+	//用于生成执行QuerySolution和PlanStage. ,每个查询计划QuerySolution对应一个计划阶段PlanStage.
     StatusWith<PrepareExecutionResult> executionResult =
         prepareExecution(opCtx, collection, ws.get(), std::move(canonicalQuery), plannerOptions);
+	
     if (!executionResult.isOK()) {
         return executionResult.getStatus();
     }
     invariant(executionResult.getValue().root);
     // We must have a tree of stages in order to have a valid plan executor, but the query
     // solution may be null.   PlanExecutor::PlanExecutor
+    //这里面会pickBestPlan选取最优的plan 
+    //调用PlanExecutor::make选择最终的PlanExecutor
+    //它初始化PlanExecutor类型,并且调用pickBestPlan选取最优的Plan.里面包含了很多不同类型的PlanStage
     return PlanExecutor::make(opCtx,
                               std::move(ws),
                               std::move(executionResult.getValue().root),
@@ -680,8 +709,10 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getOplogStartHack(
 
 }  // namespace
 
-//FindCmd::run中调用
-StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind(
+//根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
+//FindCmd::run中调用  通过getExecutorFind函数,得到PlanExecutor.
+StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
+ getExecutorFind(
     OperationContext* opCtx,
     Collection* collection,
     const NamespaceString& nss,
@@ -695,7 +726,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind(
     if (ShardingState::get(opCtx)->needCollectionMetadata(opCtx, nss.ns())) {
         plannerOptions |= QueryPlannerParams::INCLUDE_SHARD_FILTER;
     }
-    return getExecutor(
+    return getExecutor( //这里面会pickBestPlan选取最优的plan  根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
         opCtx, collection, std::move(canonicalQuery), PlanExecutor::YIELD_AUTO, plannerOptions);
 }
 

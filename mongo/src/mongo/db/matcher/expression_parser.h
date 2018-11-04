@@ -84,7 +84,10 @@ enum class PathAcceptingKeyword {
     TYPE,
     WITHIN,
 };
-
+/*
+通过MatchExpressionParser类的_parse函数解析ilter成员,filter语法上可以形成树结构,
+所以最终解析出的表达式将会形成表达式树,每个节点是不同的表达式类型.
+*/
 class MatchExpressionParser {
 public:
     /**

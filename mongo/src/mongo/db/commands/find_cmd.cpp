@@ -243,7 +243,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
 	Plan如果只关联到单个或零个索引，这只生成一个执行计划，如果发现有多个索引或者索引有重叠，这可能生成多个执行计划。
 	Optimizer只在多个执行计划时，才会介入。
 	*/
-	//也就是FindCmd::run，查询请求会走这里
+	//也就是FindCmd::run，查询请求会走这里    查询过程可以参考https://yq.aliyun.com/articles/215016
     bool run(OperationContext* opCtx,  
              const std::string& dbname,
              const BSONObj& cmdObj,
@@ -292,6 +292,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
         const boost::intrusive_ptr<ExpressionContext> expCtx;
         auto statusWithCQ =
 			// Query会进行简单的处理(标准化)，并构造一些上下文数据结构变成CanonicalQuery(标准化Query)。
+			//通过CanonicalQuery类的canonicalize函数进一步优化表达式树.
             CanonicalQuery::canonicalize(opCtx,
                                          std::move(qr),
                                          expCtx,
@@ -368,11 +369,11 @@ at src/mongo/db/commands/find_cmd.cpp:311
 		//获取obj信息，PlanExecutor::getNext->PlanExecutor::getNextImpl->PlanStage::work->FetchStage::doWork->PlanStage::work
 		//->IndexScan::doWork->IndexScan::initIndexScan
         while (!FindCommon::enoughForFirstBatch(originalQR, numResults) &&
-			   //获取满足条件的数据
+			   //获取满足条件的数据  //FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
                PlanExecutor::ADVANCED == (state = exec->getNext(&obj, NULL))) {
             // If we can't fit this result inside the current batch, then we stash it for later.
             if (!FindCommon::haveSpaceForNext(obj, numResults, firstBatch.bytesUsed())) {
-                exec->enqueue(obj); //PlanExecutor::enqueue  先enque，下次发送给客户端
+                exec->enqueue(obj); //PlanExecutor::enqueue  当取得的结果集满足一次返回的数量,将退出循环.
                 break;
             }
 /*
@@ -407,6 +408,7 @@ pad: "	  13080577566-76793693218-00011035587-01443926745-80818518372", yangtest1
 
         // Set up the cursor for getMore.
         CursorId cursorId = 0;
+		//如果有剩下的记录还没有取完,则保存游标cursorId,后续会调用getMore记录遍历游标.
         if (shouldSaveCursor(opCtx, collection, state, exec.get())) {
             // Create a ClientCursor containing this plan executor and register it with the cursor
             // manager.
@@ -441,7 +443,7 @@ pad: "	  13080577566-76793693218-00011035587-01443926745-80818518372", yangtest1
             endQueryOp(opCtx, collection, *exec, numResults, cursorId);
         }
 
-        // Generate the response object to send to the client.
+        // Generate the response object to send to the client.  返回结果集合和cursorId.
         firstBatch.done(cursorId, nss.ns());//CursorResponseBuilder::done 返回给客户端对应的数据
         return true;
     }

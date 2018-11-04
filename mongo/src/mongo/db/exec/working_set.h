@@ -43,7 +43,7 @@ class IndexAccessMethod;
 class RecordFetcher;
 class WorkingSetMember;
 
-//获取ID见IndexScan::doWork
+//获取ID见IndexScan::doWork  IndexScan::doWork
 typedef size_t WorkingSetID;
 
 /**
@@ -56,6 +56,12 @@ typedef size_t WorkingSetID;
  * is for. All other methods should only be called by the thread owning this WorkingSet while
  * holding the read lock covering the collection.
  */
+/*
+工作集是用来保存从存储引擎返回的结 果,WorkingSet会保存一次查询的所有PlanStage的结果.它有一个数组成员_data,
+这个数组用于形成一个链表结构,每个节点是 MemberHolder类型用于保存一条记录和链表的下一个节点的位置,记录将被
+做一些调整存放在WorkingSetMember类型中.在一次查询 过程中需要很多次的申请与释放MemberHolder,在释放的时候,它
+将被放在空闲链表里面,备后续使用
+*/
 class WorkingSet {
     MONGO_DISALLOW_COPYING(WorkingSet);
 
@@ -154,6 +160,11 @@ private:
 
     // All WorkingSetIDs are indexes into this, except for INVALID_ID.
     // Elements are added to _freeList rather than removed when freed.
+    /*
+    这个数组用于形成一个链表结构,每个节点是 MemberHolder类型用于保存一条记录和链表的下一个节点的位置,记录
+    将被做一些调整存放在WorkingSetMember类型中.在一次查询 过程中需要很多次的申请与释放MemberHolder,在释放
+    的时候,它将被放在空闲链表里面,备后续使用.
+    */
     std::vector<MemberHolder> _data;
 
     // Index into _data, forming a linked-list using MemberHolder::nextFreeOrSelf as the next
@@ -238,7 +249,7 @@ private:
  * Collection scan stages return a WorkingSetMember in the RID_AND_OBJ state.
  *
  * A WorkingSetMember may have any of the data above.
- */
+ */ //参考PlanExecutor::getNextImpl
 class WorkingSetMember {
     MONGO_DISALLOW_COPYING(WorkingSetMember);
 
@@ -278,8 +289,9 @@ public:
     //
     // Core attributes
     //
-
+    //loc字段为记录的id字段,
     RecordId recordId;
+    //obj字段记录的bson文档
     Snapshotted<BSONObj> obj;
     std::vector<IndexKeyDatum> keyData;
 

@@ -65,7 +65,7 @@ namespace mongo {
 
 using std::unique_ptr;
 using stdx::make_unique;
-
+//StageBuilder::build调用
 PlanStage* buildStages(OperationContext* opCtx,
                        Collection* collection,
                        const CanonicalQuery& cq,
@@ -381,7 +381,24 @@ PlanStage* buildStages(OperationContext* opCtx,
     return nullptr;
 }
 
-//prepareExecution中执行
+/*
+(gdb) bt
+#0  mongo::CollectionScan::CollectionScan (this=0x7f644e182000, opCtx=<optimized out>, params=..., workingSet=<optimized out>, filter=<optimized out>) at src/mongo/db/exec/collection_scan.cpp:71
+#1  0x00007f6445ab30d6 in mongo::buildStages (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, cq=..., qsol=..., root=<optimized out>, ws=ws@entry=0x7f644d32b180) at src/mongo/db/query/stage_builder.cpp:85
+#2  0x00007f6445ab38df in mongo::buildStages (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, cq=..., qsol=..., root=0x7f644e149230, ws=ws@entry=0x7f644d32b180) at src/mongo/db/query/stage_builder.cpp:165
+#3  0x00007f6445ab54b7 in mongo::StageBuilder::build (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, cq=..., solution=..., wsIn=wsIn@entry=0x7f644d32b180, rootOut=rootOut@entry=0x7f6444b0a400)
+    at src/mongo/db/query/stage_builder.cpp:406
+#4  0x00007f6445a9705b in mongo::(anonymous namespace)::prepareExecution (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, ws=0x7f644d32b180, canonicalQuery=..., plannerOptions=plannerOptions@entry=0)
+    at src/mongo/db/query/get_executor.cpp:460
+#5  0x00007f6445a9b3de in mongo::getExecutor (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=plannerOptions@entry=0) at src/mongo/db/query/get_executor.cpp:524
+#6  0x00007f6445a9b65b in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
+    plannerOptions=0) at src/mongo/db/query/get_executor.cpp:729
+#7  0x00007f644570e623 in mongo::(anonymous namespace)::FindCmd::run 
+
+*/
+//prepareExecution中执行  
+//StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
 // static (this one is used for Cached and MultiPlanStage) 
 bool StageBuilder::build(OperationContext* opCtx,
                          Collection* collection,
