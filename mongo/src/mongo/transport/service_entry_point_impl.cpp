@@ -74,6 +74,26 @@ ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(s
     _maxNumConnections = supportedMax;
 }
 
+/*
+#0  mongo::ServiceEntryPointImpl::startSession (this=0x7f1d47b1c320, session=...) at src/mongo/transport/service_entry_point_impl.cpp:85
+#1  0x00007f1d459d9487 in operator() (peerSocket=..., ec=..., __closure=0x7f1d375aa1b0) at src/mongo/transport/transport_layer_asio.cpp:321
+#2  operator() (this=0x7f1d375aa1b0) at src/third_party/asio-master/asio/include/asio/detail/bind_handler.hpp:308
+#3  asio_handler_invoke<asio::detail::move_binder2<mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)>, std::error_code, asio::basic_stream_socket<asio::generic::stream_protocol> > > (function=...) at src/third_party/asio-master/asio/include/asio/handler_invoke_hook.hpp:68
+#4  invoke<asio::detail::move_binder2<mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)>, std::error_code, asio::basic_stream_socket<asio::generic::stream_protocol> >, mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)> > (context=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_invoke_helpers.hpp:37
+#5  complete<asio::detail::move_binder2<mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)>, std::error_code, asio::basic_stream_socket<asio::generic::stream_protocol> > > (this=<synthetic pointer>, handler=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_work.hpp:81
+#6  asio::detail::reactive_socket_move_accept_op<asio::generic::stream_protocol, mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)> >::do_complete(void *, asio::detail::operation *, const asio::error_code &, std::size_t) (owner=<optimized out>, base=<optimized out>)
+    at src/third_party/asio-master/asio/include/asio/detail/reactive_socket_accept_op.hpp:201
+#7  0x00007f1d459e37d9 in complete (bytes_transferred=<optimized out>, ec=..., owner=0x7f1d4790e100, this=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/scheduler_operation.hpp:39
+#8  asio::detail::scheduler::do_run_one (this=this@entry=0x7f1d4790e100, lock=..., this_thread=..., ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:400
+#9  0x00007f1d459e3a21 in asio::detail::scheduler::run (this=0x7f1d4790e100, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:153
+#10 0x00007f1d459edc6e in asio::io_context::run (this=0x7f1d476f0810) at src/third_party/asio-master/asio/include/asio/impl/io_context.ipp:61
+#11 0x00007f1d459d740e in operator() (__closure=0x7f1d4b332c88) at src/mongo/transport/transport_layer_asio.cpp:243
+#12 _M_invoke<> (this=0x7f1d4b332c88) at /usr/local/include/c++/5.4.0/functional:1531
+#13 operator() (this=0x7f1d4b332c88) at /usr/local/include/c++/5.4.0/functional:1520
+#14 std::thread::_Impl<std::_Bind_simple<mongo::transport::TransportLayerASIO::start()::<lambda()>()> >::_M_run(void) (this=0x7f1d4b332c70) at /usr/local/include/c++/5.4.0/thread:115
+#15 0x00007f1d431f18f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
+#16 0x00007f1d42a0de25 in start_thread () from /lib64/libpthread.so.0
+*/
 //新的链接到来或者关闭都要走到这里  TransportLayerASIO::_acceptConnection中执行
 void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
     // Setup the restriction environment on the Session, if the Session has local/remote Sockaddrs
@@ -82,6 +102,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
     invariant(remoteAddr && localAddr);
     auto restrictionEnvironment =
         stdx::make_unique<RestrictionEnvironment>(*remoteAddr, *localAddr);
+	//RestrictionEnvironment::set
     RestrictionEnvironment::set(session, std::move(restrictionEnvironment));
 
     SSMListIterator ssmIt;
@@ -95,7 +116,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
 */ //kAsynchronous  kSynchronous
     auto transportMode = _svcCtx->getServiceExecutor()->transportMode();
 
-	//ServiceStateMachine::ServiceStateMachine
+	//ServiceStateMachine::ServiceStateMachine  这里面设置线程名conn+num
     auto ssm = ServiceStateMachine::create(_svcCtx, session, transportMode);
     {
         stdx::lock_guard<decltype(_sessionsMutex)> lk(_sessionsMutex);

@@ -123,7 +123,7 @@ private:
 
     /**
      * An implementation of the Session interface for this TransportLayer.
-     */
+     */ //LegacySession维持一个连接中多次操作的会话关系
     class LegacySession : public Session {
         MONGO_DISALLOW_COPYING(LegacySession);
 
@@ -164,7 +164,7 @@ private:
     /**
      * A TicketImpl implementation for this TransportLayer. WorkHandle is a callable that
      * can be invoked to fill this ticket.
-     */
+     */ //LegacyTicket增加收发包超时机制
     class LegacyTicket : public TicketImpl {
         MONGO_DISALLOW_COPYING(LegacyTicket);
 
@@ -197,7 +197,7 @@ private:
     /**
      * This Listener wraps the interface in listen.h so that we may implement our own
      * version of accepted().
-     */
+     */ //ListenerLegacy类负责监听端口，接收新连接；
     class ListenerLegacy : public Listener {
     public:
         ListenerLegacy(const TransportLayerLegacy::Options& opts, NewConnectionCb callback);

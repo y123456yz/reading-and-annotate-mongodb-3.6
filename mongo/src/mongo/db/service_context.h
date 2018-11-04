@@ -501,10 +501,13 @@ private:
      * The ServiceExecutor
      */
     /*
-    "adaptive") : <ServiceExecutorAdaptive>( 
-    "synchronous"): <ServiceExecutorSynchronous>(ctx));
+    "adaptive") : <ServiceExecutorAdaptive>( 引入了boost.asio库实现网络接口的异步调用并作为默认配置，同时还把线程模型调整
+    为线程池，动态根据workload压力情况调整线程数量，在大量连接情况下可以避免产生大量的处理线程，降低线程切换开销，以获得
+    更稳定的性能表现。
+    
+    "synchronous"): <ServiceExecutorSynchronous>(ctx));  每个网络连接创建一个专用线程，并同步调用网络接口recv/send收发包
     }
-    */
+    */ //参考官方配置https://docs.mongodb.com/manual/reference/configuration-options/
     std::unique_ptr<transport::ServiceExecutor> _serviceExecutor;
 
     /**

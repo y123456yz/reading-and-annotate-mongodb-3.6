@@ -88,6 +88,7 @@ Status ServiceExecutorSynchronous::shutdown(Milliseconds timeout) {
                  "passthrough executor couldn't shutdown all worker threads within time limit.");
 }
 
+//ServiceStateMachine::_scheduleNextWithGuard 启动新的conn线程
 Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
     if (!_stillRunning.load()) {
         return Status{ErrorCodes::ShutdownInProgress, "Executor is not running"};

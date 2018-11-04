@@ -97,7 +97,7 @@ using transport::TransportLayer;
  * This class wraps up the logic for swapping/unswapping the Client during runNext().
  *
  * In debug builds this also ensures that only one thread is working on the SSM at once.
- */
+ */ //ServiceStateMachine::start中调用
 class ServiceStateMachine::ThreadGuard {
     ThreadGuard(ThreadGuard&) = delete;
     ThreadGuard& operator=(ThreadGuard&) = delete;
@@ -220,6 +220,7 @@ std::shared_ptr<ServiceStateMachine> ServiceStateMachine::create(ServiceContext*
     return std::make_shared<ServiceStateMachine>(svcContext, std::move(session), transportMode);
 }
 
+//ServiceStateMachine::create调用   这里面设置线程名
 ServiceStateMachine::ServiceStateMachine(ServiceContext* svcContext,
                                          transport::SessionHandle session,
                                          transport::Mode transportMode)
@@ -230,7 +231,7 @@ ServiceStateMachine::ServiceStateMachine(ServiceContext* svcContext,
       _sessionHandle(session),
       _dbClient{svcContext->makeClient("conn", std::move(session))},
       _dbClientPtr{_dbClient.get()},
-      _threadName{str::stream() << "conn" << _session()->id()} {}
+      _threadName{str::stream() << "conn" << _session()->id()} {} //线程名
 
 const transport::SessionHandle& ServiceStateMachine::_session() const {
     return _sessionHandle;
@@ -445,7 +446,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     _cleanupSession(std::move(guard));
 }
 
-//ServiceEntryPointImpl::startSession中执行
+//ServiceEntryPointImpl::startSession中执行  启动
 void ServiceStateMachine::start(Ownership ownershipModel) {
     _scheduleNextWithGuard(
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
@@ -462,7 +463,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
         ssm->_runNextInGuard(std::move(guard));
     };
     guard.release();
-	//ServiceExecutorAdaptive::schedule
+	//ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)
     Status status = _serviceContext->getServiceExecutor()->schedule(std::move(func), flags);
     if (status.isOK()) {
         return;
