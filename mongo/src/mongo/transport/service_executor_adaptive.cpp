@@ -187,6 +187,8 @@ Status ServiceExecutorAdaptive::shutdown(Milliseconds timeout) {
                  "adaptive executor couldn't shutdown all worker threads within time limit.");
 }
 
+//ServiceStateMachine::_scheduleNextWithGuard
+//ServiceStateMachine::_scheduleNextWithGuard 启动新的conn线程
 Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, ScheduleFlags flags) {
     auto scheduleTime = _tickSource->getTicks();
     auto pendingCounterPtr = (flags & kDeferredTask) ? &_deferredTasksQueued : &_tasksQueued;

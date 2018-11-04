@@ -52,7 +52,7 @@ class TicketImpl;
  * It must do this on its own thread(s).
  *
  * References to the TransportLayer should be stored on service context objects.
- */
+ */ //参考http://www.nosqlnotes.com/technotes/mongodb/transportlayer/
 //TransportLayer类用于从Acceptor接收消息，然后创建session对象，并把接收到的消息映射到各个endpoints.
 //这个新的session被传入到数据库(通过ServiceEntryPoint)，数据库会调用额外的方法来管理这个session
 

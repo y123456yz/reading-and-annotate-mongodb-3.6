@@ -40,6 +40,7 @@ namespace mongo {
 
 class MessagingPort;
 
+//MessagingPort类负责具体收发包处理
 class MessagingPort final : public AbstractMessagingPort {
 public:
     MessagingPort(int fd, const SockAddr& remote);

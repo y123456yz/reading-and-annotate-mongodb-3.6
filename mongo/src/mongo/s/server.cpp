@@ -577,7 +577,7 @@ MONGO_INITIALIZER_GENERAL(setSSLManagerType, MONGO_NO_PREREQUISITES, ("SSLManage
     return Status::OK();
 }
 #endif
-
+//Mongos请求处理逻辑参考http://www.nosqlnotes.com/technotes/mongodb/mongos-requests/
 int mongoSMain(int argc, char* argv[], char** envp) {
     mongo::setMongos();
 

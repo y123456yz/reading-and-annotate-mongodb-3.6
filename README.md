@@ -30,3 +30,4 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .KVCatalog分析，_mdb_catalog.wt元数据文件写入读取过程分析  
     ._mdb_catalog.wt文件作用分析  
     .FindCmd::run查找过程简要分析  
+    .重新分析网络线程模型，包括adapt sync两种线程模型做详细分析  
