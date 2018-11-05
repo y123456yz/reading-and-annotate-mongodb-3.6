@@ -88,6 +88,7 @@ void TransportLayerManager::end(const SessionHandle& session) {
 // exits with an error and this isn't an issue, but we should make this more robust.
 //TransportLayerASIO::start  accept处理
 //TransportLayerASIO::setup() listen监听
+//_initAndListen中调用
 Status TransportLayerManager::start() {
     for (auto&& tl : _tls) {
         auto status = tl->start(); //TransportLayerASIO::start  accept处理
@@ -129,7 +130,7 @@ Status TransportLayerManager::addAndStartTransportLayer(std::unique_ptr<Transpor
     return ptr->start();
 }
 
-//根据配置构造相应类信息
+//根据配置构造相应类信息  _initAndListen中调用
 std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
     const ServerGlobalParams* config, ServiceContext* ctx) {
     std::unique_ptr<TransportLayer> transportLayer;
