@@ -237,6 +237,31 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
     return _sessionHandle;
 }
 
+
+/*
+#0  mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:345
+#1  0x00007f2285357c5f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:424
+#2  0x00007f228535b69e in operator() (__closure=0x7f228cedd540) at src/mongo/transport/service_state_machine.cpp:463
+#3  std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#4  0x00007f2286297c12 in operator() (this=0x7f22847a1550) at /usr/local/include/c++/5.4.0/functional:2267
+#5  mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f2289601480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#6  0x00007f228535685d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f228ce66890, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:467
+#7  0x00007f22853591f1 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f228ce66890, status=...) at src/mongo/transport/service_state_machine.cpp:292
+#8  0x00007f2285359deb in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:251
+#9  0x00007f2285357cf1 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:421
+#10 0x00007f228535b69e in operator() (__closure=0x7f228cedd500) at src/mongo/transport/service_state_machine.cpp:463
+#11 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#12 0x00007f2286298175 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#13 operator() (__closure=0x7f228ce81410) at src/mongo/transport/service_executor_synchronous.cpp:142
+#14 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#15 0x00007f22867e7d44 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#16 mongo::(anonymous namespace)::runFunc (ctx=0x7f228cedd0a0) at src/mongo/transport/service_entry_point_utils.cpp:55
+#17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
+#18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
+*/
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
     auto ticket = _session()->sourceMessage(&_inMessage);
@@ -255,6 +280,7 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     }
 }
 
+//发送数据
 void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     // Sink our response to the client
     auto ticket = _session()->sinkMessage(toSink);
@@ -337,6 +363,30 @@ void ServiceStateMachine::_sinkCallback(Status status) {
                                       ServiceExecutor::kMayYieldBeforeSchedule);
 }
 
+/*
+#0  mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:345
+#1  0x00007f2285357c5f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:424
+#2  0x00007f228535b69e in operator() (__closure=0x7f228cedd540) at src/mongo/transport/service_state_machine.cpp:463
+#3  std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#4  0x00007f2286297c12 in operator() (this=0x7f22847a1550) at /usr/local/include/c++/5.4.0/functional:2267
+#5  mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f2289601480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#6  0x00007f228535685d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f228ce66890, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:467
+#7  0x00007f22853591f1 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f228ce66890, status=...) at src/mongo/transport/service_state_machine.cpp:292
+#8  0x00007f2285359deb in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:251
+#9  0x00007f2285357cf1 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f228ce66890, guard=...) at src/mongo/transport/service_state_machine.cpp:421
+#10 0x00007f228535b69e in operator() (__closure=0x7f228cedd500) at src/mongo/transport/service_state_machine.cpp:463
+#11 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#12 0x00007f2286298175 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#13 operator() (__closure=0x7f228ce81410) at src/mongo/transport/service_executor_synchronous.cpp:142
+#14 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#15 0x00007f22867e7d44 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#16 mongo::(anonymous namespace)::runFunc (ctx=0x7f228cedd0a0) at src/mongo/transport/service_entry_point_utils.cpp:55
+#17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
+#18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
+*/
 //新链接或者消息处理都会走到这里
 void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     invariant(!_inMessage.empty());
@@ -460,7 +510,9 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
         ThreadGuard guard(ssm.get());
         if (ownershipModel == Ownership::kStatic)
             guard.markStaticOwnership();
-        ssm->_runNextInGuard(std::move(guard));
+		//对应:ServiceStateMachine::_runNextInGuard
+		////ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)中执行
+        ssm->_runNextInGuard(std::move(guard)); //新链接conn线程中需要执行的task
     };
     guard.release();
 	//ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)
@@ -470,7 +522,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
     }
 
     // We've had an error, reacquire the ThreadGuard and destroy the SSM
-    ThreadGuard terminateGuard(this);
+    ThreadGuard terminateGuard(this); //清除操作
 
     // The service executor failed to schedule the task. This could for example be that we failed
     // to start a worker thread. Terminate this connection to leave the system in a valid state.

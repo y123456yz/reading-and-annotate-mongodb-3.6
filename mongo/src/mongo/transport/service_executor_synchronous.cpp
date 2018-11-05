@@ -52,7 +52,7 @@ constexpr auto kExecutorLabel = "executor"_sd;
 constexpr auto kExecutorName = "passthrough"_sd;
 }  // namespace
 
-thread_local std::deque<ServiceExecutor::Task> ServiceExecutorSynchronous::_localWorkQueue = {};
+thread_local std::deque<ServiceExecutor::Task> ServiceExecutorSynchronous::_localWorkQueue = {}; //链接入队
 thread_local int ServiceExecutorSynchronous::_localRecursionDepth = 0;
 thread_local int64_t ServiceExecutorSynchronous::_localThreadIdleCounter = 0;
 
@@ -100,12 +100,14 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
          * at 5% performance boost in microbenchmarks if the number of worker threads
          * was greater than the number of available cores.
          */
+         //在perf测试中，我们发现，如果工作线程的数量大于可用内核的数量，那么在微基准测试中，运行每个请
+         //求后产生的性能提升为5%。
         if (flags & ScheduleFlags::kMayYieldBeforeSchedule) {
             if ((_localThreadIdleCounter++ & 0xf) == 0) {
                 markThreadIdle();
             }
             if (_numRunningWorkerThreads.loadRelaxed() > _numHardwareCores) {
-                stdx::this_thread::yield();
+                stdx::this_thread::yield();//让listener线程本次不参与CPU调度，也就是放慢脚步
             }
         }
 
@@ -113,12 +115,16 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
         // performance in testing. Try to limit the amount of recursion so we don't blow up the
         // stack, even though this shouldn't happen with this executor that uses blocking network
         // I/O.
-        if ((flags & ScheduleFlags::kMayRecurse) &&
+        /*
+		如果调用者允许，直接执行任务(递归)，因为它在测试中产生了更好的性能。尽量限制递归的数量，这样我们
+		就不会破坏堆栈，即使对于使用阻塞网络I/O的执行器来说，这是不应该发生的。
+		*/
+        if ((flags & ScheduleFlags::kMayRecurse) &&  //等待下次入队
             (_localRecursionDepth < synchronousServiceExecutorRecursionLimit.loadRelaxed())) {
             ++_localRecursionDepth;
             task();
         } else {
-            _localWorkQueue.emplace_back(std::move(task));
+            _localWorkQueue.emplace_back(std::move(task)); //入队
         }
         return Status::OK();
     }
@@ -133,11 +139,12 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
         _localWorkQueue.emplace_back(std::move(task));
         while (!_localWorkQueue.empty() && _stillRunning.loadRelaxed()) {
             _localRecursionDepth = 1;
-            _localWorkQueue.front()();
-            _localWorkQueue.pop_front();
+			//对应:ServiceStateMachine::_runNextInGuard
+            _localWorkQueue.front()(); //队列中获取一个task，并执行
+            _localWorkQueue.pop_front();  //去除该task删除
         }
 
-        if (_numRunningWorkerThreads.subtractAndFetch(1) == 0) {
+        if (_numRunningWorkerThreads.subtractAndFetch(1) == 0) { //
             _shutdownCondition.notify_all();
         }
     });

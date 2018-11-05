@@ -231,7 +231,7 @@ Status TransportLayerASIO::setup() {
 }
 
 //TransportLayerManager::start中执行   参考boost::ASIO
-Status TransportLayerASIO::start() {
+Status TransportLayerASIO::start() { //listen线程处理
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     _running.store(true);
 
@@ -323,7 +323,7 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
         _acceptConnection(acceptor); //递归，知道处理完所有的网络accept事件
     };
 
-    acceptor.async_accept(*_workerIOContext, std::move(acceptCb));
+    acceptor.async_accept(*_workerIOContext, std::move(acceptCb)); //异步接收处理
 }
 
 #ifdef MONGO_CONFIG_SSL

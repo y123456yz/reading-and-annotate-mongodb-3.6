@@ -78,8 +78,9 @@ private:
     mutable stdx::mutex _shutdownMutex;
     stdx::condition_variable _shutdownCondition;
 
+    //当前conn线程数，参考ServiceExecutorSynchronous::schedul
     AtomicWord<size_t> _numRunningWorkerThreads{0};
-    size_t _numHardwareCores{0};
+    size_t _numHardwareCores{0}; //cpu个数
 };
 
 }  // namespace transport

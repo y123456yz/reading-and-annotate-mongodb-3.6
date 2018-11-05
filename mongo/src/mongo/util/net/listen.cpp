@@ -164,7 +164,7 @@ Listener::~Listener() {
     }
 }
 
-//创建socket并bind  TransportLayerLegacy::setup中调用
+//创建socket并bind  TransportLayerLegacy::setup中调用  mongodb3.6已经使用默认的boost asio库实现，因此不会在走这里面了 
 bool Listener::setupSockets() {
 	log() << "yang test ... Listener::setupSockets()\r\n";
 

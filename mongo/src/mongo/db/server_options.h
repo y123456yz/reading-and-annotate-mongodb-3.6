@@ -77,6 +77,7 @@ struct ServerGlobalParams {
     bool noUnixSocket = false;    // --nounixsocket
     bool doFork = false;          // --fork
     std::string socket = "/tmp";  // UNIX domain socket directory
+    //net.transportLayer≈‰÷√
     std::string transportLayer;   // --transportLayer (must be either "asio" or "legacy")
 
     // --serviceExecutor ("adaptive", "synchronous")

@@ -113,7 +113,7 @@ Status TransportLayerLegacy::LegacyTicket::fill(AbstractMessagingPort* amp) {
     return _fill(amp);
 }
 
-//创建socket并bind
+//创建socket并bind  新版本都是使用asio不是使用legacy
 Status TransportLayerLegacy::setup() {
 	error() << "yang test ...  TransportLayerLegacy::setup";
     if (!_listener->setupSockets()) {

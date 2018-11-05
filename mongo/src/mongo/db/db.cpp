@@ -699,7 +699,7 @@ ExitCode _initAndListen(int listenPort) {
 	log() << "yang test .... _initAndListen 22222222222";
 
     initWireSpec();
-	//获取serviceContext类,例如mongod进程对应ServiceContextMongoD类
+	//获取serviceContext类,例如mongod进程对应ServiceContextMongoD类  如果是mongos则对应ServiceEntryPointMongos
     auto serviceContext = checked_cast<ServiceContextMongoD*>(getGlobalServiceContext());
 
     serviceContext->setFastClockSource(FastClockSourceFactory::create(Milliseconds(10)));
@@ -747,7 +747,7 @@ ExitCode _initAndListen(int listenPort) {
         stdx::make_unique<ServiceEntryPointMongod>(serviceContext)); //构造ServiceEntryPointMongod类，然后调用setServiceEntryPoint
 
     {
-		//tl为TransportLayerManager类
+		//根据serverGlobalParams全局配置信息构造tl为TransportLayerManager类
         auto tl =
             transport::TransportLayerManager::createWithConfig(&serverGlobalParams, serviceContext);
 		//创建套接字并bind
@@ -1047,7 +1047,7 @@ ExitCode _initAndListen(int listenPort) {
         return EXIT_NET_ERROR;
     }
 
-	//TransportLayerManager::start->TransportLayerASIO::start   监听listen
+	//TransportLayerManager::start->TransportLayerASIO::start   监听listen  
     start = serviceContext->getTransportLayer()->start();
     if (!start.isOK()) {
         error() << "Failed to start the listener: " << start.toString();
@@ -1402,7 +1402,7 @@ void shutdownTask() {
 /*
 //LOG(1) << " only allowing " << current << " connections";
 //log() << " --maxConns too high, can only handle " << want;
-*/
+*/ //mongos对应mongoSMain
 int mongoDbMain(int argc, char* argv[], char** envp) {
 	printf("yang test .ss..111... mongoDbMain 2\r\n");
 	

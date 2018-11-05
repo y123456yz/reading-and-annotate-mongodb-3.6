@@ -41,7 +41,7 @@ using mongo::BSONArray;
 using mongo::BSONField;
 //输出方法LOG() << WorkingSetCommon::toStatusString(obj),见FindCmd::run
 using mongo::BSONObj;
-using mongo::BSONObjBuilder;
+using mongo::BSONObjBuilder; //通过b.obj()输出
 using mongo::Date_t;
 using mongo::FieldParser;
 using mongo::OID;
