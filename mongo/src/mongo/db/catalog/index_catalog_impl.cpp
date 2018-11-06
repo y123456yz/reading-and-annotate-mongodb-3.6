@@ -1448,7 +1448,7 @@ Status IndexCatalogImpl::_unindexRecord(OperationContext* opCtx,
 }
 
 //CollectionImpl::_insertDocuments中调用执行
-//WiredTigerRecordStore::insertRecords  id索引擦入wiredtiger  IndexCatalogImpl::indexRecords 其他索引插入
+//WiredTigerRecordStore::insertRecords 普通插入   IndexCatalogImpl::indexRecords 索引插入
 Status IndexCatalogImpl::indexRecords(OperationContext* opCtx,
                                       const std::vector<BsonRecord>& bsonRecords,
                                       int64_t* keysInsertedOut) {
