@@ -458,11 +458,13 @@ Status CollectionImpl::insertDocument(OperationContext* opCtx,
 }
 
 //CollectionImpl::insertDocuments
-Status CollectionImpl::_insertDocuments(OperationContext* opCtx,
+Status 
+CollectionImpl::_insertDocuments(OperationContext* opCtx,
                                         const vector<InsertStatement>::const_iterator begin,
                                         const vector<InsertStatement>::const_iterator end,
                                         bool enforceQuota,
-                                        OpDebug* opDebug) {
+                                        OpDebug* opDebug) 
+{
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns().toString(), MODE_IX));
 
     const size_t count = std::distance(begin, end);

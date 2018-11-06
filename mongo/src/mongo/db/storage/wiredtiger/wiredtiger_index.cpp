@@ -132,7 +132,7 @@ Status WiredTigerIndex::dupKeyError(const BSONObj& key) {
 
 void WiredTigerIndex::setKey(WT_CURSOR* cursor, const WT_ITEM* item) {
     if (_prefix == KVPrefix::kNotPrefixed) {
-        cursor->set_key(cursor, item);
+        cursor->set_key(cursor, item); //__wt_cursor_set_key
     } else {
         cursor->set_key(cursor, _prefix.repr(), item);
     }
@@ -1156,6 +1156,60 @@ SortedDataBuilderInterface* WiredTigerIndexUnique::getBulkBuilder(OperationConte
     return new UniqueBulkBuilder(this, opCtx, dupsAllowed, _prefix);
 }
 
+/*
+#0  mongo::WiredTigerIndexUnique::_insert (this=0x7f863ccbbf40, c=0x7f86405ceb00, key=..., id=..., dupsAllowed=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_index.cpp:1180
+#1  0x00007f8639807b54 in mongo::WiredTigerIndex::insert (this=0x7f863ccbbf40, opCtx=<optimized out>, key=..., id=..., dupsAllowed=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_index.cpp:312
+#2  0x00007f8639d6fa96 in mongo::IndexAccessMethod::insert (this=0x7f86404aee30, opCtx=opCtx@entry=0x7f8640572640, obj=..., loc=..., options=..., numInserted=0x7f8638e3e8e8) at src/mongo/db/index/index_access_method.cpp:159
+#3  0x00007f8639b4b33a in mongo::IndexCatalogImpl::_indexFilteredRecords (this=this@entry=0x7f863c95e320, opCtx=opCtx@entry=0x7f8640572640, index=index@entry=0x7f863ccda620, bsonRecords=..., 
+    keysInsertedOut=keysInsertedOut@entry=0x7f8638e3ead0) at src/mongo/db/catalog/index_catalog_impl.cpp:1388
+#4  0x00007f8639b52d8f in mongo::IndexCatalogImpl::_indexRecords (this=this@entry=0x7f863c95e320, opCtx=opCtx@entry=0x7f8640572640, index=0x7f863ccda620, bsonRecords=..., keysInsertedOut=keysInsertedOut@entry=0x7f8638e3ead0)
+    at src/mongo/db/catalog/index_catalog_impl.cpp:1406
+#5  0x00007f8639b52e23 in mongo::IndexCatalogImpl::indexRecords (this=0x7f863c95e320, opCtx=0x7f8640572640, bsonRecords=..., keysInsertedOut=0x7f8638e3ead0) at src/mongo/db/catalog/index_catalog_impl.cpp:1461
+#6  0x00007f8639b30edf in indexRecords (keysInsertedOut=0x7f8638e3ead0, bsonRecords=..., opCtx=0x7f8640572640, this=0x7f863cac7ab8) at src/mongo/db/catalog/index_catalog.h:521
+#7  mongo::CollectionImpl::_insertDocuments (this=this@entry=0x7f863cac7a40, opCtx=opCtx@entry=0x7f8640572640, begin=..., begin@entry=..., end=end@entry=..., enforceQuota=enforceQuota@entry=true, opDebug=0x7f8640645138)
+    at src/mongo/db/catalog/collection_impl.cpp:544
+#8  0x00007f8639b311cc in mongo::CollectionImpl::insertDocuments (this=0x7f863cac7a40, opCtx=0x7f8640572640, begin=..., end=..., opDebug=0x7f8640645138, enforceQuota=true, fromMigrate=false)
+    at src/mongo/db/catalog/collection_impl.cpp:377
+#9  0x00007f8639ac44d2 in insertDocuments (fromMigrate=false, enforceQuota=true, opDebug=<optimized out>, end=..., begin=..., opCtx=0x7f8640572640, this=<optimized out>) at src/mongo/db/catalog/collection.h:498
+#10 mongo::(anonymous namespace)::insertDocuments (opCtx=0x7f8640572640, collection=<optimized out>, begin=begin@entry=..., end=end@entry=...) at src/mongo/db/ops/write_ops_exec.cpp:329
+#11 0x00007f8639aca1a6 in operator() (__closure=<optimized out>) at src/mongo/db/ops/write_ops_exec.cpp:406
+#12 writeConflictRetry<mongo::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::Insert&, std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*, mongo::WriteResult*)::<lambda()> > (f=<optimized out>, ns=..., opStr=..., opCtx=0x7f8640572640) at src/mongo/db/concurrency/write_conflict_exception.h:91
+#13 insertBatchAndHandleErrors (out=0x7f8638e3ef20, lastOpFixer=0x7f8638e3ef00, batch=..., wholeOp=..., opCtx=0x7f8640572640) at src/mongo/db/ops/write_ops_exec.cpp:418
+#14 mongo::performInserts (opCtx=opCtx@entry=0x7f8640572640, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:527
+#15 0x00007f8639ab064e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7f8640572640, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:255
+#16 0x00007f8639aaa1e8 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7f8640572640, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:221
+#17 0x00007f863aa7272f in mongo::Command::publicRun (this=0x7f863bd223a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f8640572640, request=..., result=...) at src/mongo/db/commands.cpp:355
+#18 0x00007f86399ee834 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f864056f950, request=..., command=0x7f863bd223a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f8640572640)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#19 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f8640572640, command=command@entry=0x7f863bd223a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:759
+#20 0x00007f86399ef39f in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f8638e3f400) at src/mongo/db/service_entry_point_mongod.cpp:880
+#21 0x00007f86399ef39f in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#22 0x00007f86399f0201 in runCommands (message=..., opCtx=0x7f8640572640) at src/mongo/db/service_entry_point_mongod.cpp:890
+#23 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f8640572640, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1163
+#24 0x00007f86399fcb3a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:414
+#25 0x00007f86399f7c7f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:474
+#26 0x00007f86399fb6be in operator() (__closure=0x7f8640bbe060) at src/mongo/transport/service_state_machine.cpp:515
+#27 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#28 0x00007f863a937c32 in operator() (this=0x7f8638e41550) at /usr/local/include/c++/5.4.0/functional:2267
+#29 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f863ccb2480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#30 0x00007f86399f687d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f864050c510, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:519
+#31 0x00007f86399f9211 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f864050c510, status=...) at src/mongo/transport/service_state_machine.cpp:318
+#32 0x00007f86399f9e0b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:276
+#33 0x00007f86399f7d11 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:471
+#34 0x00007f86399fb6be in operator() (__closure=0x7f863ccb9a60) at src/mongo/transport/service_state_machine.cpp:515
+#35 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#36 0x00007f863a938195 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#37 operator() (__closure=0x7f864052c1b0) at src/mongo/transport/service_executor_synchronous.cpp:143
+#38 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#39 0x00007f863ae87d64 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#40 mongo::(anonymous namespace)::runFunc (ctx=0x7f863ccb9c40) at src/mongo/transport/service_entry_point_utils.cpp:55
+#41 0x00007f8637b5ce25 in start_thread () from /lib64/libpthread.so.0
+#42 0x00007f863788a34d in clone () from /lib64/libc.so.6
+*/
 
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
@@ -1163,7 +1217,7 @@ SortedDataBuilderInterface* WiredTigerIndexUnique::getBulkBuilder(OperationConte
 //WiredTigerIndex::insert中执行
 //默认的_id索引就是唯一索引
 Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
-                                      const BSONObj& key,
+                                      const BSONObj& key,   //存入索引文件类似key:id, 也就是这个key对应的value为id，然后从数据文件中查找该id对应的value
                                       const RecordId& id,
                                       bool dupsAllowed) {
     const KeyString data(keyStringVersion(), key, _ordering);
@@ -1175,14 +1229,18 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
 //	log(1) << "yang test WiredTigerIndexUnique::_insert key: " << redact(&key);  
 	log() << "yang test WiredTigerIndexUnique::_insert";
 
-	auto& record = key;
-		log() << "yang test WiredTigerIndexUnique::_insert" << " value:" << redact(record);;
-
-
     WiredTigerItem valueItem(value.getBuffer(), value.getSize());
-    setKey(c, keyItem.Get()); //先获取原理的唯一key
+	//WiredTigerIndex::setKey
+    setKey(c, keyItem.Get());  
     c->set_value(c, valueItem.Get());
     int ret = WT_OP_CHECK(c->insert(c)); //插入
+
+	
+	auto& record = key;
+	log() << "yang test WiredTigerIndexUnique::_insert" << " key:" << redact(record)
+		<< " value:"<< id;
+	//	<< " value:" << redact(value.toBson());
+	
 
     if (ret != WT_DUPLICATE_KEY) { //说明是第一次插入该唯一key
         return wtRCToStatus(ret);

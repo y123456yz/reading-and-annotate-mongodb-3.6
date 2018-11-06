@@ -49,9 +49,11 @@ struct Record {
     RecordData data;
 };
 */
+//2018-11-06T19:50:49.980+0800 I STORAGE  [conn2] yang test ...WiredTigerRecordStore::_insertRecords .
+//_uri:table:xxxx/collection/0-2872068773297699689 key:RecordId(1) value:{ _id: ObjectId('5be18019281dffc1cb35d63a'), name: "113411", content: "2222222222222" }
 
  //struct Record{}结构体包含该结构成员   同一个文件没插入一条心数据ID会加1，打印方法参考WiredTigerRecordStore::_insertRecords
-class RecordId {//对应"_id" : xxx
+class RecordId {//该Id对应RecordId(1)，而不是ObjectId
 public:
     /**
      * Constructs a Null RecordId.
