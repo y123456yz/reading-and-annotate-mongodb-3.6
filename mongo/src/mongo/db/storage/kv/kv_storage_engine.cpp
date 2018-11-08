@@ -358,6 +358,12 @@ bool KVStorageEngine::isDurable() const {
     return _engine->isDurable();
 }
 
+/*
+ephemeralForTest存储引擎（ephemeralForTest Storage Engine）
+
+MongoDB 3.2提供了一个新的用于测试的存储引擎。而不是一些元数据，用于测试的存储引擎不维护
+任何磁盘数据，不需要在测试运行期间做清理。用于测试的存储引擎是无支持的。
+*/
 bool KVStorageEngine::isEphemeral() const {
     return _engine->isEphemeral();
 }

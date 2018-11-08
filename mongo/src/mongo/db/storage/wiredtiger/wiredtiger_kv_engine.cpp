@@ -312,6 +312,30 @@ stdx::function<bool(StringData)> initRsOplogBackgroundThreadCallback = [](String
 };
 }  // namespace
 
+/*
+wiredtiger简单例子:
+error_check(wiredtiger_open(home, NULL, CONN_CONFIG, &conn));
+
+//__conn_open_session
+error_check(conn->open_session(conn, NULL, NULL, &session));
+
+//__session_create	创建table表
+//error_check(session->create(
+	session, "table:access", "key_format=S,value_format=S"));
+
+//__session_open_cursor  //获取一个cursor通过cursorp返回
+error_check(session->open_cursor(
+	session, "table:access", NULL, NULL, &cursor));
+
+//__wt_cursor_set_key
+cursor->set_key(cursor, "key1");	
+//__wt_cursor_set_value
+cursor->set_value(cursor, "value1");
+//__curfile_insert
+error_check(cursor->insert(cursor));
+*/
+//WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
+//WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
 
 WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
                                        const std::string& path,
@@ -719,7 +743,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
 	//,key_format=q,value_format=u,app_metadata=(formatVersion=1),log=(enabled=true)
     LOG(2) << "WiredTigerKVEngine::createGroupedRecordStore ns: " << ns << " uri: " << uri
            << " config: " << config;
-	//对应wiredtiger session->create
+	//对应wiredtiger session->create  
     return wtRCToStatus(s->create(s, uri.c_str(), config.c_str()));
 }
 
@@ -767,8 +791,9 @@ string WiredTigerKVEngine::_uri(StringData ident) const {
     return string("table:") + ident.toString();
 }
 
-//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
-//创建wiredtiger索引文件
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件) 
+//WiredTigerKVEngine::createGroupedSortedDataInterface->WiredTigerIndex::Create(索引文件相关)创建wiredtiger索引文件
+
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild中执行
 Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* opCtx,

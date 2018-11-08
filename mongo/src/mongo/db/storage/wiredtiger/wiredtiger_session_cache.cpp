@@ -47,6 +47,30 @@
 #include "mongo/util/scopeguard.h"
 
 namespace mongo {
+/*
+wiredtiger简单例子:
+error_check(wiredtiger_open(home, NULL, CONN_CONFIG, &conn));
+
+//__conn_open_session
+error_check(conn->open_session(conn, NULL, NULL, &session));
+
+//__session_create	创建table表
+error_check(session->create(
+	session, "table:access", "key_format=S,value_format=S"));
+
+//__session_open_cursor  //获取一个cursor通过cursorp返回
+error_check(session->open_cursor(
+	session, "table:access", NULL, NULL, &cursor));
+
+//__wt_cursor_set_key
+cursor->set_key(cursor, "key1");	
+//__wt_cursor_set_value
+cursor->set_value(cursor, "value1");
+//__curfile_insert
+error_check(cursor->insert(cursor));
+*/
+//WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
+//WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
 
 //WiredTigerSessionCache::getSession中执行
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64_t cursorEpoch)
@@ -80,8 +104,9 @@ WiredTigerSession::~WiredTigerSession() {
     }
 }
 
+//获取cursor  同时该获取到的新c姜从_cursors列表中去除
 WT_CURSOR* WiredTigerSession::getCursor(const std::string& uri, uint64_t id, bool forRecordStore) {
-    // Find the most recently used cursor
+    // Find the most recently used cursor  
     for (CursorCache::iterator i = _cursors.begin(); i != _cursors.end(); ++i) {
         if (i->_id == id) {
             WT_CURSOR* c = i->_cursor;
@@ -92,7 +117,7 @@ WT_CURSOR* WiredTigerSession::getCursor(const std::string& uri, uint64_t id, boo
         }
     }
 
-    WT_CURSOR* c = NULL;
+    WT_CURSOR* c = NULL; 
     int ret = _session->open_cursor(
         _session, uri.c_str(), NULL, forRecordStore ? "" : "overwrite=false", &c);
     if (ret != ENOENT)
@@ -102,6 +127,7 @@ WT_CURSOR* WiredTigerSession::getCursor(const std::string& uri, uint64_t id, boo
     return c;
 }
 
+//把cursor加入到_cursors列表
 void WiredTigerSession::releaseCursor(uint64_t id, WT_CURSOR* cursor) {
     invariant(_session);
     invariant(cursor);
@@ -126,6 +152,7 @@ void WiredTigerSession::releaseCursor(uint64_t id, WT_CURSOR* cursor) {
     }
 }
 
+//erase _cursors中cursor->uri为uri的c
 void WiredTigerSession::closeAllCursors(const std::string& uri) {
     invariant(_session);
 
@@ -157,7 +184,7 @@ void WiredTigerSession::closeCursorsForQueuedDrops(WiredTigerKVEngine* engine) {
 namespace {
 AtomicUInt64 nextTableId(1);
 }
-// static
+// static   WiredTigerIndex::WiredTigerIndex
 uint64_t WiredTigerSession::genTableId() {
     return nextTableId.fetchAndAdd(1);
 }
@@ -192,7 +219,7 @@ void WiredTigerSessionCache::shuttingDown() {
     }
 
     closeAll();
-    _snapshotManager.shutdown();
+    _snapshotManager.shutdown(); //WiredTigerSnapshotManager::shutdown
 }
 
 void WiredTigerSessionCache::waitUntilDurable(bool forceCheckpoint, bool stableCheckpoint) {
@@ -265,13 +292,15 @@ void WiredTigerSessionCache::waitUntilDurable(bool forceCheckpoint, bool stableC
     }
 
     // Use the journal when available, or a checkpoint otherwise.
-    if (_engine && _engine->isDurable()) {
+    if (_engine && _engine->isDurable()) { //对应wiredtiger中的log日志模块
         invariantWTOK(_waitUntilDurableSession->log_flush(_waitUntilDurableSession, "sync=on"));
         LOG(4) << "flushed journal";
-    } else {
+    } else { //对应checkpoint模块
         invariantWTOK(_waitUntilDurableSession->checkpoint(_waitUntilDurableSession, NULL));
         LOG(4) << "created checkpoint";
     }
+
+	//ReplicationCoordinatorExternalStateImpl::onDurable
     _journalListener->onDurable(token);
 }
 
@@ -292,6 +321,7 @@ void WiredTigerSessionCache::closeCursorsForQueuedDrops() {
     }
 }
 
+//删除所有WiredTigerSession _sessions
 void WiredTigerSessionCache::closeAll() {
     // Increment the epoch as we are now closing all sessions with this epoch.
     SessionCache swap;
@@ -307,8 +337,14 @@ void WiredTigerSessionCache::closeAll() {
     }
 }
 
+/*
+ephemeralForTest存储引擎（ephemeralForTest Storage Engine）
+
+MongoDB 3.2提供了一个新的用于测试的存储引擎。而不是一些元数据，用于测试的存储引擎不维护
+任何磁盘数据，不需要在测试运行期间做清理。用于测试的存储引擎是无支持的。
+*/
 bool WiredTigerSessionCache::isEphemeral() {
-    return _engine && _engine->isEphemeral();
+    return _engine && _engine->isEphemeral(); 
 }
 
 /*
@@ -328,7 +364,7 @@ UniqueWiredTigerSession WiredTigerSessionCache::getSession() {
 
     {
         stdx::lock_guard<stdx::mutex> lock(_cacheLock);
-        if (!_sessions.empty()) {
+        if (!_sessions.empty()) { //WiredTigerSession _sessions不为空，则直接取其中一个
             // Get the most recently used session so that if we discard sessions, we're
             // discarding older ones
             WiredTigerSession* cachedSession = _sessions.back();
@@ -402,9 +438,11 @@ void WiredTigerSessionCache::setJournalListener(JournalListener* jl) {
     _journalListener = jl;
 }
 
+//释放session对应的_cache
 void WiredTigerSessionCache::WiredTigerSessionDeleter::operator()(
     WiredTigerSession* session) const {
     session->_cache->releaseSession(session);
 }
 
 }  // namespace mongo
+

@@ -47,6 +47,7 @@ namespace mongo {
 class WiredTigerKVEngine;
 class WiredTigerSessionCache;
 
+//用于标识每个具体的wiredtiger  cursor
 class WiredTigerCachedCursor {
 public:
     WiredTigerCachedCursor(uint64_t id, uint64_t gen, WT_CURSOR* cursor)
@@ -61,7 +62,7 @@ public:
  * This is a structure that caches 1 cursor for each uri.
  * The idea is that there is a pool of these somewhere.
  * NOT THREADSAFE
- */
+ */  //WiredTigerSessionCache._sessions中存起来
 class WiredTigerSession {
 public:
     /**
@@ -133,7 +134,9 @@ private:
 
     const uint64_t _epoch;
     uint64_t _cursorEpoch;
-    WiredTigerSessionCache* _cache;  // not owned
+    WiredTigerSessionCache* _cache;  // not owned   WiredTigerSession::WiredTigerSession中赋值
+    //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
+    //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
     WT_SESSION* _session;            // owned
     CursorCache _cursors;            // owned
     uint64_t _cursorGen;
@@ -144,7 +147,7 @@ private:
  *  This cache implements a shared pool of WiredTiger sessions with the goal to amortize the
  *  cost of session creation and destruction over multiple uses.
  */
-class WiredTigerSessionCache {
+class WiredTigerSessionCache { 
 public:
     WiredTigerSessionCache(WiredTigerKVEngine* engine);
     WiredTigerSessionCache(WT_CONNECTION* conn);
@@ -230,6 +233,7 @@ private:
     static const uint32_t kShuttingDownMask = 1 << 31;
 
     stdx::mutex _cacheLock;
+    
     typedef std::vector<WiredTigerSession*> SessionCache;
     SessionCache _sessions;
 
@@ -260,7 +264,7 @@ private:
 
 /**
  * A unique handle type for WiredTigerSession pointers obtained from a WiredTigerSessionCache.
- */
+ */ //WiredTigerSessionCache::getSession中调用初始化赋值
 typedef std::unique_ptr<WiredTigerSession,
                         typename WiredTigerSessionCache::WiredTigerSessionDeleter>
     UniqueWiredTigerSession;

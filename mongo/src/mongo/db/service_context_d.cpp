@@ -219,7 +219,8 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
     }
 
     // Write a new metadata file if it is not present.
-    if (!metadata.get()) { //根据配置重新构建storage.bson文件
+    if (!metadata.get()) { //根据配置重新构建storage.bson文件  
+    //没有storage.bson文件则创建，表示第一次使用mongod进程，记录下使用的存储引擎等信息，避免下次配置文件修改新的存储引擎等配置的时候进行报错提示
         invariant(!storageGlobalParams.readOnly);
         metadata.reset(new StorageEngineMetadata(storageGlobalParams.dbpath));
         metadata->setStorageEngine(factory->getCanonicalName().toString());

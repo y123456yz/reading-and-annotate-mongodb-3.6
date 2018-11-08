@@ -54,7 +54,7 @@ public:
     size_t checkpointDelaySecs;
     size_t statisticsLogDelaySecs;
     std::string journalCompressor;
-    bool directoryForIndexes;
+    bool directoryForIndexes; //ÉúÐ§¼û_newUniqueIdent
     std::string engineConfig;
 
     std::string collectionBlockCompressor;
@@ -67,3 +67,4 @@ public:
 
 extern WiredTigerGlobalOptions wiredTigerGlobalOptions;
 }
+
