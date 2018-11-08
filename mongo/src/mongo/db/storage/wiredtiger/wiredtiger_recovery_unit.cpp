@@ -134,6 +134,7 @@ void WiredTigerRecoveryUnit::abortUnitOfWork() {
     _abort();
 }
 
+//
 void WiredTigerRecoveryUnit::_ensureSession() {
     if (!_session) {
         _session = _sessionCache->getSession();
@@ -158,13 +159,15 @@ void WiredTigerRecoveryUnit::assertInActiveTxn() const {
     fassert(28575, _active);
 }
 
+//第一次调用获取新的session,以后再次调用则获取缓存的_session
 WiredTigerSession* WiredTigerRecoveryUnit::getSession() {
-    if (!_active) {
+    if (!_active) { //第一次调用的时候走if里面，下次在get的时候直接返回_session
         _txnOpen();
     }
     return _session.get();
 }
 
+//每次都获取新session   注意WiredTigerRecoveryUnit::getSession和WiredTigerRecoveryUnit::getSessionNoTxn的区别
 WiredTigerSession* WiredTigerRecoveryUnit::getSessionNoTxn() {
     _ensureSession();
     return _session.get();
@@ -268,6 +271,7 @@ boost::optional<Timestamp> WiredTigerRecoveryUnit::getMajorityCommittedSnapshot(
 RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 
 RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
 */
+//WiredTigerRecoveryUnit::getSession第一次获取session的时候调用，在_ensureSession中确定_session
 void WiredTigerRecoveryUnit::_txnOpen() {
     invariant(!_active);
     _ensureSession();
@@ -338,8 +342,10 @@ WiredTigerCursor::WiredTigerCursor(const std::string& uri,
                                    bool forRecordStore,
                                    OperationContext* opCtx) {
     _tableID = tableId;
-    _ru = WiredTigerRecoveryUnit::get(opCtx);
+	//WiredTigerRecoveryUnit* get
+    _ru = WiredTigerRecoveryUnit::get(opCtx); //获取opCtx对应的RecoveryUnit
     _session = _ru->getSession(); //WiredTigerRecoveryUnit::getSession
+    //调用WiredTigerSession::getCursor->(session->open_cursor)获取wiredtiger cursor
     _cursor = _session->getCursor(uri, tableId, forRecordStore);
     if (!_cursor) {
         error() << "no cursor for uri: " << uri;

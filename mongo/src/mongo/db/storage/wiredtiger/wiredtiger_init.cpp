@@ -55,6 +55,7 @@
 
 namespace mongo {
 
+//确定对应的存储引擎
 namespace {
 class WiredTigerFactory : public StorageEngine::Factory {
 public:
@@ -120,14 +121,17 @@ public:
         return kWiredTigerEngineName;
     }
 
+	//wiredtiger存储引擎的配置参数检查，见wiredtiger_config_validate   普通collections数据文件对应的wiredtiger参数做检查
     virtual Status validateCollectionStorageOptions(const BSONObj& options) const {
         return WiredTigerRecordStore::parseOptionsField(options).getStatus();
     }
 
+	//索引index的配置参数做检查
     virtual Status validateIndexStorageOptions(const BSONObj& options) const {
         return WiredTigerIndex::parseIndexOptions(options).getStatus();
     }
-	
+
+	//检查storage.bson的目的是为了保障每次用的存储引擎是一致的，例如如果重启mongod，之前用wiredtiger，现在改为mmap，则会报错
     virtual Status validateMetadata(const StorageEngineMetadata& metadata,
                                     const StorageGlobalParams& params) const {
 		//StorageEngineMetadata::validateStorageEngineOption，检查storage.bson中的directoryPerDB字段的内容是否和预期的params.directoryperdb相同
@@ -160,6 +164,7 @@ public:
         return Status::OK();
     }
 
+	//initializeGlobalStorageEngine中调用执行，第一次启动的时候创建storage.bson文件，避免重启mongod并且修改存储引擎等配置参数，从而进行报错提示
     virtual BSONObj createMetadataOptions(const StorageGlobalParams& params) const {
         BSONObjBuilder builder;
         builder.appendBool("directoryPerDB", params.directoryperdb);
@@ -182,3 +187,4 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(WiredTigerEngineInit, ("SetGlobalEnvironmen
     return Status::OK();
 }
 }
+

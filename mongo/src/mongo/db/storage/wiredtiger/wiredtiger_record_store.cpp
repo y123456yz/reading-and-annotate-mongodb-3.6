@@ -437,10 +437,12 @@ void WiredTigerRecordStore::OplogStones::adjust(int64_t maxSize) {
     _pokeReclaimThreadIfNeeded();
 }
 
+//wiredtiger存储引擎的配置参数检查，见wiredtiger_config_validate    validateCollectionStorageOptions调用
 StatusWith<std::string> WiredTigerRecordStore::parseOptionsField(const BSONObj options) {
     StringBuilder ss;
     BSONForEach(elem, options) {
         if (elem.fieldNameStringData() == "configString") {
+			//调用wiredtiger_config_validate做检查
             Status status = WiredTigerUtil::checkTableCreationOptions(elem);
             if (!status.isOK()) {
                 return status;
@@ -893,6 +895,7 @@ int64_t WiredTigerRecordStore::cappedDeleteAsNeeded(OperationContext* opCtx,
     return cappedDeleteAsNeeded_inlock(opCtx, justInserted);
 }
 
+//wiredtiger  truncate相关
 int64_t WiredTigerRecordStore::cappedDeleteAsNeeded_inlock(OperationContext* opCtx,
                                                            const RecordId& justInserted) {
     // we do this in a side transaction in case it aborts

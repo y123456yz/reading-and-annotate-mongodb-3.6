@@ -192,7 +192,7 @@ public:
 private: //成员变量初始化赋值见WiredTigerCursor::WiredTigerCursor
     uint64_t _tableID;
     WiredTigerRecoveryUnit* _ru;  // not owned
-    WiredTigerSession* _session;
-    WT_CURSOR* _cursor;  // owned, but pulled
+    WiredTigerSession* _session; //wiredtiger中的conn->open_session获取到的session
+    WT_CURSOR* _cursor;  // owned, but pulled   session->open_cursor获取的cursor
 };
 }

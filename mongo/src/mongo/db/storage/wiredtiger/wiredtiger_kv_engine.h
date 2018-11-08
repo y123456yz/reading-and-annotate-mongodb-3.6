@@ -271,6 +271,8 @@ private:
     Timestamp _previousSetOldestTimestamp;
     const bool _keepDataHistory;
 
+    //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
+    //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
     WT_CONNECTION* _conn;
     WT_EVENT_HANDLER _eventHandler;
     std::unique_ptr<WiredTigerSessionCache> _sessionCache;

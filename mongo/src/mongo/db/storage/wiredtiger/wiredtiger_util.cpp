@@ -246,7 +246,7 @@ StatusWith<int64_t> WiredTigerUtil::checkApplicationMetadataFormatVersion(Operat
     return version;
 }
 
-// static
+// static  调用wiredtiger的wiredtiger_config_validate进行配置信息检查
 Status WiredTigerUtil::checkTableCreationOptions(const BSONElement& configElem) {
     invariant(configElem.fieldNameStringData() == "configString");
 

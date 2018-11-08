@@ -64,6 +64,7 @@ void WiredTigerSnapshotManager::dropAllSnapshots() {
     _committedSnapshot = boost::none;
 }
 
+//WiredTigerSessionCache::shuttingDownÖÐµ÷ÓÃ
 void WiredTigerSnapshotManager::shutdown() {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     if (!_session)

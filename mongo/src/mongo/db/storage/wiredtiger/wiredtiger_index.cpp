@@ -57,6 +57,7 @@
 #include "mongo/util/hex.h"
 #include "mongo/util/log.h"
 #include "mongo/util/mongoutils/str.h"
+#include <faiss/IndexFlat.h>
 
 //#define TRACING_ENABLED 0  yang change
 #define TRACING_ENABLED 1
@@ -138,7 +139,7 @@ void WiredTigerIndex::setKey(WT_CURSOR* cursor, const WT_ITEM* item) {
     }
 }
 
-// static
+// static   对wiredtiger中index的配置参数做检查   validateIndexStorageOptions调用
 StatusWith<std::string> WiredTigerIndex::parseIndexOptions(const BSONObj& options) {
     StringBuilder ss;
     BSONForEach(elem, options) {
@@ -243,6 +244,10 @@ StatusWith<std::string> WiredTigerIndex::generateCreateString(const std::string&
 }
 
 //建wiredtiger索引  WiredTigerKVEngine::createGroupedSortedDataInterface中调用
+
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件) 
+//WiredTigerKVEngine::createGroupedSortedDataInterface->WiredTigerIndex::Create(索引文件相关)创建wiredtiger索引文件
+
 int WiredTigerIndex::Create(OperationContext* opCtx,
                             const std::string& uri,
                             const std::string& config) {
@@ -253,10 +258,10 @@ int WiredTigerIndex::Create(OperationContext* opCtx,
     return s->create(s, uri.c_str(), config.c_str());
 }
 
-//WiredTigerIndexUnique::WiredTigerIndexUnique中初始化调用
+//WiredTigerIndexUnique::WiredTigerIndexUnique  WiredTigerIndexStandard::WiredTigerIndexStandard中初始化调用
 WiredTigerIndex::WiredTigerIndex(OperationContext* ctx,
                                  const std::string& uri,
-                                 const IndexDescriptor* desc,
+                                 const IndexDescriptor* desc,  //索引描述信息 是联合索引 还是单字段索引等信息都在该类中
                                  KVPrefix prefix,
                                  bool isReadOnly)
     : _ordering(Ordering::make(desc->keyPattern())),
@@ -420,6 +425,7 @@ Status WiredTigerIndex::dupKeyCheck(OperationContext* opCtx,
     return Status::OK();
 }
 
+//索引文件中是否有数据
 bool WiredTigerIndex::isEmpty(OperationContext* opCtx) {
     if (_prefix != KVPrefix::kNotPrefixed) {
         const bool forward = true;
