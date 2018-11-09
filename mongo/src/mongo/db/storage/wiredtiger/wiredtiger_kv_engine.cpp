@@ -93,6 +93,7 @@ using std::string;
 
 namespace dps = ::mongo::dotted_path_support;
 
+//WiredTigerKVEngine::WiredTigerKVEngine中初始化调用
 class WiredTigerKVEngine::WiredTigerJournalFlusher : public BackgroundJob {
 public:
     explicit WiredTigerJournalFlusher(WiredTigerSessionCache* sessionCache)
@@ -137,6 +138,7 @@ private:
     AtomicBool _shuttingDown{false};
 };
 
+//WiredTigerKVEngine::WiredTigerKVEngine中调用执行
 class WiredTigerKVEngine::WiredTigerCheckpointThread : public BackgroundJob {
 public:
     explicit WiredTigerCheckpointThread(WiredTigerSessionCache* sessionCache)
@@ -438,7 +440,8 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
         msgasserted(28595, s.reason());
     }
 
-    _sessionCache.reset(new WiredTigerSessionCache(this));
+	//_sessionCache指向新的new对象
+    _sessionCache.reset(new WiredTigerSessionCache(this)); //_sessionCache指针赋初值
 
     if (_durable && !_ephemeral) {
         _journalFlusher = stdx::make_unique<WiredTigerJournalFlusher>(_sessionCache.get());
@@ -848,11 +851,20 @@ SortedDataInterface* WiredTigerKVEngine::getGroupedSortedDataInterface(Operation
     return new WiredTigerIndexStandard(opCtx, _uri(ident), desc, prefix, _readOnly);
 }
 
+/*
+KVCollectionCatalogEntry::RemoveIndexChange
+KVCollectionCatalogEntry::AddIndexChange
+class KVDatabaseCatalogEntryBase::RemoveCollectionChange
+KVStorageEngine::reconcileCatalogAndIdents
+*/
 Status WiredTigerKVEngine::dropIdent(OperationContext* opCtx, StringData ident) {
     string uri = _uri(ident);
 
+	//WiredTigerRecoveryUnit* get
     WiredTigerRecoveryUnit* ru = WiredTigerRecoveryUnit::get(opCtx);
+	
     ru->getSessionNoTxn()->closeAllCursors(uri);
+	//WiredTigerSessionCache::closeAllCursors
     _sessionCache->closeAllCursors(uri);
 
     WiredTigerSession session(_conn);
@@ -880,6 +892,8 @@ Status WiredTigerKVEngine::dropIdent(OperationContext* opCtx, StringData ident) 
     return Status::OK();
 }
 
+//把cache中和_identToDrop匹配的cursor找出来，放入到toDrop中，在后面的
+//WiredTigerSession::closeCursorsForQueuedDrops中调用，然后释放这些cursor
 std::list<WiredTigerCachedCursor> WiredTigerKVEngine::filterCursorsWithQueuedDrops(
     std::list<WiredTigerCachedCursor>* cache) {
     std::list<WiredTigerCachedCursor> toDrop;

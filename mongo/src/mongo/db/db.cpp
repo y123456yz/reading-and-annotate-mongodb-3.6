@@ -704,7 +704,6 @@ ExitCode _initAndListen(int listenPort) {
 
     serviceContext->setFastClockSource(FastClockSourceFactory::create(Milliseconds(10)));
     serviceContext->setOpObserver(stdx::make_unique<OpObserverImpl>());
-
 	
     DBDirectClientFactory::get(serviceContext).registerImplementation([](OperationContext* opCtx) {
 		//ªÒ»°DBDirectClient¿‡

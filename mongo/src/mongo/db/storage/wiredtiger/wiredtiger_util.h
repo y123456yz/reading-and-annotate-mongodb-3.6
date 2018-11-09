@@ -313,3 +313,4 @@ ResultType WiredTigerUtil::_castStatisticsValue(uint64_t statisticsValue,
 }
 
 }  // namespace mongo
+

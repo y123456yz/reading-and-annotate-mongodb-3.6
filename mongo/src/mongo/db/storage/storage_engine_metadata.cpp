@@ -54,6 +54,8 @@ namespace dps = ::mongo::dotted_path_support;
 
 namespace {
 
+//.bson文件可以通过bsondump转为json, /home/yyz/mongodb-test/bin/bsondump --bsonFile=/data/db/storage.bson --outFile=./test.json
+//转换后文件内容{"storage":{"engine":"wiredTiger","options":{"directoryPerDB":true,"directoryForIndexes":true,"groupCollections":false}}}
 const std::string kMetadataBasename = "storage.bson";
 
 /**
