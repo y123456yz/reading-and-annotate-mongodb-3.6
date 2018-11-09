@@ -55,6 +55,7 @@ namespace {
 int MAGIC = 123123;
 }
 
+//WiredTigerKVEngine::WiredTigerKVEngine中构造使用   sizeStorer.wt文件的操作
 WiredTigerSizeStorer::WiredTigerSizeStorer(WT_CONNECTION* conn,
                                            const std::string& storageUri,
                                            bool logSizeStorerTable,
@@ -181,6 +182,7 @@ void WiredTigerSizeStorer::fillCache() {
 }
 
 //同步到wiredtiger层  参考http://www.mongoing.com/archives/5476
+//mongodb使用WiredTigerSizeStorer做表的辅助信息的内存缓存，这些内存数据罗盘地通过_sizeStorerSyncTracker(cs, 100000, Seconds(60))定时器触发
 //WiredTigerKVEngine::syncSizeInfo中调用
 void WiredTigerSizeStorer::syncCache(bool syncToDisk) {
     stdx::lock_guard<stdx::mutex> cursorLock(_cursorMutex);

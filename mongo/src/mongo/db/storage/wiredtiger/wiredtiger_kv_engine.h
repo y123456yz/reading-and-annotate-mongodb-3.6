@@ -307,6 +307,7 @@ private:
 
     mutable stdx::mutex _dropAllQueuesMutex;
     mutable stdx::mutex _identToDropMutex;
+    //WiredTigerKVEngine::dropIdent÷–º”»Îlist
     std::list<std::string> _identToDrop;
 
     mutable Date_t _previousCheckedDropsQueued;

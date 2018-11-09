@@ -523,11 +523,11 @@ private:
 
 //WriteUnitOfWork 是事务框架提供给server层，方便执行事务的API。它是对OperationContext和RecoveryUnit的封装。
 //http://www.mongoing.com/archives/5476
-class WriteUnitOfWork {
+class WriteUnitOfWork { //使用可以参考insertDocuments
     MONGO_DISALLOW_COPYING(WriteUnitOfWork);
 
 public:
-    WriteUnitOfWork(OperationContext* opCtx)
+    WriteUnitOfWork(OperationContext* opCtx) //事务begin
         : _opCtx(opCtx),
           _committed(false),
           _toplevel(opCtx->_ruState == OperationContext::kNotInUnitOfWork) {
@@ -555,7 +555,7 @@ public:
         }
     }
 
-    void commit() {
+    void commit() { //事务end
         invariant(!_committed);
         invariant(_opCtx->_ruState == OperationContext::kActiveUnitOfWork);
         if (_toplevel) {

@@ -276,6 +276,7 @@ const StorageEngine::Factory* StorageFactoriesIteratorMongoD::next() {
     return _curr++->second;
 }
 
+//客户端的每个请求（insert/update/delete/find/getmore），会生成一个唯一的OperationContext记录执行的上下文，OperationContext从请求解析时创建，到请求执行完成时释放
 //生成一个OperationContext类
 std::unique_ptr<OperationContext> ServiceContextMongoD::_newOpCtx(Client* client, unsigned opId) {
     invariant(&cc() == client);
@@ -287,7 +288,7 @@ std::unique_ptr<OperationContext> ServiceContextMongoD::_newOpCtx(Client* client
         opCtx->setLockState(stdx::make_unique<DefaultLockerImpl>());
     }
 
-    opCtx->setRecoveryUnit(getGlobalStorageEngine()->newRecoveryUnit(),
+    opCtx->setRecoveryUnit(getGlobalStorageEngine()->newRecoveryUnit(), //wiredtiger对应WiredTigerKVEngine::newRecoveryUnit
                            OperationContext::kNotInUnitOfWork);
     return opCtx;
 }

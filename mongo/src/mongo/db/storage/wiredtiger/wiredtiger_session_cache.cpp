@@ -104,6 +104,16 @@ WiredTigerSession::~WiredTigerSession() {
     }
 }
 
+/*
+The WT_SESSION::open_cursor overwrite configuration is true by default, causing WT_CURSOR::insert, 
+WT_CURSOR::remove and WT_CURSOR::update to ignore the current state of the record, and these methods 
+will succeed regardless of whether or not the record previously exists.
+
+When an application configures overwrite to false, WT_CURSOR::insert will fail with WT_DUPLICATE_KEY 
+if the record previously exists, and WT_CURSOR::update and WT_CURSOR::remove will fail with WT_NOTFOUND 
+if the record does not previously exist.
+*/
+
 //获取cursor  同时该获取到的新c姜从_cursors列表中去除
 WT_CURSOR* WiredTigerSession::getCursor(const std::string& uri, uint64_t id, bool forRecordStore) {
     // Find the most recently used cursor  
@@ -118,7 +128,7 @@ WT_CURSOR* WiredTigerSession::getCursor(const std::string& uri, uint64_t id, boo
     }
 
     WT_CURSOR* c = NULL; 
-    int ret = _session->open_cursor(
+    int ret = _session->open_cursor( //如果false则重复的话报错WT_DUPLICATE_KEY，如果为ture则始终成功写入
         _session, uri.c_str(), NULL, forRecordStore ? "" : "overwrite=false", &c);
     if (ret != ENOENT)
         invariantWTOK(ret);
@@ -153,6 +163,7 @@ void WiredTigerSession::releaseCursor(uint64_t id, WT_CURSOR* cursor) {
 }
 
 //erase _cursors中cursor->uri为uri的c
+//WiredTigerSessionCache::closeAllCursors中执行
 void WiredTigerSession::closeAllCursors(const std::string& uri) {
     invariant(_session);
 
@@ -167,10 +178,12 @@ void WiredTigerSession::closeAllCursors(const std::string& uri) {
     }
 }
 
+//WiredTigerSessionCache::closeCursorsForQueuedDrops()调用
 void WiredTigerSession::closeCursorsForQueuedDrops(WiredTigerKVEngine* engine) {
     invariant(_session);
 
     _cursorEpoch = _cache->getCursorEpoch();
+	//WiredTigerKVEngine::filterCursorsWithQueuedDrops 找出需要drop的 cursor
     auto toDrop = engine->filterCursorsWithQueuedDrops(&_cursors);
 
     for (auto i = toDrop.begin(); i != toDrop.end(); i++) {
@@ -190,7 +203,7 @@ uint64_t WiredTigerSession::genTableId() {
 }
 
 // -----------------------
-
+//WiredTigerKVEngine::WiredTigerKVEngine中调用构造该类
 WiredTigerSessionCache::WiredTigerSessionCache(WiredTigerKVEngine* engine)
     : _engine(engine), _conn(engine->getConnection()), _snapshotManager(_conn), _shuttingDown(0) {}
 
@@ -307,7 +320,7 @@ void WiredTigerSessionCache::waitUntilDurable(bool forceCheckpoint, bool stableC
 void WiredTigerSessionCache::closeAllCursors(const std::string& uri) {
     stdx::lock_guard<stdx::mutex> lock(_cacheLock);
     for (SessionCache::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
-        (*i)->closeAllCursors(uri);
+        (*i)->closeAllCursors(uri); //WiredTigerSession::closeAllCursors
     }
 }
 

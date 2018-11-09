@@ -303,7 +303,7 @@ void insertDocuments(OperationContext* opCtx,
                      std::vector<InsertStatement>::iterator begin,
                      std::vector<InsertStatement>::iterator end) {
     // Intentionally not using writeConflictRetry. That is handled by the caller so it can react to
-    // oversized batches.
+    // oversized batches.  执行一个写操作的事务 参考http://www.mongoing.com/archives/5476
     WriteUnitOfWork wuow(opCtx);
 
     // Acquire optimes and fill them in for each item in the batch.

@@ -146,7 +146,7 @@ private:
 /**
  *  This cache implements a shared pool of WiredTiger sessions with the goal to amortize the
  *  cost of session creation and destruction over multiple uses.
- */
+ */ //WiredTigerKVEngine::WiredTigerKVEngine中调用构造该类
 class WiredTigerSessionCache { 
 public:
     WiredTigerSessionCache(WiredTigerKVEngine* engine);
@@ -254,7 +254,6 @@ private:
 
     WT_SESSION* _waitUntilDurableSession = nullptr;  // owned, and never explicitly closed
                                                      // (uses connection close to clean up)
-
     /**
      * Returns a session to the cache for later reuse. If closeAll was called between getting this
      * session and releasing it, the session is directly released. This method is thread safe.

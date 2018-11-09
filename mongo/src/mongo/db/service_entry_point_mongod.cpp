@@ -1119,7 +1119,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 
     DbMessage dbmsg(m);
 	
-    Client& c = *opCtx->getClient();
+    Client& c = *opCtx->getClient(); 
     if (c.isInDirectClient()) {
         invariant(!opCtx->lockState()->inAWriteUnitOfWork());
     } else {
