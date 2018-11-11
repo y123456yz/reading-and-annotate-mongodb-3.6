@@ -55,6 +55,55 @@ namespace {
 int MAGIC = 123123;
 }
 
+/* sizeStorer.wt内容  记录各个集合的记录数和集合总字节数
+[root@bogon db]# wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]"  -h . dump table:sizeStorer
+WiredTiger Dump (WiredTiger Version 3.0.0)
+Format=print
+Header
+table:sizeStorer
+access_pattern_hint=none,allocation_size=4KB,app_metadata=,assert=(commit_timestamp=none,read_timestamp=none),block_allocation=best,block_compressor=,cache_resident=false,checksum=uncompressed,colgroups=,collator=,columns=,dictionary=0,encryption=(keyid=,name=),exclusive=false,extractor=,format=btree,huffman_key=,huffman_value=,ignore_in_memory_cache_size=false,immutable=false,internal_item_max=0,internal_key_max=0,internal_key_truncate=true,internal_page_max=4KB,key_format=u,key_gap=10,leaf_item_max=0,leaf_key_max=0,leaf_page_max=32KB,leaf_value_max=0,log=(enabled=true),lsm=(auto_throttle=true,bloom=true,bloom_bit_count=16,bloom_config=,bloom_hash_count=8,bloom_oldest=false,chunk_count_limit=0,chunk_max=5GB,chunk_size=10MB,merge_max=15,merge_min=0),memory_page_max=5MB,os_cache_dirty_max=0,os_cache_max=0,prefix_compression=false,prefix_compression_min=4,source="file:sizeStorer.wt",split_deepen_min_child=0,split_deepen_per_child=0,split_pct=90,type=file,value_format=u
+Data
+table:_mdb_catalog
++\00\00\00\12numRecords\00\11\00\00\00\00\00\00\00\12dataSize\00f\19\00\00\00\00\00\00\00
+table:admin/collection/0-7029101439676270912
++\00\00\00\12numRecords\00\01\00\00\00\00\00\00\00\12dataSize\00;\00\00\00\00\00\00\00\00
+table:config/collection/25-7029101439676270912
++\00\00\00\12numRecords\00\00\00\00\00\00\00\00\00\12dataSize\00\00\00\00\00\00\00\00\00\00
+table:local/collection/2-7029101439676270912
++\00\00\00\12numRecords\00\0b\00\00\00\00\00\00\00\12dataSize\00\0dN\00\00\00\00\00\00\00
+table:sbtest/collection/11-7029101439676270912
++\00\00\00\12numRecords\00E\d3\00\00\00\00\00\00\12dataSize\00Oa?\01\00\00\00\00\00
+table:sbtest/collection/13-7029101439676270912
++\00\00\00\12numRecords\00\df;\00\00\00\00\00\00\12dataSize\00\1d\82Z\00\00\00\00\00\00
+table:sbtest/collection/15-7029101439676270912
++\00\00\00\12numRecords\00\82/\00\00\00\00\00\00\12dataSize\00\86\d1G\00\00\00\00\00\00
+table:sbtest/collection/17-7029101439676270912
++\00\00\00\12numRecords\00\0dF\00\00\00\00\00\00\12dataSize\00\a7\e5i\00\00\00\00\00\00
+table:sbtest/collection/19-7029101439676270912
++\00\00\00\12numRecords\00\18R\00\00\00\00\00\00\12dataSize\00H\1a|\00\00\00\00\00\00
+table:sbtest/collection/21-7029101439676270912
++\00\00\00\12numRecords\00\a0\87\00\00\00\00\00\00\12dataSize\00\e0\06\cd\00\00\00\00\00\00
+table:sbtest/collection/23-7029101439676270912
++\00\00\00\12numRecords\00d+\00\00\00\00\00\00\12dataSize\00,\98A\00\00\00\00\00\00
+table:sbtest/collection/4-7029101439676270912
++\00\00\00\12numRecords\00\dbd\00\00\00\00\00\00\12dataSize\00\11w\98\00\00\00\00\00\00
+table:sbtest/collection/6-7029101439676270912
++\00\00\00\12numRecords\00\9ez\07\00\00\00\00\00\12dataSize\00\8aXN\0b\00\00\00\00\00
+table:sbtest/collection/8-7029101439676270912
++\00\00\00\12numRecords\00\c8\02\00\00\00\00\00\00\12dataSize\00\ec\fb\0f\00\00\00\00\00\00
+table:sbtest/collection/9-7029101439676270912
++\00\00\00\12numRecords\00\d85\00\00\00\00\00\00\12dataSize\00\88eQ\00\00\00\00\00\00
+table:xxxx/collection/0-2872068773297699689
++\00\00\00\12numRecords\00\0a\00\00\00\00\00\00\00\12dataSize\00\99\02\00\00\00\00\00\00\00
+table:xxxx/collection/2-2872068773297699689
++\00\00\00\12numRecords\00\08\00\00\00\00\00\00\00\12dataSize\00\eb\0d\00\00\00\00\00\00\00
+
+[root@bogon mongo]# grep "WiredTigerSizeStorer::storeInto " /data/logs/mongod.log 
+2018-11-06T17:27:25.737+0800 D STORAGE  [WTCheckpointThread] WiredTigerSizeStorer::storeInto table:_mdb_catalog -> { numRecords: 15, dataSize: 5898 }
+2018-11-06T17:27:25.738+0800 D STORAGE  [WTCheckpointThread] WiredTigerSizeStorer::storeInto table:admin/collection/0-7029101439676270912 -> { numRecords: 1, dataSize: 59 }
+2018-11-06T17:27:25.738+0800 D STORAGE  [WTCheckpointThread] WiredTigerSizeStorer::storeInto table:config/collection/25-7029101439676270912 -> { numRecords: 0, dataSize: 0 }
+2018-11-06T17:27:25.738+0800 D STORAGE  [WTCheckpointThread] WiredTigerSizeStorer::storeInto table:local/collection/2-7029101439676270912 -> { numRecords: 7, dataSize: 12743 }
+*/
 //WiredTigerKVEngine::WiredTigerKVEngine中构造使用   sizeStorer.wt文件的操作
 WiredTigerSizeStorer::WiredTigerSizeStorer(WT_CONNECTION* conn,
                                            const std::string& storageUri,
