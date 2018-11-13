@@ -527,7 +527,7 @@ class WriteUnitOfWork { //使用可以参考insertDocuments
     MONGO_DISALLOW_COPYING(WriteUnitOfWork);
 
 public:
-    WriteUnitOfWork(OperationContext* opCtx) //事务begin
+    WriteUnitOfWork(OperationContext* opCtx) //事务begin  WriteUnitOfWork::WriteUnitOfWork
         : _opCtx(opCtx),
           _committed(false),
           _toplevel(opCtx->_ruState == OperationContext::kNotInUnitOfWork) {
@@ -546,7 +546,7 @@ public:
         if (!_committed) {
             invariant(_opCtx->_ruState != OperationContext::kNotInUnitOfWork);
             if (_toplevel) {
-                _opCtx->recoveryUnit()->abortUnitOfWork();
+                _opCtx->recoveryUnit()->abortUnitOfWork();//WiredTigerRecoveryUnit::abortUnitOfWork
                 _opCtx->_ruState = OperationContext::kNotInUnitOfWork;
             } else {
                 _opCtx->_ruState = OperationContext::kFailedUnitOfWork;
@@ -555,11 +555,11 @@ public:
         }
     }
 
-    void commit() { //事务end
+    void commit() { //事务end  WriteUnitOfWork::commit
         invariant(!_committed);
         invariant(_opCtx->_ruState == OperationContext::kActiveUnitOfWork);
         if (_toplevel) {
-            _opCtx->recoveryUnit()->commitUnitOfWork();
+            _opCtx->recoveryUnit()->commitUnitOfWork();//WiredTigerRecoveryUnit::commitUnitOfWork
             _opCtx->_ruState = OperationContext::kNotInUnitOfWork;
         }
         _opCtx->lockState()->endWriteUnitOfWork();

@@ -533,7 +533,8 @@ private:
 
 //WiredTigerRecordStore::generateCreateString获取创建wiredtiger表的uri
 //WiredTigerIndex::generateCreateString获取创建wiredtiger索引的uri
-// static
+//WiredTigerKVEngine::createGroupedRecordStore调用  
+// static 
 StatusWith<std::string> WiredTigerRecordStore::generateCreateString(
     const std::string& engineName,
     StringData ns,
@@ -604,6 +605,8 @@ StatusWith<std::string> WiredTigerRecordStore::generateCreateString(
     return StatusWith<std::string>(ss);
 }
 
+//StandardWiredTigerRecordStore::StandardWiredTigerRecordStore
+//PrefixedWiredTigerRecordStore::PrefixedWiredTigerRecordStore中调用
 WiredTigerRecordStore::WiredTigerRecordStore(WiredTigerKVEngine* kvEngine,
                                              OperationContext* ctx,
                                              Params params)
@@ -801,7 +804,7 @@ RecordData WiredTigerRecordStore::dataFor(OperationContext* opCtx, const RecordI
 bool WiredTigerRecordStore::findRecord(OperationContext* opCtx,
                                        const RecordId& id,
                                        RecordData* out) const {
-    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx); //WiredTigerCursor::WiredTigerCursor
     WT_CURSOR* c = curwrap.get();
     invariant(c);
     setKey(c, id);
@@ -1178,8 +1181,8 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 
 	//以下是写入wiredtiger存储引擎
     WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
-    curwrap.assertInActiveTxn();
-    WT_CURSOR* c = curwrap.get();
+    curwrap.assertInActiveTxn(); //头文件中的void assertInActiveTxn() const->WiredTigerRecoveryUnit::assertInActiveTxn()
+    WT_CURSOR* c = curwrap.get(); //WiredTigerCursor._cursor成员
     invariant(c);
 
     RecordId highestId = RecordId();

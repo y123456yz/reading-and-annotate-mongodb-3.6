@@ -84,6 +84,24 @@ WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64
 }
 
 //WiredTigerSessionCache::getSession中执行
+/*
+#0  mongo::WiredTigerSession::WiredTigerSession (this=0x7f5e38dfa0a0, conn=0x7f5e3558f000, cache=0x7f5e35573dc0, epoch=0, cursorEpoch=0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:98
+#1  0x00007f5e309b6820 in mongo::WiredTigerSessionCache::getSession (this=0x7f5e35573dc0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:392
+#2  0x00007f5e309b3ebd in mongo::WiredTigerRecoveryUnit::_ensureSession (this=this@entry=0x7f5e38dfe900) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:140
+#3  0x00007f5e309b4031 in _ensureSession (this=0x7f5e38dfe900) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:171
+#4  mongo::WiredTigerRecoveryUnit::getSessionNoTxn (this=0x7f5e38dfe900) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:172
+#5  0x00007f5e30988f73 in mongo::WiredTigerServerStatusSection::generateSection (this=<optimized out>, opCtx=0x7f5e38d52b80, configElement=...) at src/mongo/db/storage/wiredtiger/wiredtiger_server_status.cpp:65
+
+
+#0  mongo::WiredTigerSession::WiredTigerSession (this=0x7f5e38dfacd0, conn=0x7f5e3558f000, cache=0x7f5e35573dc0, epoch=0, cursorEpoch=0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:98
+#1  0x00007f5e309b6820 in mongo::WiredTigerSessionCache::getSession (this=0x7f5e35573dc0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:392
+#2  0x00007f5e309b3ebd in mongo::WiredTigerRecoveryUnit::_ensureSession (this=0x7f5e38dfe280) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:140
+#3  0x00007f5e309b4cf5 in _ensureSession (this=0x7f5e38dfe280) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:276
+#4  mongo::WiredTigerRecoveryUnit::_txnOpen (this=this@entry=0x7f5e38dfe280) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:277
+#5  0x00007f5e309b5367 in getSession (this=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:165
+#6  mongo::WiredTigerCursor::WiredTigerCursor (this=0x7f5e2710c260, uri=..., tableId=1, forRecordStore=<optimized out>, opCtx=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:347
+#7  0x00007f5e309a7475 in mongo::WiredTigerRecordStore::findRecord
+*/
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn,
                                      WiredTigerSessionCache* cache,
                                      uint64_t epoch,
@@ -98,6 +116,7 @@ WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn,
     invariantWTOK(conn->open_session(conn, NULL, "isolation=snapshot", &_session));
 }
 
+//注意和WiredTigerSessionCache::WiredTigerSessionDeleter::operator()的区别
 WiredTigerSession::~WiredTigerSession() {
     if (_session) {
         invariantWTOK(_session->close(_session, NULL));
@@ -214,6 +233,24 @@ WiredTigerSessionCache::~WiredTigerSessionCache() {
     shuttingDown();
 }
 
+/* CTRL+C退出程序的时候会走这里
+(gdb) bt 
+#0  mongo::WiredTigerSessionCache::closeAll (this=this@entry=0x7f3df729edc0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:368
+#1  0x00007f3df3e1d6cd in mongo::WiredTigerSessionCache::shuttingDown (this=0x7f3df729edc0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:254
+#2  0x00007f3df3e028c8 in mongo::WiredTigerKVEngine::cleanShutdown (this=0x7f3df6f71680) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:510
+#3  0x00007f3df3fd9a8e in mongo::ServiceContextMongoD::shutdownGlobalStorageEngineCleanly (this=0x7f3df6eb4480) at src/mongo/db/service_context_d.cpp:239
+#4  0x00007f3df3dc2b1e in mongo::(anonymous namespace)::shutdownTask () at src/mongo/db/db.cpp:1385
+#5  0x00007f3df55aff92 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#6  mongo::(anonymous namespace)::runTasks(std::stack<std::function<void()>, std::deque<std::function<void()>, std::allocator<std::function<void()> > > >) (tasks=...) at src/mongo/util/exit.cpp:61
+#7  0x00007f3df3d546f3 in mongo::shutdown (code=code@entry=mongo::EXIT_CLEAN) at src/mongo/util/exit.cpp:140
+#8  0x00007f3df45939d2 in exitCleanly (code=mongo::EXIT_CLEAN) at src/mongo/util/exit.h:81
+#9  mongo::(anonymous namespace)::signalProcessingThread (rotate=mongo::kNeedToRotateLogFile) at src/mongo/util/signal_handlers.cpp:198
+#10 0x00007f3df29328f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
+#11 0x00007f3df214ee25 in start_thread () from /lib64/libpthread.so.0
+#12 0x00007f3df1e7c34d in clone () from /lib64/libc.so.6
+*/ //CTRL+C退出程序的时候会走这里
+
+//WiredTigerSessionCache::~WiredTigerSessionCache中调用
 void WiredTigerSessionCache::shuttingDown() {
     uint32_t actual = _shuttingDown.load();
     uint32_t expected;
@@ -324,17 +361,18 @@ void WiredTigerSessionCache::closeAllCursors(const std::string& uri) {
     }
 }
 
+//WiredTigerSessionCache::releaseSession   WiredTigerKVEngine::dropIdent
 void WiredTigerSessionCache::closeCursorsForQueuedDrops() {
     // Increment the cursor epoch so that all cursors from this epoch are closed.
     _cursorEpoch.fetchAndAdd(1);
 
     stdx::lock_guard<stdx::mutex> lock(_cacheLock);
     for (SessionCache::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
-        (*i)->closeCursorsForQueuedDrops(_engine);
+        (*i)->closeCursorsForQueuedDrops(_engine); //WiredTigerSession::closeCursorsForQueuedDrops
     }
 }
 
-//删除所有WiredTigerSession _sessions
+//删除所有WiredTigerSession _sessions      WiredTigerSessionCache::shuttingDown调用
 void WiredTigerSessionCache::closeAll() {
     // Increment the epoch as we are now closing all sessions with this epoch.
     SessionCache swap;
@@ -369,7 +407,8 @@ WiredTigerKVEngine::WiredTigerJournalFlusher
 WiredTigerOplogManager::_oplogJournalThreadLoop
 WiredTigerRecoveryUnit::waitUntilDurable
 MultiIndexBlockImpl::init
-*/
+WiredTigerRecoveryUnit::_ensureSession
+*/ //选择是直接new新的UniqueWiredTigerSession还是直接使用WiredTigerSessionCache._sessions缓存中的session
 UniqueWiredTigerSession WiredTigerSessionCache::getSession() {
     // We should never be able to get here after _shuttingDown is set, because no new
     // operations should be allowed to start.
@@ -379,18 +418,66 @@ UniqueWiredTigerSession WiredTigerSessionCache::getSession() {
         stdx::lock_guard<stdx::mutex> lock(_cacheLock);
         if (!_sessions.empty()) { //WiredTigerSession _sessions不为空，则直接取其中一个
             // Get the most recently used session so that if we discard sessions, we're
-            // discarding older ones
+            // discarding older ones  
             WiredTigerSession* cachedSession = _sessions.back();
-            _sessions.pop_back();
-            return UniqueWiredTigerSession(cachedSession);
+            _sessions.pop_back(); //WiredTigerSessionCache._sessions
+            return UniqueWiredTigerSession(cachedSession); 
         }
     }
 
     // Outside of the cache partition lock, but on release will be put back on the cache
-    return UniqueWiredTigerSession(
+    return UniqueWiredTigerSession( //调用wiredtiger conn->open_session获取新的session
         new WiredTigerSession(_conn, this, _epoch.load(), _cursorEpoch.load()));
 }
 
+/*
+#0  mongo::WiredTigerSessionCache::releaseSession (this=0x7ff8d6abfdc0, session=0x7ff8da37aaf0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:441
+#1  0x00007ff8d2c6aa41 in mongo::WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit (this=0x7ff8da38fb80, __in_chrg=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:71
+#2  0x00007ff8d42c4046 in operator() (this=<optimized out>, __ptr=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:76
+#3  ~unique_ptr (this=0x7ff8da31c470, __in_chrg=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:236
+#4  ~OperationContext (this=0x7ff8da31c400, __in_chrg=<optimized out>) at src/mongo/db/operation_context.h:124
+#5  ~OperationContext (this=0x7ff8da31c400, __in_chrg=<optimized out>) at src/mongo/db/operation_context.h:124
+#6  mongo::ServiceContext::OperationContextDeleter::operator() (this=<optimized out>, opCtx=0x7ff8da31c400) at src/mongo/db/service_context.cpp:300
+
+#0  mongo::WiredTigerSessionCache::releaseSession (this=0x7ff8d6abfdc0, session=0x7ff8da1c20f0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:441
+#1  0x00007ff8d2c6cc1e in mongo::WiredTigerSessionCache::WiredTigerSessionDeleter::operator() (this=this@entry=0x7ff8cb3c69e0, session=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:501
+#2  0x00007ff8d2c59204 in ~unique_ptr (this=0x7ff8cb3c69e0, __in_chrg=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:236
+#3  mongo::WiredTigerKVEngine::WiredTigerCheckpointThread::run (this=0x7ff8d6ad1640) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:174
+#4  0x00007ff8d42ef5b1 in mongo::BackgroundJob::jobBody
+
+(gdb) next
+78      WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit() {
+(gdb) next
+mongo::WiredTigerSessionCache::WiredTigerSessionDeleter::operator() (this=0x7f410e1a1518, session=0x7f410e173be0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:516
+516         WiredTigerSession* session) const {
+(gdb) next
+517         session->_cache->releaseSession(session);
+(gdb) next
+516         WiredTigerSession* session) const {
+(gdb) next
+518     }
+(gdb) next
+517         session->_cache->releaseSession(session);
+(gdb) next
+mongo::WiredTigerSessionCache::releaseSession (this=0x7f410a8d4dc0, session=0x7f410e173be0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:451
+451     void WiredTigerSessionCache::releaseSession(WiredTigerSession* session) {
+(gdb) next
+
+Breakpoint 1, mongo::WiredTigerSessionCache::releaseSession (this=0x7f410a8d4dc0, session=0x7f410e173be0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:451
+451     void WiredTigerSessionCache::releaseSession(WiredTigerSession* session) {
+(gdb) bt
+#0  mongo::WiredTigerSessionCache::releaseSession (this=0x7f410a8d4dc0, session=0x7f410e173be0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:451
+这里应该还有个WiredTigerSessionCache::WiredTigerSessionDeleter::operator，见上面的step调试
+#1  0x00007f410689ca41 in mongo::WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit (this=0x7f410e1a1500, __in_chrg=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:81
+#2  0x00007f4107ef6046 in operator() (this=<optimized out>, __ptr=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:76
+#3  ~unique_ptr (this=0x7f410e12e1f0, __in_chrg=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:236
+#4  ~OperationContext (this=0x7f410e12e180, __in_chrg=<optimized out>) at src/mongo/db/operation_context.h:124
+#5  ~OperationContext (this=0x7f410e12e180, __in_chrg=<optimized out>) at src/mongo/db/operation_context.h:124
+#6  mongo::ServiceContext::OperationContextDeleter::operator() 
+
+*/
+//WiredTigerSessionCache::WiredTigerSessionDeleter::operator()   WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit(也会调用WiredTigerSessionCache::WiredTigerSessionDeleter::operator()然后走到这里)
+//release的session可以暂存到_sessions来做复用
 void WiredTigerSessionCache::releaseSession(WiredTigerSession* session) {
     invariant(session);
     invariant(session->cursorsOut() == 0);
@@ -429,10 +516,11 @@ void WiredTigerSessionCache::releaseSession(WiredTigerSession* session) {
     bool returnedToCache = false;
     uint64_t currentEpoch = _epoch.load();
 
+	//把该session放入cache做复用还是直接drop掉
     if (session->_getEpoch() == currentEpoch) {  // check outside of lock to reduce contention
         stdx::lock_guard<stdx::mutex> lock(_cacheLock);
         if (session->_getEpoch() == _epoch.load()) {  // recheck inside the lock for correctness
-            returnedToCache = true;
+            returnedToCache = true; //缓存起来
             _sessions.push_back(session);
         }
     } else
@@ -441,17 +529,20 @@ void WiredTigerSessionCache::releaseSession(WiredTigerSession* session) {
     if (!returnedToCache)
         delete session;
 
-    if (_engine && _engine->haveDropsQueued())
-        _engine->dropSomeQueuedIdents();
+	
+    if (_engine && _engine->haveDropsQueued()) //WiredTigerKVEngine::haveDropsQueued
+        _engine->dropSomeQueuedIdents(); //WiredTigerKVEngine::dropSomeQueuedIdents
 }
 
-
+//WiredTigerKVEngine::setJournalListener中调用
 void WiredTigerSessionCache::setJournalListener(JournalListener* jl) {
     stdx::unique_lock<stdx::mutex> lk(_journalListenerMutex);
     _journalListener = jl;
 }
 
-//释放session对应的_cache
+//释放session对应的_cache 有可能不是直接close，而是放入WiredTigerSessionCache._sessions
+//WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit中调用
+//WiredTigerCheckpointThread::run中的UniqueWiredTigerSession session = _sessionCache->getSession();临时变量生命周期执行完后调用
 void WiredTigerSessionCache::WiredTigerSessionDeleter::operator()(
     WiredTigerSession* session) const {
     session->_cache->releaseSession(session);

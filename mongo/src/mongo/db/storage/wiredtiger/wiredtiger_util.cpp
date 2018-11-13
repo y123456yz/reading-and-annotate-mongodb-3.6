@@ -353,7 +353,7 @@ size_t WiredTigerUtil::getCacheSizeMB(double requestedCacheSizeGB) {
     return static_cast<size_t>(cacheSizeMB);
 }
 
-namespace {
+namespace {//WiredTigerUtil::defaultEventHandlers中调用
 int mdb_handle_error(WT_EVENT_HANDLER* handler,
                      WT_SESSION* session,
                      int errorCode,
@@ -390,6 +390,7 @@ int mdb_handle_progress(WT_EVENT_HANDLER* handler,
 }
 }
 
+//WiredTigerKVEngine::WiredTigerKVEngine中调用
 WT_EVENT_HANDLER WiredTigerUtil::defaultEventHandlers() {
     WT_EVENT_HANDLER handlers = {};
     handlers.handle_error = mdb_handle_error;

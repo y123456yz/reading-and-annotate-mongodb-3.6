@@ -139,9 +139,12 @@ private:
 
     char* _getOplogReaderConfigString();
 
-    WiredTigerSessionCache* _sessionCache;  // not owned
+    //来源是WiredTigerKVEngine._sessionCache，根本来源在WiredTigerKVEngine::WiredTigerKVEngine
+    WiredTigerSessionCache* _sessionCache;  // not owned  也就是WiredTigerKVEngine._sessionCache
     WiredTigerOplogManager* _oplogManager;  // not owned
-    UniqueWiredTigerSession _session;
+    //赋值见WiredTigerRecoveryUnit::_ensureSession，真正来源在WiredTigerSessionCache._sessions
+    //消耗WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit类的时候，也会调用该_session的UniqueWiredTigerSession delete
+    UniqueWiredTigerSession _session;  //赋值见WiredTigerRecoveryUnit::_ensureSession
     bool _areWriteUnitOfWorksBanned = false;
     bool _inUnitOfWork;
     //WiredTigerRecoveryUnit::_txnOpen赋值true， RecoveryUnit::_txnClose赋值false
@@ -160,6 +163,20 @@ private:
 /**
  * This is a smart pointer that wraps a WT_CURSOR and knows how to obtain and get from pool.
  */
+/*使用的地方
+[root@bogon mongo]# grep "WiredTigerCursor curwrap(" * -r
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx); //WiredTigerCursor::WiredTigerCursor
+db/storage/wiredtiger/wiredtiger_record_store.cpp:        WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_util.cpp:    WiredTigerCursor curwrap("metadata:create", WiredTigerSession::kMetadataTableId, false, opCtx);
+*/
 class WiredTigerCursor {
 public:
     WiredTigerCursor(const std::string& uri,
@@ -192,6 +209,7 @@ public:
 private: //成员变量初始化赋值见WiredTigerCursor::WiredTigerCursor
     uint64_t _tableID;
     WiredTigerRecoveryUnit* _ru;  // not owned
+    //赋值在WiredTigerCursor::WiredTigerCursor->WiredTigerRecoveryUnit::getSession
     WiredTigerSession* _session; //wiredtiger中的conn->open_session获取到的session
     WT_CURSOR* _cursor;  // owned, but pulled   session->open_cursor获取的cursor
 };

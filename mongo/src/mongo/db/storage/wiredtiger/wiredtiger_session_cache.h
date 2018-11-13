@@ -137,7 +137,7 @@ private:
     WiredTigerSessionCache* _cache;  // not owned   WiredTigerSession::WiredTigerSession中赋值
     //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
     //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
-    WT_SESSION* _session;            // owned
+    WT_SESSION* _session;            // owned  通过上面的 WT_SESSION* getSession()获取该
     CursorCache _cursors;            // owned
     uint64_t _cursorGen;
     int _cursorsCached, _cursorsOut;
@@ -147,9 +147,9 @@ private:
  *  This cache implements a shared pool of WiredTiger sessions with the goal to amortize the
  *  cost of session creation and destruction over multiple uses.
  */ //WiredTigerKVEngine::WiredTigerKVEngine中调用构造该类
-class WiredTigerSessionCache { 
+class WiredTigerSessionCache { //根源在WiredTigerKVEngine._sessionCache
 public:
-    WiredTigerSessionCache(WiredTigerKVEngine* engine);
+    WiredTigerSessionCache(WiredTigerKVEngine* engine); //WiredTigerKVEngine::WiredTigerKVEngine中new该类
     WiredTigerSessionCache(WT_CONNECTION* conn);
     ~WiredTigerSessionCache();
 
@@ -222,9 +222,9 @@ public:
     }
 
 private:
-    WiredTigerKVEngine* _engine;  // not owned, might be NULL
-    WT_CONNECTION* _conn;         // not owned
-    WiredTigerSnapshotManager _snapshotManager;
+    WiredTigerKVEngine* _engine;  // not owned, might be NULL  赋值见WiredTigerSessionCache::WiredTigerSessionCache
+    WT_CONNECTION* _conn;         // not owned  根源在WiredTigerKVEngine._conn
+    WiredTigerSnapshotManager _snapshotManager;  //wiredtiger快照管理
 
     // Used as follows:
     //   The low 31 bits are a count of active calls to releaseSession.
@@ -233,11 +233,15 @@ private:
     static const uint32_t kShuttingDownMask = 1 << 31;
 
     stdx::mutex _cacheLock;
-    
+
+    //WiredTigerSessionCache::releaseSession中赋值 
+    //在WiredTigerRecoveryUnit::_ensureSession()被赋值给WiredTigerRecoveryUnit._session
     typedef std::vector<WiredTigerSession*> SessionCache;
-    SessionCache _sessions;
+    SessionCache _sessions; 
+    
 
     // Bumped when all open sessions need to be closed
+    //WiredTigerSessionCache::closeAll中自增
     AtomicUInt64 _epoch;  // atomic so we can check it outside of the lock
 
     // Bumped when all open cursors need to be closed
@@ -263,7 +267,8 @@ private:
 
 /**
  * A unique handle type for WiredTigerSession pointers obtained from a WiredTigerSessionCache.
- */ //WiredTigerSessionCache::getSession中调用初始化赋值
+ */ //WiredTigerSessionCache::getSession中调用初始化赋值  
+ //WiredTigerCheckpointThread::run中的UniqueWiredTigerSession session = _sessionCache->getSession();
 typedef std::unique_ptr<WiredTigerSession,
                         typename WiredTigerSessionCache::WiredTigerSessionDeleter>
     UniqueWiredTigerSession;

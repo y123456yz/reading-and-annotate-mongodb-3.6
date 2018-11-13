@@ -2835,7 +2835,6 @@ void TopologyCoordinatorImpl::_stepDownSelfAndReplaceWith(int newPrimary) {
 
 /*
 每个节点（Primary or Secondary）的复制快慢不一。而某个节点的POV下，其他节点的复制进度，是通过节点之间的心跳广播lastOpTime得到的。
-
 */
 bool TopologyCoordinatorImpl::updateLastCommittedOpTime() {
     // If we're not primary or we're stepping down due to learning of a new term then  we must not

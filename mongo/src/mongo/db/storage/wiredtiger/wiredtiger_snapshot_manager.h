@@ -42,6 +42,7 @@ namespace mongo {
 
 class WiredTigerOplogManager;
 
+////WiredTigerSessionCache._snapshotManager
 class WiredTigerSnapshotManager final : public SnapshotManager {
     MONGO_DISALLOW_COPYING(WiredTigerSnapshotManager);
 

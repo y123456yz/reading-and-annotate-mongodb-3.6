@@ -45,7 +45,7 @@ class WiredTigerSessionCache;
 
 // Manages oplog visibility, by periodically querying WiredTiger's all_committed timestamp value and
 // then using that timestamp for all transactions that read the oplog collection.
-class WiredTigerOplogManager {
+class WiredTigerOplogManager {//WiredTigerKVEngine._oplogManager
     MONGO_DISALLOW_COPYING(WiredTigerOplogManager);
 
 public:
