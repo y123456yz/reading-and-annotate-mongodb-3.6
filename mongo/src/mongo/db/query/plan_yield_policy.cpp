@@ -40,7 +40,17 @@
 #include "mongo/util/time_support.h"
 
 namespace mongo {
+/*
+Mongodb使用WiredTiger提供的SnapshotIsolation 隔离级别。但不代表Mongodb的查询是该隔离级别。
+Mongodb的查询过程中，会阶段性的将过程Yield出去，一方面是为了检测过程是否已经被终止，一方面
+是为了让出时间片给其它线程执行。而Yield出去的查询，会连带释放掉WiredTiger层的Snapshot。因此，
+Mongodb的查询操作的事务隔离级别是Read-Committed隔离级别的。
 
+
+mongodb 在执行一个耗时较长的查询时，可以通过db.killOp()命令结束。 它是通过YieldPolicy做到这点的。
+具体到查询而言，查询使用YieldAuto Policy。所谓YieldAuto，是指查询请求会运行一段时间（可配置）后
+让出CPU时间片，并检测自己是否被killOp命令kill掉。这是一种典型的协作式调度策略。
+*/
 PlanYieldPolicy::PlanYieldPolicy(PlanExecutor* exec, PlanExecutor::YieldPolicy policy)
     : _policy(exec->getOpCtx()->lockState()->isGlobalLockedRecursively() ? PlanExecutor::NO_YIELD
                                                                          : policy),
@@ -105,7 +115,7 @@ Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
             // All YIELD_AUTO plans will get here eventually when the elapsed tracker triggers
             // that it's time to yield. Whether or not we will actually yield, we need to check
             // if this operation has been interrupted.
-            if (_policy == PlanExecutor::YIELD_AUTO) {
+            if (_policy == PlanExecutor::YIELD_AUTO) { // 检查是否被kill掉了 
                 auto interruptStatus = opCtx->checkForInterruptNoAssert();
                 if (!interruptStatus.isOK()) {
                     return interruptStatus;

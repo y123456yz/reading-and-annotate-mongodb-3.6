@@ -273,9 +273,11 @@ private:
 
     //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
     //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
-    WT_CONNECTION* _conn;
+    WT_CONNECTION* _conn; //_conn是所有session共用的
     WT_EVENT_HANDLER _eventHandler;
-    std::unique_ptr<WiredTigerSessionCache> _sessionCache;
+
+    //WiredTigerKVEngine::newRecoveryUnit中_sessionCache被赋值给WiredTigerRecoveryUnit._sessionCache
+    std::unique_ptr<WiredTigerSessionCache> _sessionCache; //WiredTigerKVEngine::WiredTigerKVEngine中new该类
     ClockSource* const _clockSource;
 
     // Mutex to protect use of _oplogManager and _oplogManagerCount by this instance of KV
@@ -310,6 +312,7 @@ private:
     //WiredTigerKVEngine::dropIdent中加入list
     std::list<std::string> _identToDrop;
 
+    //WiredTigerKVEngine::haveDropsQueued
     mutable Date_t _previousCheckedDropsQueued;
 
     std::unique_ptr<WiredTigerSession> _backupSession;

@@ -39,7 +39,7 @@ class Date_t;
 
 /**
  * An interface for getting the current wall clock time.
- */ //ServiceContext中包含该类成员
+ */ //ServiceContext  WiredTigerKVEngine中包含该类成员
 class ClockSource {
 public:
     virtual ~ClockSource() = default;

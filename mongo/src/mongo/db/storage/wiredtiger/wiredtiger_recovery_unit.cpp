@@ -52,6 +52,8 @@ AtomicUInt64 nextSnapshotId{1};
 logger::LogSeverity kSlowTransactionSeverity = logger::LogSeverity::Debug(1);
 }  // namespace
 
+//WiredTigerRecoveryUnit和WiredTigerKVEngine._sessionCache类通过WiredTigerKVEngine::newRecoveryUnit()关联起来
+//WiredTigerKVEngine::newRecoveryUnit中调用
 WiredTigerRecoveryUnit::WiredTigerRecoveryUnit(WiredTigerSessionCache* sc)
     : WiredTigerRecoveryUnit(sc, sc->getKVEngine()->getOplogManager()) {}
 
@@ -63,6 +65,16 @@ WiredTigerRecoveryUnit::WiredTigerRecoveryUnit(WiredTigerSessionCache* sc,
       _active(false),
       _mySnapshotId(nextSnapshotId.fetchAndAdd(1)) {}
 
+/*
+(gdb) bt
+#0  mongo::WiredTigerSessionCache::releaseSession (this=0x7fa0cb267dc0, session=0x7fa0ce96c0f0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:441
+#1  0x00007fa0c7fb7a41 in mongo::WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit (this=0x7fa0ceb37200, __in_chrg=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:71
+#2  0x00007fa0c9611046 in operator() (this=<optimized out>, __ptr=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:76
+#3  ~unique_ptr (this=0x7fa0ceac3bb0, __in_chrg=<optimized out>) at /usr/local/include/c++/5.4.0/bits/unique_ptr.h:236
+#4  ~OperationContext (this=0x7fa0ceac3b40, __in_chrg=<optimized out>) at src/mongo/db/operation_context.h:124
+#5  ~OperationContext (this=0x7fa0ceac3b40, __in_chrg=<optimized out>) at src/mongo/db/operation_context.h:124
+#6  mongo::ServiceContext::OperationContextDeleter::operator() (this=<optimized out>, opCtx=0x7fa0ceac3b40) at src/mongo/db/service_context.cpp:300
+*/
 WiredTigerRecoveryUnit::~WiredTigerRecoveryUnit() {
     invariant(!_inUnitOfWork);
     _abort();
@@ -78,6 +90,7 @@ void WiredTigerRecoveryUnit::prepareForCreateSnapshot(OperationContext* opCtx) {
     _areWriteUnitOfWorksBanned = true;
 }
 
+//WiredTigerRecoveryUnit::commitUnitOfWork调用
 void WiredTigerRecoveryUnit::_commit() {
     try {
         if (_session && _active) {
@@ -95,6 +108,7 @@ void WiredTigerRecoveryUnit::_commit() {
     }
 }
 
+//WiredTigerRecoveryUnit::abortUnitOfWork()调用
 void WiredTigerRecoveryUnit::_abort() {
     try {
         if (_session && _active) {
@@ -116,28 +130,34 @@ void WiredTigerRecoveryUnit::_abort() {
     }
 }
 
+//WriteUnitOfWork::WriteUnitOfWork
 void WiredTigerRecoveryUnit::beginUnitOfWork(OperationContext* opCtx) {
     invariant(!_areWriteUnitOfWorksBanned);
     invariant(!_inUnitOfWork);
     _inUnitOfWork = true;
 }
 
+//WriteUnitOfWork::commit
 void WiredTigerRecoveryUnit::commitUnitOfWork() {
     invariant(_inUnitOfWork);
     _inUnitOfWork = false;
     _commit();
 }
 
+//WriteUnitOfWork::~WriteUnitOfWork
 void WiredTigerRecoveryUnit::abortUnitOfWork() {
     invariant(_inUnitOfWork);
     _inUnitOfWork = false;
     _abort();
 }
 
-//
+//调用WiredTigerSessionCache::getSession()选择是直接new新的UniqueWiredTigerSession还
+//是直接使用WiredTigerSessionCache._sessions缓存中的session
 void WiredTigerRecoveryUnit::_ensureSession() {
     if (!_session) {
-        _session = _sessionCache->getSession();
+		//WiredTigerSessionCache::getSession()选择是直接new新的UniqueWiredTigerSession还
+		//是直接使用WiredTigerSessionCache._sessions缓存中的session
+        _session = _sessionCache->getSession(); //WiredTigerSessionCache::getSession  
     }
 }
 
@@ -159,18 +179,20 @@ void WiredTigerRecoveryUnit::assertInActiveTxn() const {
     fassert(28575, _active);
 }
 
-//第一次调用获取新的session,以后再次调用则获取缓存的_session
+// 注意WiredTigerRecoveryUnit::getSession和WiredTigerRecoveryUnit::getSessionNoTxn的区别
+//获取session,通过事务方式 
+//WiredTigerCursor::WiredTigerCursor调用
 WiredTigerSession* WiredTigerRecoveryUnit::getSession() {
     if (!_active) { //第一次调用的时候走if里面，下次在get的时候直接返回_session
-        _txnOpen();
+        _txnOpen(); //这里面调用_ensureSession
     }
-    return _session.get();
+    return _session.get(); //获取UniqueWiredTigerSession对应的WiredTigerSession
 }
 
-//每次都获取新session   注意WiredTigerRecoveryUnit::getSession和WiredTigerRecoveryUnit::getSessionNoTxn的区别
+// 注意WiredTigerRecoveryUnit::getSession和WiredTigerRecoveryUnit::getSessionNoTxn的区别
 WiredTigerSession* WiredTigerRecoveryUnit::getSessionNoTxn() {
     _ensureSession();
-    return _session.get();
+    return _session.get(); //获取UniqueWiredTigerSession对应的WiredTigerSession
 }
 
 /*
@@ -280,8 +302,9 @@ void WiredTigerRecoveryUnit::_txnOpen() {
     if (shouldLog(kSlowTransactionSeverity)) {
         _timer.reset(new Timer());
     }
-    WT_SESSION* session = _session->getSession();
 
+	//也就是获取WiredTigerSession._session，通过WiredTigerSession类的WT_SESSION* getSession()获取
+    WT_SESSION* session = _session->getSession(); 
     if (_readAtTimestamp != Timestamp::min()) {
         uassertStatusOK(_sessionCache->snapshotManager().beginTransactionAtTimestamp(
             _readAtTimestamp, session));
@@ -298,7 +321,6 @@ void WiredTigerRecoveryUnit::_txnOpen() {
     LOG(3) << "WiredTigerRecoveryUnit::_txnOpen WT begin_transaction for snapshot id " << _mySnapshotId;
     _active = true;
 }
-
 
 Status WiredTigerRecoveryUnit::setTimestamp(Timestamp timestamp) {
     _ensureSession();
@@ -335,6 +357,20 @@ void WiredTigerRecoveryUnit::beginIdle() {
     }
 }
 
+/*
+[root@bogon mongo]# grep "WiredTigerCursor curwrap(" * -r
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerCursor curwrap(_uri, _tableId, false, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx); //WiredTigerCursor::WiredTigerCursor
+db/storage/wiredtiger/wiredtiger_record_store.cpp:        WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:    WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
+db/storage/wiredtiger/wiredtiger_util.cpp:    WiredTigerCursor curwrap("metadata:create", WiredTigerSession::kMetadataTableId, false, opCtx);
+*/
 // ---------------------
 //例如WiredTigerRecordStore::_insertRecords会调用
 WiredTigerCursor::WiredTigerCursor(const std::string& uri,
@@ -346,14 +382,14 @@ WiredTigerCursor::WiredTigerCursor(const std::string& uri,
     _ru = WiredTigerRecoveryUnit::get(opCtx); //获取opCtx对应的RecoveryUnit
     _session = _ru->getSession(); //WiredTigerRecoveryUnit::getSession
     //调用WiredTigerSession::getCursor->(session->open_cursor)获取wiredtiger cursor
-    _cursor = _session->getCursor(uri, tableId, forRecordStore);
+    _cursor = _session->getCursor(uri, tableId, forRecordStore); //根据tableId和uri获取对应的cursor
     if (!_cursor) {
         error() << "no cursor for uri: " << uri;
     }
 }
 
 WiredTigerCursor::~WiredTigerCursor() {
-    _session->releaseCursor(_tableID, _cursor);
+    _session->releaseCursor(_tableID, _cursor); //WiredTigerSession::releaseCursor
     _cursor = NULL;
 }
 

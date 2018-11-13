@@ -107,6 +107,7 @@ extern AtomicInt32 internalQueryExecMaxBlockingSortBytes;
 // Yield after this many "should yield?" checks.
 extern AtomicInt32 internalQueryExecYieldIterations;
 
+//internalQueryExecYieldPeriodMS 可以通过setParameter 命令配置，控制查询命令的AutoYield的间隔，默认10毫秒。
 // Yield if it's been at least this many milliseconds since we last yielded.
 extern AtomicInt32 internalQueryExecYieldPeriodMS;
 

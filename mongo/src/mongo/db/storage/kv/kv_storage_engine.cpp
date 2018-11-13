@@ -94,7 +94,7 @@ KVStorageEngine::KVStorageEngine(
             "Storage engine does not support --directoryperdb",
             !(options.directoryPerDB && !engine->supportsDirectoryPerDB()));
 
-    OperationContextNoop opCtx(_engine->newRecoveryUnit());
+    OperationContextNoop opCtx(_engine->newRecoveryUnit()); //WiredTigerKVEngine::newRecoveryUnit
 
     bool catalogExists = engine->hasIdent(&opCtx, catalogInfo);
 

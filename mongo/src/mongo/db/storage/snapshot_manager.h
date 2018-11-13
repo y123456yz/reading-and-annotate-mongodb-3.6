@@ -45,7 +45,7 @@ class RecoveryUnit;
  *
  * Implementations must be able to handle concurrent access to any methods. No methods are allowed
  * to acquire locks from the LockManager.
- */
+ */ //WiredTigerSnapshotManagerºÃ≥–∏√¿‡
 class SnapshotManager {
 public:
     /**

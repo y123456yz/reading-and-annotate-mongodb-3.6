@@ -477,6 +477,7 @@ WiredTigerKVEngine::~WiredTigerKVEngine() {
     _sessionCache.reset(NULL);
 }
 
+//db.serverStatus().wiredTiger.concurrentTransactions命令获取
 void WiredTigerKVEngine::appendGlobalStats(BSONObjBuilder& b) {
     BSONObjBuilder bb(b.subobjStart("concurrentTransactions"));
     {
@@ -496,6 +497,22 @@ void WiredTigerKVEngine::appendGlobalStats(BSONObjBuilder& b) {
     bb.done();
 }
 
+/* CTRL+C退出程序的时候会走这里
+(gdb) bt 
+#0  mongo::WiredTigerSessionCache::closeAll (this=this@entry=0x7f3df729edc0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:368
+#1  0x00007f3df3e1d6cd in mongo::WiredTigerSessionCache::shuttingDown (this=0x7f3df729edc0) at src/mongo/db/storage/wiredtiger/wiredtiger_session_cache.cpp:254
+#2  0x00007f3df3e028c8 in mongo::WiredTigerKVEngine::cleanShutdown (this=0x7f3df6f71680) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:510
+#3  0x00007f3df3fd9a8e in mongo::ServiceContextMongoD::shutdownGlobalStorageEngineCleanly (this=0x7f3df6eb4480) at src/mongo/db/service_context_d.cpp:239
+#4  0x00007f3df3dc2b1e in mongo::(anonymous namespace)::shutdownTask () at src/mongo/db/db.cpp:1385
+#5  0x00007f3df55aff92 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#6  mongo::(anonymous namespace)::runTasks(std::stack<std::function<void()>, std::deque<std::function<void()>, std::allocator<std::function<void()> > > >) (tasks=...) at src/mongo/util/exit.cpp:61
+#7  0x00007f3df3d546f3 in mongo::shutdown (code=code@entry=mongo::EXIT_CLEAN) at src/mongo/util/exit.cpp:140
+#8  0x00007f3df45939d2 in exitCleanly (code=mongo::EXIT_CLEAN) at src/mongo/util/exit.h:81
+#9  mongo::(anonymous namespace)::signalProcessingThread (rotate=mongo::kNeedToRotateLogFile) at src/mongo/util/signal_handlers.cpp:198
+#10 0x00007f3df29328f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
+#11 0x00007f3df214ee25 in start_thread () from /lib64/libpthread.so.0
+#12 0x00007f3df1e7c34d in clone () from /lib64/libc.so.6
+*/ //CTRL+C退出程序的时候会走这里
 void WiredTigerKVEngine::cleanShutdown() {
     log() << "WiredTigerKVEngine shutting down";
     if (!_readOnly)
@@ -687,6 +704,7 @@ void WiredTigerKVEngine::endBackup(OperationContext* opCtx) {
 }
 
 //参考http://www.mongoing.com/archives/5476  同步内存中的size到磁盘
+//WiredTigerKVEngine::haveDropsQueued  WiredTigerKVEngine::flushAllFiles中调用
 void WiredTigerKVEngine::syncSizeInfo(bool sync) const {
     if (!_sizeStorer)
         return;
@@ -699,8 +717,10 @@ void WiredTigerKVEngine::syncSizeInfo(bool sync) const {
     }
 }
 
+//ServiceContextMongoD::_newOpCtx   KVStorageEngine::KVStorageEngine中初始化该类
 RecoveryUnit* WiredTigerKVEngine::newRecoveryUnit() {
-    return new WiredTigerRecoveryUnit(_sessionCache.get());
+//WiredTigerRecoveryUnit和WiredTigerKVEngine._sessionCache类通过WiredTigerKVEngine::newRecoveryUnit()关联起来
+    return new WiredTigerRecoveryUnit(_sessionCache.get()); //_sessionCache在WiredTigerKVEngine::WiredTigerKVEngine初始化
 }
 
 //WiredTigerFactory::create中赋值
@@ -884,7 +904,7 @@ Status WiredTigerKVEngine::dropIdent(OperationContext* opCtx, StringData ident) 
             stdx::lock_guard<stdx::mutex> lk(_identToDropMutex);
             _identToDrop.push_front(uri);
         }
-        _sessionCache->closeCursorsForQueuedDrops();
+        _sessionCache->closeCursorsForQueuedDrops(); //WiredTigerSessionCache::closeCursorsForQueuedDrops
         return Status::OK();
     }
 
@@ -898,7 +918,7 @@ std::list<WiredTigerCachedCursor> WiredTigerKVEngine::filterCursorsWithQueuedDro
     std::list<WiredTigerCachedCursor>* cache) {
     std::list<WiredTigerCachedCursor> toDrop;
 
-    stdx::lock_guard<stdx::mutex> lk(_identToDropMutex);
+    stdx::lock_guard<stdx::mutex> lk(_identToDropMutex); //自解锁lock_guard
     if (_identToDrop.empty())
         return toDrop;
 
@@ -916,6 +936,7 @@ std::list<WiredTigerCachedCursor> WiredTigerKVEngine::filterCursorsWithQueuedDro
     return toDrop;
 }
 
+//WiredTigerSessionCache::releaseSession中调用
 bool WiredTigerKVEngine::haveDropsQueued() const {
     Date_t now = _clockSource->now();
     Milliseconds delta = now - _previousCheckedDropsQueued;
@@ -926,7 +947,7 @@ bool WiredTigerKVEngine::haveDropsQueued() const {
     }
 
     // We only want to check the queue max once per second or we'll thrash
-    if (delta < Milliseconds(1000))
+    if (delta < Milliseconds(1000)) //1s钟检查一次
         return false;
 
     _previousCheckedDropsQueued = now;
@@ -936,6 +957,7 @@ bool WiredTigerKVEngine::haveDropsQueued() const {
     return lk.try_lock() && !_identToDrop.empty();
 }
 
+//WiredTigerSessionCache::releaseSession中调用
 void WiredTigerKVEngine::dropSomeQueuedIdents() {
     int numInQueue;
 
@@ -1059,7 +1081,7 @@ void WiredTigerKVEngine::_checkIdentPath(StringData ident) {
 }
 
 void WiredTigerKVEngine::setJournalListener(JournalListener* jl) {
-    return _sessionCache->setJournalListener(jl);
+    return _sessionCache->setJournalListener(jl); //WiredTigerSessionCache::setJournalListener
 }
 
 void WiredTigerKVEngine::setInitRsOplogBackgroundThreadCallback(
@@ -1199,7 +1221,8 @@ void WiredTigerKVEngine::startOplogManager(OperationContext* opCtx,
     if (_oplogManagerCount == 0) {
         // If we don't want to keep a long history of data changes, have the OplogManager thread
         // update the oldest timestamp with the "all committed" timestamp, i.e: the latest time at
-        // which there are no holes.
+        // which there are no holes. 
+        //WiredTigerOplogManager::start
         _oplogManager->start(opCtx, uri, oplogRecordStore, !_keepDataHistory);
     }
     _oplogManagerCount++;
@@ -1213,12 +1236,12 @@ void WiredTigerKVEngine::haltOplogManager() {
         // Destructor may lock the mutex, so we must unlock here.
         // Oplog managers only destruct at shutdown or test exit, so it is safe to unlock here.
         lock.unlock();
-        _oplogManager->halt();
+        _oplogManager->halt(); //WiredTigerOplogManager::halt
     }
 }
 
 void WiredTigerKVEngine::replicationBatchIsComplete() const {
-    _oplogManager->triggerJournalFlush();
+    _oplogManager->triggerJournalFlush(); //WiredTigerOplogManager::triggerJournalFlush
 }
 
 }  // namespace mongo

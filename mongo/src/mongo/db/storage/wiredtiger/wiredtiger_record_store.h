@@ -340,7 +340,6 @@ private:
     std::shared_ptr<OplogStones> _oplogStones;
 };
 
-
 class StandardWiredTigerRecordStore final : public WiredTigerRecordStore {
 public:
     StandardWiredTigerRecordStore(WiredTigerKVEngine* kvEngine,

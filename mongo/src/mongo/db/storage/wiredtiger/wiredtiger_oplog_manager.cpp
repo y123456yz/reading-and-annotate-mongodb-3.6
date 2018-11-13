@@ -47,6 +47,7 @@ const uint64_t kMinimumTimestamp = 1;
 
 MONGO_FP_DECLARE(WTPausePrimaryOplogDurabilityLoop);
 
+//WiredTigerKVEngine::startOplogManager中调用执行
 void WiredTigerOplogManager::start(OperationContext* opCtx,
                                    const std::string& uri,
                                    WiredTigerRecordStore* oplogRecordStore,
@@ -79,6 +80,7 @@ void WiredTigerOplogManager::start(OperationContext* opCtx,
     _shuttingDown = false;
 }
 
+//WiredTigerKVEngine::haltOplogManager中调用执行
 void WiredTigerOplogManager::halt() {
     {
         stdx::lock_guard<stdx::mutex> lk(_oplogVisibilityStateMutex);
@@ -140,6 +142,7 @@ void WiredTigerOplogManager::waitForAllEarlierOplogWritesToBeVisible(
     });
 }
 
+//WiredTigerKVEngine::replicationBatchIsComplete中调用执行
 void WiredTigerOplogManager::triggerJournalFlush() {
     stdx::lock_guard<stdx::mutex> lk(_oplogVisibilityStateMutex);
     if (!_opsWaitingForJournal) {
