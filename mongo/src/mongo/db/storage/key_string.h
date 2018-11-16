@@ -88,9 +88,10 @@ public:
          * BufReader in the format described on the getBuffer() method.
          */
         void resetFromBuffer(BufReader* reader);
+        //根据version和reader数据构造一个Typebits返回,WiredTigerIndex::isDup中调用
         static TypeBits fromBuffer(Version version, BufReader* reader) {
             TypeBits out(version);
-            out.resetFromBuffer(reader);
+            out.resetFromBuffer(reader); //KeyString::TypeBits::resetFromBuffer
             return out;
         }
 

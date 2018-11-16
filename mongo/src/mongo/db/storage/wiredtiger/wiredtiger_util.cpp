@@ -422,6 +422,7 @@ int WiredTigerUtil::ErrorAccumulator::onError(WT_EVENT_HANDLER* handler,
     }
 }
 
+//WiredTigerIndex::fullValidateÖÐµ÷ÓÃ
 int WiredTigerUtil::verifyTable(OperationContext* opCtx,
                                 const std::string& uri,
                                 std::vector<std::string>* errors) {

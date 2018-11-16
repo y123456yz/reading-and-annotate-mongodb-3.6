@@ -333,6 +333,7 @@ void WiredTigerIndex::unindex(OperationContext* opCtx,
     _unindex(c, key, id, dupsAllowed);
 }
 
+//SortedDataInterface::numEntries中调用
 void WiredTigerIndex::fullValidate(OperationContext* opCtx,
                                    long long* numKeysOut,
                                    ValidateResults* fullResults) const {
@@ -358,7 +359,7 @@ void WiredTigerIndex::fullValidate(OperationContext* opCtx,
         }
     }
 
-    auto cursor = newCursor(opCtx);
+    auto cursor = newCursor(opCtx); //WiredTigerIndexUnique::newCursor或者WiredTigerIndexStandard::newCursor
     long long count = 0;
     TRACE_INDEX << " fullValidate";
 
@@ -372,6 +373,7 @@ void WiredTigerIndex::fullValidate(OperationContext* opCtx,
     }
 }
 
+//appendCollectionStorageStats->IndexAccessMethod::appendCustomStats调用
 bool WiredTigerIndex::appendCustomStats(OperationContext* opCtx,
                                         BSONObjBuilder* output,
                                         double scale) const {
@@ -429,7 +431,7 @@ Status WiredTigerIndex::dupKeyCheck(OperationContext* opCtx,
 bool WiredTigerIndex::isEmpty(OperationContext* opCtx) {
     if (_prefix != KVPrefix::kNotPrefixed) {
         const bool forward = true;
-        auto cursor = newCursor(opCtx, forward);
+        auto cursor = newCursor(opCtx, forward); //WiredTigerIndexUnique::newCursor或者WiredTigerIndexStandard::newCursor
         const bool inclusive = false;
         return cursor->seek(kMinBSONKey, inclusive, Cursor::RequestedInfo::kJustExistance) ==
             boost::none;
@@ -494,6 +496,7 @@ long long WiredTigerIndex::getSpaceUsedBytes(OperationContext* opCtx) const {
     return static_cast<long long>(WiredTigerUtil::getIdentSize(session->getSession(), _uri));
 }
 
+//查找key对应的值中有没有ID，有返回false，没有返回true
 bool WiredTigerIndex::isDup(WT_CURSOR* c, const BSONObj& key, const RecordId& id) {
     invariant(unique());
     // First check whether the key exists.
@@ -513,10 +516,12 @@ bool WiredTigerIndex::isDup(WT_CURSOR* c, const BSONObj& key, const RecordId& id
     invariantWTOK(c->get_value(c, &value)); //获取key对应的value
     BufReader br(value.data, value.size);
     while (br.remaining()) {
-        if (KeyString::decodeRecordId(&br) == id)
+        if (KeyString::decodeRecordId(&br) == id) //该key对应的RecordId已经存在，直接返回false
             return false;
 
-        KeyString::TypeBits::fromBuffer(keyStringVersion(), &br);  // Just advance the reader.
+		//根据version和reader数据构造一个Typebits返回，实际上这里没有使用返回值，因此只是简单的advance the reader
+		//也就是只是简单的移动了br._pos指针位置,继续下一个循环
+        KeyString::TypeBits::fromBuffer(keyStringVersion(), &br);  // Just advance the reader.  
     }
     return true;
 }
@@ -542,6 +547,7 @@ Status WiredTigerIndex::compact(OperationContext* opCtx) {
  *
  * Manages the bulk cursor used by bulk builders.
  */
+ //WiredTigerIndex::StandardBulkBuilder和WiredTigerIndex::UniqueBulkBuilder继承该类
 class WiredTigerIndex::BulkBuilder : public SortedDataBuilderInterface {
 public:
     BulkBuilder(WiredTigerIndex* idx, OperationContext* opCtx, KVPrefix prefix)
@@ -556,11 +562,11 @@ public:
     }
 
 protected:
-    WT_CURSOR* openBulkCursor(WiredTigerIndex* idx) {
+    WT_CURSOR* openBulkCursor(WiredTigerIndex* idx) { //BulkBuilder初始化中调用
         // Open cursors can cause bulk open_cursor to fail with EBUSY.
         // TODO any other cases that could cause EBUSY?
         WiredTigerSession* outerSession = WiredTigerRecoveryUnit::get(_opCtx)->getSession();
-        outerSession->closeAllCursors(idx->uri());
+        outerSession->closeAllCursors(idx->uri()); //WiredTigerSession::closeAllCursors
 
         // Not using cursor cache since we need to set "bulk".
         WT_CURSOR* cursor;
@@ -598,7 +604,7 @@ protected:
 
 /**
  * Bulk builds a non-unique index.
- */
+ */ //WiredTigerIndexStandard::getBulkBuilder中new
 class WiredTigerIndex::StandardBulkBuilder : public BulkBuilder {
 public:
     StandardBulkBuilder(WiredTigerIndex* idx, OperationContext* opCtx, KVPrefix prefix)
@@ -646,7 +652,7 @@ private:
  * after it sees a key after the one we are trying to insert. This allows us to gather up all
  * duplicate ids and insert them all together. This is necessary since bulk cursors can only
  * append data.
- */
+ */ //WiredTigerIndexUnique::getBulkBuilder中new该类
 class WiredTigerIndex::UniqueBulkBuilder : public BulkBuilder {
 public:
     UniqueBulkBuilder(WiredTigerIndex* idx,
@@ -1077,6 +1083,7 @@ protected:
 };
 
 //普通索引相关WiredTigerIndexStandardCursor  唯一索引相关WiredTigerIndexUniqueCursor
+//WiredTigerIndexStandard::newCursor中构造
 class WiredTigerIndexStandardCursor final : public WiredTigerIndexCursorBase {
 public:
     WiredTigerIndexStandardCursor(const WiredTigerIndex& idx,
@@ -1097,6 +1104,7 @@ public:
 };
 
 //普通索引相关WiredTigerIndexStandardCursor  唯一索引相关WiredTigerIndexUniqueCursor
+//WiredTigerIndexUnique::newCursor中构造
 class WiredTigerIndexUniqueCursor final : public WiredTigerIndexCursorBase {
 public:
     WiredTigerIndexUniqueCursor(const WiredTigerIndex& idx,

@@ -1771,8 +1771,9 @@ int KeyString::compare(const KeyString& other) const {
     return a < b ? -1 : 1;
 }
 
+//fromBuffer中调用，把reader中的数据部分拷贝到TypeBits，配合fromBuffer阅读
 void KeyString::TypeBits::resetFromBuffer(BufReader* reader) {
-    if (!reader->remaining()) {
+    if (!reader->remaining()) { //该reader buf没有数据
         // This means AllZeros state was encoded as an empty buffer.
         reset();
         return;
@@ -1785,7 +1786,8 @@ void KeyString::TypeBits::resetFromBuffer(BufReader* reader) {
 
         _buf[0] = firstByte;
         const uint8_t remainingBytes = getSizeByte();
-        memcpy(_buf + 1, reader->skip(remainingBytes), remainingBytes);
+		//配合fromBuffer阅读，同时reader._pos也会移动remainingBytes   BufReader::skip
+        memcpy(_buf + 1, reader->skip(remainingBytes), remainingBytes); //拷贝reader中的数据部分到TypeBits._buf,
         return;
     }
 

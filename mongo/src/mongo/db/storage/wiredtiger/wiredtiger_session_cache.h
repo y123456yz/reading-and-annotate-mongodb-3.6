@@ -89,7 +89,7 @@ public:
 
     ~WiredTigerSession();
 
-    WT_SESSION* getSession() const {
+    WT_SESSION* getSession() const { //ÀýÈçWiredTigerRecoveryUnit::get(_opCtx)->getSession()
         return _session;
     }
 
