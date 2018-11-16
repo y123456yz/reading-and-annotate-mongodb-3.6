@@ -182,7 +182,7 @@ public:
      * The default implementation should be overridden with a more
      * efficient one if at all possible.
      */
-    virtual long long numEntries(OperationContext* opCtx) const {
+    virtual long long numEntries(OperationContext* opCtx) const { 
         long long x = -1;
         fullValidate(opCtx, &x, NULL);
         return x;
@@ -390,7 +390,7 @@ public:
 
 /**
  * A version-hiding wrapper around the bulk builder for the Btree.
- */
+ */ //WiredTigerIndex::BulkBuilderºÃ≥–∏√¿‡
 class SortedDataBuilderInterface {
 public:
     virtual ~SortedDataBuilderInterface() {}

@@ -182,7 +182,7 @@ void WiredTigerSession::releaseCursor(uint64_t id, WT_CURSOR* cursor) {
 }
 
 //erase _cursors中cursor->uri为uri的c
-//WiredTigerSessionCache::closeAllCursors中执行
+//WiredTigerSessionCache::closeAllCursors   openBulkCursor中执行
 void WiredTigerSession::closeAllCursors(const std::string& uri) {
     invariant(_session);
 

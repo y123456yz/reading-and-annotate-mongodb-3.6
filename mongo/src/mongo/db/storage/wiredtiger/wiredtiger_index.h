@@ -43,6 +43,7 @@ class IndexCatalogEntry;
 class IndexDescriptor;
 struct WiredTigerItem;
 
+////WiredTigerIndexUnique∫ÕWiredTigerIndexStandardºÃ≥–∏√¿‡
 class WiredTigerIndex : public SortedDataInterface {
 public:
     /**
@@ -166,7 +167,7 @@ protected:
 };
 
 
-class WiredTigerIndexUnique : public WiredTigerIndex {
+class WiredTigerIndexUnique : public WiredTigerIndex { 
 public:
     WiredTigerIndexUnique(OperationContext* ctx,
                           const std::string& uri,

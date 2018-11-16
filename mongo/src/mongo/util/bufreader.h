@@ -104,10 +104,11 @@ public:
     }
 
     /** return current position pointer, and advance by len */
+    //例如KeyString::TypeBits::resetFromBuffer中就会调用
     const void* skip(unsigned len) {
         ConstDataRangeCursor cdrc(_pos, _end);
         uassertStatusOK(cdrc.advance(len));
-        return std::exchange(_pos, cdrc.data());
+        return std::exchange(_pos, cdrc.data()); //pos指针也就跟着移动了len
     }
 
     /// reads a NUL terminated string
