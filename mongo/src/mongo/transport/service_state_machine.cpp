@@ -261,21 +261,23 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
 #16 mongo::(anonymous namespace)::runFunc (ctx=0x7f228cedd0a0) at src/mongo/transport/service_entry_point_utils.cpp:55
 #17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
 #18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
-*/
+*/ //epoll异步网络时间触发，一般是有数据到来
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
+	//TransportLayerASIO::sourceMessage
     auto ticket = _session()->sourceMessage(&_inMessage);
 
-    _state.store(State::SourceWait);
+    _state.store(State::SourceWait); //等待读完内核协议栈数据到用户态，或者epoll_wait超时才返回
     guard.release();
-
+	//线程模型默认同步方式，也就是一个链接一个线程
     if (_transportMode == transport::Mode::kSynchronous) {
         _sourceCallback([this](auto ticket) {
             MONGO_IDLE_THREAD_BLOCK;
+			//TransportLayerASIO::wait   epoll_wait等待
             return _session()->getTransportLayer()->wait(std::move(ticket));
-        }(std::move(ticket)));
+        }(std::move(ticket))); 
     } else if (_transportMode == transport::Mode::kAsynchronous) {
-        _session()->getTransportLayer()->asyncWait(
+        _session()->getTransportLayer()->asyncWait( //TransportLayerASIO::asyncWait
             std::move(ticket), [this](Status status) { _sourceCallback(status); });
     }
 }
@@ -296,6 +298,7 @@ void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     }
 }
 
+//ServiceStateMachine::_sourceMessage中epoll_wait返回，也就是协议栈的数据已经读到用户态空间
 void ServiceStateMachine::_sourceCallback(Status status) {
     // The first thing to do is create a ThreadGuard which will take ownership of the SSM in this
     // thread.
@@ -303,7 +306,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
 
     // Make sure we just called sourceMessage();
     dassert(state() == State::SourceWait);
-    auto remote = _session()->remote();
+    auto remote = _session()->remote(); //获取客户端信息
 
     if (status.isOK()) {
         _state.store(State::Process);
@@ -387,7 +390,7 @@ void ServiceStateMachine::_sinkCallback(Status status) {
 #17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
 #18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
 */
-//新链接或者消息处理都会走到这里
+//消息处理都会走到这里
 void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     invariant(!_inMessage.empty());
 	//log() << "	yang test ...........	_processMessage ";
@@ -452,7 +455,7 @@ void ServiceStateMachine::runNext() {
     return _runNextInGuard(ThreadGuard(this));
 }
 
-//ServiceStateMachine::_scheduleNextWithGuard中执行
+//ServiceStateMachine::_scheduleNextWithGuard  ServiceStateMachine::_sourceCallback中执行
 void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     auto curState = state();
     dassert(curState != State::Ended);
@@ -465,9 +468,26 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 
     // Make sure the current Client got set correctly
     dassert(Client::getCurrent() == _dbClientPtr);
+	/*
+	    enum class State {
+        Created,     // The session has been created, but no operations have been performed yet
+        Source,      // Request a new Message from the network to handle
+        SourceWait,  // Wait for the new Message to arrive from the network
+        Process,     // Run the Message through the database
+        SinkWait,    // Wait for the database result to be sent by the network
+        EndSession,  // End the session - the ServiceStateMachine will be invalid after this
+        Ended        // The session has ended. It is illegal to call any method besides
+                     // state() if this is the current state.
+    };
+	*/
+	/*
+	这是个状态机，内核epoll触发有网络数据到来，则执行_sourceMessage，_sourceMessage中调用TransportLayerASIO::wait来
+	读取协议栈的数据，读取返回会，在_sourceMessage->ServiceStateMachine::_sourceCallback中把状态改为State::Process,意思是
+	可以根据mongod协议
+	*/
     try {
-        switch (curState) { //客户端过来的信息处理
-            case State::Source:
+        switch (curState) { 
+            case State::Source: //epoll异步网络时间触发，一般是有数据到来
                 _sourceMessage(std::move(guard));
                 break;
             case State::Process:
@@ -502,7 +522,7 @@ void ServiceStateMachine::start(Ownership ownershipModel) {
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
 }
 
-//上面的ServiceStateMachine::start中执行
+//上面的ServiceStateMachine::start(新连接到来)  ServiceStateMachine::_sourceCallback(网络新数据到来触发)中执行
 void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {

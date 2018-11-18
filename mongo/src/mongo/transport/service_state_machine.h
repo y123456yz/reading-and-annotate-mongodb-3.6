@@ -80,6 +80,17 @@ public:
      * Source -> SourceWait -> Process -> SinkWait -> Process -> SinkWait ... (exhaust)
      * Source -> SourceWait -> Process -> Source (fire-and-forget)
      */
+/*
+各状态主要说明如下表所示:
+状态    说明    相关函数方法
+Created 新链接到来后进入该状态  ServiceStateMachine::create
+Source  表示mongodb用户态感知到epoll网络事件通知，开始读取内核态协议栈数据到用户态空间  ServiceStateMachine::_runNextInGuard ServiceStateMachine::_sourceMessage
+SourceWait  等待读完内核协议栈数据到用户态，或者epoll_wait超时才返回    ServiceStateMachine::_sourceMessage
+Process 读完内核协议栈数据空间到用户态返回，或者epoll_wait超时返回，读取完毕后进行数据解析分析处理  ServiceStateMachine::_sourceCallback ServiceStateMachine::_processMessage
+SinkWait    数据发送相关，等待发送数据发送完成或者超时  ServiceStateMachine::_sinkMessage
+EndSession  读写异常，或者链接异常的时候进入该状态，表示链接异常需要进行session回收处理 ServiceStateMachine::_runNextInGuard ServiceStateMachine::_sinkCallback ServiceStateMachine::_sourceCallback
+Ended   该链接回收完毕，不再可用    ServiceStateMachine::_cleanupSession
+*/
     enum class State {
         Created,     // The session has been created, but no operations have been performed yet
         Source,      // Request a new Message from the network to handle
@@ -227,7 +238,7 @@ private:
 
     bool _inExhaust = false;
     boost::optional<MessageCompressorId> _compressorId;
-    Message _inMessage;
+    Message _inMessage; //赋值见ServiceStateMachine::_sourceMessage
 
     AtomicWord<Ownership> _owned{Ownership::kUnowned};
 #if MONGO_CONFIG_DEBUG_BUILD
