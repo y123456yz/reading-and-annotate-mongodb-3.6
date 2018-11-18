@@ -138,7 +138,7 @@ std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
     if (config->transportLayer == "asio") {
         transport::TransportLayerASIO::Options opts(config);
 
-		//同步方式还是异步方式，默认异步
+		//同步方式还是异步方式，默认synchronous
         if (config->serviceExecutor == "adaptive") {
             opts.transportMode = transport::Mode::kAsynchronous;
         } else if (config->serviceExecutor == "synchronous") {

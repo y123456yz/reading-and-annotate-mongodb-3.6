@@ -102,6 +102,7 @@ Ticket TransportLayerASIO::sinkMessage(const SessionHandle& session,
     return {this, std::move(ticket)};
 }
 
+//asio中的epoll_wait超时等待处理  ServiceStateMachine::_sourceMessage中会调用
 Status TransportLayerASIO::wait(Ticket&& ticket) {
     auto ownedASIOTicket = getOwnedTicketImpl(std::move(ticket));
     auto asioTicket = checked_cast<ASIOTicket*>(ownedASIOTicket.get());
