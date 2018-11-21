@@ -48,6 +48,7 @@ using write_ops::DeleteOpEntry;
 namespace {
 
 template <class T>
+//例如insert检查//InsertOp::parseLegacy->validateInsertOp->checkOpCountForCommand
 void checkOpCountForCommand(const T& op, size_t numOps) {
     uassert(ErrorCodes::InvalidLength,
             str::stream() << "Write batch sizes must be between 1 and "
@@ -63,6 +64,8 @@ void checkOpCountForCommand(const T& op, size_t numOps) {
             !stmtIds || stmtIds->size() == numOps);
 }
 
+//检查write_ops::Insert类是否有效,如集合名是否可用，文档size是否正确
+//InsertOp::parseLegacy->validateInsertOp
 void validateInsertOp(const write_ops::Insert& insertOp) {
     const auto& nss = insertOp.getNamespace();
     const auto& docs = insertOp.getDocuments();
@@ -137,10 +140,20 @@ write_ops::Insert InsertOp::parse(const OpMsgRequest& request) {
 
 //receivedInsert中调用
 write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
-    DbMessage msg(msgRaw);
+    DbMessage msg(msgRaw); //DbMessage::DbMessage 这里面会解析出insert报文体中的集合名
 
-    Insert op(NamespaceString(msg.getns()));
-
+    Insert op(NamespaceString(msg.getns())); //构造write_ops::Insert类   DbMessage::getns
+	/* insert报文体内容
+	struct {
+	    MsgHeader header;             // standard message header
+	    //第0位表示在多条批量插入的时候，如果中途某条插入失败，后续插入操作是否可以继续
+	    int32     flags;              // bit vector - see below
+	    // 完整的集合名称，形如:"dbname.collectionname"
+	    cstring   fullCollectionName; // "dbname.collectionname"
+	    // 要插入的一个或多个document,如为多个时，这些document会依次逐个写到socket里
+	    document* documents;          // one or more documents to insert into the collection
+	}
+	*/
     {
         write_ops::WriteCommandBase writeCommandBase;
         writeCommandBase.setBypassDocumentValidation(false);
@@ -148,17 +161,20 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
         op.setWriteCommandBase(std::move(writeCommandBase));
     }
 
+	//报文内容中至少携带一个json过来
     uassert(ErrorCodes::InvalidLength, "Need at least one object to insert", msg.moreJSObjs());
 
+	//解析出文档数据
     op.setDocuments([&] {
         std::vector<BSONObj> documents;
         while (msg.moreJSObjs()) { //有可能是批量写，所以用了while，全部存入documents
-            documents.push_back(msg.nextJsObj());
+            documents.push_back(msg.nextJsObj()); //DbMessage::nextJsObj 解析出文档
         }
 
         return documents;
     }());
 
+	//检查write_ops::Insert类是否有效
     validateInsertOp(op);
     return op;
 }
@@ -170,10 +186,11 @@ write_ops::Update UpdateOp::parse(const OpMsgRequest& request) {
     return updateOp;
 }
 
+//receivedInsert中调用
 write_ops::Update UpdateOp::parseLegacy(const Message& msgRaw) {
     DbMessage msg(msgRaw);
 
-    Update op(NamespaceString(msg.getns()));
+    Update op(NamespaceString(msg.getns())); //构造write_ops::Update
 
     {
         write_ops::WriteCommandBase writeCommandBase;
@@ -207,6 +224,7 @@ write_ops::Delete DeleteOp::parse(const OpMsgRequest& request) {
     return deleteOp;
 }
 
+//receivedDelete中调用
 write_ops::Delete DeleteOp::parseLegacy(const Message& msgRaw) {
     DbMessage msg(msgRaw);
 

@@ -32,7 +32,7 @@
 
 namespace mongo {
 
-size_t strnlen(const char* s, size_t maxlen) {
+size_t strnlen(const char* s, size_t maxlen) { //从s开始到遇到'\0'结束的字节长度
     for (size_t i = 0; i < maxlen; ++i) {
         if (s[i] == '\0') {
             return i;

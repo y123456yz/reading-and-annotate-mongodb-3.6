@@ -41,27 +41,30 @@ DbMessage::DbMessage(const Message& msg) : _msg(msg), _nsStart(NULL), _mark(NULL
     _theEnd = _msg.singleData().data() + _msg.singleData().dataLen();
     _nextjsobj = _msg.singleData().data();
 
-    _reserved = readAndAdvance<int>();
+    _reserved = readAndAdvance<int>(); //获取第一个INT的值
 
     // Read packet for NS
     if (messageShouldHaveNs()) {
         // Limit = buffer size of message -
         //        (first int4 in message which is either flags or a zero constant)
+        //例如insert有4字节flags，所有带有集合名的op操作，ns前面都有4字节flag，
+        //见https://docs.mongodb.com/v3.6/reference/mongodb-wire-protocol/
         size_t limit = _msg.singleData().dataLen() - sizeof(int);
 
         _nsStart = _nextjsobj;
-        _nsLen = strnlen(_nsStart, limit);
+        _nsLen = strnlen(_nsStart, limit); //从_nsStart集合名开始到遇到'\0'位置，表示就是集合名ns
 
         // Validate there is room for a null byte in the buffer
         // Strings can be zero length
         uassert(18633, "Failed to parse ns string", _nsLen < limit);
 
-        _nextjsobj += _nsLen + 1;  // skip namespace + null
+        _nextjsobj += _nsLen + 1;  // skip namespace + null  跳过集合名，下次解析从_nextjsobj开始
     }
 }
 
+//获取集合名起始地址
 const char* DbMessage::getns() const {
-    verify(messageShouldHaveNs());
+    verify(messageShouldHaveNs()); //只有部分op操作有ns
     return _nsStart;
 }
 

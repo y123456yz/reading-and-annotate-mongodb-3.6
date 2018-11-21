@@ -988,7 +988,7 @@ void receivedInsert(OperationContext* opCtx, const NamespaceString& nsString, co
 
 //数据更新 ServiceEntryPointMongod::handleRequest中调用
 void receivedUpdate(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
-    auto updateOp = UpdateOp::parseLegacy(m);
+    auto updateOp = UpdateOp::parseLegacy(m); //获取m对应的write_ops::Update类   
     auto& singleUpdate = updateOp.getUpdates()[0];
     invariant(updateOp.getNamespace() == nsString);
 
@@ -1012,7 +1012,7 @@ void receivedUpdate(OperationContext* opCtx, const NamespaceString& nsString, co
 
 //删除 ServiceEntryPointMongod::handleRequest中调用
 void receivedDelete(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
-    auto deleteOp = DeleteOp::parseLegacy(m);
+    auto deleteOp = DeleteOp::parseLegacy(m); //获取该m对应的write_ops::Delete
     auto& singleDelete = deleteOp.getDeletes()[0];
     invariant(deleteOp.getNamespace() == nsString);
 
@@ -1110,7 +1110,7 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 //mongod服务对于客户端请求的处理  ServiceStateMachine::_processMessage或者loopbackBuildResponse中调用
 DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const Message& m) {
     // before we lock...
-    NetworkOp op = m.operation();
+    NetworkOp op = m.operation(); //获取协议头部中的MSGHEADER::Layout.opCode
     bool isCommand = false;
 
 	str::stream s;
@@ -1119,7 +1119,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 
     DbMessage dbmsg(m);
 	
-    Client& c = *opCtx->getClient(); 
+    Client& c = *opCtx->getClient();  //根据操作上下文获取对应的client
     if (c.isInDirectClient()) {
         invariant(!opCtx->lockState()->inAWriteUnitOfWork());
     } else {
@@ -1163,7 +1163,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         dbresponse = runCommands(opCtx, m);   //runCommands
     } else if (op == dbQuery) {
         invariant(!isCommand);
-		//真正的查询入口  实际上新版本走的是FindCmd::run，不在走这里
+		//查询可能走这里，也可能 实际上新版本走的是FindCmd::run(runCommands层层进入)，不在走这里
         dbresponse = receivedQuery(opCtx, nsString, c, m);
     } else if (op == dbGetMore) { //已经查询了数据,这里只是执行得到更多数据的入口  
         dbresponse = receivedGetMore(opCtx, m, currentOp, &shouldLogOpDebug);

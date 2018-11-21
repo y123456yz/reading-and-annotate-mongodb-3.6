@@ -262,12 +262,13 @@ KVStorageEngine::~KVStorageEngine() {}
 
 void KVStorageEngine::finishInit() {}
 
+// ServiceContextMongoD::_newOpCtx->KVStorageEngine::newRecoveryUnit
 RecoveryUnit* KVStorageEngine::newRecoveryUnit() {
     if (!_engine) {
         // shutdown
         return NULL;
     }
-    return _engine->newRecoveryUnit();
+    return _engine->newRecoveryUnit(); //WiredTigerKVEngine::newRecoveryUnit
 }
 
 void KVStorageEngine::listDatabases(std::vector<std::string>* out) const {

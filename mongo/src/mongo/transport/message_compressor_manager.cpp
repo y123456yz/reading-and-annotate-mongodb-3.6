@@ -293,6 +293,7 @@ void MessageCompressorManager::serverNegotiate(const BSONObj& input, BSONObjBuil
     }
 }
 
+//ServiceStateMachine::_processMessage中调用执行
 MessageCompressorManager& MessageCompressorManager::forSession(
     const transport::SessionHandle& session) {
     return getForSession(session.get());

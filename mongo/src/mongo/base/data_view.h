@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+//mongodb头部外的报文体内容相关，配合ConstView阅读
 class ConstDataView {
 public:
     typedef const char* bytes_type;

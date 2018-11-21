@@ -623,6 +623,10 @@ private:
     }
 } cmdReplSetSyncFrom;
 
+/*
+secondary 节点在 自身oplog发生变化时，会通过 replSetUpdatePosition 命令来将 oplog 进度立即通知给 primary，
+另外心跳的消息里也会包含最新 oplog 的信息；
+*/
 class CmdReplSetUpdatePosition : public ReplSetCommand {
 public:
     CmdReplSetUpdatePosition() : ReplSetCommand("replSetUpdatePosition") {}

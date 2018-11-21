@@ -93,9 +93,9 @@ ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(s
 #14 std::thread::_Impl<std::_Bind_simple<mongo::transport::TransportLayerASIO::start()::<lambda()>()> >::_M_run(void) (this=0x7f1d4b332c70) at /usr/local/include/c++/5.4.0/thread:115
 #15 0x00007f1d431f18f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
 #16 0x00007f1d42a0de25 in start_thread () from /lib64/libpthread.so.0
-*/
+*/ 
 //新的链接到来或者关闭都要走到这里  TransportLayerASIO::_acceptConnection中执行
-void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
+void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //session对应ASIOSession
     // Setup the restriction environment on the Session, if the Session has local/remote Sockaddrs
     const auto& remoteAddr = session->remote().sockAddr();
     const auto& localAddr = session->local().sockAddr();
@@ -115,7 +115,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) {
 }
 */ //kAsynchronous  kSynchronous
     auto transportMode = _svcCtx->getServiceExecutor()->transportMode();
-
+	
 	//ServiceStateMachine::ServiceStateMachine  这里面设置线程名conn+num
     auto ssm = ServiceStateMachine::create(_svcCtx, session, transportMode);
     {
