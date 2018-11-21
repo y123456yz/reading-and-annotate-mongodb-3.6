@@ -79,6 +79,11 @@ class UnreplicatedWritesBlock;
  客户端的每个请求（insert/update/delete/find/getmore），会生成一个唯一的OperationContext记录执行的上下文，
  OperationContext从请求解析时创建，到请求执行完成时释放。一般情况下，其生命周期等同于一个操作执行的生命周期。
  OperationContext创建时，会初始化RecoveryUnit。
+
+ 在以前的版本，MongoDB 只管理单个操作的上下文，mongod 服务进程接收到一个请求，为该请求创建一个上下文
+ （源码里对应 OperationContext），然后在服务整个请求的过程中一直使用这个上下文，内容包括，请求耗时统计、
+ 请求占用的锁资源、请求使用的存储快照等信息。有了 Session 之后，就可以让多个请求共享一个上下文，
+ 让多个请求产生关联，从而有能力支持多文档事务。  http://www.mongoing.com/%3Fp%3D6084
  */
 //RecoveryUnit，OperationContext, WriteUnitOfWork三个的关系见http://www.mongoing.com/archives/5476
 //ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口， 
@@ -90,6 +95,7 @@ class OperationContext : public Decorable<OperationContext> {
 public:
     /**
      * The RecoveryUnitState is used by WriteUnitOfWork to ensure valid state transitions.
+     WriteUnitOfWork使用RecoveryUnitState来确保有效的状态转换。
      */
     enum RecoveryUnitState {
         kNotInUnitOfWork,   // not in a unit of work, no writes allowed
@@ -473,8 +479,11 @@ private:
     friend class WriteUnitOfWork;
     friend class repl::UnreplicatedWritesBlock;
     Client* const _client;
+
+    //currentOp的输出结果里，每个请求包含一个opid字段，有了opid，就可以发送killOp来干掉对应的请求。db.killOp(opid)
     const unsigned int _opId;
 
+    //事务相关，参考http://www.mongoing.com/%3Fp%3D6084
     boost::optional<LogicalSessionId> _lsid;
     boost::optional<TxnNumber> _txnNumber;
 
@@ -516,6 +525,7 @@ private:
     Microseconds _maxTime = Microseconds::max();
 
     // Timer counting the elapsed time since the construction of this OperationContext.
+    //计时器，计算自构造这个OperationContext以来经过的时间
     Timer _elapsedTime;
 
     bool _writesAreReplicated = true;
@@ -527,7 +537,7 @@ class WriteUnitOfWork { //使用可以参考insertDocuments
     MONGO_DISALLOW_COPYING(WriteUnitOfWork);
 
 public:
-    WriteUnitOfWork(OperationContext* opCtx) //事务begin  WriteUnitOfWork::WriteUnitOfWork
+    WriteUnitOfWork(OperationContext* opCtx) //事务begin  WriteUnitOfWork::WriteUnitOfWork  //使用可以参考insertDocuments
         : _opCtx(opCtx),
           _committed(false),
           _toplevel(opCtx->_ruState == OperationContext::kNotInUnitOfWork) {
@@ -555,7 +565,7 @@ public:
         }
     }
 
-    void commit() { //事务end  WriteUnitOfWork::commit
+    void commit() { //事务end  WriteUnitOfWork::commit  //使用可以参考insertDocuments
         invariant(!_committed);
         invariant(_opCtx->_ruState == OperationContext::kActiveUnitOfWork);
         if (_toplevel) {

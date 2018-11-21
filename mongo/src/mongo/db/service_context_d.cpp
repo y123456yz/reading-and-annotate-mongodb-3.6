@@ -278,6 +278,7 @@ const StorageEngine::Factory* StorageFactoriesIteratorMongoD::next() {
 
 //客户端的每个请求（insert/update/delete/find/getmore），会生成一个唯一的OperationContext记录执行的上下文，OperationContext从请求解析时创建，到请求执行完成时释放
 //生成一个OperationContext类
+//ServiceContext::makeOperationContext
 std::unique_ptr<OperationContext> ServiceContextMongoD::_newOpCtx(Client* client, unsigned opId) {
     invariant(&cc() == client);
     auto opCtx = stdx::make_unique<OperationContext>(client, opId);

@@ -717,7 +717,7 @@ void WiredTigerKVEngine::syncSizeInfo(bool sync) const {
     }
 }
 
-//ServiceContextMongoD::_newOpCtx   KVStorageEngine::KVStorageEngine中初始化该类
+// ServiceContextMongoD::_newOpCtx->KVStorageEngine::newRecoveryUnit中初始化该类
 RecoveryUnit* WiredTigerKVEngine::newRecoveryUnit() {
 //WiredTigerRecoveryUnit和WiredTigerKVEngine._sessionCache类通过WiredTigerKVEngine::newRecoveryUnit()关联起来
     return new WiredTigerRecoveryUnit(_sessionCache.get()); //_sessionCache在WiredTigerKVEngine::WiredTigerKVEngine初始化

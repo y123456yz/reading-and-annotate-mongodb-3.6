@@ -45,7 +45,10 @@ AtomicUInt64 sessionIdCounter(0);
 
 Session::Session() : _id(sessionIdCounter.addAndFetch(1)), _tags(kPending) {}
 
+//virtual Ticket sourceMessage(Message* message, Date_t expiration = Ticket::kNoExpirationDate);
+//ServiceStateMachine::_sourceMessageµ÷ÓÃ
 Ticket Session::sourceMessage(Message* message, Date_t expiration) {
+	//TransportLayerASIO::sourceMessage
     return getTransportLayer()->sourceMessage(shared_from_this(), message, expiration);
 }
 

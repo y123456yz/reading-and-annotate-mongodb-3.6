@@ -171,8 +171,17 @@ Microseconds OperationContext::getRemainingMaxTimeMicros() const {
     return _maxTime - getElapsedTime();
 }
 
-void OperationContext::checkForInterrupt() {
-    uassertStatusOK(checkForInterruptNoAssert());
+/*
+killOp的实现原理如下
+
+每个连接对应的服务线程存储了一个killPending的字段，当发送killOp时，会将该字段置1；
+请求在执行过程中，可以通过不断的调用OperationContext::checkForInterrupt()来检查killPending是否被设置，
+如果被设置，则线程退出。
+
+killop相关，参考https://yq.aliyun.com/articles/6647
+*/
+void OperationContext::checkForInterrupt() { 
+    uassertStatusOK(checkForInterruptNoAssert());//OperationContext::checkForInterruptNoAssert
 }
 
 namespace {
@@ -198,6 +207,7 @@ bool opShouldFail(const OperationContext* opCtx, const BSONObj& failPointInfo) {
 
 }  // namespace
 
+//OperationContext::checkForInterrupt()调用,killop相关，参考https://yq.aliyun.com/articles/6647
 Status OperationContext::checkForInterruptNoAssert() {
     // TODO: Remove the MONGO_likely(getClient()) once all operation contexts are constructed with
     // clients.
@@ -386,6 +396,7 @@ RecoveryUnit* OperationContext::releaseRecoveryUnit() {
     return _recoveryUnit.release();
 }
 
+//ServiceContextMongoD::_newOpCtx调用
 OperationContext::RecoveryUnitState OperationContext::setRecoveryUnit(RecoveryUnit* unit,
                                                                       RecoveryUnitState state) {
     _recoveryUnit.reset(unit);
@@ -399,6 +410,7 @@ std::unique_ptr<Locker> OperationContext::releaseLockState() {
     return std::move(_locker);
 }
 
+//ServiceContextMongoD::_newOpCtx调用
 void OperationContext::setLockState(std::unique_ptr<Locker> locker) {
     dassert(!_locker);
     dassert(locker);

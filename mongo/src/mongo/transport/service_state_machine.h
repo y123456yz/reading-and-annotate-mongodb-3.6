@@ -229,8 +229,9 @@ private:
     transport::Mode _transportMode;
 
     ServiceContext* const _serviceContext;
-
-    transport::SessionHandle _sessionHandle;
+    
+    //TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
+    transport::SessionHandle _sessionHandle; //Ä¬ÈÏ¶ÔÓ¦ASIOSession
     ServiceContext::UniqueClient _dbClient;
     const Client* _dbClientPtr;
     const std::string _threadName;

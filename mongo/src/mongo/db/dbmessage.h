@@ -210,7 +210,7 @@ public:
    the various messages transmitted over the connection.
 
    See http://dochub.mongodb.org/core/mongowireprotocol
-*/
+*/ //获取DbMessage内容可以参考InsertOp::parseLegacy
 class DbMessage {
     // Assume sizeof(int) == 4 bytes
     MONGO_STATIC_ASSERT(sizeof(int) == 4);
@@ -220,6 +220,7 @@ public:
     DbMessage(const Message& msg);
 
     // Indicates whether this message is expected to have a ns
+    //只有部分op协议才会有ns字段，参考https://docs.mongodb.com/v3.6/reference/mongodb-wire-protocol/
     bool messageShouldHaveNs() const {
         return (_msg.operation() >= dbUpdate) & (_msg.operation() <= dbDelete);
     }
@@ -274,11 +275,12 @@ private:
     template <typename T>
     T readAndAdvance();
 
-    const Message& _msg;
+    const Message& _msg;//也就是insert协议的flag
     int _reserved;  // flags or zero depending on packet, starts the packet
 
+    //赋值见DbMessage::DbMessage  _nsStart和_nsLen决定了集合名
     const char* _nsStart;    // start of namespace string, +4 from message start
-    const char* _nextjsobj;  // current position reading packet
+    const char* _nextjsobj;  // current position reading packet  下次继续从这个点进行数据解析
     const char* _theEnd;     // end of packet
 
     const char* _mark;

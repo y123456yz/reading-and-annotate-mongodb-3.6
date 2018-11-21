@@ -40,10 +40,11 @@ namespace mongo {
 
 /**
  * Maximum accepted message size on the wire protocol.
+ mongodb协议官方文档参考https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/
  */
 const size_t MaxMessageSizeBytes = 48 * 1000 * 1000;
 //ServiceEntryPointMongod::handleRequest
-enum NetworkOp : int32_t {
+enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
     opInvalid = 0,
     opReply = 1,     /* reply. responseTo is set. */
     dbUpdate = 2001, /* update object */
@@ -53,14 +54,16 @@ enum NetworkOp : int32_t {
     dbGetMore = 2005,
     dbDelete = 2006,
     dbKillCursors = 2007,
-    // dbCommand_DEPRECATED = 2008, //
-    // dbCommandReply_DEPRECATED = 2009, //
+    // dbCommand_DEPRECATED = 2008, 
+    // dbCommandReply_DEPRECATED = 2009, 
+    
     dbCommand = 2010,
     dbCommandReply = 2011,
     dbCompressed = 2012,
     dbMsg = 2013,
 };
 
+//检查op是否在NetworkOp范围内，如果不在，说明不支持
 inline bool isSupportedRequestNetworkOp(NetworkOp op) {
     switch (op) {
         case dbUpdate:
@@ -80,6 +83,7 @@ inline bool isSupportedRequestNetworkOp(NetworkOp op) {
     }
 }
 
+//赋值见networkOpToLogicalOp
 enum class LogicalOp {
     opInvalid,
     opUpdate,
@@ -181,17 +185,21 @@ namespace MSGHEADER {
 #pragma pack(1)
 /**
  * See http://dochub.mongodb.org/core/mongowireprotocol
- */
+ */ //MSGHEADER::Layout
 struct Layout {
+    //getMessageLength解析
     int32_t messageLength;  // total message size, including this
+    //getRequestMsgId解析
     int32_t requestID;      // identifier for this message
+    //getResponseToMsgId解析
     int32_t responseTo;     // requestID from the original request
     //   (used in responses from db)
+    //getOpCode解析
     int32_t opCode;
 };
 #pragma pack()
 
-class ConstView {
+class ConstView { //MSGHEADER::Layout头部字段解析
 public:
     typedef ConstDataView view_type;
 
@@ -201,6 +209,7 @@ public:
         return data().view();
     }
 
+    //TransportLayerASIO::ASIOSourceTicket::_headerCallback
     int32_t getMessageLength() const {
         return data().read<LittleEndian<int32_t>>(offsetof(Layout, messageLength));
     }
@@ -299,6 +308,7 @@ public:
         return header().getResponseToMsgId();
     }
 
+    //获取网络数据报文中的op字段
     NetworkOp getNetworkOp() const {
         return NetworkOp(header().getOpCode());
     }
@@ -387,12 +397,13 @@ public:
 
 const int MsgDataHeaderSize = sizeof(Value) - 4;
 
-inline int ConstView::dataLen() const {
+inline int ConstView::dataLen() const { //除去头部后的数据部分
     return getLen() - MsgDataHeaderSize;
 }
 
 }  // namespace MsgData
 
+//DbMessage._msg包含该类成员
 class Message {
 public:
     Message() = default;
@@ -403,6 +414,7 @@ public:
         return _buf.get();
     }
 
+    //获取网络数据报文中的op字段
     NetworkOp operation() const {
         return header().getNetworkOp();
     }

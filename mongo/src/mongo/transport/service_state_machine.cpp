@@ -214,6 +214,9 @@ private:
     bool _haveTakenOwnership = false;
 };
 
+//TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
+
+//ServiceEntryPointImpl::startSession中调用，session默认对应ASIOSession
 std::shared_ptr<ServiceStateMachine> ServiceStateMachine::create(ServiceContext* svcContext,
                                                                  transport::SessionHandle session,
                                                                  transport::Mode transportMode) {
@@ -264,8 +267,8 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
 */ //epoll异步网络时间触发，一般是有数据到来
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
-	//TransportLayerASIO::sourceMessage
-    auto ticket = _session()->sourceMessage(&_inMessage);
+	//TransportLayerASIO::sourceMessage  TransportLayerASIO::ASIOSession  后面的wait asio会读取数据放入_inMessage
+    auto ticket = _session()->sourceMessage(&_inMessage); //Session::sourceMessage->TransportLayerASIO::sourceMessage
 
     _state.store(State::SourceWait); //等待读完内核协议栈数据到用户态，或者epoll_wait超时才返回
     guard.release();
@@ -395,10 +398,11 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     invariant(!_inMessage.empty());
 	//log() << "	yang test ...........	_processMessage ";
 
+	//获取类MessageCompressorManager
     auto& compressorMgr = MessageCompressorManager::forSession(_session());
 
     _compressorId = boost::none;
-    if (_inMessage.operation() == dbCompressed) {
+    if (_inMessage.operation() == dbCompressed) { //
         MessageCompressorId compressorId;
         auto swm = compressorMgr.decompressMessage(_inMessage, &compressorId);
         uassertStatusOK(swm.getStatus());
