@@ -131,7 +131,7 @@ public:
 
     /**
      * Interface for durability.  Caller DOES NOT own pointer.
-     */
+     */ //wiredtiger存储引擎对应WiredTigerRecoveryUnit，来源赋值在ServiceContextMongoD::_newOpCtx
     RecoveryUnit* recoveryUnit() const {
         return _recoveryUnit.get();
     }
@@ -487,7 +487,7 @@ private:
     boost::optional<LogicalSessionId> _lsid;
     boost::optional<TxnNumber> _txnNumber;
 
-    std::unique_ptr<Locker> _locker;
+    std::unique_ptr<Locker> _locker; //wiredtiger对应的锁为DefaultLockerImpl
 
     //OperationContext::_recoveryUnit为RecoveryUnit类类型，对应WiredTigerRecoveryUnit类
     std::unique_ptr<RecoveryUnit> _recoveryUnit; 
@@ -533,19 +533,21 @@ private:
 
 //WriteUnitOfWork 是事务框架提供给server层，方便执行事务的API。它是对OperationContext和RecoveryUnit的封装。
 //http://www.mongoing.com/archives/5476
-class WriteUnitOfWork { //使用可以参考insertDocuments
+class WriteUnitOfWork { //使用可以参考insertDocuments    事务封装
     MONGO_DISALLOW_COPYING(WriteUnitOfWork);
 
 public:
     WriteUnitOfWork(OperationContext* opCtx) //事务begin  WriteUnitOfWork::WriteUnitOfWork  //使用可以参考insertDocuments
         : _opCtx(opCtx),
           _committed(false),
+          //默认_ruState=kNotInUnitOfWork，所以默认为true
           _toplevel(opCtx->_ruState == OperationContext::kNotInUnitOfWork) {
         uassert(ErrorCodes::IllegalOperation,
                 "Cannot execute a write operation in read-only mode",
                 !storageGlobalParams.readOnly);
-        _opCtx->lockState()->beginWriteUnitOfWork();
-        if (_toplevel) {
+        _opCtx->lockState()->beginWriteUnitOfWork(); //DefaultLockerImpl，对应LockerImpl::beginWriteUnitOfWork
+        if (_toplevel) { 
+            //recoveryUnit来源在ServiceContextMongoD::_newOpCtx，也就是WiredTigerRecoveryUnit
             _opCtx->recoveryUnit()->beginUnitOfWork(_opCtx);
             _opCtx->_ruState = OperationContext::kActiveUnitOfWork;
         }
@@ -580,7 +582,7 @@ private:
     OperationContext* const _opCtx;
 
     bool _committed;
-    bool _toplevel;
+    bool _toplevel; //默认为true，见WriteUnitOfWork构造函数
 };
 
 namespace repl {

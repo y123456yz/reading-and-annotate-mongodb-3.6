@@ -289,6 +289,8 @@ std::unique_ptr<OperationContext> ServiceContextMongoD::_newOpCtx(Client* client
         opCtx->setLockState(stdx::make_unique<DefaultLockerImpl>());
     }
 
+	//OperationContext:setRecoveryUnit  WriteUnitOfWork   
+	//newRecoveryUnit()，也就是wiredtiger对应WiredTigerKVEngine::newRecoveryUnit，该recoverUnit在WriteUnitOfWork构造中会用到
     opCtx->setRecoveryUnit(getGlobalStorageEngine()->newRecoveryUnit(), //wiredtiger对应WiredTigerKVEngine::newRecoveryUnit
                            OperationContext::kNotInUnitOfWork);
     return opCtx;
