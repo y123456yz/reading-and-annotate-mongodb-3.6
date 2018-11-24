@@ -39,6 +39,7 @@ namespace {
 
 using mongo::BSONArray;
 using mongo::BSONField;
+//参考https://blog.csdn.net/amuseme_lu/article/details/6573912 如何构建bson
 //输出方法LOG() << WorkingSetCommon::toStatusString(obj),见FindCmd::run
 using mongo::BSONObj;
 using mongo::BSONObjBuilder; //通过b.obj()输出

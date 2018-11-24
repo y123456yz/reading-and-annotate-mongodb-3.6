@@ -195,7 +195,7 @@ public:
 
     /**
      * Sets the type of the current logical operation.
-     */
+     */ //例如insert赋值在performInserts
     void setLogicalOp_inlock(LogicalOp op) {
         _logicalOp = op;
         _debug.logicalOp = op;
@@ -479,7 +479,7 @@ private:
 
     bool _isCommand{false};
     int _dbprofile{0};  // 0=off, 1=slow, 2=all
-    std::string _ns;
+    std::string _ns; //集合名
     //赋值见curOpCommandSetup->setOpDescription_inlock,对应OpMsg.body
     BSONObj _opDescription;
     BSONObj _originatingCommand;  // Used by getMore to display original command.

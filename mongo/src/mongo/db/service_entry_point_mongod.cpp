@@ -973,11 +973,11 @@ void receivedKillCursors(OperationContext* opCtx, const Message& m) {
 //插入 ServiceEntryPointMongod::handleRequest中调用
 void receivedInsert(OperationContext* opCtx, const NamespaceString& nsString, const Message& m) {
 	//获取m对应的write_ops::Insert类   
-	auto insertOp = InsertOp::parseLegacy(m);
+	auto insertOp = InsertOp::parseLegacy(m); //通用报文头和报文体解析
 	//insert::getNamespace
     invariant(insertOp.getNamespace() == nsString);
 
-    for (const auto& obj : insertOp.getDocuments()) {//insert::getDocuments 批量操作相关
+    for (const auto& obj : insertOp.getDocuments()) {//insert::getDocuments 获取文档，查看该连接上对应的集合是否已经认证成功
         Status status =
             AuthorizationSession::get(opCtx->getClient())->checkAuthForInsert(opCtx, nsString, obj);
         audit::logInsertAuthzCheck(opCtx->getClient(), nsString, obj, status.code());

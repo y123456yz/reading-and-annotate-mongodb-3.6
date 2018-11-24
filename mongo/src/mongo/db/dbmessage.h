@@ -276,6 +276,7 @@ private:
     T readAndAdvance();
 
     const Message& _msg;//也就是insert协议的flag
+    //insert操作中的ordered 配置
     int _reserved;  // flags or zero depending on packet, starts the packet
 
     //赋值见DbMessage::DbMessage  _nsStart和_nsLen决定了集合名
