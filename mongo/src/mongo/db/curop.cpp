@@ -143,7 +143,7 @@ BSONObj upconvertGetMoreEntry(const NamespaceString& nss, CursorId cursorId, int
  * the notion that there is always a root CurOp attached to a Client.
  *
  * The stack itself is represented in the _parent pointers of the CurOp class.
- */ //CurOp可以参考runQuery
+ */ //CurOp可以参考runQuery  performInserts(insert操作)
 class CurOp::CurOpStack {
     MONGO_DISALLOW_COPYING(CurOpStack);
 

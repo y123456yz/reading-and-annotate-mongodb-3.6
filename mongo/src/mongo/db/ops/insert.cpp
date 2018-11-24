@@ -78,6 +78,7 @@ Status validateDepth(const BSONObj& obj) {
 }  // namespace
 
 //对doc文档做检查，返回新的BSONObj  添加ID
+//这里面会遍历所有的bson成员elem，并做相应的检查，并给该doc添加相应的ID
 StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj& doc) {
     if (doc.objsize() > BSONObjMaxUserSize) //一个文档最多16M
         return StatusWith<BSONObj>(ErrorCodes::BadValue,
@@ -96,6 +97,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
     bool hasTimestampToFix = false;
     bool hadId = false;
     {
+		//mongo::BSONOBjIterator 它主要是用来遍历BSONObj对象中的每一个元素，提供了类似于stl iterator的一些接口
         BSONObjIterator i(doc);
         for (bool isFirstElement = true; i.more(); isFirstElement = false) { //文档里面的各个key字段检查
             BSONElement e = i.next();
@@ -117,7 +119,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
             // check no regexp for _id (SERVER-9502)
             // also, disallow undefined and arrays
             // Make sure _id isn't duplicated (SERVER-19361).
-            if (fieldName == "_id") {
+            if (fieldName == "_id") { //_id成员
                 if (e.type() == RegEx) {
                     return StatusWith<BSONObj>(ErrorCodes::BadValue, "can't use a regex for _id");
                 }
@@ -151,13 +153,13 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
     BSONObjIterator i(doc);
 
     BSONObjBuilder b(doc.objsize() + 16);
-    if (firstElementIsId) {
-        b.append(doc.firstElement());
+    if (firstElementIsId) { //客户端写进来第一个elem就带有_ID
+        b.append(doc.firstElement()); //直接append到新的BSONObjBuilder
         i.next();
-    } else {
+    } else { //添加一个_id elem
         BSONElement e = doc["_id"];
-        if (e.type()) {
-            b.append(e);
+        if (e.type()) { //获取_id:XXX中xxx的类型
+            b.append(e); 
         } else {
             b.appendOID("_id", NULL, true); 
         }
@@ -167,7 +169,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
         BSONElement e = i.next();
         if (hadId && e.fieldNameStringData() == "_id") {
             // no-op
-        } else if (e.type() == bsonTimestamp && e.timestampValue() == 0) {
+        } else if (e.type() == bsonTimestamp && e.timestampValue() == 0) { //生成时间elem
             auto nextTime = LogicalClock::get(service)->reserveTicks(1);
             b.append(e.fieldName(), nextTime.asTimestamp());
         } else {

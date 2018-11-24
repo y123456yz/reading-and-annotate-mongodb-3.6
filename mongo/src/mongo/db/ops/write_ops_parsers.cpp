@@ -138,7 +138,7 @@ write_ops::Insert InsertOp::parse(const OpMsgRequest& request) {
     return insertOp;
 }
 
-//receivedInsert中调用
+//receivedInsert中调用   通用报文头和报文体解析
 write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
     DbMessage msg(msgRaw); //DbMessage::DbMessage 这里面会解析出insert报文体中的集合名
 
@@ -157,6 +157,7 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
     {
         write_ops::WriteCommandBase writeCommandBase;
         writeCommandBase.setBypassDocumentValidation(false);
+		//insert操作ordered配置，该配置决定了是批量操作的时候顺序一条一条执行，还是不安顺序，见https://docs.mongodb.com/manual/reference/method/db.collection.bulkWrite/#bulkwrite-write-operations-executionofoperations
         writeCommandBase.setOrdered(!(msg.reservedField() & InsertOption_ContinueOnError));
         op.setWriteCommandBase(std::move(writeCommandBase));
     }

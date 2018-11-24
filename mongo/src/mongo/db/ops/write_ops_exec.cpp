@@ -462,10 +462,10 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     });
 
     {
-        stdx::lock_guard<Client> lk(*opCtx->getClient());
-        curOp.setNS_inlock(wholeOp.getNamespace().ns());
-        curOp.setLogicalOp_inlock(LogicalOp::opInsert);
-        curOp.ensureStarted();
+        stdx::lock_guard<Client> lk(*opCtx->getClient()); //该链接对应客户端上锁
+        curOp.setNS_inlock(wholeOp.getNamespace().ns()); //设置当前操作的集合名
+        curOp.setLogicalOp_inlock(LogicalOp::opInsert); //设置操作类型
+        curOp.ensureStarted(); //设置该操作开始时间
         curOp.debug().ninserted = 0;
     }
 
@@ -495,6 +495,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     for (auto&& doc : wholeOp.getDocuments()) {
         const bool isLastDoc = (&doc == &wholeOp.getDocuments().back());
 		//对doc文档做检查，返回新的BSONObj
+		//这里面会遍历所有的bson成员elem，并做相应的检查，并给该doc添加相应的ID
         auto fixedDoc = fixDocumentForInsert(opCtx->getServiceContext(), doc);
         if (!fixedDoc.isOK()) { //如果这个文档检测有异常，则跳过这个文档，进行下一个文档操作
             // Handled after we insert anything in the batch to be sure we report errors in the

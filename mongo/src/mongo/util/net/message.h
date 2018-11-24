@@ -87,7 +87,7 @@ inline bool isSupportedRequestNetworkOp(NetworkOp op) {
 enum class LogicalOp {
     opInvalid,
     opUpdate,
-    opInsert,
+    opInsert,  //插入操作在performInserts中使用
     opQuery,
     opGetMore,
     opDelete,
