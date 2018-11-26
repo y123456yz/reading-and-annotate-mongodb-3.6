@@ -1187,7 +1187,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 
     RecordId highestId = RecordId();
     dassert(nRecords != 0);
-    for (size_t i = 0; i < nRecords; i++) {
+    for (size_t i = 0; i < nRecords; i++) { //只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors
         auto& record = records[i];
         if (_isOplog) {
             StatusWith<RecordId> status =

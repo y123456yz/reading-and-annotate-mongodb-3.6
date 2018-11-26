@@ -71,6 +71,14 @@ stdx::function<decltype(dropAllDatabasesExceptLocal)> dropAllDatabasesExceptLoca
 }  // namespace
 }  // namespace mongo
 
+/*Status userCreateNS(OperationContext* opCtx,
+                    Database* db,
+                    StringData ns,
+                    BSONObj options,
+                    CollectionOptions::ParseKind parseKind = CollectionOptions::parseForCommand,
+                    bool createDefaultIndexes = true,
+                    const BSONObj& idIndex = BSONObj());
+*/
 // 没有则创建集合及相关的索引文件  //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
 auto mongo::userCreateNS(OperationContext* const opCtx,
                          Database* const db,

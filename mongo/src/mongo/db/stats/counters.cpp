@@ -43,11 +43,13 @@ using std::endl;
 
 OpCounters::OpCounters() {}
 
+//insertBatchAndHandleErrors中执行
 void OpCounters::gotInserts(int n) {
     RARELY _checkWrap();
     _insert.fetchAndAdd(n);
 }
 
+//performInserts  insertBatchAndHandleErrors中调用
 void OpCounters::gotInsert() {
     RARELY _checkWrap();
     _insert.fetchAndAdd(1);

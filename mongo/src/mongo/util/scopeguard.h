@@ -384,6 +384,7 @@ inline ObjScopeGuardImpl2<Obj1, Ret (Obj2::*)(P1a, P2a), P1b, P2b> MakeGuard(
 #define LOKI_CONCATENATE(s1, s2) LOKI_CONCATENATE_DIRECT(s1, s2)
 #define LOKI_ANONYMOUS_VARIABLE(str) LOKI_CONCATENATE(str, __LINE__)
 
+//ScopeGuard scopeGuard$line = MakeGuard    用法可以参考performInserts
 #define ON_BLOCK_EXIT \
     MONGO_COMPILER_VARIABLE_UNUSED ScopeGuard LOKI_ANONYMOUS_VARIABLE(scopeGuard) = MakeGuard
 #define ON_BLOCK_EXIT_OBJ \

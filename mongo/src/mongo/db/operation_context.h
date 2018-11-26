@@ -533,11 +533,12 @@ private:
 
 //WriteUnitOfWork 是事务框架提供给server层，方便执行事务的API。它是对OperationContext和RecoveryUnit的封装。
 //http://www.mongoing.com/archives/5476
-class WriteUnitOfWork { //使用可以参考insertDocuments    事务封装
+class WriteUnitOfWork { //使用可以参考insertDocuments  makeCollection    事务封装
     MONGO_DISALLOW_COPYING(WriteUnitOfWork);
 
 public:
-    WriteUnitOfWork(OperationContext* opCtx) //事务begin  WriteUnitOfWork::WriteUnitOfWork  //使用可以参考insertDocuments
+    WriteUnitOfWork(OperationContext* opCtx) //事务begin开始标记，真正的事务begin在WiredTigerRecoveryUnit::getSession 
+                                            //WriteUnitOfWork::WriteUnitOfWork  //使用可以参考insertDocuments
         : _opCtx(opCtx),
           _committed(false),
           //默认_ruState=kNotInUnitOfWork，所以默认为true
@@ -547,7 +548,7 @@ public:
                 !storageGlobalParams.readOnly);
         _opCtx->lockState()->beginWriteUnitOfWork(); //DefaultLockerImpl，对应LockerImpl::beginWriteUnitOfWork
         if (_toplevel) { 
-            //recoveryUnit来源在ServiceContextMongoD::_newOpCtx，也就是WiredTigerRecoveryUnit
+            //recoveryUnit来源在ServiceContextMongoD::_newOpCtx，也就是WiredTigerRecoveryUnit::beginUnitOfWork
             _opCtx->recoveryUnit()->beginUnitOfWork(_opCtx);
             _opCtx->_ruState = OperationContext::kActiveUnitOfWork;
         }

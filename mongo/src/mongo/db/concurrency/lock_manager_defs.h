@@ -85,17 +85,17 @@ MongoDB wiredtiger是文档级别锁，那么读写并发时，加锁就类似如下
 http://www.mongoing.com/archives/4768
 
 所有的锁都是平等的，它们是排在一个队列里，符合FIFO原则。但是，MongoDB做了优化，即当一个锁被采用时，
-所有与它兼容的锁（即上表为yes的锁）都会被采纳，从而可以并发操作。举个例子，当你针对Collection A中
+所有与它兼容的锁都会被采纳，从而可以并发操作。举个例子，当你针对Collection A中
 的Document a使用S锁时，其它reader可以同时使用S锁来读取该Document a，也可以同时读取同一个Collection
 的Document b.因为所有的S锁都是兼容的。那么，如果此时针对Collection A中的Document c进行写操作是否可
 以呢？显然需要为Document c赋予x锁，此时Collection A就需要IX锁，而由于IX和IS是兼容的，所以没有问题。
 简单来说，只要不是同一个Document，读写操作是可以并发的；如果是同一个Document，读可以并发，但写不可以。
 https://www.jianshu.com/p/d838a5905303
-*/
+*/ //简单来说，只要不是同一个Document，读写操作是可以并发的；如果是同一个Document，读可以并发，但写不可以。
 /**
  * Lock modes.
  *
- * Compatibility Matrix  相容性关系 +相容共存  
+ * Compatibility Matrix  相容性关系 +相容共存        +是兼容的   
  *                                          Granted mode
  *   ---------------.--------------------------------------------------------.
  *   Requested Mode | MODE_NONE  MODE_IS   MODE_IX  MODE_S   MODE_X  |

@@ -90,6 +90,10 @@ void WiredTigerRecoveryUnit::prepareForCreateSnapshot(OperationContext* opCtx) {
     _areWriteUnitOfWorksBanned = true;
 }
 
+/*
+RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。  WiredTigerRecoveryUnit
+RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
+*/
 //WiredTigerRecoveryUnit::commitUnitOfWork调用
 void WiredTigerRecoveryUnit::_commit() {
     try {
@@ -97,6 +101,7 @@ void WiredTigerRecoveryUnit::_commit() {
             _txnClose(true);
         }
 
+		//AddCollectionChange::commit
         for (Changes::const_iterator it = _changes.begin(), end = _changes.end(); it != end; ++it) {
             (*it)->commit();
         }
@@ -170,6 +175,7 @@ bool WiredTigerRecoveryUnit::waitUntilDurable() {
     return true;
 }
 
+//DatabaseImpl::createCollection中调用
 void WiredTigerRecoveryUnit::registerChange(Change* change) {
     invariant(_inUnitOfWork);
     _changes.push_back(std::unique_ptr<Change>{change});
@@ -290,11 +296,11 @@ boost::optional<Timestamp> WiredTigerRecoveryUnit::getMajorityCommittedSnapshot(
 
 //WiredTigerRecoveryUnit::getSession中执行,获取一个session,并begin_transaction
 /*
-RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 
+RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。  
 RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
 */
 //WiredTigerRecoveryUnit::getSession第一次获取session的时候调用，在_ensureSession中确定_session
-void WiredTigerRecoveryUnit::_txnOpen() {
+void WiredTigerRecoveryUnit::_txnOpen() { //begin_transaction在该函数中
     invariant(!_active);
     _ensureSession();
 
@@ -315,13 +321,14 @@ void WiredTigerRecoveryUnit::_txnOpen() {
         _sessionCache->snapshotManager().beginTransactionOnOplog(
             _sessionCache->getKVEngine()->getOplogManager(), session);
     } else {
-        invariantWTOK(session->begin_transaction(session, NULL));
+        invariantWTOK(session->begin_transaction(session, NULL));  //begin_transaction
     }
 
     LOG(3) << "WiredTigerRecoveryUnit::_txnOpen WT begin_transaction for snapshot id " << _mySnapshotId;
     _active = true;
 }
 
+//WiredTigerRecordStore::_insertRecords  oplogDiskLocRegister中调用执行
 Status WiredTigerRecoveryUnit::setTimestamp(Timestamp timestamp) {
     _ensureSession();
     LOG(3) << "WT set timestamp of future write operations to " << timestamp;

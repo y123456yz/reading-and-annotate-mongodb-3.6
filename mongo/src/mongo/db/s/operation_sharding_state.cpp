@@ -50,6 +50,7 @@ OperationShardingState& OperationShardingState::get(OperationContext* opCtx) {
     return shardingMetadataDecoration(opCtx);
 }
 
+//execCommandDatabase…Ë÷√
 void OperationShardingState::setAllowImplicitCollectionCreation(
     const BSONElement& allowImplicitCollectionCreationElem) {
     if (!allowImplicitCollectionCreationElem.eoo()) {

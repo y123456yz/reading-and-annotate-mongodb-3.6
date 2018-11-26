@@ -161,6 +161,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
         if (e.type()) { //获取_id:XXX中xxx的类型
             b.append(e); 
         } else {
+        	//bson/bsonobjbuilder.h:    BSONObjBuilder& appendOID(StringData fieldName, OID* oid = 0, bool generateIfBlank = false) {
             b.appendOID("_id", NULL, true); 
         }
     }
