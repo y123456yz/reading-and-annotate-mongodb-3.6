@@ -72,6 +72,16 @@ error_check(cursor->insert(cursor));
 //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
 //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
 
+/*
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerSession session(WiredTigerRecoveryUnit::get(opCtx)->getSessionCache()->conn());
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:                    UniqueWiredTigerSession session = _sessionCache->getSession();
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession sessionWrapper(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_session_cache.cpp:        UniqueWiredTigerSession session = getSession();
+*/ //上面的注释这些地方会构造使用
 //WiredTigerSessionCache::getSession中执行
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64_t cursorEpoch)
     : _epoch(epoch),
@@ -102,6 +112,16 @@ WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64
 #6  mongo::WiredTigerCursor::WiredTigerCursor (this=0x7f5e2710c260, uri=..., tableId=1, forRecordStore=<optimized out>, opCtx=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_recovery_unit.cpp:347
 #7  0x00007f5e309a7475 in mongo::WiredTigerRecordStore::findRecord
 */
+/*
+db/storage/wiredtiger/wiredtiger_index.cpp:    WiredTigerSession session(WiredTigerRecoveryUnit::get(opCtx)->getSessionCache()->conn());
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:                    UniqueWiredTigerSession session = _sessionCache->getSession();
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession sessionWrapper(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
+db/storage/wiredtiger/wiredtiger_session_cache.cpp:        UniqueWiredTigerSession session = getSession();
+*/ //上面的注释这些地方会构造使用
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn,
                                      WiredTigerSessionCache* cache,
                                      uint64_t epoch,

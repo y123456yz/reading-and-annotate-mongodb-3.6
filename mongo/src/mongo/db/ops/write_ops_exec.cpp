@@ -131,7 +131,7 @@ void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
 
 /**
  * Sets the Client's LastOp to the system OpTime if needed.
- */
+ */ //performInserts中构造使用
 class LastOpFixer {
 public:
     LastOpFixer(OperationContext* opCtx, const NamespaceString& ns)
@@ -182,6 +182,7 @@ void makeCollection(OperationContext* opCtx, const NamespaceString& ns) {
     writeConflictRetry(opCtx, "implicit collection creation", ns.ns(), [&opCtx, &ns] {
         AutoGetOrCreateDb db(opCtx, ns.db(), MODE_X);
         assertCanWrite_inlock(opCtx, ns);
+		//Database::getCollection  判断该db下是否已经有对应的集合了，没有则创建
         if (!db.getDb()->getCollection(opCtx, ns)) {  // someone else may have beat us to it.
             WriteUnitOfWork wuow(opCtx);
 			//创建新集合
@@ -297,6 +298,7 @@ WriteResult performCreateIndexes(OperationContext* opCtx, const write_ops::Inser
     return out;
 }
 
+//只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors,普通集合一次只会携带一个document进来
 //insertBatchAndHandleErrors中调用执行
 void insertDocuments(OperationContext* opCtx,
                      Collection* collection,
@@ -328,7 +330,7 @@ void insertDocuments(OperationContext* opCtx,
 	//CollectionImpl::insertDocuments   
     uassertStatusOK(collection->insertDocuments(
         opCtx, begin, end, &CurOp::get(opCtx)->debug(), /*enforceQuota*/ true));
-    wuow.commit();
+    wuow.commit(); //WriteUnitOfWork::commit
 }
 
 /**
@@ -345,7 +347,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
     auto& curOp = *CurOp::get(opCtx);
 
     boost::optional<AutoGetCollection> collection;
-    auto acquireCollection = [&] {
+    auto acquireCollection = [&] { //创建集合文件 索引文件等
         while (true) {
             opCtx->checkForInterrupt();
 
@@ -367,7 +369,9 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
 
     try {
         acquireCollection(); //执行上面定义的函数
-        if (!collection->getCollection()->isCapped() && batch.size() > 1) {
+        //MongoDB 固定集合（Capped Collections）是性能出色且有着固定大小的集合，对于大小固定，
+        //我们可以想象其就像一个环形队列，当集合空间用完后，再插入的元素就会覆盖最初始的头部的元素！
+        if (!collection->getCollection()->isCapped() && batch.size() > 1) { //如果是固定集合，一次性插入，在同一个事务中，见insertDocuments
             // First try doing it all together. If all goes well, this is all we need to do.
             // See Collection::_insertDocuments for why we do all capped inserts one-at-a-time.
             lastOpFixer->startingOp();
@@ -390,7 +394,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
 
     // Try to insert the batch one-at-a-time. This path is executed both for singular batches, and
     // for batches that failed all-at-once inserting.
-    //一次性一条一条插入
+    //一次性一条一条插入，上面的固定集合是一次性插入
     log() << "yang test ...insertBatchAndHandleErrors.........getNamespace().ns():" << wholeOp.getNamespace().ns();
     for (auto it = batch.begin(); it != batch.end(); ++it) {
         globalOpCounters.gotInsert(); //操作计数
@@ -402,7 +406,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
                     if (!collection)
                         acquireCollection(); //执行上面定义的函数  创建集合
                     lastOpFixer->startingOp(); //记录本次操作的时间
-                    //把该条文档插入
+                    //把该条文档插入  
                     insertDocuments(opCtx, collection->getCollection(), it, it + 1);
                     lastOpFixer->finishedOpSuccessfully();
                     SingleWriteResult result;
@@ -446,6 +450,7 @@ SingleWriteResult makeWriteResultForInsertOrDeleteRetry() {
 WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     auto& curOp = *CurOp::get(opCtx);
+	 //ScopeGuard scopeGuard$line = MakeGuard([&] {   });
     ON_BLOCK_EXIT([&] {
         // This is the only part of finishCurOp we need to do for inserts because they reuse the
         // top-level curOp. The rest is handled by the top-level entrypoint.

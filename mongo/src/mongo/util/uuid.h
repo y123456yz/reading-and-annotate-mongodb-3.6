@@ -48,7 +48,7 @@ class OplogEntryBase;
 /**
  * A UUID is a 128-bit unique identifier, per RFC 4122, v4, using
  * a secure random number generator.
- */
+ */ //宏定义为CollectionUUID
 class UUID { ////NamespaceUUIDCache._cache
     using UUIDStorage = std::array<unsigned char, 16>;
 
@@ -180,6 +180,7 @@ public:
 private:
     UUID(const UUIDStorage& uuid) : _uuid(uuid) {}
 
+    //uuid生成见UUID::gen()
     UUIDStorage _uuid{};  // UUID in network byte order
 };
 

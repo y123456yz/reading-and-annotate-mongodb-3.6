@@ -338,7 +338,7 @@ error_check(cursor->insert(cursor));
 */
 //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
 //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
-
+//ServiceContextMongoD::initializeGlobalStorageEngine->WiredTigerFactory::create
 WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
                                        const std::string& path,
                                        ClockSource* cs,
@@ -733,11 +733,67 @@ void WiredTigerKVEngine::setSortedDataInterfaceExtraOptions(const std::string& o
     _indexOptions = options;
 }
 
+/*
+
+Breakpoint 1, mongo::WiredTigerKVEngine::createGroupedRecordStore (this=0x7fe15cc22680, opCtx=0x7fe16061be00, ns=..., ident=..., options=..., prefix=...) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:752
+752             _canonicalName, ns, options, _rsOptions, prefixed);
+(gdb) bt
+#0  mongo::WiredTigerKVEngine::createGroupedRecordStore (this=0x7fe15cc22680, opCtx=0x7fe16061be00, ns=..., ident=..., options=..., prefix=...) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:752
+#1  0x00007fe159986696 in mongo::KVDatabaseCatalogEntryBase::createCollection (this=0x7fe15cd695a0, opCtx=0x7fe16061be00, ns=..., options=..., allocateDefaultSpace=true) at src/mongo/db/storage/kv/kv_database_catalog_entry_base.cpp:227
+#2  0x00007fe159b6a28b in mongo::DatabaseImpl::createCollection (this=0x7fe15cd6d700, opCtx=0x7fe16061be00, ns=..., options=..., createIdIndex=<optimized out>, idIndex=...) at src/mongo/db/catalog/database_impl.cpp:827
+#3  0x00007fe159b649e1 in createCollection (idIndex=..., createDefaultIndexes=true, options=..., ns=..., opCtx=0x7fe16061be00, this=0x7fe15cf812d8) at src/mongo/db/catalog/database.h:298
+#4  mongo::userCreateNSImpl (opCtx=0x7fe16061be00, db=0x7fe15cf812d8, ns=..., options=..., parseKind=mongo::CollectionOptions::parseForCommand, createDefaultIndexes=true, idIndex=...) at src/mongo/db/catalog/database_impl.cpp:1128
+#5  0x00007fe159b6c12f in std::_Function_handler<mongo::Status (mongo::OperationContext*, mongo::Database*, mongo::StringData, mongo::BSONObj, mongo::CollectionOptions::ParseKind, bool, mongo::BSONObj const&), mongo::Status (*)(mongo::OperationContext*, mongo::Database*, mongo::StringData, mongo::BSONObj, mongo::CollectionOptions::ParseKind, bool, mongo::BSONObj const&)>::_M_invoke(std::_Any_data const&, mongo::OperationContext*&&, mongo::Database*&&, mongo::StringData&&, mongo::BSONObj&&, mongo::CollectionOptions::ParseKind&&, bool&&, mongo::BSONObj const&) (__functor=..., __args#0=<optimized out>, __args#1=<optimized out>, __args#2=<optimized out>, __args#3=<optimized out>, 
+    __args#4=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x7fe0e66, DIE 0x8138ea1>, __args#5=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x7fe0e66, DIE 0x8138ea6>, 
+    __args#6=...) at /usr/local/include/c++/5.4.0/functional:1857
+#6  0x00007fe15ae9fd2e in operator() (__args#6=..., __args#5=true, __args#4=mongo::CollectionOptions::parseForCommand, __args#3=<error reading variable: access outside bounds of object referenced via synthetic pointer>, __args#2=..., 
+    __args#1=0x7fe15cf812d8, __args#0=0x7fe16061be00, this=0x7fe15bd73800 <mongo::(anonymous namespace)::userCreateNSImpl>) at /usr/local/include/c++/5.4.0/functional:2267
+#7  mongo::userCreateNS (opCtx=<optimized out>, db=<optimized out>, ns=..., options=..., parseKind=mongo::CollectionOptions::parseForCommand, createDefaultIndexes=true, idIndex=...) at src/mongo/db/catalog/database.cpp:90
+#8  0x00007fe159aed891 in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7fe158e67d80) at src/mongo/db/ops/write_ops_exec.cpp:189
+#9  0x00007fe159aedabc in writeConflictRetry<mongo::(anonymous namespace)::makeCollection(mongo::OperationContext*, const mongo::NamespaceString&)::<lambda()> > (
+    f=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x69f2164, DIE 0x6b5869d>, ns=..., opStr=..., opCtx=0x7fe16061be00) at src/mongo/db/concurrency/write_conflict_exception.h:91
+#10 mongo::(anonymous namespace)::makeCollection (opCtx=opCtx@entry=0x7fe16061be00, ns=...) at src/mongo/db/ops/write_ops_exec.cpp:192
+#11 0x00007fe159af242a in operator() (__closure=0x7fe158e67f40) at src/mongo/db/ops/write_ops_exec.cpp:363
+#12 insertBatchAndHandleErrors (out=0x7fe158e67f20, lastOpFixer=0x7fe158e67f00, batch=..., wholeOp=..., opCtx=0x7fe16061be00) at src/mongo/db/ops/write_ops_exec.cpp:371
+#13 mongo::performInserts (opCtx=opCtx@entry=0x7fe16061be00, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:533
+#14 0x00007fe159ad958e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7fe16061be00, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:255
+#15 0x00007fe159ad3128 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7fe16061be00, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:221
+#16 0x00007fe15aa9b66f in mongo::Command::publicRun (this=0x7fe15bd4b3a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7fe16061be00, request=..., result=...) at src/mongo/db/commands.cpp:355
+#17 0x00007fe159a17774 in runCommandImpl (startOperationTime=..., replyBuilder=0x7fe1610f99f0, request=..., command=0x7fe15bd4b3a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7fe16061be00)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#18 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7fe16061be00, command=command@entry=0x7fe15bd4b3a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:759
+#19 0x00007fe159a182df in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7fe158e68400) at src/mongo/db/service_entry_point_mongod.cpp:880
+#20 0x00007fe159a182df in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#21 0x00007fe159a19141 in runCommands (message=..., opCtx=0x7fe16061be00) at src/mongo/db/service_entry_point_mongod.cpp:890
+#22 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7fe16061be00, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1163
+#23 0x00007fe159a25a7a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:421
+#24 0x00007fe159a20bbf in mongo::ServiceStateMachine::_runNextInGuard (this=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:498
+#25 0x00007fe159a245fe in operator() (__closure=0x7fe15cf5f8e0) at src/mongo/transport/service_state_machine.cpp:539
+#26 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#27 0x00007fe15a960b72 in operator() (this=0x7fe158e6a550) at /usr/local/include/c++/5.4.0/functional:2267
+#28 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7fe15cf59480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#29 0x00007fe159a1f7bd in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7fe15cf585f0, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:543
+#30 0x00007fe159a22151 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7fe15cf585f0, status=...) at src/mongo/transport/service_state_machine.cpp:324
+#31 0x00007fe159a22d4b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:281
+#32 0x00007fe159a20c51 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:495
+#33 0x00007fe159a245fe in operator() (__closure=0x7fe15cf5fbc0) at src/mongo/transport/service_state_machine.cpp:539
+#34 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#35 0x00007fe15a9610d5 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#36 operator() (__closure=0x7fe1610f9810) at src/mongo/transport/service_executor_synchronous.cpp:143
+#37 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#38 0x00007fe15aeb0ca4 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#39 mongo::(anonymous namespace)::runFunc (ctx=0x7fe15cf5f9c0) at src/mongo/transport/service_entry_point_utils.cpp:55
+*/
 /* 调用的地方如下:
 KVDatabaseCatalogEntryBase::createCollection
 KVStorageEngine::KVStorageEngine
 */ 
-//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件)  WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
+//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件)  
+//WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
 //创建集合对应的wiredtiger .wt文件，同时创建对应的目录
 Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
                                                     StringData ns,
@@ -814,6 +870,67 @@ string WiredTigerKVEngine::_uri(StringData ident) const {
     return string("table:") + ident.toString();
 }
 
+/*
+
+Breakpoint 2, mongo::WiredTigerKVEngine::createGroupedSortedDataInterface (this=0x7fe15cc22680, opCtx=0x7fe16061be00, ident=..., desc=0x7fe1611a0180, prefix=...) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:833
+833         if (collection) {
+(gdb) bt
+#0  mongo::WiredTigerKVEngine::createGroupedSortedDataInterface (this=0x7fe15cc22680, opCtx=0x7fe16061be00, ident=..., desc=0x7fe1611a0180, prefix=...) at src/mongo/db/storage/wiredtiger/wiredtiger_kv_engine.cpp:833
+#1  0x00007fe159995dfa in mongo::KVCollectionCatalogEntry::prepareForIndexBuild (this=0x7fe1610deb80, opCtx=0x7fe16061be00, spec=0x7fe1611a0180) at src/mongo/db/storage/kv/kv_collection_catalog_entry.cpp:212
+#2  0x00007fe159b73cab in mongo::IndexCatalogImpl::IndexBuildBlock::init (this=this@entry=0x7fe158e673e0) at src/mongo/db/catalog/index_catalog_impl.cpp:418
+#3  0x00007fe159b75063 in mongo::IndexCatalogImpl::createIndexOnEmptyCollection (this=0x7fe15cd977e0, opCtx=0x7fe16061be00, spec=...) at src/mongo/db/catalog/index_catalog_impl.cpp:367
+#4  0x00007fe159b6ab07 in createIndexOnEmptyCollection (spec=<error reading variable: access outside bounds of object referenced via synthetic pointer>, opCtx=0x7fe16061be00, this=<optimized out>)
+    at src/mongo/db/catalog/index_catalog.h:454
+#5  mongo::DatabaseImpl::createCollection (this=<optimized out>, opCtx=0x7fe16061be00, ns=..., options=..., createIdIndex=<optimized out>, idIndex=...) at src/mongo/db/catalog/database_impl.cpp:849
+#6  0x00007fe159b649e1 in createCollection (idIndex=..., createDefaultIndexes=true, options=..., ns=..., opCtx=0x7fe16061be00, this=0x7fe15cf812d8) at src/mongo/db/catalog/database.h:298
+#7  mongo::userCreateNSImpl (opCtx=0x7fe16061be00, db=0x7fe15cf812d8, ns=..., options=..., parseKind=mongo::CollectionOptions::parseForCommand, createDefaultIndexes=true, idIndex=...) at src/mongo/db/catalog/database_impl.cpp:1128
+#8  0x00007fe159b6c12f in std::_Function_handler<mongo::Status (mongo::OperationContext*, mongo::Database*, mongo::StringData, mongo::BSONObj, mongo::CollectionOptions::ParseKind, bool, mongo::BSONObj const&), mongo::Status (*)(mongo::OperationContext*, mongo::Database*, mongo::StringData, mongo::BSONObj, mongo::CollectionOptions::ParseKind, bool, mongo::BSONObj const&)>::_M_invoke(std::_Any_data const&, mongo::OperationContext*&&, mongo::Database*&&, mongo::StringData&&, mongo::BSONObj&&, mongo::CollectionOptions::ParseKind&&, bool&&, mongo::BSONObj const&) (__functor=..., __args#0=<optimized out>, __args#1=<optimized out>, __args#2=<optimized out>, __args#3=<optimized out>, 
+    __args#4=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x7fe0e66, DIE 0x8138ea1>, __args#5=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x7fe0e66, DIE 0x8138ea6>, 
+    __args#6=...) at /usr/local/include/c++/5.4.0/functional:1857
+#9  0x00007fe15ae9fd2e in operator() (__args#6=..., __args#5=true, __args#4=mongo::CollectionOptions::parseForCommand, __args#3=<error reading variable: access outside bounds of object referenced via synthetic pointer>, __args#2=..., 
+    __args#1=0x7fe15cf812d8, __args#0=0x7fe16061be00, this=0x7fe15bd73800 <mongo::(anonymous namespace)::userCreateNSImpl>) at /usr/local/include/c++/5.4.0/functional:2267
+#10 mongo::userCreateNS (opCtx=<optimized out>, db=<optimized out>, ns=..., options=..., parseKind=mongo::CollectionOptions::parseForCommand, createDefaultIndexes=true, idIndex=...) at src/mongo/db/catalog/database.cpp:90
+#11 0x00007fe159aed891 in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7fe158e67d80) at src/mongo/db/ops/write_ops_exec.cpp:189
+#12 0x00007fe159aedabc in writeConflictRetry<mongo::(anonymous namespace)::makeCollection(mongo::OperationContext*, const mongo::NamespaceString&)::<lambda()> > (
+    f=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongod, CU 0x69f2164, DIE 0x6b5869d>, ns=..., opStr=..., opCtx=0x7fe16061be00) at src/mongo/db/concurrency/write_conflict_exception.h:91
+#13 mongo::(anonymous namespace)::makeCollection (opCtx=opCtx@entry=0x7fe16061be00, ns=...) at src/mongo/db/ops/write_ops_exec.cpp:192
+#14 0x00007fe159af242a in operator() (__closure=0x7fe158e67f40) at src/mongo/db/ops/write_ops_exec.cpp:363
+#15 insertBatchAndHandleErrors (out=0x7fe158e67f20, lastOpFixer=0x7fe158e67f00, batch=..., wholeOp=..., opCtx=0x7fe16061be00) at src/mongo/db/ops/write_ops_exec.cpp:371
+#16 mongo::performInserts (opCtx=opCtx@entry=0x7fe16061be00, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:533
+#17 0x00007fe159ad958e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7fe16061be00, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:255
+#18 0x00007fe159ad3128 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7fe16061be00, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:221
+#19 0x00007fe15aa9b66f in mongo::Command::publicRun (this=0x7fe15bd4b3a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7fe16061be00, request=..., result=...) at src/mongo/db/commands.cpp:355
+#20 0x00007fe159a17774 in runCommandImpl (startOperationTime=..., replyBuilder=0x7fe1610f99f0, request=..., command=0x7fe15bd4b3a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7fe16061be00)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#21 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7fe16061be00, command=command@entry=0x7fe15bd4b3a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:759
+#22 0x00007fe159a182df in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7fe158e68400) at src/mongo/db/service_entry_point_mongod.cpp:880
+#23 0x00007fe159a182df in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#24 0x00007fe159a19141 in runCommands (message=..., opCtx=0x7fe16061be00) at src/mongo/db/service_entry_point_mongod.cpp:890
+#25 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7fe16061be00, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1163
+#26 0x00007fe159a25a7a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:421
+#27 0x00007fe159a20bbf in mongo::ServiceStateMachine::_runNextInGuard (this=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:498
+#28 0x00007fe159a245fe in operator() (__closure=0x7fe15cf5f8e0) at src/mongo/transport/service_state_machine.cpp:539
+#29 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#30 0x00007fe15a960b72 in operator() (this=0x7fe158e6a550) at /usr/local/include/c++/5.4.0/functional:2267
+#31 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7fe15cf59480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#32 0x00007fe159a1f7bd in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7fe15cf585f0, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:543
+#33 0x00007fe159a22151 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7fe15cf585f0, status=...) at src/mongo/transport/service_state_machine.cpp:324
+#34 0x00007fe159a22d4b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:281
+#35 0x00007fe159a20c51 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7fe15cf585f0, guard=...) at src/mongo/transport/service_state_machine.cpp:495
+#36 0x00007fe159a245fe in operator() (__closure=0x7fe15cf5fbc0) at src/mongo/transport/service_state_machine.cpp:539
+#37 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#38 0x00007fe15a9610d5 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#39 operator() (__closure=0x7fe1610f9810) at src/mongo/transport/service_executor_synchronous.cpp:143
+#40 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#41 0x00007fe15aeb0ca4 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#42 mongo::(anonymous namespace)::runFunc (ctx=0x7fe15cf5f9c0) at src/mongo/transport/service_entry_point_utils.cpp:55
+#43 0x00007fe157b85e25 in start_thread () from /lib64/libpthread.so.0
+#44 0x00007fe1578b334d in clone () from /lib64/libc.so.6
+*/
 //WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件) 
 //WiredTigerKVEngine::createGroupedSortedDataInterface->WiredTigerIndex::Create(索引文件相关)创建wiredtiger索引文件
 
@@ -1057,7 +1174,7 @@ int WiredTigerKVEngine::reconfigure(const char* str) {
 2018-09-27T11:41:42.574+0800 D STORAGE  [conn1] creating subdirectory: test
 2018-09-27T11:41:42.575+0800 D STORAGE  [conn1] creating subdirectory: test/collection
 */
-//创建目录，根据ident创建
+//创建目录，根据ident创建  WiredTigerKVEngine::createGroupedRecordStore  WiredTigerKVEngine::createGroupedSortedDataInterface
 void WiredTigerKVEngine::_checkIdentPath(StringData ident) {
     size_t start = 0;
     size_t idx;

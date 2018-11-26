@@ -521,7 +521,7 @@ yang test Initializer::execute:SetEncryptionHooks
  *                                         ("globalStateInitialized", "stacktraces"))(
  *            ::mongo::InitializerContext* context) {
  *    }
- */
+ */ //
 #define MONGO_INITIALIZER_WITH_PREREQUISITES(NAME, PREREQUISITES) \
     MONGO_INITIALIZER_GENERAL(NAME, PREREQUISITES, MONGO_NO_DEPENDENTS)
 

@@ -157,7 +157,9 @@ private:
     std::unique_ptr<Timer> _timer;
     bool _isOplogReader = false;
     typedef std::vector<std::unique_ptr<Change>> Changes;
-    Changes _changes;
+    //事务提交 回滚操作相关WiredTigerRecoveryUnit::_commit WiredTigerRecoveryUnit::_abort，
+    //push赋值见WiredTigerRecoveryUnit::registerChange
+    Changes _changes; //对应AddCollectionChange
 };
 
 /**

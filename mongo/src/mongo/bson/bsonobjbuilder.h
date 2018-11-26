@@ -389,7 +389,7 @@ public:
         if (oid)
             _b.appendBuf(oid->view().view(), OID::kOIDSize);
         else {
-            OID tmp;
+            OID tmp; //¼ûoid.h
             if (generateIfBlank)
                 tmp.init();
             else

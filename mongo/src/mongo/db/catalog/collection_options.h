@@ -48,9 +48,10 @@ extern bool enableCollectionUUIDs;  // TODO(SERVER-27993) Replace based on upgra
  * its own new unique UUID though.
  */
 using CollectionUUID = UUID;
-
+//CollectionOptions.uuid成员
 using OptionalCollectionUUID = boost::optional<CollectionUUID>;
 
+//使用参考DatabaseImpl::createCollection
 struct CollectionOptions {
     /**
      * Returns true if the options indicate the namespace is a view.
@@ -84,6 +85,7 @@ struct CollectionOptions {
 
     // ----
 
+    //uuid生成见UUID::gen()
     // Collection UUID. Will exist if featureCompatibilityVersion >= 3.6.
     OptionalCollectionUUID uuid; //每个collection会对应一个uuid，见DatabaseImpl::createCollection，只有3.6以上版本有该uuid
 

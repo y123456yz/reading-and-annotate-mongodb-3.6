@@ -50,6 +50,7 @@ bool indexTypeSupportsPathLevelMultikeyTracking(StringData accessMethod) {
 
 }  // namespace
 
+//KVDatabaseCatalogEntryBase::createCollection÷–new∏√¿‡
 class KVCollectionCatalogEntry::AddIndexChange : public RecoveryUnit::Change {
 public:
     AddIndexChange(OperationContext* opCtx, KVCollectionCatalogEntry* cce, StringData ident)

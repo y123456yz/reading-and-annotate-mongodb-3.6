@@ -105,7 +105,8 @@ void uassertNamespaceNotIndex(StringData ns, StringData caller) {
             NamespaceString::normal(ns));
 }
 
-//DatabaseImpl::createCollection中new该类
+//DatabaseImpl::createCollection   KVDatabaseCatalogEntryBase::createCollection中new该类
+//该类结构最终保存在WiredTigerRecoveryUnit._changes
 class DatabaseImpl::AddCollectionChange : public RecoveryUnit::Change {
 public:
     AddCollectionChange(OperationContext* opCtx, DatabaseImpl* db, StringData ns)
@@ -776,10 +777,12 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
                                            const CollectionOptions& options,
                                            bool createIdIndex,
                                            const BSONObj& idIndex) {
+    //注意这里检查锁，建集合必须是MODE_X锁
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
     invariant(!options.isView());
     NamespaceString nss(ns);
 
+	//是否允许隐式创建集合
     uassert(ErrorCodes::CannotImplicitlyCreateCollection,
             "request doesn't allow collection to be created implicitly",
             OperationShardingState::get(opCtx).allowImplicitCollectionCreation());
@@ -807,6 +810,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
         }
     }
 
+	//检查相关参数是否有效，如集合名最大长度等
     _checkCanCreateCollection(opCtx, nss, optionsWithUUID);
     audit::logCreateCollection(&cc(), ns);
 
@@ -814,7 +818,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
     if (optionsWithUUID.uuid) {
         log() << "createCollection: " << ns << " with "
               << (generatedUUID ? "generated" : "provided")
-              << " UUID: " << optionsWithUUID.uuid.get();
+              << " UUID: " << optionsWithUUID.uuid.get(); //OptionalCollectionUUID
     } else {
         log() << "createCollection: " << ns << " with no UUID.";
     }
@@ -824,11 +828,12 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
     massertStatusOK(
         _dbEntry->createCollection(opCtx, ns, optionsWithUUID, true /*allocateDefaultSpace*/));
 
+	//wiredtiger对应WiredTigerRecoveryUnit::registerChange
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns));
 	//查找collection类，找到直接返回，没找到构造一个新的collection类
     Collection* collection = _getOrCreateCollectionInstance(opCtx, nss);
     invariant(collection);
-    _collections[ns] = collection;
+    _collections[ns] = collection; //ns集合对应collection
 
     BSONObj fullIdIndexSpec;
 
@@ -849,7 +854,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
             }
         }
 
-		//普通索引创建
+		//如何集合是"system.X"相关的索引
         if (nss.isSystem()) { //wiredtiger创建普通索引文件
             createSystemIndexes(opCtx, collection);
         }
@@ -1020,7 +1025,7 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
     if (!NamespaceString::validCollectionComponent(ns))
         return Status(ErrorCodes::InvalidNamespace, str::stream() << "invalid ns: " << ns);
 
-    Collection* collection = db->getCollection(opCtx, ns);
+    Collection* collection = db->getCollection(opCtx, ns); //Database::getCollection
 
     if (collection)
         return Status(ErrorCodes::NamespaceExists,

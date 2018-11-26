@@ -79,7 +79,7 @@ private:
  *
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * the database and the collection references returned by this class should not be retained.
- */
+ */ //使用见insertBatchAndHandleErrors
 class AutoGetCollection {
     MONGO_DISALLOW_COPYING(AutoGetCollection);
 
@@ -196,7 +196,7 @@ private:
  *
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * the database reference returned by this class should not be retained.
- */
+ */ //见makeCollection
 class AutoGetOrCreateDb {
     MONGO_DISALLOW_COPYING(AutoGetOrCreateDb);
 

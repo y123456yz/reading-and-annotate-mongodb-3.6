@@ -529,7 +529,7 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
     std::vector<BsonRecord> bsonRecords;
     bsonRecords.reserve(count);
     int recordIndex = 0;
-    for (auto it = begin; it != end; it++) {
+    for (auto it = begin; it != end; it++) { //只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors
         RecordId loc = records[recordIndex++].id;
         invariant(RecordId::min() < loc);
         invariant(loc < RecordId::max());

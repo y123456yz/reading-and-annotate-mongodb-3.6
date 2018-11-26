@@ -55,6 +55,7 @@ struct OplogSlot {
     std::int64_t hash = 0;
 };
 
+//初始化赋值可以参考performInserts
 struct InsertStatement {
 public:
     InsertStatement() = default;

@@ -193,13 +193,12 @@ Status verifySystemIndexes(OperationContext* opCtx) {
 }
 
 //DatabaseImpl::createCollection中执行
-//wiredtiger创建普通索引文件
 void createSystemIndexes(OperationContext* opCtx, Collection* collection) {
     invariant(collection);
     const NamespaceString& ns = collection->ns();
 	log() << "yang test ..... createSystemIndexes";
     if (ns == AuthorizationManager::usersCollectionNamespace) {
-        auto indexSpec = fassertStatusOK(
+        auto indexSpec = fassertStatusOK( //"admin.system.users"集合
             40455,
             index_key_validate::validateIndexSpec(opCtx,
                                                   v3SystemUsersIndexSpec.toBSON(),
@@ -208,7 +207,7 @@ void createSystemIndexes(OperationContext* opCtx, Collection* collection) {
 
         fassertStatusOK( //IndexCatalogImpl::createIndexOnEmptyCollection
             40456, collection->getIndexCatalog()->createIndexOnEmptyCollection(opCtx, indexSpec));
-    } else if (ns == AuthorizationManager::rolesCollectionNamespace) {
+    } else if (ns == AuthorizationManager::rolesCollectionNamespace) { //"admin.system.roles"集合
         auto indexSpec = fassertStatusOK(
             40457,
             index_key_validate::validateIndexSpec(opCtx,
