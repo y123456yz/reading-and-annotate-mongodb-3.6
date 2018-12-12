@@ -157,13 +157,20 @@ public:
         return _combined > 0;
     }
 
+    /*
+    实际上在3.2的实现版本是一个(majorVersion, minorVersion)的二元组)， 当
+    chunk 发生split 之后， split 之后的所有 chunk minor version增加， 当 chunk 在 shard 之间发生迁移时， 迁移的 chunk
+    在标上增加其major version， 并且在迁移源上选择一个chunk增加其major version， 这样确保不论是访问到源还是目
+    标， mongos 看到的版本都增加了
+    */
     int majorVersion() const {
         return _combined >> 32;
     }
-
     int minorVersion() const {
         return _combined & 0xFFFF;
     }
+
+    
 
     OID epoch() const {
         return _epoch;

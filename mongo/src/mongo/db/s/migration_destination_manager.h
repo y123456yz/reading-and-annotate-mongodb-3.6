@@ -59,12 +59,14 @@ class OpTime;
 
 /**
  * Drives the receiving side of the MongoD migration process. One instance exists per shard.
- */
+ */ //数据块迁移相关
 class MigrationDestinationManager {
     MONGO_DISALLOW_COPYING(MigrationDestinationManager);
 
 public:
-    enum State { READY, CLONE, CATCHUP, STEADY, COMMIT_START, DONE, FAIL, ABORT };
+    enum State { READY, CLONE, CATCHUP, 
+        STEADY,  //迁移完后更新状态为 STEADY（可以理解为全量迁移完成的状态） 。
+        COMMIT_START, DONE, FAIL, ABORT };
 
     MigrationDestinationManager();
     ~MigrationDestinationManager();

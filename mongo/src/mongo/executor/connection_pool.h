@@ -55,6 +55,22 @@ struct ConnectionPoolStats;
  * The overall workflow here is to manage separate pools for each unique
  * HostAndPort. See comments on the various Options for how the pool operates.
  */
+/*
+ConnectionPool 针对每 个Shard 机器维护一个连接池，这个连接池包含4个小的池子，用于管理连接的生命周期。
+processingPool： 正在建立的连接
+readyPool：已经建立并且可用的连接
+checkoutPool： 正在使用的连接
+droppedProcessingPool：失败的连接，需要释放
+
+连接池管理规则
+连接池的总连接会控制在[minConnections, maxConnections]之间，默认为1和无穷大
+当需要新建连接时，会发起一个新建连接的异步请求，并把请求放到 processingPool 
+当连接建立成功后，会把请求转移到readyPool ，readyPool 里的连接可以直接用于服务新的请求
+服务某个请求时会从 readyPool 里取出连接后，会将连接转移到 checkOutPool，标识为正在使用
+连接使用完后，会归还到 readyPool；
+当遇到请求失败 或 一个网络连接空闲超过1分钟时，会释放连接
+参考:https://yq.aliyun.com/articles/72986
+*/
 class ConnectionPool {
     class ConnectionHandleDeleter;
     class SpecificPool;
@@ -83,7 +99,7 @@ public:
         /**
          * The minimum number of connections to keep alive while the pool is in
          * operation
-         */
+         */ //连接池的总连接会控制在[minConnections, maxConnections]之间，默认为1和无穷大
         size_t minConnections = kDefaultMinConns;
 
         /**

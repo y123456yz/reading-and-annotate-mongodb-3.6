@@ -92,6 +92,11 @@ const int kMaxStateTransitions = 5;
  * Implementation of the replication system's network interface using Christopher
  * Kohlhoff's ASIO library instead of existing MongoDB networking primitives.
  */
+/*
+负责实际IO操作的 NetworkInterfaceASIO，使用了 boost::ASIO，将所有IO操作都异步化，它包含一个
+连接池（ConnectionPool），用于管理 Mongos 到 Shard 的网络连接。
+参考:https://yq.aliyun.com/articles/72986
+*/
 class NetworkInterfaceASIO final : public NetworkInterface {
     friend class connection_pool_asio::ASIOConnection;
     friend class connection_pool_asio::ASIOTimer;
