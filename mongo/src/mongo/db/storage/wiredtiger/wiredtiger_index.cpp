@@ -207,12 +207,13 @@ StatusWith<std::string> WiredTigerIndex::generateCreateString(const std::string&
     // for correct behavior of the server.
 
     // Indexes need to store the metadata for collation to work as expected.
+    //参考http://source.wiredtiger.com/3.0.0/schema.html#schema_column_types
     if (isPrefixed) {
         ss << ",key_format=qu";
     } else {
-        ss << ",key_format=u";
+        ss << ",key_format=u"; //WT_ITEM *类型
     }
-    ss << ",value_format=u";
+    ss << ",value_format=u";   //WT_ITEM *类型
 
     // Index versions greater than 2 use KeyString version 1.
     const int keyStringVersion = desc.version() >= IndexDescriptor::IndexVersion::kV2
@@ -1234,6 +1235,7 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
                                       const BSONObj& key,   //存入索引文件类似key:id, 也就是这个key对应的value为id，然后从数据文件中查找该id对应的value
                                       const RecordId& id,
                                       bool dupsAllowed) {
+                                      
     const KeyString data(keyStringVersion(), key, _ordering);
     WiredTigerItem keyItem(data.getBuffer(), data.getSize());
 

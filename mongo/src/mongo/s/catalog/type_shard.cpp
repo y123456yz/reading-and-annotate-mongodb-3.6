@@ -44,6 +44,9 @@ const std::string ShardType::ConfigNS = "config.shards";
 
 const BSONField<std::string> ShardType::name("_id");
 const BSONField<std::string> ShardType::host("host");
+//当用户 removeShard 将某个 shard 移除时， MongoDB 会将该 shard 标记为 draining 状态， Blancer 在做迁移时， 如
+//果发现某个 shard 处于 draining 状态， 就会主动将shard 上的chunk 迁移到其他 shard。
+//Blancer 会挑选拥有最少chunk 的 shard 作为迁移目标， 构建迁移任务
 const BSONField<bool> ShardType::draining("draining");
 const BSONField<long long> ShardType::maxSizeMB("maxSize");
 const BSONField<BSONArray> ShardType::tags("tags");

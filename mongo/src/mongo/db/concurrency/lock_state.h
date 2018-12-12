@@ -102,6 +102,7 @@ public:
     stdx::thread::id getThreadId() const override;
 
     virtual LockResult lockGlobal(LockMode mode);
+    //shutdownTaskÖÐµ÷ÓÃ
     virtual LockResult lockGlobalBegin(LockMode mode, Milliseconds timeout) {
         return _lockGlobalBegin(mode, timeout);
     }

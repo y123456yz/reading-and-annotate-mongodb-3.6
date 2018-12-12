@@ -576,15 +576,16 @@ StatusWith<std::string> WiredTigerRecordStore::generateCreateString(
         // Tune down to 10m.  See SERVER-16247
         ss << "memory_page_max=10m,";
     }
-
+	
     // WARNING: No user-specified config can appear below this line. These options are required
     // for correct behavior of the server.
+    //参考http://source.wiredtiger.com/3.0.0/schema.html#schema_column_types，确定key value的类型
     if (prefixed) {
         ss << "key_format=qq";
     } else {
-        ss << "key_format=q";
+        ss << "key_format=q";  //key类型为int64_t类型
     }
-    ss << ",value_format=u";
+    ss << ",value_format=u";  //value类型为WT_ITEM *类型
 
     // Record store metadata
     ss << ",app_metadata=(formatVersion=" << kCurrentRecordStoreVersion;
@@ -1195,7 +1196,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
             if (!status.isOK())
                 return status.getStatus();
             record.id = status.getValue();
-        } else if (_isCapped) {
+        } else if (_isCapped) { //固定集合
             record.id = _nextId();
         } else {
             record.id = _nextId();

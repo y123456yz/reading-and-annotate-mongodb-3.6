@@ -56,6 +56,7 @@ using ShardVersionMap = std::map<ShardId, ChunkVersion>;
 /**
  * In-memory representation of the routing table for a single sharded collection.
  */
+//·ÖÆ¬chunk¿éÏà¹Ø
 class ChunkManager : public std::enable_shared_from_this<ChunkManager> {
     MONGO_DISALLOW_COPYING(ChunkManager);
 

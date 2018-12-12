@@ -184,6 +184,14 @@ private:
 
     const HostAndPort _hostAndPort;
 
+
+	/*
+	ConnectionPool 针对每 个Shard 机器维护一个连接池，这个连接池包含4个小的池子，用于管理连接的生命周期:
+	processingPool： 正在建立的连接
+	readyPool：已经建立并且可用的连接
+	checkoutPool： 正在使用的连接
+	droppedProcessingPool：失败的连接，需要释放
+	*/
     LRUOwnershipPool _readyPool;
     OwnershipPool _processingPool;
     OwnershipPool _droppedProcessingPool;

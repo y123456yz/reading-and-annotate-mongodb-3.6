@@ -521,7 +521,7 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
 	https://blog.csdn.net/zhuangtim1987/article/details/53431339?utm_source=copy 
 	*/
 	//普通写入在这里，其他索引写入在后面的_indexCatalog.indexRecords
-    Status status = //WiredTigerRecordStore::insertRecords  擦入wiredtiger  数据插入走这里
+    Status status = //WiredTigerRecordStore::insertRecords  擦入wiredtiger  普通集合数据插入走这里
         _recordStore->insertRecords(opCtx, &records, &timestamps, _enforceQuota(enforceQuota));
     if (!status.isOK())
         return status;
@@ -530,7 +530,7 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
     bsonRecords.reserve(count);
     int recordIndex = 0;
     for (auto it = begin; it != end; it++) { //只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors
-        RecordId loc = records[recordIndex++].id;
+        RecordId loc = records[recordIndex++].id; //把插入到普通集合的ID记录下来，在后面的索引插入中设置为对应value
         invariant(RecordId::min() < loc);
         invariant(loc < RecordId::max());
 

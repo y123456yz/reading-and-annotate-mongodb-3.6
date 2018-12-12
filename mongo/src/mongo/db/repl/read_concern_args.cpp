@@ -53,6 +53,12 @@ const char kAvailableReadConcernStr[] = "available";
 }  // unnamed namespace
 
 const string ReadConcernArgs::kReadConcernFieldName("readConcern");
+/*
+Mongos 带着路由表版本信息请求 某个 shard，shard发现自己的版本比 mongos 新（发生过 chunk 迁移），
+此时shard 除了告诉 mongos 自己应该去更新路由表，还会把自己迁移 chunk 后更新 config server 时的 
+optime告诉mongos，mongos 请求 config server 时，指定 readConcern 级别为 majority，并指定 afterOpTime 
+参数，以确保不会从备节点读到过期的路由表。
+*/
 const string ReadConcernArgs::kAfterOpTimeFieldName("afterOpTime");
 const string ReadConcernArgs::kAfterClusterTimeFieldName("afterClusterTime");
 const string ReadConcernArgs::kAtClusterTimeFieldName("atClusterTime");

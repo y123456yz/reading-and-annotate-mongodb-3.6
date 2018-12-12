@@ -165,7 +165,8 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
 	//报文内容中至少携带一个json过来
     uassert(ErrorCodes::InvalidLength, "Need at least one object to insert", msg.moreJSObjs());
 
-	//解析出文档数据
+	//解析出文档数据, 包体部分的document实际上是bson格式，客户端会做转换，
+	//也可以参考http://liehu.tass.com.cn/archives/1294，这里有抓包展示
     op.setDocuments([&] {
         std::vector<BSONObj> documents;
         while (msg.moreJSObjs()) { //有可能是批量写，所以用了while，全部存入documents

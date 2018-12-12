@@ -70,7 +70,7 @@ class SecureRandom;
  * Warning: You MUST call OID::justForked() after a fork(). This ensures that each process will
  * generate unique OIDs.
  */
-class OID {
+class OID { //ObjectId生成相关
 public:
     /**
      * Functor compatible with std::hash for std::unordered_{map,set}
