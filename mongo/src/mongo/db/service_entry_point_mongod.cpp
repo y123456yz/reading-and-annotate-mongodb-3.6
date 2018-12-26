@@ -1105,6 +1105,55 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 
 }  // namespace
 
+/* 插入数据过程调用栈
+(gdb) bt
+#0  mongo::WiredTigerRecordStore::_insertRecords (this=0x7f863ccbdb00, opCtx=opCtx@entry=0x7f8640572640, records=0x7f8640bbd260, timestamps=0x7f863ccda1c0, nRecords=1) at src/mongo/db/storage/wiredtiger/wiredtiger_record_store.cpp:1121
+#1  0x00007f8639821154 in mongo::WiredTigerRecordStore::insertRecords (this=<optimized out>, opCtx=opCtx@entry=0x7f8640572640, records=records@entry=0x7f8638e3eae0, timestamps=timestamps@entry=0x7f8638e3eb00, 
+    enforceQuota=<optimized out>) at src/mongo/db/storage/wiredtiger/wiredtiger_record_store.cpp:1100
+#2  0x00007f8639b30a97 in mongo::CollectionImpl::_insertDocuments (this=this@entry=0x7f863cac7a40, opCtx=opCtx@entry=0x7f8640572640, begin=..., begin@entry=..., end=end@entry=..., enforceQuota=enforceQuota@entry=true, 
+    opDebug=0x7f8640645138) at src/mongo/db/catalog/collection_impl.cpp:525
+#3  0x00007f8639b311cc in mongo::CollectionImpl::insertDocuments (this=0x7f863cac7a40, opCtx=0x7f8640572640, begin=..., end=..., opDebug=0x7f8640645138, enforceQuota=true, fromMigrate=false)
+    at src/mongo/db/catalog/collection_impl.cpp:377
+#4  0x00007f8639ac44d2 in insertDocuments (fromMigrate=false, enforceQuota=true, opDebug=<optimized out>, end=..., begin=..., opCtx=0x7f8640572640, this=<optimized out>) at src/mongo/db/catalog/collection.h:498
+#5  mongo::(anonymous namespace)::insertDocuments (opCtx=0x7f8640572640, collection=<optimized out>, begin=begin@entry=..., end=end@entry=...) at src/mongo/db/ops/write_ops_exec.cpp:329
+#6  0x00007f8639aca1a6 in operator() (__closure=<optimized out>) at src/mongo/db/ops/write_ops_exec.cpp:406
+#7  writeConflictRetry<mongo::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::Insert&, std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*, mongo::WriteResult*)::<lambda()> > (f=<optimized out>, ns=..., opStr=..., opCtx=0x7f8640572640) at src/mongo/db/concurrency/write_conflict_exception.h:91
+#8  insertBatchAndHandleErrors (out=0x7f8638e3ef20, lastOpFixer=0x7f8638e3ef00, batch=..., wholeOp=..., opCtx=0x7f8640572640) at src/mongo/db/ops/write_ops_exec.cpp:418
+#9  mongo::performInserts (opCtx=opCtx@entry=0x7f8640572640, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:527
+#10 0x00007f8639ab064e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7f8640572640, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:255
+#11 0x00007f8639aaa1e8 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7f8640572640, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:221
+#12 0x00007f863aa7272f in mongo::Command::publicRun (this=0x7f863bd223a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f8640572640, request=..., result=...) at src/mongo/db/commands.cpp:355
+#13 0x00007f86399ee834 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f864056f950, request=..., command=0x7f863bd223a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f8640572640)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#14 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f8640572640, command=command@entry=0x7f863bd223a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:759
+#15 0x00007f86399ef39f in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f8638e3f400) at src/mongo/db/service_entry_point_mongod.cpp:880
+#16 0x00007f86399ef39f in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#17 0x00007f86399f0201 in runCommands (message=..., opCtx=0x7f8640572640) at src/mongo/db/service_entry_point_mongod.cpp:890
+#18 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f8640572640, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1163
+#19 0x00007f86399fcb3a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:414
+#20 0x00007f86399f7c7f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:474
+#21 0x00007f86399fb6be in operator() (__closure=0x7f8640bbe060) at src/mongo/transport/service_state_machine.cpp:515
+#22 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#23 0x00007f863a937c32 in operator() (this=0x7f8638e41550) at /usr/local/include/c++/5.4.0/functional:2267
+#24 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f863ccb2480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#25 0x00007f86399f687d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f864050c510, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:519
+#26 0x00007f86399f9211 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f864050c510, status=...) at src/mongo/transport/service_state_machine.cpp:318
+#27 0x00007f86399f9e0b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:276
+#28 0x00007f86399f7d11 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f864050c510, guard=...) at src/mongo/transport/service_state_machine.cpp:471
+#29 0x00007f86399fb6be in operator() (__closure=0x7f863ccb9a60) at src/mongo/transport/service_state_machine.cpp:515
+#30 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#31 0x00007f863a938195 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#32 operator() (__closure=0x7f864052c1b0) at src/mongo/transport/service_executor_synchronous.cpp:143
+#33 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#34 0x00007f863ae87d64 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#35 mongo::(anonymous namespace)::runFunc (ctx=0x7f863ccb9c40) at src/mongo/transport/service_entry_point_utils.cpp:55
+#36 0x00007f8637b5ce25 in start_thread () from /lib64/libpthread.so.0
+#37 0x00007f863788a34d in clone () from /lib64/libc.so.6
+*/
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 //class ServiceEntryPointMongod final : public ServiceEntryPointImpl
 //mongod服务对于客户端请求的处理  ServiceStateMachine::_processMessage或者loopbackBuildResponse中调用
@@ -1113,6 +1162,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     NetworkOp op = m.operation(); //获取协议头部中的MSGHEADER::Layout.opCode
     bool isCommand = false;
 
+	
 	str::stream s;
 	s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
 	log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
@@ -1160,7 +1210,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     DbResponse dbresponse;
 	//可通过--slowms设置slowMS 
     if (op == dbMsg || op == dbCommand || (op == dbQuery && isCommand)) {
-        dbresponse = runCommands(opCtx, m);   //runCommands
+        dbresponse = runCommands(opCtx, m);   //runCommands   新版本插入过程实际上走这里面
     } else if (op == dbQuery) {
         invariant(!isCommand);
 		//查询可能走这里，也可能 实际上新版本走的是FindCmd::run(runCommands层层进入)，不在走这里
@@ -1192,7 +1242,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
                 if (!nsString.isValid()) {
                     uassert(16257, str::stream() << "Invalid ns [" << ns << "]", false);
                 } else if (op == dbInsert) {
-                    receivedInsert(opCtx, nsString, m); //插入操作入口  
+                    receivedInsert(opCtx, nsString, m); //插入操作入口   新版本CmdInsert::runImpl
                 } else if (op == dbUpdate) {
                     receivedUpdate(opCtx, nsString, m); //更新操作入口  
                 } else if (op == dbDelete) {

@@ -35,14 +35,17 @@ namespace mongo {
  * A container for the summary statistics that the profiler, slow query log, and
  * other non-explain debug mechanisms may want to collect.
  */
-struct PlanSummaryStats {
+struct PlanSummaryStats { //理解过程可以参考，比较直观https://blog.csdn.net/defonds/article/details/51377815
     // The number of results returned by the plan.
+    //例如显示为 3，表示匹配查询并返回的文档数目为 3
     size_t nReturned = 0U;
 
     // The total number of index keys examined by the plan.
+    //例如显示为 3，表示 MongoDB 扫描了 3 个索引条目
     size_t totalKeysExamined = 0U;
 
     // The total number of documents examined by the plan.
+    //例如显示为 3，表示 MongoDB 扫描了 3 个文档
     size_t totalDocsExamined = 0U;
 
     // The number of milliseconds spent inside the root stage's work() method.

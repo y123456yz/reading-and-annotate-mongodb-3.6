@@ -125,7 +125,8 @@ StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
 }
 
 // static
-StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
+StatusWith<std::unique_ptr<CanonicalQuery>> 
+  CanonicalQuery::canonicalize(
     OperationContext* opCtx,
     std::unique_ptr<QueryRequest> qr,
     const boost::intrusive_ptr<ExpressionContext>& expCtx,
@@ -231,6 +232,8 @@ Status CanonicalQuery::init(OperationContext* opCtx,
     }
 
     // Normalize, sort and validate tree.
+    //也就是老版本中的CanonicalQuery::normalizeTree，参考https://blog.csdn.net/baijiwei/article/details/78170387
+    //主要对树中各个节点做合并优化
     _root = MatchExpression::optimize(std::move(root));
     sortTree(_root.get());
     Status validStatus = isValid(_root.get(), *_qr);

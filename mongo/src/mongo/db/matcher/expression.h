@@ -48,12 +48,19 @@ class MatchExpression;
 class TreeMatchExpression;
 
 typedef StatusWith<std::unique_ptr<MatchExpression>> StatusWithMatchExpression;
+//MatchExpression是将filter算子里每个逻辑运算转换成各个类型的表达式(GT,ET,LT,AND,OR...)，构成一个表达
+//式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
+//参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.477e4df3lsZUre
+//参考https://blog.csdn.net/baijiwei/article/details/78170387
 
-class MatchExpression {
+//CanonicalQuery._root  QuerySolutionNode.filter成员是该类型  一个filter对应一个MatchExpression
+//所有的QuerySolutionNode(代表CanonicalQuery._root树中的一个节点，对应一个MatchExpression)组成一颗树
+class MatchExpression { 
+//AlwaysBooleanMatchExpression  AlwaysBooleanMatchExpression  ExprMatchExpression等继承该类
     MONGO_DISALLOW_COPYING(MatchExpression);
 
 public:
-    enum MatchType {
+    enum MatchType { //mongodb查询的逻辑操作符解析可以参考类MatchExpressionParser
         // tree types
         AND,
         OR,

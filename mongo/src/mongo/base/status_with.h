@@ -92,6 +92,7 @@ public:
      */
     StatusWith(T t) : _status(Status::OK()), _t(std::move(t)) {}
 
+    //
     const T& getValue() const {
         dassert(isOK());
         return *_t;

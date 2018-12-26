@@ -134,6 +134,7 @@ NamespaceString Command::parseNsCollectionRequired(const string& dbname, const B
     return nss;
 }
 
+//获取集合名或者UUID
 NamespaceString Command::parseNsOrUUID(OperationContext* opCtx,
                                        const string& dbname,
                                        const BSONObj& cmdObj) {

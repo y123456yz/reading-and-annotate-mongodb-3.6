@@ -138,7 +138,7 @@ inline bool isNumericBSONType(BSONType type) {
 /* subtypes of BinData.
    bdtCustom and above are ones that the JS compiler understands, but are
    opaque to the database.
-*/
+*/ //bson¸ñÊ½£¬²Î¿¼https://blog.csdn.net/Losteng/article/details/52402775
 enum BinDataType {
     BinDataGeneral = 0,
     Function = 1,

@@ -267,7 +267,11 @@ struct PrepareExecutionResult {
 #13 0x00007f2a4d0a6b0a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:363
 */ 
 //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中执行
-//调用prepareExecution函数通过CanonicalQuery类得到的表达式树得到大于等于一个查询计划和
+/*
+用于生成执行QuerySolution和PlanStage.
+1 调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
+2 调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
+*/
 StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
                                                     Collection* collection,
                                                     WorkingSet* ws,
@@ -782,7 +786,8 @@ StatusWith<unique_ptr<PlanStage>> applyProjection(OperationContext* opCtx,
 // Delete
 //
 
-StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorDelete(
+StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
+getExecutorDelete(
     OperationContext* opCtx, OpDebug* opDebug, Collection* collection, ParsedDelete* parsedDelete) {
     const DeleteRequest* request = parsedDelete->getRequest();
 

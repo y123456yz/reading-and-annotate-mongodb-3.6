@@ -446,7 +446,7 @@ SingleWriteResult makeWriteResultForInsertOrDeleteRetry() {
 
 }  // namespace
 
-//receivedInsert中执行
+//以前老版本receivedInsert中调用，3.6新版本在CmdInsert::runImpl中调用
 WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     auto& curOp = *CurOp::get(opCtx);

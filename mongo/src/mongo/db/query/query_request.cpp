@@ -65,6 +65,7 @@ const long long QueryRequest::kDefaultBatchSize = 101;
 
 namespace {
 
+// BSON格式可以参考https://www.jianshu.com/p/bd245529164a
 Status checkFieldType(const BSONElement& el, BSONType type) {
     if (type != el.type()) {
         str::stream ss;
@@ -126,6 +127,7 @@ void QueryRequest::refreshNSS(OperationContext* opCtx) {
     invariant(!_nss.isEmpty());
 }
 
+//解析并检查bson文档内容及格式  BSON格式可以参考https://www.jianshu.com/p/bd245529164a
 // static
 StatusWith<unique_ptr<QueryRequest>> QueryRequest::parseFromFindCommand(unique_ptr<QueryRequest> qr,
                                                                         const BSONObj& cmdObj,
@@ -139,7 +141,7 @@ StatusWith<unique_ptr<QueryRequest>> QueryRequest::parseFromFindCommand(unique_p
     while (it.more()) {
         BSONElement el = it.next();
         const auto fieldName = el.fieldNameStringData();
-        if (fieldName == kFindCommandName) {
+        if (fieldName == kFindCommandName) { //find
             // Check both UUID and String types for "find" field.
             Status status = checkFieldType(el, BinData);
             if (!status.isOK()) {
@@ -148,7 +150,7 @@ StatusWith<unique_ptr<QueryRequest>> QueryRequest::parseFromFindCommand(unique_p
             if (!status.isOK()) {
                 return status;
             }
-        } else if (fieldName == kFilterField) {
+        } else if (fieldName == kFilterField) { //filter
             Status status = checkFieldType(el, Object);
             if (!status.isOK()) {
                 return status;
@@ -406,16 +408,19 @@ StatusWith<unique_ptr<QueryRequest>> QueryRequest::parseFromFindCommand(unique_p
     return std::move(qr);
 }
 
-StatusWith<unique_ptr<QueryRequest>> QueryRequest::makeFromFindCommand(NamespaceString nss,
+StatusWith<unique_ptr<QueryRequest>> 
+	QueryRequest::makeFromFindCommand(NamespaceString nss,
                                                                        const BSONObj& cmdObj,
                                                                        bool isExplain) {
     BSONElement first = cmdObj.firstElement();
     if (first.type() == BinData && first.binDataType() == BinDataType::newUUID) {
         auto uuid = uassertStatusOK(UUID::parse(first));
         auto qr = stdx::make_unique<QueryRequest>(uuid);
+		//解析并检查bson文档内容及格式
         return parseFromFindCommand(std::move(qr), cmdObj, isExplain);
     } else {
         auto qr = stdx::make_unique<QueryRequest>(nss);
+		//解析并检查bson文档内容及格式
         return parseFromFindCommand(std::move(qr), cmdObj, isExplain);
     }
 }

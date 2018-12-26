@@ -277,6 +277,7 @@ struct CountScanStats : public SpecificStats {
     bool isSparse;
     bool isUnique;
 
+    //1个走索引的查询， 扫描了多少条索引， 可查看 system.profile 的 keysExamined 字段， 该值越大， CPU 开销越大
     size_t keysExamined;
 };
 

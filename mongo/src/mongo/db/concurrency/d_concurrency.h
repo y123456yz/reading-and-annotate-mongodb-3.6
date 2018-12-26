@@ -278,6 +278,16 @@ public:
      * For storage engines that do not support collection-level locking, MODE_IS will be
      * upgraded to MODE_S and MODE_IX will be upgraded to MODE_X.
      */
+    /*
+    Primary 上写入文档时，首先对写入的 DB 加写意向锁，再对集合加写意向锁，然后调用底层引擎接口写入文档，
+对 local 数据库加写意向锁，对oplog.rs集合加写意向锁，写入 oplog:
+DBLock("db1", MODE_IX);
+CollectionLock("collection1", MODE_IX);
+storageEngine.writeDocument(...);    
+DBLock("local", MODEX_IX);
+CollectionLock("oplog.rs", MODEX_IX);
+storageEngine.writeOplog(...);
+    */
     class DBLock {
     public:
         DBLock(OperationContext* opCtx, StringData db, LockMode mode);
@@ -320,6 +330,16 @@ public:
      * collection. For storage engines that do not support document-level locking, MODE_IS
      * will be upgraded to MODE_S and MODE_IX will be upgraded to MODE_X.
      */
+ /*
+    Primary 上写入文档时，首先对写入的 DB 加写意向锁，再对集合加写意向锁，然后调用底层引擎接口写入文档，
+对 local 数据库加写意向锁，对oplog.rs集合加写意向锁，写入 oplog:
+DBLock("db1", MODE_IX);
+CollectionLock("collection1", MODE_IX);
+storageEngine.writeDocument(...);    
+DBLock("local", MODEX_IX);
+CollectionLock("oplog.rs", MODEX_IX);
+storageEngine.writeOplog(...);
+*/
     class CollectionLock {
         MONGO_DISALLOW_COPYING(CollectionLock);
 

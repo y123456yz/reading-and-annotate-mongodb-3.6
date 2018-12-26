@@ -693,10 +693,10 @@ ExitCode _initAndListen(int listenPort) {
 	log() << "yang test .... _initAndListen 111111111";
 	//listen对应的监听TransportLayerManager::setup   accept回调在TransportLayerASIO::start
 	//消息处理见ServiceEntryPointMongod::handleRequest  ServiceEntryPointMongos::handleRequest
+	// BSON格式可以参考https://www.jianshu.com/p/bd245529164a
     Client::initThread("initandlisten"); //注意这个是main线程，设置当前线程的名
     #include <unistd.h>
 	//sleep(10);
-	log() << "yang test .... _initAndListen 22222222222";
 
     initWireSpec();
 	//获取serviceContext类,例如mongod进程对应ServiceContextMongoD类  如果是mongos则对应ServiceEntryPointMongos

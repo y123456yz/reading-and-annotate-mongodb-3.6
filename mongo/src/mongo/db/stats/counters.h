@@ -83,7 +83,7 @@ private:
 
     //各种操作统计信息
     CacheAligned<AtomicUInt32> _insert;
-    CacheAligned<AtomicUInt32> _query;
+    CacheAligned<AtomicUInt32> _query;  //globalOpCounters.gotQuery()自增
     CacheAligned<AtomicUInt32> _update;
     CacheAligned<AtomicUInt32> _delete;
     CacheAligned<AtomicUInt32> _getmore;
