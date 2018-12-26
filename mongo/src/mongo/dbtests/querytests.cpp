@@ -687,6 +687,7 @@ public:
     }
 };
 
+//如果是oplogReplay则直接生成按ts字段的CollectionScan
 class OplogReplayExplain : public ClientBase {
 public:
     ~OplogReplayExplain() {

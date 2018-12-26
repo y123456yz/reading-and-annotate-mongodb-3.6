@@ -46,7 +46,7 @@ class GeoNearExpression;
  * This is an abstract representation of a query plan.  It can be transcribed into a tree of
  * PlanStages, which can then be handed to a PlanRunner for execution.
  */
-struct QuerySolutionNode {
+struct QuerySolutionNode { //QuerySolution.root
     QuerySolutionNode() {}
     virtual ~QuerySolutionNode() {
         for (size_t i = 0; i < children.size(); ++i) {
@@ -149,7 +149,7 @@ struct QuerySolutionNode {
 
     // If a stage has a non-NULL filter all values outputted from that stage must pass that
     // filter.
-    std::unique_ptr<MatchExpression> filter;
+    std::unique_ptr<MatchExpression> filter;  
 
 protected:
     /**

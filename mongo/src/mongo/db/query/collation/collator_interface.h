@@ -46,7 +46,7 @@ namespace mongo {
  * All methods are thread-safe.
  *
  * Does not throw exceptions.
- */
+ */ //CanonicalQuery._proj≥…‘±
 class CollatorInterface : public StringData::ComparatorInterface {
     MONGO_DISALLOW_COPYING(CollatorInterface);
 

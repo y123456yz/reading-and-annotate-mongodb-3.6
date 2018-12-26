@@ -249,18 +249,20 @@ at src/mongo/db/commands/find_cmd.cpp:311
              const BSONObj& cmdObj,
              BSONObjBuilder& result) override {
         // Although it is a command, a find command gets counted as a query.
-        globalOpCounters.gotQuery();
+        globalOpCounters.gotQuery(); //query查询计数加1
 
         // Parse the command BSON to a QueryRequest.
         const bool isExplain = false;
         // Pass parseNs to makeFromFindCommand in case cmdObj does not have a UUID.
+        //QueryRequest::makeFromFindCommand->parseFromFindCommand
+        //解析并检查bson文档内容及格式
         auto qrStatus = QueryRequest::makeFromFindCommand(
             NamespaceString(parseNs(dbname, cmdObj)), cmdObj, isExplain);
-        if (!qrStatus.isOK()) {
+        if (!qrStatus.isOK()) { //BSON报文内容格式是否符合要求
             return appendCommandStatus(result, qrStatus.getStatus());
         }
 
-        auto& qr = qrStatus.getValue();
+        auto& qr = qrStatus.getValue(); //也就是获取对应的QueryRequest
 
         // Validate term before acquiring locks, if provided.
         if (auto term = qr->getReplicationTerm()) {
@@ -275,7 +277,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
         // Acquire locks. If the query is on a view, we release our locks and convert the query
         // request into an aggregation command.
         Lock::DBLock dbSLock(opCtx, dbname, MODE_IS);
-        const NamespaceString nss(parseNsOrUUID(opCtx, dbname, cmdObj));
+        const NamespaceString nss(parseNsOrUUID(opCtx, dbname, cmdObj)); //获取集合名或者UUID
         qr->refreshNSS(opCtx);
 
         // Fill out curop information.
@@ -304,7 +306,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
         }
         std::unique_ptr<CanonicalQuery> cq = std::move(statusWithCQ.getValue());
 
-		//std::move(dbSLock)对应DBLock::~DBLock
+		//std::move(dbSLock)会调用DBLock::~DBLock
         AutoGetCollectionOrViewForReadCommand ctx(opCtx, nss, std::move(dbSLock));
         Collection* collection = ctx.getCollection();
         if (ctx.getView()) {
@@ -334,7 +336,8 @@ at src/mongo/db/commands/find_cmd.cpp:311
         }
 
         // Get the execution plan for the query.
-        //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind,这里面会调用QueryPlanner::plan，获取对应的plan
+        //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorFind,这里面会调用QueryPlanner::plan，获取对应的PlanExecutor
+        ////根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
         auto statusWithPlanExecutor = //获取std::unique_ptr<PlanExecutor, PlanExecutor::Deleter>
             getExecutorFind(opCtx, collection, nss, std::move(cq), PlanExecutor::YIELD_AUTO);
         if (!statusWithPlanExecutor.isOK()) {

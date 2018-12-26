@@ -31,7 +31,7 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
-
+//CanonicalQuery._proj成员为该类型
 class ParsedProjection {
 public:
     // TODO: this is duplicated in here and in the proj exec code.  When we have

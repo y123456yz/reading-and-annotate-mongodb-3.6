@@ -1,0 +1,103 @@
+(function() {
+  try {
+    (cpro_id = null),
+      (function() {
+        var e;
+        e =
+          window._SF_ && window._SF_._global_ && window._SF_._global_._ssp
+            ? window._SF_._global_._ssp
+            : (window._ssp_global = window._ssp_global || {});
+        var t = "rabc1.iteye.com/2e4d96dca598a574d51f.js",
+          o = "cpro.baidustatic.com/cpro/ui/c.js",
+          r = o,
+          n = 0;
+        /qqbrowser|ucbrowser|ubrowser|vivobrowser|oppobrowser|miui/i.test(
+          navigator.userAgent
+        );
+        t &&
+          /qqbrowser|ucbrowser|ubrowser|vivobrowser|oppobrowser|miui/i.test(
+            navigator.userAgent
+          ) &&
+          ((r = t), (n = 1));
+
+        var i = "u3535678pkcgstjjm",
+          a = i,
+          d = document.getElementById(a);
+        d ||
+          ((a =
+            "_" +
+            Math.random()
+              .toString(36)
+              .slice(2)),
+          ((d = document.createElement("div")),
+          (d.id = a),
+          (d.style.width = "100%"),
+          document
+            .getElementsByClassName("_paradigm_S8_csdn_ads_render")[0]
+            .insertBefore(
+              d,
+              document.getElementById("_paradigm_S8_csdn_ads_script")
+            )));
+        var s = "",
+          w = {
+            async: !0,
+            id: "u3535678",
+            container: a
+          };
+        n && ((w.proxy = 1), (w.pos = s), (r = t || o)),
+          "undefined" != typeof ____exps && ____exps && (w.exps = ____exps);
+        var c = [w],
+          p = null,
+          _ = "u3535678";
+        if (
+          (window["_" + i]
+            ? (p = window["_" + i])
+            : window["_" + _] && (p = window["_" + _]),
+          p)
+        )
+          if (p instanceof Array) {
+            c = [];
+            for (var u = 0; u < p.length; u++) {
+              var l = {};
+              for (var m in w) m && w.hasOwnProperty && (l[m] = w[m]);
+              var v = p[u];
+              for (var g in v) g && v.hasOwnProperty && (l[g] = v[g]);
+              c.push(l);
+            }
+            p = window["_" + i]
+              ? (window["_" + i] = [])
+              : (window["_" + _] = []);
+          } else for (var m in p) m && p.hasOwnProperty && (w[m] = p[m]);
+        for (var u = 0; u < c.length; u++)
+          (window.slotbydup = window.slotbydup || []).push(c[u]);
+        var y = function(e) {
+          var t = document.createElement("script");
+          (t.type = "text/javascript"),
+            (t.async = !0),
+            (t.src =
+              ("https:" === document.location.protocol ? "https:" : "http:") +
+              "//" +
+              e);
+          var o = document.getElementsByTagName("script")[0];
+          o.parentNode.insertBefore(t, o);
+        };
+        e.isRemoteLoaded || ((e.isRemoteLoaded = !0), y(r)),
+          !n &&
+            t &&
+            setTimeout(function() {
+              var o = document.getElementById(a);
+              (!o || o.getElementsByTagName("iframe").length < 1) &&
+                ((e.isRemoteLoaded = !0), y(t));
+            }, 2000);
+      })();
+  } catch (e) {
+    var url = [
+        "//eclick.baidu.com/se.jpg?",
+        "type=deliveryOld",
+        "date=0830",
+        "mes=" + encodeURIComponent(e)
+      ].join("&"),
+      img = new Image();
+    img.src = url;
+  }
+})();

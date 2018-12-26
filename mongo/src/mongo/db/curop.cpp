@@ -144,6 +144,7 @@ BSONObj upconvertGetMoreEntry(const NamespaceString& nss, CursorId cursorId, int
  *
  * The stack itself is represented in the _parent pointers of the CurOp class.
  */ //CurOp可以参考runQuery  performInserts(insert操作)
+ //所有的CurOpStack都会存入到CurOp._curopStack
 class CurOp::CurOpStack {
     MONGO_DISALLOW_COPYING(CurOpStack);
 

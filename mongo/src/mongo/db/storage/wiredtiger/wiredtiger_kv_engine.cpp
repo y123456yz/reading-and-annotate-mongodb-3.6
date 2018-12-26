@@ -866,6 +866,7 @@ std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
     return std::move(ret);
 }
 
+//±íÃû
 string WiredTigerKVEngine::_uri(StringData ident) const {
     return string("table:") + ident.toString();
 }

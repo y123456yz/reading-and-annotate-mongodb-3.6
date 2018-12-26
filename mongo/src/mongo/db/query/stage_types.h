@@ -37,7 +37,7 @@ enum StageType {
     STAGE_AND_HASH,
     STAGE_AND_SORTED,
     STAGE_CACHED_PLAN,
-    STAGE_COLLSCAN,
+    STAGE_COLLSCAN,  //È«±íÉ¨Ãè
 
     // This stage sits at the root of the query tree and counts up the number of results
     // returned by its child.
@@ -78,7 +78,7 @@ enum StageType {
     // Simple wrapper to iterate a SortedDataInterface::Cursor.
     STAGE_INDEX_ITERATOR,
 
-    STAGE_IXSCAN,
+    STAGE_IXSCAN,  //Ë÷ÒýÉ¨Ãè£¬INDEX SCAN
     STAGE_LIMIT,
 
     // Implements parallelCollectionScan.

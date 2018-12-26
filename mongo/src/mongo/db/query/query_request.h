@@ -48,7 +48,8 @@ class StatusWith;
  * Parses the QueryMessage or find command received from the user and makes the various fields
  * more easily accessible.
  */
-class QueryRequest {
+//在CanonicalQuery::canonicalize中会使用该类的成员来组织filter等查询条件
+class QueryRequest { //parseFromFindCommand中解析赋值
 public:
     static const char kFindCommandName[];
     static const char kShardVersionField[];
@@ -423,6 +424,7 @@ public:
                                                                      int queryOptions);
 
 private:
+    //QueryRequest::makeFromFindCommand中调用  //解析并检查bson文档内容及格式
     static StatusWith<std::unique_ptr<QueryRequest>> parseFromFindCommand(
         std::unique_ptr<QueryRequest> qr, const BSONObj& cmdObj, bool isExplain);
     Status init(int ntoskip,

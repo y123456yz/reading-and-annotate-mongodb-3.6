@@ -149,7 +149,7 @@ public:
  * The OpDebug member of a CurOp, accessed via the debug() accessor should *only* be accessed
  * from the thread executing an operation, and as a result its fields may be accessed without
  * any synchronization.
- */
+ */ //根据OperationContext生成CurOp的过程auto curOp = CurOp::get(opCtx);
 class CurOp {
     MONGO_DISALLOW_COPYING(CurOp);
 
@@ -449,7 +449,7 @@ public:
 private:
     class CurOpStack;
 
-    static const OperationContext::Decoration<CurOpStack> _curopStack;
+    static const OperationContext::Decoration<CurOpStack> _curopStack; 
 
     CurOp(OperationContext*, CurOpStack*);
 
@@ -480,7 +480,7 @@ private:
     bool _isCommand{false};
     int _dbprofile{0};  // 0=off, 1=slow, 2=all
     std::string _ns; //集合名
-    //赋值见curOpCommandSetup->setOpDescription_inlock,对应OpMsg.body
+    //赋值见curOpCommandSetup->setOpDescription_inlock,  beginQueryOp->setOpDescription_inlock对应OpMsg.body
     BSONObj _opDescription;
     BSONObj _originatingCommand;  // Used by getMore to display original command.
     OpDebug _debug;

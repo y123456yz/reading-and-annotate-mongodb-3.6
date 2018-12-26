@@ -102,7 +102,8 @@ https://www.jianshu.com/p/d838a5905303
  *     MODE_IS      |      +        +         +        +        -    |
  *     MODE_IX      |      +        +         +        -        -    |
  *     MODE_S       |      +        +         -        +        -    |
- *     MODE_X       |      +        -         -        -        -    |
+ *     MODE_X       |      +        -         -        -        -    |  加了MODE_X锁后，读写都不相容
+ * 官方文档https://docs.mongodb.com/manual/faq/concurrency/
  */
 enum LockMode {
     MODE_NONE = 0,

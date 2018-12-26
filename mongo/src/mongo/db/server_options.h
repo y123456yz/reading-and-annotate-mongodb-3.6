@@ -236,7 +236,7 @@ struct ServerGlobalParams {
     AtomicWord<bool> validateFeaturesAsMaster{true};
 
     std::vector<std::string> disabledSecureAllocatorDomains;
-
+    //使用 readConcern 需要配置replication.enableMajorityReadConcern选项
     bool enableMajorityReadConcern = true;
 };
 

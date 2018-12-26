@@ -633,6 +633,7 @@ void createOplog(OperationContext* opCtx) {
     createOplog(opCtx, _oplogCollectionName, isReplSet);
 }
 
+//²Î¿¼http://www.mongoing.com/archives/3177
 OplogSlot getNextOpTime(OperationContext* opCtx) {
     // The local oplog collection pointer must already be established by this point.
     // We can't establish it here because that would require locking the local database, which would
