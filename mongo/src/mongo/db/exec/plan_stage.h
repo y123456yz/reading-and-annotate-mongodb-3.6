@@ -102,8 +102,8 @@ class RecordId;
  *         stage->restoreState();
  *     } //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
  * } 每个查询计划QuerySolution对应一个计划阶段PlanStage. 见getExecutor
- */ //CachedPlanStage基础该类  MultiPlanStage类继承该类
-class PlanStage { //CollectionScan继承该类
+ */ //CachedPlanStage基础该类  MultiPlanStage  ShardFilterStage SortKeyGeneratorStage类继承该类
+class PlanStage { //赋值见prepareExecution 调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
 public:
     PlanStage(const char* typeName, OperationContext* opCtx)
         : _commonStats(typeName), _opCtx(opCtx) {}

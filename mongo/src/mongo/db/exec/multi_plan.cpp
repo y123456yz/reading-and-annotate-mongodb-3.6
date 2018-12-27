@@ -77,6 +77,7 @@ MultiPlanStage::MultiPlanStage(OperationContext* opCtx,
     invariant(_collection);
 }
 
+//prepareExecution中执行
 void MultiPlanStage::addPlan(QuerySolution* solution, PlanStage* root, WorkingSet* ws) {
     _candidates.push_back(CandidatePlan(solution, root, ws));
     _children.emplace_back(root);
@@ -98,6 +99,7 @@ bool MultiPlanStage::isEOF() {
     return bestPlan.results.empty() && bestPlan.root->isEOF();
 }
 
+
 PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
     if (_failure) {
         *out = _statusMemberId;
@@ -115,7 +117,7 @@ PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
 
     // best plan had no (or has no more) cached results
 
-    StageState state = bestPlan.root->work(out);
+    StageState state = bestPlan.root->work(out); //按照bestPlan执行
 
     if (PlanStage::FAILURE == state && hasBackupPlan()) {
         LOG(5) << "Best plan errored out switching to backup";
@@ -227,11 +229,12 @@ Mongodb是如何为查询选取认为合适的索引的呢？
 粗略来说，会先选几个候选的查询计划，然后会为这些查询计划按照某个规则来打分，分数最高
 的查询计划就是合适的查询计划，这个查询计划里面使用的索引就是认为合适的索引。
 */ //https://yq.aliyun.com/articles/74635
+//从PlanExecutor::pickBestPlan调用该函数
 Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // Adds the amount of time taken by pickBestPlan() to executionTimeMillis. There's lots of
     // execution work that happens here, so this is needed for the time accounting to
     // make sense.
-    ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
+    ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis); 
 
     size_t numWorks = getTrialPeriodWorks(getOpCtx(), _collection);
     size_t numResults = getTrialPeriodNumToReturn(*_query);
@@ -352,7 +355,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
             }
         }
 
-        if (validSolutions) {
+        if (validSolutions) { //把这些solutions添加到plancache，下次就可以直接用plancache来执行
             _collection->infoCache()
                 ->getPlanCache()
                 ->add(*_query,
@@ -383,7 +386,7 @@ bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolic
         }
 
         WorkingSetID id = WorkingSet::INVALID_ID;
-        PlanStage::StageState state = candidate.root->work(&id);
+        PlanStage::StageState state = candidate.root->work(&id); 
 
         if (PlanStage::ADVANCED == state) {
             // Save result for later.

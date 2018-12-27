@@ -67,7 +67,7 @@ namespace mongo {
  *
  * Preconditions: Child must be fetched.  TODO: when covering analysis is in just build doc
  * and check that against shard key.  See SERVER-5022.
- */
+ */ //prepareExecution中使用该类
 class ShardFilterStage final : public PlanStage {
 public:
     ShardFilterStage(OperationContext* opCtx,

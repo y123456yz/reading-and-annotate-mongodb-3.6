@@ -88,7 +88,7 @@ CachedPlanStage::pickBestPlan主要逻辑如下：
 如果在扫描过程遇见错误，则会返回FAILURE，也会触发重新生成执行计划
 
 参考:https://segmentfault.com/a/1190000015236644
-*/ //mongo3.6版本中是从PlanExecutor::make调用该函数
+*/ //mongo3.6版本中是从PlanExecutor::pickBestPlan调用该函数
 Status CachedPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // Adds the amount of time taken by pickBestPlan() to executionTimeMillis. There's lots of
     // execution work that happens here, so this is needed for the time accounting to

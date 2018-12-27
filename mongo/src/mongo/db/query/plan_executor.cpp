@@ -207,6 +207,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
         PlanExecutor::Deleter(opCtx, collection));
 
     // Perform plan selection, if necessary.
+    //PlanExecutor::pickBestPlan
     Status status = exec->pickBestPlan(collection);
     if (!status.isOK()) {
         return status;
@@ -248,13 +249,17 @@ PlanExecutor::PlanExecutor(OperationContext* opCtx,
     }
 }
 
+//PlanExecutor::make中调用  调用pickBestPlan选取最优的Plan.里面包含了很多不同类型的PlanStage
 Status PlanExecutor::pickBestPlan(const Collection* collection) {
     invariant(_currentState == kUsable);
+
+	//以下几种情况和prepareExecution中是对应的
 
     // First check if we need to do subplanning.
     PlanStage* foundStage = getStageByType(_root.get(), STAGE_SUBPLAN);
     if (foundStage) {
         SubplanStage* subplan = static_cast<SubplanStage*>(foundStage);
+		//SubplanStage::pickBestPlan 
         return subplan->pickBestPlan(_yieldPolicy.get());
     }
 
@@ -263,6 +268,7 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
     foundStage = getStageByType(_root.get(), STAGE_MULTI_PLAN);
     if (foundStage) {
         MultiPlanStage* mps = static_cast<MultiPlanStage*>(foundStage);
+		//MultiPlanStage::pickBestPlan 
         return mps->pickBestPlan(_yieldPolicy.get());
     }
 
@@ -271,9 +277,11 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
     foundStage = getStageByType(_root.get(), STAGE_CACHED_PLAN);
     if (foundStage) {
         CachedPlanStage* cachedPlan = static_cast<CachedPlanStage*>(foundStage);
+		//CachedPlanStage::pickBestPlan
         return cachedPlan->pickBestPlan(_yieldPolicy.get());
     }
 
+	//只有一个满足条件的索引，则这里直接返回
     // Either we chose a plan, or no plan selection was required. In both cases,
     // our work has been successfully completed.
     return Status::OK();

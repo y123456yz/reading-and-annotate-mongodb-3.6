@@ -50,6 +50,7 @@ using stdx::make_unique;
 // static
 const char* IDHackStage::kStageType = "IDHACK";
 
+
 IDHackStage::IDHackStage(OperationContext* opCtx,
                          const Collection* collection,
                          CanonicalQuery* query,

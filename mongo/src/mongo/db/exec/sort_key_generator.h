@@ -45,7 +45,7 @@ class WorkingSetMember;
 /**
  * Passes results from the child through after adding the sort key for each result as
  * WorkingSetMember computed data.
- */
+ */ //prepareExecution中使用该类
 class SortKeyGeneratorStage final : public PlanStage {
 public:
     SortKeyGeneratorStage(OperationContext* opCtx,

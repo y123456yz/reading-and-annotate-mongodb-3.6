@@ -1226,7 +1226,7 @@ Breakpoint 1, mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400
 //CollectionImpl::insertDocuments中执行
 IndexDescriptor* IndexCatalogImpl::findIdIndex(OperationContext* opCtx) const {
     IndexIterator ii = _this->getIndexIterator(opCtx, false); //IndexCatalogImpl::IndexIteratorImpl::more
-    while (ii.more()) {
+    while (ii.more()) { //索引遍历
         IndexDescriptor* desc = ii.next();
         if (desc->isIdIndex())
             return desc;

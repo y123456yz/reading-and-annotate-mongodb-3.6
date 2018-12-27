@@ -189,6 +189,7 @@ public:
         _readConcern = readConcern.getOwned();
     }
 
+    //Collation特性允许MongoDB的用户根据不同的语言定制排序规则,参考http://www.mongoing.com/archives/3912
     const BSONObj& getCollation() const {
         return _collation;
     }
@@ -471,6 +472,7 @@ private:
     // The read concern is parsed elsewhere.
     BSONObj _readConcern;
     // The collation is parsed elsewhere.
+    //Collation特性允许MongoDB的用户根据不同的语言定制排序规则,参考http://www.mongoing.com/archives/3912
     BSONObj _collation;
 
     // The unwrapped readPreference object, if one was given to us by the mongos command processor.

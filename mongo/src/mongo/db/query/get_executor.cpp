@@ -130,7 +130,7 @@ void fillOutPlannerParams(OperationContext* opCtx,
                           QueryPlannerParams* plannerParams) {
     // If it's not NULL, we may have indices.  Access the catalog and fill out IndexEntry(s)
     IndexCatalog::IndexIterator ii = collection->getIndexCatalog()->getIndexIterator(opCtx, false);
-    while (ii.more()) {
+    while (ii.more()) { 
         const IndexDescriptor* desc = ii.next();
         IndexCatalogEntry* ice = ii.catalogEntry(desc);
         plannerParams->indices.push_back(IndexEntry(desc->keyPattern(),
@@ -268,7 +268,7 @@ struct PrepareExecutionResult {
 */ 
 //StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中执行
 /*
-用于生成执行QuerySolution和PlanStage.
+用于生成执行QuerySolution和PlanStage. 这两个信息最终都存入到PrepareExecutionResult结构并返回
 1 调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
 2 调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
 */
@@ -295,10 +295,11 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     // Fill out the planning params.  We use these for both cached solutions and non-cached.
     QueryPlannerParams plannerParams;
     plannerParams.options = plannerOptions;
+	//获取plannerParams信息
     fillOutPlannerParams(opCtx, collection, canonicalQuery.get(), &plannerParams);
 
     // If the canonical query does not have a user-specified collation, set it from the collection
-    // default.
+    // default. //Collation特性允许MongoDB的用户根据不同的语言定制排序规则,参考http://www.mongoing.com/archives/3912
     if (canonicalQuery->getQueryRequest().getCollation().isEmpty() &&
         collection->getDefaultCollator()) {
         canonicalQuery->setCollator(collection->getDefaultCollator()->clone());
@@ -324,7 +325,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         // There might be a projection. The idhack stage will always fetch the full
         // document, so we don't support covered projections. However, we might use the
         // simple inclusion fast path.
-        if (NULL != canonicalQuery->getProj()) {
+        if (NULL != canonicalQuery->getProj()) { //需要把那些字段输出给客户端
             ProjectionStageParams params;
             params.projObj = canonicalQuery->getProj()->getProjObj();
             params.collator = canonicalQuery->getCollator();
@@ -368,6 +369,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
     // Try to look up a cached solution for the query.
     CachedSolution* rawCS;
+	//从plancache中获取
     if (PlanCache::shouldCacheQuery(*canonicalQuery) &&
         collection->infoCache()->getPlanCache()->get(*canonicalQuery, &rawCS).isOK()) {
         // We have a CachedSolution.  Have the planner turn it into a QuerySolution.
@@ -487,7 +489,8 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
             verify(StageBuilder::build(
                 opCtx, collection, *canonicalQuery, *solutions[ix], ws, &nextPlanRoot));
 
-            // Owns none of the arguments
+            // Owns none of the arguments  
+            //MultiPlanStage::addPlan
             multiPlanStage->addPlan(solutions[ix], nextPlanRoot, ws);
         }
 
@@ -525,6 +528,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
 
 	//调用prepareExecution函数通过CanonicalQuery类得到的表达式树得到大于等于一个查询计划和
 	//用于生成执行QuerySolution和PlanStage. ,每个查询计划QuerySolution对应一个计划阶段PlanStage.
+	//用于生成执行QuerySolution和PlanStage. 这两个信息最终都存入到PrepareExecutionResult结构并返回
     StatusWith<PrepareExecutionResult> executionResult =
         prepareExecution(opCtx, collection, ws.get(), std::move(canonicalQuery), plannerOptions);
 	

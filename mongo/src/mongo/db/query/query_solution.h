@@ -173,6 +173,8 @@ private:
  * A tree of stages may be built from a QuerySolution.  The QuerySolution must outlive the tree
  * of stages. 每个查询计划QuerySolution对应一个计划阶段PlanStage. 见getExecutor
  */ //参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
+//prepareExecution中根据QueryPlanner::plan生成QuerySolution
+//每个索引对应一种执行计划，在MongoDB中叫解决方案
 struct QuerySolution { //执行计划，可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
     QuerySolution() : hasBlockingStage(false), indexFilterApplied(false) {}
 

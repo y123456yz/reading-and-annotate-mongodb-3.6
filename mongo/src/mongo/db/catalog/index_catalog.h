@@ -53,7 +53,7 @@ struct InsertDeleteOptions;
  * how many: 1 per Collection.
  * lifecycle: attached to a Collection.
  */
-//CollectionImpl._indexCatalog成员为该类
+//CollectionImpl._indexCatalog成员为该类，获取所有的索引信息可以参考fillOutPlannerParams
 class IndexCatalog {
 public:
     class IndexIterator {
@@ -437,6 +437,7 @@ public:
         return this->_impl().checkUnfinished();
     }
 
+    //索引遍历用，可以参考IndexCatalogImpl::findIdIndex  fillOutPlannerParams
     inline IndexIterator getIndexIterator(OperationContext* const opCtx,
                                           const bool includeUnfinishedIndexes) const {
         return IndexIterator(opCtx, this, includeUnfinishedIndexes);

@@ -45,7 +45,7 @@ class RecordCursor;
  * the _id index always has the collection default collation, the IDHackStage can only be used when
  * the query's collation is equal to the collection default.
  */
-//如果是主键等值查询，则生成IDHack，直接查询主键。
+//如果是主键等值查询，则生成IDHack，直接查询主键。  //走ID索引，参考prepareExecution
 class IDHackStage final : public PlanStage {
 public:
     /** Takes ownership of all the arguments -collection. */
