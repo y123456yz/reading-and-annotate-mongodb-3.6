@@ -104,7 +104,7 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
 		粗略来说，会先选几个候选的查询计划，然后会为这些查询计划按照某个规则来打分，分数最高的
 		查询计划就是合适的查询计划，这个查询计划里面使用的索引就是认为合适的索引。
 		*/
-        double score = scoreTree(statTrees[i].get());
+        double score = scoreTree(statTrees[i].get()); //打分
         LOG(5) << "score = " << score;
         if (statTrees[i]->common.isEOF) {
             LOG(5) << "Adding +" << eofBonus << " EOF bonus to score.";

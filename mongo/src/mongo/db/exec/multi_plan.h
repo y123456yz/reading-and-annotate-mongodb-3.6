@@ -49,6 +49,7 @@ namespace mongo {
  *
  * Owns the query solutions and PlanStage roots for all candidate plans.
  */ //执行计划相关 参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
+//匹配多个执行计划存放到该类中，参考prepareExecution
 class MultiPlanStage final : public PlanStage {
 public:
     /**
@@ -97,7 +98,7 @@ public:
 
     /**
      * Takes ownership of QuerySolution and PlanStage. not of WorkingSet
-     */
+     *///MultiPlanStage::addPlan
     void addPlan(QuerySolution* solution, PlanStage* root, WorkingSet* sharedWs);
 
     /**
@@ -192,6 +193,8 @@ private:
     // of all QuerySolutions is retained here, and will *not* be tranferred to the PlanExecutor that
     // wraps this stage. Ownership of the PlanStages will be in PlanStage::_children which maps
     // one-to-one with _candidates.
+    //赋值见MultiPlanStage::addPlan   QuerySolution和PlanStage都在该结构中
+    //在MultiPlanStage::pickBestPlan中根据这些选择出来的索引对应的解决方案来选择最优的索引
     std::vector<CandidatePlan> _candidates;
 
     // index into _candidates, of the winner of the plan competition

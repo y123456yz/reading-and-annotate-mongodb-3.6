@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+//prepareExecution中使用  fillOutPlannerParams中赋值
 struct QueryPlannerParams {
     QueryPlannerParams()
         : options(DEFAULT),
@@ -104,10 +105,11 @@ struct QueryPlannerParams {
     };
 
     // See Options enum above.
-    size_t options;
+    size_t options; //取值为上面的QueryPlannerParams::NO_TABLE_SCAN等
 
     // What indices are available for planning?
-    std::vector<IndexEntry> indices;
+    //fillOutPlannerParams中赋值，所有索引都记录在该数组中
+    std::vector<IndexEntry> indices; 
 
     // What's our shard key?  If INCLUDE_SHARD_FILTER is set we will create a shard filtering
     // stage.  If we know the shard key, we can perform covering analysis instead of always

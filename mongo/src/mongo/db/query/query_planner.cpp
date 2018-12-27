@@ -439,8 +439,8 @@ Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
 
     return Status::OK();
 }
-
-// static
+//注意QueryPlanner::plan和QueryPlanner::planFromCache的区别
+// static   prepareExecution中执行，从plancache中获取QuerySolution
 Status QueryPlanner::planFromCache(const CanonicalQuery& query,
                                    const QueryPlannerParams& params,
                                    const CachedSolution& cachedSoln,
@@ -582,6 +582,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
 //执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache
 
 // static   prepareExecution中调用  调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
+//注意QueryPlanner::plan和QueryPlanner::planFromCache的区别
 Status QueryPlanner::plan(const CanonicalQuery& query,
                           const QueryPlannerParams& params,
                           std::vector<QuerySolution*>* out) {

@@ -72,7 +72,7 @@ struct ProjectionStageParams {
 
 /**
  * This stage computes a projection.
- */
+ */ //prepareExecution中使用该类 用于过滤输出那些字段给客户端
 class ProjectionStage final : public PlanStage {
 public:
     ProjectionStage(OperationContext* opCtx,

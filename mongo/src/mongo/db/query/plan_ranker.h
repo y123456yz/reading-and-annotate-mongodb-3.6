@@ -67,7 +67,7 @@ public:
 /**
  * A container holding one to-be-ranked plan and its associated/relevant data.
  * Does not own any of its pointers.
- */
+ */ //¸³Öµ¼ûMultiPlanStage::addPlan
 struct CandidatePlan {
     CandidatePlan(QuerySolution* s, PlanStage* r, WorkingSet* w)
         : solution(s), root(r), ws(w), failed(false) {}
