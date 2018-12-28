@@ -46,7 +46,7 @@ class GeoNearExpression;
  * This is an abstract representation of a query plan.  It can be transcribed into a tree of
  * PlanStages, which can then be handed to a PlanRunner for execution.
  */
-struct QuerySolutionNode { //QuerySolution.root
+struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的CollectionScanNode等类中继承该类
     QuerySolutionNode() {}
     virtual ~QuerySolutionNode() {
         for (size_t i = 0; i < children.size(); ++i) {
@@ -61,7 +61,7 @@ struct QuerySolutionNode { //QuerySolution.root
 
     /**
      * What stage should this be transcribed to?  See stage_types.h.
-     */
+     */ //例如CollectionScanNode赋值参考CollectionScanNode::getType
     virtual StageType getType() const = 0;
 
     /**
@@ -129,7 +129,7 @@ struct QuerySolutionNode { //QuerySolution.root
 
     /**
      * Make a deep copy.
-     */
+     */ //cloneBaseData调用，对应CollectionScanNode::clone  AndHashNode::clone等
     virtual QuerySolutionNode* clone() const = 0;
 
     /**

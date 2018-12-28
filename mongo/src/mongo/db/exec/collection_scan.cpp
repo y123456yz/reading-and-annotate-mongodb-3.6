@@ -115,7 +115,7 @@ CollectionScan::CollectionScan(OperationContext* opCtx,
     plannerOptions=0) at src/mongo/db/query/get_executor.cpp:729
 #7  0x00007f644570e623 in mongo::(anonymous namespace)::FindCmd::run
 */ //全表扫描走这里面  //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
-PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {
+PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {//PlanStage::work中执行
     if (_isDead) {
         Status status(
             ErrorCodes::CappedPositionLost,

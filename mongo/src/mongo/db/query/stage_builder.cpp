@@ -73,7 +73,7 @@ PlanStage* buildStages(OperationContext* opCtx,
                        const QuerySolutionNode* root,
                        WorkingSet* ws) {
     switch (root->getType()) {
-        case STAGE_COLLSCAN: {
+        case STAGE_COLLSCAN: { 
             const CollectionScanNode* csn = static_cast<const CollectionScanNode*>(root);
             CollectionScanParams params;
             params.collection = collection;

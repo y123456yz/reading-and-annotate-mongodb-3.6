@@ -33,11 +33,11 @@ namespace mongo {
 /**
  * These map to implementations of the PlanStage interface, all of which live in db/exec/
  */
-enum StageType {
+enum StageType { //参考PlanStage* buildStages
     STAGE_AND_HASH,
     STAGE_AND_SORTED,
     STAGE_CACHED_PLAN,
-    STAGE_COLLSCAN,  //全表扫描
+    STAGE_COLLSCAN,  //全表扫描   //例如CollectionScanNode赋值参考CollectionScanNode::getType
 
     // This stage sits at the root of the query tree and counts up the number of results
     // returned by its child.

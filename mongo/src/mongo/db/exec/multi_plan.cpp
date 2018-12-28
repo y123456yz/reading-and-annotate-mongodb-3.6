@@ -80,7 +80,7 @@ MultiPlanStage::MultiPlanStage(OperationContext* opCtx,
 //prepareExecution中执行
 void MultiPlanStage::addPlan(QuerySolution* solution, PlanStage* root, WorkingSet* ws) {
     _candidates.push_back(CandidatePlan(solution, root, ws));
-    _children.emplace_back(root);
+    _children.emplace_back(root); //PlanStage._children
 }
 
 bool MultiPlanStage::isEOF() {
@@ -99,7 +99,6 @@ bool MultiPlanStage::isEOF() {
     return bestPlan.results.empty() && bestPlan.root->isEOF();
 }
 
-
 PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
     if (_failure) {
         *out = _statusMemberId;
@@ -117,7 +116,7 @@ PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
 
     // best plan had no (or has no more) cached results
 
-    StageState state = bestPlan.root->work(out); //按照bestPlan执行
+    StageState state = bestPlan.root->work(out); 
 
     if (PlanStage::FAILURE == state && hasBackupPlan()) {
         LOG(5) << "Best plan errored out switching to backup";
@@ -260,7 +259,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     std::unique_ptr<PlanRankingDecision> ranking(new PlanRankingDecision);
 	//MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用
 	//PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
-    _bestPlanIdx = PlanRanker::pickBestPlan(_candidates, ranking.get());
+    _bestPlanIdx = PlanRanker::pickBestPlan(_candidates, ranking.get()); //选择最优的查询计划
     verify(_bestPlanIdx >= 0 && _bestPlanIdx < static_cast<int>(_candidates.size()));
 
     // Copy candidate order. We will need this to sort candidate stats for explain
@@ -386,7 +385,7 @@ bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolic
         }
 
         WorkingSetID id = WorkingSet::INVALID_ID;
-        PlanStage::StageState state = candidate.root->work(&id); 
+        PlanStage::StageState state = candidate.root->work(&id); //PlanStage::work
 
         if (PlanStage::ADVANCED == state) {
             // Save result for later.

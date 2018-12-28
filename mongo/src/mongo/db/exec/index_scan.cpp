@@ -186,7 +186,7 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
 //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
-PlanStage::StageState IndexScan::doWork(WorkingSetID* out) {
+PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中执行
     // Get the next kv pair from the index, if any.
     boost::optional<IndexKeyEntry> kv;
     try {

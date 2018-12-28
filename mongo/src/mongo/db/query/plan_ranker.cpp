@@ -65,7 +65,7 @@ using std::endl;
 using std::vector;
 
 //选择适合的索引  MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
-// static MultiPlanStage::workAllPlans
+// static   MultiPlanStage::pickBestPlan中执行
 size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why) {
     invariant(!candidates.empty());
     invariant(why);
