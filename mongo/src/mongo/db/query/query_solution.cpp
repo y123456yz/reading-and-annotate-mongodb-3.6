@@ -238,6 +238,7 @@ void CollectionScanNode::appendToString(mongoutils::str::stream* ss, int indent)
     addCommon(ss, indent);
 }
 
+//cloneBaseData调用
 QuerySolutionNode* CollectionScanNode::clone() const {
     CollectionScanNode* copy = new CollectionScanNode();
     cloneBaseData(copy);
@@ -297,6 +298,7 @@ bool AndHashNode::hasField(const string& field) const {
     return false;
 }
 
+//cloneBaseData调用
 QuerySolutionNode* AndHashNode::clone() const {
     AndHashNode* copy = new AndHashNode();
     cloneBaseData(copy);
@@ -347,6 +349,7 @@ bool AndSortedNode::hasField(const string& field) const {
     return false;
 }
 
+//cloneBaseData调用
 QuerySolutionNode* AndSortedNode::clone() const {
     AndSortedNode* copy = new AndSortedNode();
     cloneBaseData(copy);

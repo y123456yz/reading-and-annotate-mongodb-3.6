@@ -103,6 +103,7 @@ class RecordId;
  *     } //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
  * } 每个查询计划QuerySolution对应一个计划阶段PlanStage. 见getExecutor
  */ //CachedPlanStage基础该类  MultiPlanStage  ShardFilterStage SortKeyGeneratorStage类继承该类
+//PlanStage种类可以参考prepareExecution->StageBuilder::build->buildStages
 class PlanStage { //赋值见prepareExecution 调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
 public:
     PlanStage(const char* typeName, OperationContext* opCtx)
@@ -344,7 +345,7 @@ public:
 protected:
     /**
      * Performs one unit of work.  See comment at work() above.
-     */ //对应//IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
+     */ //对应//IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)  
     virtual StageState doWork(WorkingSetID* out) = 0;
 
     /**
@@ -392,6 +393,7 @@ protected:
         return _opCtx;
     }
 
+    ////MultiPlanStage::addPlan中赋值
     Children _children;
     //赋值见PlanStage::work
     CommonStats _commonStats;

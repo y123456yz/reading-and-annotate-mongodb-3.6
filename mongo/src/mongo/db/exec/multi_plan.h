@@ -49,7 +49,7 @@ namespace mongo {
  *
  * Owns the query solutions and PlanStage roots for all candidate plans.
  */ //执行计划相关 参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
-//匹配多个执行计划存放到该类中，参考prepareExecution
+//匹配多个执行计划存放到该类中，参考prepareExecution->MultiPlanStage::addPlan  
 class MultiPlanStage final : public PlanStage {
 public:
     /**

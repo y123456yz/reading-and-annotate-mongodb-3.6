@@ -207,7 +207,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
         PlanExecutor::Deleter(opCtx, collection));
 
     // Perform plan selection, if necessary.
-    //PlanExecutor::pickBestPlan
+    //PlanExecutor::pickBestPlan  调用pickBestPlan选取最优的Plan.里面包含了很多不同类型的PlanStage
     Status status = exec->pickBestPlan(collection);
     if (!status.isOK()) {
         return status;

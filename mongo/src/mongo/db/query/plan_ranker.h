@@ -68,7 +68,7 @@ public:
  * A container holding one to-be-ranked plan and its associated/relevant data.
  * Does not own any of its pointers.
  */ //赋值见MultiPlanStage::addPlan
-struct CandidatePlan {
+struct CandidatePlan { //满足条件的索引都转换为PlanStage和对应的QuerySolution存入该结构
     CandidatePlan(QuerySolution* s, PlanStage* r, WorkingSet* w)
         : solution(s), root(r), ws(w), failed(false) {}
 

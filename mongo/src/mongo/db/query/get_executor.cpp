@@ -228,8 +228,9 @@ struct PrepareExecutionResult {
           root(std::move(root)) {}
 
     unique_ptr<CanonicalQuery> canonicalQuery;
+	//querySolution也是数组，成员小标和root小标对应，因为一个QuerySolution对应一个PlanStage
     unique_ptr<QuerySolution> querySolution;
-    unique_ptr<PlanStage> root;
+    unique_ptr<PlanStage> root;  //实际上是一个数组，可能是一个成员，也就是只有一个索引满足条件，也可能是多个成员，表示有多个索引满足条件，参考
 };
 
 /**
@@ -463,7 +464,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         // Only one possible plan.  Run it.  Build the stages from the solution.
         PlanStage* rawRoot;
 		//调用StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
-        verify(
+        verify( //一个QuerySolution对应一个PlanStage
             StageBuilder::build(opCtx, collection, *canonicalQuery, *solutions[0], ws, &rawRoot));
         root.reset(rawRoot);
 
@@ -486,11 +487,12 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
             // version of StageBuild::build when WorkingSet is shared
             PlanStage* nextPlanRoot;
+			//一个QuerySolution对应一个PlanStage
             verify(StageBuilder::build(
                 opCtx, collection, *canonicalQuery, *solutions[ix], ws, &nextPlanRoot));
 
             // Owns none of the arguments  
-            //MultiPlanStage::addPlan
+            //MultiPlanStage::addPlan  把这里的多个满足条件的solutions及其对应的PlanStage加入multiPlanStage类的指定成员
             multiPlanStage->addPlan(solutions[ix], nextPlanRoot, ws);
         }
 

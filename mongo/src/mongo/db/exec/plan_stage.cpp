@@ -77,13 +77,14 @@ namespace mongo {
 #4  0x00007ffa91f6ac55 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7ffa94247740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7ffa9a401640, dbname=..., cmdObj=..., result=...)
 		at src/mongo/db/commands/find_cmd.cpp:370
 	*/ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
+//MultiPlanStage::workAllPlans
 PlanStage::StageState PlanStage::work(WorkingSetID* out) {  
     invariant(_opCtx);
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
     ++_commonStats.works;
 
 	log() << "yang test PlanStage::work";
-    StageState workResult = doWork(out); //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
+    StageState workResult = doWork(out); //有哪些类的doWork需要执行，参考buildStages 如CollectionScan::doWork  IndexScan::doWork  FetchStage::doWork
 
     if (StageState::ADVANCED == workResult) {
         ++_commonStats.advanced;
