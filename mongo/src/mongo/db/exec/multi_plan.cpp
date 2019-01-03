@@ -257,6 +257,8 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // After picking best plan, ranking will own plan stats from
     // candidate solutions (winner and losers).
     std::unique_ptr<PlanRankingDecision> ranking(new PlanRankingDecision);
+
+	
 	//MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用
 	//PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
     _bestPlanIdx = PlanRanker::pickBestPlan(_candidates, ranking.get()); //选择最优的查询计划
@@ -274,7 +276,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     LOG(2) << "Winning plan: " << redact(Explain::getPlanSummary(bestCandidate.root));
 
     _backupPlanIdx = kNoSuchPlan;
-    if (bestSolution->hasBlockingStage && (0 == alreadyProduced.size())) {
+    if (bestSolution->hasBlockingStage && (0 == alreadyProduced.size())) { //该查询计划有阻塞情况，则选择备用的
         LOG(5) << "Winner has blocking stage, looking for backup plan...";
         for (size_t ix = 0; ix < _candidates.size(); ++ix) {
             if (!_candidates[ix].solution->hasBlockingStage) {
@@ -329,7 +331,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
 
     // Store the choice we just made in the cache, if the query is of a type that is safe to
     // cache.
-    if (PlanCache::shouldCacheQuery(*_query) && canCache) {
+    if (PlanCache::shouldCacheQuery(*_query) && canCache) { //把最优的前面几个QuerySolution缓存起来
         // Create list of candidate solutions for the cache with
         // the best solution at the front.
         std::vector<QuerySolution*> solutions;

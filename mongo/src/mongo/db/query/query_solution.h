@@ -45,8 +45,8 @@ class GeoNearExpression;
 /**
  * This is an abstract representation of a query plan.  It can be transcribed into a tree of
  * PlanStages, which can then be handed to a PlanRunner for execution.
- */
-struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的CollectionScanNode等类中继承该类
+ */ //QueryPlannerAccess::buildIndexedDataAccess中生成该类    
+struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的FetchNode CollectionScanNode  AndHashNode等类中继承该类
     QuerySolutionNode() {}
     virtual ~QuerySolutionNode() {
         for (size_t i = 0; i < children.size(); ++i) {
@@ -56,7 +56,7 @@ struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的Collectio
 
     /**
      * Return a std::string representation of this node and any children.
-     */
+     */ //QuerySolutionNode::toString 
     std::string toString() const;
 
     /**

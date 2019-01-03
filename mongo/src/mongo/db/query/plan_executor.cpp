@@ -265,7 +265,7 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
 
     // If we didn't have to do subplanning, we might still have to do regular
     // multi plan selection...
-    foundStage = getStageByType(_root.get(), STAGE_MULTI_PLAN);
+    foundStage = getStageByType(_root.get(), STAGE_MULTI_PLAN); //multi plan
     if (foundStage) {
         MultiPlanStage* mps = static_cast<MultiPlanStage*>(foundStage);
 		//MultiPlanStage::pickBestPlan 
@@ -274,7 +274,7 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
 
     // ...or, we might have to run a plan from the cache for a trial period, falling back on
     // regular planning if the cached plan performs poorly.
-    foundStage = getStageByType(_root.get(), STAGE_CACHED_PLAN);
+    foundStage = getStageByType(_root.get(), STAGE_CACHED_PLAN); //cache plan
     if (foundStage) {
         CachedPlanStage* cachedPlan = static_cast<CachedPlanStage*>(foundStage);
 		//CachedPlanStage::pickBestPlan
@@ -552,6 +552,7 @@ PlanExecutor::ExecState PlanExecutor::waitForInserts(CappedInsertNotifierData* n
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
 //FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
+//PlanExecutor::getNext中调用
 PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, RecordId* dlOut) {
     if (MONGO_FAIL_POINT(planExecutorAlwaysFails)) {
         Status status(ErrorCodes::OperationFailed,
@@ -617,7 +618,7 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
 
         WorkingSetID id = WorkingSet::INVALID_ID;
 		//PlanStage::work
-        PlanStage::StageState code = _root->work(&id);
+        PlanStage::StageState code = _root->work(&id); //PlanStage::work
 
         if (code != PlanStage::NEED_YIELD)
             writeConflictsInARow = 0;

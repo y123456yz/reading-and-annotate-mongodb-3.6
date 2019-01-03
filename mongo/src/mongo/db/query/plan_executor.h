@@ -553,6 +553,7 @@ private:
     // detachFromOperationContext() and reattachToOperationContext().
     OperationContext* _opCtx;
 
+    //¸³Öµ¼ûgetExecutor
     std::unique_ptr<CanonicalQuery> _cq;
     std::unique_ptr<WorkingSet> _workingSet;
     std::unique_ptr<QuerySolution> _qs;

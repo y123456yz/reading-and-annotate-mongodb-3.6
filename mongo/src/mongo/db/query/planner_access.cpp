@@ -1166,7 +1166,8 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedOr(const CanonicalQuery& quer
     return orResult;
 }
 
-// static
+// static   QueryPlanner::plan中调用执行
+//这个函数会根据MatchExpression的节点的类型， 建立对应的QuerySolutionNode节点， 最终形成一个树形的QuerySolutionNode树
 QuerySolutionNode* QueryPlannerAccess::buildIndexedDataAccess(const CanonicalQuery& query,
                                                               MatchExpression* root,
                                                               bool inArrayOperator,

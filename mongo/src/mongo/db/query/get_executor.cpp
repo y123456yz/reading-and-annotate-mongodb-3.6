@@ -406,7 +406,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     }
 
     if (internalQueryPlanOrChildrenIndependently.load() &&
-        SubplanStage::canUseSubplanning(*canonicalQuery)) {
+        SubplanStage::canUseSubplanning(*canonicalQuery)) { //SubplanStage, 主要是针对$or 的处理
         LOG(2) << "Running query as sub-queries: " << redact(canonicalQuery->toStringShort());
 
         root =

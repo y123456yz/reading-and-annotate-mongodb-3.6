@@ -268,6 +268,8 @@ static BSONObj finishMaxObj(const IndexEntry& indexEntry,
     }
 }
 
+//QueryPlanner::plan中调用  
+//没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
 QuerySolution* buildCollscanSoln(const CanonicalQuery& query,
                                  bool tailable,
                                  const QueryPlannerParams& params) {
@@ -291,7 +293,7 @@ bool providesSort(const CanonicalQuery& query, const BSONObj& kp) {
 
 // static
 const int QueryPlanner::kPlannerVersion = 1;
-
+//QueryPlanner::plan中调用
 Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const taggedTree,
                                              const vector<IndexEntry>& relevantIndices,
                                              PlanCacheIndexTree** out) {
@@ -484,7 +486,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
     // Create a copy of the expression tree.  We use cachedSoln to annotate this with indices.
     unique_ptr<MatchExpression> clone = query.root()->shallowClone();
 
-    LOG(5) << "Tagging the match expression according to cache data: " << endl
+    LOG(2) << "Tagging the match expression according to cache data: " << endl
            << "Filter:" << endl
            << redact(clone->toString()) << "Cache data:" << endl
            << redact(winnerCacheData.toString());
@@ -496,7 +498,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
     for (size_t i = 0; i < params.indices.size(); ++i) {
         const IndexEntry& ie = params.indices[i];
         indexMap[ie.name] = i;
-        LOG(5) << "Index " << i << ": " << ie.name;
+        LOG(2) << "Index " << i << ": " << ie.name;
     }
 
     Status s = tagAccordingToCache(clone.get(), winnerCacheData.tree.get(), indexMap);
@@ -507,7 +509,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
     // The MatchExpression tree is in canonical order. We must order the nodes for access planning.
     prepareForAccessPlanning(clone.get());
 
-    LOG(5) << "Tagged tree:" << endl << redact(clone->toString());
+    LOG(2) << "Tagged tree:" << endl << redact(clone->toString());
 
     // Use the cached index assignments to build solnRoot.
     std::unique_ptr<QuerySolutionNode> solnRoot(QueryPlannerAccess::buildIndexedDataAccess(
@@ -528,7 +530,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
                                     << query.toStringShort());
     }
 
-    LOG(5) << "Planner: solution constructed from the cache:\n" << redact(soln->toString());
+    LOG(2) << "Planner: solution constructed from the cache:\n" << redact(soln->toString());
     *out = soln;
     return Status::OK();
 }
@@ -586,27 +588,29 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
 Status QueryPlanner::plan(const CanonicalQuery& query,
                           const QueryPlannerParams& params,
                           std::vector<QuerySolution*>* out) {
-	/*
-	2018-10-31T15:18:19.172+0800 D QUERY    [conn1] Beginning planning...
-	=============================
+	/* db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})对应输出
 	Options = INDEX_INTERSECTION SPLIT_LIMITED_SORT CANNOT_TRIM_IXISECT 
 	Canonical query:
-	ns=sbtest.sbtest1Tree: k == 2927256.0
-	Sort: {}
+	ns=testxx.testTree: $and  //-------> and是因为查询条件是"name":"yangyazhou" 同时(and) "age":22
+		age == 22.0
+		name == "yangyazhou"
+	Sort: { name: 1.0 }
 	Proj: {}
 	=============================
 	*/
-	LOG(5) << "Beginning planning..." << endl
+	LOG(2) << "Beginning planning..." << endl
            << "=============================" << endl
            << "Options = " << optionString(params.options) << endl
            << "Canonical query:" << endl
-           << redact(query.toString()) << "=============================";
+           << redact(query.toString()) << "============================="; //CanonicalQuery::toString
 
-	//打印出索引信息
-	//2018-10-31T15:18:25.315+0800 D QUERY    [conn1] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "sbtest.sbtest1" }
-	//2018-10-31T15:18:25.315+0800 D QUERY    [conn1] Index 1 is kp: { k: 1.0 } name: 'k_1' io: { v: 2, key: { k: 1.0 }, name: "k_1", ns: "sbtest.sbtest1" }
+	//打印出所有索引信息  db.test.find({"name":"yangyazhou"}).sort({"name":1})
+	//2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "testxx.test" }
+	//2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Index 1 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "testxx.test" }
+	//2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Index 2 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "testxx.test" }
+	//2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Index 3 is kp: { name: 1.0, age: 1.0 } name: 'name_1_age_1' io: { v: 2, key: { name: 1.0, age: 1.0 }, name: "name_1_age_1", ns: "testxx.test" }for (size_t i = 0; i < params.indices.size(); ++i) {
     for (size_t i = 0; i < params.indices.size(); ++i) {
-        LOG(5) << "Index " << i << " is " << params.indices[i].toString();
+        LOG(2) << "Index " << i << " is " << params.indices[i].toString();
     }
 
     const bool canTableScan = !(params.options & QueryPlannerParams::NO_TABLE_SCAN);
@@ -616,7 +620,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // tailable set on the collscan.  TODO: This is a policy departure.  Previously I think you
     // could ask for a tailable cursor and it just tried to give you one.  Now, we fail if we
     // can't provide one.  Is this what we want?
-    if (isTailable) {
+    if (isTailable) {//Tailable Cursors相关请求走这里，固定结合才用
         if (!QueryPlannerCommon::hasNode(query.root(), MatchExpression::GEO_NEAR) && canTableScan) {
             QuerySolution* soln = buildCollscanSoln(query, isTailable, params);
             if (NULL != soln) {
@@ -629,6 +633,9 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // The hint or sort can be $natural: 1.  If this happens, output a collscan. If both
     // a $natural hint and a $natural sort are specified, then the direction of the collscan
     // is determined by the sign of the sort (not the sign of the hint).
+
+	//You can specify { $natural : 1 } to force the query to perform a forwards collection scan:
+	//	db.users.find().hint( { $natural : 1 } )
     if (!query.getQueryRequest().getHint().isEmpty() ||
         !query.getQueryRequest().getSort().isEmpty()) {
         BSONObj hintObj = query.getQueryRequest().getHint();
@@ -639,7 +646,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         // A hint overrides a $natural sort. This means that we don't force a table
         // scan if there is a $natural sort with a non-$natural hint.
         if (!naturalHint.eoo() || (!naturalSort.eoo() && hintObj.isEmpty())) {
-            LOG(5) << "Forcing a table scan due to hinted $natural";
+            LOG(2) << "Forcing a table scan due to hinted $natural";
             // min/max are incompatible with $natural.
             if (canTableScan && query.getQueryRequest().getMin().isEmpty() &&
                 query.getQueryRequest().getMax().isEmpty()) {
@@ -656,8 +663,15 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     unordered_set<string> fields;
     QueryPlannerIXSelect::getFields(query.root(), "", &fields);
 
+	/* 如果是db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})
+	2019-01-03T16:58:51.444+0800 D QUERY	[conn1] Predicate over field 'name'
+	2019-01-03T16:58:51.444+0800 D QUERY	[conn1] Predicate over field 'age'
+
+	如果是db.test.find({"name":"yangyazhou"}).sort({"name":1})
+	2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Predicate over field 'name'
+	*/
     for (unordered_set<string>::const_iterator it = fields.begin(); it != fields.end(); ++it) {
-        LOG(5) << "Predicate over field '" << *it << "'"; 
+        LOG(2) << "Predicate over field '" << *it << "'"; 
 		//查找的条件，如db.sbtest1.find({"k":2927256})，这里为 Predicate over field 'k'
     }
 
@@ -669,7 +683,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // the allowed indices for planning, we should not use the hinted index
     // requested in the query.
     BSONObj hintIndex;
-    if (!params.indexFiltersApplied) { //hint指定了固定的索引
+    if (!params.indexFiltersApplied) { 
         hintIndex = query.getQueryRequest().getHint();
     }
 
@@ -679,7 +693,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     //
     // Don't do this if the query is a geonear or text as as text search queries must be answered
     // using full text indices and geoNear queries must be answered using geospatial indices.
-    if (query.getQueryRequest().isSnapshot()) {
+    if (query.getQueryRequest().isSnapshot()) {//查询带Snapshot
         RARELY {
             warning() << "The snapshot option is deprecated. See "
                          "http://dochub.mongodb.org/core/snapshot-deprecation";
@@ -710,7 +724,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     boost::optional<size_t> hintIndexNumber;
 
     if (hintIndex.isEmpty()) { //如果没有强制指定索引
-		//获取满足条件的索引
+		//获取满足条件的索引  把和fields匹配的索引找出来
         QueryPlannerIXSelect::findRelevantIndices(fields, params.indices, &relevantIndices);
     } else {
         // Sigh.  If the hint is specified it might be using the index name.
@@ -719,7 +733,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             string hintName = firstHintElt.String();
             for (size_t i = 0; i < params.indices.size(); ++i) {
                 if (params.indices[i].name == hintName) {
-                    LOG(5) << "Hint by name specified, restricting indices to "
+                    LOG(2) << "Hint by name specified, restricting indices to "
                            << params.indices[i].keyPattern.toString();
                     relevantIndices.clear();
                     relevantIndices.push_back(params.indices[i]);
@@ -733,7 +747,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                 if (0 == params.indices[i].keyPattern.woCompare(hintIndex)) {
                     relevantIndices.clear();
                     relevantIndices.push_back(params.indices[i]);
-                    LOG(5) << "Hint specified, restricting indices to " << hintIndex.toString();
+                    LOG(2) << "Hint specified, restricting indices to " << hintIndex.toString();
                     if (hintIndexNumber) {
                         return Status(ErrorCodes::IndexNotFound,
                                       str::stream() << "Hint matched multiple indexes, "
@@ -770,19 +784,19 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         size_t idxNo = numeric_limits<size_t>::max();
 
         // If there's an index hinted we need to be able to use it.
-        if (!hintIndex.isEmpty()) {
+        if (!hintIndex.isEmpty()) { //强制索引
             invariant(hintIndexNumber);
             const auto& hintedIndexEntry = params.indices[*hintIndexNumber];
 
             if (!minObj.isEmpty() &&
                 !indexCompatibleMaxMin(minObj, query.getCollator(), hintedIndexEntry)) {
-                LOG(5) << "Minobj doesn't work with hint";
+                LOG(2) << "Minobj doesn't work with hint";
                 return Status(ErrorCodes::BadValue, "hint provided does not work with min query");
             }
 
             if (!maxObj.isEmpty() &&
                 !indexCompatibleMaxMin(maxObj, query.getCollator(), hintedIndexEntry)) {
-                LOG(5) << "Maxobj doesn't work with hint";
+                LOG(2) << "Maxobj doesn't work with hint";
                 return Status(ErrorCodes::BadValue, "hint provided does not work with max query");
             }
 
@@ -791,7 +805,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
             // The min must be less than the max for the hinted index ordering.
             if (0 <= finishedMinObj.woCompare(finishedMaxObj, hintedIndexEntry.keyPattern, false)) {
-                LOG(5) << "Minobj/Maxobj don't work with hint";
+                LOG(2) << "Minobj/Maxobj don't work with hint";
                 return Status(ErrorCodes::BadValue,
                               "hint provided does not work with min/max query");
             }
@@ -827,12 +841,12 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         }
 
         if (idxNo == numeric_limits<size_t>::max()) {
-            LOG(5) << "Can't find relevant index to use for max/min query";
+            LOG(2) << "Can't find relevant index to use for max/min query";
             // Can't find an index to use, bail out.
             return Status(ErrorCodes::BadValue, "unable to find relevant index for max/min query");
         }
 
-        LOG(5) << "Max/min query using index " << params.indices[idxNo].toString();
+        LOG(2) << "Max/min query using index " << params.indices[idxNo].toString();
 
         // Make our scan and output.
         std::unique_ptr<QuerySolutionNode> solnRoot(QueryPlannerAccess::makeIndexScan(
@@ -849,8 +863,16 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     for (size_t i = 0; i < relevantIndices.size(); ++i) {
-		//Relevant index 0 is kp: { k: 1.0 } name: 'k_1' io: { v: 2, key: { k: 1.0 }, name: "k_1", ns: "sbtest.sbtest1" }
-        LOG(2) << "Relevant index " << i << " is " << relevantIndices[i].toString();
+	/* db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})
+	2019-01-03T17:57:20.793+0800 D QUERY	[conn1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "testxx.test" }
+	2019-01-03T17:57:20.793+0800 D QUERY	[conn1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "testxx.test" }
+	2019-01-03T17:57:20.793+0800 D QUERY	[conn1] Relevant index 2 is kp: { name: 1.0, age: 1.0 } name: 'name_1_age_1' io: { v: 2, key: { name: 1.0, age: 1.0 }, name: "name_1_age_1", ns: "testxx.test" }
+
+    db.test.find({"name":"yangyazhou"}).sort({"name":1})
+	2019-01-03T17:24:40.440+0800 D QUERY	[conn1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "testxx.test" }
+	2019-01-03T17:24:40.440+0800 D QUERY	[conn1] Relevant index 1 is kp: { name: 1.0, age: 1.0 } name: 'name_1_age_1' io: { v: 2, key: { name: 1.0, age: 1.0 }, name: "name_1_age_1", ns: "testxx.test" }
+	*/
+		LOG(2) << "Relevant index " << i << " is " << relevantIndices[i].toString();
     }
 
     // Figure out how useful each index is to each predicate.
@@ -872,7 +894,17 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     // query.root() is now annotated with RelevantTag(s).
-    LOG(5) << "Rated tree:" << endl << redact(query.root()->toString());
+    /* 
+    db.test.find({"name":"yangyazhou"}).sort({"name":1}):
+		name == "yangyazhou"  || First: 0 1 notFirst: full path: name
+
+	db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1}):
+		$and
+	    age == 22.0  || First: 1 notFirst: 2 full path: age
+	    name == "yangyazhou"  || First: 0 2 notFirst: full path: name
+	*/
+    //QuerySolutionNode::toString
+    LOG(2) << "Rated tree:" << endl << redact(query.root()->toString()); 
 
     // If there is a GEO_NEAR it must have an index it can use directly.
     const MatchExpression* gnNode = NULL;
@@ -880,13 +912,13 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         // No index for GEO_NEAR?  No query.
         RelevantTag* tag = static_cast<RelevantTag*>(gnNode->getTag());
         if (!tag || (0 == tag->first.size() && 0 == tag->notFirst.size())) {
-            LOG(5) << "Unable to find index for $geoNear query.";
+            LOG(2) << "Unable to find index for $geoNear query.";
             // Don't leave tags on query tree.
             query.root()->resetTag();
             return Status(ErrorCodes::BadValue, "unable to find index for $geoNear query");
         }
 
-        LOG(5) << "Rated tree after geonear processing:" << redact(query.root()->toString());
+        LOG(2) << "Rated tree after geonear processing:" << redact(query.root()->toString());
     }
 
     // Likewise, if there is a TEXT it must have an index it can use directly.
@@ -922,7 +954,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         // assigned to it.
         invariant(1 == tag->first.size() + tag->notFirst.size());
 
-        LOG(5) << "Rated tree after text processing:" << redact(query.root()->toString());
+        LOG(2) << "Rated tree after text processing:" << redact(query.root()->toString());
     }
 
     // If we have any relevant indices, we try to create indexed plans.
@@ -938,7 +970,16 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
         unique_ptr<MatchExpression> rawTree;
         while ((rawTree = isp.getNext()) && (out->size() < params.maxIndexedSolutions)) {
-            LOG(5) << "About to build solntree from tagged tree:" << endl
+		/* 
+	    db.test.find({"name":"yangyazhou"}).sort({"name":1}):
+			name == "yangyazhou"  || Selected Index #1 pos 0 combine 1
+
+		db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1}):
+			$and
+				age == 22.0  || Selected Index #2 pos 1 combine 1
+				name == "yangyazhou"  || Selected Index #2 pos 0 combine 1
+		*/
+            LOG(2) << "About to build solntree from tagged tree:" << endl
                    << redact(rawTree.get()->toString());
 
             // Store the plan cache index tree before calling prepareForAccessingPlanning(), so that
@@ -946,10 +987,10 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             // plan cache key.
             std::unique_ptr<MatchExpression> clone(rawTree.get()->shallowClone());
             PlanCacheIndexTree* cacheData;
-            Status indexTreeStatus =
+            Status indexTreeStatus = 
                 cacheDataFromTaggedTree(clone.get(), relevantIndices, &cacheData);
             if (!indexTreeStatus.isOK()) {
-                LOG(5) << "Query is not cachable: " << redact(indexTreeStatus.reason());
+                LOG(2) << "Query is not cachable: " << redact(indexTreeStatus.reason());
             }
             unique_ptr<PlanCacheIndexTree> autoData(cacheData);
 
@@ -957,6 +998,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             // access planning.
             prepareForAccessPlanning(rawTree.get());
 
+			//QueryPlannerAccess::buildIndexedDataAccess
             // This can fail if enumeration makes a mistake.
             std::unique_ptr<QuerySolutionNode> solnRoot(QueryPlannerAccess::buildIndexedDataAccess(
                 query, rawTree.release(), false, relevantIndices, params));
@@ -965,10 +1007,11 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                 continue;
             }
 
+			//获取对应QuerySolution
             QuerySolution* soln =
                 QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
             if (NULL != soln) {
-                LOG(5) << "Planner: adding solution:" << endl << redact(soln->toString());
+                LOG(2) << "Planner: adding solution:" << endl << redact(soln->toString());//QuerySolutionNode::toString
                 if (indexTreeStatus.isOK()) {
                     SolutionCacheData* scd = new SolutionCacheData();
                     scd->tree.reset(autoData.release());
@@ -982,7 +1025,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // Don't leave tags on query tree.
     query.root()->resetTag();
 
-    LOG(5) << "Planner: outputted " << out->size() << " indexed solutions."; //满足条件的索引个数
+    LOG(2) << "Planner: outputted " << out->size() << " indexed solutions."; //满足条件的索引个数
 
     // Produce legible error message for failed OR planning with a TEXT child.
     // TODO: support collection scan for non-TEXT children of OR.
@@ -1006,7 +1049,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             // a solution in the case where a filtering QueryPlannerParams argument, such as
             // NO_BLOCKING_SORT, leads to its exclusion.
             if (auto soln = buildWholeIXSoln(params.indices[*hintIndexNumber], query, params)) {
-                LOG(5) << "Planner: outputting soln that uses hinted index as scan.";
+                LOG(2) << "Planner: outputting soln that uses hinted index as scan.";
                 out->push_back(soln);
             }
         }
@@ -1068,7 +1111,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
                 const BSONObj kp = QueryPlannerAnalysis::getSortPattern(index.keyPattern);
                 if (providesSort(query, kp)) {
-                    LOG(5) << "Planner: outputting soln that uses index to provide sort.";
+                    LOG(2) << "Planner: outputting soln that uses index to provide sort.";
                     QuerySolution* soln = buildWholeIXSoln(params.indices[i], query, params);
                     if (NULL != soln) {
                         PlanCacheIndexTree* indexTree = new PlanCacheIndexTree();
@@ -1084,7 +1127,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                     }
                 }
                 if (providesSort(query, QueryPlannerCommon::reverseSortObj(kp))) {
-                    LOG(5) << "Planner: outputting soln that uses (reverse) index "
+                    LOG(2) << "Planner: outputting soln that uses (reverse) index "
                            << "to provide sort.";
                     QuerySolution* soln = buildWholeIXSoln(params.indices[i], query, params, -1);
                     if (NULL != soln) {
@@ -1122,7 +1165,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                 params.options | QueryPlannerParams::NO_UNCOVERED_PROJECTIONS;
             auto soln = buildWholeIXSoln(index, query, paramsForCoveredIxScan);
             if (soln) {
-                LOG(5) << "Planner: outputting soln that uses index to provide projection.";
+                LOG(2) << "Planner: outputting soln that uses index to provide projection.";
                 PlanCacheIndexTree* indexTree = new PlanCacheIndexTree();
                 indexTree->setIndexEntry(index);
 
@@ -1151,13 +1194,14 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     bool collscanNeeded = (0 == out->size() && canTableScan);
 
     if (possibleToCollscan && (collscanRequested || collscanNeeded)) {
+		//没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，上面如果有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
         QuerySolution* collscan = buildCollscanSoln(query, isTailable, params);
         if (NULL != collscan) {
             SolutionCacheData* scd = new SolutionCacheData();
             scd->solnType = SolutionCacheData::COLLSCAN_SOLN;
             collscan->cacheData.reset(scd);
             out->push_back(collscan);
-            LOG(5) << "Planner: outputting a collscan:" << endl << redact(collscan->toString());
+            LOG(2) << "Planner: outputting a collscan:" << endl << redact(collscan->toString());
         }
     }
 

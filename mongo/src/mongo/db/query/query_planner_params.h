@@ -36,7 +36,7 @@
 
 namespace mongo {
 
-//prepareExecution中使用  fillOutPlannerParams中赋值
+//prepareExecution中使用  fillOutPlannerParams中赋值，把集合对应的所有索引添加到indices数组
 struct QueryPlannerParams {
     QueryPlannerParams()
         : options(DEFAULT),
@@ -117,7 +117,7 @@ struct QueryPlannerParams {
     BSONObj shardKey;
 
     // Were index filters applied to indices?
-    bool indexFiltersApplied;
+    bool indexFiltersApplied; //fillOutPlannerParams中赋值
 
     // What's the max number of indexed solutions we want to output?  It's expensive to compare
     // plans via the MultiPlanStage, and the set of possible plans is very large for certain

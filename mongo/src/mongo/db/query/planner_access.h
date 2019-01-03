@@ -91,7 +91,7 @@ namespace mongo {
 
 /**
  * Methods for creating a QuerySolutionNode tree that accesses the data required by the query.
- */
+ */ //QueryPlannerAccess的主要作用是根据MatchExpression和index 产生一个QuerySolutionNode
 class QueryPlannerAccess {
 public:
     /**

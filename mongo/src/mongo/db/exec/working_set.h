@@ -250,7 +250,7 @@ private:
  *
  * A WorkingSetMember may have any of the data above.
  */ //²Î¿¼PlanExecutor::getNextImpl
-class WorkingSetMember {
+class WorkingSetMember { //
     MONGO_DISALLOW_COPYING(WorkingSetMember);
 
 public:

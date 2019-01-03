@@ -77,7 +77,7 @@ namespace mongo {
 #4  0x00007ffa91f6ac55 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7ffa94247740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7ffa9a401640, dbname=..., cmdObj=..., result=...)
 		at src/mongo/db/commands/find_cmd.cpp:370
 	*/ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
-//MultiPlanStage::workAllPlans
+//MultiPlanStage::workAllPlans  PlanExecutor::getNextImpl中执行
 PlanStage::StageState PlanStage::work(WorkingSetID* out) {  
     invariant(_opCtx);
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);

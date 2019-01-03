@@ -83,7 +83,7 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
     // Copy stats trees instead of transferring ownership
     // because multi plan runner will need its own stats
     // trees for explain.
-    for (size_t i = 0; i < candidates.size(); ++i) {
+    for (size_t i = 0; i < candidates.size(); ++i) { //每个查询计划的分数记录到statTrees
         statTrees.push_back(candidates[i].root->getStats());
     }
 
@@ -106,14 +106,17 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
 		*/
         double score = scoreTree(statTrees[i].get()); //打分
         LOG(5) << "score = " << score;
-        if (statTrees[i]->common.isEOF) {
+        if (statTrees[i]->common.isEOF) { //如果状态为IS_EOF则加一分，所以一般达到IS_EOF状态的索引都会被选中为最优执行计划。
             LOG(5) << "Adding +" << eofBonus << " EOF bonus to score.";
             score += 1;
         }
+
+		//每个查询计划(对应i)及其分数score放入scoresAndCandidateindices数组对
         scoresAndCandidateindices.push_back(std::make_pair(score, i));
     }
 
     // Sort (scores, candidateIndex). Get best child and populate candidate ordering.
+    //分数排序
     std::stable_sort(
         scoresAndCandidateindices.begin(), scoresAndCandidateindices.end(), scoreComparator);
 
@@ -122,6 +125,7 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
         double bestScore = scoresAndCandidateindices[0].first;
         double runnerUpScore = scoresAndCandidateindices[1].first;
         const double epsilon = 1e-10;
+		//最优的查询计划比第二优的查询计划得分小于1e-10，tieForBest为1，否则为0，
         why->tieForBest = std::abs(bestScore - runnerUpScore) < epsilon;
     }
 
@@ -162,7 +166,7 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
         why->candidateOrder.push_back(candidateIndex);
     }
 
-    size_t bestChild = scoresAndCandidateindices[0].second;
+    size_t bestChild = scoresAndCandidateindices[0].second; //第0个成员是分数最高的，也就是最优的
     return bestChild;
 }
 
@@ -219,6 +223,8 @@ double PlanRanker::scoreTree(const PlanStageStats* stats) {
 
     // How much did a plan produce?
     // Range: [0, 1]
+    //这里的common.advanced是每个索引扫描的时候是否能在collection拿到符合条件的记录，
+    //如果能拿到记录那么common.advanced就加1，workUnits则是总共扫描的次数
     double productivity =
         static_cast<double>(stats->common.advanced) / static_cast<double>(workUnits);
 
@@ -231,6 +237,7 @@ double PlanRanker::scoreTree(const PlanStageStats* stats) {
     // We only do this when we have a projection stage because we have so many jstests that
     // check bounds even when a collscan plan is just as good as the ixscan'd plan :(
     double noFetchBonus = epsilon;
+	//STAGE_PROJECTION&&STAGE_FETCH（限定返回字段）
     if (hasStage(STAGE_PROJECTION, stats) && hasStage(STAGE_FETCH, stats)) {
         noFetchBonus = 0;
     }
@@ -238,7 +245,7 @@ double PlanRanker::scoreTree(const PlanStageStats* stats) {
     // In the case of ties, prefer solutions without a blocking sort
     // to solutions with a blocking sort.
     double noSortBonus = epsilon;
-    if (hasStage(STAGE_SORT, stats)) {
+    if (hasStage(STAGE_SORT, stats)) { //STAGE_SORT（避免排序）
         noSortBonus = 0;
     }
 
@@ -252,15 +259,26 @@ double PlanRanker::scoreTree(const PlanStageStats* stats) {
     // allows us to examine fewer documents, the penalty given to ixisect
     // can be made up via the no fetch bonus.
     double noIxisectBonus = epsilon;
+	//STAGE_AND_HASH || STAGE_AND_SORTED（这个主要在交叉索引时产生）
     if (hasStage(STAGE_AND_HASH, stats) || hasStage(STAGE_AND_SORTED, stats)) {
         noIxisectBonus = 0;
     }
 
+	/*
+	然后我们再看tieBreakers，它是由noFetchBonus和noSortBonus和noIxisectBonus总和构成的。我们根据上述代码
+	可以看到这三个值主要是控制MongoDB不要选择如下状态的：
+	
+	STAGE_PROJECTION&&STAGE_FETCH（限定返回字段）
+	STAGE_SORT（避免排序）
+	STAGE_AND_HASH || STAGE_AND_SORTED（这个主要在交叉索引时产生）
+	它们的出现都比较影响性能，所以一旦它们出现，相应的值都会被设置成0.
+	*/
     double tieBreakers = noFetchBonus + noSortBonus + noIxisectBonus;
     double score = baseScore + productivity + tieBreakers;
 
     mongoutils::str::stream ss;
     ss << "score(" << score << ") = baseScore(" << baseScore << ")"
+    //LOG(2) << "score(" << score << ") = baseScore(" << baseScore << ")"
        << " + productivity((" << stats->common.advanced << " advanced)/(" << stats->common.works
        << " works) = " << productivity << ")"
        << " + tieBreakers(" << noFetchBonus << " noFetchBonus + " << noSortBonus

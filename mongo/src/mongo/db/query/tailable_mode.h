@@ -35,6 +35,8 @@ namespace mongo {
 
 enum class TailableMode {
     kNormal,
+    //http://blog.51cto.com/ultrasql/1789038  MongoDB Tailable Cursors深入剖析 http://www.dedecms.com/knowledge/data-base/nosql/2012/0820/8877.html
+    //MongoDB Tailable Cursors 是一个类似于UNIX tail -f 命令的功能，它使用在MongoDB的capped collection上
     kTailable,
     kTailableAndAwaitData,
 };

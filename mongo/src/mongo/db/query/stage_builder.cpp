@@ -65,7 +65,7 @@ namespace mongo {
 
 using std::unique_ptr;
 using stdx::make_unique;
-//StageBuilder::build调用
+//prepareExecution->StageBuilder::build调用  配合prepareExecution阅读
 PlanStage* buildStages(OperationContext* opCtx,
                        Collection* collection,
                        const CanonicalQuery& cq,
@@ -423,3 +423,4 @@ bool StageBuilder::build(OperationContext* opCtx,
 }
 
 }  // namespace mongo
+

@@ -38,6 +38,7 @@ namespace mongo {
 class ClockSource;
 class RecordFetcher;
 
+//参考http://www.mongoing.com/archives/5476  让出请求查询的CPU时间片相关
 class PlanYieldPolicy {
 public:
     virtual ~PlanYieldPolicy() {}

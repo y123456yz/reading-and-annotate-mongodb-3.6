@@ -50,9 +50,9 @@ namespace mongo {
  * Owns the query solutions and PlanStage roots for all candidate plans.
  */ //执行计划相关 参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
 //匹配多个执行计划存放到该类中，参考prepareExecution->MultiPlanStage::addPlan  
-class MultiPlanStage final : public PlanStage {
+class MultiPlanStage final : public PlanStage { //MultiPlanStage由多个PlanStage构成，参考prepareExecution
 public:
-    /**
+    /** 
      * Callers use this to specify how the MultiPlanStage should interact with the plan cache.
      */
     enum class CachingMode {
@@ -199,7 +199,7 @@ private:
 
     // index into _candidates, of the winner of the plan competition
     // uses -1 / kNoSuchPlan when best plan is not (yet) known
-    int _bestPlanIdx;
+    int _bestPlanIdx; //最优的查询计划所在_candidates数组中的下标，见MultiPlanStage::pickBestPlan
 
     // index into _candidates, of the backup plan for sort
     // uses -1 / kNoSuchPlan when best plan is not (yet) known
