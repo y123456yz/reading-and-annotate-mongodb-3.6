@@ -56,7 +56,7 @@ public:
 
     virtual ~IndexTag() {}
 
-    virtual void debugString(StringBuilder* builder) const {
+    virtual void debugString(StringBuilder* builder) const { 
         *builder << " || Selected Index #" << index << " pos " << pos << " combine "
                  << canCombineBounds;
     }
@@ -84,7 +84,7 @@ public:
     bool canCombineBounds = true;
 };
 
-// used internally
+// used internally  QueryPlannerIXSelect::rateIndicesÖÐÊ¹ÓÃ
 class RelevantTag : public MatchExpression::TagData {
 public:
     RelevantTag() : elemMatchExpr(NULL), pathPrefix("") {}

@@ -41,7 +41,16 @@
 namespace mongo {
 
 class OperationContext;
-
+/*查询计划相关参考
+https://blog.csdn.net/baijiwei/article/details/78170387
+https://blog.csdn.net/baijiwei/article/details/78128632
+https://blog.csdn.net/baijiwei/article/details/78195766
+https://blog.csdn.net/joy0921/article/details/80131186
+https://segmentfault.com/a/1190000015236644
+https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
+https://blog.csdn.net/baijiwei/article/details/78127191
+https://blog.csdn.net/baijiwei/article/category/7189912
+*/
 //执行计划 优化器可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
 //规范查询，见FindCmd::run  
 class CanonicalQuery { 
@@ -198,6 +207,7 @@ private:
     //参考https://blog.csdn.net/baijiwei/article/details/78170387
 
     // _root points into _qr->getFilter()
+    //参考https://blog.csdn.net/baijiwei/article/details/78170387
     //MatchExpression是将filter算子里每个逻辑运算转换成各个类型的表达式(GT,ET,LT,AND,OR...)，构成一个表达式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
     std::unique_ptr<MatchExpression> _root; 
 

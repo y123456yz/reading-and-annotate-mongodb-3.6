@@ -373,7 +373,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
 		//->IndexScan::doWork->IndexScan::initIndexScan
         while (!FindCommon::enoughForFirstBatch(originalQR, numResults) &&
 			   //获取满足条件的数据  //FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
-               PlanExecutor::ADVANCED == (state = exec->getNext(&obj, NULL))) {
+               PlanExecutor::ADVANCED == (state = exec->getNext(&obj, NULL))) { //PlanExecutor::getNext
             // If we can't fit this result inside the current batch, then we stash it for later.
             if (!FindCommon::haveSpaceForNext(obj, numResults, firstBatch.bytesUsed())) {
                 exec->enqueue(obj); //PlanExecutor::enqueue  当取得的结果集满足一次返回的数量,将退出循环.

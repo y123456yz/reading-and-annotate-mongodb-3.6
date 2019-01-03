@@ -145,7 +145,7 @@ struct PlanCacheIndexTree {
  * used to create a cache entry. When this data is retrieved
  * from the cache, it is sufficient to reconstruct the original
  * QuerySolution.
- */
+ */ //QueryPlanner::plan÷–ππ‘Ï
 struct SolutionCacheData {
     SolutionCacheData()
         : tree(nullptr),

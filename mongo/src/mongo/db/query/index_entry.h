@@ -42,7 +42,8 @@ class MatchExpression;
 
 /**
  * This name sucks, but every name involving 'index' is used somewhere.
- */ //QueryPlannerParams.indices成员为该类型，代表一个索引实例，一条索引的详细信息就记录在该结构中
+ */ //QueryPlannerParams.indices(集合对应的所有IndexEntry都存入该数组)成员为该类型，
+ //代表一个索引实例，一条索引的详细信息就记录在该结构中
  //赋值参考fillOutPlannerParams
 struct IndexEntry { //IndexEntry中的取值实际上是从IndexDescriptor获取的，参考fillOutPlannerParams
     /**

@@ -153,7 +153,7 @@ void addEqualityFieldSorts(const BSONObj& sortPattern,
 
 string QuerySolutionNode::toString() const {
     mongoutils::str::stream ss;
-    appendToString(&ss, 0);
+    appendToString(&ss, 0); //CountScanNode::appendToString  SortNode::appendToStringµ» µœ÷
     return ss;
 }
 

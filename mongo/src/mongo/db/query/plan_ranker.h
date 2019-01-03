@@ -67,7 +67,7 @@ public:
 /**
  * A container holding one to-be-ranked plan and its associated/relevant data.
  * Does not own any of its pointers.
- */ //¸³Öµ¼ûMultiPlanStage::addPlan
+ */ //¸³Öµ¼ûMultiPlanStage::addPlan    ¸Ã½á¹¹×îÖÕ´æÈëMultiPlanStage._candidatesÊı×é³ÉÔ±
 struct CandidatePlan { //Âú×ãÌõ¼şµÄË÷Òı¶¼×ª»»ÎªPlanStageºÍ¶ÔÓ¦µÄQuerySolution´æÈë¸Ã½á¹¹
     CandidatePlan(QuerySolution* s, PlanStage* r, WorkingSet* w)
         : solution(s), root(r), ws(w), failed(false) {}
@@ -86,7 +86,7 @@ struct CandidatePlan { //Âú×ãÌõ¼şµÄË÷Òı¶¼×ª»»ÎªPlanStageºÍ¶ÔÓ¦µÄQuerySolution´æÈ
 /**
  * Information about why a plan was picked to be the best.  Data here is placed into the cache
  * and used to compare expected performance with actual.
- */
+ */ //MultiPlanStage::pickBestPlanÖĞ»áÓÃµ½
 struct PlanRankingDecision {
     PlanRankingDecision() {}
 
@@ -107,11 +107,11 @@ struct PlanRankingDecision {
 
     // Stats of all plans sorted in descending order by score.
     // Owned by us.
-    std::vector<std::unique_ptr<PlanStageStats>> stats;
+    std::vector<std::unique_ptr<PlanStageStats>> stats; //¸³Öµ²Î¿¼PlanRanker::pickBestPlan
 
     // The "goodness" score corresponding to 'stats'.
     // Sorted in descending order.
-    std::vector<double> scores;
+    std::vector<double> scores; //¸³Öµ²Î¿¼PlanRanker::pickBestPlan
 
     // Ordering of original plans in descending of score.
     // Filled in by PlanRanker::pickBestPlan(candidates, ...)
@@ -119,13 +119,14 @@ struct PlanRankingDecision {
     // with corresponding cores[0] and stats[0]. Runner-up would be
     // candidates[candidateOrder[1]] followed by
     // candidates[candidateOrder[2]], ...
-    std::vector<size_t> candidateOrder;
+    std::vector<size_t> candidateOrder; //¸³Öµ²Î¿¼PlanRanker::pickBestPlan
 
     // Whether two plans tied for the win.
     //
     // Reading this flag is the only reliable way for callers to determine if there was a tie,
     // because the scores kept inside the PlanRankingDecision do not incorporate the EOF bonus.
-    bool tieForBest = false;
+    //×îÓÅµÄ²éÑ¯¼Æ»®±ÈµÚ¶şÓÅµÄ²éÑ¯¼Æ»®µÃ·ÖĞ¡ÓÚ1e-10£¬tieForBestÎª1£¬·ñÔòÎª0£¬
+    bool tieForBest = false; //¸³Öµ²Î¿¼PlanRanker::pickBestPlan
 };
 
 }  // namespace mongo

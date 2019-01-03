@@ -138,6 +138,11 @@ static bool boundsGeneratingNodeContainsComparisonToType(MatchExpression* node, 
     return false;
 }
 
+/* db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})
+2019-01-03T16:58:51.444+0800 D QUERY	[conn1] Predicate over field 'name'
+2019-01-03T16:58:51.444+0800 D QUERY	[conn1] Predicate over field 'age'
+*/
+//获取所有的查询条件，填充到out数组   QueryPlanner::plan中调用执行
 // static
 void QueryPlannerIXSelect::getFields(const MatchExpression* node,
                                      string prefix,
@@ -163,10 +168,10 @@ void QueryPlannerIXSelect::getFields(const MatchExpression* node,
         }
 
         for (size_t i = 0; i < node->numChildren(); ++i) {
-            getFields(node->getChild(i), prefix, out);
+            getFields(node->getChild(i), prefix, out); //递归调用
         }
     } else if (node->getCategory() == MatchExpression::MatchCategory::kLogical) {
-        for (size_t i = 0; i < node->numChildren(); ++i) {
+        for (size_t i = 0; i < node->numChildren(); ++i) { //递归调用
             getFields(node->getChild(i), prefix, out);
         }
     }
@@ -383,8 +388,14 @@ bool QueryPlannerIXSelect::compatible(const BSONElement& elt,
     }
 }
 
-// static
-void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
+// static  QueryPlanner::plan中调用  
+//程序走到这里， MatchExpression的每一个节点对应的TagData*或者RelevantTag* 字段还是空的,给MatchExpression._tagData赋值
+/*
+对于每一个节点， 我们把第一个匹配的index放在RelevantTag 的first
+字段， 其他的匹配的index放进notfirst 字段；如果是NOT， 找到他的子节点； 如果是逻辑节点， 
+使用它的所有的子节点进行深度优先的遍历。 
+*/
+void QueryPlannerIXSelect::rateIndices(MatchExpression* node,   
                                        string prefix,
                                        const vector<IndexEntry>& indices,
                                        const CollatorInterface* collator) {

@@ -66,7 +66,7 @@ class OperationContext;
  *   another rooted $or query, or shape C as its own query.
  *
  *   --Plans for entire rooted $or queries are neither written to nor read from the plan cache.
- */
+ */ //SubplanStage, 主要是针对$or 的处理
 class SubplanStage final : public PlanStage {
 public:
     SubplanStage(OperationContext* opCtx,

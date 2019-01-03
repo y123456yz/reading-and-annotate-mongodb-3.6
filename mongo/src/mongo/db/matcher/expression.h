@@ -242,7 +242,7 @@ public:
 
     /**
      * Takes ownership
-     */
+     */ //QueryPlannerIXSelect::rateIndices中调用
     void setTag(TagData* data) {
         _tagData.reset(data);
     }
@@ -320,6 +320,7 @@ private:
     virtual ExpressionOptimizerFunc getOptimizer() const = 0;
 
     MatchType _matchType;
-    std::unique_ptr<TagData> _tagData;
+    //QueryPlannerIXSelect::rateIndices中赋值
+    std::unique_ptr<TagData> _tagData; 
 };
 }

@@ -54,7 +54,7 @@ struct SpecificStats {
 };
 
 // Every stage has CommonStats.
-struct CommonStats {
+struct CommonStats { //算分用的该类，参考PlanStage::work 
     CommonStats(const char* type)
         : stageTypeStr(type),
           works(0),
@@ -70,15 +70,15 @@ struct CommonStats {
     const char* stageTypeStr;
 
     // Count calls into the stage.
-    size_t works;
+    size_t works; //PlanStage::work中赋值，总次数
     size_t yields;
     size_t unyields;
     size_t invalidates;
 
     // How many times was this state the return value of work(...)?
-    size_t advanced;
-    size_t needTime;
-    size_t needYield;
+    size_t advanced;//赋值见PlanStage::work PlanRanker::scoreTree算分的时候，会用到
+    size_t needTime;//赋值见PlanStage::work
+    size_t needYield; //赋值见PlanStage::work
 
     // BSON representation of a MatchExpression affixed to this node. If there
     // is no filter affixed, then 'filter' should be an empty BSONObj.
@@ -94,7 +94,10 @@ struct CommonStats {
     // the user, eg. time_t totalTimeSpent;
 
     // TODO: keep track of the total yield time / fetch time done for a plan.
-
+    //在MongoDB扫描A次的时候，如果某个索引的命中数量小于A次，那它必然会提前扫描完，然后标志位状态为IS_EOF
+    //参考https://segmentfault.com/a/1190000015236644
+    //参考PlanRanker::pickBestPlan
+    //如果状态为IS_EOF则加一分，所以一般达到IS_EOF状态的索引都会被选中为最优执行计划。
     bool isEOF;
 
 private:
@@ -125,7 +128,8 @@ struct PlanStageStats {
     StageType stageType;
 
     // Stats exported by implementing the PlanStage interface.
-    CommonStats common;
+    //算分用的该类，参考PlanStage::work 
+    CommonStats common; 
 
     // Per-stage place to stash additional information
     std::unique_ptr<SpecificStats> specific;

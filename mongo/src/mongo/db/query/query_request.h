@@ -462,6 +462,7 @@ private:
     NamespaceString _nss;
     OptionalCollectionUUID _uuid;
 
+    //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
     BSONObj _filter;
     BSONObj _proj;
     BSONObj _sort;
@@ -513,6 +514,7 @@ private:
 
     bool _returnKey = false;
     bool _showRecordId = false;
+    //参考https://www.cnblogs.com/silentcross/archive/2011/07/04/2095424.html  查询带snapshot
     bool _snapshot = false;
     bool _hasReadPref = false;
 
