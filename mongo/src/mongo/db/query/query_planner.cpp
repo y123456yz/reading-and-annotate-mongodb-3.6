@@ -278,6 +278,7 @@ QuerySolution* buildCollscanSoln(const CanonicalQuery& query,
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
 
+//QueryPlanner::plan
 QuerySolution* buildWholeIXSoln(const IndexEntry& index,
                                 const CanonicalQuery& query,
                                 const QueryPlannerParams& params,
@@ -965,6 +966,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         enumParams.root = query.root();
         enumParams.indices = &relevantIndices;
 
+		//类PlanEnumerator 罗列MatchExpression的各种可能的组合， （indexScan & collectionScan等）， 生成具体的MatchExpression
         PlanEnumerator isp(enumParams);
         isp.init().transitional_ignore();
 
@@ -1050,6 +1052,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             // NO_BLOCKING_SORT, leads to its exclusion.
             if (auto soln = buildWholeIXSoln(params.indices[*hintIndexNumber], query, params)) {
                 LOG(2) << "Planner: outputting soln that uses hinted index as scan.";
+				LOG(2) << "Planner: outputting a buildWholeIXSoln:" << endl << redact(soln->toString());
                 out->push_back(soln);
             }
         }
@@ -1058,7 +1061,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // If a sort order is requested, there may be an index that provides it, even if that
     // index is not over any predicates in the query.
-    //
+    //sort排序
     if (!query.getQueryRequest().getSort().isEmpty() &&
         !QueryPlannerCommon::hasNode(query.root(), MatchExpression::GEO_NEAR) &&
         !QueryPlannerCommon::hasNode(query.root(), MatchExpression::TEXT)) {
@@ -1120,6 +1123,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                         scd->tree.reset(indexTree);
                         scd->solnType = SolutionCacheData::WHOLE_IXSCAN_SOLN;
                         scd->wholeIXSolnDir = 1;
+						LOG(2) << "Planner: outputting a buildWholeIXSoln:" << endl << redact(soln->toString());
 
                         soln->cacheData.reset(scd);
                         out->push_back(soln);
@@ -1137,6 +1141,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                         scd->tree.reset(indexTree);
                         scd->solnType = SolutionCacheData::WHOLE_IXSCAN_SOLN;
                         scd->wholeIXSolnDir = -1;
+						LOG(2) << "Planner: outputting a buildWholeIXSoln:" << endl << redact(soln->toString());
 
                         soln->cacheData.reset(scd);
                         out->push_back(soln);
@@ -1166,6 +1171,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             auto soln = buildWholeIXSoln(index, query, paramsForCoveredIxScan);
             if (soln) {
                 LOG(2) << "Planner: outputting soln that uses index to provide projection.";
+				LOG(2) << "Planner: outputting a buildWholeIXSoln:" << endl << redact(soln->toString());
                 PlanCacheIndexTree* indexTree = new PlanCacheIndexTree();
                 indexTree->setIndexEntry(index);
 

@@ -52,10 +52,15 @@ typedef StatusWith<std::unique_ptr<MatchExpression>> StatusWithMatchExpression;
 //式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
 //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.477e4df3lsZUre
 //参考https://blog.csdn.net/baijiwei/article/details/78170387
+/* 
+MatchExpression 是查询过程的第一步， 它是由一个Bson生成的， 根据bson的的各种设定， 产生一个树 型的expression结构， 
+该树形结构中的节点是有一个个的查询操作符。 理解和掌握Mongodb里面第一的操作 符的类型和属性， 是掌握MatchExpression的关键。
+https://blog.csdn.net/baijiwei/article/details/78122733
+*/
 
 //CanonicalQuery._root  QuerySolutionNode.filter成员是该类型  一个filter对应一个MatchExpression
 //所有的QuerySolutionNode(代表CanonicalQuery._root树中的一个节点，对应一个MatchExpression)组成一颗树
-class MatchExpression { 
+class MatchExpression { //很多的xxxMatchExpression继承该类
 //AlwaysBooleanMatchExpression  AlwaysBooleanMatchExpression  ExprMatchExpression等继承该类
     MONGO_DISALLOW_COPYING(MatchExpression);
 

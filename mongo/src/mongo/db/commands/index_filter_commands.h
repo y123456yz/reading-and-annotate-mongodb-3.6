@@ -48,7 +48,7 @@ namespace mongo {
  * IndexFilterCommand
  * Defines common attributes for all index filter related commands
  * such as slaveOk.
- */
+ */ //²Î¿¼http://www.mongoing.com/eshu_explain2
 class IndexFilterCommand : public BasicCommand {
 public:
     IndexFilterCommand(const std::string& name, const std::string& helpText);

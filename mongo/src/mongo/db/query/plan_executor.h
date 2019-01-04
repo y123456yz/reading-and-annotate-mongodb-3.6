@@ -557,6 +557,7 @@ private:
     std::unique_ptr<CanonicalQuery> _cq;
     std::unique_ptr<WorkingSet> _workingSet;
     std::unique_ptr<QuerySolution> _qs;
+    //PlanExecutor::getNextImpl中执行对应PlanStage
     std::unique_ptr<PlanStage> _root;
 
     // If _killReason has a value, then we have been killed and the value represents the reason for

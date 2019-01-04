@@ -47,7 +47,7 @@ class OperationContext;
  * there are no more records in the collection.
  *
  * Preconditions: Valid RecordId.
- */
+ */ //buildStages中构造使用
 class CollectionScan final : public PlanStage {
 public:
     CollectionScan(OperationContext* opCtx,

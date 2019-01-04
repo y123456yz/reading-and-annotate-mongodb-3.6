@@ -34,44 +34,44 @@ namespace mongo {
  * These map to implementations of the PlanStage interface, all of which live in db/exec/
  */
 enum StageType { //参考PlanStage* buildStages
-    STAGE_AND_HASH,
-    STAGE_AND_SORTED,
-    STAGE_CACHED_PLAN,
+    STAGE_AND_HASH, //0
+    STAGE_AND_SORTED,  //1
+    STAGE_CACHED_PLAN, //2
     STAGE_COLLSCAN,  //全表扫描   //例如CollectionScanNode赋值参考CollectionScanNode::getType
 
     // This stage sits at the root of the query tree and counts up the number of results
     // returned by its child.
-    STAGE_COUNT,
+    STAGE_COUNT, //4
 
     // If we're running a .count(), the query is fully covered by one ixscan, and the ixscan is
     // from one key to another, we can just skip through the keys without bothering to examine
     // them.
-    STAGE_COUNT_SCAN,
+    STAGE_COUNT_SCAN,//5
 
-    STAGE_DELETE,
+    STAGE_DELETE,//6
 
     // If we're running a distinct, we only care about one value for each key.  The distinct
     // scan stage is an ixscan with some key-skipping behvaior that only distinct uses.
-    STAGE_DISTINCT_SCAN,
+    STAGE_DISTINCT_SCAN,//7
 
     // Dummy stage used for receiving notifications of deletions during chunk migration.
-    STAGE_NOTIFY_DELETE,
+    STAGE_NOTIFY_DELETE,//8
 
-    STAGE_ENSURE_SORTED,
+    STAGE_ENSURE_SORTED,//9
 
-    STAGE_EOF,
+    STAGE_EOF,//10
 
     // This is more of an "internal-only" stage where we try to keep docs that were mutated
     // during query execution.
-    STAGE_KEEP_MUTATIONS,
+    STAGE_KEEP_MUTATIONS,  
 
-    STAGE_FETCH,
+    STAGE_FETCH, //12  FetchStage
 
     // The two $geoNear impls imply a fetch+sort and must be stages.
     STAGE_GEO_NEAR_2D,
     STAGE_GEO_NEAR_2DSPHERE,
 
-    STAGE_GROUP,
+    STAGE_GROUP, //15
 
     STAGE_IDHACK,
 
@@ -82,7 +82,7 @@ enum StageType { //参考PlanStage* buildStages
     STAGE_LIMIT,
 
     // Implements parallelCollectionScan.
-    STAGE_MULTI_ITERATOR,
+    STAGE_MULTI_ITERATOR, //20
 
     STAGE_MULTI_PLAN,
     STAGE_OPLOG_START,
@@ -90,20 +90,20 @@ enum StageType { //参考PlanStage* buildStages
     STAGE_PROJECTION,
 
     // Stage for running aggregation pipelines.
-    STAGE_PIPELINE_PROXY,
+    STAGE_PIPELINE_PROXY, //25
 
     STAGE_QUEUED_DATA,
     STAGE_SHARDING_FILTER,
     STAGE_SKIP,
-    STAGE_SORT,
-    STAGE_SORT_KEY_GENERATOR,
+    STAGE_SORT,  //29 SortStage
+    STAGE_SORT_KEY_GENERATOR, //30  SortKeyGeneratorStage
     STAGE_SORT_MERGE,
     STAGE_SUBPLAN,
 
     // Stages for running text search.
     STAGE_TEXT,
     STAGE_TEXT_OR,
-    STAGE_TEXT_MATCH,
+    STAGE_TEXT_MATCH, //35
 
     STAGE_UNKNOWN,
 

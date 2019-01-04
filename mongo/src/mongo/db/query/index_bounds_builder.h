@@ -41,6 +41,16 @@ class CollatorInterface;
 /**
  * Translates expressions over fields into bounds on an index.
  */
+/*  db.test.find({"name":"zhangsan", "age":33}).explain()
+"indexBounds" : {
+        "name" : [
+                "[\"zhangsan\", \"zhangsan\"]"
+        ],
+        "age" : [
+                "[33.0, 33.0]"
+        ]
+}
+*/
 class IndexBoundsBuilder {
 public:
     /**

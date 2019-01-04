@@ -281,7 +281,7 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
         return cachedPlan->pickBestPlan(_yieldPolicy.get());
     }
 
-	//只有一个满足条件的索引，则这里直接返回
+	//只有一个满足条件的PlanStage，则这里直接返回
     // Either we chose a plan, or no plan selection was required. In both cases,
     // our work has been successfully completed.
     return Status::OK();
@@ -552,7 +552,7 @@ PlanExecutor::ExecState PlanExecutor::waitForInserts(CappedInsertNotifierData* n
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
 //FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
-//PlanExecutor::getNext中调用
+//PlanExecutor::getNext中调用      执行查询计划
 PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, RecordId* dlOut) {
     if (MONGO_FAIL_POINT(planExecutorAlwaysFails)) {
         Status status(ErrorCodes::OperationFailed,
@@ -618,14 +618,14 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
 
         WorkingSetID id = WorkingSet::INVALID_ID;
 		//PlanStage::work
-        PlanStage::StageState code = _root->work(&id); //PlanStage::work
+        PlanStage::StageState code = _root->work(&id); //PlanStage::work  执行查询计划
 
         if (code != PlanStage::NEED_YIELD)
             writeConflictsInARow = 0;
 
 		log() << "yang test PlanExecutor::getNextImpl:" << (int)code;
         if (PlanStage::ADVANCED == code) {
-            WorkingSetMember* member = _workingSet->get(id); 
+            WorkingSetMember* member = _workingSet->get(id);  //数据都存入WorkingSetMember这里面
             bool hasRequestedData = true;
 
             if (NULL != objOut) {

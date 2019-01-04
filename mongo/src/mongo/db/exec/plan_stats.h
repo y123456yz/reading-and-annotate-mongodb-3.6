@@ -54,7 +54,7 @@ struct SpecificStats {
 };
 
 // Every stage has CommonStats.
-struct CommonStats { //算分用的该类，参考PlanStage::work 
+struct CommonStats { //算分用的该类，参考PlanStage::work    explain("allPlansExecution")展示的内容来源就在该结构
     CommonStats(const char* type)
         : stageTypeStr(type),
           works(0),

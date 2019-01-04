@@ -123,11 +123,11 @@ public:
 
         // work(...) won't do anything more.  isEOF() will also be true.  There is nothing
         // output in the out parameter.
-        IS_EOF,
+        IS_EOF,  //1
 
         // work(...) needs more time to product a result.  Call work(...) again.  There is
         // nothing output in the out parameter.
-        NEED_TIME,
+        NEED_TIME, //2
 
         // The storage engine says we need to yield, possibly to fetch a record from disk, or
         // due to an aborted transaction in the storage layer.
@@ -150,7 +150,7 @@ public:
         // requested fetch. The stage that requested the fetch holds the WSID of the loc it
         // wants fetched. On the next call to work() that stage can assume a fetch was performed
         // on the WSM that the held WSID refers to.
-        NEED_YIELD,
+        NEED_YIELD, //3
 
         // Something went wrong but it's not an internal error.  Perhaps our collection was
         // dropped or state deleted.
