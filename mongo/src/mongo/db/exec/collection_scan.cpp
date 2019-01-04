@@ -69,7 +69,7 @@ const char* CollectionScan::kStageType = "COLLSCAN";
 #6  0x00007f6445a9b65b in mongo::getExecutorFind (opCtx=opCtx@entry=0x7f644e182640, collection=collection@entry=0x7f64498ce1e0, nss=..., canonicalQuery=..., yieldPolicy=yieldPolicy@entry=mongo::PlanExecutor::YIELD_AUTO, 
     plannerOptions=0) at src/mongo/db/query/get_executor.cpp:729
 #7  0x00007f644570e623 in mongo::(anonymous namespace)::FindCmd::run
-*/ //buildStages
+*/ //buildStages  //buildStages中构造使用
 CollectionScan::CollectionScan(OperationContext* opCtx,
                                const CollectionScanParams& params,
                                WorkingSet* workingSet,
@@ -259,6 +259,8 @@ Status CollectionScan::setLatestOplogEntryTimestamp(const Record& record) {
     return Status::OK();
 }
 
+//查看这条全表扫描的记录是否符合我们的CollectionScan这个PlanStage的filter.
+//如果符合则返回给PlanExecutor的getNext函数,否则继续往后遍历.
 PlanStage::StageState CollectionScan::returnIfMatches(WorkingSetMember* member,
                                                       WorkingSetID memberID,
                                                       WorkingSetID* out) {

@@ -743,7 +743,7 @@ namespace {
 
 /**
  * Implements the basic WT_CURSOR functionality used by both unique and standard indexes.
- */
+ */ //WiredTigerIndexUniqueCursor->WiredTigerIndexCursorBase->SortedDataInterface::Cursor
 class WiredTigerIndexCursorBase : public SortedDataInterface::Cursor {
 public:
     WiredTigerIndexCursorBase(const WiredTigerIndex& idx,

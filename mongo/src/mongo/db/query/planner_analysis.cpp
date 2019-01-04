@@ -615,7 +615,7 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
     return solnRoot;
 }
 
-// static    buildCollscanSoln调用  QueryPlanner::plan中调用执行
+// static  buildWholeIXSoln  buildCollscanSoln调用  QueryPlanner::plan中调用执行
 //没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
 QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     const CanonicalQuery& query,

@@ -58,7 +58,7 @@ namespace mongo {
 
 // static
 const char* IndexScan::kStageType = "IXSCAN";
-
+//buildStages中构造使用
 IndexScan::IndexScan(OperationContext* opCtx,
                      const IndexScanParams& params,
                      WorkingSet* workingSet,
@@ -127,7 +127,7 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
     }
 
     // Perform the possibly heavy-duty initialization of the underlying index cursor.
-    _indexCursor = _iam->newCursor(getOpCtx(), _forward);
+    _indexCursor = _iam->newCursor(getOpCtx(), _forward); //WiredTigerIndexUnique::newCursor   
 
     // We always seek once to establish the cursor position.
     ++_specificStats.seeks;
@@ -145,7 +145,7 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
         // IndexBoundsChecker to determine when we've finished the scan.
         if (IndexBoundsBuilder::isSingleInterval(
                 _params.bounds, &_startKey, &_startKeyInclusive, &_endKey, &_endKeyInclusive)) {
-            _indexCursor->setEndPosition(_endKey, _endKeyInclusive);
+            _indexCursor->setEndPosition(_endKey, _endKeyInclusive); //WiredTigerIndexCursorBase::seek
             return _indexCursor->seek(_startKey, _startKeyInclusive);
         } else {
             _checker.reset(new IndexBoundsChecker(&_params.bounds, _keyPattern, _params.direction));

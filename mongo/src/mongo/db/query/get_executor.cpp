@@ -228,9 +228,10 @@ struct PrepareExecutionResult {
           root(std::move(root)) {}
 
     unique_ptr<CanonicalQuery> canonicalQuery;
-	//querySolution也是数组，成员小标和root小标对应，因为一个QuerySolution对应一个PlanStage
+	//参考prepareExecution 
     unique_ptr<QuerySolution> querySolution;
-    unique_ptr<PlanStage> root;  //实际上是一个数组，可能是一个成员，也就是只有一个索引满足条件，也可能是多个成员，表示有多个索引满足条件，参考
+	//参考prepareExecution  对应类型CachedPlanStage PlanStage(一个索引满足条件)  MultiPlanStage(多个满足条件)
+    unique_ptr<PlanStage> root;  
 };
 
 /**
@@ -472,7 +473,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
                << redact(canonicalQuery->toStringShort())
                << ", planSummary: " << redact(Explain::getPlanSummary(root.get()));
 
-        querySolution.reset(solutions[0]);
+        querySolution.reset(solutions[0]); //querySolution取solutions第一个成员
         return PrepareExecutionResult(
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
     } else { //多个plan满足要求
@@ -497,7 +498,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         }
 
         root = std::move(multiPlanStage);
-        return PrepareExecutionResult(
+        return PrepareExecutionResult( //querySolution实际上没有赋值
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
     }
 }

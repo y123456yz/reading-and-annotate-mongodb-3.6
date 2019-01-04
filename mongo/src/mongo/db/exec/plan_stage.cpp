@@ -78,12 +78,13 @@ namespace mongo {
 		at src/mongo/db/commands/find_cmd.cpp:370
 	*/ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
 //MultiPlanStage::workAllPlans  PlanExecutor::getNextImpl中执行
-PlanStage::StageState PlanStage::work(WorkingSetID* out) {  
+PlanStage::StageState PlanStage::work(WorkingSetID* out) {   //存在根据StageState递归调用的情况
     invariant(_opCtx);
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
     ++_commonStats.works;
 
-	log() << "yang test PlanStage::work";
+	StageType type = this->stageType();
+	log() << "yang test PlanStage::work stageType:" << (int)type;  
     StageState workResult = doWork(out); //有哪些类的doWork需要执行，参考buildStages 如CollectionScan::doWork  IndexScan::doWork  FetchStage::doWork
 
     if (StageState::ADVANCED == workResult) {

@@ -55,7 +55,7 @@ struct IndexScanParams {
 
     int direction;
 
-    bool doNotDedup;
+    bool doNotDedup; //默认false，只有geo可能为true
 
     // How many keys will we look at?
     size_t maxScan;
@@ -69,7 +69,7 @@ struct IndexScanParams {
  * filter.  Internally dedups on RecordId.
  *
  * Sub-stage preconditions: None.  Is a leaf and consumes no stage data.
- */
+ */ //buildStages中构造使用
 class IndexScan final : public PlanStage {
 public:
     /**
