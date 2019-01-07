@@ -306,6 +306,7 @@ struct CollectionScanNode : public QuerySolutionNode {
     int direction;
 
     // maxScan option to .find() limits how many docs we look at.
+    //db.collection.find( { $query: { <query> }, $maxScan: <number> } )
     int maxScan;
 };
 

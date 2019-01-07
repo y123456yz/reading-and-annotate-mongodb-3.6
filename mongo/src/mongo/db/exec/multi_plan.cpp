@@ -99,11 +99,21 @@ bool MultiPlanStage::isEOF() {
     return bestPlan.results.empty() && bestPlan.root->isEOF();
 }
 
+/*
+(gdb) bt
+#0  mongo::MultiPlanStage::doWork (this=0x7fd018909200, out=0x7fd0112938d0) at src/mongo/db/exec/multi_plan.cpp:111
+#1  0x00007fd01255d625 in mongo::PlanStage::work (this=0x7fd018909200, out=out@entry=0x7fd0112938d0) at src/mongo/db/exec/plan_stage.cpp:88
+#2  0x00007fd01223291a in mongo::PlanExecutor::getNextImpl (this=0x7fd018909400, objOut=objOut@entry=0x7fd0112939d0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:621
+#3  0x00007fd01223342b in mongo::PlanExecutor::getNext (this=<optimized out>, objOut=objOut@entry=0x7fd011293af0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:449
+#4  0x00007fd011e97b95 in mongo::(anonymous namespace)::FindCmd::run
+*/ 
+//如果有多个索引满足条件，则选择最优的执行
 PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
     if (_failure) {
         *out = _statusMemberId;
         return PlanStage::FAILURE;
     }
+	LOG(2) << "yang test ...PlanStage::StageState MultiPlanStage::doWork ";
 
     CandidatePlan& bestPlan = _candidates[_bestPlanIdx];
 
@@ -116,10 +126,10 @@ PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
 
     // best plan had no (or has no more) cached results
 
-    StageState state = bestPlan.root->work(out); 
+    StageState state = bestPlan.root->work(out);  //执行最优的stage
 
     if (PlanStage::FAILURE == state && hasBackupPlan()) {
-        LOG(5) << "Best plan errored out switching to backup";
+        LOG(2) << "Best plan errored out switching to backup";
         // Uncache the bad solution if we fall back
         // on the backup solution.
         //
@@ -137,7 +147,7 @@ PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
     }
 
     if (hasBackupPlan() && PlanStage::ADVANCED == state) {
-        LOG(5) << "Best plan had a blocking stage, became unblocked";
+        LOG(2) << "Best plan had a blocking stage, became unblocked";
         _backupPlanIdx = kNoSuchPlan;
     }
 
@@ -268,19 +278,20 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // after transferring ownership of 'ranking' to plan cache.
     std::vector<size_t> candidateOrder = ranking->candidateOrder;
 
+	//最优的查询计划最终在MultiPlanStage::doWork中执行
     CandidatePlan& bestCandidate = _candidates[_bestPlanIdx];
     std::list<WorkingSetID>& alreadyProduced = bestCandidate.results;
     const auto& bestSolution = bestCandidate.solution;
 
-    LOG(5) << "Winning solution:\n" << redact(bestSolution->toString());
+    LOG(2) << "Winning solution:\n" << redact(bestSolution->toString());
     LOG(2) << "Winning plan: " << redact(Explain::getPlanSummary(bestCandidate.root));
 
     _backupPlanIdx = kNoSuchPlan;
     if (bestSolution->hasBlockingStage && (0 == alreadyProduced.size())) { //该查询计划有阻塞情况，则选择备用的
-        LOG(5) << "Winner has blocking stage, looking for backup plan...";
+        LOG(2) << "Winner has blocking stage, looking for backup plan...";
         for (size_t ix = 0; ix < _candidates.size(); ++ix) {
             if (!_candidates[ix].solution->hasBlockingStage) {
-                LOG(5) << "Candidate " << ix << " is backup child";
+                LOG(2) << "Candidate " << ix << " is backup child";
                 _backupPlanIdx = ix;
                 break;
             }
@@ -349,7 +360,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
         bool validSolutions = true;
         for (size_t ix = 0; ix < solutions.size(); ++ix) {
             if (NULL == solutions[ix]->cacheData.get()) {
-                LOG(5) << "Not caching query because this solution has no cache data: "
+                LOG(2) << "Not caching query because this solution has no cache data: "
                        << redact(solutions[ix]->toString());
                 validSolutions = false;
                 break;
@@ -518,3 +529,4 @@ const SpecificStats* MultiPlanStage::getSpecificStats() const {
 }
 
 }  // namespace mongo
+

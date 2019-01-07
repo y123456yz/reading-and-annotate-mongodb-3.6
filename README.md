@@ -51,3 +51,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .QuerySolution和PlanStage生成过程分析  
     .PlanExecutor类功能分析  
     .PlanStage生成过程分析  
+    .各种StageState生成过程  
+    .StageState::doWork计划阶段执行过程详细分析  
+    .索引选取及MultiPlanStage生成、最优索引选取  
+    .按照最优的planstage执行过程分析  

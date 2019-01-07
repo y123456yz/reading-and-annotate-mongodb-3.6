@@ -498,7 +498,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         }
 
         root = std::move(multiPlanStage);
-        return PrepareExecutionResult( //querySolution实际上没有赋值
+        return PrepareExecutionResult( //querySolution实际上没有赋值，solutions[]实际上是存在于multiPlanStage
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
     }
 }

@@ -199,6 +199,7 @@ private:
 
     // index into _candidates, of the winner of the plan competition
     // uses -1 / kNoSuchPlan when best plan is not (yet) known
+    //MultiPlanStage::doWork中执行
     int _bestPlanIdx; //最优的查询计划所在_candidates数组中的下标，见MultiPlanStage::pickBestPlan
 
     // index into _candidates, of the backup plan for sort

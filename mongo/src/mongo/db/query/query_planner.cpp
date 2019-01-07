@@ -769,7 +769,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // Deal with the .min() and .max() query options.  If either exist we can only use an index
     // that matches the object inside.
-    if (!query.getQueryRequest().getMin().isEmpty() ||
+    if (!query.getQueryRequest().getMin().isEmpty() ||  //MIN MAX操作符相关
         !query.getQueryRequest().getMax().isEmpty()) {
         BSONObj minObj = query.getQueryRequest().getMin();
         BSONObj maxObj = query.getQueryRequest().getMax();
@@ -969,8 +969,9 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 		//类PlanEnumerator 罗列MatchExpression的各种可能的组合， （indexScan & collectionScan等）， 生成具体的MatchExpression
         PlanEnumerator isp(enumParams);
         isp.init().transitional_ignore();
-
+	
         unique_ptr<MatchExpression> rawTree;
+		//根据CanonicalQuery和满足要求的索引relevantIndices来生成QuerySolution树
         while ((rawTree = isp.getNext()) && (out->size() < params.maxIndexedSolutions)) {
 		/* 
 	    db.test.find({"name":"yangyazhou"}).sort({"name":1}):
@@ -981,7 +982,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 				age == 22.0  || Selected Index #2 pos 1 combine 1
 				name == "yangyazhou"  || Selected Index #2 pos 0 combine 1
 		*/
-            LOG(2) << "About to build solntree from tagged tree:" << endl
+            LOG(2) << "About to build solntree(QuerySolution tree) from tagged tree:" << endl
                    << redact(rawTree.get()->toString());
 
             // Store the plan cache index tree before calling prepareForAccessingPlanning(), so that
