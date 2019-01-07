@@ -276,7 +276,7 @@ PlanStage::StageState CollectionScan::returnIfMatches(WorkingSetMember* member,
         _workingSet->free(memberID);
         _commonStats.isEOF = true;
         return PlanStage::IS_EOF;
-    } else {
+    } else { //查询结果不满足要求
         _workingSet->free(memberID);
         return PlanStage::NEED_TIME;
     }

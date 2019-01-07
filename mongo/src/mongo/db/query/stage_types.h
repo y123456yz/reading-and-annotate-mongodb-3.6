@@ -37,6 +37,7 @@ enum StageType { //参考PlanStage* buildStages
     STAGE_AND_HASH, //0
     STAGE_AND_SORTED,  //1
     STAGE_CACHED_PLAN, //2
+    //CollectionScan::doWork
     STAGE_COLLSCAN,  //全表扫描   //例如CollectionScanNode赋值参考CollectionScanNode::getType
 
     // This stage sits at the root of the query tree and counts up the number of results
@@ -65,7 +66,7 @@ enum StageType { //参考PlanStage* buildStages
     // during query execution.
     STAGE_KEEP_MUTATIONS,  
 
-    STAGE_FETCH, //12  FetchStage
+    STAGE_FETCH, //12  FetchStage::doWork
 
     // The two $geoNear impls imply a fetch+sort and must be stages.
     STAGE_GEO_NEAR_2D,
@@ -78,13 +79,13 @@ enum StageType { //参考PlanStage* buildStages
     // Simple wrapper to iterate a SortedDataInterface::Cursor.
     STAGE_INDEX_ITERATOR,
 
-    STAGE_IXSCAN,  //索引扫描，INDEX SCAN
+    STAGE_IXSCAN,  //索引扫描，INDEX SCAN   IndexScan::doWork
     STAGE_LIMIT,
 
     // Implements parallelCollectionScan.
     STAGE_MULTI_ITERATOR, //20
 
-    STAGE_MULTI_PLAN,
+    STAGE_MULTI_PLAN,  //21 MultiPlanStage
     STAGE_OPLOG_START,
     STAGE_OR,
     STAGE_PROJECTION,

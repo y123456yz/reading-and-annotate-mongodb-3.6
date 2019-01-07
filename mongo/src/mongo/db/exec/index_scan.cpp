@@ -136,6 +136,7 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
         // Start at one key, end at another.
         _startKey = _params.bounds.startKey;
         _endKey = _params.bounds.endKey;
+		//WiredTigerIndexCursorBase::setEndPosition
         _indexCursor->setEndPosition(_endKey, _endKeyInclusive);
 		//WiredTigerIndexCursorBase::seek
         return _indexCursor->seek(_startKey, _startKeyInclusive);

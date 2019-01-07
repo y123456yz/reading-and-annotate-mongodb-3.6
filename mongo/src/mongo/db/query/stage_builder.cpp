@@ -66,7 +66,7 @@ namespace mongo {
 using std::unique_ptr;
 using stdx::make_unique;
 //prepareExecution->StageBuilder::buildµ÷ÓÃ  ÅäºÏprepareExecutionÔÄ¶Á
-PlanStage* buildStages(OperationContext* opCtx,
+PlanStage* buildStages(OperationContext* opCtx,     //¸Ãº¯Êý´æÔÚµÝ¹éµ÷ÓÃ
                        Collection* collection,
                        const CanonicalQuery& cq,
                        const QuerySolution& qsol,
@@ -106,6 +106,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_FETCH: {
             const FetchNode* fn = static_cast<const FetchNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, fn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -114,6 +115,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_SORT: {
             const SortNode* sn = static_cast<const SortNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, sn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -126,7 +128,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_SORT_KEY_GENERATOR: {
             const SortKeyGeneratorNode* keyGenNode = static_cast<const SortKeyGeneratorNode*>(root);
-            PlanStage* childStage =
+            PlanStage* childStage = //µÝ¹é
                 buildStages(opCtx, collection, cq, qsol, keyGenNode->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -136,6 +138,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_PROJECTION: {
             const ProjectionNode* pn = static_cast<const ProjectionNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, pn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -162,6 +165,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_LIMIT: {
             const LimitNode* ln = static_cast<const LimitNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, ln->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -170,6 +174,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_SKIP: {
             const SkipNode* sn = static_cast<const SkipNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, sn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -180,6 +185,7 @@ PlanStage* buildStages(OperationContext* opCtx,
             const AndHashNode* ahn = static_cast<const AndHashNode*>(root);
             auto ret = make_unique<AndHashStage>(opCtx, ws, collection);
             for (size_t i = 0; i < ahn->children.size(); ++i) {
+				//µÝ¹é
                 PlanStage* childStage =
                     buildStages(opCtx, collection, cq, qsol, ahn->children[i], ws);
                 if (nullptr == childStage) {
@@ -193,7 +199,7 @@ PlanStage* buildStages(OperationContext* opCtx,
             const OrNode* orn = static_cast<const OrNode*>(root);
             auto ret = make_unique<OrStage>(opCtx, ws, orn->dedup, orn->filter.get());
             for (size_t i = 0; i < orn->children.size(); ++i) {
-                PlanStage* childStage =
+                PlanStage* childStage = //µÝ¹é
                     buildStages(opCtx, collection, cq, qsol, orn->children[i], ws);
                 if (nullptr == childStage) {
                     return nullptr;
@@ -206,7 +212,7 @@ PlanStage* buildStages(OperationContext* opCtx,
             const AndSortedNode* asn = static_cast<const AndSortedNode*>(root);
             auto ret = make_unique<AndSortedStage>(opCtx, ws, collection);
             for (size_t i = 0; i < asn->children.size(); ++i) {
-                PlanStage* childStage =
+                PlanStage* childStage = //µÝ¹é
                     buildStages(opCtx, collection, cq, qsol, asn->children[i], ws);
                 if (nullptr == childStage) {
                     return nullptr;
@@ -223,7 +229,7 @@ PlanStage* buildStages(OperationContext* opCtx,
             params.collator = cq.getCollator();
             auto ret = make_unique<MergeSortStage>(opCtx, params, ws, collection);
             for (size_t i = 0; i < msn->children.size(); ++i) {
-                PlanStage* childStage =
+                PlanStage* childStage = //µÝ¹é
                     buildStages(opCtx, collection, cq, qsol, msn->children[i], ws);
                 if (nullptr == childStage) {
                     return nullptr;
@@ -290,6 +296,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_SHARDING_FILTER: {
             const ShardingFilterNode* fn = static_cast<const ShardingFilterNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, fn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -302,6 +309,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_KEEP_MUTATIONS: {
             const KeepMutationsNode* km = static_cast<const KeepMutationsNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, km->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -348,6 +356,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         }
         case STAGE_ENSURE_SORTED: {
             const EnsureSortedNode* esn = static_cast<const EnsureSortedNode*>(root);
+			//µÝ¹é
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, esn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -363,7 +372,7 @@ PlanStage* buildStages(OperationContext* opCtx,
         case STAGE_IDHACK:
         case STAGE_INDEX_ITERATOR:
         case STAGE_MULTI_ITERATOR:
-        case STAGE_MULTI_PLAN:
+        case STAGE_MULTI_PLAN: //MultiPlanStageÔÚprepareExecution->MultiPlanStage::addPlan³õÊ¼»¯´´½¨
         case STAGE_OPLOG_START:
         case STAGE_PIPELINE_PROXY:
         case STAGE_QUEUED_DATA:

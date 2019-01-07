@@ -76,7 +76,18 @@ namespace mongo {
 #3  0x00007ffa923064eb in mongo::PlanExecutor::getNext (this=<optimized out>, objOut=objOut@entry=0x7ffa91366af0, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:440
 #4  0x00007ffa91f6ac55 in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7ffa94247740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7ffa9a401640, dbname=..., cmdObj=..., result=...)
 		at src/mongo/db/commands/find_cmd.cpp:370
-	*/ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
+
+
+#0  mongo::PlanStage::work (this=0x7f253eafc300, out=out@entry=0x7f25355f7228) at src/mongo/db/exec/plan_stage.cpp:88
+#1  0x00007f253689cb15 in mongo::FetchStage::doWork (this=0x7f253e1a62a0, out=0x7f25355f73d8) at src/mongo/db/exec/fetch.cpp:115
+#2  0x00007f25368c1625 in mongo::PlanStage::work (this=0x7f253e1a62a0, out=out@entry=0x7f25355f73d8) at src/mongo/db/exec/plan_stage.cpp:88
+#3  0x00007f253688dc10 in mongo::CachedPlanStage::pickBestPlan (this=0x7f253eaf2280, yieldPolicy=0x7f253a8df300) at src/mongo/db/exec/cached_plan.cpp:114
+#4  0x00007f25365951c2 in mongo::PlanExecutor::pickBestPlan (this=0x7f253eaf8300, collection=collection@entry=0x7f253a7e4e20) at src/mongo/db/query/plan_executor.cpp:281
+#5  0x00007f2536598e5a in mongo::PlanExecutor::make (opCtx=opCtx@entry=0x7f253eaf2c80, ws=..., rt=..., qs=..., cq=..., collection=0x7f253a7e4e20, nss=..., yieldPolicy=mongo::PlanExecutor::YIELD_AUTO)
+    at src/mongo/db/query/plan_executor.cpp:211
+#6  0x00007f2536599f04 in mongo::PlanExecutor::make (opCtx=opCtx@entry=0x7f253eaf2c80, ws=..., rt=..., qs=..., cq=..., collection=0x7f253a7e4e20, yieldPolicy=mongo::PlanExecutor::YIELD_AUTO) at src/mongo/db/query/plan_executor.cpp:182
+#7  0x00007f25365883a7 in mongo::getExecutor		
+*/ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
 //MultiPlanStage::workAllPlans  PlanExecutor::getNextImpl中执行
 PlanStage::StageState PlanStage::work(WorkingSetID* out) {   //存在根据StageState递归调用的情况
     invariant(_opCtx);
@@ -85,7 +96,8 @@ PlanStage::StageState PlanStage::work(WorkingSetID* out) {   //存在根据StageStat
 
 	StageType type = this->stageType();
 	log() << "yang test PlanStage::work stageType:" << (int)type;  
-    StageState workResult = doWork(out); //有哪些类的doWork需要执行，参考buildStages 如CollectionScan::doWork  IndexScan::doWork  FetchStage::doWork
+    StageState workResult = doWork(out); 
+//有哪些类的doWork需要执行，参考buildStages 如MultiPlanStage::doWork CollectionScan::doWork  IndexScan::doWork  FetchStage::doWork
 
     if (StageState::ADVANCED == workResult) {
         ++_commonStats.advanced;
