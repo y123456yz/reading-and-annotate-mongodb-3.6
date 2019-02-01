@@ -44,7 +44,7 @@ class IndexDescriptor;
 struct WiredTigerItem;
 
 ////WiredTigerIndexUnique和WiredTigerIndexStandard继承该类
-class WiredTigerIndex : public SortedDataInterface {
+class WiredTigerIndex : public SortedDataInterface { 
 public:
     /**
      * Parses index options for wired tiger configuration string suitable for table creation.
@@ -158,7 +158,7 @@ protected:
 
     const Ordering _ordering;
     // The keystring version is effectively const after the WiredTigerIndex instance is constructed.
-    KeyString::Version _keyStringVersion;
+    KeyString::Version _keyStringVersion; //默认KeyString::Version::V1对应的字符串"V1"
     std::string _uri;
     uint64_t _tableId;
     std::string _collectionNamespace;

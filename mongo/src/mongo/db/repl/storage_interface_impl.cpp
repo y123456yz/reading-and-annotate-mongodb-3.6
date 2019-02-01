@@ -958,8 +958,10 @@ StatusWith<OptionalCollectionUUID> StorageInterfaceImpl::getCollectionUUID(
 Status StorageInterfaceImpl::upgradeUUIDSchemaVersionNonReplicated(OperationContext* opCtx) {
     return updateUUIDSchemaVersionNonReplicated(opCtx, true);
 }
-
+//InitialSyncer::_setUp_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
+//ReplicationCoordinatorImpl::_setStableTimestampForStorage_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
 void StorageInterfaceImpl::setStableTimestamp(ServiceContext* serviceCtx, Timestamp snapshotName) {
+	//KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
     serviceCtx->getGlobalStorageEngine()->setStableTimestamp(snapshotName);
 }
 

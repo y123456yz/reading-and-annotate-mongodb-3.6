@@ -167,7 +167,9 @@ void WiredTigerSizeStorer::onDestroy(WiredTigerRecordStore* rs) {
     entry.rs = NULL;
 }
 
-//修改_entries[uri]的值，也就是修改内存中的值
+//WiredTigerRecordStore::_increaseDataSize
+//修改_entries[uri]的值，也就是修改内存中的值中调用  
+//WiredTigerSizeStorer::storeToCache和WiredTigerSizeStorer::loadFromCache对应
 void WiredTigerSizeStorer::storeToCache(StringData uri, long long numRecords, long long dataSize) {
     _checkMagic();
     stdx::lock_guard<stdx::mutex> lk(_entriesMutex);
@@ -176,8 +178,10 @@ void WiredTigerSizeStorer::storeToCache(StringData uri, long long numRecords, lo
     entry.dataSize = dataSize;
     entry.dirty = true;
 }
- 
+
+//WiredTigerSizeStorer::storeToCache和WiredTigerSizeStorer::loadFromCache对应
 //获取_entries[uri]的内容返回  WiredTigerRecordStore::postConstructorInit中调用
+//db.coll.count()操作也只是读内存数据。实际上就是调用该接口
 void WiredTigerSizeStorer::loadFromCache(StringData uri,
                                          long long* numRecords,
                                          long long* dataSize) const {

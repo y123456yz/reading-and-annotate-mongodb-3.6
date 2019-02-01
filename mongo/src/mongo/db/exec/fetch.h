@@ -93,7 +93,7 @@ private:
     WorkingSet* _ws;
 
     // The filter is not owned by us.
-    const MatchExpression* _filter;
+    const MatchExpression* _filter; //filter : 查询过滤条件，类比SQL的where表达式
 
     // If not Null, we use this rather than asking our child what to do next.
     WorkingSetID _idRetrying;

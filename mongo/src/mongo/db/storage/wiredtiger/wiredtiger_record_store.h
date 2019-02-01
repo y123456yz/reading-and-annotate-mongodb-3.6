@@ -68,9 +68,11 @@ class WiredTigerSizeStorer;
 
 extern const std::string kWiredTigerEngineName;
 
-//WiredTigerSizeStorer.Entry *rs为该类型
+//WiredTigerSizeStorer.Entry *rs为该类型 
+//WiredTigerSizeStorer._entries[].rs map表中记录所有的集合统计信息
+
 //StandardWiredTigerRecordStore和PrefixedWiredTigerRecordStore继承该类
-class WiredTigerRecordStore : public RecordStore {
+class WiredTigerRecordStore : public RecordStore { //代表一个表的统计
     friend class WiredTigerRecordStoreCursorBase;
 
     friend class StandardWiredTigerRecordStore;
@@ -331,6 +333,7 @@ private:
     AtomicInt64 _dataSize;
     AtomicInt64 _numRecords;
 
+    //
     WiredTigerSizeStorer* _sizeStorer;  // not owned, can be NULL
     int _sizeStorerCounter;
 

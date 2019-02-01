@@ -58,7 +58,7 @@ struct IndexScanParams {
     bool doNotDedup; //默认false，只有geo可能为true
 
     // How many keys will we look at?
-    size_t maxScan;
+    size_t maxScan; //db.collection.find( { $query: { <query> }, $maxScan: <number> } 
 
     // Do we want to add the key as metadata?
     bool addKeyMetadata;
@@ -124,6 +124,7 @@ private:
 
     // Index access.
     const IndexAccessMethod* const _iam;  // owned by Collection -> IndexCatalog
+    //WiredTigerIndexUniqueCursor结构
     std::unique_ptr<SortedDataInterface::Cursor> _indexCursor;
     const BSONObj _keyPattern;
 
@@ -133,6 +134,7 @@ private:
     // Contains expressions only over fields in the index key.  We assume this is built
     // correctly by whomever creates this class.
     // The filter is not owned by us.
+    //filter : 查询过滤条件，类比SQL的where表达式
     const MatchExpression* const _filter;
 
     // Could our index have duplicates?  If so, we use _returned to dedup.
@@ -143,7 +145,7 @@ private:
     const IndexScanParams _params;
 
     // Stats
-    IndexScanStats _specificStats;
+    IndexScanStats _specificStats; //IndexScan._specificStats
 
     //
     // This class employs one of two different algorithms for determining when the index scan
@@ -165,6 +167,7 @@ private:
     //    BSON compares against scanned keys. In this case _checker will be NULL.
     //
 
+    //也就是db.test.find({"name": "yangyazhou"}).explain("allPlansExecution")返回中的indexBounds内容，指定key范围
     // The key that the index cursor should start on/after.
     BSONObj _startKey;
     // The key that the index cursor should stop on/after.

@@ -243,7 +243,7 @@ PlanStage::StageState CollectionScan::doWork(WorkingSetID* out) {//PlanStage::wo
 
 	//最后调用returnIfMatches,查看这条全表扫描的记录是否符合我们的CollectionScan这个PlanStage的filter.
 	//如果符合则返回给PlanExecutor的getNext函数,否则继续往后遍历.
-    return returnIfMatches(member, id, out);
+    return returnIfMatches(member, id, out); //CollectionScan::returnIfMatches
 }
 
 Status CollectionScan::setLatestOplogEntryTimestamp(const Record& record) {

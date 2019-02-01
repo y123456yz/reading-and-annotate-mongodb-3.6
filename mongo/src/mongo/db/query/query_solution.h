@@ -490,7 +490,7 @@ struct IndexScanNode : public QuerySolutionNode {
     int direction;
 
     // maxScan option to .find() limits how many docs we look at.
-    int maxScan;
+    int maxScan; //db.collection.find( { $query: { <query> }, $maxScan: <number> } 
 
     // If there's a 'returnKey' projection we add key metadata.
     bool addKeyMetadata;

@@ -102,6 +102,9 @@ bool FetchStage::isEOF() {
 #12 0x00007f882a76fc08 in mongo::TTLMonitor::run (this=0x7f882e8cdfc0) at src/mongo/db/ttl.cpp:111
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
+//IndexScan::doWork走索引的情况下，每获取到一个index的key-value(value实际上是数据文件的key，也就指定了数据文件位置)(获取满足key的索引数据)，
+//该函数返回后会通过PlanStage::work调用FetchStage::doWork走fetch流程来对IndexScan::doWork获取到的索引key-value中的value来获取对应的数据
+
 //PlanStage::work中执行
 PlanStage::StageState FetchStage::doWork(WorkingSetID* out) {
     if (isEOF()) {
@@ -211,6 +214,7 @@ void FetchStage::doInvalidate(OperationContext* opCtx, const RecordId& dl, Inval
     }
 }
 
+//FetchStage::doWork调用
 PlanStage::StageState FetchStage::returnIfMatches(WorkingSetMember* member,
                                                   WorkingSetID memberID,
                                                   WorkingSetID* out) {
@@ -228,7 +232,7 @@ PlanStage::StageState FetchStage::returnIfMatches(WorkingSetMember* member,
     // the user might also want to find only those documents for which accommodationType==
     // "restaurant". The planner will add a second fetch stage to filter by this non-geo
     // predicate.
-    ++_specificStats.docsExamined;
+    ++_specificStats.docsExamined; //size_t docsExamined; FetchStage::returnIfMatches中自增     keysExamined在IndexScan::doWork自增
 
     if (Filter::passes(member, _filter)) {
         *out = memberID;

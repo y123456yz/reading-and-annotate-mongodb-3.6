@@ -364,7 +364,8 @@ struct FetchStats : public SpecificStats {
     size_t forcedFetches;
 
     // The total number of full documents touched by the fetch stage.
-    size_t docsExamined;
+    //size_t docsExamined; FetchStage::returnIfMatches中自增     keysExamined在IndexScan::doWork自增
+    size_t docsExamined; //FetchStage::returnIfMatches中自增
 };
 
 struct GroupStats : public SpecificStats {
@@ -396,6 +397,7 @@ struct IDHackStats : public SpecificStats {
     size_t docsExamined;
 };
 
+//index scan 统计信息  //IndexScan._specificStats为该成员
 struct IndexScanStats : public SpecificStats {
     IndexScanStats()
         : indexVersion(0),
@@ -457,10 +459,11 @@ struct IndexScanStats : public SpecificStats {
     // TODO: we could track key sizes here.
 
     // Number of entries retrieved from the index during the scan.
-    size_t keysExamined;
+    //size_t docsExamined; FetchStage::returnIfMatches中自增     keysExamined在IndexScan::doWork自增
+    size_t keysExamined;  //IndexScan::doWork赋值
 
     // Number of times the index cursor is re-positioned during the execution of the scan.
-    size_t seeks;
+    size_t seeks; //IndexScan::doWork赋值
 };
 
 struct LimitStats : public SpecificStats {

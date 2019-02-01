@@ -1632,9 +1632,10 @@ private:
     int64_t _diff;
 };
 
-void WiredTigerRecordStore::_changeNumRecords(OperationContext* opCtx, int64_t diff) {
+//WiredTigerRecordStore::deleteRecord  WiredTigerRecordStore::_insertRecords
+void WiredTigerRecordStore::_changeNumRecords(OperationContext* opCtx, int64_t diff) { //diff可能为负数
     opCtx->recoveryUnit()->registerChange(new NumRecordsChange(this, diff));
-    if (_numRecords.fetchAndAdd(diff) < 0)
+    if (_numRecords.fetchAndAdd(diff) < 0) //_numRecords小于0，则赋值为0
         _numRecords.store(std::max(diff, int64_t(0)));
 }
 
@@ -1651,6 +1652,7 @@ private:
     int64_t _amount;
 };
 
+//WiredTigerRecordStore::deleteRecord  WiredTigerRecordStore::_insertRecords WiredTigerRecordStore::updateRecord
 void WiredTigerRecordStore::_increaseDataSize(OperationContext* opCtx, int64_t amount) {
     if (opCtx)
         opCtx->recoveryUnit()->registerChange(new DataSizeChange(this, amount));
