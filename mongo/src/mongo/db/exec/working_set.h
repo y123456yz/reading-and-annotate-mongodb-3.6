@@ -44,7 +44,7 @@ class RecordFetcher;
 class WorkingSetMember;
 
 //获取ID见IndexScan::doWork  IndexScan::doWork
-typedef size_t WorkingSetID;
+typedef size_t WorkingSetID; //一个WorkingSetID对应一个WorkingSetMember
 
 /**
  * All data in use by a query.  Data is passed through the stage tree by referencing the ID of
@@ -147,7 +147,7 @@ public:
     std::vector<WorkingSetID> getAndClearYieldSensitiveIds();
 
 private:
-    struct MemberHolder {
+    struct MemberHolder { 
         MemberHolder();
         ~MemberHolder();
 
@@ -249,8 +249,8 @@ private:
  * Collection scan stages return a WorkingSetMember in the RID_AND_OBJ state.
  *
  * A WorkingSetMember may have any of the data above.
- */ //参考PlanExecutor::getNextImpl
-class WorkingSetMember { //
+ */ //参考PlanExecutor::getNextImpl  //一个WorkingSetID对应一个WorkingSetMember，参考IndexScan::doWork
+class WorkingSetMember { //WorkingSet.MemberHolder.member   
     MONGO_DISALLOW_COPYING(WorkingSetMember);
 
 public:

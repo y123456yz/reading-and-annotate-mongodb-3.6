@@ -260,7 +260,7 @@ public:
  * potentially deleted RecordIds to seek methods if they know that MMAPv1 is not the current
  * storage engine. All new storage engines must support detecting the existence of Records.
  *
- */
+ */ //WiredTigerRecordStoreCursorBaseºÃ≥–∏√¿‡
 class SeekableRecordCursor : public RecordCursor {
 public:
     /**

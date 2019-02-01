@@ -301,6 +301,7 @@ private:
     bool _durable;
     bool _ephemeral;
     bool _readOnly;
+    
     std::unique_ptr<WiredTigerJournalFlusher> _journalFlusher;  // Depends on _sizeStorer
     std::unique_ptr<WiredTigerCheckpointThread> _checkpointThread;
 

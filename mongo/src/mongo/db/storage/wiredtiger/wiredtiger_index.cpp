@@ -744,6 +744,8 @@ namespace {
 /**
  * Implements the basic WT_CURSOR functionality used by both unique and standard indexes.
  */ //WiredTigerIndexUniqueCursor->WiredTigerIndexCursorBase->SortedDataInterface::Cursor
+
+//实际上在//WiredTigerIndexUnique::newCursor中构造WiredTigerIndexUniqueCursor类的时候构造base类
 class WiredTigerIndexCursorBase : public SortedDataInterface::Cursor {
 public:
     WiredTigerIndexCursorBase(const WiredTigerIndex& idx,
@@ -753,14 +755,15 @@ public:
         : _opCtx(opCtx),
           _idx(idx),
           _forward(forward),
-          _key(idx.keyStringVersion()),
+          _key(idx.keyStringVersion()), //KeyString::Version::V1对应的字符串"v1"
           _typeBits(idx.keyStringVersion()),
           _query(idx.keyStringVersion()),
           _prefix(prefix) {
         _cursor.emplace(_idx.uri(), _idx.tableId(), false, _opCtx);
     }
 
-    boost::optional<IndexKeyEntry> next(RequestedInfo parts) override {
+	//例如IndexScan::doWork会调用  如果没有传参，默认kKeyAndLoc，见 SortedDataInterface::Cursor
+    boost::optional<IndexKeyEntry> next(RequestedInfo parts) override { //WiredTigerIndexCursorBase::next
         // Advance on a cursor at the end is a no-op
         if (_eof)
             return {};
@@ -788,7 +791,7 @@ public:
         _endPosition->resetToKey(stripFieldNames(key), _idx.ordering(), discriminator);
     }
 
-	//IndexScan::initIndexScan中调用执行
+	//IndexScan::initIndexScan中调用执行   //WiredTigerIndexCursorBase::seek确定key所在的cursor位置
     boost::optional<IndexKeyEntry> seek(const BSONObj& key,
                                         bool inclusive,
                                         RequestedInfo parts) override {
@@ -799,7 +802,7 @@ public:
         // By using a discriminator other than kInclusive, there is no need to distinguish
         // unique vs non-unique key formats since both start with the key.
         _query.resetToKey(finalKey, _idx.ordering(), discriminator);
-        seekWTCursor(_query);
+        seekWTCursor(_query); 
         updatePosition();
         return curr(parts);
     }
@@ -914,7 +917,9 @@ protected:
 #8  0x00007f882ab6b16b in mongo::PlanExecutor::getNext (this=<optimized out>, objOut=objOut@entry=0x7f8829bcbb80, dlOut=dlOut@entry=0x0) at src/mongo/db/query/plan_executor.cpp:406
 #9  0x00007f882a7cfc3d in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7f882caac740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7f883216fdc0, dbname=..., cmdObj=..., result=...)
     at src/mongo/db/commands/find_cmd.cpp:366
-	*/
+	*/ 
+	//WiredTigerIndexCursorBase::curr  定位索引key及其在数据文件中的位置
+	//WiredTigerIndexCursorBase::next  WiredTigerIndexCursorBase::seek等调用    
     boost::optional<IndexKeyEntry> curr(RequestedInfo parts) const {
         if (_eof)
             return {};
@@ -971,14 +976,15 @@ protected:
     }
 
     // Seeks to query. Returns true on exact match. 查找query对应的key是否存在
-    bool seekWTCursor(const KeyString& query) {
+    ////WiredTigerIndexCursorBase::seek确定key所在的cursor位置, WiredTigerIndexCursorBase::seek调用
+    bool seekWTCursor(const KeyString& query) { 
         WT_CURSOR* c = _cursor->get();
 
         int cmp = -1;
         const WiredTigerItem keyItem(query.getBuffer(), query.getSize()); //query转换为WiredTigerItem
         setKey(c, keyItem.Get());
 
-        int ret = WT_READ_CHECK(c->search_near(c, &cmp));
+        int ret = WT_READ_CHECK(c->search_near(c, &cmp)); //该函数会快速定位cursor到query所指定key的位置
         if (ret == WT_NOTFOUND) {
             _cursorAtEof = true;
             TRACE_CURSOR << "\t not found";
@@ -995,7 +1001,7 @@ protected:
         }
 
         // Make sure we land on a matching key (after/before for forward/reverse).
-        if (_forward ? cmp < 0 : cmp > 0) {
+        if (_forward ? cmp < 0 : cmp > 0) { //如果
             advanceWTCursor();
         }
 
@@ -1006,7 +1012,7 @@ protected:
      * This must be called after moving the cursor to update our cached position. It should not
      * be called after a restore that did not restore to original state since that does not
      * logically move the cursor until the following call to next().
-     */
+     */  //WiredTigerIndexCursorBase::next
     void updatePosition(bool inNext = false) {
         _lastMoveWasRestore = false;
         if (_cursorAtEof) {
@@ -1047,7 +1053,7 @@ protected:
         }
 
         // Store (a copy of) the new item data as the current key for this cursor.
-        _key.resetFromBuffer(item.data, item.size);
+        _key.resetFromBuffer(item.data, item.size); //获取到的key赋值给_key WiredTigerIndexCursorBase::curr中使用
 
         if (atOrPastEndPointAfterSeeking()) {
             _eof = true;
@@ -1058,20 +1064,23 @@ protected:
     }
 
     OperationContext* _opCtx;
+	//初始值对应uri文件的cursor，见WiredTigerIndexCursorBase构造函数
+	//WiredTigerIndexCursorBase::seek->WiredTigerIndexCursorBase::seekWTCursor中快速指定要查找key的cursor位置
     boost::optional<WiredTigerCursor> _cursor;
     const WiredTigerIndex& _idx;  // not owned
     const bool _forward;
 
     // These are where this cursor instance is. They are not changed in the face of a failing
     // next().
-    KeyString _key;
+    //要查找的索引文件key,  _key和下面的_id对应
+    KeyString _key; //WiredTigerIndex::keyStringVersion类型，初始默认KeyString::Version::V1对应的字符串"v1"
     KeyString::TypeBits _typeBits; //赋值见updateIdAndTypeBits
-    RecordId _id; //赋值见updateIdAndTypeBits
+    RecordId _id; //赋值见updateIdAndTypeBits 也就是索引文件_key对应的value，也就是数据文件的位置
     bool _eof = true;
 
     // This differs from _eof in that it always reflects the result of the most recent call to
     // reposition _cursor.
-    bool _cursorAtEof = false;
+    bool _cursorAtEof = false; //扫描到了文件末尾行
 
     // Used by next to decide to return current position rather than moving. Should be reset to
     // false by any operation that moves the cursor, other than subsequent save/restore pairs.
@@ -1093,6 +1102,7 @@ public:
                                   KVPrefix prefix)
         : WiredTigerIndexCursorBase(idx, opCtx, forward, prefix) {}
 
+	//
     void updateIdAndTypeBits() override {
         _id = KeyString::decodeRecordIdAtEnd(_key.getBuffer(), _key.getSize());
 

@@ -220,7 +220,7 @@ public:
      * Implementations may override any default implementation if they can provide a more
      * efficient implementation.
      */ //WiredTigerIndexUniqueCursor->WiredTigerIndexCursorBase->SortedDataInterface::Cursor
-    class Cursor {
+    class Cursor { //SortedDataInterface::Cursor
     public:
         /**
          * Tells methods that return an IndexKeyEntry what part of the data the caller is

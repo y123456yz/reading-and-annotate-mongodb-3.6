@@ -94,6 +94,7 @@ using std::string;
 namespace dps = ::mongo::dotted_path_support;
 
 //WiredTigerKVEngine::WiredTigerKVEngine中初始化调用
+//WiredTigerKVEngine._journalFlusher成员为该类
 class WiredTigerKVEngine::WiredTigerJournalFlusher : public BackgroundJob {
 public:
     explicit WiredTigerJournalFlusher(WiredTigerSessionCache* sessionCache)
@@ -139,6 +140,7 @@ private:
 };
 
 //WiredTigerKVEngine::WiredTigerKVEngine中调用执行
+//WiredTigerKVEngine._checkpointThread成员为该类
 class WiredTigerKVEngine::WiredTigerCheckpointThread : public BackgroundJob {
 public:
     explicit WiredTigerCheckpointThread(WiredTigerSessionCache* sessionCache)
@@ -214,6 +216,7 @@ public:
         LOG(1) << "stopping " << name() << " thread";
     }
 
+	//WiredTigerKVEngine::supportsRecoverToStableTimestamp中调用
     bool supportsRecoverToStableTimestamp() {
         // Replication is calling this method, however it is not setting the
         // `_initialDataTimestamp` in all necessary cases. This may be removed when replication
@@ -237,6 +240,7 @@ public:
         return _stableTimestamp.load() > initialDataTimestamp;
     }
 
+	//WiredTigerKVEngine::setStableTimestamp中调用
     void setStableTimestamp(Timestamp stableTimestamp) {
         _stableTimestamp.store(stableTimestamp.asULL());
     }
@@ -258,7 +262,9 @@ private:
     stdx::mutex _mutex;
     stdx::condition_variable _condvar;
     AtomicBool _shuttingDown{false};
-    AtomicWord<std::uint64_t> _stableTimestamp;
+	//前面的setStableTimestamp设置
+    AtomicWord<std::uint64_t> _stableTimestamp; 
+	//前面的setInitialDataTimestamp设置
     AtomicWord<std::uint64_t> _initialDataTimestamp;
 };
 
@@ -812,7 +818,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     std::string config = result.getValue();
 
     //ident是类似这种形式：6--4057196034770697536.wt，_uri(ident)返回的是string("table:") + ident.toString();
-    string uri = _uri(ident);
+    string uri = _uri(ident); //uri加上table前缀
 
 	//对应open_session
     WT_SESSION* s = session.getSession();
@@ -1198,6 +1204,7 @@ void WiredTigerKVEngine::_checkIdentPath(StringData ident) {
     }
 }
 
+//KVStorageEngine::setJournalListener
 void WiredTigerKVEngine::setJournalListener(JournalListener* jl) {
     return _sessionCache->setJournalListener(jl); //WiredTigerSessionCache::setJournalListener
 }
@@ -1211,6 +1218,9 @@ bool WiredTigerKVEngine::initRsOplogBackgroundThread(StringData ns) {
     return initRsOplogBackgroundThreadCallback(ns);
 }
 
+//InitialSyncer::_setUp_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
+//ReplicationCoordinatorImpl::_setStableTimestampForStorage_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
+//KVStorageEngine::setStableTimestamp
 void WiredTigerKVEngine::setStableTimestamp(Timestamp stableTimestamp) {
     const bool keepOldBehavior = true;
     // Communicate to WiredTiger what the "stable timestamp" is. Timestamp-aware checkpoints will
@@ -1232,6 +1242,7 @@ void WiredTigerKVEngine::setStableTimestamp(Timestamp stableTimestamp) {
         _conn->set_timestamp(_conn, conf.c_str());
     }
     if (_checkpointThread) {
+		//WiredTigerCheckpointThread::setStableTimestamp
         _checkpointThread->setStableTimestamp(stableTimestamp);
     }
 
@@ -1246,6 +1257,8 @@ void WiredTigerKVEngine::setStableTimestamp(Timestamp stableTimestamp) {
     }
 }
 
+//WiredTigerRecordStore::cappedTruncateAfter中调用
+////KVStorageEngine::setOldestTimestamp
 void WiredTigerKVEngine::setOldestTimestamp(Timestamp oldestTimestamp) {
     invariant(oldestTimestamp != Timestamp::min());
 
@@ -1270,6 +1283,7 @@ void WiredTigerKVEngine::setOldestTimestamp(Timestamp oldestTimestamp) {
     LOG(1) << "Forced a new oldest_timestamp. Value: " << oldestTimestamp;
 }
 
+//KVStorageEngine::advanceOldestTimestamp
 void WiredTigerKVEngine::advanceOldestTimestamp(Timestamp oldestTimestamp) {
     if (oldestTimestamp == Timestamp()) {
         // No oldestTimestamp to set, yet.
@@ -1318,6 +1332,7 @@ void WiredTigerKVEngine::advanceOldestTimestamp(Timestamp oldestTimestamp) {
     LOG(2) << "oldest_timestamp set to " << timestampToSet;
 }
 
+//KVStorageEngine::setInitialDataTimestamp
 void WiredTigerKVEngine::setInitialDataTimestamp(Timestamp initialDataTimestamp) {
     if (_checkpointThread) {
         _checkpointThread->setInitialDataTimestamp(initialDataTimestamp);

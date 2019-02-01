@@ -42,6 +42,7 @@ namespace mongo {
  * Represents a single item in an index. An index item simply consists of a key
  * and a disk location.
  */
+//索引记录相关，可以参考WiredTigerIndexCursorBase::curr
 struct IndexKeyEntry {
     IndexKeyEntry(BSONObj key, RecordId loc) : key(std::move(key)), loc(std::move(loc)) {}
 

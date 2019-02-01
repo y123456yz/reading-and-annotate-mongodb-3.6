@@ -68,7 +68,7 @@ struct CollectionScanParams {
     bool stopApplyingFilterAfterFirstMatch = false;
 
     // If non-zero, how many documents will we look at?
-    size_t maxScan = 0;
+    size_t maxScan = 0; //db.collection.find( { $query: { <query> }, $maxScan: <number> } 
 };
 
 }  // namespace mongo

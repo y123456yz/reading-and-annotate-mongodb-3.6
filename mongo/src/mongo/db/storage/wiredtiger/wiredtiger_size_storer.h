@@ -52,7 +52,7 @@ sizeStorer.wtÀï´æ´¢ËùÓĞ¼¯ºÏµÄÈİÁ¿ĞÅÏ¢£¬ÈçÎÄµµÊı¡¢ÎÄµµ×Ü´óĞ¡µÈ£¬µ±²åÈë¡¢É¾³ı¡¢¸üĞ
 mongodbÊ¹ÓÃWiredTigerSizeStorer×ö±íµÄ¸¨ÖúĞÅÏ¢µÄÄÚ´æ»º´æ¡£DML²Ù×÷ÒıÆğµÄ¸¨ÖúĞÅÏ¢±ä»¯£¬²»»áÖ±½Ó·´À¡µ½WiredTiger²ã¡£
 ¶øÊÇcacheÔÚÄÚ´æÀï£¬±ê¼ÇÎªdirty¡£db.coll.count()²Ù×÷Ò²Ö»ÊÇ¶ÁÄÚ´æÊı¾İ¡£
 */ 
-//WiredTigerRecordStoreÀàÖĞ°üº¬¸ÃÀàĞÍ³ÉÔ±   //WiredTigerKVEngine._sizeStorer   WiredTigerSizeStorer.sizeStorer
+//WiredTigerKVEngine._sizeStorer(Õë¶Ô±ítable:sizeStorer)   WiredTigerRecordStore._sizeStorer(Ã¿¸ö¼¯ºÏÓĞÒ»¸öWiredTigerRecordStoreÀà£¬_sizeStorerÎª¸ÃÀàµÄÍ³¼ÆĞÅÏ¢)
 class WiredTigerSizeStorer {
 public:
     WiredTigerSizeStorer(WT_CONNECTION* conn,
@@ -86,7 +86,7 @@ private:
         long long numRecords;
         long long dataSize;
         bool dirty; //±ê¼ÇÊÇ·ñÓĞdirtyÊı¾İ£¬synµ½´ÅÅÌºóÖ°Î»false
-        WiredTigerRecordStore* rs;  // not owned
+        WiredTigerRecordStore* rs;  // not owned  ´ú±í¶ÔÓ¦µÄ¼¯ºÏWiredTigerRecordStore.uri
     };
 
     int _magic;
@@ -96,10 +96,10 @@ private:
     const WiredTigerSession _session;
     WT_CURSOR* _cursor;  // pointer is const after constructor
 
-    typedef std::map<std::string, Entry> Map;
+    typedef std::map<std::string, Entry> Map; 
     //_entries map±íÖĞµÄÄÚ´æÄÚÈİÔÚWiredTigerSizeStorer::syncCacheÖĞÍ¬²½µ½wiredtiger²ã
     //Ã¿¸ô60ÃëÍ¬²½Ò»´Î¡£½«dirty entry¸üĞÂµ½wt²ã,¶¨Ê±Æ÷ÊµÏÖ¼û_sizeStorerSyncTracker
-    Map _entries;
+    Map _entries; //WiredTigerSizeStorer._entries[].rs map±íÖĞ¼ÇÂ¼ËùÓĞµÄ¼¯ºÏÍ³¼ÆĞÅÏ¢
     mutable stdx::mutex _entriesMutex;
 };
 }

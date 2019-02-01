@@ -350,6 +350,7 @@ void InitialSyncer::setScheduleDbWorkFn_forTest(const CollectionCloner::Schedule
     _scheduleDbWorkFn = work;
 }
 
+//InitialSyncer::_setUp_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
 void InitialSyncer::_setUp_inlock(OperationContext* opCtx, std::uint32_t initialSyncMaxAttempts) {
     // 'opCtx' is passed through from startup().
     _replicationProcess->getConsistencyMarkers()->setInitialSyncFlag(opCtx);

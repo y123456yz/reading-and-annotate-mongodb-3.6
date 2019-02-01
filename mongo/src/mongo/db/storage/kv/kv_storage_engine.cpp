@@ -386,15 +386,21 @@ void KVStorageEngine::setJournalListener(JournalListener* jl) {
     _engine->setJournalListener(jl);
 }
 
+//StorageInterfaceImpl::setStableTimestampµ÷ÓÃ
 void KVStorageEngine::setStableTimestamp(Timestamp stableTimestamp) {
+	//WiredTigerKVEngine::setStableTimestamp
     _engine->setStableTimestamp(stableTimestamp);
 }
 
+
 void KVStorageEngine::setInitialDataTimestamp(Timestamp initialDataTimestamp) {
+	//WiredTigerKVEngine::setInitialDataTimestamp
     _engine->setInitialDataTimestamp(initialDataTimestamp);
 }
 
+
 void KVStorageEngine::setOldestTimestamp(Timestamp oldestTimestamp) {
+	//WiredTigerKVEngine::setOldestTimestamp
     _engine->setOldestTimestamp(oldestTimestamp);
 }
 

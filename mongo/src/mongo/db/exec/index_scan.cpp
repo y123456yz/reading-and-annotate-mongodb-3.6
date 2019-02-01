@@ -127,11 +127,13 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
     }
 
     // Perform the possibly heavy-duty initialization of the underlying index cursor.
+    //WiredTigerIndexUniqueCursor结构
     _indexCursor = _iam->newCursor(getOpCtx(), _forward); //WiredTigerIndexUnique::newCursor   
 
     // We always seek once to establish the cursor position.
     ++_specificStats.seeks;
 
+	//也就是db.test.find({"name": "yangyazhou"}).explain("allPlansExecution")返回中的indexBounds内容，指定key范围
     if (_params.bounds.isSimpleRange) {
         // Start at one key, end at another.
         _startKey = _params.bounds.startKey;
@@ -146,8 +148,8 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
         // IndexBoundsChecker to determine when we've finished the scan.
         if (IndexBoundsBuilder::isSingleInterval(
                 _params.bounds, &_startKey, &_startKeyInclusive, &_endKey, &_endKeyInclusive)) {
-            _indexCursor->setEndPosition(_endKey, _endKeyInclusive); //WiredTigerIndexCursorBase::seek
-            return _indexCursor->seek(_startKey, _startKeyInclusive);
+            _indexCursor->setEndPosition(_endKey, _endKeyInclusive); //WiredTigerIndexCursorBase::setEndPosition
+            return _indexCursor->seek(_startKey, _startKeyInclusive); //WiredTigerIndexCursorBase::seek
         } else {
             _checker.reset(new IndexBoundsChecker(&_params.bounds, _keyPattern, _params.direction));
 
@@ -187,16 +189,19 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
 //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
+
+//IndexScan::doWork走索引的情况下，每获取到一个index的key-value(value实际上是数据文件的key，也就指定了数据文件位置)(获取满足key的索引数据)，
+//该函数返回后会通过PlanStage::work调用FetchStage::doWork走fetch流程来对IndexScan::doWork获取到的索引key-value中的value来获取对应的数据
 PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中执行
     // Get the next kv pair from the index, if any.
-    boost::optional<IndexKeyEntry> kv;
+    boost::optional<IndexKeyEntry> kv; //索引文件key，及其在数据文件中的位置
     try {
         switch (_scanState) {
             case INITIALIZING:
                 kv = initIndexScan();
                 break;
             case GETTING_NEXT:
-                kv = _indexCursor->next();
+                kv = _indexCursor->next(); //WiredTigerIndexCursorBase::next  如果没有传参，默认kKeyAndLoc，见 SortedDataInterface::Cursor
                 break;
             case NEED_SEEK:
                 ++_specificStats.seeks;
@@ -230,15 +235,17 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
             dassert(_forward ? cmp <= 0 : cmp >= 0);
         }
 
+		//size_t docsExamined; FetchStage::returnIfMatches中自增     keysExamined在IndexScan::doWork自增
         ++_specificStats.keysExamined;
-        if (_params.maxScan && _specificStats.keysExamined >= _params.maxScan) {
+        if (_params.maxScan && _specificStats.keysExamined >= _params.maxScan) { //查询的时候指定了最多扫描maxScan条
             kv = boost::none;
         }
     }
 
     if (kv && _checker) {
+		//
         switch (_checker->checkKey(kv->key, &_seekPoint)) {
-            case IndexBoundsChecker::VALID:
+            case IndexBoundsChecker::VALID: 
                 break;
 
             case IndexBoundsChecker::DONE:
@@ -269,7 +276,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
         }
     }
 
-    if (_filter) {
+    if (_filter) { //filter : 查询过滤条件，类比SQL的where表达式
         if (!Filter::passes(kv->key, _keyPattern, _filter)) {
             return PlanStage::NEED_TIME;
         }
@@ -279,9 +286,10 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
         kv->key = kv->key.getOwned();
 
     // We found something to return, so fill out the WSM.
-    WorkingSetID id = _workingSet->allocate();
-    WorkingSetMember* member = _workingSet->get(id);
-    member->recordId = kv->loc;
+    //一个WorkingSetID对应一个WorkingSetMember
+    WorkingSetID id = _workingSet->allocate(); //WorkingSet::allocate
+    WorkingSetMember* member = _workingSet->get(id);//WorkingSet::get
+    member->recordId = kv->loc; //根据在数据文件中的位置，获取到数据文件中的kv
     member->keyData.push_back(IndexKeyDatum(_keyPattern, kv->key, _iam));
     _workingSet->transitionToRecordIdAndIdx(id);
 
@@ -291,7 +299,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
         member->addComputed(new IndexKeyComputedData(bob.obj()));
     }
 
-    *out = id;
+    *out = id; //这里面有索引信息 
     return PlanStage::ADVANCED;
 }
 

@@ -3308,6 +3308,9 @@ void ReplicationCoordinatorImpl::_setStableTimestampForStorage_inlock() {
             // write concern.
             _updateCommittedSnapshot_inlock(stableOpTime.get());
             // Update the stable timestamp for the storage engine.
+
+
+			//StorageInterfaceImpl::setStableTimestamp
             _storage->setStableTimestamp(getServiceContext(), stableOpTime->getTimestamp());
         }
         _cleanupStableOpTimeCandidates(&_stableOpTimeCandidates, stableOpTime.get());
