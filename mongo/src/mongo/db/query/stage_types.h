@@ -79,7 +79,7 @@ enum StageType { //²Î¿¼PlanStage* buildStages
     // Simple wrapper to iterate a SortedDataInterface::Cursor.
     STAGE_INDEX_ITERATOR,
 
-    STAGE_IXSCAN,  //Ë÷ÒýÉ¨Ãè£¬INDEX SCAN   IndexScan::doWork
+    STAGE_IXSCAN,  //18 Ë÷ÒýÉ¨Ãè£¬INDEX SCAN   IndexScan::doWork
     STAGE_LIMIT,
 
     // Implements parallelCollectionScan.

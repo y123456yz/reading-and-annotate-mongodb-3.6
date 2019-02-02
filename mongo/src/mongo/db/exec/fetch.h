@@ -87,9 +87,11 @@ private:
     // stages. The lifetime of the collection must supersede that of the stage.
     const Collection* _collection;
     // Used to fetch Records from _collection.
+    //赋值见FetchStage::doWork，对应集合的游标
     std::unique_ptr<SeekableRecordCursor> _cursor;
 
     // _ws is not owned by us.
+    //FetchStage::doWork
     WorkingSet* _ws;
 
     // The filter is not owned by us.

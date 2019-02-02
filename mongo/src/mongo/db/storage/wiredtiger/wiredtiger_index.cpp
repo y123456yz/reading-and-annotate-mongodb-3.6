@@ -575,9 +575,11 @@ protected:
         // Configure the bulk cursor open to fail quickly if it would wait on a checkpoint
         // completing - since checkpoints can take a long time, and waiting can result in
         // an unexpected pause in building an index.
-        WT_SESSION* session = _session->getSession();
-        int err = session->open_cursor(
-            session, idx->uri().c_str(), NULL, "bulk,checkpoint_wait=false", &cursor);
+        WT_SESSION* session = _session->getSession(); //获取一个session
+        int err = session->open_cursor( //指定该session拥有bulk功能
+//bulk功能生效参考wiredtiger __wt_curbulk_init，实际上是为了减少btree insert写入时候的查找，
+//但该功能前提是所有insert的key在插入的时候已经是有序的 	  
+            session, idx->uri().c_str(), NULL, "bulk,checkpoint_wait=false", &cursor);  //bulk参数指定使用wiredtiger bulk功能
         if (!err)
             return cursor;
 
@@ -791,7 +793,8 @@ public:
         _endPosition->resetToKey(stripFieldNames(key), _idx.ordering(), discriminator);
     }
 
-	//IndexScan::initIndexScan中调用执行   //WiredTigerIndexCursorBase::seek确定key所在的cursor位置
+	//IndexScan::initIndexScan  IndexScan::doWork中调用执行   
+	//WiredTigerIndexCursorBase::seek确定key所在的cursor位置，获取索引KV，及数据value
     boost::optional<IndexKeyEntry> seek(const BSONObj& key,
                                         bool inclusive,
                                         RequestedInfo parts) override {
@@ -802,9 +805,9 @@ public:
         // By using a discriminator other than kInclusive, there is no need to distinguish
         // unique vs non-unique key formats since both start with the key.
         _query.resetToKey(finalKey, _idx.ordering(), discriminator);
-        seekWTCursor(_query); 
-        updatePosition();
-        return curr(parts);
+        seekWTCursor(_query); //根据查询key获取索引cursor位置
+        updatePosition(); //获取索引行中对应的key-value
+        return curr(parts); //把索引key-value转换为IndexKeyEntry结构返回
     }
 
     boost::optional<IndexKeyEntry> seek(const IndexSeekPoint& seekPoint,
@@ -918,7 +921,7 @@ protected:
 #9  0x00007f882a7cfc3d in mongo::(anonymous namespace)::FindCmd::run (this=this@entry=0x7f882caac740 <mongo::(anonymous namespace)::findCmd>, opCtx=opCtx@entry=0x7f883216fdc0, dbname=..., cmdObj=..., result=...)
     at src/mongo/db/commands/find_cmd.cpp:366
 	*/ 
-	//WiredTigerIndexCursorBase::curr  定位索引key及其在数据文件中的位置
+	//WiredTigerIndexCursorBase::curr  //把索引key-value转换为IndexKeyEntry结构返回
 	//WiredTigerIndexCursorBase::next  WiredTigerIndexCursorBase::seek等调用    
     boost::optional<IndexKeyEntry> curr(RequestedInfo parts) const {
         if (_eof)
@@ -928,7 +931,7 @@ protected:
         dassert(!_id.isNull());
 
         BSONObj bson;
-        if (TRACING_ENABLED || (parts & kWantKey)) {
+        if (TRACING_ENABLED || (parts & kWantKey)) { //根据索引KV中的V，也就是_id，获取对应的数据value给bson
             bson = KeyString::toBson(_key.getBuffer(), _key.getSize(), _idx.ordering(), _typeBits);
 
             TRACE_CURSOR << " returning " << bson << ' ' << _id;
@@ -1012,7 +1015,7 @@ protected:
      * This must be called after moving the cursor to update our cached position. It should not
      * be called after a restore that did not restore to original state since that does not
      * logically move the cursor until the following call to next().
-     */  //WiredTigerIndexCursorBase::next
+     */  //WiredTigerIndexCursorBase::next，获取索引行中对应的key-value
     void updatePosition(bool inNext = false) {
         _lastMoveWasRestore = false;
         if (_cursorAtEof) {
@@ -1053,13 +1056,15 @@ protected:
         }
 
         // Store (a copy of) the new item data as the current key for this cursor.
-        _key.resetFromBuffer(item.data, item.size); //获取到的key赋值给_key WiredTigerIndexCursorBase::curr中使用
+		//获取索引行KEY-VALUE中的KEY
+		_key.resetFromBuffer(item.data, item.size); //获取到的key赋值给_key WiredTigerIndexCursorBase::curr中使用
 
         if (atOrPastEndPointAfterSeeking()) {
             _eof = true;
             return;
         }
 
+		//获取索引行KEY-VALUE中的VALUE
         updateIdAndTypeBits();
     }
 
@@ -1102,7 +1107,7 @@ public:
                                   KVPrefix prefix)
         : WiredTigerIndexCursorBase(idx, opCtx, forward, prefix) {}
 
-	//
+	//updatePosition中调用  //获取索引行KEY-VALUE中的VALUE
     void updateIdAndTypeBits() override {
         _id = KeyString::decodeRecordIdAtEnd(_key.getBuffer(), _key.getSize());
 

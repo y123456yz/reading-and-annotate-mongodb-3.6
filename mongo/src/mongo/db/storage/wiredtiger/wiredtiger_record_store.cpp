@@ -1798,13 +1798,13 @@ boost::optional<Record> WiredTigerRecordStoreCursorBase::next() {
     return {{id, {static_cast<const char*>(value.data), static_cast<int>(value.size)}}};
 }
 
-//获取ID对应的一行记录
+//获取ID对应的一行记录   WorkingSetCommon::fetch调用
 boost::optional<Record> WiredTigerRecordStoreCursorBase::seekExact(const RecordId& id) {
     _skipNextAdvance = false;
     WT_CURSOR* c = _cursor->get();
     setKey(c, id);
     // Nothing after the next line can throw WCEs.
-    int seekRet = WT_READ_CHECK(c->search(c));
+    int seekRet = WT_READ_CHECK(c->search(c)); //curfile_search  没有该id对应的value记录，直接置位_eof
     if (seekRet == WT_NOTFOUND) {
         // hasWrongPrefix check not needed for a precise 'WT_CURSOR::search'.
         _eof = true;
@@ -1813,7 +1813,7 @@ boost::optional<Record> WiredTigerRecordStoreCursorBase::seekExact(const RecordI
     invariantWTOK(seekRet);
 
     WT_ITEM value;
-    invariantWTOK(c->get_value(c, &value));
+    invariantWTOK(c->get_value(c, &value));//__wt_cursor_get_value
 
     _lastReturnedId = id;
     _eof = false;

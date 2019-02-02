@@ -85,7 +85,7 @@ void WorkingSetCommon::prepareForSnapshotChange(WorkingSet* workingSet) {
     }
 }
 
-// static
+// static   FetchStage::doWork调用，根据member->recordId索引标识记录获取对应的数据行信息存入obj
 bool WorkingSetCommon::fetch(OperationContext* opCtx,
                              WorkingSet* workingSet,
                              WorkingSetID id,
@@ -100,6 +100,7 @@ bool WorkingSetCommon::fetch(OperationContext* opCtx,
     invariant(member->hasRecordId());
 
     member->obj.reset();
+	//WiredTigerRecordStoreCursorBase::seekExact
     auto record = cursor->seekExact(member->recordId);
     if (!record) {
         return false;

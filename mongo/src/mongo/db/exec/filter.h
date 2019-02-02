@@ -149,6 +149,7 @@ public:
      * Returns true if filter is NULL or if 'wsm' satisfies the filter.
      * Returns false if 'wsm' does not satisfy the filter.
      */
+    //检查wsm的数据是否符合filter要求，参考FetchStage::returnIfMatches
     static bool passes(WorkingSetMember* wsm, const MatchExpression* filter) {
         if (NULL == filter) {
             return true;

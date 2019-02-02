@@ -140,7 +140,7 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
         _endKey = _params.bounds.endKey;
 		//WiredTigerIndexCursorBase::setEndPosition
         _indexCursor->setEndPosition(_endKey, _endKeyInclusive);
-		//WiredTigerIndexCursorBase::seek
+		//WiredTigerIndexCursorBase::seek  确定要搜索的key的位置
         return _indexCursor->seek(_startKey, _startKeyInclusive);
     } else {
         // For single intervals, we can use an optimized scan which checks against the position
@@ -155,7 +155,7 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
 
             if (!_checker->getStartSeekPoint(&_seekPoint))
                 return boost::none;
-			//WiredTigerIndexCursorBase::seek
+			//WiredTigerIndexCursorBase::seek  确定要搜索的key的位置
             return _indexCursor->seek(_seekPoint);
         }
     }
@@ -190,11 +190,15 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
 */
 //IndexScan::doWork(走索引)  CollectionScan::doWork(全表扫描)
 
-//IndexScan::doWork走索引的情况下，每获取到一个index的key-value(value实际上是数据文件的key，也就指定了数据文件位置)(获取满足key的索引数据)，
-//该函数返回后会通过PlanStage::work调用FetchStage::doWork走fetch流程来对IndexScan::doWork获取到的索引key-value中的value来获取对应的数据
+//IndexScan::doWork获取索引行信息，FetchStage::doWork根据索引行信息取出对应数据行信息，并检查是否符合filter要求
+
+//实际上该work是FetchStage::doWork的child，实际上由FetchStage::doWork调用child接口执行的该函数
 PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中执行
     // Get the next kv pair from the index, if any.
-    boost::optional<IndexKeyEntry> kv; //索引文件key，及其在数据文件中的位置
+    //实际上对应的是索引key和value
+    //参考WiredTigerIndexCursorBase::curr
+    boost::optional<IndexKeyEntry> kv; 
+	
     try {
         switch (_scanState) {
             case INITIALIZING:
@@ -214,7 +218,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
         *out = WorkingSet::INVALID_ID;
         return PlanStage::NEED_YIELD;
     }
-
+	
     if (kv) {
         // In debug mode, check that the cursor isn't lying to us.
         if (kDebugBuild && !_startKey.isEmpty()) {
@@ -299,7 +303,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
         member->addComputed(new IndexKeyComputedData(bob.obj()));
     }
 
-    *out = id; //这里面有索引信息 
+    *out = id; //一个id和一个WorkingSetMember对应
     return PlanStage::ADVANCED;
 }
 
