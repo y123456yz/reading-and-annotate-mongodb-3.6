@@ -358,7 +358,7 @@ struct FetchStats : public SpecificStats {
     }
 
     // Have we seen anything that already had an object?
-    size_t alreadyHasObj;
+    size_t alreadyHasObj; //¸³Öµ¼ûFetchStage::doWork
 
     // How many records were we forced to fetch as the result of an invalidation?
     size_t forcedFetches;

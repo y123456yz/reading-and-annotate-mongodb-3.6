@@ -61,8 +61,8 @@ typedef size_t WorkingSetID; //一个WorkingSetID对应一个WorkingSetMember
 这个数组用于形成一个链表结构,每个节点是 MemberHolder类型用于保存一条记录和链表的下一个节点的位置,记录将被
 做一些调整存放在WorkingSetMember类型中.在一次查询 过程中需要很多次的申请与释放MemberHolder,在释放的时候,它
 将被放在空闲链表里面,备后续使用
-*/
-class WorkingSet {
+*/ //FetchStage._ws结构,FetchStage::doWork中使用
+class WorkingSet { //通过索引获取到的索引行信息对应的数据信息保存到该结构的MemberHolder.member中
     MONGO_DISALLOW_COPYING(WorkingSet);
 
 public:
@@ -250,7 +250,7 @@ private:
  *
  * A WorkingSetMember may have any of the data above.
  */ //参考PlanExecutor::getNextImpl  //一个WorkingSetID对应一个WorkingSetMember，参考IndexScan::doWork
-class WorkingSetMember { //WorkingSet.MemberHolder.member   
+class WorkingSetMember { //WorkingSet.MemberHolder.member     所有的WorkingSetMember都保存到WorkingSet中
     MONGO_DISALLOW_COPYING(WorkingSetMember);
 
 public:
@@ -289,11 +289,11 @@ public:
     //
     // Core attributes
     //
-    //loc字段为记录的id字段,
-    RecordId recordId;
-    //obj字段记录的bson文档
-    Snapshotted<BSONObj> obj;
-    std::vector<IndexKeyDatum> keyData;
+    //loc字段为记录的id字段,也就是索引对应的value，实际上对应的是数据行的id
+    RecordId recordId; //可以参考IndexScan::doWork
+    //obj字段记录的bson文档, 根据recordId获取到的真实数据内容
+    Snapshotted<BSONObj> obj; //赋值见WorkingSetCommon::fetch
+    std::vector<IndexKeyDatum> keyData; //要查找的key, 也就是索引key  //可以参考IndexScan::doWork
 
     // True if this WSM has survived a yield in RID_AND_IDX state.
     // TODO consider replacing by tracking SnapshotIds for IndexKeyDatums.

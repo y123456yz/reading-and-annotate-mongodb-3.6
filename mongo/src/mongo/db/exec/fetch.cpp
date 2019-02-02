@@ -102,10 +102,9 @@ bool FetchStage::isEOF() {
 #12 0x00007f882a76fc08 in mongo::TTLMonitor::run (this=0x7f882e8cdfc0) at src/mongo/db/ttl.cpp:111
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
-//IndexScan::doWork走索引的情况下，每获取到一个index的key-value(value实际上是数据文件的key，也就指定了数据文件位置)(获取满足key的索引数据)，
-//该函数返回后会通过PlanStage::work调用FetchStage::doWork走fetch流程来对IndexScan::doWork获取到的索引key-value中的value来获取对应的数据
 
-//PlanStage::work中执行
+//IndexScan::doWork获取索引行信息，FetchStage::doWork根据索引行信息取出对应数据行信息，并检查是否符合filter要求
+//PlanStage::work中执行  如果走索引，out代表的是满足条件的索引行及数据行信息，结合IndexScan::doWork
 PlanStage::StageState FetchStage::doWork(WorkingSetID* out) {
     if (isEOF()) {
         return PlanStage::IS_EOF;
@@ -115,7 +114,7 @@ PlanStage::StageState FetchStage::doWork(WorkingSetID* out) {
     WorkingSetID id;
     StageState status;
     if (_idRetrying == WorkingSet::INVALID_ID) {
-        status = child()->work(&id);
+        status = child()->work(&id); //如果走索引实际上是调用IndexScan::doWork
     } else {
         status = ADVANCED;
         id = _idRetrying;
@@ -123,7 +122,7 @@ PlanStage::StageState FetchStage::doWork(WorkingSetID* out) {
     }
 
     if (PlanStage::ADVANCED == status) {
-        WorkingSetMember* member = _ws->get(id);
+        WorkingSetMember* member = _ws->get(id); //id和WorkingSetMember是对应的
 
         // If there's an obj there, there is no fetching to perform.
         if (member->hasObj()) {
@@ -135,9 +134,11 @@ PlanStage::StageState FetchStage::doWork(WorkingSetID* out) {
 
             try {
                 if (!_cursor)
+					//CollectionImpl::getCursor
                     _cursor = _collection->getCursor(getOpCtx());
 
-                if (auto fetcher = _cursor->fetcherForId(member->recordId)) {
+				// SeekableRecordCursor::fetcherForId    只有MMAP有该接口 
+                if (auto fetcher = _cursor->fetcherForId(member->recordId)) { 
                     // There's something to fetch. Hand the fetcher off to the WSM, and pass up
                     // a fetch request.
                     _idRetrying = id;
@@ -148,6 +149,8 @@ PlanStage::StageState FetchStage::doWork(WorkingSetID* out) {
 
                 // The doc is already in memory, so go ahead and grab it. Now we have a RecordId
                 // as well as an unowned object
+                //根据索引内容value(也就是数据文件的key)，获取数据行
+                //根据索引行信息，获取对应的数据行信息
                 if (!WorkingSetCommon::fetch(getOpCtx(), _ws, id, _cursor)) {
                     _ws->free(id);
                     return NEED_TIME;
@@ -232,14 +235,16 @@ PlanStage::StageState FetchStage::returnIfMatches(WorkingSetMember* member,
     // the user might also want to find only those documents for which accommodationType==
     // "restaurant". The planner will add a second fetch stage to filter by this non-geo
     // predicate.
-    ++_specificStats.docsExamined; //size_t docsExamined; FetchStage::returnIfMatches中自增     keysExamined在IndexScan::doWork自增
 
-    if (Filter::passes(member, _filter)) {
+	//size_t docsExamined; FetchStage::returnIfMatches中自增     keysExamined在IndexScan::doWork自增
+    ++_specificStats.docsExamined; 
+
+    if (Filter::passes(member, _filter)) { 
         *out = memberID;
-        return PlanStage::ADVANCED;
+        return PlanStage::ADVANCED; //符合要求
     } else {
         _ws->free(memberID);
-        return PlanStage::NEED_TIME;
+        return PlanStage::NEED_TIME; //不符合要求
     }
 }
 

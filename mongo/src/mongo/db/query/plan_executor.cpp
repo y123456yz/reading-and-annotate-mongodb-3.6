@@ -624,12 +624,12 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
             writeConflictsInARow = 0;
 
 		log() << "yang test PlanExecutor::getNextImpl:" << (int)code;
-        if (PlanStage::ADVANCED == code) {
+        if (PlanStage::ADVANCED == code) {//0
             WorkingSetMember* member = _workingSet->get(id);  //数据都存入WorkingSetMember这里面
             bool hasRequestedData = true;
 
             if (NULL != objOut) {
-                if (WorkingSetMember::RID_AND_IDX == member->getState()) {
+                if (WorkingSetMember::RID_AND_IDX == member->getState()) { //只需要获取索引信息
                     if (1 != member->keyData.size()) {
                         _workingSet->free(id);
                         hasRequestedData = false;

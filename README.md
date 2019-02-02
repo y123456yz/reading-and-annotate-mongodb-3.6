@@ -58,3 +58,4 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .分析wiredtiger存储引擎事务功能  
     .进一步分析wiredtiger存储引擎checkpoint实现过程  
     .结合wiredtiger存储引擎重新所里planstage中IndexScan::doWork和FetchStage::doWork实现流程，已经他们之间的关系，及索引key计数过程
+    .配合wiredtiger bulk功能，分析mongo session使用该功能的代码实现  
