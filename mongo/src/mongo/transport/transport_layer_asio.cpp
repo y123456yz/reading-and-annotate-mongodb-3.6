@@ -236,26 +236,37 @@ Status TransportLayerASIO::start() { //listen线程处理
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     _running.store(true);
 
+	
+	warning() << "222 yang test  TransportLayerASIO::start";
     _listenerThread = stdx::thread([this] {
-        setThreadName("listener");
+        setThreadName("listener"); //新线程为listen线程
         while (_running.load()) {
-            asio::io_context::work work(*_acceptorIOContext);
+			
+            asio::io_context::work work(*_acceptorIOContext); 
+			//_acceptorIOContext和_acceptors是关联的，见TransportLayerASIO::setup
             try {
-                _acceptorIOContext->run();
+				warning() << "yang test  TransportLayerASIO::start";
+                _acceptorIOContext->run(); //异步调度_acceptConnection中的ServiceEntryPointImpl::startSession
             } catch (...) {
                 severe() << "Uncaught exception in the listener: " << exceptionToStatus();
                 fassertFailed(40491);
             }
         }
+		warning() << "yang test  TransportLayerASIO::start end";
     }); //创建listener线程
 
+	//下面逻辑是mongosMain线程处理
+	warning() << "111 yang test  TransportLayerASIO::start";
 	/*
+	现在的默认配置都是该模型:
 	mongod为每个连接创建一个线程，创建时做了一定优化，将栈空间设置为1M，减少了线程的内存开销。
 	当线程太多时，线程切换的开销也会变大，但因为mongdb后端是持久化的存储，切换开销相比IO的开销还是要小得多。
+
+	如果配置了net  adaptive，则会复用链接
 	*/
     for (auto& acceptor : _acceptors) { //bind绑定的时候赋值，见TransportLayerASIO::setup
         acceptor.second.listen(serverGlobalParams.listenBacklog);
-        _acceptConnection(acceptor.second);  
+        _acceptConnection(acceptor.second);    //异步accept处理在该函数中
     }
 
     const char* ssl = "";
@@ -304,7 +315,7 @@ const std::shared_ptr<asio::io_context>& TransportLayerASIO::getIOContext() {
     return _workerIOContext;
 }
 
-//TransportLayerASIO::start
+//TransportLayerASIO::start  这里的acceptor和TransportLayerASIO::start中的_acceptorIOContext是关联的
 void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
     auto acceptCb = [this, &acceptor](const std::error_code& ec, GenericSocket peerSocket) mutable {
         if (!_running.load())
@@ -324,7 +335,8 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
         _acceptConnection(acceptor); //递归，知道处理完所有的网络accept事件
     };
 
-    acceptor.async_accept(*_workerIOContext, std::move(acceptCb)); //异步接收处理
+	//新连接到来，最终的acceptCb是由TransportLayerASIO::start  listen线程来处理
+    acceptor.async_accept(*_workerIOContext, std::move(acceptCb)); //异步接收处理，新链接到来listen线程调用acceptCb回调
 }
 
 #ifdef MONGO_CONFIG_SSL

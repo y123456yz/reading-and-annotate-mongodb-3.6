@@ -402,6 +402,7 @@ void ReplicaSetMonitor::remove(const string& name) {
     globalConnPool.removeHost(name);
 }
 
+//hook «∫Ø ˝÷∏’Î  runMongosServer
 void ReplicaSetMonitor::setAsynchronousConfigChangeHook(ConfigChangeHook hook) {
     invariant(!asyncConfigChangeHook);
     asyncConfigChangeHook = hook;

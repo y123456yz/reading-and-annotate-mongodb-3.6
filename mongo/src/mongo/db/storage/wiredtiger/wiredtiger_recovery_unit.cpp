@@ -238,7 +238,7 @@ void* WiredTigerRecoveryUnit::writingPtr(void* data, size_t len) {
 /*
 RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTransaction。 
 RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
-*/
+*/ //事务提交，事务回滚
 void WiredTigerRecoveryUnit::_txnClose(bool commit) {
     invariant(_active);
     WT_SESSION* s = _session->getSession();

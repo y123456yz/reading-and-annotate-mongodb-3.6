@@ -46,6 +46,7 @@
 namespace mongo {
 namespace {
 //全局变量 service_context_d.cpp:    makeMongoDServiceContext中初始化赋值
+//mongos赋值在mongoSMain上面的函数中，编译的时候已经确定了,对应ServiceContextNoop
 ServiceContext* globalServiceContext = nullptr;
 stdx::mutex globalServiceContextMutex;
 stdx::condition_variable globalServiceContextCV;
@@ -208,7 +209,7 @@ void ServiceContext::setTickSource(std::unique_ptr<TickSource> newSource) {
     _tickSource = std::move(newSource);
 }
 
-//makeMongoDServiceContext _initAndListen中调用，默认10ms
+//makeMongoDServiceContext _initAndListen  _main中调用，默认10ms
 void ServiceContext::setFastClockSource(std::unique_ptr<ClockSource> newSource) {
     _fastClockSource = std::move(newSource);
 }
@@ -217,12 +218,12 @@ void ServiceContext::setPreciseClockSource(std::unique_ptr<ClockSource> newSourc
     _preciseClockSource = std::move(newSource);
 }
 
-//makeMongoDServiceContext _initAndListen中调用
+//makeMongoDServiceContext  ServiceEntryPointMongos  _initAndListen  runMongosServer中调用
 void ServiceContext::setServiceEntryPoint(std::unique_ptr<ServiceEntryPoint> sep) {
     _serviceEntryPoint = std::move(sep);
 }
 
-//_initAndListen中执行
+//_initAndListen中执行 mongos在runMongosServer
 void ServiceContext::setTransportLayer(std::unique_ptr<transport::TransportLayer> tl) {
     _transportLayer = std::move(tl);
 }

@@ -623,7 +623,7 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
         if (code != PlanStage::NEED_YIELD)
             writeConflictsInARow = 0;
 
-		log() << "yang test PlanExecutor::getNextImpl:" << (int)code;
+		//log() << "yang test PlanExecutor::getNextImpl:" << (int)code;
         if (PlanStage::ADVANCED == code) {//0
             WorkingSetMember* member = _workingSet->get(id);  //数据都存入WorkingSetMember这里面
             bool hasRequestedData = true;

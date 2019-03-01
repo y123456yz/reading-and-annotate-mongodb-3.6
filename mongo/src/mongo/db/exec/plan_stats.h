@@ -70,7 +70,7 @@ struct CommonStats { //算分用的该类，参考PlanStage::work    explain("allPlansExe
     const char* stageTypeStr;
 
     // Count calls into the stage.
-    size_t works; //PlanStage::work中赋值，总次数
+    size_t works; //PlanStage::work中赋值，总次数 下面的advanced  needTime  needYield总和
     size_t yields;
     size_t unyields;
     size_t invalidates;

@@ -1163,9 +1163,9 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     bool isCommand = false;
 
 	
-	str::stream s;
-	s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
-	log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
+	//str::stream s;
+	//s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
+	//log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
 
     DbMessage dbmsg(m);
 	

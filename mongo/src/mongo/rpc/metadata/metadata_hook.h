@@ -46,7 +46,7 @@ namespace rpc {
  * TODO: At some point we will want the opposite of this interface (readRequestMetadata,
  * writeReplyMetadata) that we will use for ingress networking. This will allow us to move much
  * of the metadata handling logic out of Command::run.
- */
+ */ //EgressMetadataHookList中继承使用该类
 class EgressMetadataHook {
 public:
     virtual ~EgressMetadataHook() = default;

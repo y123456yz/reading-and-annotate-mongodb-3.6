@@ -181,6 +181,7 @@ inline bool shouldLog(logger::LogSeverity severity) {
                                       ::mongo::LogstreamBuilder::severityCast(DLEVEL), \
                                       MongoLogDefaultComponent_component)
 
+//LOG(1)表示在启动mongod的时候加了一个-v，-vv表示LOG(1) LOG(2)都会写日志
 #define LOG MONGO_LOG
 
 #define MONGO_LOG_COMPONENT(DLEVEL, COMPONENT1)                                            \

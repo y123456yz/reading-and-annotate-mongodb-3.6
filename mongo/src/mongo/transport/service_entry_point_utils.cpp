@@ -58,7 +58,7 @@ void* runFunc(void* ctx) {
 }
 }  // namespace
 
-//创建线程
+//创建线程worker-
 Status launchServiceWorkerThread(stdx::function<void()> task) {
 
     try {
@@ -92,7 +92,7 @@ Status launchServiceWorkerThread(stdx::function<void()> task) {
         pthread_t thread;
 		//task参数传递给新建线程
         auto ctx = stdx::make_unique<stdx::function<void()>>(std::move(task));
-        int failed = pthread_create(&thread, &attrs, runFunc, ctx.get());
+        int failed = pthread_create(&thread, &attrs, runFunc, ctx.get()); //runFunc根据ctx获取到对应task
 
         pthread_attr_destroy(&attrs);
 

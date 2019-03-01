@@ -57,13 +57,17 @@ size_t TaskExecutorPool::getSuggestedPoolSize() {
     return std::max(4U, std::min(64U, numCores));
 }
 
+//initializeGlobalShardingState->TaskExecutorPool::startup->ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
 void TaskExecutorPool::startup() {
     invariant(!_executors.empty());
     invariant(_fixedExecutor);
 
-    _fixedExecutor->startup();
+	//参考makeShardingTaskExecutorPool
+	
+    _fixedExecutor->startup(); //ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
     for (auto&& exec : _executors) {
-        exec->startup();
+		//对应NetworkInterfaceASIO-ShardRegistry线程
+        exec->startup(); //ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
     }
 }
 
@@ -76,6 +80,7 @@ void TaskExecutorPool::shutdownAndJoin() {
     }
 }
 
+//见makeShardingTaskExecutorPool
 void TaskExecutorPool::addExecutors(std::vector<std::unique_ptr<TaskExecutor>> executors,
                                     std::unique_ptr<TaskExecutor> fixedExecutor) {
     invariant(_executors.empty());

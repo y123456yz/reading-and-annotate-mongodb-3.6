@@ -231,6 +231,7 @@ void execCommandClient(OperationContext* opCtx,
     Command::appendCommandStatus(result, ok);
 }
 
+//Strategy::clientCommand
 void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBuilder&& builder) {
     // Handle command option maxTimeMS first thing while processing the command so that the
     // subsequent code has the deadline available

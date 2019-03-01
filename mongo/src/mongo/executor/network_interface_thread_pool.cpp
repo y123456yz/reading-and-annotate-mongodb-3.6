@@ -61,6 +61,7 @@ void NetworkInterfaceThreadPool::dtorImpl() {
     invariant(_tasks.empty());
 }
 
+//ThreadPoolTaskExecutor::startup
 void NetworkInterfaceThreadPool::startup() {
     stdx::unique_lock<stdx::mutex> lk(_mutex);
     if (_started) {

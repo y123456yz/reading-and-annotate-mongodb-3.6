@@ -121,6 +121,7 @@ std::unique_ptr<ShardingCatalogClient> makeCatalogClient(ServiceContext* service
     return stdx::make_unique<ShardingCatalogClientImpl>(std::move(distLockManager));
 }
 
+//生成到后端mongod的连接池TaskExecutorPool   initializeGlobalShardingState调用
 std::unique_ptr<TaskExecutorPool> makeShardingTaskExecutorPool(
     std::unique_ptr<NetworkInterface> fixedNet,
     rpc::ShardingEgressMetadataHookBuilder metadataHookBuilder,
@@ -128,10 +129,14 @@ std::unique_ptr<TaskExecutorPool> makeShardingTaskExecutorPool(
     boost::optional<size_t> taskExecutorPoolSize) {
     std::vector<std::unique_ptr<executor::TaskExecutor>> executors;
 
+	//获取taskExecutorPoolSize
     const auto poolSize = taskExecutorPoolSize.value_or(TaskExecutorPool::getSuggestedPoolSize());
 
     for (size_t i = 0; i < poolSize; ++i) {
-        auto exec = makeShardingTaskExecutor(executor::makeNetworkInterface(
+		//负责到后端mongod的链接,  NetworkInterfaceASIO-TaskExecutorPool-线程
+		//一个链接对应一个  线程名设置在NetworkInterfaceASIO::startup 
+		//top看的时候，对应的是Network.ool-3-0类似的线程
+        auto exec = makeShardingTaskExecutor(executor::makeNetworkInterface( //make生成一个NetworkInterfaceASIO
             "NetworkInterfaceASIO-TaskExecutorPool-" + std::to_string(i),
             stdx::make_unique<ShardingNetworkConnectionHook>(),
             metadataHookBuilder(),
@@ -141,19 +146,23 @@ std::unique_ptr<TaskExecutorPool> makeShardingTaskExecutorPool(
     }
 
     // Add executor used to perform non-performance critical work.
+    //对应NetworkInterfaceASIO-ShardRegistry
     auto fixedExec = makeShardingTaskExecutor(std::move(fixedNet));
 
     auto executorPool = stdx::make_unique<TaskExecutorPool>();
+	//TaskExecutorPool::addExecutors
     executorPool->addExecutors(std::move(executors), std::move(fixedExec));
     return executorPool;
 }
 
 }  // namespace
 
+//makeShardingTaskExecutorPool
 std::unique_ptr<executor::TaskExecutor> makeShardingTaskExecutor(
-    std::unique_ptr<NetworkInterface> net) {
+    std::unique_ptr<NetworkInterface> net) { //net为NetworkInterfaceASIO
     auto netPtr = net.get();
-    auto executor = stdx::make_unique<ThreadPoolTaskExecutor>(
+	//创建
+       auto executor = stdx::make_unique<ThreadPoolTaskExecutor>(
         stdx::make_unique<NetworkInterfaceThreadPool>(netPtr), std::move(net));
 
     return stdx::make_unique<executor::ShardingTaskExecutor>(std::move(executor));
@@ -225,9 +234,10 @@ Status initializeGlobalShardingState(OperationContext* opCtx,
                                        hookBuilder(),
                                        connPoolOptions);
     auto networkPtr = network.get();
+	//初始化到mongod的连接池 
     auto executorPool = makeShardingTaskExecutorPool(
         std::move(network), hookBuilder, connPoolOptions, taskExecutorPoolSize);
-    executorPool->startup();
+    executorPool->startup(); //TaskExecutorPool::startup
 
     auto const grid = Grid::get(opCtx);
     grid->init(

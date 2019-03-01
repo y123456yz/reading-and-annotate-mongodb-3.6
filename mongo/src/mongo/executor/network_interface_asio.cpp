@@ -148,10 +148,13 @@ std::string NetworkInterfaceASIO::getHostName() {
     return getHostNameCached();
 }
 
+//initializeGlobalShardingState->TaskExecutorPool::startup->ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
+//ThreadPoolTaskExecutor::startup  
 void NetworkInterfaceASIO::startup() {
     _serviceRunners.resize(kIOServiceWorkers);
     for (std::size_t i = 0; i < kIOServiceWorkers; ++i) {
         _serviceRunners[i] = stdx::thread([this, i]() {
+			//instanceNameÀ´Ô´makeShardingTaskExecutorPool
             setThreadName(_options.instanceName + "-" + std::to_string(i));
             try {
                 LOG(2) << "The NetworkInterfaceASIO worker thread is spinning up";

@@ -327,6 +327,7 @@ bool ShardRegistry::reload(OperationContext* opCtx) {
     return true;
 }
 
+//shard hook，ShardRegistry::replicaSetChangeShardRegistryUpdateHook和ShardRegistry::replicaSetChangeConfigServerUpdateHook对应
 void ShardRegistry::replicaSetChangeShardRegistryUpdateHook(
     const std::string& setName, const std::string& newConnectionString) {
     // Inform the ShardRegsitry of the new connection string for the shard.
@@ -335,6 +336,8 @@ void ShardRegistry::replicaSetChangeShardRegistryUpdateHook(
     grid.shardRegistry()->updateReplSetHosts(connString);
 }
 
+//ShardRegistry::replicaSetChangeShardRegistryUpdateHook和ShardRegistry::replicaSetChangeConfigServerUpdateHook对应
+//config hook
 void ShardRegistry::replicaSetChangeConfigServerUpdateHook(const std::string& setName,
                                                            const std::string& newConnectionString) {
     // This is run in it's own thread. Exceptions escaping would result in a call to terminate.

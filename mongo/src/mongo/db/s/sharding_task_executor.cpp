@@ -56,8 +56,8 @@ const std::string kOperationTimeField = "operationTime";
 ShardingTaskExecutor::ShardingTaskExecutor(std::unique_ptr<ThreadPoolTaskExecutor> executor)
     : _executor(std::move(executor)) {}
 
-void ShardingTaskExecutor::startup() {
-    _executor->startup();
+void ShardingTaskExecutor::startup() { //ShardingTaskExecutor::startup->TaskExecutorPool::startup
+    _executor->startup(); //ThreadPoolTaskExecutor::startup
 }
 
 void ShardingTaskExecutor::shutdown() {

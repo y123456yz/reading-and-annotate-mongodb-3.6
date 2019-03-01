@@ -489,12 +489,12 @@ private:
 
     /**
      * The TransportLayer.  ServiceContext:_transportLayer
-     */
+     */ //∂‘”¶TransportLayerManager
     std::unique_ptr<transport::TransportLayer> _transportLayer;
 
     /**
      * The service entry point
-     */ 
+     */  ////ServiceEntryPointMongod  ServiceEntryPointMongos
     std::unique_ptr<ServiceEntryPoint> _serviceEntryPoint;
 
     /**

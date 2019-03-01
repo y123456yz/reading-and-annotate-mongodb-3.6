@@ -37,7 +37,7 @@ class Status;
 
 /**
  * Interface for a thread pool.
- */
+ */ //NetworkInterfaceThreadPoolWithASIOºÃ≥–∏√¿‡
 class ThreadPoolInterface {
     MONGO_DISALLOW_COPYING(ThreadPoolInterface);
 

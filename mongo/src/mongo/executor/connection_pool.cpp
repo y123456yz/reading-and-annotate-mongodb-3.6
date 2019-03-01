@@ -191,6 +191,10 @@ private:
 	readyPool：已经建立并且可用的连接
 	checkoutPool： 正在使用的连接
 	droppedProcessingPool：失败的连接，需要释放
+
+	mongos有一个ASIO的ReactorPool，每个Pool有有若干个连接池，每个连接池负责管理某个特定的mongod的连接。 
+	每个连接池又分为 1. readyPool (管理空闲连接) 2. processingPool （管理在创建中/定期检查健康状态的连接） 
+	3. checkoutPool （管理正在使用中的连接）
 	*/
     LRUOwnershipPool _readyPool;
     OwnershipPool _processingPool;

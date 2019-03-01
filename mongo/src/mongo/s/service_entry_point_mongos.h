@@ -37,7 +37,7 @@ namespace mongo {
 
 /**
  * The entry point from the TransportLayer into Mongos.
- */
+ */ //runMongosServer中构造使用
 class ServiceEntryPointMongos final : public ServiceEntryPointImpl {
     MONGO_DISALLOW_COPYING(ServiceEntryPointMongos);
 

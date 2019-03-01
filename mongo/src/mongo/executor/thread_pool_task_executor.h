@@ -48,7 +48,7 @@ class NetworkInterface;
 
 /**
  * Implementation of a TaskExecutor that uses a pool of threads to execute work items.
- */
+ */ //ShardingTaskExecutor包含该类成员   makeShardingTaskExecutor中构建该类
 class ThreadPoolTaskExecutor final : public TaskExecutor {
     MONGO_DISALLOW_COPYING(ThreadPoolTaskExecutor);
 
@@ -172,10 +172,12 @@ private:
     stdx::unique_lock<stdx::mutex> _join(stdx::unique_lock<stdx::mutex> lk);
 
     // The network interface used for remote command execution and waiting.
-    std::unique_ptr<NetworkInterface> _net;
+    //赋值见makeShardingTaskExecutor
+    std::unique_ptr<NetworkInterface> _net; //对应NetworkInterfaceASIO
 
     // The thread pool that executes scheduled work items.
-    std::unique_ptr<ThreadPoolInterface> _pool;
+    //赋值见makeShardingTaskExecutor
+    std::unique_ptr<ThreadPoolInterface> _pool; //对应NetworkInterfaceThreadPool
 
     // Mutex guarding all remaining fields.
     mutable stdx::mutex _mutex;
