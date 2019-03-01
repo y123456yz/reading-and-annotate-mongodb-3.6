@@ -96,7 +96,7 @@ const int kMaxStateTransitions = 5;
 负责实际IO操作的 NetworkInterfaceASIO，使用了 boost::ASIO，将所有IO操作都异步化，它包含一个
 连接池（ConnectionPool），用于管理 Mongos 到 Shard 的网络连接。
 参考:https://yq.aliyun.com/articles/72986
-*/
+*/ ////makeShardingTaskExecutorPool->makeNetworkInterface中构造
 class NetworkInterfaceASIO final : public NetworkInterface {
     friend class connection_pool_asio::ASIOConnection;
     friend class connection_pool_asio::ASIOTimer;
@@ -474,6 +474,7 @@ private:
     Options _options;
 
     asio::io_service _io_service;
+    //到后端的链接线程，见NetworkInterfaceASIO::startup
     std::vector<stdx::thread> _serviceRunners;
 
     const std::unique_ptr<rpc::EgressMetadataHook> _metadataHook;

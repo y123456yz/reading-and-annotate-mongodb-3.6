@@ -203,6 +203,7 @@ private:
 
     mutable stdx::mutex _threadsMutex;
     ThreadList _threads;
+    //worker-controller thread   ServiceExecutorAdaptive::start÷–¥¥Ω®
     stdx::thread _controllerThread;
 
     TickSource* const _tickSource;

@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+//¼ûrunMongosServer
 std::unique_ptr<PeriodicRunner> makePeriodicRunner() {
     return stdx::make_unique<PeriodicRunnerASIO>(
         stdx::make_unique<executor::AsyncTimerFactoryASIO>());

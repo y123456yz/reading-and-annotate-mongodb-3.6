@@ -39,7 +39,7 @@ class DBClientBase;
 /**
  * Intercepts creation of sharded connections and transparently performs the internal
  * authentication on them.
- */
+ */ //runMongosServer中构造使用
 class ShardingConnectionHook : public DBConnectionHook {
 public:
     ShardingConnectionHook(bool shardedConnections,
@@ -50,7 +50,7 @@ public:
     void onRelease(DBClientBase* conn) override;
 
 private:
-    bool _shardedConnections;
+    bool _shardedConnections; //是否sharde链接
 
     // Use the implementation of the metadata readers and writers in ShardingEgressMetadataHook,
     // since that is the hook for Network Interface ASIO and this hook is to be deprecated.

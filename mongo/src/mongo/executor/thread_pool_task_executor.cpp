@@ -134,15 +134,17 @@ ThreadPoolTaskExecutor::~ThreadPoolTaskExecutor() {
     invariant(_state == shutdownComplete);
 }
 
+//ShardingTaskExecutor::startup
+//initializeGlobalShardingState->TaskExecutorPool::startup->ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
 void ThreadPoolTaskExecutor::startup() {
-    _net->startup();
+    _net->startup(); ////∂‘”¶NetworkInterfaceASIO::startup
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     if (_inShutdown_inlock()) {
         return;
     }
     invariant(_state == preStart);
     _setState_inlock(running);
-    _pool->startup();
+    _pool->startup(); //NetworkInterfaceThreadPool::startup
 }
 
 void ThreadPoolTaskExecutor::shutdown() {

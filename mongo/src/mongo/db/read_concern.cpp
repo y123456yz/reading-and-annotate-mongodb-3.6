@@ -345,3 +345,4 @@ Status waitForLinearizableReadConcern(OperationContext* opCtx) {
 }
 
 }  // namespace mongo
+

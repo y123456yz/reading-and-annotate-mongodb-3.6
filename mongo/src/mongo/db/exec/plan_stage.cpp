@@ -94,14 +94,14 @@ PlanStage::StageState PlanStage::work(WorkingSetID* out) {   //存在根据StageStat
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
     ++_commonStats.works;
 
-	StageType type = this->stageType();
-	log() << "yang test PlanStage::work stageType:" << (int)type;  
+	//StageType type = this->stageType();
+	//log() << "yang test PlanStage::work stageType:" << (int)type;  
     StageState workResult = doWork(out); 
 //有哪些类的doWork需要执行，参考buildStages 如MultiPlanStage::doWork CollectionScan::doWork  IndexScan::doWork  FetchStage::doWork
 
     if (StageState::ADVANCED == workResult) {
         ++_commonStats.advanced;
-    } else if (StageState::NEED_TIME == workResult) {
+    } else if (StageState::NEED_TIME == workResult) { //表示不满足过滤条件
         ++_commonStats.needTime;
     } else if (StageState::NEED_YIELD == workResult) {
         ++_commonStats.needYield;

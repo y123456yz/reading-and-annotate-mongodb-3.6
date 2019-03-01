@@ -136,10 +136,11 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
     Status status = launchServiceWorkerThread([ this, task = std::move(task) ] {
         _numRunningWorkerThreads.addAndFetch(1);
 
+		//task对应 ServiceStateMachine::_runNextInGuard
         _localWorkQueue.emplace_back(std::move(task));
         while (!_localWorkQueue.empty() && _stillRunning.loadRelaxed()) {
             _localRecursionDepth = 1;
-			//对应:ServiceStateMachine::_runNextInGuard
+			//对应:ServiceStateMachine::_runNextInGuard  该线程负责接收新链接的所有数据包解析处理
             _localWorkQueue.front()(); //队列中获取一个task，并执行
             _localWorkQueue.pop_front();  //去除该task删除
         }

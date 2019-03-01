@@ -58,13 +58,22 @@ BSONObj buildErrReply(const DBException& ex) {
 
 }  // namespace
 
+#include <sys/prctl.h>
 
+//ServiceStateMachine::_processMessage
 DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const Message& message) {
     // Release any cached egress connections for client back to pool before destroying
     auto guard = MakeGuard(ShardConnection::releaseMyConnections);
-
+	
     const int32_t msgId = message.header().getId();
     const NetworkOp op = message.operation();
+
+	char name[100];
+	memset(name, 0, 100);
+	prctl(PR_GET_NAME, name);
+
+	//[conn----yangtest1] yang test ........ ServiceEntryPointMongos::handleRequest thread name:conn---.ngtest1  op:2004
+	//LOG(1) << "yang test ........ ServiceEntryPointMongos::handleRequest thread name:" << StringData(name) << "  op:" << (int)op;
 
     // This exception will not be returned to the caller, but will be logged and will close the
     // connection
@@ -156,3 +165,4 @@ DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const
 }
 
 }  // namespace mongo
+

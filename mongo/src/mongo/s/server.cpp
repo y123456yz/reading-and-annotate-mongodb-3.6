@@ -348,15 +348,17 @@ static ExitCode runMongosServer() {
     auto sep = stdx::make_unique<ServiceEntryPointMongos>(getGlobalServiceContext());
     getGlobalServiceContext()->setServiceEntryPoint(std::move(sep));
 
+	//构造TransportLayerManager类
     auto tl = transport::TransportLayerManager::createWithConfig(&serverGlobalParams,
-                                                                 getGlobalServiceContext());
-    auto res = tl->setup();
+   	                                                              getGlobalServiceContext());
+	//TransportLayerManager::setup->TransportLayerASIO::setup
+	auto res = tl->setup(); //listen相关
     if (!res.isOK()) {
         error() << "Failed to set up listener: " << res;
         return EXIT_NET_ERROR;
     }
     getGlobalServiceContext()->setTransportLayer(std::move(tl));
-
+	
     auto unshardedHookList = stdx::make_unique<rpc::EgressMetadataHookList>();
     unshardedHookList->addHook(
         stdx::make_unique<rpc::LogicalTimeMetadataHook>(getGlobalServiceContext()));
@@ -374,6 +376,7 @@ static ExitCode runMongosServer() {
 
     shardConnectionPool.addHook(new ShardingConnectionHook(true, std::move(shardedHookList)));
 
+	//设置config sync async hook
     ReplicaSetMonitor::setAsynchronousConfigChangeHook(
         &ShardRegistry::replicaSetChangeConfigServerUpdateHook);
     ReplicaSetMonitor::setSynchronousConfigChangeHook(
@@ -387,7 +390,7 @@ static ExitCode runMongosServer() {
         quickExit(EXIT_BADOPTIONS);
     }
 
-    auto opCtx = cc().makeOperationContext();
+    auto opCtx = cc().makeOperationContext(); //模拟一个client上下文
 
     auto logicalClock = stdx::make_unique<LogicalClock>(opCtx->getServiceContext());
     LogicalClock::set(opCtx->getServiceContext(), std::move(logicalClock));
@@ -448,12 +451,15 @@ static ExitCode runMongosServer() {
     // Set up the logical session cache
     LogicalSessionCache::set(getGlobalServiceContext(), makeLogicalSessionCacheS());
 
+	//ServiceExecutorAdaptive::start   ServiceExecutorSynchronous::start
+	//启动CPU/2个worker线程
     auto start = getGlobalServiceContext()->getServiceExecutor()->start();
     if (!start.isOK()) {
         error() << "Failed to start the service executor: " << start;
         return EXIT_NET_ERROR;
     }
 
+	//TransportLayerManager::start  新链接处理
     start = getGlobalServiceContext()->getTransportLayer()->start();
     if (!start.isOK()) {
         return EXIT_NET_ERROR;
@@ -505,11 +511,12 @@ static void startupConfigActions(const std::vector<std::string>& argv) {
 }
 
 static int _main() {	
-    if (!initializeServerGlobalState())
+    if (!initializeServerGlobalState()) //认证相关的检查
         return EXIT_FAILURE;
 
-    startSignalProcessingThread();
+    startSignalProcessingThread(); //信号处理相关
 
+	//赋值见本文件中的setGlobalServiceContext
     getGlobalServiceContext()->setFastClockSource(FastClockSourceFactory::create(Milliseconds{10}));
 
     auto shardingContext = Grid::get(getGlobalServiceContext());
@@ -577,7 +584,11 @@ MONGO_INITIALIZER_GENERAL(setSSLManagerType, MONGO_NO_PREREQUISITES, ("SSLManage
     return Status::OK();
 }
 #endif
+//top -b -n 1 -Hp 2898
 //Mongos请求处理逻辑参考http://www.nosqlnotes.com/technotes/mongodb/mongos-requests/
+//https://yq.aliyun.com/articles/72986
+//http://blog.itpub.net/31556448/viewspace-2219248/
+//boost::asio  https://mmoaay.gitbooks.io/boost-asio-cpp-network-programming-chinese/content/Chapter1.html
 int mongoSMain(int argc, char* argv[], char** envp) {
     mongo::setMongos();
 
@@ -597,6 +608,7 @@ int mongoSMain(int argc, char* argv[], char** envp) {
     startupConfigActions(std::vector<std::string>(argv, argv + argc));
     cmdline_utils::censorArgvArray(argc, argv);
 
+	//一些不安全提示
     mongo::logCommonStartupWarnings(serverGlobalParams);
 
     try {

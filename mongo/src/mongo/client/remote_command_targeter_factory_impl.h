@@ -37,9 +37,10 @@ namespace mongo {
  * connection. It will return RemoteCommandTargeterStandalone for a single node (MASTER) or
  * custom (CUSTOM) connection string and RemoteCommandTargeterRS for a SET connection string.
  * All other connection strings are not supported and will cause a failed invariant error.
- */
+ */  //initializeSharding中使用该类
 class RemoteCommandTargeterFactoryImpl final : public RemoteCommandTargeterFactory {
 public:
+   
     RemoteCommandTargeterFactoryImpl();
     ~RemoteCommandTargeterFactoryImpl();
 

@@ -214,6 +214,8 @@ private:
     bool _haveTakenOwnership = false;
 };
 
+//创建新的worker-n线程ServiceExecutorAdaptive::_startWorkerThread->_workerThreadRoutine   conn线程创建见ServiceStateMachine::create 
+
 //TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
 
 //ServiceEntryPointImpl::startSession中调用，session默认对应ASIOSession
@@ -234,7 +236,8 @@ ServiceStateMachine::ServiceStateMachine(ServiceContext* svcContext,
       _sessionHandle(session),
       _dbClient{svcContext->makeClient("conn", std::move(session))},
       _dbClientPtr{_dbClient.get()},
-      _threadName{str::stream() << "conn" << _session()->id()} {} //线程名
+      //真正生效在ServiceStateMachine::ThreadGuard
+      _threadName{str::stream() << "conn----yangtest" << _session()->id()} {} //线程名
 
 const transport::SessionHandle& ServiceStateMachine::_session() const {
     return _sessionHandle;
@@ -417,7 +420,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
 
     // The handleRequest is implemented in a subclass for mongod/mongos and actually all the
     // database work for this request.
-    //ServiceEntryPointMongod::handleRequest 请求处理
+    //ServiceEntryPointMongod::handleRequest  ServiceEntryPointMongos::handleRequest请求处理
     DbResponse dbresponse = _sep->handleRequest(opCtx.get(), _inMessage);
 
     // opCtx must be destroyed here so that the operation cannot show
@@ -531,7 +534,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {
     auto func = [ ssm = shared_from_this(), ownershipModel ] {
-        ThreadGuard guard(ssm.get());
+        ThreadGuard guard(ssm.get()); //线程更名也在这里面  "conn-"线程名
         if (ownershipModel == Ownership::kStatic)
             guard.markStaticOwnership();
 		//对应:ServiceStateMachine::_runNextInGuard

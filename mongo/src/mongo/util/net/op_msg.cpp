@@ -81,7 +81,7 @@ OpMsg OpMsg::parse(const Message& message) try {
     invariant(!message.empty());
     invariant(message.operation() == dbMsg);
 
-	LOG(1) << "yang test ..... OpMsg::parse";
+	//LOG(1) << "yang test ..... OpMsg::parse";
     const uint32_t flags = OpMsg::flags(message);
     uassert(ErrorCodes::IllegalOpMsgFlag,
             str::stream() << "Message contains illegal flags value: Ob"
@@ -101,7 +101,7 @@ OpMsg OpMsg::parse(const Message& message) try {
     OpMsg msg;
     while (!sectionsBuf.atEof()) {
         const auto sectionKind = sectionsBuf.read<Section>();
-		LOG(1) << "yang test ..... OpMsg::parse  sectionKind:" << uint32_t(sectionKind);
+		//LOG(1) << "yang test ..... OpMsg::parse  sectionKind:" << uint32_t(sectionKind);
         switch (sectionKind) {
             case Section::kBody: {
                 uassert(40430, "Multiple body sections in message", !haveBody);

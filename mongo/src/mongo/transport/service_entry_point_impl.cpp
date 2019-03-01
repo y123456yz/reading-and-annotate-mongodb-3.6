@@ -94,7 +94,7 @@ ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(s
 #15 0x00007f1d431f18f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
 #16 0x00007f1d42a0de25 in start_thread () from /lib64/libpthread.so.0
 */ 
-//新的链接到来或者关闭都要走到这里  TransportLayerASIO::_acceptConnection中执行
+//新的链接到来或者关闭都要走到这里  ServiceEntryPointImpl::startSession中listen线程执行
 void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //session对应ASIOSession
     // Setup the restriction environment on the Session, if the Session has local/remote Sockaddrs
     const auto& remoteAddr = session->remote().sockAddr();
