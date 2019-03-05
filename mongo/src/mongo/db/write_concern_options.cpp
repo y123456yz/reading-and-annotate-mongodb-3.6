@@ -150,6 +150,7 @@ Status WriteConcernOptions::parse(const BSONObj& obj) {
     return Status::OK();
 }
 
+//该参数作用可以参考http://www.mongoing.com/archives/2916
 StatusWith<WriteConcernOptions> WriteConcernOptions::extractWCFromCommand(
     const BSONObj& cmdObj, const std::string& dbName, const WriteConcernOptions& defaultWC) {
     WriteConcernOptions writeConcern = defaultWC;

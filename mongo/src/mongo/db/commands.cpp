@@ -229,6 +229,7 @@ BSONObj Command::runCommandDirectly(OperationContext* opCtx, const OpMsgRequest&
     return out.obj();
 }
 
+//根据name获取对应的Command信息
 Command* Command::findCommand(StringData name) {
     CommandMap::const_iterator i = _commands->find(name);
     if (i == _commands->end())
@@ -347,7 +348,7 @@ Status Command::checkAuthorization(Command* c,
     audit::logCommandAuthzCheck(opCtx->getClient(), request, c, status.code());
     return status;
 }
-
+//execCommandClient->Command::publicRun
 //runCommands->execCommandDatabase->runCommandImpl->Command::publicRun调用
 bool Command::publicRun(OperationContext* opCtx,
                         const OpMsgRequest& request,

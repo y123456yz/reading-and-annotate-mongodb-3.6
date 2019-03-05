@@ -197,7 +197,7 @@ private:
     enum class ThreadTimer { Running, Executing };
     TickSource::Tick _getThreadTimerTotal(ThreadTimer which) const;
 
-    std::shared_ptr<asio::io_context> _ioContext;
+    std::shared_ptr<asio::io_context> _ioContext; //ÔçÆÚASIOÖÐ½Ðio_service 
 
     std::unique_ptr<Options> _config;
 

@@ -75,11 +75,13 @@ void OpCounters::gotGetMore() {
     _getmore.fetchAndAdd(1);
 }
 
+//execCommandClient中调用
 void OpCounters::gotCommand() {
     RARELY _checkWrap();
     _command.fetchAndAdd(1);
 }
 
+//各种操作统计
 void OpCounters::gotOp(int op, bool isCommand) {
     switch (op) {
         case dbInsert: /*gotInsert();*/

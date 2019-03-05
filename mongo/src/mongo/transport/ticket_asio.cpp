@@ -71,7 +71,7 @@ TransportLayerASIO::ASIOSinkTicket::ASIOSinkTicket(const ASIOSessionHandle& sess
                                                    Date_t expiration,
                                                    const Message& msg)
     : ASIOTicket(session, expiration), _msgToSend(msg) {}
-
+//TransportLayerASIO::ASIOSourceTicket::_headerCallback
 void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& ec, size_t size) {
     if (ec) {
         finishFill(errorCodeToStatus(ec));
@@ -83,6 +83,7 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
     finishFill(Status::OK());
 }
 
+//TransportLayerASIO::ASIOSourceTicket::fillImpl
 void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code& ec, size_t size) {
     if (ec) {
         finishFill(errorCodeToStatus(ec));
@@ -154,7 +155,7 @@ void TransportLayerASIO::ASIOTicket::finishFill(Status status) {
     // variables in ASIOTicket after it gets called.
     invariant(_fillCallback);
     auto fillCallback = std::move(_fillCallback);
-    fillCallback(status);
+    fillCallback(status); //TransportLayerASIO::asyncWait
 }
 
 void TransportLayerASIO::ASIOTicket::fill(bool sync, TicketCallback&& cb) {

@@ -35,6 +35,7 @@ namespace mongo {
 
 class Status;
 
+//该参数作用可以参考http://www.mongoing.com/archives/2916
 struct WriteConcernOptions {
 public:
     enum class SyncMode { UNSET, NONE, FSYNC, JOURNAL };

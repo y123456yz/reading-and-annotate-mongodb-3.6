@@ -44,6 +44,7 @@ namespace executor {
 // set to a particular positive value, this will be used as the pool size.
 MONGO_EXPORT_SERVER_PARAMETER(taskExecutorPoolSize, int, 0);
 
+//makeShardingTaskExecutorPoolµ÷ÓÃ
 size_t TaskExecutorPool::getSuggestedPoolSize() {
     auto poolSize = taskExecutorPoolSize.load();
     if (poolSize > 0) {
@@ -51,7 +52,7 @@ size_t TaskExecutorPool::getSuggestedPoolSize() {
     }
 
     ProcessInfo p;
-    unsigned numCores = p.getNumCores();
+    unsigned numCores = 1;//p.getNumCores(); yang add change xxx todo 
 
     // Never suggest a number outside the range [4, 64].
     return std::max(4U, std::min(64U, numCores));
