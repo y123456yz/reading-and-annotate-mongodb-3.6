@@ -50,7 +50,7 @@ namespace {
 // The executor will always keep this many number of threads around. If the value is -1,
 // (the default) then it will be set to number of cores / 2.
 //赋值见ServerParameterOptions
-MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorReservedThreads, int, -1);
+MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorReservedThreads, int, 1); //yang change debug
 
 // Each worker thread will allow ASIO to run for this many milliseconds before checking
 // whether it should exit
@@ -70,6 +70,7 @@ MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorMaxQueueLatencyMicros, int,
 
 // Threads will exit themselves if they spent less than this percentage of the time they ran
 // doing actual work.
+//如果一个线程处理网络请求的时间/总时间(处理请求时间)+空闲时间  也就是如果线程比较空闲
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorIdlePctThreshold, int, 60);
 
 // Tasks scheduled with MayRecurse may be called recursively if the recursion depth is below this
@@ -196,20 +197,22 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     auto pendingCounterPtr = (flags & kDeferredTask) ? &_deferredTasksQueued : &_tasksQueued;
     pendingCounterPtr->addAndFetch(1);
 
-	log() << "yang test ............. ServiceExecutorAdaptive::schedule";
     if (!_isRunning.load()) {
         return {ErrorCodes::ShutdownInProgress, "Executor is not running"};
     }
 
     auto wrappedTask = [ this, task = std::move(task), scheduleTime, pendingCounterPtr ] {
+		//worker线程回调会执行该wrappedTask，
         pendingCounterPtr->subtractAndFetch(1);
         auto start = _tickSource->getTicks();
-        _totalSpentQueued.addAndFetch(start - scheduleTime);
+        _totalSpentQueued.addAndFetch(start - scheduleTime); //从接受链接，到该网络请求被worker线程开始处理的时间
 
         if (_localThreadState->recursionDepth++ == 0) {
             _localThreadState->executing.markRunning();
             _threadsInUse.addAndFetch(1);
         }
+
+		//guard实际上是在 _ioContext->run_for(runTime.toSystemDuration());中调用的
         const auto guard = MakeGuard([this, start] {
             if (--_localThreadState->recursionDepth == 0) {
                 _localThreadState->executingCurRun += _localThreadState->executing.markStopped();
@@ -234,13 +237,13 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 	*/ //队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
     if ((flags & kMayRecurse) &&
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {
-        _ioContext->dispatch(std::move(wrappedTask));
+        _ioContext->dispatch(std::move(wrappedTask)); //io_context在asio的早期版本叫做
     } else {
         _ioContext->post(std::move(wrappedTask));
     }
 
     _lastScheduleTimer.reset();
-    _totalQueued.addAndFetch(1);
+    _totalQueued.addAndFetch(1); //队列中的网络链接总数
 
     // Deferred tasks never count against the thread starvation avoidance. For other tasks, we
     // notify the controller thread that a task has been scheduled and we should monitor thread
@@ -268,6 +271,9 @@ bool ServiceExecutorAdaptive::_isStarved() const {
 
     return (tasksQueued > available);
 }
+
+//worker-x线程默认是CPU/2个，但是在controller线程会根据负载在_controllerThreadRoutine中动态调整worker线程数
+//如果controller线程发现负载高，那么worker线程数也就是增加，如果负载下去了，worker线程根据自身情况来觉得是否退出消耗自身线程
 
 //worker-controller thread   ServiceExecutorAdaptive::start中创建  woker控制线程
 void ServiceExecutorAdaptive::_controllerThreadRoutine() {
@@ -375,8 +381,10 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
 //ServiceExecutorAdaptive::start  _controllerThreadRoutine  中调用
 void ServiceExecutorAdaptive::_startWorkerThread() {
     stdx::unique_lock<stdx::mutex> lk(_threadsMutex);
-    auto it = _threads.emplace(_threads.begin(), _tickSource);
+	warning() << "yang test   _startWorkerThread:  num1:" << _threads.size();
+    auto it = _threads.emplace(_threads.begin(), _tickSource); //该_threads list中追加一个thread，线程增加一个
     auto num = _threads.size();
+	warning() << "yang test   _startWorkerThread: 22222 num2:" << _threads.size();
 
     _threadsPending.addAndFetch(1);
     _threadsRunning.addAndFetch(1);
@@ -395,6 +403,7 @@ void ServiceExecutorAdaptive::_startWorkerThread() {
     }
 }
 
+//产生一个随机数
 Milliseconds ServiceExecutorAdaptive::_getThreadJitter() const {
     static stdx::mutex jitterMutex;
     static std::default_random_engine randomEngine = [] {
@@ -443,6 +452,8 @@ TickSource::Tick ServiceExecutorAdaptive::_getThreadTimerTotal(ThreadTimer which
 }
 
 //ServiceExecutorAdaptive::_startWorkerThread
+//worker-x线程默认是CPU/2个，但是在controller线程会根据负载在_controllerThreadRoutine中动态调整worker线程数
+//如果controller线程发现负载高，那么worker线程数也就是增加，如果负载下去了，worker线程根据自身情况来觉得是否退出消耗自身线程
 void ServiceExecutorAdaptive::_workerThreadRoutine(
     int threadId, ServiceExecutorAdaptive::ThreadList::iterator state) {
 
@@ -458,7 +469,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
     // When a thread is pending, it will only try to run one task through ASIO, and report back
     // as soon as possible so that the thread controller knows not to keep starting threads while
     // the threads it's already created are finishing starting up.
-    bool stillPending = true;
+    bool stillPending = true; //表示该线程调用run_one_for,
 
     const auto guard = MakeGuard([this, &stillPending, state] {
         if (stillPending)
@@ -489,23 +500,26 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
             asio::io_context::work work(*_ioContext);
             // If we're still "pending" only try to run one task, that way the controller will
             // know that it's okay to start adding threads to avoid starvation again.
-            state->running.markRunning();
+            state->running.markRunning(); //
+            //这里面会调用ServiceExecutorAdaptive::schedule对应的task,线程名也就睡被改为conn线程
+            //在该线程异步操作过程中，通过ServiceStateMachine::_sinkCallback  ServiceStateMachine::_sourceCallback把worker线程改为conn线程
             if (stillPending) {
 				//在一定时间内处理事件循环，阻塞到任务被完成同时没用其他任务派遣，或者直到io_context调用 stop() 函数停止 或 超时 为止
                 _ioContext->run_one_for(runTime.toSystemDuration());
             } else {  // Otherwise, just run for the full run period
                 _ioContext->run_for(runTime.toSystemDuration());
             }
-
+			
             // _ioContext->run_one() will return when all the scheduled handlers are completed, and
             // you must call restart() to call run_one() again or else it will return immediately.
             // In the case where the server has just started and there has been no work yet, this
             // means this loop will spin until the first client connect. Thsi call to restart avoids
             // that.
-            if (_ioContext->stopped())
+            if (_ioContext->stopped()) //保证该worker线程继续其他网络处理，否则本次异步操作处理完后该线程会退出
                 _ioContext->restart();
             // If an exceptione escaped from ASIO, then break from this thread and start a new one.
         } catch (std::exception& e) {
+        	//抛异常说明压力大，一般都是，因此可以考虑增加线程池大小
             log() << "Exception escaped worker thread: " << e.what()
                   << " Starting new worker thread.";
             _startWorkerThread();
@@ -521,10 +535,12 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
         //
         // Otherwise we can think about exiting if the last call to run_for() wasn't very
         // productive
-        if (stillPending) {
+        
+        if (stillPending) { //该线程继续执行，这次该线程调用run_for
             _threadsPending.subtractAndFetch(1);
             stillPending = false;
-        } else if (_threadsRunning.load() > _config->reservedThreads()) {
+        } else if (_threadsRunning.load() > _config->reservedThreads()) { //
+        	//最后一次调用run_for()的效率不是很高，我们可以考虑退出
             // If we spent less than our idle threshold actually running tasks then exit the thread.
             // This time measurement doesn't include time spent running network callbacks, so the
             // threshold is lower than you'd expect.
@@ -540,7 +556,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
             dassert(executingToRunning <= 100);
 
             int pctExecuting = static_cast<int>(executingToRunning);
-			//满足这个条件，该worker线程会退出
+			//线程很多，超过了指定配置，并且满足这个条件，该worker线程会退出，线程比较空闲，退出
             if (pctExecuting < _config->idlePctThreshold()) {
                 log() << "Thread was only executing tasks " << pctExecuting << "% over the last "
                       << runTime << ". Exiting thread.";

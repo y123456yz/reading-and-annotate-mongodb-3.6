@@ -539,7 +539,7 @@ private:
                              BSONObjBuilder& result) = 0;
 
     // Counters for how many times this command has been executed and failed
-    Counter64 _commandsExecuted;
+    Counter64 _commandsExecuted; //该命令执行次数
     Counter64 _commandsFailed;
 
     // The full name of the command

@@ -386,6 +386,89 @@ void remoteCommandFailedEarly(const TaskExecutor::CallbackArgs& cbData,
 }
 }  // namespace
 
+/*
+调用栈
+Breakpoint 1, mongo::executor::ThreadPoolTaskExecutor::scheduleRemoteCommand(mongo::executor::RemoteCommandRequest const&, std::function<void (mongo::executor::TaskExecutor::RemoteCommandCallbackArgs const&)> const&) (
+    this=0x7f54273d00e0, request=..., cb=...) at src/mongo/executor/thread_pool_task_executor.cpp:412
+412         LOG(3) << "Scheduling remote command request: " << redact(scheduledRequest.toString()) << "  thread id:" << syscall(SYS_gettid);
+(gdb) bt
+#0  mongo::executor::ThreadPoolTaskExecutor::scheduleRemoteCommand(mongo::executor::RemoteCommandRequest const&, std::function<void (mongo::executor::TaskExecutor::RemoteCommandCallbackArgs const&)> const&) (this=0x7f54273d00e0, 
+    request=..., cb=...) at src/mongo/executor/thread_pool_task_executor.cpp:412
+#1  0x00007f5423c0d146 in mongo::executor::ShardingTaskExecutor::scheduleRemoteCommand(mongo::executor::RemoteCommandRequest const&, std::function<void (mongo::executor::TaskExecutor::RemoteCommandCallbackArgs const&)> const&) (
+    this=0x7f54272d5cd0, request=..., cb=...) at src/mongo/db/s/sharding_task_executor.cpp:189
+#2  0x00007f5423e006ce in mongo::AsyncRequestsSender::_scheduleRequest (this=this@entry=0x7f54236fd110, remoteIndex=remoteIndex@entry=0) at src/mongo/s/async_requests_sender.cpp:246
+#3  0x00007f5423e00c1f in mongo::AsyncRequestsSender::_scheduleRequests (this=this@entry=0x7f54236fd110, lk=...) at src/mongo/s/async_requests_sender.cpp:215
+#4  0x00007f5423e0589a in mongo::AsyncRequestsSender::AsyncRequestsSender (this=0x7f54236fd110, opCtx=<optimized out>, executor=<optimized out>, db=..., requests=..., readPreference=..., retryPolicy=mongo::Shard::kNoRetry)
+    at src/mongo/s/async_requests_sender.cpp:80
+#5  0x00007f5423cc545c in mongo::BatchWriteExec::executeBatch (opCtx=opCtx@entry=0x7f54279eb540, targeter=..., clientRequest=..., clientResponse=clientResponse@entry=0x7f54236fd960, stats=stats@entry=0x7f54236fd8a0)
+    at src/mongo/s/write_ops/batch_write_exec.cpp:214
+#6  0x00007f5423cd11f6 in mongo::ClusterWriter::write (opCtx=opCtx@entry=0x7f54279eb540, request=..., stats=stats@entry=0x7f54236fd8a0, response=response@entry=0x7f54236fd960) at src/mongo/s/commands/cluster_write.cpp:234
+#7  0x00007f5423c91c5a in mongo::(anonymous namespace)::ClusterWriteCmd::enhancedRun (this=0x7f542517a6a0 <mongo::(anonymous namespace)::clusterInsertCmd>, opCtx=0x7f54279eb540, request=..., result=...)
+    at src/mongo/s/commands/cluster_write_cmd.cpp:204
+#8  0x00007f54240c84ff in mongo::Command::publicRun (this=this@entry=0x7f542517a6a0 <mongo::(anonymous namespace)::clusterInsertCmd>, opCtx=0x7f54279eb540, request=..., result=...) at src/mongo/db/commands.cpp:357
+#9  0x00007f5423cb055d in execCommandClient (result=..., request=..., c=0x7f542517a6a0 <mongo::(anonymous namespace)::clusterInsertCmd>, opCtx=0x7f54279eb540) at src/mongo/s/commands/strategy.cpp:227
+#10 mongo::(anonymous namespace)::runCommand(mongo::OperationContext *, const mongo::OpMsgRequest &, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongos, CU 0x2847e1d, DIE 0x298cf31>) (opCtx=0x7f54279eb540, 
+    request=..., builder=builder@entry=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongos, CU 0x2847e1d, DIE 0x298cf31>) at src/mongo/s/commands/strategy.cpp:267
+#11 0x00007f5423cb127c in mongo::Strategy::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f54236fe610) at src/mongo/s/commands/strategy.cpp:425
+#12 0x00007f5423cb1939 in mongo::Strategy::clientCommand (opCtx=opCtx@entry=0x7f54279eb540, m=...) at src/mongo/s/commands/strategy.cpp:436
+#13 0x00007f5423bd2a21 in mongo::ServiceEntryPointMongos::handleRequest (this=<optimized out>, opCtx=0x7f54279eb540, message=...) at src/mongo/s/service_entry_point_mongos.cpp:167
+#14 0x00007f5423bf00ca in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f5427410ef0, guard=...) at src/mongo/transport/service_state_machine.cpp:455
+#15 0x00007f5423beb00f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f5427410ef0, guard=...) at src/mongo/transport/service_state_machine.cpp:532
+#16 0x00007f5423beeaed in operator() (__closure=0x7f5427315bc0) at src/mongo/transport/service_state_machine.cpp:573
+#17 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#18 0x00007f5424039b29 in operator() (this=0x7f54236feee8) at /usr/local/include/c++/5.4.0/functional:2267
+#19 operator() (__closure=0x7f54236feee0) at src/mongo/transport/service_executor_adaptive.cpp:224
+#20 asio_handler_invoke<mongo::transport::ServiceExecutorAdaptive::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> > (function=...)
+    at src/third_party/asio-master/asio/include/asio/handler_invoke_hook.hpp:68
+#21 invoke<mongo::transport::ServiceExecutorAdaptive::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()>, mongo::transport::ServiceExecutorAdaptive::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> > (context=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_invoke_helpers.hpp:37
+#22 dispatch<mongo::transport::ServiceExecutorAdaptive::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> > (this=<optimized out>, 
+    handler=<unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongos, CU 0x876b520, DIE 0x87a6f1f>) at src/third_party/asio-master/asio/include/asio/impl/io_context.hpp:143
+#23 mongo::transport::ServiceExecutorAdaptive::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f54273078c0, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_adaptive.cpp:240
+#24 0x00007f5423be9b05 in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f5427410ef0, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:577
+#25 0x00007f5423bec702 in mongo::ServiceStateMachine::_sourceCallback (this=0x7f5427410ef0, status=...) at src/mongo/transport/service_state_machine.cpp:358
+#26 0x00007f5423bed48d in operator() (status=..., __closure=<optimized out>) at src/mongo/transport/service_state_machine.cpp:317
+#27 std::_Function_handler<void(mongo::Status), mongo::ServiceStateMachine::_sourceMessage(mongo::ServiceStateMachine::ThreadGuard)::<lambda(mongo::Status)> >::_M_invoke(const std::_Any_data &, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongos, CU 0x4f5bfb, DIE 0x5481eb>) (__functor=..., __args#0=<optimized out>) at /usr/local/include/c++/5.4.0/functional:1871
+#28 0x00007f54242bb439 in operator() (__args#0=..., this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#29 operator() (status=..., __closure=<optimized out>) at src/mongo/transport/transport_layer_asio.cpp:123
+#30 std::_Function_handler<void(mongo::Status), mongo::transport::TransportLayerASIO::asyncWait(mongo::transport::Ticket&&, mongo::transport::TransportLayer::TicketCallback)::<lambda(mongo::Status)> >::_M_invoke(const std::_Any_data &, <unknown type in /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/mongos, CU 0xb37a29b, DIE 0xb3d2ee8>) (__functor=..., __args#0=<optimized out>) at /usr/local/include/c++/5.4.0/functional:1871
+#31 0x00007f54242b7dfc in operator() (__args#0=..., this=0x7f54236ff540) at /usr/local/include/c++/5.4.0/functional:2267
+#32 mongo::transport::TransportLayerASIO::ASIOTicket::finishFill (this=this@entry=0x7f54271ce960, status=...) at src/mongo/transport/ticket_asio.cpp:158
+#33 0x00007f54242b7f9f in mongo::transport::TransportLayerASIO::ASIOSourceTicket::_bodyCallback (this=this@entry=0x7f54271ce960, ec=..., size=size@entry=190) at src/mongo/transport/ticket_asio.cpp:83
+#34 0x00007f54242b9109 in operator() (size=190, ec=..., __closure=<optimized out>) at src/mongo/transport/ticket_asio.cpp:119
+#35 opportunisticRead<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code&, size_t)::<lambda(const std::error_code&, size_t)> > (this=<optimized out>, handler=<optimized out>, buffers=..., stream=..., sync=false) at src/mongo/transport/session_asio.h:191
+#36 read<asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code&, size_t)::<lambda(const std::error_code&, size_t)> > (handler=<optimized out>, buffers=..., sync=false, 
+    this=<optimized out>) at src/mongo/transport/session_asio.h:154
+#37 mongo::transport::TransportLayerASIO::ASIOSourceTicket::_headerCallback (this=0x7f54271ce960, ec=..., size=<optimized out>) at src/mongo/transport/ticket_asio.cpp:119
+#38 0x00007f54242ba032 in operator() (size=<optimized out>, ec=..., __closure=0x7f54236ff8c8) at src/mongo/transport/ticket_asio.cpp:132
+#39 operator() (start=0, bytes_transferred=<optimized out>, ec=..., this=0x7f54236ff8a0) at src/third_party/asio-master/asio/include/asio/impl/read.hpp:284
+#40 operator() (this=0x7f54236ff8a0) at src/third_party/asio-master/asio/include/asio/detail/bind_handler.hpp:163
+#41 asio_handler_invoke<asio::detail::binder2<asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> >, std::error_code, long unsigned int> > (function=...) at src/third_party/asio-master/asio/include/asio/handler_invoke_hook.hpp:68
+#42 invoke<asio::detail::binder2<asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> >, std::error_code, long unsigned int>, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> > (
+    context=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_invoke_helpers.hpp:37
+#43 asio_handler_invoke<asio::detail::binder2<asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> >, std::error_code, long unsigned int>, asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> > (this_handler=<optimized out>, function=...)
+    at src/third_party/asio-master/asio/include/asio/impl/read.hpp:337
+---Type <return> to continue, or q <return> to quit---
+#44 invoke<asio::detail::binder2<asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> >, std::error_code, long unsigned int>, asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> > > (context=..., function=...)
+    at src/third_party/asio-master/asio/include/asio/detail/handler_invoke_helpers.hpp:37
+#45 complete<asio::detail::binder2<asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> >, std::error_code, long unsigned int> > (this=<synthetic pointer>, handler=..., function=...)
+    at src/third_party/asio-master/asio/include/asio/detail/handler_work.hpp:81
+#46 asio::detail::reactive_socket_recv_op<asio::mutable_buffers_1, asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, const asio::mutable_buffer*, asio::detail::transfer_all_t, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::<lambda(const std::error_code&, size_t)> > >::do_complete(void *, asio::detail::operation *, const asio::error_code &, std::size_t) (owner=0x7f54270b8000, 
+    base=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/reactive_socket_recv_op.hpp:121
+#47 0x00007f54242c8213 in complete (bytes_transferred=<optimized out>, ec=..., owner=0x7f54270b8000, this=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/scheduler_operation.hpp:39
+#48 asio::detail::scheduler::do_wait_one (this=this@entry=0x7f54270b8000, lock=..., this_thread=..., usec=<optimized out>, usec@entry=1000000, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:480
+#49 0x00007f54242c888a in asio::detail::scheduler::wait_one (this=0x7f54270b8000, usec=1000000, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:192
+#50 0x00007f542403f639 in asio::io_context::run_one_until<std::chrono::_V2::steady_clock, std::chrono::duration<long, std::ratio<1l, 1000000000l> > > (this=this@entry=0x7f54270aacf0, abs_time=...)
+    at src/third_party/asio-master/asio/include/asio/impl/io_context.hpp:109
+#51 0x00007f542403e46f in run_until<std::chrono::_V2::steady_clock, std::chrono::duration<long, std::ratio<1l, 1000000000l> > > (abs_time=..., this=0x7f54270aacf0) at src/third_party/asio-master/asio/include/asio/impl/io_context.hpp:82
+#52 run_for<long, std::ratio<1l, 1000000000l> > (rel_time=..., this=0x7f54270aacf0) at src/third_party/asio-master/asio/include/asio/impl/io_context.hpp:74
+#53 mongo::transport::ServiceExecutorAdaptive::_workerThreadRoutine (this=0x7f54273078c0, threadId=<optimized out>, state=...) at src/mongo/transport/service_executor_adaptive.cpp:510
+#54 0x00007f54245e3684 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#55 mongo::(anonymous namespace)::runFunc (ctx=0x7f54271d0e60) at src/mongo/transport/service_entry_point_utils.cpp:55
+
+*/
+//由conn-xx线程处理，实际上是worker线程，只是改名而已
 StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteCommand(
     const RemoteCommandRequest& request, const RemoteCommandCallbackFn& cb) {
     RemoteCommandRequest scheduledRequest = request;
@@ -406,8 +489,15 @@ StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteC
     if (!cbHandle.isOK())
         return cbHandle;
     const auto cbState = _networkInProgressQueue.back();
-    LOG(3) << "Scheduling remote command request: " << redact(scheduledRequest.toString());
+
+	#include <sys/types.h>
+	#include <sys/syscall.h>
+	//2019-03-05T16:57:53.368+0800 D EXECUTOR [conn----yangtest1] Scheduling remote command request: 
+	//RemoteCommand 150 -- target:172.23.240.29:28018 db:test cmd:{ insert: "test", bypassDocumentValidation: false, ordered: true, documents: [ { _id: ObjectId('5c7e3a11ea9e07c79ca3abdf') } ], shardVersion: [ Timestamp(0, 0), ObjectId('000000000000000000000000') ] }  thread id:6222
+    LOG(3) << "Scheduling remote command request: " << redact(scheduledRequest.toString()) << "  thread id:" << syscall(SYS_gettid);
+
     lk.unlock();
+	//NetworkInterfaceASIO::startCommand
     _net->startCommand(
             cbHandle.getValue(),
             scheduledRequest,

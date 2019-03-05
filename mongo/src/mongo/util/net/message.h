@@ -58,6 +58,7 @@ enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
     // dbCommandReply_DEPRECATED = 2009, 
     
     dbCommand = 2010,
+    
     dbCommandReply = 2011,
     dbCompressed = 2012,
     dbMsg = 2013,

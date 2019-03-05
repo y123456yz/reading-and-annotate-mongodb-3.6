@@ -97,7 +97,32 @@ using transport::TransportLayer;
  * This class wraps up the logic for swapping/unswapping the Client during runNext().
  *
  * In debug builds this also ensures that only one thread is working on the SSM at once.
- */ //ServiceStateMachine::start中调用
+ */ 
+/*
+Breakpoint 1, mongo::ServiceStateMachine::ThreadGuard::ThreadGuard (this=0x7f60ef378e90, ssm=<optimized out>) at src/mongo/transport/service_state_machine.cpp:128
+128                             log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
+(gdb) bt
+#0  mongo::ServiceStateMachine::ThreadGuard::ThreadGuard (this=0x7f60ef378e90, ssm=<optimized out>) at src/mongo/transport/service_state_machine.cpp:128
+#1  0x00007f60fd72f791 in mongo::ServiceStateMachine::start (this=0x7f60ff8d3a90, ownershipModel=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:534
+#2  0x00007f60fd72d2b1 in mongo::ServiceEntryPointImpl::startSession (this=<optimized out>, session=...) at src/mongo/transport/service_entry_point_impl.cpp:169
+#3  0x00007f60fde02987 in operator() (peerSocket=..., ec=..., __closure=0x7f60ef379280) at src/mongo/transport/transport_layer_asio.cpp:334
+#4  operator() (this=0x7f60ef379280) at src/third_party/asio-master/asio/include/asio/detail/bind_handler.hpp:308
+#5  asio_handler_invoke<asio::detail::move_binder2<mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)>, std::error_code, asio::basic_stream_socket<asio::generic::stream_protocol> > > (function=...) at src/third_party/asio-master/asio/include/asio/handler_invoke_hook.hpp:68
+#6  invoke<asio::detail::move_binder2<mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)>, std::error_code, asio::basic_stream_socket<asio::generic::stream_protocol> >, mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)> > (context=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_invoke_helpers.hpp:37
+#7  complete<asio::detail::move_binder2<mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)>, std::error_code, asio::basic_stream_socket<asio::generic::stream_protocol> > > (this=<synthetic pointer>, handler=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_work.hpp:81
+#8  asio::detail::reactive_socket_move_accept_op<asio::generic::stream_protocol, mongo::transport::TransportLayerASIO::_acceptConnection(mongo::transport::TransportLayerASIO::GenericAcceptor&)::<lambda(const std::error_code&, mongo::transport::GenericSocket)> >::do_complete(void *, asio::detail::operation *, const asio::error_code &, std::size_t) (owner=<optimized out>, base=<optimized out>)
+    at src/third_party/asio-master/asio/include/asio/detail/reactive_socket_accept_op.hpp:201
+#9  0x00007f60fde0ccd9 in complete (bytes_transferred=<optimized out>, ec=..., owner=0x7f60ff58b100, this=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/scheduler_operation.hpp:39
+#10 asio::detail::scheduler::do_run_one (this=this@entry=0x7f60ff58b100, lock=..., this_thread=..., ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:400
+#11 0x00007f60fde0cf21 in asio::detail::scheduler::run (this=0x7f60ff58b100, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:153
+#12 0x00007f60fde1716e in asio::io_context::run (this=0x7f60ff7a8a90) at src/third_party/asio-master/asio/include/asio/impl/io_context.ipp:61
+#13 0x00007f60fde0071e in mongo::transport::TransportLayerASIO::<lambda()>::operator()(void) const (__closure=0x7f60ff6ac2e8) at src/mongo/transport/transport_layer_asio.cpp:249
+#14 0x00007f60fc7428f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
+#15 0x00007f60fbf5ee25 in start_thread () from /lib64/libpthread.so.0
+#16 0x00007f60fbc8c34d in clone () from /lib64/libc.so.6
+(gdb) c
+*/
+//ThreadGuard 相关的定义会调用
 class ServiceStateMachine::ThreadGuard {
     ThreadGuard(ThreadGuard&) = delete;
     ThreadGuard& operator=(ThreadGuard&) = delete;
@@ -120,8 +145,12 @@ public:
         // Set up the thread name
         auto oldThreadName = getThreadName();
         if (oldThreadName != _ssm->_threadName) {
+			//记录下之前的线程名
             _ssm->_oldThreadName = getThreadName().toString();
+			log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
             setThreadName(_ssm->_threadName);
+			//sleep(60);
+			log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
         }
 
         // Swap the current Client so calls to cc() work as expected
@@ -184,7 +213,8 @@ public:
             }
 
             if (!_ssm->_oldThreadName.empty()) {
-                setThreadName(_ssm->_oldThreadName);
+				
+                setThreadName(_ssm->_oldThreadName); //恢复到老线程
             }
         }
 
@@ -267,7 +297,7 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
 #16 mongo::(anonymous namespace)::runFunc (ctx=0x7f228cedd0a0) at src/mongo/transport/service_entry_point_utils.cpp:55
 #17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
 #18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
-*/ //epoll异步网络时间触发，一般是有数据到来
+*/ //epoll异步网络时间触发，一般是有数据到来   
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
 	//TransportLayerASIO::sourceMessage  TransportLayerASIO::ASIOSession  后面的wait asio会读取数据放入_inMessage
@@ -283,7 +313,7 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
             return _session()->getTransportLayer()->wait(std::move(ticket));
         }(std::move(ticket))); 
     } else if (_transportMode == transport::Mode::kAsynchronous) {
-        _session()->getTransportLayer()->asyncWait( //TransportLayerASIO::asyncWait
+        _session()->getTransportLayer()->asyncWait( 
             std::move(ticket), [this](Status status) { _sourceCallback(status); });
     }
 }
@@ -304,11 +334,12 @@ void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     }
 }
 
+//mongos  TransportLayerASIO::asyncWait
 //ServiceStateMachine::_sourceMessage中epoll_wait返回，也就是协议栈的数据已经读到用户态空间
 void ServiceStateMachine::_sourceCallback(Status status) {
     // The first thing to do is create a ThreadGuard which will take ownership of the SSM in this
     // thread.
-    ThreadGuard guard(this);
+    ThreadGuard guard(this); 
 
     // Make sure we just called sourceMessage();
     dassert(state() == State::SourceWait);
@@ -525,7 +556,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 
 //ServiceEntryPointImpl::startSession中执行  启动
 void ServiceStateMachine::start(Ownership ownershipModel) {
-    _scheduleNextWithGuard(
+    _scheduleNextWithGuard( //暂时性的变为conn线程名 //线程更名也在这里面  "conn-"线程名  该函数执行完后自动恢复为原来的listen线程
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
 }
 
@@ -534,7 +565,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {
     auto func = [ ssm = shared_from_this(), ownershipModel ] {
-        ThreadGuard guard(ssm.get()); //线程更名也在这里面  "conn-"线程名
+        ThreadGuard guard(ssm.get());  //对应ThreadGuard& operator=(ThreadGuard&& other)
         if (ownershipModel == Ownership::kStatic)
             guard.markStaticOwnership();
 		//对应:ServiceStateMachine::_runNextInGuard
@@ -549,7 +580,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
     }
 
     // We've had an error, reacquire the ThreadGuard and destroy the SSM
-    ThreadGuard terminateGuard(this); //清除操作
+    ThreadGuard terminateGuard(this);  //对应ThreadGuard& operator=(ThreadGuard&& other)
 
     // The service executor failed to schedule the task. This could for example be that we failed
     // to start a worker thread. Terminate this connection to leave the system in a valid state.

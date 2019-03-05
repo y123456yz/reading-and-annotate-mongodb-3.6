@@ -180,19 +180,20 @@ void execCommandClient(OperationContext* opCtx,
         return;
     }
 
-    c->incrementCommandsExecuted();
+    c->incrementCommandsExecuted(); //改名了的执行次数自增
 
     if (c->shouldAffectCommandCounter()) {
         globalOpCounters.gotCommand();
     }
 
-    StatusWith<WriteConcernOptions> wcResult =
+    StatusWith<WriteConcernOptions> wcResult = //该参数作用可以参考http://www.mongoing.com/archives/2916
         WriteConcernOptions::extractWCFromCommand(request.body, dbname);
     if (!wcResult.isOK()) {
         Command::appendCommandStatus(result, wcResult.getStatus());
         return;
     }
 
+	//有部分命令不支持writeconcern配置，报错
     bool supportsWriteConcern = c->supportsWriteConcern(request.body);
     if (!supportsWriteConcern && !wcResult.getValue().usedDefault) {
         // This command doesn't do writes so it should not be passed a writeConcern.
@@ -216,14 +217,14 @@ void execCommandClient(OperationContext* opCtx,
 
     bool ok = false;
     if (!supportsWriteConcern) {
-        ok = c->publicRun(opCtx, request, result);
+        ok = c->publicRun(opCtx, request, result); //Command::publicRun
     } else {
         // Change the write concern while running the command.
         const auto oldWC = opCtx->getWriteConcern();
         ON_BLOCK_EXIT([&] { opCtx->setWriteConcern(oldWC); });
         opCtx->setWriteConcern(wcResult.getValue());
 
-        ok = c->publicRun(opCtx, request, result);
+        ok = c->publicRun(opCtx, request, result); //Command::publicRun
     }
     if (!ok) {
         c->incrementCommandsFailed();
@@ -231,7 +232,7 @@ void execCommandClient(OperationContext* opCtx,
     Command::appendCommandStatus(result, ok);
 }
 
-//Strategy::clientCommand
+//Strategy::clientCommand  Strategy::writeOp  Strategy::clientCommand中调用
 void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBuilder&& builder) {
     // Handle command option maxTimeMS first thing while processing the command so that the
     // subsequent code has the deadline available
@@ -241,13 +242,13 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
 
     const int maxTimeMS = uassertStatusOK(
         QueryRequest::parseMaxTimeMS(request.body[QueryRequest::cmdOptionMaxTimeMS]));
-    if (maxTimeMS > 0) {
+    if (maxTimeMS > 0) { //mongos op操作的最大超时时间设置，超时mongod不想要报错，参考https://docs.mongodb.com/manual/reference/operator/meta/maxTimeMS/
         opCtx->setDeadlineAfterNowBy(Milliseconds{maxTimeMS});
     }
 
     auto const commandName = request.getCommandName();
     auto const command = Command::findCommand(commandName);
-    if (!command) {
+    if (!command) { //没有对应的command存在
         ON_BLOCK_EXIT([opCtx, &builder] { appendRequiredFieldsToResponse(opCtx, &builder); });
         Command::appendCommandStatus(
             builder,
@@ -263,7 +264,7 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
     while (true) {
         builder.resetToEmpty();
         try {
-            execCommandClient(opCtx, command, request, builder);
+            execCommandClient(opCtx, command, request, builder); //执行命令
             return;
         } catch (const StaleConfigException& e) {
             if (e.getns().empty()) {
