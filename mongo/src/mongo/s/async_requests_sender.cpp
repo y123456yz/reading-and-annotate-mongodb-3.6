@@ -77,7 +77,7 @@ AsyncRequestsSender::AsyncRequestsSender(OperationContext* opCtx,
     // We lock so that no callbacks signal the notification until after we are done scheduling
     // requests, to prevent signaling the notification twice, which is illegal.
     stdx::lock_guard<stdx::mutex> lk(_mutex);
-    _scheduleRequests(lk);
+    _scheduleRequests(lk); //AsyncRequestsSender::_scheduleRequests
 }
 AsyncRequestsSender::~AsyncRequestsSender() {
     _cancelPendingRequests();
@@ -171,6 +171,7 @@ boost::optional<AsyncRequestsSender::Response> AsyncRequestsSender::_ready() {
     return boost::none;
 }
 
+//AsyncRequestsSender::AsyncRequestsSender中调用
 void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
     invariant(!_stopRetrying);
     // Schedule remote work on hosts for which we have not sent a request or need to retry.
@@ -212,6 +213,7 @@ void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
 
         // If the remote does not have a response or pending request, schedule remote work for it.
         if (!remote.swResponse && !remote.cbHandle.isValid()) {
+			//AsyncRequestsSender::_scheduleRequest
             auto scheduleStatus = _scheduleRequest(lk, i);
             if (!scheduleStatus.isOK()) {
                 remote.swResponse = std::move(scheduleStatus);
@@ -226,6 +228,7 @@ void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
     }
 }
 
+//AsyncRequestsSender::_scheduleRequests中调用
 Status AsyncRequestsSender::_scheduleRequest(WithLock, size_t remoteIndex) {
     auto& remote = _remotes[remoteIndex];
 
@@ -240,6 +243,7 @@ Status AsyncRequestsSender::_scheduleRequest(WithLock, size_t remoteIndex) {
     executor::RemoteCommandRequest request(
         *remote.shardHostAndPort, _db, remote.cmdObj, _metadataObj, _opCtx);
 
+	//ThreadPoolTaskExecutor::scheduleRemoteCommand
     auto callbackStatus = _executor->scheduleRemoteCommand(
         request,
         stdx::bind(

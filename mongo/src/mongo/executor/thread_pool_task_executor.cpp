@@ -124,6 +124,7 @@ public:
     WorkQueue waiters;
 };
 
+////赋值见makeShardingTaskExecutor
 ThreadPoolTaskExecutor::ThreadPoolTaskExecutor(std::unique_ptr<ThreadPoolInterface> pool,
                                                std::unique_ptr<NetworkInterface> net)
     : _net(std::move(net)), _pool(std::move(pool)) {}
@@ -469,6 +470,7 @@ Breakpoint 1, mongo::executor::ThreadPoolTaskExecutor::scheduleRemoteCommand(mon
 
 */
 //由conn-xx线程处理，实际上是worker线程，只是改名而已
+//AsyncRequestsSender::_scheduleRequest调用执行
 StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteCommand(
     const RemoteCommandRequest& request, const RemoteCommandCallbackFn& cb) {
     RemoteCommandRequest scheduledRequest = request;
