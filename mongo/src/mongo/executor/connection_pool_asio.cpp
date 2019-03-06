@@ -245,7 +245,8 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
             _impl->timeOut_inlock();
         });
 
-        _global->_impl->_connect(_impl.get());
+		//NetworkInterfaceASIO::_connect
+        _global->_impl->_connect(_impl.get()); //NetworkInterfaceASIO::_connect
     });
 }
 

@@ -48,10 +48,13 @@
 namespace mongo {
 namespace executor {
 
+////makeShardingTaskExecutorPool  initializeGlobalShardingState 
+//线程名instanceName 分别对应"NetworkInterfaceASIO-ShardRegistry-" "NetworkInterfaceASIO-TaskExecutorPool-"
 std::unique_ptr<NetworkInterface> makeNetworkInterface(std::string instanceName) {
     return makeNetworkInterface(std::move(instanceName), nullptr, nullptr);
 }
 
+//makeShardingTaskExecutorPool  initializeGlobalShardingState调用
 //makeShardingTaskExecutorPool->makeNetworkInterface
 std::unique_ptr<NetworkInterface> makeNetworkInterface(
     std::string instanceName,
@@ -59,7 +62,7 @@ std::unique_ptr<NetworkInterface> makeNetworkInterface(
     std::unique_ptr<rpc::EgressMetadataHook> metadataHook,
     ConnectionPool::Options connPoolOptions) {
     NetworkInterfaceASIO::Options options{};
-    options.instanceName = std::move(instanceName);
+    options.instanceName = std::move(instanceName); //线程名
     options.networkConnectionHook = std::move(hook);
     options.metadataHook = std::move(metadataHook);
     options.timerFactory = stdx::make_unique<AsyncTimerFactoryASIO>();

@@ -74,7 +74,7 @@ void NetworkInterfaceASIO::AsyncConnection::setServerProtocols(rpc::ProtocolSet 
     _serverProtocols = protocols;
 }
 
-//NetworkInterfaceASIO::_startCommand
+//ASIOConnection::setup
 void NetworkInterfaceASIO::_connect(AsyncOp* op) {
     log() << "Connecting to " << op->request().target.toString();
 

@@ -194,6 +194,7 @@ public:
             opCtx, shardResults, ClusterExplain::kWriteOnShards, timer.millis(), out);
     }
 
+	//Command::publicRunÖÐµ÷ÓÃ
     bool enhancedRun(OperationContext* opCtx,
                      const OpMsgRequest& request,
                      BSONObjBuilder& result) final {

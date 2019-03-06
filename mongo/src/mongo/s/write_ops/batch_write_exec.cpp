@@ -81,6 +81,7 @@ const int kMaxRoundsWithoutProgress(5);
 
 }  // namespace
 
+//ClusterWriter::write中调用执行
 void BatchWriteExec::executeBatch(OperationContext* opCtx,
                                   NSTargeter& targeter,
                                   const BatchedCommandRequest& clientRequest,
@@ -205,6 +206,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 pendingBatches.insert(std::make_pair(targetShardId, nextBatch));
             }
 
+			//这里面会调用AsyncRequestsSender::AsyncRequestsSender
             AsyncRequestsSender ars(opCtx,
                                     Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor(),
                                     clientRequest.getTargetingNS().db().toString(),

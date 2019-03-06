@@ -222,14 +222,14 @@ ResponseStatus NetworkInterfaceASIO::AsyncCommand::response(AsyncOp* op,
 }
 
 void NetworkInterfaceASIO::_startCommand(AsyncOp* op) {
-    LOG(3) << "running command " << redact(op->request().cmdObj) << " against database "
+    LOG(3) << "running command x " << redact(op->request().cmdObj) << " against database "
            << op->request().dbname << " across network to " << op->request().target.toString();
     if (inShutdown()) {
         return;
     }
 
     // _connect() will continue the state machine.
-    _connect(op);
+    _connect(op); //NetworkInterfaceASIO::_connect
 }
 
 void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {

@@ -42,7 +42,7 @@ namespace executor {
 
 // If less than or equal to 0, the suggested pool size will be determined by the number of cores. If
 // set to a particular positive value, this will be used as the pool size.
-MONGO_EXPORT_SERVER_PARAMETER(taskExecutorPoolSize, int, 0);
+MONGO_EXPORT_SERVER_PARAMETER(taskExecutorPoolSize, int, 1);//0); yang add change
 
 //makeShardingTaskExecutorPool调用
 size_t TaskExecutorPool::getSuggestedPoolSize() {
@@ -52,7 +52,7 @@ size_t TaskExecutorPool::getSuggestedPoolSize() {
     }
 
     ProcessInfo p;
-    unsigned numCores = 1;//p.getNumCores(); yang add change xxx todo 
+    unsigned numCores = p.getNumCores();
 
     // Never suggest a number outside the range [4, 64].
     return std::max(4U, std::min(64U, numCores));
@@ -64,10 +64,11 @@ void TaskExecutorPool::startup() {
     invariant(_fixedExecutor);
 
 	//参考makeShardingTaskExecutorPool
-	
+
+	//对应NetworkInterfaceASIO-ShardRegistry线程
     _fixedExecutor->startup(); //ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
     for (auto&& exec : _executors) {
-		//对应NetworkInterfaceASIO-ShardRegistry线程
+		//对应NetworkInterfaceASIO-TaskExecutorPool-线程
         exec->startup(); //ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
     }
 }

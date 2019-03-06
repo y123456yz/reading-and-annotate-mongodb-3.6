@@ -122,6 +122,7 @@ std::unique_ptr<ShardingCatalogClient> makeCatalogClient(ServiceContext* service
 }
 
 //生成到后端mongod的连接池TaskExecutorPool   initializeGlobalShardingState调用
+//线程真正在TaskExecutorPool::startup中创建
 std::unique_ptr<TaskExecutorPool> makeShardingTaskExecutorPool(
     std::unique_ptr<NetworkInterface> fixedNet,
     rpc::ShardingEgressMetadataHookBuilder metadataHookBuilder,
@@ -131,13 +132,14 @@ std::unique_ptr<TaskExecutorPool> makeShardingTaskExecutorPool(
 
 	//获取taskExecutorPoolSize
     const auto poolSize = taskExecutorPoolSize.value_or(TaskExecutorPool::getSuggestedPoolSize());
-
-    for (size_t i = 0; i < poolSize; ++i) {
+	warning() << "yang test .... taskExecutorPoolSize:" << poolSize;
+    for (size_t i = 0; i < poolSize; ++i) { //线程名的第一个"-"后面的数字代码第几个pool
 		//负责到后端mongod的链接,  NetworkInterfaceASIO-TaskExecutorPool-线程
 		//一个链接对应一个  线程名设置在NetworkInterfaceASIO::startup 
 		//top看的时候，对应的是Network.ool-3-0类似的线程
+		//线程真正创建在NetworkInterfaceASIO::startup
         auto exec = makeShardingTaskExecutor(executor::makeNetworkInterface( //make生成一个NetworkInterfaceASIO
-            "NetworkInterfaceASIO-TaskExecutorPool-" + std::to_string(i),
+            "NetworkInterfaceASIO-TaskExecutorPool-yang-" + std::to_string(i),
             stdx::make_unique<ShardingNetworkConnectionHook>(),
             metadataHookBuilder(),
             connPoolOptions));

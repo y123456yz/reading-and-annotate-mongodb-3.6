@@ -176,6 +176,7 @@ void splitIfNeeded(OperationContext* opCtx,
 
 }  // namespace
 
+//ClusterWriteCmd::enhancedRunÖÐµ÷ÓÃ
 void ClusterWriter::write(OperationContext* opCtx,
                           const BatchedCommandRequest& request,
                           BatchWriteExecStats* stats,

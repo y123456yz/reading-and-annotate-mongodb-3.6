@@ -487,7 +487,7 @@ private:
 
     std::unique_ptr<AsyncStreamFactoryInterface> _streamFactory;
 
-    ConnectionPool _connectionPool;
+    ConnectionPool _connectionPool; //到后端的连接池
 
     // If it is necessary to hold this lock while accessing a particular operation with
     // an AccessControl object, take this lock first, always.

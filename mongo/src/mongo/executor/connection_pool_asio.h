@@ -70,7 +70,7 @@ private:
  * Implements connection pool connections on top of asio
  *
  * Owns an async op when it's out of the pool
- */
+ */ //ASIOImpl::makeConnection中构造使用
 class ASIOConnection final : public ConnectionPool::ConnectionInterface {
 public:
     ASIOConnection(const HostAndPort& hostAndPort, size_t generation, ASIOImpl* global);

@@ -270,6 +270,7 @@ void ConnectionPool::dropConnections(const HostAndPort& hostAndPort) {
     });
 }
 
+//NetworkInterfaceASIO::startCommand中调用
 void ConnectionPool::get(const HostAndPort& hostAndPort,
                          Milliseconds timeout,
                          GetConnectionCallback cb) {
@@ -278,7 +279,7 @@ void ConnectionPool::get(const HostAndPort& hostAndPort,
     stdx::unique_lock<stdx::mutex> lk(_mutex);
 
     auto iter = _pools.find(hostAndPort);
-
+	//获取hostAndPort对应的连接池
     if (iter == _pools.end()) {
         auto handle = stdx::make_unique<SpecificPool>(this, hostAndPort);
         pool = handle.get();
@@ -430,7 +431,7 @@ void ConnectionPool::SpecificPool::returnConnection(ConnectionInterface* connPtr
         lk.unlock();
         connPtr->refresh(
             _parent->_options.refreshTimeout, [this](ConnectionInterface* connPtr, Status status) {
-                connPtr->indicateUsed();
+                connPtr->indicateUsed(); //计数
 
                 runWithActiveClient([&](stdx::unique_lock<stdx::mutex> lk) {
                     auto conn = takeFromProcessingPool(connPtr);
@@ -651,6 +652,7 @@ void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mute
 
         // Run the setup callback
         lk.unlock();
+		//开始键连接 ASIOConnection::setup
         connPtr->setup(
             _parent->_options.refreshTimeout, [this](ConnectionInterface* connPtr, Status status) {
                 connPtr->indicateUsed();

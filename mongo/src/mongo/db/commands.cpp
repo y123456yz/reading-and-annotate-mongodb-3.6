@@ -350,6 +350,7 @@ Status Command::checkAuthorization(Command* c,
 }
 //execCommandClient->Command::publicRun
 //runCommands->execCommandDatabase->runCommandImpl->Command::publicRun调用
+//execCommandClient中调用
 bool Command::publicRun(OperationContext* opCtx,
                         const OpMsgRequest& request,
                         BSONObjBuilder& result) {
