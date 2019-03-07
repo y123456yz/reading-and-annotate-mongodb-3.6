@@ -142,11 +142,13 @@ NetworkInterfaceASIO::AsyncConnection& NetworkInterfaceASIO::AsyncOp::connection
     return *_connection;
 }
 
+//NetworkInterfaceASIO::_setupSocket
 void NetworkInterfaceASIO::AsyncOp::setConnection(AsyncConnection&& conn) {
     MONGO_ASYNC_OP_INVARIANT(!_connection.is_initialized(), "Connection already initialized");
     _connection = std::move(conn);
 }
 
+//NetworkInterfaceASIO::_beginCommunication
 Status NetworkInterfaceASIO::AsyncOp::beginCommand(Message&& newCommand,
                                                    const HostAndPort& target) {
     // NOTE: We operate based on the assumption that AsyncOp's
@@ -154,6 +156,7 @@ Status NetworkInterfaceASIO::AsyncOp::beginCommand(Message&& newCommand,
     MONGO_ASYNC_OP_INVARIANT(_connection.is_initialized(),
                              "Connection should not change over AsyncOp's lifetime");
 
+	//Ñ¹ËõÊý¾Ý
     auto swm = _connection->getCompressorManager().compressMessage(newCommand);
     if (!swm.isOK())
         return swm.getStatus();
@@ -163,6 +166,7 @@ Status NetworkInterfaceASIO::AsyncOp::beginCommand(Message&& newCommand,
     return Status::OK();
 }
 
+// NetworkInterfaceASIO::_beginCommunication
 Status NetworkInterfaceASIO::AsyncOp::beginCommand(const RemoteCommandRequest& request) {
     return beginCommand(
         rpc::messageFromOpMsgRequest(

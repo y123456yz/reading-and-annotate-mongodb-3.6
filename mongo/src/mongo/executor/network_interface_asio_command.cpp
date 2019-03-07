@@ -250,8 +250,8 @@ void NetworkInterfaceASIO::_startCommand(AsyncOp* op) {
 #12 0x00007f731b52653c in mongo::executor::NetworkInterfaceASIO::<lambda()>::operator()(void) const (__closure=0x7f731d572ee8) at src/mongo/executor/network_interface_asio.cpp:165
 #13 0x00007f7319efc8f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
 #14 0x00007f7319718e25 in start_thread () from /lib64/libpthread.so.0
-
 */
+//mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
 void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     // The way that we connect connections for the connection pool is by
     // starting the callback chain with connect(), but getting off at the first
@@ -272,12 +272,14 @@ void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     }
 
     LOG(3) << "Initiating asynchronous command: " << redact(op->request().toString());
-
+	//NetworkInterfaceASIO::AsyncOp::beginCommand
+	//压缩msg数据构建新的AsyncCommand对象
     auto beginStatus = op->beginCommand(op->request());
     if (!beginStatus.isOK()) {
         return _completeOperation(op, beginStatus);
     }
 
+	//异步发送数据到后端，并接受后端应答，接收到后端应答后调用handler处理
     _asyncRunCommand(op, [this, op](std::error_code ec, size_t bytes) {
         _validateAndRun(op, ec, [this, op]() { _completedOpCallback(op); });
     });
@@ -417,6 +419,7 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
     signalWorkAvailable();
 }
 
+//异步发送数据到后端，并接受后端应答，接收到后端应答后调用handler处理
 void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handler) {
     LOG(2) << "Starting asynchronous command " << op->request().id << " on host "
            << op->request().target.toString();
@@ -439,7 +442,7 @@ void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handle
         handler(ec, bytes);
     };
 
-    // Step 3
+    // Step 3 接受后端body数据
     auto recvHeaderCallback = [this, &cmd, handler, recvMessageCallback, op](std::error_code ec,
                                                                              size_t bytes) {
         // The operation could have been canceled after starting the command, but before
@@ -455,12 +458,13 @@ void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handle
                 return handler(make_error_code(ErrorCodes::ProtocolError), bytes);
             }
 
+			//后端数据接收完毕后调用recvMessageCallback，也就是handler
             asyncRecvMessageBody(
                 cmd.conn().stream(), &cmd.header(), &cmd.toRecv(), std::move(recvMessageCallback));
         });
     };
 
-    // Step 2
+    // Step 2 接受后端数据头部信息
     auto sendMessageCallback = [this, &cmd, handler, recvHeaderCallback, op](std::error_code ec,
                                                                              size_t bytes) {
         _validateAndRun(op, ec, [this, &cmd, recvHeaderCallback] {

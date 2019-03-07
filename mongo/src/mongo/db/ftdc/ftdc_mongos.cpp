@@ -42,7 +42,17 @@
 namespace mongo {
 
 namespace {
+/*
+编译生成ftdc工具命令，入下:
+go get github.com/10gen/ftdc-utils/cmd/ftdc
+go get github.com/10gen/ftdc-utils
+二进制文件在/root/go/bin/ftdc
 
+详见:https://github.com/10gen/ftdc-utils
+
+使用方法:
+/root/go/bin/ftdc stats  -o ./ /home/yyz/mongodb-test/mongos_1/logs/mongos.diagnostic.data/metrics.interim -o ./test.txt3
+*/
 /**
  * Expose diagnosticDataCollectionDirectoryPath set parameter to specify the MongoS FTDC path.
  */
