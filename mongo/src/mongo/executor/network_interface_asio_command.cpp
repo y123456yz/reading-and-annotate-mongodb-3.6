@@ -232,6 +232,26 @@ void NetworkInterfaceASIO::_startCommand(AsyncOp* op) {
     _connect(op); //NetworkInterfaceASIO::_connect
 }
 
+/*
+#0  mongo::executor::NetworkInterfaceASIO::_beginCommunication (this=0x7f731d412b80, op=0x7f731d783500) at src/mongo/executor/network_interface_asio_command.cpp:254
+#1  0x00007f731b52943f in mongo::executor::NetworkInterfaceASIO::<lambda(mongo::StatusWith<std::unique_ptr<mongo::executor::ConnectionPool::ConnectionInterface, mongo::executor::ConnectionPool::ConnectionHandleDeleter> >)>::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f7317b499a0) at src/mongo/executor/network_interface_asio.cpp:503
+#2  0x00007f731b529d00 in asio_handler_invoke<mongo::executor::NetworkInterfaceASIO::startCommand(const mongo::executor::TaskExecutor::CallbackHandle&, mongo::executor::RemoteCommandRequest&, const RemoteCommandCompletionFn&)::<lambda(mongo::StatusWith<std::unique_ptr<mongo::executor::ConnectionPool::ConnectionInterface, mongo::executor::ConnectionPool::ConnectionHandleDeleter> >)>::<lambda()> > (function=...)
+    at src/third_party/asio-master/asio/include/asio/handler_invoke_hook.hpp:68
+#3  invoke<mongo::executor::NetworkInterfaceASIO::startCommand(const mongo::executor::TaskExecutor::CallbackHandle&, mongo::executor::RemoteCommandRequest&, const RemoteCommandCompletionFn&)::<lambda(mongo::StatusWith<std::unique_ptr<mongo::executor::ConnectionPool::ConnectionInterface, mongo::executor::ConnectionPool::ConnectionHandleDeleter> >)>::<lambda()>, mongo::executor::NetworkInterfaceASIO::startCommand(const mongo::executor::TaskExecutor::CallbackHandle&, mongo::executor::RemoteCommandRequest&, const RemoteCommandCompletionFn&)::<lambda(mongo::StatusWith<std::unique_ptr<mongo::executor::ConnectionPool::ConnectionInterface, mongo::executor::ConnectionPool::ConnectionHandleDeleter> >)>::<lambda()> > (context=..., function=...) at src/third_party/asio-master/asio/include/asio/detail/handler_invoke_helpers.hpp:37
+#4  complete<mongo::executor::NetworkInterfaceASIO::startCommand(const mongo::executor::TaskExecutor::CallbackHandle&, mongo::executor::RemoteCommandRequest&, const RemoteCommandCompletionFn&)::<lambda(mongo::StatusWith<std::unique_ptr<mongo::executor::ConnectionPool::ConnectionInterface, mongo::executor::ConnectionPool::ConnectionHandleDeleter> >)>::<lambda()> > (this=<synthetic pointer>, handler=..., function=...)
+    at src/third_party/asio-master/asio/include/asio/detail/handler_work.hpp:81
+#5  asio::detail::completion_handler<mongo::executor::NetworkInterfaceASIO::startCommand(const mongo::executor::TaskExecutor::CallbackHandle&, mongo::executor::RemoteCommandRequest&, const RemoteCommandCompletionFn&)::<lambda(mongo::StatusWith<std::unique_ptr<mongo::executor::ConnectionPool::ConnectionInterface, mongo::executor::ConnectionPool::ConnectionHandleDeleter> >)>::<lambda()> >::do_complete(void *, asio::detail::operation *, const asio::error_code &, std::size_t) (owner=0x7f731d4f4e00, base=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/completion_handler.hpp:69
+#6  0x00007f731b5c98b5 in complete (bytes_transferred=0, ec=..., owner=0x7f731d4f4e00, this=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/scheduler_operation.hpp:39
+#7  asio::detail::strand_service::do_complete (owner=0x7f731d4f4e00, base=0x7f731d637080, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/strand_service.ipp:167
+#8  0x00007f731b5c6df9 in complete (bytes_transferred=<optimized out>, ec=..., owner=0x7f731d4f4e00, this=<optimized out>) at src/third_party/asio-master/asio/include/asio/detail/scheduler_operation.hpp:39
+#9  asio::detail::scheduler::do_run_one (this=this@entry=0x7f731d4f4e00, lock=..., this_thread=..., ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:400
+#10 0x00007f731b5c7041 in asio::detail::scheduler::run (this=0x7f731d4f4e00, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:153
+#11 0x00007f731b5c71de in asio::io_context::run (this=<optimized out>, ec=...) at src/third_party/asio-master/asio/include/asio/impl/io_context.ipp:69
+#12 0x00007f731b52653c in mongo::executor::NetworkInterfaceASIO::<lambda()>::operator()(void) const (__closure=0x7f731d572ee8) at src/mongo/executor/network_interface_asio.cpp:165
+#13 0x00007f7319efc8f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
+#14 0x00007f7319718e25 in start_thread () from /lib64/libpthread.so.0
+
+*/
 void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     // The way that we connect connections for the connection pool is by
     // starting the callback chain with connect(), but getting off at the first
