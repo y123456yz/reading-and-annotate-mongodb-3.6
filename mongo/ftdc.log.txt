@@ -1,0 +1,1852 @@
+/*
+编译生成ftdc工具命令，入下:
+go get github.com/10gen/ftdc-utils/cmd/ftdc
+go get github.com/10gen/ftdc-utils
+二进制文件在/root/go/bin/ftdc
+
+详见:https://github.com/10gen/ftdc-utils
+
+使用方法:
+/root/go/bin/ftdc stats  -o ./ /home/yyz/mongodb-test/mongos_1/logs/mongos.diagnostic.data/metrics.interim -o ./test.txt3
+*/
+
+
+{
+	"Start": "2019-03-07T17:12:30+08:00",
+	"End": "2019-03-07T17:15:09+08:00",
+	"Metrics": {
+		"connPoolStats.end": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27018.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27018.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27018.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27018.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27028.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27028.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27028.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27028.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27038.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27038.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27038.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:27038.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28018.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28018.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28018.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28018.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28028.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28028.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28028.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28028.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28038.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28038.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28038.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.hosts.172.23.240.29:28038.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.numAScopedConnections": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.numClientConnections": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.ok": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27018.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27018.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27018.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27018.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27028.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27028.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27028.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27028.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27038.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27038.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27038.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.172.23.240.29:27038.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.poolAvailable": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.poolCreated": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.poolInUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-ShardRegistry.poolRefreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.172.23.240.29:28018.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.172.23.240.29:28018.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.172.23.240.29:28018.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.172.23.240.29:28018.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.poolAvailable": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.poolCreated": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.poolInUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.NetworkInterfaceASIO-TaskExecutorPool-yang-0.poolRefreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27018.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27018.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27018.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27018.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27028.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27028.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27028.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27028.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27038.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27038.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27038.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:27038.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28018.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28018.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28018.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28018.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28028.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28028.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28028.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28028.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28038.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28038.created": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28038.inUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.172.23.240.29:28038.refreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.poolAvailable": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.poolCreated": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.poolInUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.pools.global.poolRefreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.start": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"connPoolStats.totalAvailable": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.totalCreated": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.totalInUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"connPoolStats.totalRefreshing": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"end": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.asserts.msg": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.asserts.regular": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.asserts.rollovers": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.asserts.user": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.asserts.warning": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.connections.available": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.connections.current": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.connections.totalCreated": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.end": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"serverStatus.extra_info.page_faults": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.localTime": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"serverStatus.logicalSessionRecordCache.activeSessionsCount": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastSessionsCollectionJobCursorsClosed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastSessionsCollectionJobDurationMillis": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastSessionsCollectionJobEntriesEnded": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastSessionsCollectionJobEntriesRefreshed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastSessionsCollectionJobTimestamp": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastTransactionReaperJobDurationMillis": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastTransactionReaperJobEntriesCleanedUp": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.lastTransactionReaperJobTimestamp": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.sessionsCollectionJobCount": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.logicalSessionRecordCache.transactionReaperJobCount": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.mem.bits": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.mem.resident": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.mem.supported": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.mem.virtual": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.\u003cUNKNOWN\u003e": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands._isSelf.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands._isSelf.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands._mergeAuthzCollections.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands._mergeAuthzCollections.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.addShard.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.addShard.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.addShardToZone.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.addShardToZone.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.aggregate.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.aggregate.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.authSchemaUpgrade.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.authSchemaUpgrade.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.authenticate.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.authenticate.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.availableQueryOptions.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.availableQueryOptions.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.balancerStart.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.balancerStart.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.balancerStatus.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.balancerStatus.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.balancerStop.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.balancerStop.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.buildInfo.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.buildInfo.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.collMod.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.collMod.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.collStats.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.collStats.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.compact.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.compact.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.connPoolStats.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.connPoolStats.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.connPoolSync.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.connPoolSync.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.connectionStatus.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.connectionStatus.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.convertToCapped.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.convertToCapped.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.copydb.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.copydb.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.count.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.count.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.create.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.create.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.createIndexes.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.createIndexes.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.createRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.createRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.createUser.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.createUser.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.currentOp.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.currentOp.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dataSize.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dataSize.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dbStats.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dbStats.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.delete.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.delete.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.distinct.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.distinct.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.drop.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.drop.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropAllRolesFromDatabase.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropAllRolesFromDatabase.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropAllUsersFromDatabase.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropAllUsersFromDatabase.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropDatabase.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropDatabase.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropIndexes.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropIndexes.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropUser.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.dropUser.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.enableSharding.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.enableSharding.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.endSessions.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.endSessions.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.eval.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.eval.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.explain.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.explain.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.features.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.features.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.filemd5.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.filemd5.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.find.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.find.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.findAndModify.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.findAndModify.total": {
+			"Avg": 110,
+			"Var": 479280
+		},
+		"serverStatus.metrics.commands.flushRouterConfig.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.flushRouterConfig.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.forceerror.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.forceerror.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.fsync.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.fsync.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.geoNear.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.geoNear.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getCmdLineOpts.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getCmdLineOpts.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getDiagnosticData.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getDiagnosticData.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getLastError.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getLastError.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getLog.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getLog.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getMore.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getMore.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getParameter.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getParameter.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getPrevError.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getPrevError.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getShardMap.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getShardMap.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getShardVersion.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getShardVersion.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getnonce.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.getnonce.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.grantPrivilegesToRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.grantPrivilegesToRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.grantRolesToRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.grantRolesToRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.grantRolesToUser.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.grantRolesToUser.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.group.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.group.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.hostInfo.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.hostInfo.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.insert.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.insert.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.invalidateUserCache.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.invalidateUserCache.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.isMaster.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.isMaster.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.isdbgrid.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.isdbgrid.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killAllSessions.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killAllSessions.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killAllSessionsByPattern.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killAllSessionsByPattern.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killCursors.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killCursors.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killOp.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killOp.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killSessions.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.killSessions.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listCollections.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listCollections.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listCommands.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listCommands.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listDatabases.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listDatabases.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listIndexes.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listIndexes.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listShards.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.listShards.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.logRotate.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.logRotate.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.logout.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.logout.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.mapReduce.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.mapReduce.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.mergeChunks.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.mergeChunks.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.moveChunk.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.moveChunk.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.movePrimary.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.movePrimary.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.netstat.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.netstat.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.ping.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.ping.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheClear.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheClear.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheClearFilters.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheClearFilters.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheListFilters.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheListFilters.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheListPlans.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheListPlans.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheListQueryShapes.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheListQueryShapes.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheSetFilter.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.planCacheSetFilter.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.profile.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.profile.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.reIndex.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.reIndex.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.refreshSessions.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.refreshSessions.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.refreshSessionsInternal.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.refreshSessionsInternal.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.removeShard.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.removeShard.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.removeShardFromZone.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.removeShardFromZone.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.renameCollection.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.renameCollection.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.replSetGetStatus.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.replSetGetStatus.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.resetError.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.resetError.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.revokePrivilegesFromRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.revokePrivilegesFromRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.revokeRolesFromRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.revokeRolesFromRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.revokeRolesFromUser.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.revokeRolesFromUser.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.rolesInfo.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.rolesInfo.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.saslContinue.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.saslContinue.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.saslStart.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.saslStart.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.serverStatus.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.serverStatus.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.setFeatureCompatibilityVersion.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.setFeatureCompatibilityVersion.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.setParameter.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.setParameter.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.shardCollection.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.shardCollection.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.shardConnPoolStats.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.shardConnPoolStats.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.shutdown.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.shutdown.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.split.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.split.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.splitVector.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.splitVector.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.startSession.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.startSession.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.update.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.update.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.updateRole.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.updateRole.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.updateUser.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.updateUser.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.updateZoneKeyRange.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.updateZoneKeyRange.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.usersInfo.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.usersInfo.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.validate.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.validate.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.whatsmyuri.failed": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.commands.whatsmyuri.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.cursor.open.multiTarget": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.cursor.open.pinned": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.cursor.open.singleTarget": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.cursor.open.total": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.metrics.cursor.timedOut": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.network.bytesIn": {
+			"Avg": 69685,
+			"Var": 191444570472
+		},
+		"serverStatus.network.bytesOut": {
+			"Avg": 38228,
+			"Var": 56941597227
+		},
+		"serverStatus.network.compression.snappy.compressor.bytesIn": {
+			"Avg": 117234,
+			"Var": 539100182510
+		},
+		"serverStatus.network.compression.snappy.compressor.bytesOut": {
+			"Avg": 92432,
+			"Var": 335073306997
+		},
+		"serverStatus.network.compression.snappy.decompressor.bytesIn": {
+			"Avg": 40048,
+			"Var": 61992577774
+		},
+		"serverStatus.network.compression.snappy.decompressor.bytesOut": {
+			"Avg": 52503,
+			"Var": 106123855201
+		},
+		"serverStatus.network.numRequests": {
+			"Avg": 110,
+			"Var": 479282
+		},
+		"serverStatus.network.physicalBytesIn": {
+			"Avg": 69685,
+			"Var": 191445603305
+		},
+		"serverStatus.network.physicalBytesOut": {
+			"Avg": 38228,
+			"Var": 56940866343
+		},
+		"serverStatus.network.serviceExecutorTaskStats.deferredTasksQueued": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.network.serviceExecutorTaskStats.tasksQueued": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.network.serviceExecutorTaskStats.threadsInUse": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.network.serviceExecutorTaskStats.threadsPending": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.network.serviceExecutorTaskStats.threadsRunning": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.network.serviceExecutorTaskStats.totalExecuted": {
+			"Avg": 220,
+			"Var": 1917111
+		},
+		"serverStatus.network.serviceExecutorTaskStats.totalQueued": {
+			"Avg": 220,
+			"Var": 1917129
+		},
+		"serverStatus.network.serviceExecutorTaskStats.totalTimeExecutingMicros": {
+			"Avg": 2556099,
+			"Var": 40809673753440
+		},
+		"serverStatus.network.serviceExecutorTaskStats.totalTimeQueuedMicros": {
+			"Avg": 373993,
+			"Var": 828704401062
+		},
+		"serverStatus.network.serviceExecutorTaskStats.totalTimeRunningMicros": {
+			"Avg": 3511656,
+			"Var": 58702192996729
+		},
+		"serverStatus.ok": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.opcounters.command": {
+			"Avg": 110,
+			"Var": 479282
+		},
+		"serverStatus.opcounters.delete": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.opcounters.getmore": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.opcounters.insert": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.opcounters.query": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.opcounters.update": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.pid": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.start": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"serverStatus.tcmalloc.generic.current_allocated_bytes": {
+			"Avg": 8439,
+			"Var": 9092377496
+		},
+		"serverStatus.tcmalloc.generic.heap_size": {
+			"Avg": 31392,
+			"Var": 52437095306
+		},
+		"serverStatus.tcmalloc.tcmalloc.aggressive_memory_decommit": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.central_cache_free_bytes": {
+			"Avg": 2098,
+			"Var": 177788974
+		},
+		"serverStatus.tcmalloc.tcmalloc.current_total_thread_cache_bytes": {
+			"Avg": 1528,
+			"Var": 456887985
+		},
+		"serverStatus.tcmalloc.tcmalloc.max_total_thread_cache_bytes": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_commit_count": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_committed_bytes": {
+			"Avg": 31392,
+			"Var": 52437095306
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_decommit_count": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_free_bytes": {
+			"Avg": 3130,
+			"Var": 17831690561
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_reserve_count": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_scavenge_count": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_total_commit_bytes": {
+			"Avg": 31392,
+			"Var": 52437095306
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_total_decommit_bytes": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_total_reserve_bytes": {
+			"Avg": 31392,
+			"Var": 52437095306
+		},
+		"serverStatus.tcmalloc.tcmalloc.pageheap_unmapped_bytes": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"serverStatus.tcmalloc.tcmalloc.thread_cache_free_bytes": {
+			"Avg": 1528,
+			"Var": 460965261
+		},
+		"serverStatus.tcmalloc.tcmalloc.total_free_bytes": {
+			"Avg": 19823,
+			"Var": 6337040746
+		},
+		"serverStatus.tcmalloc.tcmalloc.transfer_cache_free_bytes": {
+			"Avg": 16196,
+			"Var": 5452502838
+		},
+		"serverStatus.uptime": {
+			"Avg": 1,
+			"Var": 1
+		},
+		"serverStatus.uptimeEstimate": {
+			"Avg": 1,
+			"Var": 1
+		},
+		"serverStatus.uptimeMillis": {
+			"Avg": 1135,
+			"Var": 1560161
+		},
+		"start": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"systemMetrics.cpu.btime": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.ctxt": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.guest_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.guest_nice_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.idle_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.iowait_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.irq_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.nice_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.num_cpus": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.processes": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.procs_blocked": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.procs_running": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.softirq_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.steal_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.system_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.cpu.user_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.io_in_progress": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.io_queued_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.io_time_ms": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.read_sectors": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.read_time_ms": {
+			"Avg": 189,
+			"Var": 473487
+		},
+		"systemMetrics.disks.sda.reads": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.reads_merged": {
+			"Avg": 909,
+			"Var": 3126169
+		},
+		"systemMetrics.disks.sda.write_sectors": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.disks.sda.write_time_ms": {
+			"Avg": 16,
+			"Var": 8040
+		},
+		"systemMetrics.disks.sda.writes": {
+			"Avg": 4575,
+			"Var": 18021120
+		},
+		"systemMetrics.disks.sda.writes_merged": {
+			"Avg": 3270,
+			"Var": 20459960
+		},
+		"systemMetrics.end": {
+			"Avg": 100288,
+			"Var": 19882336289
+		},
+		"systemMetrics.memory.Active(anon)_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Active(file)_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Active_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Buffers_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Cached_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Dirty_kb": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"systemMetrics.memory.Inactive(anon)_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Inactive(file)_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.Inactive_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.MemFree_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.MemTotal_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.SwapCached_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.memory.SwapFree_kb": {
+			"Avg": 1135,
+			"Var": 1560153
+		},
+		"systemMetrics.memory.SwapTotal_kb": {
+			"Avg": 0,
+			"Var": 0
+		},
+		"systemMetrics.start": {
+			"Avg": 0,
+			"Var": 0
+		}
+	},
+	"NSamples": 141
+}
