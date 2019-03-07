@@ -89,6 +89,7 @@ MessageCompressorManager::MessageCompressorManager()
 MessageCompressorManager::MessageCompressorManager(MessageCompressorRegistry* factory)
     : _registry{factory} {}
 
+//对msg做压缩处理
 StatusWith<Message> MessageCompressorManager::compressMessage(
     const Message& msg, const MessageCompressorId* compressorId) {
 

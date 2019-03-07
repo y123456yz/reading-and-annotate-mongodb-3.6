@@ -395,7 +395,7 @@ private:
          * An AsyncOp may run 0, 1, or multiple commands over its lifetime.
          * AsyncOp only holds at most a single AsyncCommand object at a time,
          * representing its current running or next-to-be-run command, if there is one.
-         */
+         */ //保证后端返回的顺序 赋值见NetworkInterfaceASIO::AsyncOp::beginCommand
         boost::optional<AsyncCommand> _command;
         bool _inSetup;
         bool _inRefresh;

@@ -77,3 +77,8 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .后端线程池初始化过程、conn pool链接流程分析  
     .NetworkInterfaceASIO-TaskExecutorPool-x-x线程处理及异步网络处理过程分析  
     .mongos和后端mongod键连过程和数据收发过程流程分界过程分析  
+    .mongos异步发送数据到后端并接收后端数据应答处理流程分析  
+    .ftdc-utils工具使用方法，用于分析mongos.diagnostic.data日志信息，这里面是二进制的，需要该工具支持  
+    .mongos-ftdc统计过程分析  
+    .新增ftdc.log文件，里面有详细的统计信息，指定方法，需要什么信息从里面看  
+
