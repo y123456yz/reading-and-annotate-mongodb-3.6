@@ -212,7 +212,7 @@ public:
  * Provides a minimal interface to manipulate connections within the pool,
  * specifically callbacks to set them up (connect + auth + whatever else),
  * refresh them (issue some kind of ping) and manage a timer.
- */
+ */ //ASIOConnectionºÃ≥–∏√¿‡
 class ConnectionPool::ConnectionInterface : public TimerInterface {
     MONGO_DISALLOW_COPYING(ConnectionInterface);
 

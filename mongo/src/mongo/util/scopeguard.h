@@ -150,6 +150,7 @@ protected:
 };
 
 template <typename F>
+//调用该MakeGuard的函数执行完后才会执行该MakeGuard
 inline ScopeGuardImpl0<F> MakeGuard(F fun) {
     return ScopeGuardImpl0<F>::MakeGuard(fun);
 }

@@ -86,7 +86,7 @@ public:
     void runWithActiveClient(stdx::unique_lock<stdx::mutex> lk, Callback&& cb) {
         invariant(lk.owns_lock());
 
-        _activeClients++;
+        _activeClients++; //活跃客户端请求计数
 
         const auto guard = MakeGuard([&] {
             invariant(!lk.owns_lock());
@@ -205,7 +205,7 @@ private:
 
     std::unique_ptr<TimerInterface> _requestTimer;
     Date_t _requestTimerExpiration;
-    size_t _activeClients;
+    size_t _activeClients; //赋值见runWithActiveClient
     size_t _generation;
     bool _inFulfillRequests;
     bool _inSpawnConnections;
@@ -291,6 +291,7 @@ void ConnectionPool::get(const HostAndPort& hostAndPort,
     invariant(pool);
 
     pool->runWithActiveClient(std::move(lk), [&](decltype(lk) lk) {
+		//SpecificPool::getConnection
         pool->getConnection(hostAndPort, timeout, std::move(lk), std::move(cb));
     });
 }
@@ -384,7 +385,7 @@ void ConnectionPool::SpecificPool::getConnection(const HostAndPort& hostAndPort,
 
     updateStateInLock();
 
-    spawnConnections(lk);
+    spawnConnections(lk); //这里面建链接
     fulfillRequests(lk);
 }
 
@@ -623,6 +624,8 @@ void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mute
     if (_inSpawnConnections)
         return;
 
+	//2019-03-07T11:17:40.056+0800 I ASIO     [conn----yangtest1] yang test...........ConnectionPool::SpecificPool::spawnConnections
+	log() << "yang test...........ConnectionPool::SpecificPool::spawnConnections";
     _inSpawnConnections = true;
     auto guard = MakeGuard([&] { _inSpawnConnections = false; });
 
@@ -639,13 +642,14 @@ void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mute
         std::unique_ptr<ConnectionPool::ConnectionInterface> handle;
         try {
             // make a new connection and put it in processing
+            // ASIOImpl::makeConnection  获取ASIOConnection类
             handle = _parent->_factory->makeConnection(_hostAndPort, _generation);
         } catch (std::system_error& e) {
             severe() << "Failed to construct a new connection object: " << e.what();
             fassertFailed(40336);
         }
 
-        auto connPtr = handle.get();
+        auto connPtr = handle.get(); //获取ASIOConnection类
         _processingPool[connPtr] = std::move(handle);
 
         ++_created;

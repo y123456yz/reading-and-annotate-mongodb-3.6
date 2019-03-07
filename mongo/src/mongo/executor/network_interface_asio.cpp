@@ -162,7 +162,7 @@ void NetworkInterfaceASIO::startup() {
                 LOG(2) << "The NetworkInterfaceASIO worker thread is spinning up :" <<  _options.instanceName + "-" + std::to_string(i); //工作线程开始工作
                 asio::io_service::work work(_io_service);
                 std::error_code ec;
-                _io_service.run(ec);
+                _io_service.run(ec);  //NetworkInterfaceASIO::startup-> _io_service.run
                 if (ec) {
                     severe() << "Failure in _io_service.run(): " << ec.message();
                     fassertFailed(40335);

@@ -122,6 +122,7 @@ void ASIOTimer::cancelTimeout() {
     });
 }
 
+//ASIOImpl::makeConnection
 ASIOConnection::ASIOConnection(const HostAndPort& hostAndPort, size_t generation, ASIOImpl* global)
     : _global(global),
       _hostAndPort(hostAndPort),
@@ -182,6 +183,7 @@ std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::makeAsyncOp(ASIOC
                              BSONObj(),
                              nullptr},
         [conn](const TaskExecutor::ResponseStatus& rs) {
+        	//_setupCallback来源在ASIOConnection::setup
             auto cb = std::move(conn->_setupCallback);
             cb(conn, rs.status);
         },
@@ -201,8 +203,14 @@ void ASIOConnection::cancelTimeout() {
     _timer.cancelTimeout();
 }
 
+//ConnectionPool::SpecificPool::spawnConnections
 void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
+	//2019-03-07T11:17:40.056+0800 I ASIO     [conn----yangtest1] yang test ......... ASIOConnection::setup
+	log() << "yang test ......... ASIOConnection::setup";
+
+	//这里dispatch的任务在NetworkInterfaceASIO::startup-> _io_service.run中由Network线程执行
     _impl->strand().dispatch([this, timeout, cb] {
+    	//_setupCallback在ASIOConnection::makeAsyncOp中执行
         _setupCallback = [this, cb](ConnectionInterface* ptr, Status status) {
             {
                 stdx::lock_guard<stdx::mutex> lk(_impl->_access->mutex);
@@ -223,7 +231,7 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
             cancelTimeout();
             cb(ptr, status);
         };
-
+		log() << "yang test ....2..... ASIOConnection::setup";
         // Capturing the shared access pad and generation before calling setTimeout gives us enough
         // information to avoid calling the timer if we shouldn't without needing any other
         // resources that might have been cleaned up.
@@ -310,6 +318,7 @@ std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::releaseAsyncOp() 
     return std::move(_impl);
 }
 
+//NetworkInterfaceASIO::_completeOperation
 void ASIOConnection::bindAsyncOp(std::unique_ptr<NetworkInterfaceASIO::AsyncOp> op) {
     _impl = std::move(op);
 }
@@ -324,6 +333,7 @@ std::unique_ptr<ConnectionPool::TimerInterface> ASIOImpl::makeTimer() {
     return stdx::make_unique<ASIOTimer>(&_impl->_strand);
 }
 
+//ConnectionPool::SpecificPool::spawnConnections  ASIOConnection继承ConnectionPool::ConnectionInterface类
 std::unique_ptr<ConnectionPool::ConnectionInterface> ASIOImpl::makeConnection(
     const HostAndPort& hostAndPort, size_t generation) {
     return stdx::make_unique<ASIOConnection>(hostAndPort, generation, this);
@@ -332,3 +342,4 @@ std::unique_ptr<ConnectionPool::ConnectionInterface> ASIOImpl::makeConnection(
 }  // namespace connection_pool_asio
 }  // namespace executor
 }  // namespace mongo
+
