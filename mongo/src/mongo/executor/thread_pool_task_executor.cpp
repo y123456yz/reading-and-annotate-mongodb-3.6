@@ -127,7 +127,7 @@ public:
 ////赋值见makeShardingTaskExecutor
 ThreadPoolTaskExecutor::ThreadPoolTaskExecutor(std::unique_ptr<ThreadPoolInterface> pool,
                                                std::unique_ptr<NetworkInterface> net)
-    : _net(std::move(net)), _pool(std::move(pool)) {}
+    : _net(std::move(net)), _pool(std::move(pool)) {} //net对应的是NetworkInterfaceASIO  pool对应NetworkInterfaceThreadPool
 
 ThreadPoolTaskExecutor::~ThreadPoolTaskExecutor() {
     shutdown();
@@ -367,6 +367,7 @@ using ResponseStatus = TaskExecutor::ResponseStatus;
 // convert the raw Status in cbData to a RemoteCommandResponse so that the callback,
 // which expects a RemoteCommandResponse as part of RemoteCommandCallbackArgs,
 // can be run despite a RemoteCommandResponse never having been created.
+//NetworkInterfaceThreadPool::consumeTasks中执行
 void remoteCommandFinished(const TaskExecutor::CallbackArgs& cbData,
                            const TaskExecutor::RemoteCommandCallbackFn& cb,
                            const RemoteCommandRequest& request,
@@ -503,6 +504,7 @@ StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteC
     _net->startCommand(
             cbHandle.getValue(),
             scheduledRequest,
+            //后端应答后会调用该函数，真正执行在NetworkInterfaceASIO::AsyncOp::finish
             [this, scheduledRequest, cbState, cb](const ResponseStatus& response) {
                 using std::swap;
                 CallbackFn newCb = [cb, scheduledRequest, response](const CallbackArgs& cbData) {
@@ -613,18 +615,20 @@ void ThreadPoolTaskExecutor::scheduleIntoPool_inlock(WorkQueue* fromQueue,
     scheduleIntoPool_inlock(fromQueue, fromQueue->begin(), fromQueue->end(), std::move(lk));
 }
 
+//ThreadPoolTaskExecutor::scheduleRemoteCommand
 void ThreadPoolTaskExecutor::scheduleIntoPool_inlock(WorkQueue* fromQueue,
                                                      const WorkQueue::iterator& iter,
                                                      stdx::unique_lock<stdx::mutex> lk) {
     scheduleIntoPool_inlock(fromQueue, iter, std::next(iter), std::move(lk));
 }
 
+//ThreadPoolTaskExecutor::scheduleIntoPool_inlock
 void ThreadPoolTaskExecutor::scheduleIntoPool_inlock(WorkQueue* fromQueue,
                                                      const WorkQueue::iterator& begin,
                                                      const WorkQueue::iterator& end,
                                                      stdx::unique_lock<stdx::mutex> lk) {
     dassert(fromQueue != &_poolInProgressQueue);
-    std::vector<std::shared_ptr<CallbackState>> todo(begin, end);
+    std::vector<std::shared_ptr<CallbackState>> todo(begin, end); //赋值见
     _poolInProgressQueue.splice(_poolInProgressQueue.end(), *fromQueue, begin, end);
 
     lk.unlock();
@@ -636,7 +640,8 @@ void ThreadPoolTaskExecutor::scheduleIntoPool_inlock(WorkQueue* fromQueue,
         }
     }
 
-    for (const auto& cbState : todo) {
+    for (const auto& cbState : todo) { //todo赋值见ThreadPoolTaskExecutor::scheduleRemoteCommand
+    	//NetworkInterfaceThreadPool::schedule
         const auto status = _pool->schedule([this, cbState] { runCallback(std::move(cbState)); });
         if (status == ErrorCodes::ShutdownInProgress)
             break;

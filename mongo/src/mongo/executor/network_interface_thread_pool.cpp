@@ -103,7 +103,9 @@ void NetworkInterfaceThreadPool::join() {
     _joiningCondition.wait(lk, [&] { return _tasks.empty() && (!_consumingTasks); });
 }
 
-Status NetworkInterfaceThreadPool::schedule(Task task) {
+//task入队到_tasks
+//ThreadPoolTaskExecutor::scheduleIntoPool_inlock调用，后端mongod应答后都会走到这里，等待NetworkInterfaceThreadPool::consumeTasks task消费
+Status NetworkInterfaceThreadPool::schedule(Task task) { //task对应remoteCommandFinished，参考ThreadPoolTaskExecutor::scheduleRemoteCommand
     stdx::unique_lock<stdx::mutex> lk(_mutex);
     if (_inShutdown) {
         return {ErrorCodes::ShutdownInProgress, "Shutdown in progress"};
@@ -124,7 +126,8 @@ Status NetworkInterfaceThreadPool::schedule(Task task) {
  * it we invoke directly. This allows us to use the network interface's threads
  * as our own pool, which should reduce context switches if our tasks are
  * getting scheduled by network interface tasks.
- */
+ */ //消费task执行 NetworkInterfaceThreadPool::consumeTasks  生成task在NetworkInterfaceThreadPool::schedule
+ //NetworkInterfaceThreadPool::startup中调用该函数消费task
 void NetworkInterfaceThreadPool::consumeTasks(stdx::unique_lock<stdx::mutex> lk) {
     if (_consumingTasks || _tasks.empty())
         return;

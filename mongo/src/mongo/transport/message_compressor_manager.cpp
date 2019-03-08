@@ -89,6 +89,8 @@ MessageCompressorManager::MessageCompressorManager()
 MessageCompressorManager::MessageCompressorManager(MessageCompressorRegistry* factory)
     : _registry{factory} {}
 
+//MessageCompressorManager::compressMessage和MessageCompressorManager::decompressMessage对应
+
 //对msg做压缩处理
 StatusWith<Message> MessageCompressorManager::compressMessage(
     const Message& msg, const MessageCompressorId* compressorId) {
@@ -141,6 +143,7 @@ StatusWith<Message> MessageCompressorManager::compressMessage(
     return {Message(outputMessageBuffer)};
 }
 
+//MessageCompressorManager::compressMessage和MessageCompressorManager::decompressMessage对应
 StatusWith<Message> MessageCompressorManager::decompressMessage(const Message& msg,
                                                                 MessageCompressorId* compressorId) {
     auto inputHeader = msg.header();

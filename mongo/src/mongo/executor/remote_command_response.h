@@ -49,7 +49,7 @@ namespace executor {
 
 /**
  * Type of object describing the response of previously sent RemoteCommandRequest.
- */
+ */ //赋值可以参考NetworkInterfaceASIO::_networkErrorCallback
 struct RemoteCommandResponse {
     RemoteCommandResponse() = default;
 
@@ -80,7 +80,7 @@ struct RemoteCommandResponse {
     std::shared_ptr<const Message> message;  // May be null.
     BSONObj data;                            // Always owned. May point into message.
     BSONObj metadata;                        // Always owned. May point into message.
-    boost::optional<Milliseconds> elapsedMillis;
+    boost::optional<Milliseconds> elapsedMillis; //代表的是时延，见NetworkInterfaceASIO::_networkErrorCallback
     Status status = Status::OK();
 };
 

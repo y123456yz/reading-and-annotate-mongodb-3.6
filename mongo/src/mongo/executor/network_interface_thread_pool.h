@@ -67,6 +67,8 @@ private:
     // Protects all of the pool state below
     stdx::mutex _mutex;
     stdx::condition_variable _joiningCondition;
+    //task入队到这里，参考NetworkInterfaceThreadPool::schedule
+    //消费task执行 NetworkInterfaceThreadPool::consumeTasks
     std::vector<Task> _tasks;
     bool _started = false;
     bool _inShutdown = false;

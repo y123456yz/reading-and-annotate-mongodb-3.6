@@ -81,4 +81,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .ftdc-utils工具使用方法，用于分析mongos.diagnostic.data日志信息，这里面是二进制的，需要该工具支持  
     .mongos-ftdc统计过程分析  
     .新增ftdc.log文件，里面有详细的统计信息，指定方法，需要什么信息从里面看  
-
+    .remote Command处理过程分析  
+    .NetworkInterfaceThreadPool task生成消费过程分析  
+    .重新梳理conn线程处理client命令runCommand执行详细过程  
+    .adaptive模式下ServiceExecutorAdaptive对应的stats计算生成过程分析  

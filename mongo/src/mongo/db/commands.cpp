@@ -179,6 +179,7 @@ ResourcePattern Command::parseResourcePattern(const std::string& dbname,
     return ResourcePattern::forExactNamespace(NamespaceString(ns));
 }
 
+//db.serverStatus().metrics.commands√¸¡Ó≤Èø¥
 Command::Command(StringData name, StringData oldName)
     : _name(name.toString()),
       _commandsExecutedMetric("commands." + _name + ".total", &_commandsExecuted),
