@@ -285,6 +285,8 @@ void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     });
 }
 
+//NetworkInterfaceASIO::_beginCommunication
+//后端应答数据后，最终会调用该接口
 void NetworkInterfaceASIO::_completedOpCallback(AsyncOp* op) {
     auto response = op->command().response(op, op->operationProtocol(), now(), _metadataHook.get());
     _completeOperation(op, response);
@@ -321,7 +323,7 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
         // If we fail during connection, we won't be able to access any of op's members after
         // calling finish(), so we return here.
         log() << "Failed to connect to " << op->request().target << " - " << redact(resp.status);
-        op->finish(std::move(resp));
+        op->finish(std::move(resp)); //NetworkInterfaceASIO::AsyncOp::finish
         return;
     }
 
@@ -334,7 +336,7 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
               << (op->commandIsInitialized() ? op->command().target().toString() : "unknown"s)
               << " - " << redact(resp.status);
         _numFailedOps.fetchAndAdd(1);
-        op->finish(std::move(resp));
+        op->finish(std::move(resp));  //NetworkInterfaceASIO::AsyncOp::finish
         return;
     }
 
@@ -388,7 +390,7 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
         _inProgress.erase(iter);
     }
 
-    op->finish(std::move(resp));
+    op->finish(std::move(resp)); //NetworkInterfaceASIO::AsyncOp::finish
 
     MONGO_ASIO_INVARIANT(static_cast<bool>(ownedOp), "Invalid AsyncOp", op);
 

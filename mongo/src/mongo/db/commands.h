@@ -539,7 +539,8 @@ private:
                              BSONObjBuilder& result) = 0;
 
     // Counters for how many times this command has been executed and failed
-    Counter64 _commandsExecuted; //该命令执行次数
+    //db.serverStatus().metrics.commands命令查看
+    Counter64 _commandsExecuted; //该命令执行次数 Command::Command
     Counter64 _commandsFailed;
 
     // The full name of the command

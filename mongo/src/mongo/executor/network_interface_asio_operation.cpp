@@ -185,6 +185,7 @@ bool NetworkInterfaceASIO::AsyncOp::commandIsInitialized() const {
     return _command.is_initialized();
 }
 
+//NetworkInterfaceASIO::_completeOperation
 void NetworkInterfaceASIO::AsyncOp::finish(ResponseStatus&& rs) {
     // We never hold the access lock when we call finish from NetworkInterfaceASIO.
     _transitionToState(AsyncOp::State::kFinished);
@@ -193,7 +194,7 @@ void NetworkInterfaceASIO::AsyncOp::finish(ResponseStatus&& rs) {
            << redact(rs.isOK() ? rs.data.toString() : rs.status.toString());
 
     // Calling the completion handler may invalidate state in this op, so do it last.
-    _onFinish(rs);
+    _onFinish(rs); //该函数赋值在ThreadPoolTaskExecutor::scheduleRemoteCommand
 }
 
 const RemoteCommandRequest& NetworkInterfaceASIO::AsyncOp::request() const {

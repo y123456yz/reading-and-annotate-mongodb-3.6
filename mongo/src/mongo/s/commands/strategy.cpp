@@ -142,6 +142,7 @@ void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* res
     }
 }
 
+//runCommand中调用执行
 void execCommandClient(OperationContext* opCtx,
                        Command* c,
                        const OpMsgRequest& request,
@@ -231,8 +232,8 @@ void execCommandClient(OperationContext* opCtx,
     }
     Command::appendCommandStatus(result, ok);
 }
-
-//Strategy::clientCommand  Strategy::writeOp  Strategy::clientCommand中调用
+ 
+//Strategy::clientCommand  Strategy::writeOp  Strategy::clientCommand Strategy::clientCommand中调用
 void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBuilder&& builder) {
     // Handle command option maxTimeMS first thing while processing the command so that the
     // subsequent code has the deadline available
@@ -397,6 +398,7 @@ DbResponse Strategy::queryOp(OperationContext* opCtx, const NamespaceString& nss
                                          cursorId.getValue())};
 }
 
+//ServiceEntryPointMongos::handleRequest中调用执行
 DbResponse Strategy::clientCommand(OperationContext* opCtx, const Message& m) {
     auto reply = rpc::makeReplyBuilder(rpc::protocolForMessage(m));
 
@@ -478,7 +480,7 @@ DbResponse Strategy::getMore(OperationContext* opCtx, const NamespaceString& nss
         34424, str::stream() << "Invalid ntoreturn for OP_GET_MORE: " << ntoreturn, ntoreturn >= 0);
     const long long cursorId = dbm->pullInt64();
 
-    globalOpCounters.gotGetMore();
+    globalOpCounters.gotGetMore(); //getMore操作计数
 
     // TODO: Handle stale config exceptions here from coll being dropped or sharded during op for
     // now has same semantics as legacy request.

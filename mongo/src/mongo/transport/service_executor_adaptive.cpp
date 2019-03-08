@@ -566,7 +566,9 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
     }
 }
 
+//db.serverStatus().network.serviceExecutorTaskStats
 void ServiceExecutorAdaptive::appendStats(BSONObjBuilder* bob) const {
+	//下面的第一列是名,第二列是对应的值，如"totalTimeRunningMicros" : NumberLong("69222621699"),
     BSONObjBuilder section(bob->subobjStart("serviceExecutorTaskStats"));
     section << kExecutorLabel << kExecutorName                                             //
             << kTotalQueued << _totalQueued.load()                                         //
