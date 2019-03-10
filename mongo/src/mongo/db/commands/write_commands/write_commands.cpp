@@ -194,6 +194,10 @@ void serializeReply(OperationContext* opCtx,
     }
 }
 
+//mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
+//mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
+
+//CmdInsert  CmdUpdate  CmdDelete等继承该类
 class WriteCommand : public Command {
 public:
     explicit WriteCommand(StringData name) : Command(name) {}
@@ -218,6 +222,7 @@ public:
                      const OpMsgRequest& request,
                      BSONObjBuilder& result) final {
         try {
+			//CmdInsert::runImpl  CmdUpdate::runImpl   CmdDelete::runImpl
             runImpl(opCtx, request, result);
             return true;
         } catch (const DBException& ex) {
@@ -226,6 +231,7 @@ public:
         }
     }
 
+	//(CmdInsert  CmdUpdate  CmdDelete)::runImpl
     virtual void runImpl(OperationContext* opCtx,
                          const OpMsgRequest& request,
                          BSONObjBuilder& result) = 0;
@@ -280,7 +286,8 @@ public:
 #36 0x00007f8637b5ce25 in start_thread () from /lib64/libpthread.so.0
 #37 0x00007f863788a34d in clone () from /lib64/libc.so.6
 */
-class CmdInsert final : public WriteCommand {
+//class CmdInsert final : public WriteCommand {yang add change
+class CmdInsert : public WriteCommand { //
 public:
     CmdInsert() : WriteCommand("insert") {}
 
@@ -311,8 +318,8 @@ public:
                        &result);
     }
 } cmdInsert;
-
-class CmdUpdate final : public WriteCommand {
+//class CmdUpdate final : public WriteCommand {yang add change
+class CmdUpdate : public WriteCommand {
 public:
     CmdUpdate() : WriteCommand("update") {}
 
@@ -379,7 +386,8 @@ public:
     }
 } cmdUpdate;
 
-class CmdDelete final : public WriteCommand {
+//class CmdDelete final : public WriteCommand { //yang add change
+class CmdDelete : public WriteCommand {
 public:
     CmdDelete() : WriteCommand("delete") {}
 

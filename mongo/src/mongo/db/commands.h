@@ -241,7 +241,9 @@ public:
 
 /**
  * Serves as a base for server commands. See the constructor for more details.
- */
+ */ //BasicCommand继承该类(类构造一般由basicCommand实现，如AddShardCmd()等) ClusterWriteCmd(mongos) WriteCommand(mongod)  Command类来源见Command::findCommand
+//mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
+//mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
 class Command : public CommandInterface {
 public:
     // The type of the first field in 'cmdObj' must be mongo::String. The first field is
@@ -523,6 +525,7 @@ public:
     static BSONObj filterCommandReplyForPassthrough(const BSONObj& reply);
 
 private:
+    //添加地方见Command::Command(
     static CommandMap* _commands;
     static CommandMap* _commandsByBestName;
 
@@ -544,6 +547,7 @@ private:
     Counter64 _commandsFailed;
 
     // The full name of the command
+   
     const std::string _name;
 
     // Pointers to hold the metrics tree references
@@ -554,7 +558,7 @@ private:
 /**
  * A subclass of Command that only cares about the BSONObj body and doesn't need access to document
  * sequences.
- */
+ */ //ErrmsgCommandDeprecated继承该类  AddShardCmd() : BasicCommand("addShard", "addshard") {}也继承该类
 class BasicCommand : public Command {
 public:
     using Command::Command;
