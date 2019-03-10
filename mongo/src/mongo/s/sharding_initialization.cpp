@@ -121,6 +121,8 @@ std::unique_ptr<ShardingCatalogClient> makeCatalogClient(ServiceContext* service
     return stdx::make_unique<ShardingCatalogClientImpl>(std::move(distLockManager));
 }
 
+//conn-xx线程处理完后在ASIOConnection::setup中交由NetworkInterfaceASIO-TaskExecutorPool-x-0线程处理
+
 //生成到后端mongod的连接池TaskExecutorPool   initializeGlobalShardingState调用
 //线程真正在TaskExecutorPool::startup中创建
 std::unique_ptr<TaskExecutorPool> makeShardingTaskExecutorPool(

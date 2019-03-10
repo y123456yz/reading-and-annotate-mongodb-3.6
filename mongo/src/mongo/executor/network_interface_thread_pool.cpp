@@ -153,6 +153,11 @@ void NetworkInterfaceThreadPool::consumeTasks(stdx::unique_lock<stdx::mutex> lk)
 
     decltype(_tasks) tasks;
 
+	//注意以下线程执行该task
+	//2019-03-10T19:03:37.339+0800 F EXECUTOR [ReplicaSetMonitor-TaskExecutor-0] yang test ... NetworkInterfaceThreadPool::consumeTasks
+	//2019-03-10T19:03:37.339+0800 F EXECUTOR [ShardRegistryUpdater-0] yang test ... NetworkInterfaceThreadPool::consumeTasks
+	//2019-03-10T19:03:37.346+0800 F EXECUTOR [NetworkInterfaceASIO-ShardRegistry-0] yang test ... NetworkInterfaceThreadPool::consumeTasks
+	//severe() << "yang test ... NetworkInterfaceThreadPool::consumeTasks";	
     while (_tasks.size()) {
         using std::swap;
         swap(tasks, _tasks);

@@ -85,3 +85,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .NetworkInterfaceThreadPool task生成消费过程分析  
     .重新梳理conn线程处理client命令runCommand执行详细过程  
     .adaptive模式下ServiceExecutorAdaptive对应的stats计算生成过程分析  
+    .Command类命令生成过程举例分析  
+    .mongos和mongod进程insert update delete命令拥有不同的类，不同的分支，分别对应ClusterWriteCmd和WriteCommand，整个流程分支分析  
+    .conn-xx线程处理客户端请求及解析数据在内部处理后，转由NetworkInterfaceASIO-TaskExecutorPool-x-0线程处理，这个分界点代码详细分析  
+

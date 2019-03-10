@@ -135,7 +135,9 @@ BatchedCommandRequest parseRequest(BatchedCommandRequest::BatchType type,
 
 /**
  * Base class for mongos write commands.
- */
+ */ 
+//mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
+//mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
 class ClusterWriteCmd : public Command {
 public:
     virtual ~ClusterWriteCmd() {}

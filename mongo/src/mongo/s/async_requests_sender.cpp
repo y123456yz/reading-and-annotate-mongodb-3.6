@@ -50,6 +50,7 @@ const int kMaxNumFailedHostRetryAttempts = 3;
 
 }  // namespace
 
+//BatchWriteExec::executeBatch中调用
 AsyncRequestsSender::AsyncRequestsSender(OperationContext* opCtx,
                                          executor::TaskExecutor* executor,
                                          const std::string db,
@@ -171,7 +172,7 @@ boost::optional<AsyncRequestsSender::Response> AsyncRequestsSender::_ready() {
     return boost::none;
 }
 
-//AsyncRequestsSender::AsyncRequestsSender中调用
+//BatchWriteExec::executeBatch->AsyncRequestsSender::AsyncRequestsSender中调用
 void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
     invariant(!_stopRetrying);
     // Schedule remote work on hosts for which we have not sent a request or need to retry.

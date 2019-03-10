@@ -179,7 +179,12 @@ ResourcePattern Command::parseResourcePattern(const std::string& dbname,
     return ResourcePattern::forExactNamespace(NamespaceString(ns));
 }
 
-//db.serverStatus().metrics.commands命令查看
+//BasicCommand继承该类(类构造一般由basicCommand实现，如AddShardCmd()等) WriteCommand  Command类来源见Command::findCommand
+//mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
+//mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
+
+//command统计在db.serverStatus().metrics.commands命令查看
+//例如: AddShardCmd() : BasicCommand("addShard", "addshard") {}
 Command::Command(StringData name, StringData oldName)
     : _name(name.toString()),
       _commandsExecutedMetric("commands." + _name + ".total", &_commandsExecuted),
@@ -195,7 +200,7 @@ Command::Command(StringData name, StringData oldName)
     c = this;
     (*_commandsByBestName)[name] = this;
 
-    if (!oldName.empty())
+    if (!oldName.empty()) //也就是name和oldName两个命令对应的是同一个this类
         (*_commands)[oldName.toString()] = this;
 }
 
@@ -230,7 +235,8 @@ BSONObj Command::runCommandDirectly(OperationContext* opCtx, const OpMsgRequest&
     return out.obj();
 }
 
-//根据name获取对应的Command信息
+//根据name获取对应的Command信息   //添加地方见Command::Command
+//strategy.cpp中的runCommand中调用  
 Command* Command::findCommand(StringData name) {
     CommandMap::const_iterator i = _commands->find(name);
     if (i == _commands->end())
@@ -356,7 +362,11 @@ bool Command::publicRun(OperationContext* opCtx,
                         const OpMsgRequest& request,
                         BSONObjBuilder& result) {
     try {
-        return enhancedRun(opCtx, request, result); //BasicCommand::enhancedRun
+		//mongod(WriteCommand::enhancedRun(insert  delete update))
+		//其他命令BasicCommand::enhancedRun  
+		//mongos (ClusterWriteCmd::enhancedRun) 不同命令对应不同接口
+		//
+		return enhancedRun(opCtx, request, result); //BasicCommand::enhancedRun
     } catch (const DBException& e) {
         if (e.code() == ErrorCodes::Unauthorized) {
             audit::logCommandAuthzCheck(
@@ -428,7 +438,7 @@ bool ErrmsgCommandDeprecated::run(OperationContext* opCtx,
                                   const std::string& db,
                                   const BSONObj& cmdObj,
                                   BSONObjBuilder& result) {
-    std::string errmsg;
+    std::string errmsg; 
     auto ok = errmsgRun(opCtx, db, cmdObj, errmsg, result);
     if (!errmsg.empty()) {
         appendCommandStatus(result, ok, errmsg);

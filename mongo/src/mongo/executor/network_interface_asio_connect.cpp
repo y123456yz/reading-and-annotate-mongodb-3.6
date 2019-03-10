@@ -176,6 +176,8 @@ r_code, asio::ip::basic_resolver<asio::ip::tcp>::iterator)>, asio::detail::is_co
 //mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
 //ASIOConnection::setup调用
 void NetworkInterfaceASIO::_connect(AsyncOp* op) {
+//	2019-03-10T18:19:58.459+0800 I ASIO 	[NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] Connecting to 172.23.240.29:28018
+
     log() << "Connecting to " << op->request().target.toString();
 
     tcp::resolver::query query(op->request().target.host(),

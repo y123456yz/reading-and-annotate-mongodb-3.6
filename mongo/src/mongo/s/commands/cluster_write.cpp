@@ -176,7 +176,7 @@ void splitIfNeeded(OperationContext* opCtx,
 
 }  // namespace
 
-//ClusterWriteCmd::enhancedRun中调用
+//ClusterWriteCmd::enhancedRun中调用 (mongos  insert delete update)
 void ClusterWriter::write(OperationContext* opCtx,
                           const BatchedCommandRequest& request,
                           BatchWriteExecStats* stats,

@@ -610,6 +610,7 @@ void ThreadPoolTaskExecutor::signalEvent_inlock(const EventHandle& event,
     scheduleIntoPool_inlock(&eventState->waiters, std::move(lk));
 }
 
+//ThreadPoolTaskExecutor::scheduleRemoteCommand
 void ThreadPoolTaskExecutor::scheduleIntoPool_inlock(WorkQueue* fromQueue,
                                                      stdx::unique_lock<stdx::mutex> lk) {
     scheduleIntoPool_inlock(fromQueue, fromQueue->begin(), fromQueue->end(), std::move(lk));
