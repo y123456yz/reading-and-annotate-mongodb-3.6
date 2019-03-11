@@ -248,16 +248,20 @@ bool wasMetadataRefreshed(const std::shared_ptr<ChunkManager>& managerA,
 
 }  // namespace
 
+//ClusterWriter::write中调用该构造函数
 ChunkManagerTargeter::ChunkManagerTargeter(const NamespaceString& nss, TargeterStats* stats)
-    : _nss(nss), _needsTargetingRefresh(false), _stats(stats) {}
+    : _nss(nss), _needsTargetingRefresh(false), _stats(stats) {} //nss对应集合
 
 
+//ClusterWriter::write中调用  获取路由信息
 Status ChunkManagerTargeter::init(OperationContext* opCtx) {
+	//在mongod-config中创建dbName库
     auto shardDbStatus = createShardDatabase(opCtx, _nss.db());
     if (!shardDbStatus.isOK()) {
         return shardDbStatus.getStatus();
     }
 
+	// CatalogCache::getCollectionRoutingInfo 获取路由信息
     const auto routingInfoStatus =
         Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfo(opCtx, _nss);
     if (!routingInfoStatus.isOK()) {
@@ -273,11 +277,13 @@ const NamespaceString& ChunkManagerTargeter::getNS() const {
     return _nss;
 }
 
+//WriteOp::targetWrites
 Status ChunkManagerTargeter::targetInsert(OperationContext* opCtx,
                                           const BSONObj& doc,
                                           ShardEndpoint** endpoint) const {
     BSONObj shardKey;
 
+	//CachedCollectionRoutingInfo::cm
     if (_routingInfo->cm()) {
         //
         // Sharded collections have the following requirements for targeting:
@@ -304,8 +310,8 @@ Status ChunkManagerTargeter::targetInsert(OperationContext* opCtx,
     // Target the shard key or database primary
     if (!shardKey.isEmpty()) {
         *endpoint = targetShardKey(shardKey, CollationSpec::kSimpleSpec, doc.objsize()).release();
-    } else {
-        if (!_routingInfo->primary()) {
+    } else { //如果没有设置shardKey，则直接转发到primary 分片
+        if (!_routingInfo->primary()) { //CachedCollectionRoutingInfo::primary
             return Status(ErrorCodes::NamespaceNotFound,
                           str::stream() << "could not target insert in collection " << getNS().ns()
                                         << "; no metadata found");
@@ -317,6 +323,7 @@ Status ChunkManagerTargeter::targetInsert(OperationContext* opCtx,
     return Status::OK();
 }
 
+//WriteOp::targetWrites
 Status ChunkManagerTargeter::targetUpdate(
     OperationContext* opCtx,
     const write_ops::UpdateOpEntry& updateDoc,
@@ -455,6 +462,7 @@ Status ChunkManagerTargeter::targetUpdate(
     }
 }
 
+//WriteOp::targetWrites
 Status ChunkManagerTargeter::targetDelete(
     OperationContext* opCtx,
     const write_ops::DeleteOpEntry& deleteDoc,
@@ -586,6 +594,7 @@ std::unique_ptr<ShardEndpoint> ChunkManagerTargeter::targetShardKey(const BSONOb
                                             _routingInfo->cm()->getVersion(chunk->getShardId()));
 }
 
+//ClusterWriter::write
 Status ChunkManagerTargeter::targetCollection(
     std::vector<std::unique_ptr<ShardEndpoint>>* endpoints) const {
     if (!_routingInfo->primary() && !_routingInfo->cm()) {
@@ -595,7 +604,7 @@ Status ChunkManagerTargeter::targetCollection(
     }
 
     std::set<ShardId> shardIds;
-    if (_routingInfo->cm()) {
+    if (_routingInfo->cm()) { //参考ChunkManagerTargeter::init  _routingInfo代表路由信息
         _routingInfo->cm()->getAllShardIds(&shardIds);
     } else {
         shardIds.insert(_routingInfo->primary()->getId());

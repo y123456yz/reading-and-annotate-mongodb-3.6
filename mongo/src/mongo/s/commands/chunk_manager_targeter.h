@@ -60,7 +60,7 @@ struct TargeterStats {
  * NamespaceNotFound status on applicable failures.
  *
  * Must be initialized before use, and initialization may fail.
- */
+ */ //使用可以参考ClusterWriter::write
 class ChunkManagerTargeter : public NSTargeter {
 public:
     ChunkManagerTargeter(const NamespaceString& nss, TargeterStats* stats);
@@ -154,6 +154,7 @@ private:
                                                   long long estDataSize) const;
 
     // Full namespace of the collection for this targeter
+    //对应集合名 见ChunkManagerTargeter::ChunkManagerTargeter
     const NamespaceString _nss;
 
     // Stores whether we need to check the remote server on refresh
@@ -163,6 +164,7 @@ private:
     TargeterStats* _stats;
 
     // The latest loaded routing cache entry
+    // CatalogCache::getCollectionRoutingInfo 获取路由信息
     boost::optional<CachedCollectionRoutingInfo> _routingInfo;
 
     // Map of shard->remote shard version reported from stale errors

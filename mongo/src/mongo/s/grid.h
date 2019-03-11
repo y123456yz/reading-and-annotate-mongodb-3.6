@@ -165,8 +165,8 @@ private:
 
     // Executor pool for scheduling work and remote commands to shards and config servers. Each
     // contained executor has a connection hook set on it for sending/receiving sharding metadata.
-    std::unique_ptr<executor::TaskExecutorPool> _executorPool;
-
+    std::unique_ptr<executor::TaskExecutorPool> _executorPool;  //Grid::init≥ı ºªØ
+     
     // Network interface being used by the fixed executor in _executorPool.  Used for asking
     // questions about the network configuration, such as getting the current server's hostname.
     executor::NetworkInterface* _network{nullptr};

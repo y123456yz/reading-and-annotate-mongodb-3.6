@@ -62,6 +62,7 @@ Grid* Grid::get(OperationContext* operationContext) {
     return get(operationContext->getServiceContext());
 }
 
+//initializeGlobalShardingState调用
 void Grid::init(std::unique_ptr<ShardingCatalogClient> catalogClient,
                 std::unique_ptr<CatalogCache> catalogCache,
                 std::unique_ptr<ShardRegistry> shardRegistry,
@@ -82,7 +83,7 @@ void Grid::init(std::unique_ptr<ShardingCatalogClient> catalogClient,
     _shardRegistry = std::move(shardRegistry);
     _cursorManager = std::move(cursorManager);
     _balancerConfig = std::move(balancerConfig);
-    _executorPool = std::move(executorPool);
+    _executorPool = std::move(executorPool); //makeShardingTaskExecutorPool函数的返回值，对应network线程
     _network = network;
 
     _shardRegistry->init(); //ShardRegistry::init

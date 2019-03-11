@@ -253,6 +253,8 @@ private:
 
     OperationContext* _opCtx;
 
+    //轮询获取的Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor()
+    //见BatchWriteExec::executeBatch中调用
     executor::TaskExecutor* _executor;
 
     // The metadata obj to pass along with the command remote. Used to indicate that the command is

@@ -105,6 +105,7 @@ bool BatchedCommandRequest::isInsertIndexRequest() const {
     return getNS().isSystemDotIndexes();
 }
 
+//表示接受到的是几个文档，一般为1，如果为批量操作，则可能一次多个文档
 std::size_t BatchedCommandRequest::sizeWriteOps() const {
     switch (_batchType) {
         case BatchedCommandRequest::BatchType_Insert:

@@ -41,7 +41,7 @@ class NamespaceString;
 
 /**
  *  Representation of a shard identifier.
- */
+ */ //参考ShardEndpoint，包含该类
 class ShardId {
 public:
     friend std::ostream& operator<<(std::ostream&, const ShardId&);

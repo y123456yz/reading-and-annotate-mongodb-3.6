@@ -50,8 +50,10 @@ const WriteErrorDetail& WriteOp::getOpError() const {
     return *_error;
 }
 
+//BatchWriteOp::targetBatch
+//获取该op对应的后端mongod节点TargetedWrite  应该发送到后端那些mongod
 Status WriteOp::targetWrites(OperationContext* opCtx,
-                             const NSTargeter& targeter,
+                             const NSTargeter& targeter, //ChunkManagerTargeter
                              std::vector<TargetedWrite*>* targetedWrites) {
     bool isUpdate = _itemRef.getOpType() == BatchedCommandRequest::BatchType_Update;
     bool isDelete = _itemRef.getOpType() == BatchedCommandRequest::BatchType_Delete;
@@ -60,19 +62,22 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
     Status targetStatus = Status::OK();
     std::vector<std::unique_ptr<ShardEndpoint>> endpoints;
 
-    if (isUpdate) {
+    if (isUpdate) { 
+		//ChunkManagerTargeter::targetUpdate
         targetStatus = targeter.targetUpdate(opCtx, _itemRef.getUpdate(), &endpoints);
-    } else if (isDelete) {
+    } else if (isDelete) { ////ChunkManagerTargeter::targetDelete
         targetStatus = targeter.targetDelete(opCtx, _itemRef.getDelete(), &endpoints);
-    } else {
+    } else { //insert
         dassert(_itemRef.getOpType() == BatchedCommandRequest::BatchType_Insert);
 
         ShardEndpoint* endpoint = NULL;
         // TODO: Remove the index targeting stuff once there is a command for it
         if (!isIndexInsert) {
+			//ChunkManagerTargeter::targetInsert
             targetStatus = targeter.targetInsert(opCtx, _itemRef.getDocument(), &endpoint);
         } else {
             // TODO: Retry index writes with stale version?
+            //ChunkManagerTargeter::targetCollection
             targetStatus = targeter.targetCollection(&endpoints);
         }
 
@@ -93,7 +98,7 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
     if (targetStatus.isOK() && endpoints.size() > 1u && !isIndexInsert) {
         endpoints.clear();
         invariant(endpoints.empty());
-        targetStatus = targeter.targetAllShards(&endpoints);
+        targetStatus = targeter.targetAllShards(&endpoints); //需要发送给所有shard分片
     }
 
     // If we had an error, stop here
@@ -109,7 +114,7 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
 
         // For now, multiple endpoints imply no versioning - we can't retry half a multi-write
         if (endpoints.size() == 1u) {
-            targetedWrites->push_back(new TargetedWrite(*endpoint, ref));
+            targetedWrites->push_back(new TargetedWrite(*endpoint, ref)); //这样要操作的文档WriteOp就和targetedWrites关联起来
         } else {
             ShardEndpoint broadcastEndpoint(endpoint->shardName, ChunkVersion::IGNORED());
             targetedWrites->push_back(new TargetedWrite(broadcastEndpoint, ref));

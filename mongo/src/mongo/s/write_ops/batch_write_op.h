@@ -84,6 +84,7 @@ struct EndpointComp {
     bool operator()(const ShardEndpoint* endpointA, const ShardEndpoint* endpointB) const;
 };
 
+//BatchWriteOp::targetBatch
 using TargetedBatchMap = std::map<const ShardEndpoint*, TargetedWriteBatch*, EndpointComp>;
 
 /**
@@ -232,7 +233,8 @@ private:
  *
  * Internal support for storage as a doubly-linked list, to allow the TargetedWriteBatch to
  * efficiently be registered for reporting.
- */
+ */ //参考TargetedBatchMap   
+//BatchWriteOp::targetBatch中构造使用
 class TargetedWriteBatch {
     MONGO_DISALLOW_COPYING(TargetedWriteBatch);
 
@@ -250,6 +252,7 @@ public:
     /**
      * TargetedWrite is owned here once given to the TargetedWriteBatch
      */
+    //BatchWriteOp::targetBatch
     void addWrite(TargetedWrite* targetedWrite) {
         _writes.mutableVector().push_back(targetedWrite);
     }
@@ -260,7 +263,7 @@ private:
 
     // Where the responses go
     // TargetedWrite*s are owned by the TargetedWriteBatch
-    OwnedPointerVector<TargetedWrite> _writes;
+    OwnedPointerVector<TargetedWrite> _writes; //赋值见BatchWriteOp::targetBatch->addWrite
 };
 
 /**

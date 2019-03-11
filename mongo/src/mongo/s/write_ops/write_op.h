@@ -49,7 +49,7 @@ enum WriteOpState {
 
     // Op was successful, write completed
     // We assume all states higher than this one are *final*
-    WriteOpState_Completed,
+    WriteOpState_Completed, //赋值见BatchWriteOp::noteBatchResponse
 
     // Op failed with some error
     WriteOpState_Error,
@@ -85,7 +85,7 @@ enum WriteOpState {
  *   3c. If there are no errors, the state is changed to _Completed.
  *
  * WriteOps finish in a _Completed or _Error state.
- */
+ */ //可以参考BatchWriteOp::targetBatch
 class WriteOp {
 public:
     WriteOp(BatchItemRef itemRef) : _itemRef(std::move(itemRef)) {}
@@ -211,7 +211,7 @@ typedef std::pair<int, int> WriteOpRef;
  *
  * TargetedWrites are the link between the RPC layer and the in-progress write
  * operation.
- */
+ */ //参考WriteOp::targetWrites
 struct TargetedWrite {
     TargetedWrite(const ShardEndpoint& endpoint, WriteOpRef writeOpRef)
         : endpoint(endpoint), writeOpRef(writeOpRef) {}
@@ -222,7 +222,7 @@ struct TargetedWrite {
     // Where to find the write item and put the response
     // TODO: Could be a more complex handle, shared between write state and networking code if
     // we need to be able to cancel ops.
-    WriteOpRef writeOpRef;
+    WriteOpRef writeOpRef; //该TargetedWrite和WriteOp通过这里关联,参考WriteOp::targetWrites
 };
 
 }  // namespace mongo

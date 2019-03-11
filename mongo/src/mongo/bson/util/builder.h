@@ -61,7 +61,7 @@ namespace mongo {
    exhaustive for example need to check for size too big after
      update $push (append) operation
      various db.eval() type operations
-*/
+*/ //文档长度检查wouldMakeBatchesTooBig
 const int BSONObjMaxUserSize = 16 * 1024 * 1024; //一个文档最多16M，见fixDocumentForInsert
 
 /*

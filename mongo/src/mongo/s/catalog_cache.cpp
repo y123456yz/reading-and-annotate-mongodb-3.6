@@ -126,6 +126,7 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
     }
 }
 
+//ChunkManagerTargeter::init调用，获取路由信息
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
     OperationContext* opCtx, const NamespaceString& nss) {
     while (true) {
@@ -188,6 +189,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
     }
 }
 
+//ChunkManagerTargeter::init调用，获取路由信息
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
     OperationContext* opCtx, StringData ns) {
     return getCollectionRoutingInfo(opCtx, NamespaceString(ns));

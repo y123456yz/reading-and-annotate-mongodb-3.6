@@ -49,6 +49,8 @@ class TaskExecutor;
  * Initialization and shutdown methods are not thread-safe, but getArbitraryExecutor() may be called
  * concurrently by multiple threads.
  */ //在makeShardingTaskExecutorPool构造使用
+ 
+//Grid._executorPool为该类
 class TaskExecutorPool final {
 public:
     /**
@@ -113,7 +115,7 @@ public:
 
 private:
     AtomicUInt32 _counter;
-    //在makeShardingTaskExecutorPool构造使用
+    //在makeShardingTaskExecutorPool构造使用  TaskExecutorPool::getArbitraryExecutor中轮询数组成员
     std::vector<std::unique_ptr<TaskExecutor>> _executors;
     //在makeShardingTaskExecutorPool构造使用
     std::unique_ptr<TaskExecutor> _fixedExecutor;

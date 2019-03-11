@@ -52,7 +52,8 @@ const int kMaxNumFailedHostRetryAttempts = 3;
 
 //BatchWriteExec::executeBatch中调用
 AsyncRequestsSender::AsyncRequestsSender(OperationContext* opCtx,
-                                         executor::TaskExecutor* executor,
+										//轮询，Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor()
+                                         executor::TaskExecutor* executor, //该AsyncRequestsSender对应的TaskExecutor
                                          const std::string db,
                                          const std::vector<AsyncRequestsSender::Request>& requests,
                                          const ReadPreferenceSetting& readPreference,
@@ -215,7 +216,7 @@ void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
         // If the remote does not have a response or pending request, schedule remote work for it.
         if (!remote.swResponse && !remote.cbHandle.isValid()) {
 			//AsyncRequestsSender::_scheduleRequest
-            auto scheduleStatus = _scheduleRequest(lk, i);
+            auto scheduleStatus = _scheduleRequest(lk, i); //发送走这里
             if (!scheduleStatus.isOK()) {
                 remote.swResponse = std::move(scheduleStatus);
                 // Signal the notification indicating the remote had an error (we need to do this

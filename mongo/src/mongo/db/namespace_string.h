@@ -189,7 +189,7 @@ public:
     索引信息等，WT存储引擎初始化时，会从_mdb_catalog.wt里读取所有的集合信息，并加载元信息到内存。
     */ //3.6版本不会有该集合了，二十记录到
     bool isSystemDotIndexes() const { //是否有创建索引_mdb_catalog.wt文件
-        return coll() == "system.indexes";
+        return coll() == "system.indexes"; //dbname.system.indexes	列出所有索引。
     }
     bool isSystemDotProfile() const {
         return coll() == "system.profile";
