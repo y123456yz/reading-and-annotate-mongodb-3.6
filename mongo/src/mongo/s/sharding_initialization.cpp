@@ -182,6 +182,7 @@ std::string generateDistLockProcessId(OperationContext* opCtx) {
         << ':' << rng->nextInt64();
 }
 
+//initializeSharding
 Status initializeGlobalShardingState(OperationContext* opCtx,
                                      const ConnectionString& configCS,
                                      StringData distLockProcessId,

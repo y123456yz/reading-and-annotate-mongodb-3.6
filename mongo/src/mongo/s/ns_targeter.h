@@ -69,7 +69,7 @@ struct ShardEndpoint;
  *
  * Interface must be externally synchronized if used in multiple threads, for now.
  * TODO: Determine if we should internally synchronize.
- */
+ */ //ChunkManagerTargeter继承该类
 class NSTargeter {
 public:
     virtual ~NSTargeter() {}
@@ -157,7 +157,9 @@ public:
  * A ShardEndpoint represents a destination for a targeted query or document.  It contains both
  * the logical target (shard name/version/broadcast) and the physical target (host name).
  */
-struct ShardEndpoint {
+//在ChunkManagerTargeter::targetCollection中使用
+//ShardEndpoint代表一个后端mongod节点，TargetedWrite.endpoint
+struct ShardEndpoint { //insert可以参考ChunkManagerTargeter::targetInsert
     ShardEndpoint(const ShardEndpoint& other)
         : shardName(other.shardName), shardVersion(other.shardVersion) {}
 

@@ -93,6 +93,7 @@ void TaskExecutorPool::addExecutors(std::vector<std::unique_ptr<TaskExecutor>> e
     _executors = std::move(executors);
 }
 
+//ÂÖÑ¯»ñÈ¡_executors[i]
 TaskExecutor* TaskExecutorPool::getArbitraryExecutor() {
     invariant(!_executors.empty());
     uint64_t idx = (_counter.fetchAndAdd(1) % _executors.size());

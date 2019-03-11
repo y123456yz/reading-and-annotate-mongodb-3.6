@@ -52,7 +52,7 @@ static constexpr int kMaxNumStaleVersionRetries = 10;
  * This is the root of the "read-only" hierarchy of cached catalog metadata. It is read only
  * in the sense that it only reads from the persistent store, but never writes to it. Instead
  * writes happen through the ShardingCatalogManager and the cache hierarchy needs to be invalidated.
- */
+ */ //Grid._catalogCache成员为该类
 class CatalogCache {
     MONGO_DISALLOW_COPYING(CatalogCache);
 

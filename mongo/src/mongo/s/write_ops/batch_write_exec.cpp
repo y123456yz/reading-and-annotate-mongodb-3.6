@@ -81,9 +81,9 @@ const int kMaxRoundsWithoutProgress(5);
 
 }  // namespace
 
-//ClusterWriter::write中调用执行
+//ClusterWriter::write中调用执行  确定数据发送到那个分片
 void BatchWriteExec::executeBatch(OperationContext* opCtx,
-                                  NSTargeter& targeter,
+                                  NSTargeter& targeter, //ChunkManagerTargeter
                                   const BatchedCommandRequest& clientRequest,
                                   BatchedCommandResponse* clientResponse,
                                   BatchWriteExecStats* stats) {
@@ -92,6 +92,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
     LOG(4) << "Starting execution of write batch of size "
            << static_cast<int>(clientRequest.sizeWriteOps()) << " for " << nss.ns();
 
+	//BatchWriteOp::BatchWriteOp
     BatchWriteOp batchOp(opCtx, clientRequest);
 
     // Current batch status
@@ -100,7 +101,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
     int numCompletedOps = 0;
     int numRoundsWithoutProgress = 0;
 
-    while (!batchOp.isFinished()) {
+    while (!batchOp.isFinished()) {//是否有消息需要发送到后端mongod,如果有进入循环
         //
         // Get child batches to send using the targeter
         //
@@ -131,6 +132,8 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         // If we've already had a targeting error, we've refreshed the metadata once and can
         // record target errors definitively.
         bool recordTargetErrors = refreshedTargeter;
+		//BatchWriteOp::targetBatch 获取该BatchWriteOp对应的childBatches
+		//也就是确定BatchWriteOp对应的文档应该发送到后端那些mongod分片(路由记录到childBatches中)
         Status targetStatus = batchOp.targetBatch(targeter, recordTargetErrors, &childBatches);
         if (!targetStatus.isOK()) {
             // Don't do anything until a targeter refresh
@@ -166,13 +169,14 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                     continue;
 
                 // If we already have a batch for this shard, wait until the next time
-                ShardId targetShardId = nextBatch->getEndpoint().shardName;
+                ShardId targetShardId = nextBatch->getEndpoint().shardName;  //对应分片名
 
                 OwnedShardBatchMap::MapType::iterator pendingIt =
                     pendingBatches.find(targetShardId);
-                if (pendingIt != pendingBatches.end())
+                if (pendingIt != pendingBatches.end()) //跳过重复的
                     continue;
 
+				//构造shardBatchRequest
                 const auto request = [&] {
                     const auto shardBatchRequest(batchOp.buildBatchRequest(*nextBatch));
 
@@ -195,7 +199,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
 
                 LOG(4) << "Sending write batch to " << targetShardId << ": " << redact(request);
 
-                requests.emplace_back(targetShardId, request);
+                requests.emplace_back(targetShardId, request); //该request对应targetShardId这个shard
 
                 // Indicate we're done by setting the batch to nullptr. We'll only get duplicate
                 // hostEndpoints if we have broadcast and non-broadcast endpoints for the same host,
@@ -208,10 +212,10 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
 
 			//这里面会调用AsyncRequestsSender::AsyncRequestsSender
             AsyncRequestsSender ars(opCtx,
-                                    Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor(),
+                                    Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor(), //轮询Grid::_executorPool
                                     clientRequest.getTargetingNS().db().toString(),
                                     requests,
-                                    kPrimaryOnlyReadPreference,
+                                    kPrimaryOnlyReadPreference, //写只能走主
                                     opCtx->getTxnNumber() ? Shard::RetryPolicy::kIdempotent
                                                           : Shard::RetryPolicy::kNoRetry);
             numSent += pendingBatches.size();

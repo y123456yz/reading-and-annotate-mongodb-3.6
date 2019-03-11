@@ -56,6 +56,7 @@ struct BatchSize {
     int sizeBytes{0};
 };
 
+//BatchWriteOp::targetBatch
 typedef std::map<const ShardEndpoint*, BatchSize, EndpointComp> TargetedBatchSizeMap;
 
 struct WriteErrorDetailComp {
@@ -117,7 +118,7 @@ bool isNewBatchRequired(const std::vector<TargetedWrite*>& writes,
 
 /**
  * Helper to determine whether a number of targeted writes require a new targeted batch.
- */
+ */ //文档长度检查wouldMakeBatchesTooBig
 bool wouldMakeBatchesTooBig(const std::vector<TargetedWrite*>& writes,
                             int writeSizeBytes,
                             const TargetedBatchSizeMap& batchSizes) {
@@ -232,7 +233,8 @@ BatchWriteOp::~BatchWriteOp() {
     invariant(_targeted.empty());
 }
 
-Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
+//BatchWriteExec::executeBatch  获取该BatchWriteOp对应的targetedBatches，也就是确定BatchWriteOp对应的文档应该发送到后端那些mongod分片
+Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTargeter
                                  bool recordTargetErrors,
                                  std::map<ShardId, TargetedWriteBatch*>* targetedBatches) {
     //
@@ -275,9 +277,9 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
 
     int numTargetErrors = 0;
 
-    const size_t numWriteOps = _clientRequest.sizeWriteOps();
+    const size_t numWriteOps = _clientRequest.sizeWriteOps(); //总文档数
 
-    for (size_t i = 0; i < numWriteOps; ++i) {
+    for (size_t i = 0; i < numWriteOps; ++i) { 
         WriteOp& writeOp = _writeOps[i];
 
         // Only target _Ready ops
@@ -292,6 +294,8 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
         OwnedPointerVector<TargetedWrite> writesOwned;
         vector<TargetedWrite*>& writes = writesOwned.mutableVector();
 
+		//获取该op对应的后端mongod节点TargetedWrite   应该发送该op对应的文档到后端那些mongod
+		//WriteOp::targetWrites
         Status targetStatus = writeOp.targetWrites(_opCtx, targeter, &writes);
 
         if (!targetStatus.isOK()) {
@@ -341,7 +345,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
             (_batchTxnNum ? kBSONArrayPerElementOverheadBytes + 4 : 0);
 
         // If this write will push us over some sort of size limit, stop targeting
-        if (wouldMakeBatchesTooBig(writes, writeSizeBytes, batchSizes)) {
+        if (wouldMakeBatchesTooBig(writes, writeSizeBytes, batchSizes)) {//文档长度检查wouldMakeBatchesTooBig
             invariant(!batchMap.empty());
             writeOp.cancelWrites(NULL);
             break;
@@ -354,10 +358,14 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
         for (vector<TargetedWrite*>::iterator it = writes.begin(); it != writes.end(); ++it) {
             TargetedWrite* write = *it;
 
+			//using TargetedBatchMap = std::map<const ShardEndpoint*, TargetedWriteBatch*, EndpointComp>;
+			//typedef std::map<const ShardEndpoint*, BatchSize, EndpointComp> TargetedBatchSizeMap;
             TargetedBatchMap::iterator batchIt = batchMap.find(&write->endpoint);
             TargetedBatchSizeMap::iterator batchSizeIt = batchSizes.find(&write->endpoint);
 
-            if (batchIt == batchMap.end()) {
+			//可以去重，保证相同的endpoint不会在batchMap中重复
+            if (batchIt == batchMap.end()) { //没找到，则根据endpoint获取一个新的 TargetedWriteBatch  
+            
                 TargetedWriteBatch* newBatch = new TargetedWriteBatch(write->endpoint);
                 batchIt = batchMap.insert(make_pair(&newBatch->getEndpoint(), newBatch)).first;
                 batchSizeIt =
@@ -372,7 +380,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
             // If the request contains transaction number, this means the end result will contain a
             // statement ids array, so we need to account for that overhead.
             batchSize.sizeBytes += writeSizeBytes;
-            batch->addWrite(write);
+            batch->addWrite(write); //TargetedWriteBatch::addWrite
         }
 
         // Relinquish ownership of TargetedWrites, now the TargetedBatches own them
@@ -402,7 +410,8 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter,
 
         // Send the handle back to caller
         invariant(targetedBatches->find(batch->getEndpoint().shardName) == targetedBatches->end());
-        targetedBatches->insert(std::make_pair(batch->getEndpoint().shardName, batch));
+		//该batch对应的文档信息应该转发到shardName节点
+        targetedBatches->insert(std::make_pair(batch->getEndpoint().shardName, batch)); //向targetedBatches添加map成员
     }
 
     return Status::OK();
@@ -506,6 +515,7 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
     return request;
 }
 
+//BatchWriteOp::noteBatchError
 void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
                                      const BatchedCommandResponse& response,
                                      TrackedErrors* trackedErrors) {
@@ -620,6 +630,7 @@ void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
     }
 }
 
+//BatchWriteOp::noteBatchResponse
 void BatchWriteOp::noteBatchError(const TargetedWriteBatch& targetedBatch,
                                   const WriteErrorDetail& error) {
     // Treat errors to get a batch response as failures of the contained writes
@@ -655,12 +666,13 @@ void BatchWriteOp::abortBatch(const WriteErrorDetail& error) {
     dassert(isFinished());
 }
 
+//
 bool BatchWriteOp::isFinished() {
     const size_t numWriteOps = _clientRequest.sizeWriteOps();
     const bool orderedOps = _clientRequest.getWriteCommandBase().getOrdered();
     for (size_t i = 0; i < numWriteOps; ++i) {
         WriteOp& writeOp = _writeOps[i];
-        if (writeOp.getWriteState() < WriteOpState_Completed)
+        if (writeOp.getWriteState() < WriteOpState_Completed) //该文档写入到后端成功，赋值见BatchWriteOp::noteBatchResponse
             return false;
         else if (orderedOps && writeOp.getWriteState() == WriteOpState_Error)
             return true;

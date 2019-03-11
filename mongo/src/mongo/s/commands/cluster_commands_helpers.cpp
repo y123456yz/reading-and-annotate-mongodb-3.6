@@ -442,12 +442,15 @@ CachedCollectionRoutingInfo getShardedCollection(OperationContext* opCtx,
     return routingInfo;
 }
 
+//在mongod-config中创建dbName库
 StatusWith<CachedDatabaseInfo> createShardDatabase(OperationContext* opCtx, StringData dbName) {
+	//CatalogCache::getDatabase
     auto dbStatus = Grid::get(opCtx)->catalogCache()->getDatabase(opCtx, dbName);
     if (dbStatus == ErrorCodes::NamespaceNotFound) {
         ConfigsvrCreateDatabase configCreateDatabaseRequest;
         configCreateDatabaseRequest.set_configsvrCreateDatabase(dbName);
 
+		//ShardRegistry::getConfigShard
         auto configShard = Grid::get(opCtx)->shardRegistry()->getConfigShard();
 
         auto createDbStatus =
@@ -456,6 +459,7 @@ StatusWith<CachedDatabaseInfo> createShardDatabase(OperationContext* opCtx, Stri
                     opCtx,
                     ReadPreferenceSetting(ReadPreference::PrimaryOnly),
                     "admin",
+                    //在config mongo中创建dbName库
                     Command::appendMajorityWriteConcern(configCreateDatabaseRequest.toBSON()),
                     Shard::RetryPolicy::kIdempotent))
                 .commandStatus;

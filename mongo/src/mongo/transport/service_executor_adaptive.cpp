@@ -157,6 +157,7 @@ ServiceExecutorAdaptive::~ServiceExecutorAdaptive() {
     invariant(!_isRunning.load());
 }
 
+//runMongosServerÖÐµ÷ÓÃ
 Status ServiceExecutorAdaptive::start() {
     invariant(!_isRunning.load());
     _isRunning.store(true);

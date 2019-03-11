@@ -142,7 +142,7 @@ BSONObj findExtremeKeyForShard(OperationContext* opCtx,
 
 /**
  * Splits the chunks touched based from the targeter stats if needed.
- */
+ */ //ClusterWriter::write
 void splitIfNeeded(OperationContext* opCtx,
                    const NamespaceString& nss,
                    const TargeterStats& stats) {
@@ -186,15 +186,20 @@ void ClusterWriter::write(OperationContext* opCtx,
     LastError::Disabled disableLastError(&LastError::get(opCtx->getClient()));
 
     // Config writes and shard writes are done differently
-    if (nss.db() == NamespaceString::kAdminDb) {
+    if (nss.db() == NamespaceString::kAdminDb) { //admin库，则直接写入mongo-config
         Grid::get(opCtx)->catalogClient()->writeConfigServerDirect(opCtx, request, response);
     } else {
         TargeterStats targeterStats;
 
         {
+			//ChunkManagerTargeter::ChunkManagerTargeter
             ChunkManagerTargeter targeter(request.getTargetingNS(), &targeterStats);
 
-            Status targetInitStatus = targeter.init(opCtx);
+			//yang test ............... ClusterWriter::write  nss:test.test targeter ns:test.test
+			//LOG(3) << "yang test ............... ClusterWriter::write  nss:" << request.getNS().ns() << " targeter ns:" << request.getTargetingNS().ns();
+
+			//ChunkManagerTargeter::init 获取路由信息
+			Status targetInitStatus = targeter.init(opCtx);
             if (!targetInitStatus.isOK()) {
                 toBatchError({targetInitStatus.code(),
                               str::stream() << "unable to initialize targeter for"
@@ -207,7 +212,8 @@ void ClusterWriter::write(OperationContext* opCtx,
             }
 
             std::vector<std::unique_ptr<ShardEndpoint>> endpoints;
-            auto targetStatus = targeter.targetCollection(&endpoints);
+			//ChunkManagerTargeter::targetCollection
+            auto targetStatus = targeter.targetCollection(&endpoints); //获取ShardEndpoint信息
             if (!targetStatus.isOK()) {
                 toBatchError({targetStatus.code(),
                               str::stream() << "unable to target"

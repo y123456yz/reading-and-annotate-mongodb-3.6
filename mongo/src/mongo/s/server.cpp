@@ -269,6 +269,7 @@ static void cleanupTask() {
 
 using namespace mongo;
 
+//runMongosServer
 static Status initializeSharding(OperationContext* opCtx) {
     auto targeterFactory = stdx::make_unique<RemoteCommandTargeterFactoryImpl>();
     auto targeterFactoryPtr = targeterFactory.get();

@@ -204,6 +204,8 @@ public:
 
         BatchWriteExecStats stats;
         BatchedCommandResponse response;
+
+		//这里mongos做转发  (mongos  insert delete update)
         ClusterWriter::write(opCtx, batchedRequest, &stats, &response);
 
         // Populate the lastError object based on the write response
