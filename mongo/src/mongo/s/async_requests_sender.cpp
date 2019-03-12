@@ -64,6 +64,7 @@ AsyncRequestsSender::AsyncRequestsSender(OperationContext* opCtx,
       _readPreference(readPreference),
       _retryPolicy(retryPolicy) {
     for (const auto& request : requests) {
+		//记录了请求报文，以及应该发送到那个shardId
         _remotes.emplace_back(request.shardId, request.cmdObj);
     }
 
@@ -237,6 +238,7 @@ Status AsyncRequestsSender::_scheduleRequest(WithLock, size_t remoteIndex) {
     invariant(!remote.cbHandle.isValid());
     invariant(!remote.swResponse);
 
+	//获取shardHostAndPort
     Status resolveStatus = remote.resolveShardIdToHostAndPort(_readPreference);
     if (!resolveStatus.isOK()) {
         return resolveStatus;
@@ -300,6 +302,7 @@ AsyncRequestsSender::Response::Response(ShardId shardId,
 AsyncRequestsSender::RemoteData::RemoteData(ShardId shardId, BSONObj cmdObj)
     : shardId(std::move(shardId)), cmdObj(std::move(cmdObj)) {}
 
+//获取shardHostAndPort
 Status AsyncRequestsSender::RemoteData::resolveShardIdToHostAndPort(
     const ReadPreferenceSetting& readPref) {
     const auto shard = getShard();

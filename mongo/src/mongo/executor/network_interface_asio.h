@@ -226,7 +226,7 @@ private:
     /**
      * Helper object to manage individual network operations.
      */
-    class AsyncOp {
+    class AsyncOp {  //ASIOConnection::makeAsyncOpππ‘Ï
         friend class NetworkInterfaceASIO;
         friend class connection_pool_asio::ASIOConnection;
 

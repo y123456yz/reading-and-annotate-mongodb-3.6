@@ -173,6 +173,7 @@ size_t ASIOConnection::getGeneration() const {
     return _generation;
 }
 
+//ASIOConnection::ASIOConnection
 std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::makeAsyncOp(ASIOConnection* conn) {
     return stdx::make_unique<NetworkInterfaceASIO::AsyncOp>(
         conn->_global->_impl,
@@ -231,7 +232,7 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
             cancelTimeout();
             cb(ptr, status);
         };
-		log() << "yang test ....2..... ASIOConnection::setup"; //这里面实际上室友network线程执行
+		log() << "yang test ....2..... ASIOConnection::setup"; //这里面实际上是由network线程执行
         // Capturing the shared access pad and generation before calling setTimeout gives us enough
         // information to avoid calling the timer if we shouldn't without needing any other
         // resources that might have been cleaned up.

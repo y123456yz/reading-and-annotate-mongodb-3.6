@@ -74,6 +74,7 @@ template <typename FunctionLike>
 using IsNetworkHandler =
     std::is_convertible<FunctionLike, stdx::function<void(std::error_code, std::size_t)>>;
 
+//NetworkInterfaceASIO::_asyncRunCommand中发送
 template <typename Handler>
 void asyncSendMessage(AsyncStreamInterface& stream, Message* m, Handler&& handler) {
     MONGO_STATIC_ASSERT_MSG(
@@ -83,6 +84,7 @@ void asyncSendMessage(AsyncStreamInterface& stream, Message* m, Handler&& handle
     m->header().setId(nextMessageId());
     // TODO: Some day we may need to support vector messages.
     fassert(28708, m->buf() != 0);
+	//write发送到后端取  接收后端回调handler
     stream.write(asio::buffer(m->buf(), m->size()), std::forward<Handler>(handler));
 }
 
@@ -422,6 +424,7 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
 }
 
 //异步发送数据到后端，并接受后端应答，接收到后端应答后调用handler处理
+//ASIOConnection::refresh  NetworkInterfaceASIO::_runConnectionHook  NetworkInterfaceASIO::_authenticate
 void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handler) {
     LOG(2) << "Starting asynchronous command " << op->request().id << " on host "
            << op->request().target.toString();
@@ -436,7 +439,7 @@ void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handle
     // 2 - receive a header for the response
     // 3 - validate and receive response body
     // 4 - advance the state machine by calling handler()
-    auto& cmd = op->command();
+    auto& cmd = op->command(); //AsyncCommand类型
 
     // Step 4
     auto recvMessageCallback = [this, handler](std::error_code ec, size_t bytes) {
@@ -477,7 +480,7 @@ void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handle
 
     };
 
-    // Step 1
+    // Step 1 发送数据到后端mongod
     asyncSendMessage(cmd.conn().stream(), &cmd.toSend(), std::move(sendMessageCallback));
 }
 

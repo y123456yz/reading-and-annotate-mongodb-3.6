@@ -282,6 +282,7 @@ private:
     stdx::mutex _mutex;
 
     // Data tracking the state of our communication with each of the remote nodes.
+    //AsyncRequestsSender::AsyncRequestsSender
     std::vector<RemoteData> _remotes;
 
     // A notification that gets signaled when a remote is ready for processing (i.e., we failed to

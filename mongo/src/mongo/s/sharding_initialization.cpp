@@ -245,7 +245,7 @@ Status initializeGlobalShardingState(OperationContext* opCtx,
     executorPool->startup(); //TaskExecutorPool::startup
 
     auto const grid = Grid::get(opCtx);
-    grid->init(
+    grid->init( //Grid::init
         makeCatalogClient(opCtx->getServiceContext(), distLockProcessId),
         std::move(catalogCache),
         stdx::make_unique<ShardRegistry>(std::move(shardFactory), configCS),

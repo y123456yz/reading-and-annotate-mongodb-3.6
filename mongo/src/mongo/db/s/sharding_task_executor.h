@@ -73,7 +73,7 @@ public:
     void appendConnectionStats(ConnectionPoolStats* stats) const override;
 
 private:
-    std::unique_ptr<ThreadPoolTaskExecutor> _executor;
+    std::unique_ptr<ThreadPoolTaskExecutor> _executor; 
 };
 
 }  // namespace executor

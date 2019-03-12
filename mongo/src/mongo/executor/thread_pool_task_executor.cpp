@@ -138,7 +138,7 @@ ThreadPoolTaskExecutor::~ThreadPoolTaskExecutor() {
 //ShardingTaskExecutor::startup
 //initializeGlobalShardingState->TaskExecutorPool::startup->ShardingTaskExecutor::startup->ThreadPoolTaskExecutor::startup
 void ThreadPoolTaskExecutor::startup() {
-    _net->startup(); ////对应NetworkInterfaceASIO::startup
+    _net->startup(); ////对应NetworkInterfaceASIO::startup  创建NetworkInterfaceASIO-TaskExecutorPool-0-1线程
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     if (_inShutdown_inlock()) {
         return;
