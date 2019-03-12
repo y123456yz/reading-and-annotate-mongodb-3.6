@@ -184,7 +184,7 @@ std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::makeAsyncOp(ASIOC
                              BSONObj(),
                              nullptr},
         [conn](const TaskExecutor::ResponseStatus& rs) {
-        	//_setupCallback来源在ASIOConnection::setup
+        	//_setupCallback来源在ASIOConnection::setup 中的_setupCallback
             auto cb = std::move(conn->_setupCallback);
             cb(conn, rs.status);
         },
@@ -219,7 +219,7 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
 
                 // If our connection timeout callback ran but wasn't the reason we exited
                 // the state machine, clear any TIMED_OUT state.
-                if (status.isOK()) {
+                if (status.isOK()) { //更新状态
                     _impl->_transitionToState_inlock(
                         NetworkInterfaceASIO::AsyncOp::State::kUninitialized);
                     _impl->_transitionToState_inlock(

@@ -249,6 +249,7 @@ void NetworkInterfaceASIO::_startCommand(AsyncOp* op) {
 #9  asio::detail::scheduler::do_run_one (this=this@entry=0x7f731d4f4e00, lock=..., this_thread=..., ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:400
 #10 0x00007f731b5c7041 in asio::detail::scheduler::run (this=0x7f731d4f4e00, ec=...) at src/third_party/asio-master/asio/include/asio/detail/impl/scheduler.ipp:153
 #11 0x00007f731b5c71de in asio::io_context::run (this=<optimized out>, ec=...) at src/third_party/asio-master/asio/include/asio/impl/io_context.ipp:69
+(下面这行对应NetworkInterfaceASIO::startup-> _io_service.run)
 #12 0x00007f731b52653c in mongo::executor::NetworkInterfaceASIO::<lambda()>::operator()(void) const (__closure=0x7f731d572ee8) at src/mongo/executor/network_interface_asio.cpp:165
 #13 0x00007f7319efc8f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
 #14 0x00007f7319718e25 in start_thread () from /lib64/libpthread.so.0
@@ -262,14 +263,14 @@ void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     // return to the connection pool's get() callback with _inSetup == false,
     // so we can proceed with user operations after they return to this
     // codepath.
-    if (op->_inSetup) {
+    if (op->_inSetup) { //链接后端mongod成功，这里提示
         auto host = op->request().target;
         auto getConnectionDuration = now() - op->start();
         log() << "Successfully connected to " << host << ", took " << getConnectionDuration << " ("
               << _connectionPool.getNumConnectionsPerHost(host) << " connections now open to "
               << host << ")";
         op->_inSetup = false;
-        op->finish(RemoteCommandResponse());
+        op->finish(RemoteCommandResponse()); //NetworkInterfaceASIO::AsyncOp::finish
         return;
     }
 
@@ -288,7 +289,7 @@ void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
 }
 
 //NetworkInterfaceASIO::_beginCommunication
-//后端应答数据后，最终会调用该接口
+//后端应答数据后，最终会调用该接口  真正调用该函数执行在NetworkInterfaceASIO::_asyncRunCommand
 void NetworkInterfaceASIO::_completedOpCallback(AsyncOp* op) {
     auto response = op->command().response(op, op->operationProtocol(), now(), _metadataHook.get());
     _completeOperation(op, response);
@@ -303,6 +304,7 @@ void NetworkInterfaceASIO::_networkErrorCallback(AsyncOp* op, const std::error_c
 
 // NOTE: This method may only be called by ASIO threads
 // (do not call from methods entered by TaskExecutor threads)
+//NetworkInterfaceASIO::_completedOpCallback
 void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) {
     auto metadata = op->getResponseMetadata();
     if (!metadata.isEmpty()) {
@@ -425,7 +427,9 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
 
 //异步发送数据到后端，并接受后端应答，接收到后端应答后调用handler处理
 //ASIOConnection::refresh  NetworkInterfaceASIO::_runConnectionHook  NetworkInterfaceASIO::_authenticate
+//NetworkInterfaceASIO::_beginCommunication
 void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handler) {
+	//[NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] Starting asynchronous command 93108 on host 172.23.240.29:28018
     LOG(2) << "Starting asynchronous command " << op->request().id << " on host "
            << op->request().target.toString();
 
@@ -444,7 +448,7 @@ void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handle
     // Step 4
     auto recvMessageCallback = [this, handler](std::error_code ec, size_t bytes) {
         // We don't call _validateAndRun here as we assume the caller will.
-        handler(ec, bytes);
+        handler(ec, bytes); //对应_completedOpCallback  见NetworkInterfaceASIO::_beginCommunication
     };
 
     // Step 3 接受后端body数据
