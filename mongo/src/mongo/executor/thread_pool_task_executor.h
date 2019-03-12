@@ -48,7 +48,7 @@ class NetworkInterface;
 
 /**
  * Implementation of a TaskExecutor that uses a pool of threads to execute work items.
- */ //ShardingTaskExecutor包含该类成员   makeShardingTaskExecutor中构建该类
+ */ //ShardingTaskExecutor包含该类成员   makeShardingTaskExecutor中构建该类  //ShardingTaskExecutor._executor成员为该类型
 class ThreadPoolTaskExecutor final : public TaskExecutor {
     MONGO_DISALLOW_COPYING(ThreadPoolTaskExecutor);
 

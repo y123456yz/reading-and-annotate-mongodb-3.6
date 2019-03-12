@@ -66,6 +66,7 @@ AtomicUInt64 kAsyncOpIdCounter(0);
 const NetworkInterfaceASIO::TableRow NetworkInterfaceASIO::AsyncOp::kFieldLabels = {
     "", "id", "states", "start_time", "request"};
 
+//ASIOConnection::makeAsyncOp
 NetworkInterfaceASIO::AsyncOp::AsyncOp(NetworkInterfaceASIO* const owner,
                                        const TaskExecutor::CallbackHandle& cbHandle,
                                        const RemoteCommandRequest& request,
@@ -178,7 +179,8 @@ Status NetworkInterfaceASIO::AsyncOp::beginCommand(const RemoteCommandRequest& r
 NetworkInterfaceASIO::AsyncCommand& NetworkInterfaceASIO::AsyncOp::command() {
     MONGO_ASYNC_OP_INVARIANT(_command.is_initialized(), "Command is not yet initialized");
 
-    return *_command;
+	//数据来源见NetworkInterfaceASIO::AsyncOp::beginCommand
+    return *_command; //AsyncCommand类型
 }
 
 bool NetworkInterfaceASIO::AsyncOp::commandIsInitialized() const {
