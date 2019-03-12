@@ -195,6 +195,21 @@ private:
 	mongos有一个ASIO的ReactorPool，每个Pool有有若干个连接池，每个连接池负责管理某个特定的mongod的连接。 
 	每个连接池又分为 1. readyPool (管理空闲连接) 2. processingPool （管理在创建中/定期检查健康状态的连接） 
 	3. checkoutPool （管理正在使用中的连接）
+
+	ConnectionPool 针对每 个Shard 机器维护一个连接池，这个连接池包含4个小的池子，用于管理连接的生命周期。
+	
+processingPool： 正在建立的连接
+readyPool：已经建立并且可用的连接
+checkoutPool： 正在使用的连接
+droppedProcessingPool：失败的连接，需要释放
+连接池管理规则
+
+连接池的总连接会控制在[minConnections, maxConnections]之间，默认为1和无穷大
+当需要新建连接时，会发起一个新建连接的异步请求，并把请求放到 processingPool 
+当连接建立成功后，会把请求转移到readyPool ，readyPool 里的连接可以直接用于服务新的请求
+服务某个请求时会从 readyPool 里取出连接后，会将连接转移到 checkOutPool，标识为正在使用
+连接使用完后，会归还到 readyPool；
+当遇到请求失败 或 一个网络连接空闲超过1分钟时，会释放连接
 	*/
     LRUOwnershipPool _readyPool;
     OwnershipPool _processingPool;
@@ -371,6 +386,7 @@ size_t ConnectionPool::SpecificPool::openConnections(const stdx::unique_lock<std
     return _checkedOutPool.size() + _readyPool.size() + _processingPool.size();
 }
 
+//ConnectionPool::get中调用
 void ConnectionPool::SpecificPool::getConnection(const HostAndPort& hostAndPort,
                                                  Milliseconds timeout,
                                                  stdx::unique_lock<stdx::mutex> lk,
@@ -482,6 +498,7 @@ void ConnectionPool::SpecificPool::returnConnection(ConnectionInterface* connPtr
 }
 
 // Adds a live connection to the ready pool
+//和后端链接简历成功后会执行 NetworkInterfaceASIO::AsyncOp::finish
 void ConnectionPool::SpecificPool::addToReady(stdx::unique_lock<stdx::mutex>& lk,
                                               OwnedConnection conn) {
     auto connPtr = conn.get();
@@ -561,6 +578,7 @@ void ConnectionPool::SpecificPool::processFailure(const Status& status,
 }
 
 // fulfills as many outstanding requests as possible
+//ConnectionPool::SpecificPool::getConnection  ConnectionPool::SpecificPool::addToReady中调用
 void ConnectionPool::SpecificPool::fulfillRequests(stdx::unique_lock<stdx::mutex>& lk) {
     // If some other thread (possibly this thread) is fulfilling requests,
     // don't keep padding the callstack.
@@ -604,6 +622,7 @@ void ConnectionPool::SpecificPool::fulfillRequests(stdx::unique_lock<stdx::mutex
         auto connPtr = conn.get();
 
         // check out the connection
+        //把从_readyPool获取的这个链接转给_checkedOutPool
         _checkedOutPool[connPtr] = std::move(conn);
 
         updateStateInLock();
@@ -658,7 +677,9 @@ void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mute
         lk.unlock();
 		//开始键连接 ASIOConnection::setup
         connPtr->setup(
-            _parent->_options.refreshTimeout, [this](ConnectionInterface* connPtr, Status status) {
+            _parent->_options.refreshTimeout, 
+            //链接简历成功后执行 NetworkInterfaceASIO::AsyncOp::finish
+            [this](ConnectionInterface* connPtr, Status status) {
                 connPtr->indicateUsed();
 
                 runWithActiveClient([&](stdx::unique_lock<stdx::mutex> lk) {
@@ -668,7 +689,7 @@ void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mute
                         // If the host and port was dropped, let the
                         // connection lapse
                         spawnConnections(lk);
-                    } else if (status.isOK()) {
+                    } else if (status.isOK()) { //链接建立成功，放入_readyPool池
                         addToReady(lk, std::move(conn));
                         spawnConnections(lk);
                     } else if (status.code() == ErrorCodes::NetworkInterfaceExceededTimeLimit) {
