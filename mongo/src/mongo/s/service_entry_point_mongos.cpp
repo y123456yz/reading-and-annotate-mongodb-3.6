@@ -124,6 +124,8 @@ Breakpoint 1, mongo::ServiceEntryPointMongos::handleRequest (this=<optimized out
 (gdb) 
 
 */
+//mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和客户端交互:ServiceEntryPointMongos::handleRequest
 //ServiceStateMachine::_processMessage
 DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const Message& message) {
     // Release any cached egress connections for client back to pool before destroying

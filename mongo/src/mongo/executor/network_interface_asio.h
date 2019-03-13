@@ -378,6 +378,8 @@ private:
         boost::optional<rpc::Protocol> _operationProtocol;
 
         Date_t _start;
+        //客户端请求发送到后端后，后端响应的超时定时器设置见NetworkInterfaceASIO::startCommand
+        //后端应答后在NetworkInterfaceASIO::_completeOperation中删除超时定时器
         std::unique_ptr<AsyncTimerInterface> _timeoutAlarm;
 
         asio::ip::tcp::resolver _resolver;
