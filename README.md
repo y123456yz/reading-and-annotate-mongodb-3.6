@@ -90,5 +90,6 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .conn-xx线程处理客户端请求及解析数据在内部处理后，转由NetworkInterfaceASIO-TaskExecutorPool-x-0线程处理，这个分界点代码详细分析  
     .mongos转发管理ChunkManager相关代码分析  
     .BatchWriteOp路由过程查找详细过程  
+    .NetworkInterfaceASIO(_getDiagnosticString_inlock)统计过程分析  
 
 

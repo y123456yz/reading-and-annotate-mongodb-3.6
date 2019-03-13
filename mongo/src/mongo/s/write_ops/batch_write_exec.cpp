@@ -224,9 +224,9 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
             // Receive the responses.
             //
 
-            while (!ars.done()) {
+            while (!ars.done()) { //AsyncRequestsSender::done
                 // Block until a response is available.
-                auto response = ars.next();
+                auto response = ars.next();//AsyncRequestsSender::next
 
                 // Get the TargetedWriteBatch to find where to put the response
                 dassert(pendingBatches.find(response.shardId) != pendingBatches.end());

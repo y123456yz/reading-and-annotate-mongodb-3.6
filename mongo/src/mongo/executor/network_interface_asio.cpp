@@ -85,6 +85,7 @@ std::string NetworkInterfaceASIO::getDiagnosticString() {
     return _getDiagnosticString_inlock(nullptr);
 }
 
+//该NetworkInterfaceASIO对应的统计信息
 std::string NetworkInterfaceASIO::_getDiagnosticString_inlock(AsyncOp* currentOp) {
     str::stream output;
     std::vector<TableRow> rows;
@@ -379,11 +380,11 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
         return statusMetadata;
     }
 
-	//在ConnectionPool::SpecificPool::fulfillRequests中执行
+	//在ConnectionPool::SpecificPool::fulfillRequests中获取到了与mongod的链接后调用执行
     auto nextStep = [this, getConnectionStartTime, cbHandle, request, onFinish](
         StatusWith<ConnectionPool::ConnectionHandle> swConn) {
 
-        if (!swConn.isOK()) {
+        if (!swConn.isOK()) {//获取到后端mongod的链接失败
             LOG(2) << "Failed to get connection from pool for request " << request.id << ": "
                    << swConn.getStatus();
 
@@ -396,9 +397,12 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
             Status status = wasPreviouslyCanceled
                 ? Status(ErrorCodes::CallbackCanceled, "Callback canceled")
                 : swConn.getStatus();
+			//链接超时
             if (ErrorCodes::isExceededTimeLimitError(status.code())) {
                 _numTimedOutOps.fetchAndAdd(1);
             }
+
+			//链接异常等统计
             if (status.code() != ErrorCodes::CallbackCanceled) {
                 _numFailedOps.fetchAndAdd(1);
             }
@@ -408,6 +412,7 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
             return;
         }
 
+		//获取到后端mongod的conn链接信息
         auto conn = static_cast<connection_pool_asio::ASIOConnection*>(swConn.getValue().get());
 
         AsyncOp* op = nullptr;
@@ -433,7 +438,8 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
         }
 
         // We can't release the AsyncOp until we know we were not canceled.
-        auto ownedOp = conn->releaseAsyncOp();
+        //从该链接上获取一个NetworkInterfaceASIO::AsyncOp类
+        auto ownedOp = conn->releaseAsyncOp(); //ASIOConnection::releaseAsyncOp
         op = ownedOp.get();
 
         // This AsyncOp may be recycled. We expect timeout and canceled to be clean.
@@ -455,6 +461,8 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
 
         // This ditches the lock and gets us onto the strand (so we're
         // threadsafe)
+        //asio::io_service::strand _strand;
+        //该[this, op, getConnectionStartTime] 函数在NetworkInterfaceASIO::startup-> _io_service.run中由Network线程执行
         op->_strand.post([this, op, getConnectionStartTime] {
             const auto timeout = op->_request.timeout;
 

@@ -70,7 +70,7 @@ private:
  * Implements connection pool connections on top of asio
  *
  * Owns an async op when it's out of the pool
- */ //ASIOImpl::makeConnection中构造使用
+ */ //ASIOImpl::makeConnection中构造使用  代表一个链接
 class ASIOConnection final : public ConnectionPool::ConnectionInterface {
 public:
     ASIOConnection(const HostAndPort& hostAndPort, size_t generation, ASIOImpl* global);
@@ -111,6 +111,8 @@ private:
     HostAndPort _hostAndPort;
     size_t _generation;
     std::unique_ptr<NetworkInterfaceASIO::AsyncOp> _impl;
+    //ASIOConnection::setTimeout和ASIOConnection::cancelTimeout对应
+    //mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
     ASIOTimer _timer;
 };
 

@@ -122,12 +122,12 @@ void ASIOTimer::cancelTimeout() {
     });
 }
 
-//ASIOImpl::makeConnection
+//ASIOImpl::makeConnection  代表一个链接
 ASIOConnection::ASIOConnection(const HostAndPort& hostAndPort, size_t generation, ASIOImpl* global)
     : _global(global),
       _hostAndPort(hostAndPort),
       _generation(generation),
-      _impl(makeAsyncOp(this)),
+      _impl(makeAsyncOp(this)), //ASIOConnection::makeAsyncOp
       _timer(&_impl->strand()) {}
 
 ASIOConnection::~ASIOConnection() {
@@ -183,6 +183,7 @@ std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::makeAsyncOp(ASIOC
                              BSON("isMaster" << 1),
                              BSONObj(),
                              nullptr},
+        //该函数真正在NetworkInterfaceASIO::AsyncOp::finish执行，这里只是赋值给_onFinish成员
         [conn](const TaskExecutor::ResponseStatus& rs) {
         	//_setupCallback来源在ASIOConnection::setup 中的_setupCallback
             auto cb = std::move(conn->_setupCallback);
@@ -196,13 +197,20 @@ Message ASIOConnection::makeIsMasterRequest(ASIOConnection* conn) {
         OpMsgRequest::fromDBAndBody("admin", BSON("isMaster" << 1)));
 }
 
+//ASIOConnection::setTimeout和ASIOConnection::cancelTimeout对应
+//mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
 void ASIOConnection::setTimeout(Milliseconds timeout, TimeoutCallback cb) {
     _timer.setTimeout(timeout, std::move(cb));
 }
 
+//ASIOConnection::setTimeout和ASIOConnection::cancelTimeout对应
+//mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
 void ASIOConnection::cancelTimeout() {
     _timer.cancelTimeout();
 }
+
+//mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和客户端交互:ServiceEntryPointMongos::handleRequest
 
 //ConnectionPool::SpecificPool::spawnConnections
 void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
@@ -211,8 +219,8 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
 
 	//这里dispatch的任务在NetworkInterfaceASIO::startup-> _io_service.run中由Network线程执行
     _impl->strand().dispatch([this, timeout, cb] {
-    	//_setupCallback在ASIOConnection::makeAsyncOp中执行
-        _setupCallback = [this, cb](ConnectionInterface* ptr, Status status) {
+    	//_setupCallback在ASIOConnection::makeAsyncOp中赋值给finish，真正执行在NetworkInterfaceASIO::_completeOperation -> op->finish()
+        _setupCallback = [this, cb](ConnectionInterface* ptr, Status status) {//配合ASIOConnection::makeAsyncOp阅读
             {
                 stdx::lock_guard<stdx::mutex> lk(_impl->_access->mutex);
                 _impl->_access->id++;
@@ -229,10 +237,12 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
                 }
             }
 
-            cancelTimeout();
+            cancelTimeout(); //清除超时定时器
+
+			//cb对应ConnectionPool::SpecificPool::spawnConnections中的 [this](ConnectionInterface* connPtr, Status status) {}
             cb(ptr, status);
         };
-		log() << "yang test ....2..... ASIOConnection::setup"; //这里面实际上是由network线程执行
+		//log() << "yang test ....2..... ASIOConnection::setup"; //这里面实际上是由network线程执行
         // Capturing the shared access pad and generation before calling setTimeout gives us enough
         // information to avoid calling the timer if we shouldn't without needing any other
         // resources that might have been cleaned up.
@@ -245,6 +255,7 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
         }
 
         // Actually timeout setup
+        //mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
         setTimeout(timeout, [this, access, generation] {
             stdx::lock_guard<stdx::mutex> lk(access->mutex);
             if (generation != access->id) {
@@ -254,7 +265,7 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
             _impl->timeOut_inlock();
         });
 
-		//NetworkInterfaceASIO::_connect
+		//NetworkInterfaceASIO::_connect 真正的键连
         _global->_impl->_connect(_impl.get()); //NetworkInterfaceASIO::_connect
     });
 }
@@ -274,6 +285,7 @@ void ASIOConnection::refresh(Milliseconds timeout, RefreshCallback cb) {
         _refreshCallback = std::move(cb);
 
         // Actually timeout refreshes
+        //mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
         setTimeout(timeout, [this] { _impl->connection().stream().cancel(); });
 
         // Our pings are isMaster's
@@ -337,7 +349,8 @@ std::unique_ptr<ConnectionPool::TimerInterface> ASIOImpl::makeTimer() {
 //ConnectionPool::SpecificPool::spawnConnections  ASIOConnection继承ConnectionPool::ConnectionInterface类
 std::unique_ptr<ConnectionPool::ConnectionInterface> ASIOImpl::makeConnection(
     const HostAndPort& hostAndPort, size_t generation) {
-    return stdx::make_unique<ASIOConnection>(hostAndPort, generation, this);
+    //ASIOConnection::ASIOConnection
+    return stdx::make_unique<ASIOConnection>(hostAndPort, generation, this); 
 }
 
 }  // namespace connection_pool_asio

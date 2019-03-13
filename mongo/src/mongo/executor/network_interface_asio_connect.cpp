@@ -175,7 +175,10 @@ r_code, asio::ip::basic_resolver<asio::ip::tcp>::iterator)>, asio::detail::is_co
 */
 //mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
 //mongos和客户端交互:ServiceEntryPointMongos::handleRequest
-//ASIOConnection::setup调用
+//conn-xx线程处理解析完客户端请求后，在ASIOConnection::setup-> _impl->strand().dispatch中实现连接的过度，后续连接处理由conn-xx线程交接给Network线程
+//conn-xx线程处理解析完客户端请求后，在NetworkInterfaceASIO::startCommand中的op->_strand.post([this, op, getConnectionStartTime]完成数据异步交接，而后数据由Network线程处理
+
+//通过conn线程在ASIOConnection::setup中经过异步调用最终走到这里
 void NetworkInterfaceASIO::_connect(AsyncOp* op) {
 //	2019-03-10T18:19:58.459+0800 I ASIO 	[NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] Connecting to 172.23.240.29:28018
 

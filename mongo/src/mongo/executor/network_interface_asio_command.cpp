@@ -256,6 +256,8 @@ void NetworkInterfaceASIO::_startCommand(AsyncOp* op) {
 */
 //mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
 //mongos和客户端交互:ServiceEntryPointMongos::handleRequest
+
+//NetworkInterfaceASIO::_runConnectionHook和NetworkInterfaceASIO::startCommand中的nextStep中会调用该函数
 void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     // The way that we connect connections for the connection pool is by
     // starting the callback chain with connect(), but getting off at the first
@@ -312,17 +314,19 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
     if (!metadata.isEmpty()) {
         resp.metadata = metadata;
     }
+	//D ASIO     [NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] yang test .......... NetworkInterfaceASIO::_completeOperation
+	//LOG(3) << "yang test .......... NetworkInterfaceASIO::_completeOperation";
 
     // Cancel this operation's timeout. Note that the timeout callback may already be running,
     // may have run, or may have already been scheduled to run in the near future.
-    if (op->_timeoutAlarm) {
+    if (op->_timeoutAlarm) { //删除该请求对应的定时器
         op->_timeoutAlarm->cancel();
     }
 
-    if (ErrorCodes::isExceededTimeLimitError(resp.status.code())) {
+    if (ErrorCodes::isExceededTimeLimitError(resp.status.code())) { //超时
         _numTimedOutOps.fetchAndAdd(1);
     }
-
+	
     if (op->_inSetup) {
         // If we are in setup we should only be here if we failed to connect.
         MONGO_ASIO_INVARIANT(!resp.isOK(), "Failed to connect in setup", op);
@@ -376,10 +380,10 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
         }
 
         if (resp.status.code() != ErrorCodes::CallbackCanceled) {
-            _numFailedOps.fetchAndAdd(1);
+            _numFailedOps.fetchAndAdd(1); //统计
         }
     } else {
-        _numSucceededOps.fetchAndAdd(1);
+        _numSucceededOps.fetchAndAdd(1); //统计
     }
 
     std::unique_ptr<AsyncOp> ownedOp;
@@ -396,10 +400,12 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
         _inProgress.erase(iter);
     }
 
+	//_onFinish该函数赋值在赋值NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup 中的_setupCallback  
     op->finish(std::move(resp)); //NetworkInterfaceASIO::AsyncOp::finish
 
     MONGO_ASIO_INVARIANT(static_cast<bool>(ownedOp), "Invalid AsyncOp", op);
 
+	//获取该op对应的后端mongod链接
     auto conn = std::move(op->_connectionPoolHandle);
     auto asioConn = static_cast<connection_pool_asio::ASIOConnection*>(conn.get());
 
@@ -414,17 +420,20 @@ void NetworkInterfaceASIO::_completeOperation(AsyncOp* op, ResponseStatus resp) 
 
     // We need to bump the generation BEFORE we call reset() or we could flip the timeout in the
     // timeout callback before returning the AsyncOp to the pool.
-    ownedOp->reset();
+    ownedOp->reset(); //AsyncOp::reset
 
-    asioConn->bindAsyncOp(std::move(ownedOp));
+	//NetworkInterfaceASIO::_completeOperation中调用
+    asioConn->bindAsyncOp(std::move(ownedOp)); //ASIOConnection::bindAsyncOp
     if (!resp.isOK()) {
+		//ASIOConnection::indicateFailure
         asioConn->indicateFailure(resp.status);
     } else {
-        asioConn->indicateUsed();
-        asioConn->indicateSuccess();
+        asioConn->indicateUsed();//ASIOConnection::indicateUsed
+        asioConn->indicateSuccess();//ASIOConnection::indicateSuccess
     }
-
+	
     signalWorkAvailable();
+	
 }
 
 //异步发送数据到后端，并接受后端应答，接收到后端应答后调用handler处理
@@ -450,7 +459,8 @@ void NetworkInterfaceASIO::_asyncRunCommand(AsyncOp* op, NetworkOpHandler handle
     // Step 4
     auto recvMessageCallback = [this, handler](std::error_code ec, size_t bytes) {
         // We don't call _validateAndRun here as we assume the caller will.
-        handler(ec, bytes); //对应_completedOpCallback  见NetworkInterfaceASIO::_beginCommunication
+        //对应_completedOpCallback
+        handler(ec, bytes); //对应_completedOpCallback  见NetworkInterfaceASIO::_beginCommunication 
     };
 
     // Step 3 接受后端body数据

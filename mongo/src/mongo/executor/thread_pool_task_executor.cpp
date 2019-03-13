@@ -505,6 +505,7 @@ StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteC
             cbHandle.getValue(),
             scheduledRequest,
             //后端应答后会调用该函数，真正执行在NetworkInterfaceASIO::AsyncOp::finish
+            //链接异常执行在NetworkInterfaceASIO::startCommand
             [this, scheduledRequest, cbState, cb](const ResponseStatus& response) {
                 using std::swap;
                 CallbackFn newCb = [cb, scheduledRequest, response](const CallbackArgs& cbData) {
