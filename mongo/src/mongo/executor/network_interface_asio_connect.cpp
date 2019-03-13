@@ -173,7 +173,8 @@ r_code, asio::ip::basic_resolver<asio::ip::tcp>::iterator)>, asio::detail::is_co
 #53 0x00007fdf8445b8f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
 #54 0x00007fdf83c77e25 in start_thread () from /lib64/libpthread.so.0
 */
-//mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和客户端交互:ServiceEntryPointMongos::handleRequest
 //ASIOConnection::setup调用
 void NetworkInterfaceASIO::_connect(AsyncOp* op) {
 //	2019-03-10T18:19:58.459+0800 I ASIO 	[NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] Connecting to 172.23.240.29:28018

@@ -254,7 +254,8 @@ void NetworkInterfaceASIO::_startCommand(AsyncOp* op) {
 #13 0x00007f7319efc8f0 in std::execute_native_thread_routine (__p=<optimized out>) at ../../../.././libstdc++-v3/src/c++11/thread.cc:84
 #14 0x00007f7319718e25 in start_thread () from /lib64/libpthread.so.0
 */
-//mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和客户端交互:ServiceEntryPointMongos::handleRequest
 void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     // The way that we connect connections for the connection pool is by
     // starting the callback chain with connect(), but getting off at the first
@@ -274,6 +275,7 @@ void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
         return;
     }
 
+	//[NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] Initiating asynchronous command: RemoteCommand 34 -- target:
     LOG(3) << "Initiating asynchronous command: " << redact(op->request().toString());
 	//NetworkInterfaceASIO::AsyncOp::beginCommand
 	//压缩msg数据构建新的AsyncCommand对象

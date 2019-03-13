@@ -401,7 +401,7 @@ void ConnectionPool::SpecificPool::getConnection(const HostAndPort& hostAndPort,
 
     updateStateInLock();
 
-    spawnConnections(lk); //这里面建链接
+    spawnConnections(lk); //这里面建链接  cb真正在这里面执行
     fulfillRequests(lk);
 }
 
