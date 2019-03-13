@@ -225,7 +225,7 @@ private:
 
     /**
      * Helper object to manage individual network operations.
-     */
+     */ //该类属于NetworkInterfaceASIO的子类
     class AsyncOp {  //ASIOConnection::makeAsyncOp构造
         friend class NetworkInterfaceASIO;
         friend class connection_pool_asio::ASIOConnection;
@@ -359,6 +359,7 @@ private:
         // via a call to startCommand().
         TaskExecutor::CallbackHandle _cbHandle;
         RemoteCommandRequest _request;
+        //该函数赋值在赋值NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup 中的_setupCallback  
         RemoteCommandCompletionFn _onFinish;
 
         // AsyncOp's have a handle to their connection pool handle. They are

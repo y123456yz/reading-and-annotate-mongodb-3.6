@@ -211,11 +211,13 @@ droppedProcessingPool：失败的连接，需要释放
 连接使用完后，会归还到 readyPool；
 当遇到请求失败 或 一个网络连接空闲超过1分钟时，会释放连接
 	*/
+	//mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
     LRUOwnershipPool _readyPool;
     OwnershipPool _processingPool;
     OwnershipPool _droppedProcessingPool;
     OwnershipPool _checkedOutPool;
 
+	//赋值见ConnectionPool::SpecificPool::getConnection
     std::priority_queue<Request, std::vector<Request>, RequestComparator> _requests;
 
     std::unique_ptr<TimerInterface> _requestTimer;
@@ -385,12 +387,14 @@ size_t ConnectionPool::SpecificPool::createdConnections(const stdx::unique_lock<
 size_t ConnectionPool::SpecificPool::openConnections(const stdx::unique_lock<stdx::mutex>& lk) {
     return _checkedOutPool.size() + _readyPool.size() + _processingPool.size();
 }
+//mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和客户端交互:ServiceEntryPointMongos::handleRequest
 
 //ConnectionPool::get中调用
 void ConnectionPool::SpecificPool::getConnection(const HostAndPort& hostAndPort,
                                                  Milliseconds timeout,
                                                  stdx::unique_lock<stdx::mutex> lk,
-                                                 GetConnectionCallback cb) {
+                                                 GetConnectionCallback cb) { //cb赋值见NetworkInterfaceASIO::startCommand
     if (timeout < Milliseconds(0) || timeout > _parent->_options.refreshTimeout) {
         timeout = _parent->_options.refreshTimeout;
     }
@@ -401,8 +405,8 @@ void ConnectionPool::SpecificPool::getConnection(const HostAndPort& hostAndPort,
 
     updateStateInLock();
 
-    spawnConnections(lk); //这里面建链接  cb真正在这里面执行
-    fulfillRequests(lk);
+    spawnConnections(lk);  //这里面建链接 
+    fulfillRequests(lk); // cb真正在这里面执行
 }
 
 void ConnectionPool::SpecificPool::returnConnection(ConnectionInterface* connPtr,
@@ -533,7 +537,7 @@ void ConnectionPool::SpecificPool::addToReady(stdx::unique_lock<stdx::mutex>& lk
         });
     });
 
-    fulfillRequests(lk);
+    fulfillRequests(lk);//链接简历成功后，继续处理客户端请求，例如可能上次的时候没有空闲可用链接，就可以通过这里激活
 }
 
 // Drop connections and fail all requests
@@ -579,6 +583,7 @@ void ConnectionPool::SpecificPool::processFailure(const Status& status,
 
 // fulfills as many outstanding requests as possible
 //ConnectionPool::SpecificPool::getConnection  ConnectionPool::SpecificPool::addToReady中调用
+//从_readyPool链接池获取一个链接后，执行cb回调
 void ConnectionPool::SpecificPool::fulfillRequests(stdx::unique_lock<stdx::mutex>& lk) {
     // If some other thread (possibly this thread) is fulfilling requests,
     // don't keep padding the callstack.
@@ -591,14 +596,14 @@ void ConnectionPool::SpecificPool::fulfillRequests(stdx::unique_lock<stdx::mutex
     while (_requests.size()) {
         // _readyPool is an LRUCache, so its begin() object is the MRU item.
         auto iter = _readyPool.begin();
-
-        if (iter == _readyPool.end())
+//说明_readyPool链接池没有可用链接，直接退出，等有可用链接后，会从ConnectionPool::SpecificPool::addToReady继续调用该函数，获取链接转发数据
+        if (iter == _readyPool.end()) 
             break;
 
         // Grab the connection and cancel its timeout
         auto conn = std::move(iter->second);
         _readyPool.erase(iter);
-        conn->cancelTimeout();
+        conn->cancelTimeout(); //mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
 
         if (!conn->isHealthy()) {
             log() << "dropping unhealthy pooled connection to " << conn->getHostAndPort();
@@ -616,6 +621,7 @@ void ConnectionPool::SpecificPool::fulfillRequests(stdx::unique_lock<stdx::mutex
         }
 
         // Grab the request and callback
+        //cb赋值见NetworkInterfaceASIO::startCommand中的nextStep
         auto cb = std::move(_requests.top().second);
         _requests.pop();
 
@@ -635,8 +641,12 @@ void ConnectionPool::SpecificPool::fulfillRequests(stdx::unique_lock<stdx::mutex
     }
 }
 
+//mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
+//mongos和客户端交互:ServiceEntryPointMongos::handleRequest
+
+
 // spawn enough connections to satisfy open requests and minpool, while
-// honoring maxpool
+// honoring maxpool  mongs建立和后端mongos的链接
 void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mutex>& lk) {
     // If some other thread (possibly this thread) is spawning connections,
     // don't keep padding the callstack.
@@ -678,7 +688,7 @@ void ConnectionPool::SpecificPool::spawnConnections(stdx::unique_lock<stdx::mute
 		//开始键连接 ASIOConnection::setup
         connPtr->setup(
             _parent->_options.refreshTimeout, 
-            //链接简历成功后执行 NetworkInterfaceASIO::AsyncOp::finish
+            //链接建立成功后执行或者后端应答数据后执行，由 NetworkInterfaceASIO::AsyncOp::finish调用
             [this](ConnectionInterface* connPtr, Status status) {
                 connPtr->indicateUsed();
 

@@ -91,6 +91,7 @@ AsyncRequestsSender::~AsyncRequestsSender() {
     }
 }
 
+//×èÈûµÈ´ýºó¶ËÓ¦´ð
 AsyncRequestsSender::Response AsyncRequestsSender::next() {
     invariant(!done());
 
@@ -139,6 +140,7 @@ void AsyncRequestsSender::_cancelPendingRequests() {
     }
 }
 
+//AsyncRequestsSender::next
 boost::optional<AsyncRequestsSender::Response> AsyncRequestsSender::_ready() {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
 

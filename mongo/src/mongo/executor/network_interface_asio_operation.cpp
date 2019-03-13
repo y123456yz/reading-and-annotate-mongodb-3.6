@@ -196,7 +196,7 @@ void NetworkInterfaceASIO::AsyncOp::finish(ResponseStatus&& rs) {
            << redact(rs.isOK() ? rs.data.toString() : rs.status.toString());
 
     // Calling the completion handler may invalidate state in this op, so do it last.
-    _onFinish(rs); //该函数赋值在ASIOConnection::setup 中的_setupCallback
+    _onFinish(rs); //该函数赋值在赋值NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup 中的_setupCallback  
 }
 
 const RemoteCommandRequest& NetworkInterfaceASIO::AsyncOp::request() const {
@@ -231,6 +231,7 @@ BSONObj NetworkInterfaceASIO::AsyncOp::getResponseMetadata() {
     return _responseMetadata;
 }
 
+//恢复AsyncOp类成员的默认值
 void NetworkInterfaceASIO::AsyncOp::reset() {
     // We don't reset owner as it never changes
     _cbHandle = {};

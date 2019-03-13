@@ -126,6 +126,10 @@ Breakpoint 1, mongo::ServiceEntryPointMongos::handleRequest (this=<optimized out
 */
 //mongos和后端mongod交互:mongos和后端mongod的链接处理在NetworkInterfaceASIO::_connect，mongos转发数据到mongod在NetworkInterfaceASIO::_beginCommunication
 //mongos和客户端交互:ServiceEntryPointMongos::handleRequest
+//conn-xx线程处理解析完客户端请求后，在ASIOConnection::setup-> _impl->strand().dispatch中实现连接的过度，后续连接处理由conn-xx线程交接给Network线程
+//conn-xx线程处理解析完客户端请求后，在NetworkInterfaceASIO::startCommand中的op->_strand.post([this, op, getConnectionStartTime]完成数据异步交接，而后数据由Network线程处理
+//后端应答后，conn线程在BatchWriteExec::executeBatch->while (!ars.done()) {}等待后端应答后发送应答给客户端
+
 //ServiceStateMachine::_processMessage
 DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const Message& message) {
     // Release any cached egress connections for client back to pool before destroying
