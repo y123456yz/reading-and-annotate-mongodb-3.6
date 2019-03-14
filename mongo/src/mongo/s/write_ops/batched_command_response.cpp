@@ -419,6 +419,7 @@ bool BatchedCommandResponse::isNModified() const {
     return _isNModifiedSet;
 }
 
+//BatchWriteOp::_incBatchStats
 long long BatchedCommandResponse::getNModified() const {
     if (_isNModifiedSet) {
         return _nModified;
@@ -427,6 +428,7 @@ long long BatchedCommandResponse::getNModified() const {
     }
 }
 
+//BatchWriteOp::buildClientResponse
 void BatchedCommandResponse::setN(long long n) {
     _n = n;
     _isNSet = true;
@@ -440,6 +442,7 @@ bool BatchedCommandResponse::isNSet() const {
     return _isNSet;
 }
 
+//BatchWriteOp::_incBatchStats
 long long BatchedCommandResponse::getN() const {
     if (_isNSet) {
         return _n;
@@ -478,6 +481,7 @@ void BatchedCommandResponse::unsetUpsertDetails() {
     }
 }
 
+//BatchWriteOp::_incBatchStats
 bool BatchedCommandResponse::isUpsertDetailsSet() const {
     return _upsertDetails.get() != NULL;
 }

@@ -91,7 +91,7 @@ AsyncRequestsSender::~AsyncRequestsSender() {
     }
 }
 
-//阻塞等待后端应答
+//阻塞等待后端应答 BatchWriteExec::executeBatch
 AsyncRequestsSender::Response AsyncRequestsSender::next() {
     invariant(!done());
 

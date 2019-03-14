@@ -223,7 +223,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
             //
             // Receive the responses.
             //
-
+			
             while (!ars.done()) { //AsyncRequestsSender::done
                 // Block until a response is available.
                 auto response = ars.next();//AsyncRequestsSender::next
@@ -253,7 +253,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                     continue;
                 }
 
-                const auto shardHost(std::move(*response.shardHostAndPort));
+                const auto shardHost(std::move(*response.shardHostAndPort)); //AsyncRequestsSender::Response::shardHostAndPort
 
                 // Then check if we successfully got a response.
                 Status responseStatus = response.swResponse.getStatus();
@@ -266,15 +266,17 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                         responseStatus = {ErrorCodes::FailedToParse, errMsg};
                     }
                 }
-
+				
                 if (responseStatus.isOK()) {
+					
                     TrackedErrors trackedErrors;
                     trackedErrors.startTracking(ErrorCodes::StaleShardVersion);
-
+					//D SHARDING [conn----yangtest1] Write results received from 172.23.240.29:28018: { ok: 1, n: 1, opTime: { ts: Timestamp(1552560582, 2), t: 12 }, electionId: ObjectId('7fffffff000000000000000c') }
                     LOG(4) << "Write results received from " << shardHost.toString() << ": "
                            << redact(batchedCommandResponse.toString());
 
                     // Dispatch was ok, note response
+                    //BatchWriteOp::noteBatchResponse
                     batchOp.noteBatchResponse(*batch, batchedCommandResponse, &trackedErrors);
 
                     // Note if anything was stale
@@ -295,6 +297,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                                        batchedCommandResponse.isElectionIdSet()
                                            ? batchedCommandResponse.getElectionId()
                                            : OID());
+					
                 } else {
                     // Error occurred dispatching, note it
                     const Status status(responseStatus.code(),
@@ -361,7 +364,10 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         }
     }
 
+	//应答的数据填充到clientResponse这里面,在 ServiceStateMachine::_processMessage(ServiceEntryPointMongos::handleRequest)
+	//返回给客户端
     batchOp.buildClientResponse(clientResponse);
+	
 
     LOG(4) << "Finished execution of write batch"
            << (clientResponse->isErrDetailsSet() ? " with write errors" : "")
