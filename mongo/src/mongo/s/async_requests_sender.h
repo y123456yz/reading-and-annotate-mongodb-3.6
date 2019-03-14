@@ -100,6 +100,7 @@ public:
     /**
      * Defines a response for a request to a remote shard.
      */
+    //²Î¿¼BatchWriteExec::executeBatch
     struct Response {
         // Constructor for a response that was successfully received.
         Response(ShardId shardId, executor::RemoteCommandResponse response, HostAndPort hp);

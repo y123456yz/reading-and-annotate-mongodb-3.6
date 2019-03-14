@@ -515,7 +515,7 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
     return request;
 }
 
-//BatchWriteOp::noteBatchError
+//BatchWriteOp::noteBatchError  BatchWriteExec::executeBatch执行
 void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
                                      const BatchedCommandResponse& response,
                                      TrackedErrors* trackedErrors) {
@@ -535,7 +535,7 @@ void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
     _targeted.erase(&targetedBatch);
 
     // Increment stats for this batch
-    _incBatchStats(response);
+    _incBatchStats(response);//计数
 
     //
     // Assign errors to particular items.
@@ -681,6 +681,7 @@ bool BatchWriteOp::isFinished() {
     return true;
 }
 
+//BatchWriteExec::executeBatch
 void BatchWriteOp::buildClientResponse(BatchedCommandResponse* batchResp) {
     dassert(isFinished());
 
@@ -777,18 +778,19 @@ int BatchWriteOp::numWriteOpsIn(WriteOpState opState) const {
         });
 }
 
+//后端应答后，做统计   BatchWriteOp::noteBatchResponse
 void BatchWriteOp::_incBatchStats(const BatchedCommandResponse& response) {
     const auto batchType = _clientRequest.getBatchType();
 
     if (batchType == BatchedCommandRequest::BatchType_Insert) {
-        _numInserted += response.getN();
+        _numInserted += response.getN(); //BatchedCommandResponse::getN
     } else if (batchType == BatchedCommandRequest::BatchType_Update) {
         int numUpserted = 0;
-        if (response.isUpsertDetailsSet()) {
+        if (response.isUpsertDetailsSet()) { //BatchedCommandResponse::isUpsertDetailsSet
             numUpserted = response.sizeUpsertDetails();
         }
         _numMatched += (response.getN() - numUpserted);
-        long long numModified = response.getNModified();
+        long long numModified = response.getNModified();//BatchedCommandResponse::getNModified
 
         if (numModified >= 0)
             _numModified += numModified;
