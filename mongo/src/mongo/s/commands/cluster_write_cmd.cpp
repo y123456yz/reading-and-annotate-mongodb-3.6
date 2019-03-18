@@ -197,7 +197,7 @@ public:
     }
 
 	//Command::publicRunÖÐµ÷ÓÃ
-    bool enhancedRun(OperationContext* opCtx,
+    bool enhancedRun(OperationContext* opCtx, //ClusterWriteCmd::enhancedRun
                      const OpMsgRequest& request,
                      BSONObjBuilder& result) final {
         const auto batchedRequest(parseRequest(_writeType, request));

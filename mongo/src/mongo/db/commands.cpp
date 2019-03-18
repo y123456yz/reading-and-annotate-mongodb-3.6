@@ -365,7 +365,7 @@ bool Command::publicRun(OperationContext* opCtx,
 		//mongod(WriteCommand::enhancedRun(insert  delete update))
 		//其他命令BasicCommand::enhancedRun  
 		//mongos (ClusterWriteCmd::enhancedRun) 不同命令对应不同接口
-		//
+		
 		return enhancedRun(opCtx, request, result); //BasicCommand::enhancedRun
     } catch (const DBException& e) {
         if (e.code() == ErrorCodes::Unauthorized) {
@@ -429,7 +429,9 @@ bool BasicCommand::enhancedRun(OperationContext* opCtx,
                                const OpMsgRequest& request,
                                BSONObjBuilder& result) {
     uassertNoDocumentSequences(request);
-	//ErrmsgCommandDeprecated::run   FindCmd::run
+	//ErrmsgCommandDeprecated::run   FindCmd::run  
+	//getMore命令mongos对应ClusterGetMoreCmd::run  mongod对应GetMoreCmd::run
+	//mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
     return run(opCtx, request.getDatabase().toString(), request.body, result);
 }
 

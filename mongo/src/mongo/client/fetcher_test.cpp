@@ -44,6 +44,7 @@ using namespace mongo;
 using executor::NetworkInterfaceMock;
 using executor::TaskExecutor;
 
+// //里面包含状态 时延 msg等
 using ResponseStatus = TaskExecutor::ResponseStatus;
 
 const HostAndPort source("localhost", -1);

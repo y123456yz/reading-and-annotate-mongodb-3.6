@@ -558,7 +558,7 @@ private:
 /**
  * A subclass of Command that only cares about the BSONObj body and doesn't need access to document
  * sequences.
- */ //ErrmsgCommandDeprecated继承该类  AddShardCmd() : BasicCommand("addShard", "addshard") {}也继承该类
+ */ //ErrmsgCommandDeprecated  CmdServerStatus等继承该类  AddShardCmd() : BasicCommand("addShard", "addshard") {}也继承该类
 class BasicCommand : public Command {
 public:
     using Command::Command;

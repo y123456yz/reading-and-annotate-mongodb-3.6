@@ -43,7 +43,7 @@ namespace connection_pool_asio {
 
 /**
  * Implements connection pool timers on top of asio
- */
+ */ ////ASIOConnection._timer
 class ASIOTimer final : public ConnectionPool::TimerInterface {
 public:
     using clock_type = asio::system_timer::clock_type;
@@ -110,6 +110,7 @@ private:
     Status _status = ConnectionPool::kConnectionStateUnknown;
     HostAndPort _hostAndPort;
     size_t _generation;
+    //ASIOConnection::ASIOConnection
     std::unique_ptr<NetworkInterfaceASIO::AsyncOp> _impl;
     //ASIOConnection::setTimeout和ASIOConnection::cancelTimeout对应
     //mongos到mongod的空闲链接在指定时间内如果没有请求，会cancel删除
@@ -119,6 +120,7 @@ private:
 /**
  * Implementions connection pool implementation for asio
  */
+//ASIOConnection._global
 class ASIOImpl final : public ConnectionPool::DependentTypeFactoryInterface {
     friend class ASIOConnection;
 

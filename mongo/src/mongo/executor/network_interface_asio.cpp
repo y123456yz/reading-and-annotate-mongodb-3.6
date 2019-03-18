@@ -373,7 +373,7 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
 	//[conn----yangtest2] startCommand: RemoteCommand   conn线程准备转发客户端请求数据给networker线程处理
     LOG(2) << "startCommand: " << redact(request.toString());
 
-    auto getConnectionStartTime = now();
+    auto getConnectionStartTime = now(); //处理客户端请求开始时间(这时候报文已经解析了，准备转发到后端)
 
     auto statusMetadata = attachMetadataIfNeeded(request, _metadataHook.get());
     if (!statusMetadata.isOK()) {
@@ -453,11 +453,13 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
         // not until we release the inProgressMutex.
         _inProgress.emplace(op, std::move(ownedOp));
 
+		//后后端mongod链接建立成功后会重新赋值以下成员
         op->_cbHandle = std::move(cbHandle);
         op->_request = std::move(request);
         op->_onFinish = std::move(onFinish);
-        op->_connectionPoolHandle = std::move(swConn.getValue());
-        op->startProgress(getConnectionStartTime);
+        op->_connectionPoolHandle = std::move(swConn.getValue()); //对应的后端链接
+		//NetworkInterfaceASIO::AsyncOp::startProgress
+        op->startProgress(getConnectionStartTime); 	//把这个时间记录下来
 
         // This ditches the lock and gets us onto the strand (so we're
         // threadsafe)
@@ -471,7 +473,7 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
                 // Subtract the time it took to get the connection from the pool from the request
                 // timeout.
                 auto getConnectionDuration = now() - getConnectionStartTime;
-                if (getConnectionDuration >= timeout) {
+                if (getConnectionDuration >= timeout) { //链接超时
                     // We only assume that the request timer is guaranteed to fire *after* the
                     // timeout duration - but make no stronger assumption. It is thus possible that
                     // we have already exceeded the timeout. In this case we timeout the operation

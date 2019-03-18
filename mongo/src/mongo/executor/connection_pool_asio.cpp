@@ -127,7 +127,7 @@ ASIOConnection::ASIOConnection(const HostAndPort& hostAndPort, size_t generation
     : _global(global),
       _hostAndPort(hostAndPort),
       _generation(generation),
-      _impl(makeAsyncOp(this)), //ASIOConnection::makeAsyncOp
+      _impl(makeAsyncOp(this)), //ASIOConnection::makeAsyncOp   ASIOConnection::_impl
       _timer(&_impl->strand()) {}
 
 ASIOConnection::~ASIOConnection() {
@@ -173,8 +173,9 @@ size_t ASIOConnection::getGeneration() const {
     return _generation;
 }
 
-//ASIOConnection::ASIOConnection
+//ASIOConnection::ASIOConnection  
 std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::makeAsyncOp(ASIOConnection* conn) {
+	//NetworkInterfaceASIO::AsyncOp::AsyncOp
     return stdx::make_unique<NetworkInterfaceASIO::AsyncOp>(
         conn->_global->_impl,
         TaskExecutor::CallbackHandle(),
@@ -189,7 +190,8 @@ std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::makeAsyncOp(ASIOC
             auto cb = std::move(conn->_setupCallback);
             cb(conn, rs.status);
         },
-        conn->_global->now());
+        //ASIOConnection::_global
+        conn->_global->now()); //当前时间 ASIOImpl::now   
 }
 
 Message ASIOConnection::makeIsMasterRequest(ASIOConnection* conn) {
@@ -218,6 +220,7 @@ void ASIOConnection::setup(Milliseconds timeout, SetupCallback cb) {
 	log() << "yang test ......... ASIOConnection::setup";
 
 	//这里dispatch的任务在NetworkInterfaceASIO::startup-> _io_service.run中由Network线程执行
+	//_impl类型为NetworkInterfaceASIO::AsyncOp
     _impl->strand().dispatch([this, timeout, cb] {
     	//_setupCallback在ASIOConnection::makeAsyncOp中赋值给finish，真正执行在NetworkInterfaceASIO::_completeOperation -> op->finish()
         _setupCallback = [this, cb](ConnectionInterface* ptr, Status status) {//配合ASIOConnection::makeAsyncOp阅读
@@ -323,6 +326,8 @@ void ASIOConnection::refresh(Milliseconds timeout, RefreshCallback cb) {
     });
 }
 
+//也就是ASIOConnection::makeAsyncOp构造的_impl  参考ASIOConnection::ASIOConnection
+//NetworkInterfaceASIO::startCommand中调用获取_impl后，会对成员重新赋值
 std::unique_ptr<NetworkInterfaceASIO::AsyncOp> ASIOConnection::releaseAsyncOp() {
     {
         stdx::lock_guard<stdx::mutex> lk(_impl->_access->mutex);
@@ -338,6 +343,7 @@ void ASIOConnection::bindAsyncOp(std::unique_ptr<NetworkInterfaceASIO::AsyncOp> 
 
 ASIOImpl::ASIOImpl(NetworkInterfaceASIO* impl) : _impl(impl) {}
 
+//ASIOConnection::makeAsyncOp
 Date_t ASIOImpl::now() {
     return _impl->now();
 }

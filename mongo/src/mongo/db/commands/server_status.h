@@ -38,6 +38,8 @@
 
 namespace mongo {
 
+//OpCounterServerStatusSection  LogicalSessionSSS 等继承该类
+//每个该类结构，代表db.serverStatus()下面的各个子项名称
 class ServerStatusSection {
 public:
     ServerStatusSection(const std::string& sectionName);
@@ -105,7 +107,7 @@ public:
     }
 
 private:
-    const std::string _sectionName;
+    const std::string _sectionName; //代表db.serverStatus()下面的各个子项名称
 };
 
 class OpCounterServerStatusSection : public ServerStatusSection {
@@ -119,6 +121,7 @@ public:
                                     const BSONElement& configElement) const;
 
 private:
+    //见globalOpCounterServerStatusSection
     const OpCounters* _counters;
 };
 }

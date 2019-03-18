@@ -147,10 +147,10 @@ public:
         if (oldThreadName != _ssm->_threadName) {
 			//记录下之前的线程名
             _ssm->_oldThreadName = getThreadName().toString();
-			log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
+			//log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
             setThreadName(_ssm->_threadName);
 			//sleep(60);
-			log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
+			//log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
         }
 
         // Swap the current Client so calls to cc() work as expected

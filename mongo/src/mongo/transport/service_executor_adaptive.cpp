@@ -77,6 +77,7 @@ MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorIdlePctThreshold, int, 60);
 // value.
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRecursionLimit, int, 8);
 
+//db.serverStatus().network获取
 constexpr auto kTotalQueued = "totalQueued"_sd;
 constexpr auto kTotalExecuted = "totalExecuted"_sd;
 constexpr auto kTasksQueued = "tasksQueued"_sd;
@@ -567,7 +568,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
     }
 }
 
-//db.serverStatus().network.serviceExecutorTaskStats
+//db.serverStatus().network.serviceExecutorTaskStats  //db.serverStatus().network获取
 void ServiceExecutorAdaptive::appendStats(BSONObjBuilder* bob) const {
 	//下面的第一列是名,第二列是对应的值，如"totalTimeRunningMicros" : NumberLong("69222621699"),
     BSONObjBuilder section(bob->subobjStart("serviceExecutorTaskStats"));
