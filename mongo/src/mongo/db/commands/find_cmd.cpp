@@ -243,6 +243,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
 	Plan如果只关联到单个或零个索引，这只生成一个执行计划，如果发现有多个索引或者索引有重叠，这可能生成多个执行计划。
 	Optimizer只在多个执行计划时，才会介入。
 	*/
+	//mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
 	//也就是FindCmd::run，查询请求会走这里    查询过程可以参考https://yq.aliyun.com/articles/215016
     bool run(OperationContext* opCtx,  
              const std::string& dbname,

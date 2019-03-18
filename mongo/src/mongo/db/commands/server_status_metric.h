@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+//可以参考class MemBase : public ServerStatusMetric {}类
 class ServerStatusMetric {
 public:
     /**

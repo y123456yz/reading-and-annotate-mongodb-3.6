@@ -210,6 +210,7 @@ ServerStatusSection::ServerStatusSection(const string& sectionName) : _sectionNa
     CmdServerStatusInstantiator::getInstance().addSection(this);
 }
 
+//见//见globalOpCounterServerStatusSection
 OpCounterServerStatusSection::OpCounterServerStatusSection(const string& sectionName,
                                                            OpCounters* counters)
     : ServerStatusSection(sectionName), _counters(counters) {}
@@ -225,7 +226,7 @@ OpCounterServerStatusSection globalOpCounterServerStatusSection("opcounters", &g
 namespace {
 
 // some universal sections
-
+//db.serverStatus().connections
 class Connections : public ServerStatusSection {
 public:
     Connections() : ServerStatusSection("connections") {}
@@ -248,6 +249,7 @@ public:
 
 } connections;
 
+//db.serverStatus().extra_info
 class ExtraInfo : public ServerStatusSection {
 public:
     ExtraInfo() : ServerStatusSection("extra_info") {}
@@ -287,7 +289,7 @@ public:
 
 } asserts;
 
-
+//db.serverStatus().network
 class Network : public ServerStatusSection {
 public:
     Network() : ServerStatusSection("network") {}
@@ -297,7 +299,7 @@ public:
 
     BSONObj generateSection(OperationContext* opCtx, const BSONElement& configElement) const {
         BSONObjBuilder b;
-        networkCounter.append(b);
+        networkCounter.append(b); //NetworkCounter::append
         appendMessageCompressionStats(&b);
         auto executor = opCtx->getServiceContext()->getServiceExecutor();
         if (executor)
@@ -326,7 +328,7 @@ public:
     }
 } security;
 #endif
-
+//db.serverStatus().mem.bits获取
 class MemBase : public ServerStatusMetric {
 public:
     MemBase() : ServerStatusMetric(".mem.bits") {}

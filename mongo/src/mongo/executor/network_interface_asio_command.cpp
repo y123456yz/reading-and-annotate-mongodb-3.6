@@ -269,6 +269,7 @@ void NetworkInterfaceASIO::_beginCommunication(AsyncOp* op) {
     if (op->_inSetup) { //链接后端mongod成功，这里提示
         auto host = op->request().target;
         auto getConnectionDuration = now() - op->start();
+		//建链接消耗的时间
         log() << "Successfully connected to " << host << ", took " << getConnectionDuration << " ("
               << _connectionPool.getNumConnectionsPerHost(host) << " connections now open to "
               << host << ")";

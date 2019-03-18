@@ -403,6 +403,7 @@ public:
             return appendCommandStatus(result, parsedRequest.getStatus());
         }
         auto request = parsedRequest.getValue();
+	
         return runParsed(opCtx, request.nss, request, cmdObj, result);
     }
 

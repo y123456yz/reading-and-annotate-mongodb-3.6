@@ -44,7 +44,8 @@ namespace {
  * corresponding to the cursor id passed from the application. In order to generate these results,
  * may issue getMore commands to remote nodes in one or more shards.
  */
-class ClusterGetMoreCmd final : public BasicCommand {
+//class ClusterGetMoreCmd final : public BasicCommand { yang add change
+class ClusterGetMoreCmd : public BasicCommand {
     MONGO_DISALLOW_COPYING(ClusterGetMoreCmd);
 
 public:
@@ -91,6 +92,11 @@ public:
             request.nss, request.cursorid, request.term.is_initialized());
     }
 
+	//服务端默认一次性会推送好几十条数据给shell,敲it后数据不够，就会Getmore
+	//getMore客户端mongo shell模拟过程，DBQuery.shellBatchSize = 100; db.sbtest2.find(); it;
+	//mongos ClusterGetMoreCmd::run
+
+	//Command::publicRun中执行
     bool run(OperationContext* opCtx,
              const std::string& dbname,
              const BSONObj& cmdObj,

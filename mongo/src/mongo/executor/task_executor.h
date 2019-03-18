@@ -80,6 +80,7 @@ public:
     class EventState;
     class EventHandle;
 
+    //里面包含状态 时延 msg等
     using ResponseStatus = RemoteCommandResponse;
 
     /**
@@ -419,7 +420,7 @@ struct TaskExecutor::CallbackArgs {
 
 /**
  * Argument passed to all remote command callbacks scheduled via a TaskExecutor.
- */
+ */ //构造见remoteCommandFinished
 struct TaskExecutor::RemoteCommandCallbackArgs {
     RemoteCommandCallbackArgs(TaskExecutor* theExecutor,
                               const CallbackHandle& theHandle,

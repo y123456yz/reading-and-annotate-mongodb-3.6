@@ -93,5 +93,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .NetworkInterfaceASIO(_getDiagnosticString_inlock)统计过程分析  
     .BatchWriteOp::_incBatchStats mongo后端应答，conn-xx线程收到应答后的统计  
     .conn-xx线程处理应答发送给客户端过程分析  
+    .和后端开始建立链接时候的AsyncOp，以及建立连接成功后的AsyncOp赋值过程分析  
+    .OpCounter计算过程、CmdServerStatus分析  
 
 

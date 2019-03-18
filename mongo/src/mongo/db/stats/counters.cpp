@@ -44,12 +44,14 @@ using std::endl;
 OpCounters::OpCounters() {}
 
 //insertBatchAndHandleErrors中执行
+//mongos统计在//ClusterWriteCmd::publicRun中调用
 void OpCounters::gotInserts(int n) {
     RARELY _checkWrap();
     _insert.fetchAndAdd(n);
 }
 
 //performInserts  insertBatchAndHandleErrors中调用
+//mongos统计在 ClusterWriteCmd::enhancedRun中调用
 void OpCounters::gotInsert() {
     RARELY _checkWrap();
     _insert.fetchAndAdd(1);
@@ -60,16 +62,19 @@ void OpCounters::gotQuery() {
     _query.fetchAndAdd(1);
 }
 
+//mongos统计在//ClusterWriteCmd::enhancedRun中调用
 void OpCounters::gotUpdate() {
     RARELY _checkWrap();
     _update.fetchAndAdd(1);
 }
 
+//mongos统计在//ClusterWriteCmd::enhancedRun中调用
 void OpCounters::gotDelete() {
     RARELY _checkWrap();
     _delete.fetchAndAdd(1);
 }
 
+//mongos  ClusterGetMoreCmd::run   Strategy::getMore
 void OpCounters::gotGetMore() {
     RARELY _checkWrap();
     _getmore.fetchAndAdd(1);
@@ -127,8 +132,11 @@ void OpCounters::_checkWrap() {
     }
 }
 
+//对应db.serverStatus().opcounters
 BSONObj OpCounters::getObj() const {
     BSONObjBuilder b;
+	//[ftdc] yang test ............... OpCounters::getObj
+	//log() << "yang test ............... OpCounters::getObj";
     b.append("insert", _insert.loadRelaxed());
     b.append("query", _query.loadRelaxed());
     b.append("update", _update.loadRelaxed());
@@ -195,6 +203,7 @@ void NetworkCounter::hitLogicalOut(long long bytes) {
     }
 }
 
+//对应db.serverStatus().network   class Network : public ServerStatusSection {)中调用
 void NetworkCounter::append(BSONObjBuilder& b) {
     b.append("bytesIn", static_cast<long long>(_together.logicalBytesIn.loadRelaxed()));
     b.append("bytesOut", static_cast<long long>(_logicalBytesOut.loadRelaxed()));
@@ -204,7 +213,9 @@ void NetworkCounter::append(BSONObjBuilder& b) {
 }
 
 
+//赋值给OpCounterServerStatusSection._counters，见globalOpCounterServerStatusSection
 OpCounters globalOpCounters;
 OpCounters replOpCounters;
+//见class Network : public ServerStatusSection
 NetworkCounter networkCounter;
 }

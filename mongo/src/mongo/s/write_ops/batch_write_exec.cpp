@@ -85,6 +85,7 @@ const int kMaxRoundsWithoutProgress(5);
 void BatchWriteExec::executeBatch(OperationContext* opCtx,
                                   NSTargeter& targeter, //ChunkManagerTargeter
                                   const BatchedCommandRequest& clientRequest,
+//应答的数据填充到clientResponse这里面,在 ServiceStateMachine::_processMessage(ServiceEntryPointMongos::handleRequest)//返回给客户端
                                   BatchedCommandResponse* clientResponse,
                                   BatchWriteExecStats* stats) {
     const auto& nss(clientRequest.getNS());
@@ -276,7 +277,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                            << redact(batchedCommandResponse.toString());
 
                     // Dispatch was ok, note response
-                    //BatchWriteOp::noteBatchResponse
+                    //BatchWriteOp::noteBatchResponse  这里面有一些统计信息
                     batchOp.noteBatchResponse(*batch, batchedCommandResponse, &trackedErrors);
 
                     // Note if anything was stale

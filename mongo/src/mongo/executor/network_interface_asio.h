@@ -359,7 +359,8 @@ private:
         // via a call to startCommand().
         TaskExecutor::CallbackHandle _cbHandle;
         RemoteCommandRequest _request;
-        //该函数赋值在赋值NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup 中的_setupCallback  
+        //该函数赋值在赋值(开始键连接的时候)NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup(对应到后端mongod的) 中的_setupCallback  
+        //链接建立成功后，会重新赋值，见NetworkInterfaceASIO::startCommand(对应到客户端的)中也会赋值
         RemoteCommandCompletionFn _onFinish;
 
         // AsyncOp's have a handle to their connection pool handle. They are

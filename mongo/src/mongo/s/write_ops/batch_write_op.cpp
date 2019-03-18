@@ -535,7 +535,7 @@ void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
     _targeted.erase(&targetedBatch);
 
     // Increment stats for this batch
-    _incBatchStats(response);//计数
+    _incBatchStats(response);//计数统计
 
     //
     // Assign errors to particular items.
@@ -789,7 +789,7 @@ void BatchWriteOp::_incBatchStats(const BatchedCommandResponse& response) {
         if (response.isUpsertDetailsSet()) { //BatchedCommandResponse::isUpsertDetailsSet
             numUpserted = response.sizeUpsertDetails();
         }
-        _numMatched += (response.getN() - numUpserted);
+        _numMatched += (response.getN() - numUpserted); //update成功，也就是确实有某条满足条件的数据，并且做了更新
         long long numModified = response.getNModified();//BatchedCommandResponse::getNModified
 
         if (numModified >= 0)

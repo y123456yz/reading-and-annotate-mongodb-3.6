@@ -479,7 +479,7 @@ DbResponse Strategy::getMore(OperationContext* opCtx, const NamespaceString& nss
     uassert(
         34424, str::stream() << "Invalid ntoreturn for OP_GET_MORE: " << ntoreturn, ntoreturn >= 0);
     const long long cursorId = dbm->pullInt64();
-
+	
     globalOpCounters.gotGetMore(); //getMore²Ù×÷¼ÆÊý
 
     // TODO: Handle stale config exceptions here from coll being dropped or sharded during op for

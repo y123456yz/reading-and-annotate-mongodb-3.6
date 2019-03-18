@@ -367,7 +367,7 @@ using ResponseStatus = TaskExecutor::ResponseStatus;
 // convert the raw Status in cbData to a RemoteCommandResponse so that the callback,
 // which expects a RemoteCommandResponse as part of RemoteCommandCallbackArgs,
 // can be run despite a RemoteCommandResponse never having been created.
-//NetworkInterfaceThreadPool::consumeTasks中执行
+//NetworkInterfaceThreadPool::consumeTasks中执行  赋值见ThreadPoolTaskExecutor::scheduleRemoteCommand
 void remoteCommandFinished(const TaskExecutor::CallbackArgs& cbData,
                            const TaskExecutor::RemoteCommandCallbackFn& cb,
                            const RemoteCommandRequest& request,
@@ -505,8 +505,8 @@ StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteC
             cbHandle.getValue(),
             scheduledRequest,
             //后端应答后会调用该函数，真正执行在NetworkInterfaceASIO::AsyncOp::finish
-            //链接异常执行在NetworkInterfaceASIO::startCommand
-            [this, scheduledRequest, cbState, cb](const ResponseStatus& response) {
+            //赋值给NetworkInterfaceASIO::startCommand，后端应答数据后会调用
+            [this, scheduledRequest, cbState, cb](const ResponseStatus& response) { //response里面包含状态 时延 msg等
                 using std::swap;
                 CallbackFn newCb = [cb, scheduledRequest, response](const CallbackArgs& cbData) {
                     remoteCommandFinished(cbData, cb, scheduledRequest, response);
@@ -515,6 +515,14 @@ StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteC
                 if (_inShutdown_inlock()) {
                     return;
                 }
+				/*
+				D EXECUTOR [NetworkInterfaceASIO-TaskExecutorPool-yang-0-0] Received remote response: RemoteResponse --  
+				cmd:{ n: 1, opTime: { ts: Timestamp(1552619801, 1), t: 13 }, electionId: ObjectId('7fffffff000000000000000d'), 
+				ok: 1.0, operationTime: Timestamp(1552619801, 1), $gleStats: { lastOpTime: { ts: Timestamp(1552619801, 1), 
+				t: 13 }, electionId: ObjectId('7fffffff000000000000000d') }, $clusterTime: { clusterTime: Timestamp(1552619801,
+				1), signature: { hash: BinData(0, 0000000000000000000000000000000000000000), keyId: 0 } }, $configServerState:
+				{ opTime: { ts: Timestamp(1552619796, 1), t: 9 } } }
+				*/
                 LOG(3) << "Received remote response: "
                        << redact(response.isOK() ? response.toString()
                                                  : response.status.toString());

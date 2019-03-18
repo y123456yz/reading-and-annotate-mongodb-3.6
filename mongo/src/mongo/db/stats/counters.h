@@ -42,7 +42,7 @@ namespace mongo {
 /**
  * for storing operation counters
  * note: not thread safe.  ok with that for speed
- */
+ */ //全局变量OpCounters globalOpCounters;  OpCounters replOpCounters;
 class OpCounters {
 public:
     OpCounters();
@@ -93,6 +93,7 @@ private:
 extern OpCounters globalOpCounters;
 extern OpCounters replOpCounters;
 
+//全局变量NetworkCounter networkCounter;
 class NetworkCounter {
 public:
     // Increment the counters for the number of bytes read directly off the wire

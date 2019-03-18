@@ -66,6 +66,9 @@ AtomicUInt64 kAsyncOpIdCounter(0);
 const NetworkInterfaceASIO::TableRow NetworkInterfaceASIO::AsyncOp::kFieldLabels = {
     "", "id", "states", "start_time", "request"};
 
+//该函数赋值在赋值(开始键连接的时候)NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup(对应到后端mongod的) 中的_setupCallback  
+//链接建立成功后，会重新赋值，见NetworkInterfaceASIO::startCommand(对应到客户端的)中也会赋值
+
 //ASIOConnection::makeAsyncOp
 NetworkInterfaceASIO::AsyncOp::AsyncOp(NetworkInterfaceASIO* const owner,
                                        const TaskExecutor::CallbackHandle& cbHandle,
@@ -76,7 +79,7 @@ NetworkInterfaceASIO::AsyncOp::AsyncOp(NetworkInterfaceASIO* const owner,
       _cbHandle(cbHandle),
       _request(request),
       _onFinish(onFinish),
-      _start(now),
+      _start(now),  //开始进行转发的时间点
       _resolver(owner->_io_service),
       _id(kAsyncOpIdCounter.addAndFetch(1)),
       _access(std::make_shared<AsyncOp::AccessControl>()),
@@ -196,19 +199,24 @@ void NetworkInterfaceASIO::AsyncOp::finish(ResponseStatus&& rs) {
            << redact(rs.isOK() ? rs.data.toString() : rs.status.toString());
 
     // Calling the completion handler may invalidate state in this op, so do it last.
-    _onFinish(rs); //该函数赋值在赋值NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup 中的_setupCallback  
+    //该函数赋值在赋值(开始键连接的时候)NetworkInterfaceASIO::AsyncOp::AsyncOp，函数对应ASIOConnection::setup(对应到后端mongod的) 中的_setupCallback  
+    //链接建立成功后，会重新赋值，见NetworkInterfaceASIO::startCommand(对应到客户端的)中也会赋值
+    _onFinish(rs); 
 }
 
 const RemoteCommandRequest& NetworkInterfaceASIO::AsyncOp::request() const {
     return _request;
 }
 
+//NetworkInterfaceASIO::startCommand中调用
 void NetworkInterfaceASIO::AsyncOp::startProgress(Date_t startTime) {
+	//conn线程报文解析成功开始向后端建链的时间，可以理解为开始转发的时间
     _start = startTime;
     // We never hold the access lock when we call startProgress from NetworkInterfaceASIO.
     _transitionToState(AsyncOp::State::kInProgress);
 }
 
+//_validateAndRun  NetworkInterfaceASIO::_beginCommunication中调用
 Date_t NetworkInterfaceASIO::AsyncOp::start() const {
     return _start;
 }

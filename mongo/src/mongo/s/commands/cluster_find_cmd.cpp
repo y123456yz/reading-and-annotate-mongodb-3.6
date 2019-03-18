@@ -149,6 +149,7 @@ public:
         return result;
     }
 
+	//mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
     bool run(OperationContext* opCtx,
              const std::string& dbname,
              const BSONObj& cmdObj,
