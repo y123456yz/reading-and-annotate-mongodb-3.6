@@ -181,7 +181,7 @@ void execCommandClient(OperationContext* opCtx,
         return;
     }
 
-    c->incrementCommandsExecuted(); //改名了的执行次数自增
+    c->incrementCommandsExecuted(); //该命令的执行次数自增
 
     if (c->shouldAffectCommandCounter()) {
         globalOpCounters.gotCommand();
@@ -265,6 +265,7 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
     while (true) {
         builder.resetToEmpty();
         try {
+			LOG(2) << "yang test   run command " << request.getDatabase() << ".$cmd" << ' '  << command->getRedactedCopyForLogging(request.body) << ' ' << request.getCommandName();
             execCommandClient(opCtx, command, request, builder); //执行命令
             return;
         } catch (const StaleConfigException& e) {
@@ -407,7 +408,7 @@ DbResponse Strategy::clientCommand(OperationContext* opCtx, const Message& m) {
         std::string db;
         try {  // Parse.
             request = rpc::opMsgRequestFromAnyProtocol(m);
-            db = request.getDatabase().toString();
+            db = request.getDatabase().toString(); //OpMsgRequest::getDatabase
         } catch (const DBException& ex) {
             // If this error needs to fail the connection, propagate it out.
             if (ErrorCodes::isConnectionFatalMessageParseError(ex.code()))
@@ -425,7 +426,7 @@ DbResponse Strategy::clientCommand(OperationContext* opCtx, const Message& m) {
         try {  // Execute.
             LOG(3) << "Command begin db: " << db << " msg id: " << m.header().getId();
             runCommand(opCtx, request, reply->getInPlaceReplyBuilder(0));
-            LOG(3) << "Command end db: " << db << " msg id: " << m.header().getId();
+			LOG(3) << "Command end db: " << db << " msg id: " << m.header().getId();
         } catch (const DBException& ex) {
             LOG(1) << "Exception thrown while processing command on " << db
                    << " msg id: " << m.header().getId() << causedBy(redact(ex));

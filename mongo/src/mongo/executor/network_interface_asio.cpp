@@ -371,7 +371,7 @@ Status NetworkInterfaceASIO::startCommand(const TaskExecutor::CallbackHandle& cb
     }
 
 	//[conn----yangtest2] startCommand: RemoteCommand   conn线程准备转发客户端请求数据给networker线程处理
-    LOG(2) << "startCommand: " << redact(request.toString());
+    LOG(2) << "startCommand: " << redact(request.toString()); //RemoteCommandRequest::toString
 
     auto getConnectionStartTime = now(); //处理客户端请求开始时间(这时候报文已经解析了，准备转发到后端)
 

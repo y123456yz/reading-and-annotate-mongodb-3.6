@@ -219,6 +219,7 @@ void trackErrors(const ShardEndpoint& endpoint,
 
 }  // namespace
 
+//BatchWriteExec::executeBatch
 BatchWriteOp::BatchWriteOp(OperationContext* opCtx, const BatchedCommandRequest& clientRequest)
     : _opCtx(opCtx), _clientRequest(clientRequest), _batchTxnNum(_opCtx->getTxnNumber()) {
     _writeOps.reserve(_clientRequest.sizeWriteOps());
@@ -417,6 +418,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
     return Status::OK();
 }
 
+//BatchWriteExec::executeBatch
 BatchedCommandRequest BatchWriteOp::buildBatchRequest(
     const TargetedWriteBatch& targetedBatch) const {
     const auto batchType = _clientRequest.getBatchType();

@@ -52,6 +52,7 @@ std::string redact(const BSONObj& objectToRedact) {
     return objectToRedact.toString(true);
 }
 
+//¿ÉÒÔ²Î¿¼NetworkInterfaceASIO::startCommand
 StringData redact(StringData stringToRedact) {
     if (!logger::globalLogDomain()->shouldRedactLogs()) {
         return stringToRedact;

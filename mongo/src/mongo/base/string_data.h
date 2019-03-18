@@ -55,7 +55,7 @@ namespace mongo {
  *
  *  + Because std::string data can be used to pass a substring around, one should never assume a
  *    rawData() terminates with a null.
- */
+ */ //StringData打印可以参考NetworkInterfaceASIO::startCommand
 class StringData {
     struct TrustedInitTag {};
     constexpr StringData(const char* c, size_t len, TrustedInitTag) : _data(c), _size(len) {}

@@ -88,6 +88,7 @@ struct RemoteCommandRequest {
     HostAndPort target;
     std::string dbname;
     BSONObj metadata{rpc::makeEmptyMetadata()};
+    //客户端请求的详细信息存放在这里，参考RemoteCommandRequest::toString
     BSONObj cmdObj;
 
     // OperationContext is added to each request to allow OP_Command metadata attachment access to

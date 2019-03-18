@@ -80,6 +80,7 @@ RemoteCommandRequest::RemoteCommandRequest(const HostAndPort& theTarget,
                            opCtx,
                            timeoutMillis) {}
 
+//NetworkInterfaceASIO::startCommandµ÷ÓÃ
 std::string RemoteCommandRequest::toString() const {
     str::stream out;
     out << "RemoteCommand " << id << " -- target:" << target.toString() << " db:" << dbname;
