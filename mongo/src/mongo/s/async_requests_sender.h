@@ -91,10 +91,10 @@ public:
         Request(ShardId shardId, BSONObj cmdObj);
 
         // ShardId of the shard to which the command will be sent.
-        const ShardId shardId;
+        const ShardId shardId; //给那个分片
 
         // The command object to send to the remote host.
-        const BSONObj cmdObj;
+        const BSONObj cmdObj; //请求内容
     };
 
     /**

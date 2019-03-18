@@ -45,14 +45,17 @@ class BatchedCommandRequest {
 public:
     enum BatchType { BatchType_Insert, BatchType_Update, BatchType_Delete };
 
+    //构造使用见BatchWriteOp::buildBatchRequest
     BatchedCommandRequest(write_ops::Insert insertOp)
         : _batchType(BatchType_Insert),
           _insertReq(stdx::make_unique<write_ops::Insert>(std::move(insertOp))) {}
 
+    //构造使用见BatchWriteOp::buildBatchRequest
     BatchedCommandRequest(write_ops::Update updateOp)
         : _batchType(BatchType_Update),
           _updateReq(stdx::make_unique<write_ops::Update>(std::move(updateOp))) {}
 
+    //构造使用见BatchWriteOp::buildBatchRequest
     BatchedCommandRequest(write_ops::Delete deleteOp)
         : _batchType(BatchType_Delete),
           _deleteReq(stdx::make_unique<write_ops::Delete>(std::move(deleteOp))) {}
@@ -133,8 +136,10 @@ public:
     static BatchedCommandRequest cloneInsertWithIds(BatchedCommandRequest origCmdRequest);
 
 private:
+    //操作类型
     BatchType _batchType;
 
+    //参考BatchWriteOp::buildBatchRequest
     std::unique_ptr<write_ops::Insert> _insertReq;
     std::unique_ptr<write_ops::Update> _updateReq;
     std::unique_ptr<write_ops::Delete> _deleteReq;
