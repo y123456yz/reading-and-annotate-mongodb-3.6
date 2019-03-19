@@ -37,9 +37,10 @@ namespace {
 
 const auto kWriteConcern = "writeConcern"_sd;
 
+//²Î¿¼BatchedCommandRequest::parseInsert   BatchedCommandRequest::parseUpdate  BatchedCommandRequest::parseDelete
 template <class T>
 BatchedCommandRequest constructBatchedCommandRequest(const OpMsgRequest& request) {
-    auto batchRequest = BatchedCommandRequest{T::parse(request)};
+    auto batchRequest = BatchedCommandRequest{T::parse(request)}; //InsertOp::parse  UpdateOp::parse  DeleteOp::parse
 
     auto chunkVersion = ChunkVersion::parseFromBSONForCommands(request.body);
     if (chunkVersion != ErrorCodes::NoSuchKey) {

@@ -40,22 +40,26 @@ namespace mongo {
 /**
  * This class wraps the different kinds of command requests into a generically usable write command
  * request that can be passed around.
- */
+ */ //constructBatchedCommandRequest中构造使用   BatchItemRef._request为该成员类型
 class BatchedCommandRequest {
 public:
+    //赋值可以参考ClusterCmdInsert  ClusterCmdUpdate   ClusterCmdDelete继承该类
     enum BatchType { BatchType_Insert, BatchType_Update, BatchType_Delete };
 
+    //constructBatchedCommandRequest
     //构造使用见BatchWriteOp::buildBatchRequest
     BatchedCommandRequest(write_ops::Insert insertOp)
         : _batchType(BatchType_Insert),
           _insertReq(stdx::make_unique<write_ops::Insert>(std::move(insertOp))) {}
 
     //构造使用见BatchWriteOp::buildBatchRequest
+    //constructBatchedCommandRequest
     BatchedCommandRequest(write_ops::Update updateOp)
         : _batchType(BatchType_Update),
           _updateReq(stdx::make_unique<write_ops::Update>(std::move(updateOp))) {}
 
     //构造使用见BatchWriteOp::buildBatchRequest
+    //constructBatchedCommandRequest
     BatchedCommandRequest(write_ops::Delete deleteOp)
         : _batchType(BatchType_Delete),
           _deleteReq(stdx::make_unique<write_ops::Delete>(std::move(deleteOp))) {}
@@ -139,7 +143,8 @@ private:
     //操作类型
     BatchType _batchType;
 
-    //参考BatchWriteOp::buildBatchRequest
+    //参考BatchWriteOp::buildBatchRequest  constructBatchedCommandRequest
+    //insert  update  delete请求的详细内容都存在这几个成员中
     std::unique_ptr<write_ops::Insert> _insertReq;
     std::unique_ptr<write_ops::Update> _updateReq;
     std::unique_ptr<write_ops::Delete> _deleteReq;

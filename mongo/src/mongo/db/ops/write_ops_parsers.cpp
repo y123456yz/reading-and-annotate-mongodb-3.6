@@ -131,6 +131,7 @@ NamespaceString extractIndexedNamespace(const Insert& insertOp) {
 
 }  // namespace write_ops
 
+//constructBatchedCommandRequest
 write_ops::Insert InsertOp::parse(const OpMsgRequest& request) {
     auto insertOp = Insert::parse(IDLParserErrorContext("insert"), request);
 
@@ -181,6 +182,7 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
     return op;
 }
 
+//constructBatchedCommandRequest
 write_ops::Update UpdateOp::parse(const OpMsgRequest& request) {
     auto updateOp = Update::parse(IDLParserErrorContext("update"), request);
 
@@ -219,6 +221,7 @@ write_ops::Update UpdateOp::parseLegacy(const Message& msgRaw) {
     return op;
 }
 
+//constructBatchedCommandRequest
 write_ops::Delete DeleteOp::parse(const OpMsgRequest& request) {
     auto deleteOp = Delete::parse(IDLParserErrorContext("delete"), request);
 

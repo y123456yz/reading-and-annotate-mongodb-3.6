@@ -54,6 +54,10 @@ public:
     void gotGetMore();
     void gotCommand();
 
+    void gotInsertsTime(long long n);
+    void gotUpdatesTime(long long n);
+    void gotDeletesTime(long long n);
+
     void gotOp(int op, bool isCommand);
 
     BSONObj getObj() const;
@@ -78,6 +82,16 @@ public:
         return &_command;
     }
 
+    const AtomicUInt32* getDeletesTime() const {
+        return &_deleteTime;
+    }
+    const AtomicUInt32* getInsertsTime() const {
+        return &_insertTime;
+    }
+    const AtomicUInt32* getUpdatesTime() const {
+        return &_updateTime;
+    }
+
 private:
     void _checkWrap();
 
@@ -88,6 +102,10 @@ private:
     CacheAligned<AtomicUInt32> _delete;
     CacheAligned<AtomicUInt32> _getmore;
     CacheAligned<AtomicUInt32> _command;
+
+    CacheAligned<AtomicUInt32> _insertTime;
+    CacheAligned<AtomicUInt32> _updateTime;
+    CacheAligned<AtomicUInt32> _deleteTime;
 };
 
 extern OpCounters globalOpCounters;
