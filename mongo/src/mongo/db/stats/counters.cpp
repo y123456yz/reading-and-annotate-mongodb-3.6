@@ -44,10 +44,15 @@ using std::endl;
 OpCounters::OpCounters() {}
 
 //insertBatchAndHandleErrors中执行
-//mongos统计在//ClusterWriteCmd::publicRun中调用
+//mongos统计在//ClusterWriteCmd::enhancedRun中调用
 void OpCounters::gotInserts(int n) {
     RARELY _checkWrap();
     _insert.fetchAndAdd(n);
+}
+
+void OpCounters::gotInsertsTime(long long n) {
+    RARELY _checkWrap();
+    _insertTime.fetchAndAdd(n);
 }
 
 //performInserts  insertBatchAndHandleErrors中调用
@@ -68,10 +73,21 @@ void OpCounters::gotUpdate() {
     _update.fetchAndAdd(1);
 }
 
+void OpCounters::gotUpdatesTime(long long n) {
+    RARELY _checkWrap();
+    _updateTime.fetchAndAdd(n);
+}
+
+
 //mongos统计在//ClusterWriteCmd::enhancedRun中调用
 void OpCounters::gotDelete() {
     RARELY _checkWrap();
     _delete.fetchAndAdd(1);
+}
+
+void OpCounters::gotDeletesTime(long long n) {
+    RARELY _checkWrap();
+    _deleteTime.fetchAndAdd(n);
 }
 
 //mongos  ClusterGetMoreCmd::run   Strategy::getMore
@@ -86,7 +102,7 @@ void OpCounters::gotCommand() {
     _command.fetchAndAdd(1);
 }
 
-//各种操作统计
+//各种操作统计  Strategy::killCursors
 void OpCounters::gotOp(int op, bool isCommand) {
     switch (op) {
         case dbInsert: /*gotInsert();*/
@@ -120,7 +136,9 @@ void OpCounters::_checkWrap() {
 
     bool wrap = _insert.loadRelaxed() > MAX || _query.loadRelaxed() > MAX ||
         _update.loadRelaxed() > MAX || _delete.loadRelaxed() > MAX ||
-        _getmore.loadRelaxed() > MAX || _command.loadRelaxed() > MAX;
+        _getmore.loadRelaxed() > MAX || _command.loadRelaxed() > MAX ||
+        _insertTime.loadRelaxed() > MAX || _deleteTime.loadRelaxed() > MAX ||
+        _updateTime.loadRelaxed() > MAX;
 
     if (wrap) {
         _insert.store(0);
@@ -129,6 +147,10 @@ void OpCounters::_checkWrap() {
         _delete.store(0);
         _getmore.store(0);
         _command.store(0);
+		
+		_insertTime.store(0);
+		_deleteTime.store(0);
+		_updateTime.store(0);
     }
 }
 
@@ -143,6 +165,10 @@ BSONObj OpCounters::getObj() const {
     b.append("delete", _delete.loadRelaxed());
     b.append("getmore", _getmore.loadRelaxed());
     b.append("command", _command.loadRelaxed());
+	
+	b.append("insertTime", _insertTime.loadRelaxed());
+	b.append("updateTime", _updateTime.loadRelaxed());
+	b.append("deleteTime", _deleteTime.loadRelaxed());
     return b.obj();
 }
 

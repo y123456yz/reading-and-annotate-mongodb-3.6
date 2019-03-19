@@ -177,8 +177,9 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 if (pendingIt != pendingBatches.end()) //跳过重复的
                     continue;
 
-				//构造shardBatchRequest
+				
                 const auto request = [&] {
+					//构造BatchedCommandRequest
                     const auto shardBatchRequest(batchOp.buildBatchRequest(*nextBatch));
 
                     BSONObjBuilder requestBuilder;
@@ -195,7 +196,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                         sessionInfo.serialize(&requestBuilder);
                     }
 
-                    return requestBuilder.obj();
+                    return requestBuilder.obj(); 
                 }();
 
                 LOG(4) << "Sending write batch to " << targetShardId << ": " << redact(request);

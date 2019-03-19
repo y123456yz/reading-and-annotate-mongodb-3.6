@@ -119,9 +119,10 @@ void batchErrorToLastError(const BatchedCommandRequest& request,
     }
 }
 
+//mongos 写入操作对应ClusterWriteCmd::enhancedRun
 BatchedCommandRequest parseRequest(BatchedCommandRequest::BatchType type,
                                    const OpMsgRequest& request) {
-    switch (type) {
+    switch (type) { //参考ClusterCmdInsert  ClusterCmdUpdate   ClusterCmdDelete继承该类
         case BatchedCommandRequest::BatchType_Insert:
             return BatchedCommandRequest::cloneInsertWithIds(
                 BatchedCommandRequest::parseInsert(request));
@@ -138,6 +139,8 @@ BatchedCommandRequest parseRequest(BatchedCommandRequest::BatchType type,
  */ 
 //mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
 //mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
+
+//ClusterCmdInsert  ClusterCmdUpdate   ClusterCmdDelete继承该类
 class ClusterWriteCmd : public Command {
 public:
     virtual ~ClusterWriteCmd() {}
@@ -196,7 +199,9 @@ public:
             opCtx, shardResults, ClusterExplain::kWriteOnShards, timer.millis(), out);
     }
 
-	//Command::publicRun中调用
+	//Command::publicRun中调用 
+
+	//ClusterWriteCmd::enhancedRun
     bool enhancedRun(OperationContext* opCtx, //ClusterWriteCmd::enhancedRun
                      const OpMsgRequest& request,
                      BSONObjBuilder& result) final {
@@ -205,8 +210,12 @@ public:
         BatchWriteExecStats stats;
         BatchedCommandResponse response;
 
+		long long start = curTimeMicros64();
 		//这里mongos做转发  (mongos  insert delete update)
         ClusterWriter::write(opCtx, batchedRequest, &stats, &response);
+		
+		long long end = curTimeMicros64();
+		auto consumeTime = end - start;
 
         // Populate the lastError object based on the write response
         batchErrorToLastError(batchedRequest, response, &LastError::get(opCtx->getClient()));
@@ -227,14 +236,17 @@ public:
         if (_writeType == BatchedCommandRequest::BatchType_Insert) {
             for (size_t i = 0; i < numAttempts; ++i) {
                 globalOpCounters.gotInsert();
+				globalOpCounters.gotInsertsTime(consumeTime);
             }
         } else if (_writeType == BatchedCommandRequest::BatchType_Update) {
             for (size_t i = 0; i < numAttempts; ++i) {
                 globalOpCounters.gotUpdate();
+				globalOpCounters.gotUpdatesTime(consumeTime);
             }
         } else if (_writeType == BatchedCommandRequest::BatchType_Delete) {
             for (size_t i = 0; i < numAttempts; ++i) {
                 globalOpCounters.gotDelete();
+				globalOpCounters.gotDeletesTime(consumeTime);
             }
         }
 
