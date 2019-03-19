@@ -71,14 +71,18 @@ BatchedCommandRequest constructBatchedCommandRequest(const OpMsgRequest& request
 
 }  // namespace
 
+
+//BatchedCommandRequest parseRequest
 BatchedCommandRequest BatchedCommandRequest::parseInsert(const OpMsgRequest& request) {
     return constructBatchedCommandRequest<InsertOp>(request);
 }
 
+//BatchedCommandRequest parseRequest
 BatchedCommandRequest BatchedCommandRequest::parseUpdate(const OpMsgRequest& request) {
     return constructBatchedCommandRequest<UpdateOp>(request);
 }
 
+//BatchedCommandRequest parseRequest
 BatchedCommandRequest BatchedCommandRequest::parseDelete(const OpMsgRequest& request) {
     return constructBatchedCommandRequest<DeleteOp>(request);
 }
@@ -141,6 +145,7 @@ void BatchedCommandRequest::setWriteCommandBase(write_ops::WriteCommandBase writ
     INVOKE(setWriteCommandBase, std::move(writeCommandBase));
 }
 
+//BatchedCommandRequest::toBSON
 void BatchedCommandRequest::serialize(BSONObjBuilder* builder) const {
     switch (_batchType) {
         case BatchedCommandRequest::BatchType_Insert:

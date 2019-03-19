@@ -205,6 +205,7 @@ public:
     bool enhancedRun(OperationContext* opCtx, //ClusterWriteCmd::enhancedRun
                      const OpMsgRequest& request,
                      BSONObjBuilder& result) final {
+        //BatchedCommandRequest¿‡–Õ
         const auto batchedRequest(parseRequest(_writeType, request));
 
         BatchWriteExecStats stats;
@@ -216,6 +217,9 @@ public:
 		
 		long long end = curTimeMicros64();
 		auto consumeTime = end - start;
+
+		
+		LOG(2) << "yang test 1 ClusterWriteCmd::enhancedRun:" << redact(batchedRequest.toBSON()) << " time(ms):" << (int)consumeTime;
 
         // Populate the lastError object based on the write response
         batchErrorToLastError(batchedRequest, response, &LastError::get(opCtx->getClient()));
@@ -249,7 +253,7 @@ public:
 				globalOpCounters.gotDeletesTime(consumeTime);
             }
         }
-
+		
         // Save the last opTimes written on each shard for this client, to allow GLE to work
         ClusterLastErrorInfo::get(opCtx->getClient())->addHostOpTimes(stats.getWriteOpTimes());
 
