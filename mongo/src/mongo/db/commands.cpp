@@ -313,6 +313,7 @@ BSONObj Command::getRedactedCopyForLogging(const BSONObj& cmdObj) {
     return bob.obj();
 }
 
+//Command::checkAuthorization中用
 static Status _checkAuthorizationImpl(Command* c,
                                       OperationContext* opCtx,
                                       const OpMsgRequest& request) {
@@ -324,7 +325,10 @@ static Status _checkAuthorizationImpl(Command* c,
                       str::stream() << c->getName()
                                     << " may only be run against the admin database.");
     }
+
+	//如果使能了认证功能，做认证检查
     if (AuthorizationSession::get(client)->getAuthorizationManager().isAuthEnabled()) {
+		//例如mongos的增删改，见ClusterWriteCmd::checkAuthForRequest
         Status status = c->checkAuthForRequest(opCtx, request);
         if (status == ErrorCodes::Unauthorized) {
             mmb::Document cmdToLog(request.body, mmb::Document::kInPlaceDisabled);
@@ -345,6 +349,7 @@ static Status _checkAuthorizationImpl(Command* c,
     return Status::OK();
 }
 
+//客户端认证检测
 Status Command::checkAuthorization(Command* c,
                                    OperationContext* opCtx,
                                    const OpMsgRequest& request) {

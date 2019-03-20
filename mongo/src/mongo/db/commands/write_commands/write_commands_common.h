@@ -41,6 +41,7 @@
 namespace mongo {
 namespace auth {
 
+//部分命令的checkAuthForRequest接口中会调用
 Status checkAuthForWriteCommand(AuthorizationSession* authzSession,
                                 BatchedCommandRequest::BatchType cmdType,
                                 const OpMsgRequest& request);

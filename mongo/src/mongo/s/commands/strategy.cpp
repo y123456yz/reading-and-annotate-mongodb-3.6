@@ -175,7 +175,8 @@ void execCommandClient(OperationContext* opCtx,
                 topLevelFields[fieldName]++ == 0);
     }
 
-    Status status = Command::checkAuthorization(c, opCtx, request);
+	
+    Status status = Command::checkAuthorization(c, opCtx, request);  
     if (!status.isOK()) {
         Command::appendCommandStatus(result, status);
         return;

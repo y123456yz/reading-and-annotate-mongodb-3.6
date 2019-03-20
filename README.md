@@ -96,5 +96,6 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .和后端开始建立链接时候的AsyncOp，以及建立连接成功后的AsyncOp赋值过程分析  
     .OpCounter计算过程、CmdServerStatus分析  
     .BatchedCommandRequest构造，insert update delete对应Op处理过程  
+    .客户端认证过程点分析处理  
 
 
