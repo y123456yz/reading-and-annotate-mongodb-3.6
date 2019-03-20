@@ -153,9 +153,13 @@ public:
         return true;
     }
 
+	//_checkAuthorizationImplÖÐµ÷ÓÃ
     Status checkAuthForRequest(OperationContext* opCtx, const OpMsgRequest& request) final {
-        Status status = auth::checkAuthForWriteCommand(
-            AuthorizationSession::get(opCtx->getClient()), _writeType, request);
+
+		//Status status(ErrorCodes::Unauthorized, str::stream() << " must run from localhost when running db without auth");
+		//LOG(2) << "yang test ................... checkAuthForRequest";
+
+        Status status = auth::checkAuthForWriteCommand( AuthorizationSession::get(opCtx->getClient()), _writeType, request);
 
         // TODO: Remove this when we standardize GLE reporting from commands
         if (!status.isOK()) {
@@ -217,8 +221,7 @@ public:
 		
 		long long end = curTimeMicros64();
 		auto consumeTime = end - start;
-
-		
+	
 		LOG(2) << "yang test 1 ClusterWriteCmd::enhancedRun:" << redact(batchedRequest.toBSON()) << " time(ms):" << (int)consumeTime;
 
         // Populate the lastError object based on the write response
