@@ -256,6 +256,8 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
             builder,
             {ErrorCodes::CommandNotFound, str::stream() << "no such cmd: " << commandName});
         Command::unknownCommands.increment();
+		LOG(2) << "yang test 111  run command " << commandName;
+		//return appendCommandStatus( result, Status(ErrorCodes::IllegalOperation, "_configsvrAddShard can only be run on config servers"));
         return;
     }
 
@@ -267,7 +269,7 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
         builder.resetToEmpty();
         try {
 			LOG(2) << "yang test   run command " << request.getDatabase() << ".$cmd" << ' '  << command->getRedactedCopyForLogging(request.body) << ' ' << request.getCommandName();
-            execCommandClient(opCtx, command, request, builder); //Ö´ÐÐÃüÁî
+			execCommandClient(opCtx, command, request, builder); //Ö´ÐÐÃüÁî
             return;
         } catch (const StaleConfigException& e) {
             if (e.getns().empty()) {
