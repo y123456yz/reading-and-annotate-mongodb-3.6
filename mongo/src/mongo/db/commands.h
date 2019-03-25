@@ -244,6 +244,8 @@ public:
  */ //BasicCommand继承该类(类构造一般由basicCommand实现，如AddShardCmd()等) ClusterWriteCmd(mongos) WriteCommand(mongod)  Command类来源见Command::findCommand
 //mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
 //mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
+
+//mongos和mongod支持的命令统计都不一样，通过 db.serverStatus().metrics.commands查看命令统计信息
 class Command : public CommandInterface {
 public:
     // The type of the first field in 'cmdObj' must be mongo::String. The first field is
@@ -547,7 +549,7 @@ private:
     Counter64 _commandsFailed;
 
     // The full name of the command
-   
+   //命令名，如"find" "insert" "update" "createIndexes" "deleteIndexes"
     const std::string _name;
 
     // Pointers to hold the metrics tree references
