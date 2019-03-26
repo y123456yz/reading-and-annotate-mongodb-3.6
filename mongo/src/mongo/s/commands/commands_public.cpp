@@ -298,7 +298,8 @@ public:
         return false;
     }
 
-    virtual void addRequiredPrivileges(const std::string& dbname,
+	//BasicCommand::checkAuthForCommandÖÐµ÷ÓÃ  
+    virtual void addRequiredPrivileges(const std::string& dbname,  //CreateIndexesCmd::addRequiredPrivileges
                                        const BSONObj& cmdObj,
                                        std::vector<Privilege>* out) {
         ActionSet actions;
@@ -316,6 +317,7 @@ public:
                    std::string& errmsg,
                    BSONObjBuilder& output) override {
         const NamespaceString nss(parseNsCollectionRequired(dbName, cmdObj));
+		//2019-03-25T14:29:01.308+0800 D COMMAND  [conn----yangtest1] createIndexes: test.test cmd:{ createIndexes: "test", indexes: [ { key: { name: 1.0 }, name: "name_1", background: true } ], $clusterTime: { clusterTime: Timestamp(1553495267, 2), signature: { hash: BinData(0, 0000000000000000000000000000000000000000), keyId: 0 } }, $db: "test" }
         LOG(1) << "createIndexes: " << nss << " cmd:" << redact(cmdObj);
 
         uassertStatusOK(createShardDatabase(opCtx, dbName));

@@ -56,6 +56,8 @@ Privilege::Privilege(const ResourcePattern& resource, const ActionType& action)
     : _resource(resource) {
     _actions.addAction(action);
 }
+
+//©ирт╡н©╪//CreateIndexesCmd::addRequiredPrivileges
 Privilege::Privilege(const ResourcePattern& resource, const ActionSet& actions)
     : _resource(resource), _actions(actions) {}
 
