@@ -162,6 +162,7 @@ NamespaceString Command::parseNsOrUUID(OperationContext* opCtx,
     }
 }
 
+//如test.test
 string Command::parseNs(const string& dbname, const BSONObj& cmdObj) const {
     BSONElement first = cmdObj.firstElement();
     if (first.type() != mongo::String)
@@ -170,6 +171,7 @@ string Command::parseNs(const string& dbname, const BSONObj& cmdObj) const {
     return str::stream() << dbname << '.' << cmdObj.firstElement().valueStringData();
 }
 
+//可以参考//CreateIndexesCmd::addRequiredPrivileges
 ResourcePattern Command::parseResourcePattern(const std::string& dbname,
                                               const BSONObj& cmdObj) const {
     const std::string ns = parseNs(dbname, cmdObj);
@@ -286,16 +288,20 @@ Status BasicCommand::checkAuthForRequest(OperationContext* opCtx, const OpMsgReq
     return checkAuthForOperation(opCtx, request.getDatabase().toString(), request.body);
 }
 
+//BasicCommand::checkAuthForRequest
 Status BasicCommand::checkAuthForOperation(OperationContext* opCtx,
                                            const std::string& dbname,
                                            const BSONObj& cmdObj) {
     return checkAuthForCommand(opCtx->getClient(), dbname, cmdObj);
 }
 
+//BasicCommand::checkAuthForOperation
 Status BasicCommand::checkAuthForCommand(Client* client,
                                          const std::string& dbname,
                                          const BSONObj& cmdObj) {
     std::vector<Privilege> privileges;
+	//例如加索引对应CreateIndexesCmd::addRequiredPrivileges  DropIndexesCmd::addRequiredPrivileges 不同命令有不同实现
+	//DropDatabaseCmd::addRequiredPrivileges等 
     this->addRequiredPrivileges(dbname, cmdObj, &privileges);
     if (AuthorizationSession::get(client)->isAuthorizedForPrivileges(privileges))
         return Status::OK();
@@ -329,6 +335,7 @@ static Status _checkAuthorizationImpl(Command* c,
 	//如果使能了认证功能，做认证检查
     if (AuthorizationSession::get(client)->getAuthorizationManager().isAuthEnabled()) {
 		//例如mongos的增删改，见ClusterWriteCmd::checkAuthForRequest
+		//BasicCommand::checkAuthForRequest等，不同命令可能会有不同实现
         Status status = c->checkAuthForRequest(opCtx, request);
         if (status == ErrorCodes::Unauthorized) {
             mmb::Document cmdToLog(request.body, mmb::Document::kInPlaceDisabled);

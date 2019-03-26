@@ -46,7 +46,7 @@ namespace mongo {
  * the types also act as patterns, useful for matching against groups of concrete resources as
  * part of the access control system.  See buildResourceSearchList() in
  * authorization_session.cpp for details.
- */
+ */ //Privilege._resource成员为该类型
 class ResourcePattern {
 public:
     /**
@@ -189,8 +189,11 @@ private:
     enum MatchType {
         matchNever = 0,              /// Matches no resource.
         matchClusterResource = 1,    /// Matches if the resource is the cluster resource.
+        //库
         matchDatabaseName = 2,       /// Matches if the resource's database name is _ns.db().
+        //表
         matchCollectionName = 3,     /// Matches if the resource's collection name is _ns.coll().
+        //库.表
         matchExactNamespace = 4,     /// Matches if the resource's namespace name is _ns.
         matchAnyNormalResource = 5,  /// Matches all databases and non-system collections.
         matchAnyResource = 6         /// Matches absolutely anything.

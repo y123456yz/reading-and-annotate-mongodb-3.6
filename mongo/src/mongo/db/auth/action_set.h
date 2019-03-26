@@ -41,7 +41,7 @@ namespace mongo {
  *  These are the actions that a Privilege can grant a user to perform on a resource.
  *  If the special ActionType::anyAction is granted to this set, it automatically sets all bits
  *  in the bitmask, indicating that it contains all possible actions.
- */
+ */ //可以参考各个命令的addRequiredPrivileges    例如CreateIndexesCmd::addRequiredPrivileges
 class ActionSet {
 public:
     ActionSet() : _actions(0) {}
@@ -90,7 +90,7 @@ public:
                                                  std::vector<std::string>* unrecognizedActions);
 
 private:
-    // bitmask of actions this privilege grants
+    // bitmask of actions this privilege grants  所有的操作都记录在这里面
     std::bitset<ActionType::NUM_ACTION_TYPES> _actions;
 };
 

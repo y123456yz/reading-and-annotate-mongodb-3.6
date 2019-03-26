@@ -80,6 +80,7 @@ public:
     BSONObj toBSON() const;
 
 private:
+    //例如可以参考CreateIndexesCmd::addRequiredPrivileges
     ResourcePattern _resource;
     ActionSet _actions;  // bitmask of actions this privilege grants
 };
