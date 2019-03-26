@@ -83,6 +83,7 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(SetupInternalSecurityUser, ("EndStartupOpti
     ActionSet allActions;
     allActions.addAllActions();
     PrivilegeVector privileges;
+	//默认所有用户都用户allActions操作权限
     RoleGraph::generateUniversalPrivileges(&privileges);
     user->addPrivileges(privileges);
 
@@ -287,11 +288,15 @@ AuthorizationManager::~AuthorizationManager() {
     }
 }
 
+//AuthzClientObserver类构造函数和MONGO_INITIALIZER_WITH_PREREQUISITES(PostSaslCommands, ("NativeSaslServerCore"))中调用 
 std::unique_ptr<AuthorizationSession> AuthorizationManager::makeAuthorizationSession() {
+	//AuthzManagerExternalStateMongos::makeAuthzSessionExternalState
+	//AuthzManagerExternalStateMongod::makeAuthzSessionExternalState
     return stdx::make_unique<AuthorizationSession>(
         _externalState->makeAuthzSessionExternalState(this));
 }
 
+//CreateAuthorizationManager
 void AuthorizationManager::setShouldValidateAuthSchemaOnStartup(bool validate) {
     _startupAuthSchemaValidation = validate;
 }
@@ -329,6 +334,7 @@ OID AuthorizationManager::getCacheGeneration() {
     return _cacheGeneration;
 }
 
+//CreateAuthorizationManager
 void AuthorizationManager::setAuthEnabled(bool enabled) {
     _authEnabled = enabled;
 }

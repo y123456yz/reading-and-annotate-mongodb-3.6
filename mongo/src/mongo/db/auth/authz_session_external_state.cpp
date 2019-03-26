@@ -36,7 +36,8 @@
 #include "mongo/db/namespace_string.h"
 
 namespace mongo {
-
+//AuthzManagerExternalStateMongod::makeAuthzSessionExternalState
+//AuthzManagerExternalStateMongos::makeAuthzSessionExternalStateÖÐµ÷ÓÃ
 AuthzSessionExternalState::AuthzSessionExternalState(AuthorizationManager* authzManager)
     : _authzManager(authzManager) {}
 AuthzSessionExternalState::~AuthzSessionExternalState() {}

@@ -84,6 +84,7 @@ AuthorizationManager* AuthorizationManager::get(ServiceContext& service) {
     return getAuthorizationManager(service).get();
 }
 
+//CreateAuthorizationManager
 void AuthorizationManager::set(ServiceContext* service,
                                std::unique_ptr<AuthorizationManager> authzManager) {
     auto& manager = getAuthorizationManager(service);
@@ -93,10 +94,12 @@ void AuthorizationManager::set(ServiceContext* service,
     service->registerClientObserver(stdx::make_unique<AuthzClientObserver>());
 }
 
+//获取该客户端对应的AuthorizationSession
 AuthorizationSession* AuthorizationSession::get(Client* client) {
     return get(*client);
 }
 
+//获取client对应的AuthorizationSession
 AuthorizationSession* AuthorizationSession::get(Client& client) {
     AuthorizationSession* retval = getAuthorizationSession(client).get();
     massert(16481, "No AuthorizationManager has been set up for this connection", retval);

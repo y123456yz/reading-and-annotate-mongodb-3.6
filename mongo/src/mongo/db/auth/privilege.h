@@ -40,7 +40,17 @@ typedef std::vector<Privilege> PrivilegeVector;
 
 /**
  * A representation of the permission to perform a set of actions on a resource.
- */
+ */  
+/*
+主要对Action和Resource封装，然后调用_isAuthorizedForPrivilege完成功能。
+
+简单介绍下Privilege，Action就是对数据的操作，比如Query，Insert都可以归纳为Action；Resource就是数据集合，
+可以是Collection，也可以是DB，那Privilege就是Action*Privilege的组合，一个Privilege可以含有多个Action，
+但在Privilege维度上，Action都只能与一个（或者表达式）Resource组合。Privilege的集合可以组合成Role概念，
+方便用户配置。
+*/
+//例如可以参考CreateIndexesCmd::addRequiredPrivileges
+//真正起作用见AuthorizationSession::_isAuthorizedForPrivilege
 class Privilege {
 public:
     /**
@@ -80,6 +90,14 @@ public:
     BSONObj toBSON() const;
 
 private:
+    /*
+    主要对Action和Resource封装，然后调用_isAuthorizedForPrivilege完成功能。
+    
+    简单介绍下Privilege，Action就是对数据的操作，比如Query，Insert都可以归纳为Action；Resource就是数据集合，
+    可以是Collection，也可以是DB，那Privilege就是Action*Privilege的组合，一个Privilege可以含有多个Action，
+    但在Privilege维度上，Action都只能与一个（或者表达式）Resource组合。Privilege的集合可以组合成Role概念，
+    方便用户配置。
+    */
     //例如可以参考CreateIndexesCmd::addRequiredPrivileges
     ResourcePattern _resource;
     ActionSet _actions;  // bitmask of actions this privilege grants

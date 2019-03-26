@@ -175,10 +175,10 @@ string Command::parseNs(const string& dbname, const BSONObj& cmdObj) const {
 ResourcePattern Command::parseResourcePattern(const std::string& dbname,
                                               const BSONObj& cmdObj) const {
     const std::string ns = parseNs(dbname, cmdObj);
-    if (!NamespaceString::validCollectionComponent(ns)) {
+    if (!NamespaceString::validCollectionComponent(ns)) { //只有db名
         return ResourcePattern::forDatabaseName(ns);
     }
-    return ResourcePattern::forExactNamespace(NamespaceString(ns));
+    return ResourcePattern::forExactNamespace(NamespaceString(ns)); //db.collection
 }
 
 //BasicCommand继承该类(类构造一般由basicCommand实现，如AddShardCmd()等) WriteCommand  Command类来源见Command::findCommand
