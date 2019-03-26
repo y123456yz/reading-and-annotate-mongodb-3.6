@@ -89,6 +89,8 @@ uint32_t User::getRefCount() const {
     return _refCount;
 }
 
+//∏≥÷µº˚User::setPrivileges  User::addPrivilege  ≤È’“User::getActionsForResource
+//AuthorizationSession::_isAuthorizedForPrivilege
 const ActionSet User::getActionsForResource(const ResourcePattern& resource) const {
     unordered_map<ResourcePattern, Privilege>::const_iterator it = _privileges.find(resource);
     if (it == _privileges.end()) {
@@ -133,6 +135,7 @@ void User::addRoles(const std::vector<RoleName>& roles) {
     }
 }
 
+//User::addPrivileges
 void User::addPrivilege(const Privilege& privilegeToAdd) {
     ResourcePrivilegeMap::iterator it = _privileges.find(privilegeToAdd.getResourcePattern());
     if (it == _privileges.end()) {

@@ -37,7 +37,8 @@ namespace mongo {
 
 /**
  * The implementation of AuthzSessionExternalState functionality common to mongod and mongos.
- */
+ */ 
+ //AuthzSessionExternalStateMongod  AuthzSessionExternalStateMongos继承该类,makeAuthzSessionExternalState中构造不同类型
 class AuthzSessionExternalStateServerCommon : public AuthzSessionExternalState {
     MONGO_DISALLOW_COPYING(AuthzSessionExternalStateServerCommon);
 

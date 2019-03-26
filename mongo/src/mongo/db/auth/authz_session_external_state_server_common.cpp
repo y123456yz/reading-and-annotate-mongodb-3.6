@@ -82,12 +82,14 @@ bool AuthzSessionExternalStateServerCommon::serverIsArbiter() const {
     return false;
 }
 
+//默认_allowLocalhost认证是开启的
 bool AuthzSessionExternalStateServerCommon::shouldAllowLocalhost() const {
     Client* client = Client::getCurrent();
     return _allowLocalhost && client->getIsLocalHostConnection();
 }
 
 bool AuthzSessionExternalStateServerCommon::shouldIgnoreAuthChecks() const {
+	//AuthorizationManager::isAuthEnabled
     return !_authzManager->isAuthEnabled();
 }
 

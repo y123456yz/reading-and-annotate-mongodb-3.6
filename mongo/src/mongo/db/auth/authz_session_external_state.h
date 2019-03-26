@@ -45,7 +45,7 @@ class OperationContext;
  * Public interface for a class that encapsulates all the session information related to system
  * state not stored in AuthorizationSession.  This is primarily to make AuthorizationSession
  * easier to test as well as to allow different implementations in mongos and mongod.
- */
+ */ //AuthzSessionExternalStateServerCommon继承该类   //AuthorizationSession._externalState成员为该类型
 class AuthzSessionExternalState {
     MONGO_DISALLOW_COPYING(AuthzSessionExternalState);
 

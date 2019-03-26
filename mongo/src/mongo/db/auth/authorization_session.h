@@ -64,7 +64,7 @@ class Client;
  * the cached information about any users who have been marked as invalid.  This guarantees that
  * every operation looks at one consistent view of each user for every auth check required over
  * the lifetime of the operation.
- */
+ */ //获取客户端对应的认证session见uthorizationSession::get
 class AuthorizationSession {
     MONGO_DISALLOW_COPYING(AuthorizationSession);
 
@@ -324,7 +324,8 @@ protected:
     void _buildAuthenticatedRolesVector();
 
     // All Users who have been authenticated on this connection.
-    UserSet _authenticatedUsers;
+    //所有已经认证的客户端都加入到这里AuthorizationSession::addAndAuthorizeUser
+    UserSet _authenticatedUsers; //AuthorizationSession._authenticatedUsers
 
     // The roles of the authenticated users. This vector is generated when the authenticated
     // users set is changed.
@@ -340,7 +341,8 @@ private:
     // we should even be doing authorization checks in general.  Note: this may acquire a read
     // lock on the admin database (to update out-of-date user privilege information).
     bool _isAuthorizedForPrivilege(const Privilege& privilege);
-
+    
+    //AuthzSessionExternalStateMongod  AuthzSessionExternalStateMongos继承该类,makeAuthzSessionExternalState中构造不同类型
     std::unique_ptr<AuthzSessionExternalState> _externalState;
 
     // A vector of impersonated UserNames and a vector of those users' RoleNames.

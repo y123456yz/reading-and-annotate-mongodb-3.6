@@ -224,6 +224,7 @@ private:
     SHA256Block _digest;
 
     // Maps resource name to privilege on that resource
+    //∏≥÷µº˚User::setPrivileges  User::addPrivilege  ≤È’“User::getActionsForResource
     ResourcePrivilegeMap _privileges;
 
     // Roles the user has privileges from

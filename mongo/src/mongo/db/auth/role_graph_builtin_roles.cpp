@@ -730,6 +730,7 @@ bool RoleGraph::addPrivilegesForBuiltinRole(const RoleName& roleName, PrivilegeV
 
 void RoleGraph::generateUniversalPrivileges(PrivilegeVector* privileges) {
     ActionSet allActions;
+	//默认所有用户都用户allActions操作权限
     allActions.addAllActions();
     privileges->push_back(Privilege(ResourcePattern::forAnyResource(), allActions));
 }

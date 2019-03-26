@@ -82,7 +82,7 @@ public:
 
     /**
      * Adds to "privileges" the necessary privileges to do absolutely anything on the system.
-     */
+     *///默认所有用户都用户allActions操作权限
     static void generateUniversalPrivileges(PrivilegeVector* privileges);
 
     /**

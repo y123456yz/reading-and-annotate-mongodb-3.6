@@ -153,6 +153,7 @@ void AuthorizationSession::startRequest(OperationContext* opCtx) {
     _refreshUserInfoAsNeeded(opCtx);
 }
 
+//CmdAuthenticate::_authenticateCR
 Status AuthorizationSession::addAndAuthorizeUser(OperationContext* opCtx,
                                                  const UserName& userName) {
     User* user;
@@ -242,13 +243,14 @@ void AuthorizationSession::grantInternalAuthorization() {
     _buildAuthenticatedRolesVector();
 }
 
+//AuthorizationSession::_isAuthorizedForPrivilege
 PrivilegeVector AuthorizationSession::getDefaultPrivileges() {
     PrivilegeVector defaultPrivileges;
 
     // If localhost exception is active (and no users exist),
     // return a vector of the minimum privileges required to bootstrap
     // a system and add the first user.
-    if (_externalState->shouldAllowLocalhost()) {
+    if (_externalState->shouldAllowLocalhost()) { //这个和localhost链接相关，跳过
         ResourcePattern adminDBResource = ResourcePattern::forDatabaseName(ADMIN_DBNAME);
         ActionSet setupAdminUserActionSet;
         setupAdminUserActionSet.addAction(ActionType::createUser);
@@ -659,8 +661,11 @@ bool AuthorizationSession::isAuthorizedForPrivilege(const Privilege& privilege) 
     return _isAuthorizedForPrivilege(privilege);
 }
 
+//BasicCommand::checkAuthForCommand
 bool AuthorizationSession::isAuthorizedForPrivileges(const vector<Privilege>& privileges) {
-    if (_externalState->shouldIgnoreAuthChecks())
+	//mongos对应AuthzSessionExternalStateServerCommon::shouldIgnoreAuthChecks
+	//mongod对应AuthzSessionExternalStateMongod::shouldIgnoreAuthChecks
+    if (_externalState->shouldIgnoreAuthChecks()) //如果没有使能认证，直接返回
         return true;
 
     for (size_t i = 0; i < privileges.size(); ++i) {
@@ -717,12 +722,12 @@ static const int resourceSearchListCapacity = 5;
  *   searchList = { ResourcePattern::forAnyResource(),
  *                  system.coll,
  *                  db.system.coll }
- */
+ */ //AuthorizationSession::_isAuthorizedForPrivilege
 static int buildResourceSearchList(const ResourcePattern& target,
                                    ResourcePattern resourceSearchList[resourceSearchListCapacity]) {
     int size = 0;
     resourceSearchList[size++] = ResourcePattern::forAnyResource();
-    if (target.isExactNamespacePattern()) {
+    if (target.isExactNamespacePattern()) { //db.collection   例如db.collection.insert()操作就会涉及到db和collection
         if (!target.ns().isSystem()) {
             // Some databases should not be matchable with ResourcePattern::forAnyNormalResource.
             // 'local' and 'config' are used to store special system collections, which user level
@@ -733,7 +738,7 @@ static int buildResourceSearchList(const ResourcePattern& target,
             resourceSearchList[size++] = ResourcePattern::forDatabaseName(target.ns().db());
         }
         resourceSearchList[size++] = ResourcePattern::forCollectionName(target.ns().coll());
-    } else if (target.isDatabasePattern()) {
+    } else if (target.isDatabasePattern()) { //db   例如db.dropDatabase操作只会设计到db
         resourceSearchList[size++] = ResourcePattern::forAnyNormalResource();
     }
     resourceSearchList[size++] = target;
@@ -879,15 +884,19 @@ void AuthorizationSession::_buildAuthenticatedRolesVector() {
     }
 }
 
+//AuthorizationSession::isAuthorizedForPrivileges
 bool AuthorizationSession::_isAuthorizedForPrivilege(const Privilege& privilege) {
     const ResourcePattern& target(privilege.getResourcePattern());
 
     ResourcePattern resourceSearchList[resourceSearchListCapacity];
     const int resourceSearchListLength = buildResourceSearchList(target, resourceSearchList);
 
+	//本次请求的action
     ActionSet unmetRequirements = privilege.getActions();
-
+	
     PrivilegeVector defaultPrivileges = getDefaultPrivileges();
+	
+	//这个和localhost链接相关，跳过
     for (PrivilegeVector::iterator it = defaultPrivileges.begin(); it != defaultPrivileges.end();
          ++it) {
         for (int i = 0; i < resourceSearchListLength; ++i) {
@@ -902,14 +911,17 @@ bool AuthorizationSession::_isAuthorizedForPrivilege(const Privilege& privilege)
         }
     }
 
+	//所有已认证的客户端都添加到_authenticatedUsers中
+	//遍历授权过的所有用户，和待验证的Resource比较，如果找到，则对比Action，所有的Action都找到的话，则通过验证。
     for (UserSet::iterator it = _authenticatedUsers.begin(); it != _authenticatedUsers.end();
          ++it) {
         User* user = *it;
         for (int i = 0; i < resourceSearchListLength; ++i) {
             ActionSet userActions = user->getActionsForResource(resourceSearchList[i]);
+			//如果本次请求的action在userActions中，那么清除后，unmetRequirements应该为空，否则说明本次请求的action不在userActions中
             unmetRequirements.removeAllActionsFromSet(userActions);
 
-            if (unmetRequirements.empty())
+            if (unmetRequirements.empty()) //请求的action在userActions中，则说明该请求的操作被运行，直接返回true
                 return true;
         }
     }

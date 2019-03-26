@@ -54,6 +54,7 @@ namespace mongo {
 AuthzManagerExternalStateMongod::AuthzManagerExternalStateMongod() = default;
 AuthzManagerExternalStateMongod::~AuthzManagerExternalStateMongod() = default;
 
+//AuthorizationManager::makeAuthorizationSessionÖÐµ÷ÓÃ
 std::unique_ptr<AuthzSessionExternalState>
 AuthzManagerExternalStateMongod::makeAuthzSessionExternalState(AuthorizationManager* authzManager) {
     return stdx::make_unique<AuthzSessionExternalStateMongod>(authzManager);

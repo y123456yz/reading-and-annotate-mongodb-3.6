@@ -51,7 +51,7 @@ class OperationContext;
  * Public interface for a class that encapsulates all the information related to system
  * state not stored in AuthorizationManager.  This is primarily to make AuthorizationManager
  * easier to test as well as to allow different implementations for mongos and mongod.
- */
+ */ //AuthorizationManager._externalState成员为该类型
 class AuthzManagerExternalState {
     MONGO_DISALLOW_COPYING(AuthzManagerExternalState);
 

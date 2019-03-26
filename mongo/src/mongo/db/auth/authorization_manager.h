@@ -77,7 +77,7 @@ enum class AuthenticationRestrictionsFormat {
 
 /**
  * Contains server/cluster-wide information about Authorization.
- */
+ */ //认证管理类  CreateAuthorizationManager中构造该类
 class AuthorizationManager {
     MONGO_DISALLOW_COPYING(AuthorizationManager);
 
@@ -394,6 +394,7 @@ private:
     // Protects _privilegeDocsExist
     mutable stdx::mutex _privilegeDocsExistMutex;
 
+    
     std::unique_ptr<AuthzManagerExternalState> _externalState;
 
     /**
