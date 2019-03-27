@@ -43,7 +43,9 @@ void (*saslClientAuthenticate)(auth::RunCommandHook runCommand,
                                const BSONObj& saslParameters,
                                auth::AuthCompletionHandler handler) = nullptr;
 
+//¼ûCmdSaslStart::CmdSaslStart
 const char* const saslStartCommandName = "saslStart";
+//CmdSaslContinue::CmdSaslContinue
 const char* const saslContinueCommandName = "saslContinue";
 const char* const saslCommandAutoAuthorizeFieldName = "autoAuthorize";
 const char* const saslCommandCodeFieldName = "code";

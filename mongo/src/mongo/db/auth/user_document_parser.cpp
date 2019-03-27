@@ -307,6 +307,7 @@ std::string V2UserDocumentParser::extractUserNameFromUserDocument(const BSONObj&
     return doc[AuthorizationManager::USER_NAME_FIELD_NAME].str();
 }
 
+//AuthorizationManager::_initializeUserFromPrivilegeDocument
 Status V2UserDocumentParser::initializeUserCredentialsFromUserDocument(
     User* user, const BSONObj& privDoc) const {
     User::CredentialData credentials;
@@ -435,6 +436,7 @@ Status V2UserDocumentParser::parseRoleVector(const BSONArray& rolesArray,
     return Status::OK();
 }
 
+//AuthorizationManager::_initializeUserFromPrivilegeDocument
 Status V2UserDocumentParser::initializeAuthenticationRestrictionsFromUserDocument(
     const BSONObj& privDoc, User* user) const {
     RestrictionDocuments::sequence_type restrictionVector;
@@ -487,6 +489,7 @@ Status V2UserDocumentParser::initializeAuthenticationRestrictionsFromUserDocumen
     return Status::OK();
 }
 
+//AuthorizationManager::_initializeUserFromPrivilegeDocument
 Status V2UserDocumentParser::initializeUserRolesFromUserDocument(const BSONObj& privDoc,
                                                                  User* user) const {
     BSONElement rolesElement = privDoc[ROLES_FIELD_NAME];
@@ -515,6 +518,7 @@ Status V2UserDocumentParser::initializeUserRolesFromUserDocument(const BSONObj& 
     return Status::OK();
 }
 
+//AuthorizationManager::_initializeUserFromPrivilegeDocument
 Status V2UserDocumentParser::initializeUserIndirectRolesFromUserDocument(const BSONObj& privDoc,
                                                                          User* user) const {
     BSONElement indirectRolesElement = privDoc[INHERITED_ROLES_FIELD_NAME];
@@ -544,6 +548,7 @@ Status V2UserDocumentParser::initializeUserIndirectRolesFromUserDocument(const B
     return Status::OK();
 }
 
+//AuthorizationManager::_initializeUserFromPrivilegeDocument
 Status V2UserDocumentParser::initializeUserPrivilegesFromUserDocument(const BSONObj& doc,
                                                                       User* user) const {
     BSONElement privilegesElement = doc[PRIVILEGES_FIELD_NAME];

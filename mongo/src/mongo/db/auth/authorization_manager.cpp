@@ -79,11 +79,12 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(SetupInternalSecurityUser, ("EndStartupOpti
 (InitializerContext* const context) try {
     User* user = new User(UserName("__system", "local"));
 
+	LOG(2) << "yang test .....................SetupInternalSecurityUser";
     user->incrementRefCount();  // Pin this user so the ref count never drops below 1.
     ActionSet allActions;
     allActions.addAllActions();
     PrivilegeVector privileges;
-	//默认所有用户都用户allActions操作权限
+	//默认所有用户都拥有allActions操作权限
     RoleGraph::generateUniversalPrivileges(&privileges);
     user->addPrivileges(privileges);
 
@@ -449,9 +450,11 @@ Status AuthorizationManager::_initializeUserFromPrivilegeDocument(User* user,
     return Status::OK();
 }
 
+//AuthorizationManager::_fetchUserV2
 Status AuthorizationManager::getUserDescription(OperationContext* opCtx,
                                                 const UserName& userName,
                                                 BSONObj* result) {
+    //AuthzManagerExternalStateMongos::getUserDescription
     return _externalState->getUserDescription(opCtx, userName, result);
 }
 

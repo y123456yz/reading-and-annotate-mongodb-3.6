@@ -94,7 +94,7 @@ uint32_t User::getRefCount() const {
 const ActionSet User::getActionsForResource(const ResourcePattern& resource) const {
     unordered_map<ResourcePattern, Privilege>::const_iterator it = _privileges.find(resource);
     if (it == _privileges.end()) {
-        return ActionSet();
+        return ActionSet(); //没有对应action，也就是空action
     }
     return it->second.getActions();
 }
@@ -117,6 +117,7 @@ void User::setIndirectRoles(RoleNameIterator indirectRoles) {
     }
 }
 
+//V2UserDocumentParser::initializeUserPrivilegesFromUserDocument
 void User::setPrivileges(const PrivilegeVector& privileges) {
     _privileges.clear();
     for (size_t i = 0; i < privileges.size(); ++i) {
@@ -135,6 +136,8 @@ void User::addRoles(const std::vector<RoleName>& roles) {
     }
 }
 
+//赋值见User::setPrivileges  User::addPrivilege  查找User::getActionsForResource
+
 //User::addPrivileges
 void User::addPrivilege(const Privilege& privilegeToAdd) {
     ResourcePrivilegeMap::iterator it = _privileges.find(privilegeToAdd.getResourcePattern());
@@ -147,6 +150,7 @@ void User::addPrivilege(const Privilege& privilegeToAdd) {
     }
 }
 
+//赋值见User::setPrivileges  User::addPrivilege  查找User::getActionsForResource
 void User::addPrivileges(const PrivilegeVector& privileges) {
     for (PrivilegeVector::const_iterator it = privileges.begin(); it != privileges.end(); ++it) {
         addPrivilege(*it);

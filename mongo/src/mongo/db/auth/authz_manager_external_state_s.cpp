@@ -85,6 +85,7 @@ AuthzManagerExternalStateMongos::AuthzManagerExternalStateMongos() = default;
 
 AuthzManagerExternalStateMongos::~AuthzManagerExternalStateMongos() = default;
 
+//AuthorizationManager::initialize
 Status AuthzManagerExternalStateMongos::initialize(OperationContext* opCtx) {
     return Status::OK();
 }
@@ -119,6 +120,7 @@ Status AuthzManagerExternalStateMongos::getStoredAuthorizationVersion(OperationC
     return Status::OK();
 }
 
+//从mongod-cfg获取用户权限信息  
 Status AuthzManagerExternalStateMongos::getUserDescription(OperationContext* opCtx,
                                                            const UserName& userName,
                                                            BSONObj* result) {
