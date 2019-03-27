@@ -120,7 +120,9 @@ Status AuthzManagerExternalStateMongos::getStoredAuthorizationVersion(OperationC
     return Status::OK();
 }
 
+//usersInfo参考https://docs.mongodb.com/manual/reference/command/usersInfo/
 //从mongod-cfg获取用户权限信息  
+//AuthorizationManager::_fetchUserV2
 Status AuthzManagerExternalStateMongos::getUserDescription(OperationContext* opCtx,
                                                            const UserName& userName,
                                                            BSONObj* result) {

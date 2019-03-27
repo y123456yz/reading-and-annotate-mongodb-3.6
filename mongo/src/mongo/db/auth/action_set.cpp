@@ -96,7 +96,7 @@ Status ActionSet::parseActionSetFromString(const std::string& actionsString, Act
     std::vector<std::string> actionsList;
     splitStringDelim(actionsString, &actionsList, ',');
     std::vector<std::string> unrecognizedActions;
-    Status status = parseActionSetFromStringVector(actionsList, result, &unrecognizedActions);
+    Status status = parseActionSetFromStringVector(actionsList, result, &unrecognizedActions, false);
     invariantOK(status);
     if (unrecognizedActions.empty()) {
         return Status::OK();
@@ -108,9 +108,11 @@ Status ActionSet::parseActionSetFromString(const std::string& actionsString, Act
                                 << unrecognizedActionsString);
 }
 
+//ParsedPrivilege::parsedPrivilegeToPrivilege
 Status ActionSet::parseActionSetFromStringVector(const std::vector<std::string>& actionsVector,
                                                  ActionSet* result,
-                                                 std::vector<std::string>* unrecognizedActions) {
+                                                 std::vector<std::string>* unrecognizedActions,
+                                                 bool isCommonUserRole) {
     result->removeAllActions();
     for (size_t i = 0; i < actionsVector.size(); i++) {
         ActionType action;
@@ -122,7 +124,14 @@ Status ActionSet::parseActionSetFromStringVector(const std::vector<std::string>&
             if (action == ActionType::anyAction) {
                 result->addAllActions();
                 return Status::OK();
-            }
+            }//createCollection  createDatabase createIndex dropCollection dropDatabase dropIndex remove
+
+			if (isCommonUserRole == true && (action == ActionType::createCollection || action == ActionType::createDatabase
+				|| action == ActionType::createIndex || action == ActionType::dropCollection
+				|| action == ActionType::dropDatabase || action == ActionType::dropIndex
+				|| action == ActionType::remove))
+				continue;
+			
             result->addAction(action);
         }
     }

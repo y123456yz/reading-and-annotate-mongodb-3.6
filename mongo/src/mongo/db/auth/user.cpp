@@ -117,6 +117,8 @@ void User::setIndirectRoles(RoleNameIterator indirectRoles) {
     }
 }
 
+//usersInfo参考https://docs.mongodb.com/manual/reference/command/usersInfo/
+//通过usersInfo从后端mongo-cfg获取到用户权限信息后，调用
 //V2UserDocumentParser::initializeUserPrivilegesFromUserDocument
 void User::setPrivileges(const PrivilegeVector& privileges) {
     _privileges.clear();

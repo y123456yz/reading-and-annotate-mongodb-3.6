@@ -25,6 +25,8 @@
  *    delete this exception statement from all source files in the program,
  *    then also delete it in the license file.
  */
+	 
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kAccessControl
 
 #include "mongo/db/auth/privilege_parser.h"
 
@@ -34,6 +36,7 @@
 #include "mongo/db/field_parser.h"
 #include "mongo/db/namespace_string.h"
 #include "mongo/util/mongoutils/str.h"
+#include "mongo/util/log.h"
 
 namespace mongo {
 
@@ -294,7 +297,7 @@ BSONObj ParsedPrivilege::toBSON() const {
     BSONObjBuilder builder;
 
     if (_isResourceSet)
-        builder.append(resource(), _resource.toBSON());
+        builder.append(resource(), _resource.toBSON()); //ParsedResource::toBSON
 
     if (_isActionsSet) {
         BSONArrayBuilder actionsBuilder(builder.subarrayStart(actions()));
@@ -308,6 +311,7 @@ BSONObj ParsedPrivilege::toBSON() const {
     return builder.obj().getOwned();
 }
 
+//V2UserDocumentParser::initializeUserPrivilegesFromUserDocument
 bool ParsedPrivilege::parseBSON(const BSONObj& source, string* errMsg) {
     clear();
 
@@ -345,6 +349,14 @@ void ParsedPrivilege::setActions(const std::vector<string>& actions) {
         addToActions((*it));
     }
     _isActionsSet = actions.size() > 0;
+}
+
+void ParsedPrivilege::setIsCommonUserRole(bool role) {
+    isCommonUserRole = role;
+}
+
+const bool ParsedPrivilege::getIsCommonUserRole() const {
+    return isCommonUserRole;
 }
 
 void ParsedPrivilege::addToActions(const string& actions) {
@@ -394,9 +406,95 @@ const ParsedResource& ParsedPrivilege::getResource() const {
     return _resource;
 }
 
+/* userInfo从mongo-cfg获取到的用户信息
+{
+	users: [{
+		_id: "admin.123456",
+		user: "123456",
+		db: "admin",
+		credentials: {
+			SCRAM - SHA - 1: {
+				iterationCount: 10000,
+				salt: "HdWvyPNNnp43/oHayn4RUg==",
+				storedKey: "a1b/EWwsMce4HVJ4V2DedhLntFg=",
+				serverKey: "bV48/bWw4nSQO7qY42cGHWL09Kg="
+			}
+		},
+		roles: [{
+			role: "readWrite",
+			db: "test1"
+		}],
+		inheritedRoles: [{
+			role: "readWrite",
+			db: "test1"
+		}],
+		inheritedPrivileges: [{
+			resource: {
+				db: "test1",
+				collection: ""
+			},
+			actions: ["changeStream", "collStats", "convertToCapped", "createCollection", "createIndex", "dbHash", "dbStats", "dropCollection", "dropIndex", "emptycapped", "find", "insert", "killCursors", "listCollections", "listIndexes", "planCacheRead", "remove", "renameCollectionSameDB", "update"]
+		}, {
+			resource: {
+				db: "test1",
+				collection: "system.indexes"
+			},
+			actions: ["changeStream", "collStats", "dbHash", "dbStats", "find", "killCursors", "listCollections", "listIndexes", "planCacheRead"]
+		}, {
+			resource: {
+				db: "test1",
+				collection: "system.js"
+			},
+			actions: ["changeStream", "collStats", "convertToCapped", "createCollection", "createIndex", "dbHash", "dbStats", "dropCollection", "dropIndex", "emptycapped", "find", "insert", "killCursors", "listCollections", "listIndexes", "planCacheRead", "remove", "renameCollectionSameDB", "update"]
+		}, {
+			resource: {
+				db: "test1",
+				collection: "system.namespaces"
+			},
+			actions: ["changeStream", "collStats", "dbHash", "dbStats", "find", "killCursors", "listCollections", "listIndexes", "planCacheRead"]
+		}],
+		inheritedAuthenticationRestrictions: [],
+		authenticationRestrictions: []
+	}],
+	ok: 1.0,
+	operationTime: Timestamp(1553674933, 1),
+	$replData: {
+		term: 12,
+		lastOpCommitted: {
+			ts: Timestamp(1553674933, 1),
+			t: 12
+		},
+		lastOpVisible: {
+			ts: Timestamp(1553674933, 1),
+			t: 12
+		},
+		configVersion: 1,
+		replicaSetId: ObjectId('5c6e1c764e3e991ab8278bd9'),
+		primaryIndex: 0,
+		syncSourceIndex: -1
+	},
+	$gleStats: {
+		lastOpTime: {
+			ts: Timestamp(1553674933, 1),
+			t: 12
+		},
+		electionId: ObjectId('7fffffff000000000000000c')
+	},
+	$clusterTime: {
+		clusterTime: Timestamp(1553674933, 1),
+		signature: {
+			hash: BinData(0, 0000000000000000000000000000000000000000),
+			keyId: 0
+		}
+	}
+}
+*/
+//获取上面inheritedPrivileges下的单个item
+//V2UserDocumentParser::initializeUserPrivilegesFromUserDocument
 Status ParsedPrivilege::parsedPrivilegeToPrivilege(const ParsedPrivilege& parsedPrivilege,
                                                    Privilege* result,
-                                                   std::vector<std::string>* unrecognizedActions) {
+                                                   std::vector<std::string>* unrecognizedActions
+                                                   ) {
     std::string errmsg;
     if (!parsedPrivilege.isValid(&errmsg)) {
         return Status(ErrorCodes::FailedToParse, errmsg);
@@ -404,9 +502,11 @@ Status ParsedPrivilege::parsedPrivilegeToPrivilege(const ParsedPrivilege& parsed
 
     // Build actions
     ActionSet actions;
-    const vector<std::string>& parsedActions = parsedPrivilege.getActions();
-    Status status =
-        ActionSet::parseActionSetFromStringVector(parsedActions, &actions, unrecognizedActions);
+	//获取actions
+	log() << "yang test  parsedPrivilege.getIsCommonUserRole():" << parsedPrivilege.getIsCommonUserRole();
+    const vector<std::string>& parsedActions = parsedPrivilege.getActions(); //ParsedPrivilege::getActions
+    Status status = 
+        ActionSet::parseActionSetFromStringVector(parsedActions, &actions, unrecognizedActions, parsedPrivilege.getIsCommonUserRole());
     if (!status.isOK()) {
         return status;
     }
@@ -435,6 +535,45 @@ Status ParsedPrivilege::parsedPrivilegeToPrivilege(const ParsedPrivilege& parsed
         }
     }
 
+	/*
+	管理员权限
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<system resource>
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<all normal resources>
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<database config>
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<database local>
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<local.system.indexes>
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<local.system.js>
+	2019-03-27T17:17:47.527+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<local.system.namespaces>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<config.system.indexes>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<config.system.js>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<config.system.namespaces>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<local.system.replset>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<collection system.profile in any database>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<$setFeatureCompatibilityVersion.version>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<collection system.users in any database>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.system.users>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.system.roles>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.system.version>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.system.new_users>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.system.backup_users>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<collection system.indexes in any database>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<collection system.namespaces in any database>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<collection system.js in any database>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<config.settings>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<all resources>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.tempusers>
+	2019-03-27T17:17:47.528+0800 I ACCESS	[conn----yangtest2] yang test ....parsedPrivilegeToPrivilege:<admin.temproles>
+
+	//用户权限
+	//ResourcePattern::toString
+	2019-03-27T17:17:07.593+0800 I ACCESS   [conn----yangtest1] yang test ....parsedPrivilegeToPrivilege:<database test1>
+2019-03-27T17:17:07.593+0800 I ACCESS   [conn----yangtest1] yang test ....parsedPrivilegeToPrivilege:<test1.system.indexes>
+2019-03-27T17:17:07.593+0800 I ACCESS   [conn----yangtest1] yang test ....parsedPrivilegeToPrivilege:<test1.system.js>
+2019-03-27T17:17:07.593+0800 I ACCESS   [conn----yangtest1] yang test ....parsedPrivilegeToPrivilege:<test1.system.namespaces>
+	log() << "yang test ....parsedPrivilegeToPrivilege:" << resource.toString();
+	*/
+
+	//removeAllActionsFromSet
     *result = Privilege(resource, actions);
     return Status::OK();
 }

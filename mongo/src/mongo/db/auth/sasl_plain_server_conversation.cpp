@@ -25,6 +25,7 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kAccessControl
 
 #include "mongo/db/auth/sasl_plain_server_conversation.h"
 
@@ -33,6 +34,7 @@
 #include "mongo/util/base64.h"
 #include "mongo/util/password_digest.h"
 #include "mongo/util/text.h"
+#include "mongo/util/log.h"
 
 namespace mongo {
 
@@ -88,6 +90,7 @@ StatusWith<bool> SaslPLAINServerConversation::step(StringData inputData, std::st
         return Status(ErrorCodes::AuthenticationFailed,
                       mongoutils::str::stream() << "Incorrectly formatted PLAIN client message");
     }
+	log() << "yang test ........................SaslPLAINServerConversation::step";
 
     User* userObj;
     // The authentication database is also the source database for the user.
