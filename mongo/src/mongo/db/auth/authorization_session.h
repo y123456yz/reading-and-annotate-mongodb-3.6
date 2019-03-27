@@ -65,7 +65,7 @@ class Client;
  * every operation looks at one consistent view of each user for every auth check required over
  * the lifetime of the operation.
  */ //获取客户端对应的认证session见uthorizationSession::get
-class AuthorizationSession {
+class AuthorizationSession { 
     MONGO_DISALLOW_COPYING(AuthorizationSession);
 
 public:
@@ -324,7 +324,7 @@ protected:
     void _buildAuthenticatedRolesVector();
 
     // All Users who have been authenticated on this connection.
-    //所有已经认证的客户端都加入到这里AuthorizationSession::addAndAuthorizeUser
+    //所有已经认证的客户端都加入到这里AuthorizationSession::addAndAuthorizeUser AuthorizationSession::addAndAuthorizeUser
     UserSet _authenticatedUsers; //AuthorizationSession._authenticatedUsers
 
     // The roles of the authenticated users. This vector is generated when the authenticated

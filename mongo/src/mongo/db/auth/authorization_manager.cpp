@@ -413,6 +413,8 @@ Status AuthorizationManager::getBSONForRole(RoleGraph* graph,
     return Status::OK();
 }
 
+//从mongo-cfg获取到用户权限信息后，在AuthorizationManager::_fetchUserV2中调用
+//AuthorizationManager::_fetchUserV2
 Status AuthorizationManager::_initializeUserFromPrivilegeDocument(User* user,
                                                                   const BSONObj& privDoc) {
     V2UserDocumentParser parser;
@@ -485,9 +487,12 @@ Status AuthorizationManager::getRoleDescriptionsForDB(OperationContext* opCtx,
         opCtx, dbname, privileges, restrictions, showBuiltinRoles, result);
 }
 
+//AuthorizationSession::_refreshUserInfoAsNeeded  AuthorizationSession::addAndAuthorizeUser
+//SaslPLAINServerConversation::step  SaslSCRAMSHA1ServerConversation::_firstStep
+//从mongod-cfg获取用户权限信息
 Status AuthorizationManager::acquireUser(OperationContext* opCtx,
-                                         const UserName& userName,
-                                         User** acquiredUser) {
+                                         const UserName& userName, 
+                                         User** acquiredUser) { //在外层最终存入到_authenticatedUsers
     if (userName == internalSecurity.user->getName()) {
         *acquiredUser = internalSecurity.user;
         return Status::OK();
@@ -576,10 +581,12 @@ Status AuthorizationManager::acquireUser(OperationContext* opCtx,
     return Status::OK();
 }
 
+//AuthorizationManager::acquireUser
 Status AuthorizationManager::_fetchUserV2(OperationContext* opCtx,
                                           const UserName& userName,
-                                          std::unique_ptr<User>* acquiredUser) {
+                                          std::unique_ptr<User>* acquiredUser) { //在外层最终存入到_authenticatedUsers
     BSONObj userObj;
+	log() << "yang test ........................AuthorizationManager::_fetchUserV2\r\n";
     Status status = getUserDescription(opCtx, userName, &userObj);
     if (!status.isOK()) {
         return status;
@@ -589,6 +596,7 @@ Status AuthorizationManager::_fetchUserV2(OperationContext* opCtx,
     // initializing the user.
     auto user = stdx::make_unique<User>(userName);
 
+	//
     status = _initializeUserFromPrivilegeDocument(user.get(), userObj);
     if (!status.isOK()) {
         return status;

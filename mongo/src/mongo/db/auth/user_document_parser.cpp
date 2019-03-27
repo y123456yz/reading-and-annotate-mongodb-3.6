@@ -548,6 +548,89 @@ Status V2UserDocumentParser::initializeUserIndirectRolesFromUserDocument(const B
     return Status::OK();
 }
 
+/* userInfo从mongo-cfg获取到的用户信息
+{
+	users: [{
+		_id: "admin.123456",
+		user: "123456",
+		db: "admin",
+		credentials: {
+			SCRAM - SHA - 1: {
+				iterationCount: 10000,
+				salt: "HdWvyPNNnp43/oHayn4RUg==",
+				storedKey: "a1b/EWwsMce4HVJ4V2DedhLntFg=",
+				serverKey: "bV48/bWw4nSQO7qY42cGHWL09Kg="
+			}
+		},
+		roles: [{
+			role: "readWrite",
+			db: "test1"
+		}],
+		inheritedRoles: [{
+			role: "readWrite",
+			db: "test1"
+		}],
+		inheritedPrivileges: [{
+			resource: {
+				db: "test1",
+				collection: ""
+			},
+			actions: ["changeStream", "collStats", "convertToCapped", "createCollection", "createIndex", "dbHash", "dbStats", "dropCollection", "dropIndex", "emptycapped", "find", "insert", "killCursors", "listCollections", "listIndexes", "planCacheRead", "remove", "renameCollectionSameDB", "update"]
+		}, {
+			resource: {
+				db: "test1",
+				collection: "system.indexes"
+			},
+			actions: ["changeStream", "collStats", "dbHash", "dbStats", "find", "killCursors", "listCollections", "listIndexes", "planCacheRead"]
+		}, {
+			resource: {
+				db: "test1",
+				collection: "system.js"
+			},
+			actions: ["changeStream", "collStats", "convertToCapped", "createCollection", "createIndex", "dbHash", "dbStats", "dropCollection", "dropIndex", "emptycapped", "find", "insert", "killCursors", "listCollections", "listIndexes", "planCacheRead", "remove", "renameCollectionSameDB", "update"]
+		}, {
+			resource: {
+				db: "test1",
+				collection: "system.namespaces"
+			},
+			actions: ["changeStream", "collStats", "dbHash", "dbStats", "find", "killCursors", "listCollections", "listIndexes", "planCacheRead"]
+		}],
+		inheritedAuthenticationRestrictions: [],
+		authenticationRestrictions: []
+	}],
+	ok: 1.0,
+	operationTime: Timestamp(1553674933, 1),
+	$replData: {
+		term: 12,
+		lastOpCommitted: {
+			ts: Timestamp(1553674933, 1),
+			t: 12
+		},
+		lastOpVisible: {
+			ts: Timestamp(1553674933, 1),
+			t: 12
+		},
+		configVersion: 1,
+		replicaSetId: ObjectId('5c6e1c764e3e991ab8278bd9'),
+		primaryIndex: 0,
+		syncSourceIndex: -1
+	},
+	$gleStats: {
+		lastOpTime: {
+			ts: Timestamp(1553674933, 1),
+			t: 12
+		},
+		electionId: ObjectId('7fffffff000000000000000c')
+	},
+	$clusterTime: {
+		clusterTime: Timestamp(1553674933, 1),
+		signature: {
+			hash: BinData(0, 0000000000000000000000000000000000000000),
+			keyId: 0
+		}
+	}
+}
+*/
 //AuthorizationManager::_initializeUserFromPrivilegeDocument
 Status V2UserDocumentParser::initializeUserPrivilegesFromUserDocument(const BSONObj& doc,
                                                                       User* user) const {
@@ -560,6 +643,7 @@ Status V2UserDocumentParser::initializeUserPrivilegesFromUserDocument(const BSON
     }
     PrivilegeVector privileges;
     std::string errmsg;
+	bool isCommonUserRole = true;
     for (BSONObjIterator it(privilegesElement.Obj()); it.more(); it.next()) {
         if ((*it).type() != Object) {
             warning() << "Wrong type of element in inheritedPrivileges array for "
@@ -568,12 +652,36 @@ Status V2UserDocumentParser::initializeUserPrivilegesFromUserDocument(const BSON
         }
         Privilege privilege;
         ParsedPrivilege pp;
-        if (!pp.parseBSON((*it).Obj(), &errmsg)) {
+        if (!pp.parseBSON((*it).Obj(), &errmsg)) { //ParsedPrivilege::parseBSON  获取ParsedPrivilege
             warning() << "Could not parse privilege element in user document for "
                       << user->getName() << ": " << errmsg;
             continue;
         }
+
+		
+		if (pp.isResourceSet() && pp.getResource().isDbSet() == true && pp.getResource().getDb() == "admin") {
+            isCommonUserRole = false;
+		}
+    }
+	
+    for (BSONObjIterator it(privilegesElement.Obj()); it.more(); it.next()) {
+        if ((*it).type() != Object) {
+            warning() << "Wrong type of element in inheritedPrivileges array for "
+                      << user->getName() << ": " << *it;
+            continue;
+        }
+        Privilege privilege;
+        ParsedPrivilege pp;
+        if (!pp.parseBSON((*it).Obj(), &errmsg)) { //ParsedPrivilege::parseBSON  获取ParsedPrivilege
+            warning() << "Could not parse privilege element in user document for "
+                      << user->getName() << ": " << errmsg;
+            continue;
+        }
+
+		pp.setIsCommonUserRole(isCommonUserRole);
+		log() << "yang test xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << isCommonUserRole;
         std::vector<std::string> unrecognizedActions;
+		//后端mongd-cfg应答回来的无法识别的action添加到unrecognizedActions中
         Status status =
             ParsedPrivilege::parsedPrivilegeToPrivilege(pp, &privilege, &unrecognizedActions);
         if (!status.isOK()) {

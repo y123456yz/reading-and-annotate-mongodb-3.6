@@ -55,7 +55,8 @@ namespace mongo {
  * should check isInvalidated() before using it, and if it has been invalidated, it should
  * return the object to the AuthorizationManager and fetch a new User object instance for this
  * user from the AuthorizationManager.
- */
+ */ //UserSet._users成员   添加的账号权限等信息都在这里面
+ //账号权限信息都在这里面参考AuthorizationSession::addAndAuthorizeUserAuthorizationSession::addAndAuthorizeUser
 class User {
     MONGO_DISALLOW_COPYING(User);
 
@@ -217,7 +218,8 @@ public:
      */
     void decrementRefCount();
 
-private:
+private: //账号权限信息都在这里面参考AuthorizationSession::addAndAuthorizeUserAuthorizationSession::addAndAuthorizeUser
+
     UserName _name;
 
     // Digest of the full username

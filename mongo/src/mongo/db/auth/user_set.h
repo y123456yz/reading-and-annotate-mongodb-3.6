@@ -43,7 +43,7 @@ namespace mongo {
  * A collection of authenticated users.
  * This class does not do any locking/synchronization, the consumer will be responsible for
  * synchronizing access.
- */
+ */ //AuthorizationSession._authenticatedUsers成员  账号权限信息都在这里面参考AuthorizationSession::addAndAuthorizeUserAuthorizationSession::addAndAuthorizeUser
 class UserSet {
     MONGO_DISALLOW_COPYING(UserSet);
 
@@ -121,7 +121,7 @@ private:
 
     // The UserSet maintains ownership of the Users in it, and is responsible for
     // returning them to the AuthorizationManager when done with them.
-    std::vector<User*> _users;
+    std::vector<User*> _users; 
     std::vector<User*>::iterator _usersEnd;
 };
 

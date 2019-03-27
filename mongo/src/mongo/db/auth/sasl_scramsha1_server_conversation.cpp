@@ -28,6 +28,7 @@
 
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kAccessControl
 
+
 #include "mongo/platform/basic.h"
 
 #include "mongo/db/auth/sasl_scramsha1_server_conversation.h"
@@ -45,6 +46,7 @@
 #include "mongo/util/password_digest.h"
 #include "mongo/util/sequence_util.h"
 #include "mongo/util/text.h"
+
 
 namespace mongo {
 
@@ -166,6 +168,7 @@ StatusWith<bool> SaslSCRAMSHA1ServerConversation::_firstStep(std::vector<string>
 
     std::string clientNonce = input[2].substr(2);
 
+	log() << "yang test ........................ SaslSCRAMSHA1ServerConversation::_firstStep";
     // The authentication database is also the source database for the user.
     User* userObj;
     Status status =
