@@ -99,6 +99,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
     .客户端认证过程点分析处理  
     .重新梳理分析mongos命令权限控制过程  
     .ActionType操作类型  privileges权限控制过程分析  
+    .usersInfo账号权限获取过程分析  
 
 
 

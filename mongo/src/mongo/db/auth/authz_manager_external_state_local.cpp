@@ -46,7 +46,7 @@
 namespace mongo {
 
 using std::vector;
-
+//AuthorizationManager::initialize
 Status AuthzManagerExternalStateLocal::initialize(OperationContext* opCtx) {
     Status status = _initializeRoleGraph(opCtx);
     if (!status.isOK()) {
