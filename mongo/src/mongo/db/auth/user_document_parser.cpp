@@ -678,8 +678,7 @@ Status V2UserDocumentParser::initializeUserPrivilegesFromUserDocument(const BSON
             continue;
         }
 
-		pp.setIsCommonUserRole(isCommonUserRole);
-		log() << "yang test xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << isCommonUserRole;
+		//log() << "yang test xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << isCommonUserRole;
         std::vector<std::string> unrecognizedActions;
 		//后端mongd-cfg应答回来的无法识别的action添加到unrecognizedActions中
         Status status =

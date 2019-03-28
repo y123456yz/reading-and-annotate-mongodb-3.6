@@ -88,8 +88,7 @@ public:
     // *unrecognizedActions, while still returning the valid actions in *result, and returning OK.
     static Status parseActionSetFromStringVector(const std::vector<std::string>& actionsVector,
                                                  ActionSet* result,
-                                                 std::vector<std::string>* unrecognizedActions,
-                                                 bool isCommonUserRole);
+                                                 std::vector<std::string>* unrecognizedActions);
 
 private:
     // bitmask of actions this privilege grants  所有的操作都记录在这里面
