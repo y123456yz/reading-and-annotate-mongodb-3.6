@@ -66,6 +66,8 @@ const std::string ADMIN_DBNAME = "admin";
 // Checks if this connection has the privileges necessary to create or modify the view 'viewNs'
 // to be a view on 'viewOnNs' with pipeline 'viewPipeline'. Call this function after verifying
 // that the user has the 'createCollection' or 'collMod' action, respectively.
+
+// AuthorizationSession::checkAuthForCreate
 Status checkAuthForCreateOrModifyView(AuthorizationSession* authzSession,
                                       const NamespaceString& viewNs,
                                       const NamespaceString& viewOnNs,
@@ -288,6 +290,7 @@ PrivilegeVector AuthorizationSession::getDefaultPrivileges() {
     return defaultPrivileges;
 }
 
+//checkAuthForCreateOrModifyView
 Status AuthorizationSession::checkAuthForAggregate(const NamespaceString& nss,
                                                    const BSONObj& cmdObj,
                                                    bool isMongos) {
@@ -500,6 +503,7 @@ Status AuthorizationSession::checkAuthForKillCursors(const NamespaceString& ns,
     return Status::OK();
 }
 
+//CmdCreate::checkAuthForCommand  create命令相关
 Status AuthorizationSession::checkAuthForCreate(const NamespaceString& ns,
                                                 const BSONObj& cmdObj,
                                                 bool isMongos) {
@@ -511,6 +515,7 @@ Status AuthorizationSession::checkAuthForCreate(const NamespaceString& ns,
     const bool hasCreateCollectionAction =
         isAuthorizedForActionsOnNamespace(ns, ActionType::createCollection);
 
+	//log() << "yang test ..................... AuthorizationSession::checkAuthForCreate:" << hasCreateCollectionAction;
     // If attempting to create a view, check for additional required privileges.
     if (cmdObj["viewOn"]) {
         // You need the createCollection action on this namespace; the insert action is not
@@ -528,8 +533,8 @@ Status AuthorizationSession::checkAuthForCreate(const NamespaceString& ns,
     }
 
     // To create a regular collection, ActionType::createCollection or ActionType::insert are
-    // both acceptable.
-    if (hasCreateCollectionAction || isAuthorizedForActionsOnNamespace(ns, ActionType::insert)) {
+    // both acceptable. 官方默认这里只有要createCollection建表权限或者insert权限
+    if (hasCreateCollectionAction) {// || isAuthorizedForActionsOnNamespace(ns, ActionType::insert)) {
         return Status::OK();
     }
 
@@ -662,7 +667,7 @@ bool AuthorizationSession::isAuthorizedForPrivilege(const Privilege& privilege) 
     return _isAuthorizedForPrivilege(privilege);
 }
 
-//BasicCommand::checkAuthForCommand
+//BasicCommand::checkAuthForCommand  AuthorizationSession::checkAuthForAggregate
 bool AuthorizationSession::isAuthorizedForPrivileges(const vector<Privilege>& privileges) {
 	//mongos对应AuthzSessionExternalStateServerCommon::shouldIgnoreAuthChecks
 	//mongod对应AuthzSessionExternalStateMongod::shouldIgnoreAuthChecks
@@ -670,10 +675,13 @@ bool AuthorizationSession::isAuthorizedForPrivileges(const vector<Privilege>& pr
         return true;
 
     for (size_t i = 0; i < privileges.size(); ++i) {
-        if (!_isAuthorizedForPrivilege(privileges[i]))
+        if (!_isAuthorizedForPrivilege(privileges[i])) {
+			//log() << "yang test ................... isAuthorizedForPrivileges,  failed !!!!!!!!!!!!!!!!!!";
             return false;
-    }
+        }
+	}
 
+	//log() << "yang test ................... isAuthorizedForPrivileges,  ok !!!!!!!!!!!!!!!!!!";
     return true;
 }
 
@@ -894,7 +902,7 @@ bool AuthorizationSession::_isAuthorizedForPrivilege(const Privilege& privilege)
 
 	//本次请求的action
     ActionSet unmetRequirements = privilege.getActions();
-	
+	//log() << "yang test ..............._isAuthorizedForPrivilege:" << unmetRequirements.toString();
     PrivilegeVector defaultPrivileges = getDefaultPrivileges();
 	
 	//这个和localhost链接相关，跳过
@@ -919,6 +927,7 @@ bool AuthorizationSession::_isAuthorizedForPrivilege(const Privilege& privilege)
         User* user = *it;
         for (int i = 0; i < resourceSearchListLength; ++i) {
             ActionSet userActions = user->getActionsForResource(resourceSearchList[i]);
+			//log() << "yang test ................... useractions:" << userActions.toString();
 			//如果本次请求的action在userActions中，那么清除后，unmetRequirements应该为空，否则说明本次请求的action不在userActions中
             unmetRequirements.removeAllActionsFromSet(userActions);
 
@@ -926,7 +935,7 @@ bool AuthorizationSession::_isAuthorizedForPrivilege(const Privilege& privilege)
                 return true;
         }
     }
-
+	//log() << "yang test ................... useractions,  failed !!!!!!!!!!!!!!!!!!";
     return false;
 }
 

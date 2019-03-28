@@ -351,14 +351,6 @@ void ParsedPrivilege::setActions(const std::vector<string>& actions) {
     _isActionsSet = actions.size() > 0;
 }
 
-void ParsedPrivilege::setIsCommonUserRole(bool role) {
-    isCommonUserRole = role;
-}
-
-const bool ParsedPrivilege::getIsCommonUserRole() const {
-    return isCommonUserRole;
-}
-
 void ParsedPrivilege::addToActions(const string& actions) {
     _actions.push_back(actions);
     _isActionsSet = true;
@@ -503,10 +495,9 @@ Status ParsedPrivilege::parsedPrivilegeToPrivilege(const ParsedPrivilege& parsed
     // Build actions
     ActionSet actions;
 	//ªÒ»°actions
-	log() << "yang test  parsedPrivilege.getIsCommonUserRole():" << parsedPrivilege.getIsCommonUserRole();
     const vector<std::string>& parsedActions = parsedPrivilege.getActions(); //ParsedPrivilege::getActions
     Status status = 
-        ActionSet::parseActionSetFromStringVector(parsedActions, &actions, unrecognizedActions, parsedPrivilege.getIsCommonUserRole());
+        ActionSet::parseActionSetFromStringVector(parsedActions, &actions, unrecognizedActions);
     if (!status.isOK()) {
         return status;
     }

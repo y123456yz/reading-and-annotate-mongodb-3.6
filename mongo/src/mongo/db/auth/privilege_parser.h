@@ -265,8 +265,6 @@ public:
     void unsetResource();
     bool isResourceSet() const;
     const ParsedResource& getResource() const;
-    void setIsCommonUserRole(bool role);
-    const bool getIsCommonUserRole() const;
 
 private:
     // Convention: (M)andatory, (O)ptional
@@ -278,8 +276,6 @@ private:
     // (M) Object describing the resource pattern of this privilege
     ParsedResource _resource;
     bool _isResourceSet;
-
-    bool isCommonUserRole;
 };
 
 }  // namespace mongo

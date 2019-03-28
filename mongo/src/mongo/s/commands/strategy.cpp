@@ -217,7 +217,6 @@ void execCommandClient(OperationContext* opCtx,
         return;
     }
 
-	LOG(2) << "yang test ............... execCommandClient";
     bool ok = false;
     if (!supportsWriteConcern) {
         ok = c->publicRun(opCtx, request, result); //Command::publicRun
