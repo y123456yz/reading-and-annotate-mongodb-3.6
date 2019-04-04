@@ -843,6 +843,7 @@ void WiredTigerRecordStore::deleteRecord(OperationContext* opCtx, const RecordId
     _increaseDataSize(opCtx, -old_length);
 }
 
+//capped collection集合大小不能超过现在，否则需要清除
 bool WiredTigerRecordStore::cappedAndNeedDelete() const {
     if (!_isCapped)
         return false;
@@ -856,6 +857,7 @@ bool WiredTigerRecordStore::cappedAndNeedDelete() const {
     return false;
 }
 
+//capped collection集合大小不能超过现在，否则需要清除  cappedAndNeedDelete
 int64_t WiredTigerRecordStore::cappedDeleteAsNeeded(OperationContext* opCtx,
                                                     const RecordId& justInserted) {
     invariant(!_oplogStones);
@@ -899,7 +901,7 @@ int64_t WiredTigerRecordStore::cappedDeleteAsNeeded(OperationContext* opCtx,
     return cappedDeleteAsNeeded_inlock(opCtx, justInserted);
 }
 
-//wiredtiger  truncate相关
+//wiredtiger  固定collection如果超限了，需要做清理操作
 int64_t WiredTigerRecordStore::cappedDeleteAsNeeded_inlock(OperationContext* opCtx,
                                                            const RecordId& justInserted) {
     // we do this in a side transaction in case it aborts
@@ -1510,7 +1512,7 @@ Status WiredTigerRecordStore::validate(OperationContext* opCtx,
 void WiredTigerRecordStore::appendCustomStats(OperationContext* opCtx,
                                               BSONObjBuilder* result,
                                               double scale) const {
-    result->appendBool("capped", _isCapped);
+    result->appendBool("capped", _isCapped); //capped collection集合大小不能超过现在，否则需要清除  cappedAndNeedDelete
     if (_isCapped) {
         result->appendIntOrLL("max", _cappedMaxDocs);
         result->appendIntOrLL("maxSize", static_cast<long long>(_cappedMaxSize / scale));

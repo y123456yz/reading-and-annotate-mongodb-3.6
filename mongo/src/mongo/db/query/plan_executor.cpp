@@ -680,7 +680,7 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
             // If we're allowed to, we will yield next time through the loop.
             if (_yieldPolicy->canAutoYield())
                 _yieldPolicy->forceYield();
-        } else if (PlanStage::NEED_TIME == code) {
+        } else if (PlanStage::NEED_TIME == code) { //NEED_TIME这里不退出，继续循环执行
             // Fall through to yield check at end of large conditional.
         } else if (PlanStage::IS_EOF == code) {
             if (!shouldWaitForInserts()) {

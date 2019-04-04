@@ -83,14 +83,15 @@ public:
 
     static std::string secondsExpireField;
 
-    virtual void run() {
+	//当你在集合中某一个字段建立TTL索引后，后台会有一个单线程，通过不断查询（默认60s一次）索引的值来判断document是否有过期
+    virtual void run() { //每隔60S进行扫描一次
         Client::initThread(name().c_str());
         AuthorizationSession::get(cc())->grantInternalAuthorization();
 
         while (!globalInShutdownDeprecated()) {
             {
                 MONGO_IDLE_THREAD_BLOCK;
-                sleepsecs(ttlMonitorSleepSecs.load());
+                sleepsecs(ttlMonitorSleepSecs.load()); //也就是60S执行一次
             }
 
             LOG(3) << "thread awake";

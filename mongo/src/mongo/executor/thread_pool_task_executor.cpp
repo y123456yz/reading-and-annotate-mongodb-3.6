@@ -506,6 +506,7 @@ StatusWith<TaskExecutor::CallbackHandle> ThreadPoolTaskExecutor::scheduleRemoteC
             scheduledRequest,
             //后端应答后会调用该函数，真正执行在NetworkInterfaceASIO::AsyncOp::finish
             //赋值给NetworkInterfaceASIO::startCommand，后端应答数据后会调用
+            //该用法为c++11的Lambda,可以参考https://www.cnblogs.com/DswCnblog/p/5629165.html
             [this, scheduledRequest, cbState, cb](const ResponseStatus& response) { //response里面包含状态 时延 msg等
                 using std::swap;
                 CallbackFn newCb = [cb, scheduledRequest, response](const CallbackArgs& cbData) {

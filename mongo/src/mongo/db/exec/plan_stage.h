@@ -119,7 +119,7 @@ public:
     enum StageState {
         // work(...) has returned a new result in its out parameter.  The caller must free it
         // from the working set when done with it.
-        ADVANCED,
+        ADVANCED,  //参考PlanExecutor::getNextImpl 表示本次扫描的行满足条件
 
         // work(...) won't do anything more.  isEOF() will also be true.  There is nothing
         // output in the out parameter.
@@ -127,7 +127,7 @@ public:
 
         // work(...) needs more time to product a result.  Call work(...) again.  There is
         // nothing output in the out parameter.
-        NEED_TIME, //2
+        NEED_TIME, //2  参考PlanExecutor::getNextImpl 表示本次扫描的行不满足条件
 
         // The storage engine says we need to yield, possibly to fetch a record from disk, or
         // due to an aborted transaction in the storage layer.
@@ -150,7 +150,7 @@ public:
         // requested fetch. The stage that requested the fetch holds the WSID of the loc it
         // wants fetched. On the next call to work() that stage can assume a fetch was performed
         // on the WSM that the held WSID refers to.
-        NEED_YIELD, //3
+        NEED_YIELD, //3  参考IndexScan::doWork
 
         // Something went wrong but it's not an internal error.  Perhaps our collection was
         // dropped or state deleted.

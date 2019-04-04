@@ -88,7 +88,7 @@ struct CollectionOptions {
     //uuid生成见UUID::gen()
     // Collection UUID. Will exist if featureCompatibilityVersion >= 3.6.
     OptionalCollectionUUID uuid; //每个collection会对应一个uuid，见DatabaseImpl::createCollection，只有3.6以上版本有该uuid
-
+    //说明是MongoDB固定集合（capped collection）
     bool capped = false;
     long long cappedSize = 0;
     long long cappedMaxDocs = 0;

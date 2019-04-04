@@ -58,6 +58,7 @@ struct MemberState {
         RS_STARTUP = 0,
         RS_PRIMARY = 1,
         RS_SECONDARY = 2,
+        //当Secondary上需要的oplog在同步源上已经滚掉时， Secondary的同步将无法正常进行， 会进入RECOVERING的状态， 需向Secondary主动发送resyc命令重新同步。
         RS_RECOVERING = 3,
         RS_STARTUP2 = 5,
         RS_UNKNOWN = 6, /* remote node not yet reached */
