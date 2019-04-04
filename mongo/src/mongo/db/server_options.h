@@ -237,6 +237,11 @@ struct ServerGlobalParams {
 
     std::vector<std::string> disabledSecureAllocatorDomains;
     //使用 readConcern 需要配置replication.enableMajorityReadConcern选项
+    /*
+    MongoDB 要支持 majority 的 readConcern 级别， 必须设置 replication.enableMajorityReadConcern 参数， 加上这个参数
+    后， MongoDB 会起一个单独的snapshot 线程， 会周期性的对当前的数据集进行snapshot， 并记录 snapshot 时最新
+    oplog的时间戳， 得到一个映射表。参考<<MONGODB原理与实战>> readConcern 实现原理章节
+    */ //生效见WiredTigerKVEngine::startOplogManager
     bool enableMajorityReadConcern = true;
 };
 

@@ -626,6 +626,8 @@ private:
 /*
 secondary 节点在 自身oplog发生变化时，会通过 replSetUpdatePosition 命令来将 oplog 进度立即通知给 primary，
 另外心跳的消息里也会包含最新 oplog 的信息；
+Secondary上有单独的线程， 当oplog的最新时间戳发生更新时， 就会向Primary发送replSetUpdatePosition命令更
+新自己的oplog时间戳
 */
 class CmdReplSetUpdatePosition : public ReplSetCommand {
 public:
