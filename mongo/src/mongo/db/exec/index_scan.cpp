@@ -214,7 +214,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
             case HIT_END:
                 return PlanStage::IS_EOF;
         }
-    } catch (const WriteConflictException&) {
+    } catch (const WriteConflictException&) { ////WiredTigerIndexCursorBase::next->updatePosition中出现异常会抛出该异常
         *out = WorkingSet::INVALID_ID;
         return PlanStage::NEED_YIELD;
     }

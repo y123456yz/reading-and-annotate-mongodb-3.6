@@ -107,7 +107,7 @@ public:
         StringData ns;
         std::string uri;
         std::string engineName;
-        bool isCapped;
+        bool isCapped; //capped collection，如果固定集合超限了，则在cappedAndNeedDelete判断
         bool isEphemeral;
         int64_t cappedMaxSize;
         int64_t cappedMaxDocs;

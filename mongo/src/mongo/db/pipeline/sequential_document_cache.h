@@ -144,6 +144,8 @@ private:
     CacheStatus checkCacheSize(const Document& doc);
 
     CacheStatus _status = CacheStatus::kBuilding;
+    //当Secondary同步滞后是因为主上并发写入太高导致， （db.serverStatus().metrics.repl.buffer.sizeBytes持续接近
+    //db.serverStatus().metrics.repl.buffer.maxSizeBytes） ， 可通过调整Secondary上replWriter并发线程数来提升。
     size_t _maxSizeBytes = 0;
     size_t _sizeBytes = 0;
 

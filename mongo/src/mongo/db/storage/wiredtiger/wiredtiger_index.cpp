@@ -1016,7 +1016,7 @@ protected:
      * be called after a restore that did not restore to original state since that does not
      * logically move the cursor until the following call to next().
      */  //WiredTigerIndexCursorBase::next，获取索引行中对应的key-value
-    void updatePosition(bool inNext = false) {
+    void updatePosition(bool inNext = false) { 
         _lastMoveWasRestore = false;
         if (_cursorAtEof) {
             _eof = true;
