@@ -47,6 +47,12 @@ const uint64_t kMinimumTimestamp = 1;
 
 MONGO_FP_DECLARE(WTPausePrimaryOplogDurabilityLoop);
 
+/*
+MongoDB 要支持 majority 的 readConcern 级别， 必须设置 replication.enableMajorityReadConcern 参数， 加上这个参数
+后， MongoDB 会起一个单独的snapshot 线程， 会周期性的对当前的数据集进行snapshot， 并记录 snapshot 时最新
+oplog的时间戳， 得到一个映射表。参考<<MONGODB原理与实战>> readConcern 实现原理章节
+*/
+
 //WiredTigerKVEngine::startOplogManager中调用执行
 void WiredTigerOplogManager::start(OperationContext* opCtx,
                                    const std::string& uri,
