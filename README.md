@@ -46,11 +46,11 @@ https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0
 阅读过程  
 ===================================   
 18.10.8  
-    .提交mongo官方代码    
-    .主要类结构,宏定义代码梳理注释  
-    .主流程简单分析  
-    .mongodb存储引擎wiredtiger代码架构梳理    
-    .wiredtiger源码分析    
+> * .提交mongo官方代码    
+> * .主要类结构,宏定义代码梳理注释  
+> * .主流程简单分析  
+> * .mongodb存储引擎wiredtiger代码架构梳理    
+> * .wiredtiger源码分析    
     .添加mongodb压测工具，sysbench-mongodb    
     .网络收发处理过程完整分析  
     .网络线程模型分析  
