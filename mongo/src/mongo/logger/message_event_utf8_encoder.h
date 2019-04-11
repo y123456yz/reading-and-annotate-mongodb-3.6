@@ -39,6 +39,14 @@ namespace logger {
 /**
  * Encoder that writes log messages of the style that MongoDB writes to console and files.
  */
+/*
+Encoder
+Encoder类负责对日志格式化，在不同的场景可能需要不同格式的日志，比如输出到console和文件可以使用一种格式，输出到syslog用另一种格式，还有些时候是不需要特定格式，直接输出raw信息即可。那么只要定义一个特定格式的派生类，实现对应的encode()接口即可。MongoDB目前定义了以下3种Encoder分别用于console/文件、syslog和raw：
+
+MessageEventDetailsEncoder
+MessageEventWithContextEncoder
+MessageEventUnadornedEncoder
+*/
 class MessageEventDetailsEncoder : public Encoder<MessageEventEphemeral> {
 public:
     typedef void (*DateFormatter)(std::ostream&, Date_t);
@@ -65,6 +73,14 @@ public:
 /**
  * Encoder that generates log messages suitable for syslog.
  */
+/*
+Encoder
+Encoder类负责对日志格式化，在不同的场景可能需要不同格式的日志，比如输出到console和文件可以使用一种格式，输出到syslog用另一种格式，还有些时候是不需要特定格式，直接输出raw信息即可。那么只要定义一个特定格式的派生类，实现对应的encode()接口即可。MongoDB目前定义了以下3种Encoder分别用于console/文件、syslog和raw：
+
+MessageEventDetailsEncoder
+MessageEventWithContextEncoder
+MessageEventUnadornedEncoder
+*/
 class MessageEventWithContextEncoder : public Encoder<MessageEventEphemeral> {
 public:
     virtual ~MessageEventWithContextEncoder();
@@ -75,6 +91,14 @@ public:
 /**
  * Encoder that generates log messages containing only the raw text of the message.
  */
+ /*
+Encoder
+Encoder类负责对日志格式化，在不同的场景可能需要不同格式的日志，比如输出到console和文件可以使用一种格式，输出到syslog用另一种格式，还有些时候是不需要特定格式，直接输出raw信息即可。那么只要定义一个特定格式的派生类，实现对应的encode()接口即可。MongoDB目前定义了以下3种Encoder分别用于console/文件、syslog和raw：
+
+MessageEventDetailsEncoder
+MessageEventWithContextEncoder
+MessageEventUnadornedEncoder
+*/
 class MessageEventUnadornedEncoder : public Encoder<MessageEventEphemeral> {
 public:
     virtual ~MessageEventUnadornedEncoder();

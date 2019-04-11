@@ -32,11 +32,37 @@
 #include "mongo/platform/compiler.h"
 
 namespace mongo {
+/*
+MongoDB启动时在GlobalLogManager这个全局初始化函数中实例化了全局的LogManager单例，其中包含了ComponentMessageLogDomain这个全局的LogDomain。因此我们只只需要在需要记log的地方构造LogstreamBuilder，再传入日志内容就可以了。
+
+在util/log.h中定义了以下函数直接构造一个对应的LogstreamBuilder（使用全局的LogDomain和MONGO_LOG_DEFAULT_COMPONENT）：
+
+severe()
+error()
+warning()
+log()
+此外，还定义了以下一系列LOG宏来根据传入的DLEVEL值是否大于组件配置的日志级别的值来判断是否需要记录log：
+
+LOG
+MONGO_LOG(DLEVEL)
+MONGO_LOG_COMPONENT(DLEVEL, COMPONENT1)
+MONGO_LOG_COMPONENT2(DLEVEL, COMPONENT1, COMPONENT2)
+MONGO_LOG_COMPONENT3(DLEVEL, COMPONENT1, COMPONENT2, COMPONENT3)
+这种方式可以指定DLEVEL，因此更加灵活。
+
+综上，MongoDB日志系统的使用非常简单，只需：
+
+在cpp文件中include util/log.h头文件，注意不可include多次
+在当前cpp文件中定义一个MONGO_LOG_DEFAULT_COMPONENT宏
+使用预定义的几个函数或LOG系列宏来进行log调用
+参考https://yq.aliyun.com/articles/5528
+*/
 namespace logger {
 
 static LogManager* theGlobalLogManager;  // NULL at program start, before even static
                                          // initialization.
 
+//日志切割相关
 static RotatableFileManager theGlobalRotatableFileManager;
 
 LogManager* globalLogManager() {

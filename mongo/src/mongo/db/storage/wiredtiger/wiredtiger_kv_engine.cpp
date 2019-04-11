@@ -680,6 +680,7 @@ int WiredTigerKVEngine::flushAllFiles(OperationContext* opCtx, bool sync) {
     const bool forceCheckpoint = true;
     // If there's no journal, we must take a full checkpoint.
     const bool stableCheckpoint = _durable;
+	//WiredTigerSessionCache::waitUntilDurable
     _sessionCache->waitUntilDurable(forceCheckpoint, stableCheckpoint);
 
     return 1;

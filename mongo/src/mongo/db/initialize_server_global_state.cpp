@@ -247,6 +247,10 @@ MONGO_INITIALIZER_GENERAL(ServerLogRedirection,
                     new logger::MessageEventWithContextEncoder)));
 #endif  // defined(_WIN32)
     } else if (!serverGlobalParams.logpath.empty()) {
+		StringBuilder sb;
+        sb << serverGlobalParams.binaryName << "." << serverGlobalParams.port << "ALLSQL";
+        openlog(strdup(sb.str().c_str()), LOG_PID | LOG_CONS, LOG_USER);
+	
         fassert(16448, !serverGlobalParams.logWithSyslog);
         std::string absoluteLogpath =
             boost::filesystem::absolute(serverGlobalParams.logpath, serverGlobalParams.cwd)

@@ -292,6 +292,7 @@ void WiredTigerSessionCache::shuttingDown() {
     _snapshotManager.shutdown(); //WiredTigerSnapshotManager::shutdown
 }
 
+//WiredTigerKVEngine::flushAllFiles
 void WiredTigerSessionCache::waitUntilDurable(bool forceCheckpoint, bool stableCheckpoint) {
     // For inMemory storage engines, the data is "as durable as it's going to get".
     // That is, a restart is equivalent to a complete node failure.
