@@ -38,6 +38,14 @@ namespace logger {
  * Most appender implementations write to streams, and Encoders represent the process of
  * encoding events into streams.
  */
+ /*
+Encoder
+Encoder类负责对日志格式化，在不同的场景可能需要不同格式的日志，比如输出到console和文件可以使用一种格式，输出到syslog用另一种格式，还有些时候是不需要特定格式，直接输出raw信息即可。那么只要定义一个特定格式的派生类，实现对应的encode()接口即可。MongoDB目前定义了以下3种Encoder分别用于console/文件、syslog和raw：
+
+MessageEventDetailsEncoder
+MessageEventWithContextEncoder
+MessageEventUnadornedEncoder
+*/
 template <typename Event>
 class Encoder {
 public:

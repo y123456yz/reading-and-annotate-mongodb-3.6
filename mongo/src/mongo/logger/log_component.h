@@ -40,6 +40,16 @@ namespace logger {
  * Debug messages logged using the LOG() or MONGO_LOG_COMPONENT().
  * Macros may be associated with one or more log components.
  */
+/*
+LogComponent
+标识日志是哪个组件产生的，是一个枚举值，有
+
+kDefault
+kControl
+kCommand
+...
+如果没有明确的所属组件，那么使用kDefault这个默认组件。
+*/
 class LogComponent {
 public:
     enum Value {

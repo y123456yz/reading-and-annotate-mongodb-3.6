@@ -38,7 +38,16 @@ namespace logger {
  *
  * Example concrete instances are ConsoleAppender<E>, SyslogAppender<E> and
  * RotatableFileAppender<E>.
- */
+ *//*
+Appender
+和其他日志系统一样，Appender就是日志输出到什么地方，常见的有Console、File、syslog等。作为一个服务，日志切割是普遍需求，为此MongoDB实现了一个RotatableFileAppender结合RotatableFileWriter和RotatableFileManager来实现这个功能。
+每个Appender类有一个append()接口，所有派生类都需要实现这个接口。Appender类在构造时需要指定一个Encoder，append()的时候调用Encoder的encode()接口对日志进行格式化，然后再输出。MongoDB目前定义了以下几种Appender分别用于console、File和syslog输出：
+
+ConsoleAppender
+RotatableFileAppender
+SyslogAppender
+
+*/
 template <typename E>
 class Appender {
 public:

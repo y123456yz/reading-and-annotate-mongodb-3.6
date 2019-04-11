@@ -57,6 +57,14 @@ namespace logger {
  * Once you've configured the domain, call append() from potentially many threads, to add log
  * messages.
  */
+/*
+LogDomain
+LogDomain可以理解为用来对日志按照业务类型进行分类（Domain）。这里业务类型是一个抽象的说法，具体可以是普通的程序日志、
+或是一些特殊模块的日志。MongoDB中有一个全局的LogDomain用于普通的日志输出，另外还有一个专门用于JavaScript输出。
+每个LogDomain管理了一组Appender，因此可以实现比较灵活的配置，比如系统日志可以输出到一个文件，JavsScript相关的
+日志可以输出到console或是另一个文件。除Appender的管理方法(attachAppender()、detachAppender()、clearAppenders()）
+外，LogDomain也提供一个append()方法，调用后就是遍历其包含的Appender依次调用append()方法。
+*/
 template <typename E>
 class LogDomain {
     MONGO_DISALLOW_COPYING(LogDomain);

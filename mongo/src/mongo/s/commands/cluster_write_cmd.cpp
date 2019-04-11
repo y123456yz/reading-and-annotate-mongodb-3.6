@@ -221,8 +221,9 @@ public:
 		
 		long long end = curTimeMicros64();
 		auto consumeTime = end - start;
-	
-		LOG(2) << "yang test 1 ClusterWriteCmd::enhancedRun:" << redact(batchedRequest.toBSON()) << " time(ms):" << (int)consumeTime;
+
+
+		//LOG(2) << "yang test 1 ClusterWriteCmd::enhancedRun:" << redact(batchedRequest.toBSON()) << " time(ms):" << (int)consumeTime;
 
         // Populate the lastError object based on the write response
         batchErrorToLastError(batchedRequest, response, &LastError::get(opCtx->getClient()));
@@ -253,6 +254,11 @@ public:
                 globalOpCounters.gotDelete();
             }
         }
+		
+		char buf[200];
+		snprintf(buf, sizeof(buf), " time(ms):%d", (int)consumeTime);
+		//syslog(LOG_MAKEPRI(LOG_USER, LOG_INFO), "%s", batchedRequest.jsonString().c_str());
+		syslog(LOG_MAKEPRI(LOG_USER, LOG_INFO), "%s", (batchedRequest.toString() + buf).c_str());
 		
         // Save the last opTimes written on each shard for this client, to allow GLE to work
         ClusterLastErrorInfo::get(opCtx->getClient())->addHostOpTimes(stats.getWriteOpTimes());

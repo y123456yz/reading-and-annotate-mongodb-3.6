@@ -41,6 +41,10 @@ namespace logger {
  * Container for managing log domains.
  *
  * Use this while setting up the logging system, before launching any threads.
+ */ 
+ /*
+ LogManager
+ LogDomain的管理者，包含一个全局的LogDomain以及一个LogDomain map，可以根据LogDomain的名字获取到对应的LogDomain。
  */
 class LogManager {
     MONGO_DISALLOW_COPYING(LogManager);

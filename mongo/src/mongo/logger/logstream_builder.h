@@ -48,6 +48,12 @@ class Tee;
 /**
  * Stream-ish object used to build and append log messages.
  */
+ /*
+ LogstreamBuilder
+ 根据提供的LogDomain、的LogSeverity和LogComponent等封装一个日志流，包含一个std::ostringstream。
+ 它重载了『<<』操作符，将日志内容输入到std::ostringstream中去，因此可以直接按照std::ostringstream的
+ 使用方式去使用。在LogstreamBuilder析构时会调用LogDomain的append()方法将日志输出到Appender中。
+ */
 class LogstreamBuilder {
 public:
     static LogSeverity severityCast(int ll) {

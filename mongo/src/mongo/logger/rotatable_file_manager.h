@@ -47,6 +47,10 @@ typedef StatusWith<RotatableFileWriter*> StatusWithRotatableFileWriter;
  *
  * Unlike RotatableFileWriter, this type leaves synchronization to its consumers.
  */
+/*
+use admin  触发日志切割  
+db.runCommand({logRotate:1})
+*/ //日志切割相关
 class RotatableFileManager {
     MONGO_DISALLOW_COPYING(RotatableFileManager);
 

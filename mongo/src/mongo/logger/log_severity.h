@@ -41,6 +41,22 @@ namespace logger {
  * Severities are totally ordered, from most severe to least severe as follows:
  * Severe, Error, Warning, Info, Log, Debug(1), Debug(2), ...
  */
+/*
+LogSeverity
+日志级别，按照严重程度包含以下级别：
+
+Severe
+Error
+Warning
+Info
+Log
+Debug(1)
+Debug(2)
+各级别有一个对应的整型值，从小到大依次对应-4到2。当一个log调用时使用的日志级别对应的整型值大于当前配置的日志级别的整型值时，
+这个log才会被记录。可以在YAML配置文件中使用systemLog.verbosity来配置日志级别，注意这个配置只能配置非负值，即0、1、2分别对
+应Log、Debug(1)和Debug(2)。因此，值为负数的日志，即Info级别以上的的日志是一定会被记录的。另外，MongoDB可以支持不同的
+LogComponent使用不同的LogSeverity，比如可以配置systemLog.component.control.verbosity等。
+*/
 class LogSeverity {
 public:
     //
