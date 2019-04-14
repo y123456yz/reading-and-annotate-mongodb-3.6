@@ -137,6 +137,14 @@ BatchedCommandRequest parseRequest(BatchedCommandRequest::BatchType type,
 /**
  * Base class for mongos write commands.
  */ 
+
+/*
+命令注册可以参考
+src/mongo/db/auth/action_types.txt:"enableProfiler",
+src/mongo/db/auth/role_graph_builtin_roles.cpp:        << ActionType::enableProfiler
+src/mongo/db/commands/dbcommands.cpp:                                                           ActionType::enableProfiler)) {
+src/mongo/s/commands/cluster_profile_cmd.cpp:        actions.addAction(ActionType::enableProfiler);
+*/
 //mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
 //mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
 
