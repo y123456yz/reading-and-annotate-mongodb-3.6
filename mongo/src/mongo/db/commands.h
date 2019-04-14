@@ -241,7 +241,16 @@ public:
 
 /**
  * Serves as a base for server commands. See the constructor for more details.
- */ //BasicCommand继承该类(类构造一般由basicCommand实现，如AddShardCmd()等) ClusterWriteCmd(mongos) WriteCommand(mongod)  Command类来源见Command::findCommand
+ */ 
+/*
+命令注册可以参考
+src/mongo/db/auth/action_types.txt:"enableProfiler",
+src/mongo/db/auth/role_graph_builtin_roles.cpp:        << ActionType::enableProfiler
+src/mongo/db/commands/dbcommands.cpp:                                                           ActionType::enableProfiler)) {
+src/mongo/s/commands/cluster_profile_cmd.cpp:        actions.addAction(ActionType::enableProfiler);
+*/
+
+//BasicCommand继承该类(类构造一般由basicCommand实现，如AddShardCmd()等) ClusterWriteCmd(mongos) WriteCommand(mongod)  Command类来源见Command::findCommand
 //mongod  WriteCommand(CmdInsert  CmdUpdate  CmdDelete等继承WriteCommand类,WriteCommand继承Command类)
 //mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
 

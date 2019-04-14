@@ -1402,7 +1402,6 @@ void shutdownTask() {
 //LOG(1) << " only allowing " << current << " connections";
 //log() << " --maxConns too high, can only handle " << want;
 */ //mongos对应mongoSMain
-//percona mongodb编译会出错，原因是编译少了-lcrypto ./build/opt/mongo/db/backup/libbackup.a 
 int mongoDbMain(int argc, char* argv[], char** envp) {
 	printf("yang test .ss..111... mongoDbMain 2\r\n");
 	
