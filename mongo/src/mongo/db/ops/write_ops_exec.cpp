@@ -397,7 +397,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
     //一次性一条一条插入，上面的固定集合是一次性插入
     log() << "yang test ...insertBatchAndHandleErrors.........getNamespace().ns():" << wholeOp.getNamespace().ns();
     for (auto it = batch.begin(); it != batch.end(); ++it) {
-        globalOpCounters.gotInsert(); //操作计数
+        globalOpCounters.gotInsert(); //insert操作计数
         try {
 			//log() << "yang test ............getNamespace().ns():" << wholeOp.getNamespace().ns();
 			//writeConflictRetry里面会执行{}中的函数体
@@ -454,7 +454,8 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     ON_BLOCK_EXIT([&] {
         // This is the only part of finishCurOp we need to do for inserts because they reuse the
         // top-level curOp. The rest is handled by the top-level entrypoint.
-        curOp.done();
+        //performInserts函数执行完成后，需要调用该函数
+        curOp.done(); //执行完成
         Top::get(opCtx->getServiceContext())
             .record(opCtx,
                     wholeOp.getNamespace().ns(),

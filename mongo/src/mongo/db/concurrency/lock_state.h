@@ -103,7 +103,7 @@ public:
 
     virtual LockResult lockGlobal(LockMode mode);
     //shutdownTask中调用
-    virtual LockResult lockGlobalBegin(LockMode mode, Milliseconds timeout) {
+    virtual LockResult lockGlobalBegin(LockMode mode, Milliseconds timeout) { 
         return _lockGlobalBegin(mode, timeout);
     }
     virtual LockResult lockGlobalComplete(Milliseconds timeout);
@@ -185,7 +185,7 @@ private:
 
     /**
      * Like lockGlobalBegin, but accepts a timeout for acquiring a ticket.
-     */
+     */ //上面的LockResult lockGlobalBegin中调用
     LockResult _lockGlobalBegin(LockMode, Milliseconds timeout);
 
     /**

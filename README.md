@@ -128,7 +128,11 @@ https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0
 > * .usersInfo从mongod-cfg获取用户账号、actions等信息过程分析  
 > * .用户信息解析识别过程分析   
 > * .管理员权限和普通用户权限privilege不同点分析  
-> * .建表权限控制过程分析，分析发现只要有建表权限或者Insert权限，则默认都可以建表？为什么要这样？？？？？？有点好奇
+> * .建表权限控制过程分析，分析发现只要有建表权限或者Insert权限，则默认都可以建表？insert权限为什么可以建索引？？？？？？有点好奇
+> * .mongod写入过程重新分析  
+> * .locker锁操作过程原理分析  
+> * .locker sem信号量实现原理详细分析  
+> * .locker类与Lock类区别、及其他们的关联性分析  
 
 
 

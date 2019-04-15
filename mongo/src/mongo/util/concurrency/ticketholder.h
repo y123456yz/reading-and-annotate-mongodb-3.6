@@ -38,7 +38,7 @@
 
 namespace mongo {
 
-//listener类包含该成员
+//listener类包含该成员  //Listener.globalTicketHolder   TicketHolder openWriteTransaction(128);  TicketHolder openReadTransaction(128);
 class TicketHolder {
     MONGO_DISALLOW_COPYING(TicketHolder);
 

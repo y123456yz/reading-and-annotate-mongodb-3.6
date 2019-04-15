@@ -289,6 +289,7 @@ Locker::ClientState LockerImpl<IsForMMAPV1>::getClientState() const {
     return state;
 }
 
+//LockerImpl<IsForMMAPV1>::restoreLockState
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockGlobal(LockMode mode) {
     LockResult result = _lockGlobalBegin(mode, Milliseconds::max());
@@ -305,6 +306,8 @@ LockResult LockerImpl<IsForMMAPV1>::lockGlobal(LockMode mode) {
 }
 
 //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
+//Lock::GlobalLock::_enqueue      LockerImpl<IsForMMAPV1>::lockGlobal中调用  
+//lock_state.h中的lockGlobalBegin函数调用  
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
@@ -323,7 +326,7 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
 		*/
             _clientState.store(reader ? kQueuedReader : kQueuedWriter);
             if (timeout == Milliseconds::max()) {
-                holder->waitForTicket(); //等待wiredtiger有可用ticket
+                holder->waitForTicket(); //等待wiredtiger有可用ticket 从这里可以看出锁操作实际上是依赖信号量的
             } else if (!holder->waitForTicketUntil(Date_t::now() + timeout)) {
                 _clientState.store(kInactive);
                 return LOCK_TIMEOUT;
@@ -387,6 +390,7 @@ void LockerImpl<IsForMMAPV1>::downgradeGlobalXtoSForMMAPV1() {
     }
 }
 
+//Lock::GlobalLock::_unlock
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::unlockGlobal() {
     if (!unlock(resourceIdGlobal)) {
@@ -644,6 +648,8 @@ bool LockerImpl<IsForMMAPV1>::saveLockStateAndUnlock(Locker::LockSnapshot* state
     return true;
 }
 
+//Lock::TempRelease::~TempRelease    WiredTigerRecordStore::yieldAndAwaitOplogDeletionRequest
+//QueryYield::yieldAllLocks   handleBatchHelper 
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::restoreLockState(const Locker::LockSnapshot& state) {
     // We shouldn't be saving and restoring lock state from inside a WriteUnitOfWork.

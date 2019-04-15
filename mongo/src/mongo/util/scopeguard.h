@@ -149,8 +149,10 @@ protected:
     F fun_;
 };
 
+//参考https://www.cnblogs.com/qicosmos/archive/2013/11/13/3421333.html
 template <typename F>
-//调用该MakeGuard的函数执行完后才会执行该MakeGuard
+//调用该MakeGuard的函数执行完后才会执行该MakeGuard  
+//ScopeGuard的作用是确保资源面对异常时总能被成功释放，就算没有正常返回
 inline ScopeGuardImpl0<F> MakeGuard(F fun) {
     return ScopeGuardImpl0<F>::MakeGuard(fun);
 }

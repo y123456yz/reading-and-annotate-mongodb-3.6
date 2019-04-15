@@ -166,6 +166,7 @@ void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
         _pbwm.lock(MODE_IS);
     }
 
+	//LockerImpl<IsForMMAPV1>::_lockGlobalBegin
     _result = _opCtx->lockState()->lockGlobalBegin(lockMode, Milliseconds(timeoutMs));
 }
 
@@ -185,7 +186,7 @@ void Lock::GlobalLock::waitForLock(unsigned timeoutMs) {
 
 void Lock::GlobalLock::_unlock() {
     if (isLocked()) {
-        _opCtx->lockState()->unlockGlobal();
+        _opCtx->lockState()->unlockGlobal(); //LockerImpl<IsForMMAPV1>::unlockGlobal
         _result = LOCK_INVALID;
     }
 }
@@ -206,6 +207,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
         _mode = MODE_X;
     }
 
+	//LockerImpl<IsForMMAPV1>::lock
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode));
 }
 
@@ -272,6 +274,7 @@ void Lock::CollectionLock::relockAsDatabaseExclusive(Lock::DBLock& dbLock) {
 }
 
 namespace {
+//oplockÏà¹ØµÄËø
 stdx::mutex oplogSerialization;  // for OplogIntentWriteLock
 }  // namespace
 
