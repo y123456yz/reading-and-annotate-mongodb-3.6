@@ -408,15 +408,16 @@ void LockHead::migratePartitionedLockHeads() {
 //
 
 // Have more buckets than CPUs to reduce contention on lock and caches
-const unsigned LockManager::_numLockBuckets(128);
+const unsigned LockManager::_numLockBuckets(128); //信号量默认赋值128
 
 // Balance scalability of intent locks against potential added cost of conflicting locks.
 // The exact value doesn't appear very important, but should be power of two
 const unsigned LockManager::_numPartitions = 32;
 
+//LockManager::LockManager()  _numLockBuckets默认128
 LockManager::LockManager() {
-    _lockBuckets = new LockBucket[_numLockBuckets];
-    _partitions = new Partition[_numPartitions];
+    _lockBuckets = new LockBucket[_numLockBuckets]; //128
+    _partitions = new Partition[_numPartitions]; //32
 }
 
 LockManager::~LockManager() {

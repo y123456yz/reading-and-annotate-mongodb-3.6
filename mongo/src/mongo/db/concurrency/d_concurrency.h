@@ -39,6 +39,7 @@ namespace mongo {
 class StringData;
 class NamespaceString;
 
+//注意d_concurrency.h中的lock类和locker.h中的locker类的区别
 class Lock {
 public:
     /**
@@ -177,7 +178,7 @@ public:
      * scopes, so write conflicts cannot happen when releasing the GlobalLock.
      *
      * NOTE: Does not acquire flush lock.
-     */
+     */  //GlobalWrite  GlobalrRead全局读锁和全局写锁继承该类
     class GlobalLock {
     public:
         class EnqueueOnly {};

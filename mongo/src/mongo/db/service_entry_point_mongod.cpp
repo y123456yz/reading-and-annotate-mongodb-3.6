@@ -479,7 +479,7 @@ bool runCommandImpl(OperationContext* opCtx,
             return result;
         }
 
-		//Command::publicRun
+		//Command::publicRun 执行不同命令的run
         result = command->publicRun(opCtx, request, inPlaceReplyBob);
     } else {
         auto wcResult = extractWriteConcern(opCtx, cmd, db);
@@ -756,6 +756,7 @@ void execCommandDatabase(OperationContext* opCtx,
             rpc::TrackingMetadata::get(opCtx).setIsLogged(true);
         }
 
+		//真正的命令执行在这里面
         retval = runCommandImpl(opCtx, command, request, replyBuilder, startOperationTime);
 
         if (!retval) {
@@ -1210,7 +1211,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     DbResponse dbresponse;
 	//可通过--slowms设置slowMS 
     if (op == dbMsg || op == dbCommand || (op == dbQuery && isCommand)) {
-        dbresponse = runCommands(opCtx, m);   //runCommands   新版本插入过程实际上走这里面
+        dbresponse = runCommands(opCtx, m);   //runCommands   新版本插入 查询过程实际上走这里面
     } else if (op == dbQuery) {
         invariant(!isCommand);
 		//查询可能走这里，也可能 实际上新版本走的是FindCmd::run(runCommands层层进入)，不在走这里
@@ -1272,6 +1273,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         ? true
         : c.getPrng().nextCanonicalDouble() < serverGlobalParams.sampleRate;
 
+	//慢日志记录
     if (shouldLogOpDebug || (shouldSample && debug.executionTimeMicros > logThresholdMs * 1000LL)) {
         Locker::LockerInfo lockerInfo;
         opCtx->lockState()->getLockerInfo(&lockerInfo);

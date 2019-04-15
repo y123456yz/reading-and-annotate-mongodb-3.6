@@ -51,7 +51,7 @@ void OpCounters::gotInserts(int n) {
 }
 
 //performInserts  insertBatchAndHandleErrors中调用
-//mongos统计在 ClusterWriteCmd::enhancedRun中调用
+//mongos统计在 ClusterWriteCmd::enhancedRun中调用   mongod统计在insertBatchAndHandleErrors
 void OpCounters::gotInsert() {
     RARELY _checkWrap();
     _insert.fetchAndAdd(1);

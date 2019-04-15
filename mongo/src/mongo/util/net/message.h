@@ -61,7 +61,7 @@ enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
     
     dbCommandReply = 2011,
     dbCompressed = 2012,
-    dbMsg = 2013,
+    dbMsg = 2013,  //3.6版本实际上insert find都是走的该op，参考ServiceEntryPointMongod::handleRequest
 };
 
 //检查op是否在NetworkOp范围内，如果不在，说明不支持

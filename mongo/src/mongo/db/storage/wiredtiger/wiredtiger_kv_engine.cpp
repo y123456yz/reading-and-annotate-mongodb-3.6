@@ -295,23 +295,26 @@ public:
         return _set(num);
     }
 
-    Status _set(int newNum) {
+	//上面的set调用
+    Status _set(int newNum) { 
         if (newNum <= 0) {
             return Status(ErrorCodes::BadValue, str::stream() << name() << " has to be > 0");
         }
 
-        return _holder->resize(newNum);
+        return _holder->resize(newNum); //TicketHolder::resize
     }
 
 private:
-    TicketHolder* _holder;
+    TicketHolder* _holder; 
 };
 
-TicketHolder openWriteTransaction(128);
+TicketHolder openWriteTransaction(128); 
+//赋值给TicketServerParameter._holder
 TicketServerParameter openWriteTransactionParam(&openWriteTransaction,
                                                 "wiredTigerConcurrentWriteTransactions");
 
 TicketHolder openReadTransaction(128);
+//赋值给TicketServerParameter._holder
 TicketServerParameter openReadTransactionParam(&openReadTransaction,
                                                "wiredTigerConcurrentReadTransactions");
 

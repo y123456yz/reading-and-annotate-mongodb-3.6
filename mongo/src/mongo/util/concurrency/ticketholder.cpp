@@ -49,9 +49,20 @@ void _check(int ret) {
 }
 }
 
-//互斥信号量初始化
+//信号量生效的地方在//LockerImpl<IsForMMAPV1>::_lockGlobalBegin中调用
+
+//互斥信号量初始化    globalTicketHolder赋值  
+//Listener.globalTicketHolder成员为TicketHolder类型  
+//TicketHolder openWriteTransaction(128);  TicketHolder openReadTransaction(128);
 TicketHolder::TicketHolder(int num) : _outof(num) {
     _check(sem_init(&_sem, 0, num));
+
+	/*
+	2019-04-15T17:39:42.799+0800 I -		[main] yang test .........................TicketHolder num:128
+	2019-04-15T17:39:42.799+0800 I -		[main] yang test .........................TicketHolder num:128
+	2019-04-15T17:39:42.808+0800 I -		[main] yang test .........................TicketHolder num:1000000
+	*/
+	//log() << "yang test .........................TicketHolder num:" << num;
 }
 
 TicketHolder::~TicketHolder() {
@@ -76,7 +87,7 @@ ticket是引擎可以设置的一个限制。正常情况下，如果没有锁竞争，所有的读写请求都会被
 wiredtiger设置了读写ticket均为128，也就是说wiredtiger引擎层最多支持128的读写并发（这个值经过测试是非常合理的经验值，无需修改）。
 */
 //LockerImpl<IsForMMAPV1>::_lockGlobalBegin中调用
-void TicketHolder::waitForTicket() {
+void TicketHolder::waitForTicket() { 
     while (0 != sem_wait(&_sem)) {
         if (errno != EINTR)
             _check(-1);
@@ -104,6 +115,7 @@ void TicketHolder::release() {
 }
 
 //checkTicketNumbers中调用，调整大小，最终TicketHolder::_outof = newSize
+//TicketServerParameter::_set
 Status TicketHolder::resize(int newSize) {
     stdx::lock_guard<stdx::mutex> lk(_resizeMutex);
 
@@ -141,6 +153,7 @@ int TicketHolder::used() const {
     return outof() - available();
 }
 
+////TicketServerParameter::append
 int TicketHolder::outof() const {
     return _outof.load();
 }
