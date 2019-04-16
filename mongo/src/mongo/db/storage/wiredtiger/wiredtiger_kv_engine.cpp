@@ -308,11 +308,12 @@ private:
     TicketHolder* _holder; 
 };
 
+//生效见WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
 TicketHolder openWriteTransaction(128); 
 //赋值给TicketServerParameter._holder
 TicketServerParameter openWriteTransactionParam(&openWriteTransaction,
                                                 "wiredTigerConcurrentWriteTransactions");
-
+//生效见WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
 TicketHolder openReadTransaction(128);
 //赋值给TicketServerParameter._holder
 TicketServerParameter openReadTransactionParam(&openReadTransaction,
@@ -474,6 +475,7 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
         new WiredTigerSizeStorer(_conn, _sizeStorerUri, sizeStorerLoggingEnabled, _readOnly));
     _sizeStorer->fillCache();
 
+	//WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
     Locker::setGlobalThrottling(&openReadTransaction, &openWriteTransaction);
 }
 

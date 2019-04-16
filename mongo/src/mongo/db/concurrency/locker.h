@@ -93,6 +93,8 @@ public:
     */  //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
     //Locker._clientState为该类型，赋值见LockerImpl<IsForMMAPV1>::_lockGlobalBegin  
     //获取客户端链接状态见LockerImpl<IsForMMAPV1>::getClientState    
+    //等待锁期间为Queued状态，获取到锁后变为Active状态，获取超时变为inactive
+    //获取当前客户端的锁状态LockerImpl<IsForMMAPV1>::getClientState
     enum ClientState { kInactive, kActiveReader, kActiveWriter, kQueuedReader, kQueuedWriter };
 
     /**

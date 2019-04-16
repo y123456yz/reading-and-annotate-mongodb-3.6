@@ -55,7 +55,7 @@ struct CounterOps {
     static void set(AtomicInt64& counter, int64_t value) {
         counter.store(value);
     }
-
+    
     static void add(int64_t& counter, int64_t value) {
         counter += value;
     }
@@ -90,10 +90,13 @@ struct LockStatCounters {
         CounterOps::set(numDeadlocks, 0);
     }
 
-
+    //PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
     CounterType numAcquisitions;
+    //PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
     CounterType numWaits;
+    //PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
     CounterType combinedWaitTimeMicros;
+    //PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
     CounterType numDeadlocks;
 };
 
@@ -102,6 +105,11 @@ struct LockStatCounters {
  * Templatized lock statistics management class, which can be specialized with atomic integers
  * for the global stats and with regular integers for the per-locker stats.
  */
+/*
+参考
+typedef LockStats<int64_t> SingleThreadedLockStats;
+typedef LockStats<AtomicInt64> AtomicLockStats;
+*/ //计数在PartitionedInstanceWideLockStats中实现
 template <typename CounterType>
 class LockStats {
 public:
@@ -113,22 +121,27 @@ public:
      */
     LockStats();
 
+    //PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
     void recordAcquisition(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numAcquisitions, 1);
     }
 
+    //PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
     void recordWait(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numWaits, 1);
     }
 
+    //PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
     void recordWaitTime(ResourceId resId, LockMode mode, int64_t waitMicros) {
         CounterOps::add(get(resId, mode).combinedWaitTimeMicros, waitMicros);
     }
 
+    //PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
     void recordDeadlock(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numDeadlocks, 1);
     }
 
+    //上面的各种统计中会调用
     LockStatCountersType& get(ResourceId resId, LockMode mode) {
         if (resId == resourceIdOplog) {
             return _oplogStats.modeStats[mode];
@@ -170,8 +183,8 @@ private:
 
     // Keep the per-mode lock stats next to each other in case we want to do fancy operations
     // such as atomic operations on 128-bit values.
-    struct PerModeLockStatCounters {
-        LockStatCountersType modeStats[LockModesCount];
+    struct PerModeLockStatCounters { //下面的_stats和_oplogStats为该类型
+        LockStatCountersType modeStats[LockModesCount]; //对应不同类型的锁
     };
 
 
@@ -182,11 +195,13 @@ private:
 
     // Split the lock stats per resource type and special-case the oplog so we can collect
     // more detailed stats for it.
+    //数组全局锁  库锁  表锁
     PerModeLockStatCounters _stats[ResourceTypesCount];
     PerModeLockStatCounters _oplogStats;
 };
 
 typedef LockStats<int64_t> SingleThreadedLockStats;
+//PartitionedInstanceWideLockStats._partitions[]数组为该类型
 typedef LockStats<AtomicInt64> AtomicLockStats;
 
 

@@ -1117,6 +1117,15 @@ void DeadlockDetector::_processNextNode(const UnprocessedNode& node) {
 // ResourceId
 //
 
+ /*
+db/concurrency/lock_state.cpp:const ResourceId resourceIdGlobal = ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_GLOBAL);
+db/concurrency/lock_state.cpp:const ResourceId resourceIdLocalDB = ResourceId(RESOURCE_DATABASE, StringData("local"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESOURCE_COLLECTION, StringData("local.oplog.rs"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
+*/ //全局锁 库锁 表锁分别会对应一个该类结构，和ResourceType配合
+//ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
+
+//对type hashID做  前面的64 - resourceTypeBits位存type，后面的resourceTypeBits位和hashId相关
 uint64_t ResourceId::fullHash(ResourceType type, uint64_t hashId) {
     return (static_cast<uint64_t>(type) << (64 - resourceTypeBits)) +
         (hashId & (std::numeric_limits<uint64_t>::max() >> resourceTypeBits));
@@ -1159,6 +1168,8 @@ std::string ResourceId::toString() const {
 // LockRequest
 //
 
+//LockRequest定义在lock_manager_defs.h
+//LockerImpl<IsForMMAPV1>::lockBegin   
 void LockRequest::initNew(Locker* locker, LockGrantNotification* notify) {
     this->locker = locker;
     this->notify = notify;
