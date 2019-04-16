@@ -57,11 +57,14 @@ public:
     PartitionedInstanceWideLockStats() {}
 
 	//PartitionedInstanceWideLockStats::recordAcquisition
+	//LockerImpl<IsForMMAPV1>::lockBegin中执行
     void recordAcquisition(LockerId id, ResourceId resId, LockMode mode) {
         _get(id).recordAcquisition(resId, mode);
     }
 
+	
 	//PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
+	//LockerImpl<IsForMMAPV1>::lockBegin中执行
     void recordWait(LockerId id, ResourceId resId, LockMode mode) {
         _get(id).recordWait(resId, mode);
     }
@@ -324,10 +327,19 @@ LockResult LockerImpl<IsForMMAPV1>::lockGlobal(LockMode mode) {
 
     return result;
 }
+/*
+db/concurrency/lock_state.cpp:const ResourceId resourceIdGlobal = ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_GLOBAL);
+db/concurrency/lock_state.cpp:const ResourceId resourceIdLocalDB = ResourceId(RESOURCE_DATABASE, StringData("local"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESOURCE_COLLECTION, StringData("local.oplog.rs"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
+*/
 
 //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
 //Lock::GlobalLock::_enqueue      LockerImpl<IsForMMAPV1>::lockGlobal中调用  
 //lock_state.h中的lockGlobalBegin函数调用  
+
+//全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
+//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
@@ -467,6 +479,12 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
     }
 }
 
+//全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
+//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+
+//Lock::DBLock::DBLock  Lock::DBLock::relockWithMode
+//Lock::CollectionLock::CollectionLock
+//Lock::OplogIntentWriteLock::OplogIntentWriteLock
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lock(ResourceId resId,
                                          LockMode mode,
@@ -699,13 +717,16 @@ void LockerImpl<IsForMMAPV1>::restoreLockState(const Locker::LockSnapshot& state
     invariant(_modeForTicket != MODE_NONE);
 }
 
-//_lockGlobalBegin
+//全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
+//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+
+//全局锁_lockGlobalBegin    库锁 写锁 LockResult LockerImpl<IsForMMAPV1>::lock 都会执行该函数
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     dassert(!getWaitingResource().isValid());
 
     LockRequest* request;
-    bool isNew = true;
+    bool isNew = true; //说明request是最新构造的，false说明是之前_requests已经存在的
 
     LockRequestsMap::Iterator it = _requests.find(resId); 
     if (!it) { //如果resId不在_requests表中，则添加进去
@@ -723,12 +744,15 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     // Making this call here will record lock re-acquisitions and conversions as well.
     //_id为标识本LockerImpl类的唯一ID
     //_id标识为LockerImpl的类，其记录的mode类型锁ResourceId resId, LockMode mode对应的计数增加
-    globalStats.recordAcquisition(_id, resId, mode); //PartitionedInstanceWideLockStats::recordAcquisition;
-    _stats.recordAcquisition(resId, mode);
+	//全局计数
+	globalStats.recordAcquisition(_id, resId, mode); //PartitionedInstanceWideLockStats::recordAcquisition;
+	//LockStats::recordAcquisition;
+    _stats.recordAcquisition(resId, mode); //对本LockerImpl._stats做统计
 
     // Give priority to the full modes for global, parallel batch writer mode,
     // and flush lock so we don't stall global operations such as shutdown or flush.
     const ResourceType resType = resId.getType();
+	//全局锁
     if (resType == RESOURCE_GLOBAL || (IsForMMAPV1 && resId == resourceIdMMAPV1Flush)) {
         if (mode == MODE_S || mode == MODE_X) {
             request->enqueueAtFront = true;
@@ -752,11 +776,13 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     // otherwise we might reset state if the lock becomes granted very fast.
     _notify.clear();
 
-    LockResult result = isNew ? globalLockManager.lock(resId, request, mode)
-                              : globalLockManager.convert(resId, request, mode);
+    LockResult result = isNew ? globalLockManager.lock(resId, request, mode)  //LockManager::lock
+                              : globalLockManager.convert(resId, request, mode); //LockManager::convert
 
     if (result == LOCK_WAITING) {
+		//PartitionedInstanceWideLockStats::recordWait;
         globalStats.recordWait(_id, resId, mode);
+		//LockStats::recordWait;
         _stats.recordWait(resId, mode);
     }
 

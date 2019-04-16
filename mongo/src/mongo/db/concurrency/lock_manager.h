@@ -211,10 +211,15 @@ private:
      */
     void _cleanupUnusedLocksInBucket(LockBucket* bucket);
 
+    /*
+    _lockBuckets = new LockBucket[_numLockBuckets]; //128
+    _partitions = new Partition[_numPartitions]; //32
+    */
     // LockManager::_numLockBuckets(128); //信号量默认赋值128
     static const unsigned _numLockBuckets;
     LockBucket* _lockBuckets;
 
+    //_partitions = new Partition[_numPartitions]; //32
     static const unsigned _numPartitions;
     Partition* _partitions;
 };

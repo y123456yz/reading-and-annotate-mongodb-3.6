@@ -45,6 +45,7 @@ namespace mongo {
  */
 //GlobalWrite : public GlobalLock
 //LockerImpl  locker_noop继承该类
+//LockRequest.locker为该类型
 class Locker {
     MONGO_DISALLOW_COPYING(Locker);
 
