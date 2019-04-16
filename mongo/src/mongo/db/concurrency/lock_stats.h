@@ -122,11 +122,13 @@ public:
     LockStats();
 
     //PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
+    //LockerImpl<IsForMMAPV1>::lockBegin
     void recordAcquisition(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numAcquisitions, 1);
     }
 
     //PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
+    //LockerImpl<IsForMMAPV1>::lockBegin
     void recordWait(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numWaits, 1);
     }
@@ -200,6 +202,7 @@ private:
     PerModeLockStatCounters _oplogStats;
 };
 
+//LockerImpl._stats为该类型
 typedef LockStats<int64_t> SingleThreadedLockStats;
 //PartitionedInstanceWideLockStats._partitions[]数组为该类型
 typedef LockStats<AtomicInt64> AtomicLockStats;

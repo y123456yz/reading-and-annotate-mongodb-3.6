@@ -151,6 +151,7 @@ enum LockResult {
 
     /**
      * The lock request was granted and is now on the granted list for the specified resource.
+     * 锁请求已被授予，现在位于指定资源的授予列表中。
      */
     LOCK_OK,
 
@@ -159,6 +160,8 @@ enum LockResult {
      * request was placed on the conflict queue of the specified resource and a call to the
      * LockGrantNotification::notify callback should be expected with the resource whose lock
      * was requested.
+     * 由于冲突，锁请求未被授予。如果返回此值，则将请求放置在指定资源的冲突队列中，并且应该期望对请求
+     * 锁的资源调用LockGrantNotification::notify回调函数。
      */
     LOCK_WAITING,
 
@@ -166,6 +169,8 @@ enum LockResult {
      * The lock request waited, but timed out before it could be granted. This value is never
      * returned by the LockManager methods here, but by the Locker class, which offers
      * capability to block while waiting for locks.
+     * 锁请求等待，但在被授予之前超时。这里的LockManager方法不会返回这个值，而是由Locker类返回，该
+     * 类提供了在等待锁时进行阻塞的功能。
      */
     LOCK_TIMEOUT,
 
@@ -175,6 +180,8 @@ enum LockResult {
      * killed due to deadlock). It is up to the caller to decide how to recover from this
      * return value - could be either release some locks and try again, or just bail with an
      * error and have some upper code handle it.
+     * 没有授予锁请求，因为这会导致死锁。如果返回此值，则不会更改状态(即，它不会因为死锁而被杀死)。
+     * 如何从这个返回值中恢复取决于调用者——可以释放一些锁并重试，也可以释放一个错误并让一些高级代码处理它。
      */
     LOCK_DEADLOCK,
 
@@ -335,12 +342,15 @@ extern const ResourceId resourceIdParallelBatchWriterMode;
 /**
  * Interface on which granted lock requests will be notified. See the contract for the notify
  * method for more information and also the LockManager::lock call.
+ * 授予锁接口请求将在该接口上得到通知。有关更多信息，以及LockManager::lock调用，请参见notify方法。
  *
  * The default implementation of this method would simply block on an event until notify has
  * been invoked (see CondVarLockGrantNotification).
  *
  * Test implementations could just count the number of notifications and their outcome so that
  * they can validate locks are granted as desired and drive the test execution.
+ * 此方法的默认实现将简单地阻塞事件，直到调用notify(请参阅CondVarLockGrantNotification)。
+ * 测试实现可以只计算通知的数量及其结果，这样它们就可以根据需要验证所授予的锁，并驱动测试执行。
  */
 class LockGrantNotification {
 public:
@@ -369,10 +379,15 @@ public:
  * There is one of those entries per each request for a lock. They hang on a linked list off
  * the LockHead or off a PartitionedLockHead and also are in a map for each Locker. This
  * structure is not thread-safe.
+ * 每个锁请求都有一个这样的条目。它们挂在LockHead或PartitionedLockHead的链表上，也在每个Locker的map表上。
+ * 这个结构不是线程安全的。
  *
  * LockRequest are owned by the Locker class and it controls their lifetime. They should not
  * be deleted while on the LockManager though (see the contract for the lock/unlock methods).
- */ //LockerImpl._requests map表为该类型, ResourceId存入到该map表中
+ * LockRequest属于Locker类，它控制它们的生存期。但是，在LockManager上不应该删除它们(请参阅lock/unlock方法)。
+ */ 
+ //LockerImpl._requests map表为该类型, ResourceId存入到该map表中  
+//LockRequest::initNew中构造该类
 struct LockRequest {
     enum Status {
         STATUS_NEW,
@@ -413,7 +428,7 @@ struct LockRequest {
     // Written at construction time by Locker
     // Read by LockManager on any thread
     // No synchronization
-    bool enqueueAtFront;
+    bool enqueueAtFront; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When this request is granted and as long as it is on the granted queue, the particular
     // resource's policy will be changed to "compatibleFirst". This means that even if there are
@@ -423,7 +438,7 @@ struct LockRequest {
     // Written at construction time by Locker
     // Read by LockManager on any thread
     // No synchronization
-    bool compatibleFirst;
+    bool compatibleFirst; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When set, an attempt is made to execute this request using partitioned lockheads. This speeds
     // up the common case where all requested locking modes are compatible with each other, at the
@@ -460,7 +475,7 @@ struct LockRequest {
     // Written by LockManager on any thread
     // Read by LockManager on any thread
     // Protected by LockHead bucket's mutex
-    PartitionedLockHead* partitionedLock;
+    PartitionedLockHead* partitionedLock; 
 
     // The linked list chain on which this request hangs off the owning lock head. The reason
     // intrusive linked list is used instead of the std::list class is to allow for entries to be

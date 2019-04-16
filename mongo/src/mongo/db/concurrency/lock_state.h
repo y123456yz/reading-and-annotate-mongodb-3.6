@@ -82,7 +82,7 @@ private:
  * @param IsForMMAPV1 Whether to compile-in the flush lock functionality, which is specific to
  *          the way the MMAP V1 (legacy) storag engine does commit concurrency control.
  */
-template <bool IsForMMAPV1>  
+template <bool IsForMMAPV1>   
 class LockerImpl : public Locker {
 public:
     /**

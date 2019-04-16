@@ -136,7 +136,7 @@ MONGO_STATIC_ASSERT((sizeof(LockRequestStatusNames) / sizeof(LockRequestStatusNa
  *
  * Not thread-safe and should only be accessed under the LockManager's bucket lock. Must be locked
  * before locking a partition, not after.
- */
+ */ //LockRequest.lock为该类型
 struct LockHead {
 
     /**
@@ -348,7 +348,7 @@ struct LockHead {
  *
  * Not thread-safe, must be accessed under its partition lock.
  * May not lock a LockManager bucket while holding a partition lock.
- */
+ */ //LockRequest.partitionedLock为该类型
 struct PartitionedLockHead {
 
     void initNew(ResourceId resId) {
@@ -1168,8 +1168,9 @@ std::string ResourceId::toString() const {
 // LockRequest
 //
 
-//LockRequest定义在lock_manager_defs.h
-//LockerImpl<IsForMMAPV1>::lockBegin   
+//LockRequest定义在lock_manager_defs.h  struct LockRequest {}
+//LockerImpl<IsForMMAPV1>::lockBegin    
+//初始化一个struct LockRequest结构
 void LockRequest::initNew(Locker* locker, LockGrantNotification* notify) {
     this->locker = locker;
     this->notify = notify;
