@@ -181,6 +181,7 @@ public:
 private:
     friend class AutoYieldFlushLockForMMAPV1Commit;
 
+    //见下面的_requests
     typedef FastMapNoAlloc<ResourceId, LockRequest, 16> LockRequestsMap;
 
     /**
@@ -203,7 +204,8 @@ private:
     LockMode _getModeForMMAPV1FlushLock() const;
 
     // Used to disambiguate different lockers
-    const LockerId _id;
+    //每构造一个LockerImpl类，该id就自增，见LockerImpl<IsForMMAPV1>::LockerImpl()，用来标识不同的LockerImpl类
+    const LockerId _id; 
 
     // The only reason we have this spin lock here is for the diagnostic tools, which could
     // iterate through the LockRequestsMap on a separate thread and need it to be stable.
@@ -211,6 +213,7 @@ private:
     //
     // This has to be locked inside const methods, hence the mutable.
     mutable SpinLock _lock;
+    //往map表添加赋值见LockerImpl<IsForMMAPV1>::lockBegin
     LockRequestsMap _requests;
 
     // Reuse the notification object across requests so we don't have to create a new mutex
@@ -227,6 +230,7 @@ private:
     std::queue<ResourceId> _resourcesToUnlockAtEndOfUnitOfWork;
 
     // Mode for which the Locker acquired a ticket, or MODE_NONE if no ticket was acquired.
+    //赋值见LockerImpl<IsForMMAPV1>::_lockGlobalBegin
     LockMode _modeForTicket = MODE_NONE;
 
     // Indicates whether the client is active reader/writer or is queued.

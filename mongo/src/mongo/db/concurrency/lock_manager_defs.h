@@ -104,8 +104,10 @@ https://www.jianshu.com/p/d838a5905303
  *     MODE_S       |      +        +         -        +        -    |
  *     MODE_X       |      +        -         -        -        -    |  加了MODE_X锁后，读写都不相容
  * 官方文档https://docs.mongodb.com/manual/faq/concurrency/
- */
-enum LockMode {
+ */ //四种模式的锁，锁放入ticketHolders指针数组
+
+//ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
+enum LockMode { //不同锁的统计在LockStats中实现
     MODE_NONE = 0,
     MODE_IS = 1,
     MODE_IX = 2,
@@ -114,7 +116,7 @@ enum LockMode {
 
     // Counts the lock modes. Used for array size allocations, etc. Always insert new lock
     // modes above this entry.
-    LockModesCount
+    LockModesCount 
 };
 
 /**
@@ -136,7 +138,7 @@ bool isModeCovered(LockMode mode, LockMode coveringMode);
 
 /**
  * Returns whether the passed in mode is S or IS. Used for validation checks.
- */
+ */ //判断是否读锁
 inline bool isSharedLockMode(LockMode mode) {
     return (mode == MODE_IS || mode == MODE_S);
 }
@@ -196,15 +198,23 @@ enum LockResult {
  * It is OK to lock resources out of order, but it is the users responsibility to ensure
  * ordering is consistent so deadlock cannot occur.
  */
+/*
+db/concurrency/lock_state.cpp:const ResourceId resourceIdGlobal = ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_GLOBAL);
+db/concurrency/lock_state.cpp:const ResourceId resourceIdLocalDB = ResourceId(RESOURCE_DATABASE, StringData("local"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESOURCE_COLLECTION, StringData("local.oplog.rs"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
+*/
+//不同类型的锁统计在LockStats中实现
 enum ResourceType {
     // Types used for special resources, use with a hash id from ResourceId::SingletonHashIds.
     RESOURCE_INVALID = 0,
+    //全局锁
     RESOURCE_GLOBAL,        // Used for mode changes or global exclusive operations
     RESOURCE_MMAPV1_FLUSH,  // Necessary only for the MMAPv1 engine
 
     // Generic resources, used for multi-granularity locking, together with RESOURCE_GLOBAL
-    RESOURCE_DATABASE,
-    RESOURCE_COLLECTION,
+    RESOURCE_DATABASE, //库锁
+    RESOURCE_COLLECTION, //表锁
     RESOURCE_METADATA,
 
     // Resource type used for locking general resources not related to the storage hierarchy.
@@ -221,7 +231,16 @@ const char* resourceTypeName(ResourceType resourceType);
 
 /**
  * Uniquely identifies a lockable resource.
- */
+ */ //resourceIdGlobal全局变量为该类类型
+ /*
+db/concurrency/lock_state.cpp:const ResourceId resourceIdGlobal = ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_GLOBAL);
+db/concurrency/lock_state.cpp:const ResourceId resourceIdLocalDB = ResourceId(RESOURCE_DATABASE, StringData("local"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESOURCE_COLLECTION, StringData("local.oplog.rs"));
+db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
+*/ //全局锁 库锁 表锁分别会对应一个该类结构，和ResourceType配合
+//ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
+
+//LockerImpl._requests map表为该类型, ResourceId存入到该map表中
 class ResourceId {
     // We only use 3 bits for the resource type in the ResourceId hash
     enum { resourceTypeBits = 3 };
@@ -272,7 +291,7 @@ private:
      * The top 'resourceTypeBits' bits of '_fullHash' represent the resource type,
      * while the remaining bits contain the bottom bits of the hashId. This avoids false
      * conflicts between resources of different types, which is necessary to prevent deadlocks.
-     */
+     */ //算法见ResourceId::ResourceId(ResourceType type, uint64_t hashId)
     uint64_t _fullHash;
 
     static uint64_t fullHash(ResourceType type, uint64_t hashId);
@@ -292,6 +311,7 @@ MONGO_STATIC_ASSERT(sizeof(ResourceId) == sizeof(uint64_t));
 
 
 // Type to uniquely identify a given locker object
+//LockerImpl._id为该类  每个LockerImpl类会有一个唯一的id标识
 typedef uint64_t LockerId;
 
 // Hardcoded resource id for the oplog collection, which is special-cased both for resource
@@ -352,7 +372,7 @@ public:
  *
  * LockRequest are owned by the Locker class and it controls their lifetime. They should not
  * be deleted while on the LockManager though (see the contract for the lock/unlock methods).
- */
+ */ //LockerImpl._requests map表为该类型, ResourceId存入到该map表中
 struct LockRequest {
     enum Status {
         STATUS_NEW,

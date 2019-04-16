@@ -49,25 +49,29 @@ namespace {
 
 /**
  * Partitioned global lock statistics, so we don't hit the same bucket.
- */
+ */ //PartitionedInstanceWideLockStats globalStats;
 class PartitionedInstanceWideLockStats {
     MONGO_DISALLOW_COPYING(PartitionedInstanceWideLockStats);
 
 public:
     PartitionedInstanceWideLockStats() {}
 
+	//PartitionedInstanceWideLockStats::recordAcquisition
     void recordAcquisition(LockerId id, ResourceId resId, LockMode mode) {
         _get(id).recordAcquisition(resId, mode);
     }
 
+	//PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
     void recordWait(LockerId id, ResourceId resId, LockMode mode) {
         _get(id).recordWait(resId, mode);
     }
 
+	//PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
     void recordWaitTime(LockerId id, ResourceId resId, LockMode mode, uint64_t waitMicros) {
         _get(id).recordWaitTime(resId, mode, waitMicros);
     }
 
+	//PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
     void recordDeadlock(ResourceId resId, LockMode mode) {
         _get(resId).recordDeadlock(resId, mode);
     }
@@ -87,21 +91,22 @@ public:
 private:
     // This alignment is a best effort approach to ensure that each partition falls on a
     // separate page/cache line in order to avoid false sharing.
+    //c++ alignas改变一个数据类型的对齐属性
     struct alignas(stdx::hardware_destructive_interference_size) AlignedLockStats {
         AtomicLockStats stats;
     };
 
+	//AlignedLockStats _partitions[NumPartitions];
     enum { NumPartitions = 8 };
 
-
+	//前面的recordAcquisition等接口会用到该类
     AtomicLockStats& _get(LockerId id) {
         return _partitions[id % NumPartitions].stats;
     }
 
-
+	//也就是AtomicLockStats结构
     AlignedLockStats _partitions[NumPartitions];
 };
-
 
 // Global lock manager instance.
 LockManager globalLockManager;
@@ -123,7 +128,7 @@ const Milliseconds DeadlockTimeout = Milliseconds(500);
 AtomicUInt64 idCounter(0);
 
 // Partitioned global lock statistics, so we don't hit the same bucket
-PartitionedInstanceWideLockStats globalStats;
+PartitionedInstanceWideLockStats globalStats; //全局lock统计
 
 
 /**
@@ -237,20 +242,35 @@ void CondVarLockGrantNotification::notify(ResourceId resId, LockResult result) {
     _cond.notify_all();
 }
 
-namespace { //赋值见setGlobalThrottling
-TicketHolder* ticketHolders[LockModesCount] = {};
+namespace { //赋值见setGlobalThrottling //WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
+TicketHolder* ticketHolders[LockModesCount] = {}; 
 }  // namespace
 
 
 //
 // Locker
 //
-
-/* static */
+/**
+ * Lock modes.
+ *
+ * Compatibility Matrix  相容性关系 +相容共存        +是兼容的   
+ *                                          Granted mode
+ *   ---------------.--------------------------------------------------------.
+ *   Requested Mode | MODE_NONE  MODE_IS   MODE_IX  MODE_S   MODE_X  |
+ *     MODE_IS      |      +        +         +        +        -    |
+ *     MODE_IX      |      +        +         +        -        -    |
+ *     MODE_S       |      +        +         -        +        -    |
+ *     MODE_X       |      +        -         -        -        -    |  加了MODE_X锁后，读写都不相容
+ * 官方文档https://docs.mongodb.com/manual/faq/concurrency/
+ */
+//WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
+/* static */  //读写锁默认由128的信号量实现，获取锁信号量-1，释放锁信号量加1
 void Locker::setGlobalThrottling(class TicketHolder* reading, class TicketHolder* writing) {
     ticketHolders[MODE_S] = reading;
     ticketHolders[MODE_IS] = reading;
     ticketHolders[MODE_IX] = writing;
+
+	//ticketHolders[MODE_X]为什么没赋值呢，在哪里赋值呢   从_lockGlobalBegin配合阅读
 }
 
 template <bool IsForMMAPV1>
@@ -313,8 +333,8 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
     if (_modeForTicket == MODE_NONE) {
         const bool reader = isSharedLockMode(mode);
-        auto holder = ticketHolders[mode];
-        if (holder) {
+        auto holder = ticketHolders[mode]; //是那种模式的锁
+        if (holder) { //如果mode为MODE_X， 这里ticketHolders[MODE_X]为NULL，见setGlobalThrottling
 		/*
     如果holder不为空，Client会先进去kQueuedReader或kQueuedWriter状态，然后获取一个ticket，获取到后转
 换为kActiveReader或kActiveWriter状态。这里的ticket是什么东西？
@@ -324,14 +344,17 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
     wiredtiger设置了读写ticket均为128，也就是说wiredtiger引擎层最多支持128的读写并发（这个值经过测试是非常合理的经验值，无需修改）。
 	globalLock完成后，client就进入了kActiveReader或kActiveWriter中的一种状态，这个就对应了globalLock.activerClients字段里的指标，接下来才开始lockBegin，加DB、Collection等层次锁，更底层的锁竞争会间接影响到globalLock。
 		*/
-            _clientState.store(reader ? kQueuedReader : kQueuedWriter);
+            _clientState.store(reader ? kQueuedReader : kQueuedWriter); 
+		//等待锁期间为Queued状态，获取到锁后变为Active状态，获取超时变为inactive
             if (timeout == Milliseconds::max()) {
                 holder->waitForTicket(); //等待wiredtiger有可用ticket 从这里可以看出锁操作实际上是依赖信号量的
             } else if (!holder->waitForTicketUntil(Date_t::now() + timeout)) {
-                _clientState.store(kInactive);
+                _clientState.store(kInactive); //没获取到锁，也就是信号量用完了，状态变为inactive
                 return LOCK_TIMEOUT;
             }
         }
+
+		//获取到锁后状态变为active
         _clientState.store(reader ? kActiveReader : kActiveWriter);
         _modeForTicket = mode;
     }
@@ -676,6 +699,7 @@ void LockerImpl<IsForMMAPV1>::restoreLockState(const Locker::LockSnapshot& state
     invariant(_modeForTicket != MODE_NONE);
 }
 
+//_lockGlobalBegin
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     dassert(!getWaitingResource().isValid());
@@ -683,20 +707,23 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     LockRequest* request;
     bool isNew = true;
 
-    LockRequestsMap::Iterator it = _requests.find(resId);
-    if (!it) {
+    LockRequestsMap::Iterator it = _requests.find(resId); 
+    if (!it) { //如果resId不在_requests表中，则添加进去
         scoped_spinlock scopedLock(_lock);
         LockRequestsMap::Iterator itNew = _requests.insert(resId);
-        itNew->initNew(this, &_notify);
+        itNew->initNew(this, &_notify); //LockRequest::initNew
 
-        request = itNew.objAddr();
+		//获取LockRequest 上面的LockRequest::initNew生成
+        request = itNew.objAddr();//FastMapNoAlloc::IteratorImpl::objAddr
     } else {
         request = it.objAddr();
         isNew = false;
     }
 
     // Making this call here will record lock re-acquisitions and conversions as well.
-    globalStats.recordAcquisition(_id, resId, mode);
+    //_id为标识本LockerImpl类的唯一ID
+    //_id标识为LockerImpl的类，其记录的mode类型锁ResourceId resId, LockMode mode对应的计数增加
+    globalStats.recordAcquisition(_id, resId, mode); //PartitionedInstanceWideLockStats::recordAcquisition;
     _stats.recordAcquisition(resId, mode);
 
     // Give priority to the full modes for global, parallel batch writer mode,
