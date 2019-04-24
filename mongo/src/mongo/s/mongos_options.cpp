@@ -53,6 +53,7 @@
 
 namespace mongo {
 
+//mongoSMain->_main函数中使用
 MongosGlobalParams mongosGlobalParams;
 
 //MONGO_GENERAL_STARTUP_OPTIONS_REGISTER 宏定义中调用执行
