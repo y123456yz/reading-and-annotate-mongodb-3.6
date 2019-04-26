@@ -226,6 +226,9 @@ Status _checkV2RolesArray(const BSONElement& rolesElement) {
     return Status::OK();
 }
 
+//添加用户权限db.createUser({user: "xxx",pwd: "xxx",roles: [ {role: 'readWrite', db: 'xxx'} ],authenticationRestrictions: [ {clientSource:["1d0.2.23d8.22","10.3.4.26"],serverAddress: ["4.89.50.4","10.4.4.47"]}]})
+//权限解析过程
+//CmdCreateUser::run命令调用
 Status V2UserDocumentParser::checkValidUserDocument(const BSONObj& doc) const {
     BSONElement userElement = doc[AuthorizationManager::USER_NAME_FIELD_NAME];
     BSONElement userDBElement = doc[AuthorizationManager::USER_DB_FIELD_NAME];
@@ -303,6 +306,8 @@ Status V2UserDocumentParser::checkValidUserDocument(const BSONObj& doc) const {
     return Status::OK();
 }
 
+//添加用户权限db.createUser({user: "xxx",pwd: "xxx",roles: [ {role: 'readWrite', db: 'xxx'} ],authenticationRestrictions: [ {clientSource:["1d0.2.23d8.22","10.3.4.26"],serverAddress: ["4.89.50.4","10.4.4.47"]}]})
+//获取上面的user:用户名xxx
 std::string V2UserDocumentParser::extractUserNameFromUserDocument(const BSONObj& doc) const {
     return doc[AuthorizationManager::USER_NAME_FIELD_NAME].str();
 }
@@ -437,6 +442,8 @@ Status V2UserDocumentParser::parseRoleVector(const BSONArray& rolesArray,
 }
 
 //AuthorizationManager::_initializeUserFromPrivilegeDocument
+//添加用户权限db.createUser({user: "xxx",pwd: "xxx",roles: [ {role: 'readWrite', db: 'xxx'} ],authenticationRestrictions: [ {clientSource:["1d0.2.23d8.22","10.3.4.26"],serverAddress: ["4.89.50.4","10.4.4.47"]}]})
+//authenticationRestrictions配置检查
 Status V2UserDocumentParser::initializeAuthenticationRestrictionsFromUserDocument(
     const BSONObj& privDoc, User* user) const {
     RestrictionDocuments::sequence_type restrictionVector;
@@ -659,7 +666,8 @@ Status V2UserDocumentParser::initializeUserPrivilegesFromUserDocument(const BSON
         }
 
 		
-		if (pp.isResourceSet() && pp.getResource().isDbSet() == true && pp.getResource().getDb() == "admin") {
+		if (pp.isResourceSet() && pp.getResource().isDbSet() == true && pp.getResource().getDb() == "admin" &&
+			user->getName().getUser().toString().compare("root") != 0) {
             isCommonUserRole = false;
 		}
     }

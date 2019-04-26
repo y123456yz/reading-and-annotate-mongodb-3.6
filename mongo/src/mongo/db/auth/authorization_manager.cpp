@@ -418,6 +418,10 @@ Status AuthorizationManager::getBSONForRole(RoleGraph* graph,
 Status AuthorizationManager::_initializeUserFromPrivilegeDocument(User* user,
                                                                   const BSONObj& privDoc) {
     V2UserDocumentParser parser;
+//添加用户权限db.createUser({user: "xxx",pwd: "xxx",roles: [ {role: 'readWrite', db: 'xxx'} ],authenticationRestrictions: [ {clientSource:["1d0.2.23d8.22","10.3.4.26"],serverAddress: ["4.89.50.4","10.4.4.47"]}]})
+//获取上面的user:用户名xxx
+
+//用户认证上来后，携带用户名密码等，用户名需要提前通过CreateUser(CmdCreateUser::run)命令创建改账号，也就是这个账号必须存在//
     std::string userName = parser.extractUserNameFromUserDocument(privDoc);
     if (userName != user->getName().getUser()) {
         return Status(ErrorCodes::BadValue,

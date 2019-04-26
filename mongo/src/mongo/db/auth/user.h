@@ -57,6 +57,7 @@ namespace mongo {
  * user from the AuthorizationManager.
  */ //UserSet._users成员   添加的账号权限等信息都在这里面
  //账号权限信息都在这里面参考AuthorizationSession::addAndAuthorizeUserAuthorizationSession::addAndAuthorizeUser
+ //createUser创建一个用户，就会有对应的一个user，所有user最终存放在UserSet._users成员 
 class User {
     MONGO_DISALLOW_COPYING(User);
 
@@ -227,7 +228,8 @@ private: //账号权限信息都在这里面参考AuthorizationSession::addAndAuthorizeUserAu
 
     // Maps resource name to privilege on that resource
     //赋值见User::setPrivileges  User::addPrivilege  查找User::getActionsForResource
-    ResourcePrivilegeMap _privileges;
+    //控制该user用户有哪些权限操作，如是否可以建索引
+    ResourcePrivilegeMap _privileges; 
 
     // Roles the user has privileges from
     unordered_set<RoleName> _roles;

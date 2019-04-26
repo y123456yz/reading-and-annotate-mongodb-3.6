@@ -383,7 +383,7 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
 //ServiceExecutorAdaptive::start  _controllerThreadRoutine  中调用
 void ServiceExecutorAdaptive::_startWorkerThread() {
     stdx::unique_lock<stdx::mutex> lk(_threadsMutex);
-	warning() << "yang test   _startWorkerThread:  num1:" << _threads.size();
+	//warning() << "yang test   _startWorkerThread:  num1:" << _threads.size();
     auto it = _threads.emplace(_threads.begin(), _tickSource); //该_threads list中追加一个thread，线程增加一个
     auto num = _threads.size();
 	warning() << "yang test   _startWorkerThread: 22222 num2:" << _threads.size();

@@ -135,6 +135,8 @@ typedef std::vector<Privilege> PrivilegeVector;
 */
 //例如可以参考CreateIndexesCmd::addRequiredPrivileges
 //真正起作用见AuthorizationSession::_isAuthorizedForPrivilege
+
+////User._privileges为该结构类型  记录createUser创建的user对应有哪些权限，如该user是否可以创建索引等
 class Privilege {
 public:
     /**
