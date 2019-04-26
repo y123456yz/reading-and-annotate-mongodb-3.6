@@ -217,6 +217,9 @@ public:
     ReadWriteType getReadWriteType() const {
         return ReadWriteType::kWrite;
     }
+	//mongod(WriteCommand::enhancedRun(insert  delete update))
+	//其他命令BasicCommand::enhancedRun  
+	//mongos (ClusterWriteCmd::enhancedRun) 不同命令对应不同接口
 
     bool enhancedRun(OperationContext* opCtx,
                      const OpMsgRequest& request,

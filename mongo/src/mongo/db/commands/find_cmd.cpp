@@ -244,6 +244,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
 	Optimizer只在多个执行计划时，才会介入。
 	*/
 	//mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
+	//mongos对应ClusterGetMoreCmd::run   mongod对应GetMoreCmd::run  
 	//也就是FindCmd::run，查询请求会走这里    查询过程可以参考https://yq.aliyun.com/articles/215016
     bool run(OperationContext* opCtx,  
              const std::string& dbname,
