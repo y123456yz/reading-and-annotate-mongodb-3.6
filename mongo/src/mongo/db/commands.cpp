@@ -381,6 +381,8 @@ bool Command::publicRun(OperationContext* opCtx,
 		//mongod(WriteCommand::enhancedRun(insert  delete update))
 		//其他命令BasicCommand::enhancedRun  
 		//mongos (ClusterWriteCmd::enhancedRun) 不同命令对应不同接口
+		//mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
+		//mongos对应ClusterGetMoreCmd::run   mongod对应GetMoreCmd::run  
 		
 		return enhancedRun(opCtx, request, result); //BasicCommand::enhancedRun
     } catch (const DBException& e) {

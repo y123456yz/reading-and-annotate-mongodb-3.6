@@ -134,7 +134,7 @@ https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0
 > * .locker sem信号量实现原理详细分析  
 > * .locker类与Lock类区别、及其他们的关联性分析  
 > * .客户端获取锁过程及锁状态变换过程分析，globalStats全局lock统计过程分析  
-> * .重新梳理用户权限创建过程
-> * .
+> * .重新梳理用户权限创建过程  
+> * .getmore querey查找命令执行过程重新分析  
 > * .
 > * .

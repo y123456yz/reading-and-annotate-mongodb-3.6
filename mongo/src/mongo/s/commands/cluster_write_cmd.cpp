@@ -211,6 +211,10 @@ public:
             opCtx, shardResults, ClusterExplain::kWriteOnShards, timer.millis(), out);
     }
 
+			//mongod(WriteCommand::enhancedRun(insert  delete update))
+		//其他命令BasicCommand::enhancedRun  
+		//mongos (ClusterWriteCmd::enhancedRun) 不同命令对应不同接口
+
 	//Command::publicRun中调用 
 
 	//ClusterWriteCmd::enhancedRun

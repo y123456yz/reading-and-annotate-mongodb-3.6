@@ -53,7 +53,7 @@ const char kTermField[] = "term";
 
 /**
  * Implements the find command on mongos.
- */
+ */ //mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
 class ClusterFindCmd : public BasicCommand {
     MONGO_DISALLOW_COPYING(ClusterFindCmd);
 
@@ -150,6 +150,7 @@ public:
     }
 
 	//mongos对应ClusterFindCmd::run  mongod对应 FindCmd::run
+	//mongos对应ClusterGetMoreCmd::run   mongod对应GetMoreCmd::run  
     bool run(OperationContext* opCtx,
              const std::string& dbname,
              const BSONObj& cmdObj,
