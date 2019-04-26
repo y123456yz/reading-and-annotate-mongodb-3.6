@@ -125,7 +125,7 @@ class Privilege;
 /**
  * This class is used to parse documents describing resources as they are represented as part
  * of privileges granted to roles in the role management commands.
- */
+ */ //ParsedPrivilege._resource为该类型
 class ParsedResource {
     MONGO_DISALLOW_COPYING(ParsedResource);
 
@@ -276,6 +276,6 @@ private:
     // (M) Object describing the resource pattern of this privilege
     ParsedResource _resource;
     bool _isResourceSet;
-};
+}; 
 
 }  // namespace mongo

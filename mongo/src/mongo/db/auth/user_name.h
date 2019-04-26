@@ -50,6 +50,7 @@ public:
     /**
      * Gets the user part of a UserName.
      */
+    //user@dbÖĞµÄuser
     StringData getUser() const {
         return StringData(_fullName).substr(0, _splitPoint);
     }

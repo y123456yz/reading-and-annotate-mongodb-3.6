@@ -302,7 +302,7 @@ Status BasicCommand::checkAuthForCommand(Client* client,
     std::vector<Privilege> privileges;
 	//例如加索引对应CreateIndexesCmd::addRequiredPrivileges  DropIndexesCmd::addRequiredPrivileges 不同命令有不同实现
 	//DropDatabaseCmd::addRequiredPrivileges等 
-	log() << "yang test ................... checkAuthForCommand,  begin !!!!!!!!!!!!!!!!!!";
+	//log() << "yang test ................... checkAuthForCommand,  begin !!!!!!!!!!!!!!!!!!";
     this->addRequiredPrivileges(dbname, cmdObj, &privileges);
     if (AuthorizationSession::get(client)->isAuthorizedForPrivileges(privileges)) {
 		//log() << "yang test ................... checkAuthForCommand,  ok !!!!!!!!!!!!!!!!!!";

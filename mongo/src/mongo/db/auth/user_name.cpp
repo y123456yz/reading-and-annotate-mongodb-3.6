@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+///user@db∏Ò Ω¥Ê∑≈
 UserName::UserName(StringData user, StringData dbname) {
     _fullName.resize(user.size() + dbname.size() + 1);
     std::string::iterator iter =

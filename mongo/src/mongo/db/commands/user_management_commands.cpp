@@ -713,7 +713,7 @@ public:
         V2UserDocumentParser parser;
         status = parser.checkValidUserDocument(userObj);
         if (!status.isOK()) {
-            return appendCommandStatus(result, status);
+            return appendCommandStatus(result, status); 
         }
 
         stdx::lock_guard<stdx::mutex> lk(getAuthzDataMutex(serviceContext));
