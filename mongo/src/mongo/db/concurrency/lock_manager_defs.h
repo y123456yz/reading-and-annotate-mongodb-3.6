@@ -388,7 +388,7 @@ public:
  */ 
  //LockerImpl._requests map表为该类型, ResourceId存入到该map表中  
 //LockRequest::initNew中构造该类
-struct LockRequest {
+struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
     enum Status {
         STATUS_NEW,
         STATUS_GRANTED,

@@ -1170,7 +1170,7 @@ std::string ResourceId::toString() const {
 
 //LockRequest定义在lock_manager_defs.h  struct LockRequest {}
 //LockerImpl<IsForMMAPV1>::lockBegin    
-//初始化一个struct LockRequest结构
+//初始化一个struct LockRequest结构   一个locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
 void LockRequest::initNew(Locker* locker, LockGrantNotification* notify) {
     this->locker = locker;
     this->notify = notify;
