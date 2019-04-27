@@ -213,7 +213,7 @@ private:
     //
     // This has to be locked inside const methods, hence the mutable.
     mutable SpinLock _lock;
-    //往map表添加赋值见LockerImpl<IsForMMAPV1>::lockBegin
+    //往map表添加赋值见LockerImpl<IsForMMAPV1>::lockBegin  所有Locker都记录在该map表中
     LockRequestsMap _requests;
 
     // Reuse the notification object across requests so we don't have to create a new mutex

@@ -732,8 +732,10 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     if (!it) { //如果resId不在_requests表中，则添加进去
         scoped_spinlock scopedLock(_lock);
         LockRequestsMap::Iterator itNew = _requests.insert(resId);
+		
+		//初始化一个struct LockRequest结构	 一个locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
         itNew->initNew(this, &_notify); //LockRequest::initNew
-
+		
 		//获取LockRequest 上面的LockRequest::initNew生成
         request = itNew.objAddr();//FastMapNoAlloc::IteratorImpl::objAddr
     } else {
@@ -758,7 +760,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
             request->enqueueAtFront = true;
             request->compatibleFirst = true;
         }
-    } else if (resType != RESOURCE_MUTEX) {
+    } else if (resType != RESOURCE_MUTEX) { //库锁 表锁类型，进入这里面
         // This is all sanity checks that the global and flush locks are always be acquired
         // before any other lock has been acquired and they must be in sync with the nesting.
         DEV {

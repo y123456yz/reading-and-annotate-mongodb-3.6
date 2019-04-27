@@ -42,10 +42,13 @@ namespace mongo {
  * request (transaction).
  *
  * Lock/unlock methods must always be called from a single thread.
+ * // 一个locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
  */
 //GlobalWrite : public GlobalLock
 //LockerImpl  locker_noop继承该类
 //LockRequest.locker为该类型
+
+//struct LockRequest{Locker* locker}  LockRequest.locker为该类
 class Locker {
     MONGO_DISALLOW_COPYING(Locker);
 
