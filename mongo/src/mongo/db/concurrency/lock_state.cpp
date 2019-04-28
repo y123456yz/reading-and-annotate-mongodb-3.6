@@ -791,6 +791,10 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     return result;
 }
 
+//LockerImpl<IsForMMAPV1>::lockGlobalComplete
+//LockerImpl<IsForMMAPV1>::lock
+
+//循环等待lock结果，知道LOCK_OK或者LOCK_DEADLOCK或者超时，超时时间timeout ms超时
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
                                                  LockMode mode,
