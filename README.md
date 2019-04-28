@@ -136,5 +136,5 @@ https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0
 > * .客户端获取锁过程及锁状态变换过程分析，globalStats全局lock统计过程分析  
 > * .重新梳理用户权限创建过程  
 > * .getmore querey查找命令执行过程重新分析  
-> * .
+> * .符合索引范围查询过程的解析增加文档记录  
 > * .

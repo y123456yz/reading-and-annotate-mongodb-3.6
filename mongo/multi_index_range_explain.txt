@@ -1,0 +1,555 @@
+mongos> db.sbtest1.find({"name":"yangyazhou", "k":{ $gt: 1, $lt: 455462179}}).explain("allPlansExecution")
+{
+        "queryPlanner" : {
+                "mongosPlannerVersion" : 1,
+                "winningPlan" : {
+                        "stage" : "SINGLE_SHARD",
+                        "shards" : [
+                                {
+                                        "shardName" : "featdoc",
+                                        "connectionString" : "featdoc/172.23.240.29:28018,172.23.240.29:28028,172.23.240.29:28038",
+                                        "serverInfo" : {
+                                                "host" : "bogon",
+                                                "port" : 28018,
+                                                "version" : "3.6.6",
+                                                "gitVersion" : "6405d65b1d6432e138b44c13085d0c2fe235d6bd"
+                                        },
+                                        "plannerVersion" : 1,
+                                        "namespace" : "sbtest.sbtest1",
+                                        "indexFilterSet" : false,
+                                        "parsedQuery" : {
+                                                "$and" : [
+                                                        {
+                                                                "name" : {
+                                                                        "$eq" : "yangyazhou"
+                                                                }
+                                                        },
+                                                        {
+                                                                "k" : {
+                                                                        "$lt" : 455462179
+                                                                }
+                                                        },
+                                                        {
+                                                                "k" : {
+                                                                        "$gt" : 1
+                                                                }
+                                                        }
+                                                ]
+                                        },
+                                        "winningPlan" : {
+                                                "stage" : "FETCH",
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "keyPattern" : {
+                                                                "name" : 1,
+                                                                "k" : 1,
+                                                                "c" : 1
+                                                        },
+                                                        "indexName" : "name_1_k_1_c_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "name" : [ ],
+                                                                "k" : [ ],
+                                                                "c" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "name" : [
+                                                                        "[\"yangyazhou\", \"yangyazhou\"]"
+                                                                ],
+                                                                "k" : [
+                                                                        "(1.0, 455462179.0)"
+                                                                ],
+                                                                "c" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ]
+                                                        }
+                                                }
+                                        },
+                                        "rejectedPlans" : [ ]
+                                }
+                        ]
+                }
+        },
+        "executionStats" : {
+                "nReturned" : 120995,
+                "executionTimeMillis" : 232,
+                "totalKeysExamined" : 120995,
+                "totalDocsExamined" : 120995,
+                "executionStages" : {
+                        "stage" : "SINGLE_SHARD",
+                        "nReturned" : 120995,
+                        "executionTimeMillis" : 232,
+                        "totalKeysExamined" : 120995,
+                        "totalDocsExamined" : 120995,
+                        "totalChildMillis" : NumberLong(231),
+                        "shards" : [
+                                {
+                                        "shardName" : "featdoc",
+                                        "executionSuccess" : true,
+                                        "executionStages" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 120995,
+                                                "executionTimeMillisEstimate" : 230,
+                                                "works" : 120996,
+                                                "advanced" : 120995,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 945,
+                                                "restoreState" : 945,
+                                                "isEOF" : 1,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 120995,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 120995,
+                                                        "executionTimeMillisEstimate" : 90,
+                                                        "works" : 120996,
+                                                        "advanced" : 120995,
+                                                        "needTime" : 0,
+                                                        "needYield" : 0,
+                                                        "saveState" : 945,
+                                                        "restoreState" : 945,
+                                                        "isEOF" : 1,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "name" : 1,
+                                                                "k" : 1,
+                                                                "c" : 1
+                                                        },
+                                                        "indexName" : "name_1_k_1_c_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "name" : [ ],
+                                                                "k" : [ ],
+                                                                "c" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "name" : [
+                                                                        "[\"yangyazhou\", \"yangyazhou\"]"
+                                                                ],
+                                                                "k" : [
+                                                                        "(1.0, 455462179.0)"
+                                                                ],
+                                                                "c" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 120995,
+                                                        "seeks" : 1,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        ]
+                },
+                "allPlansExecution" : [
+                        {
+                                "shardName" : "featdoc",
+                                "allPlans" : [ ]
+                        }
+                ]
+        },
+        "ok" : 1,
+        "operationTime" : Timestamp(1556418971, 1),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1556418978, 2),
+                "signature" : {
+                        "hash" : BinData(0,"umGRuti9tcL/si02Ok7H3hrhous="),
+                        "keyId" : NumberLong("6660292243598868500")
+                }
+        }
+}
+mongos> 
+mongos> 
+mongos> db.sbtest1.find({"name":"yangyazhou", "k":{ $gt: 1, $lt: 455462179}, "c":{$gt:"     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628"}}).explain("allPlansExecution")
+{
+        "queryPlanner" : {
+                "mongosPlannerVersion" : 1,
+                "winningPlan" : {
+                        "stage" : "SINGLE_SHARD",
+                        "shards" : [
+                                {
+                                        "shardName" : "featdoc",
+                                        "connectionString" : "featdoc/172.23.240.29:28018,172.23.240.29:28028,172.23.240.29:28038",
+                                        "serverInfo" : {
+                                                "host" : "bogon",
+                                                "port" : 28018,
+                                                "version" : "3.6.6",
+                                                "gitVersion" : "6405d65b1d6432e138b44c13085d0c2fe235d6bd"
+                                        },
+                                        "plannerVersion" : 1,
+                                        "namespace" : "sbtest.sbtest1",
+                                        "indexFilterSet" : false,
+                                        "parsedQuery" : {
+                                                "$and" : [
+                                                        {
+                                                                "name" : {
+                                                                        "$eq" : "yangyazhou"
+                                                                }
+                                                        },
+                                                        {
+                                                                "k" : {
+                                                                        "$lt" : 455462179
+                                                                }
+                                                        },
+                                                        {
+                                                                "c" : {
+                                                                        "$gt" : "     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628"
+                                                                }
+                                                        },
+                                                        {
+                                                                "k" : {
+                                                                        "$gt" : 1
+                                                                }
+                                                        }
+                                                ]
+                                        },
+                                        "winningPlan" : {
+                                                "stage" : "FETCH",
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "keyPattern" : {
+                                                                "name" : 1,
+                                                                "k" : 1,
+                                                                "c" : 1
+                                                        },
+                                                        "indexName" : "name_1_k_1_c_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "name" : [ ],
+                                                                "k" : [ ],
+                                                                "c" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "name" : [
+                                                                        "[\"yangyazhou\", \"yangyazhou\"]"
+                                                                ],
+                                                                "k" : [
+                                                                        "(1.0, 455462179.0)"
+                                                                ],
+                                                                "c" : [
+                                                                        "(\"     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628\", {})"
+                                                                ]
+                                                        }
+                                                }
+                                        },
+                                        "rejectedPlans" : [ ]
+                                }
+                        ]
+                }
+        },
+        "executionStats" : {
+                "nReturned" : 16540,
+                "executionTimeMillis" : 291,
+                "totalKeysExamined" : 107336,
+                "totalDocsExamined" : 16540,
+                "executionStages" : {
+                        "stage" : "SINGLE_SHARD",
+                        "nReturned" : 16540,
+                        "executionTimeMillis" : 291,
+                        "totalKeysExamined" : 107336,
+                        "totalDocsExamined" : 16540,
+                        "totalChildMillis" : NumberLong(290),
+                        "shards" : [
+                                {
+                                        "shardName" : "featdoc",
+                                        "executionSuccess" : true,
+                                        "executionStages" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 16540,
+                                                "executionTimeMillisEstimate" : 290,
+                                                "works" : 107336,
+                                                "advanced" : 16540,
+                                                "needTime" : 90795,
+                                                "needYield" : 0,
+                                                "saveState" : 838,
+                                                "restoreState" : 838,
+                                                "isEOF" : 1,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 16540,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 16540,
+                                                        "executionTimeMillisEstimate" : 240,
+                                                        "works" : 107336,
+                                                        "advanced" : 16540,
+                                                        "needTime" : 90795,
+                                                        "needYield" : 0,
+                                                        "saveState" : 838,
+                                                        "restoreState" : 838,
+                                                        "isEOF" : 1,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "name" : 1,
+                                                                "k" : 1,
+                                                                "c" : 1
+                                                        },
+                                                        "indexName" : "name_1_k_1_c_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "name" : [ ],
+                                                                "k" : [ ],
+                                                                "c" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "name" : [
+                                                                        "[\"yangyazhou\", \"yangyazhou\"]"
+                                                                ],
+                                                                "k" : [
+                                                                        "(1.0, 455462179.0)"
+                                                                ],
+                                                                "c" : [
+                                                                        "(\"     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628\", {})"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 107336,
+                                                        "seeks" : 90796,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        ]
+                },
+                "allPlansExecution" : [
+                        {
+                                "shardName" : "featdoc",
+                                "allPlans" : [ ]
+                        }
+                ]
+        },
+        "ok" : 1,
+        "operationTime" : Timestamp(1556419031, 1),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1556419031, 1),
+                "signature" : {
+                        "hash" : BinData(0,"UzV9TmlDPLR8KK8m+OIjmgp4vg0="),
+                        "keyId" : NumberLong("6660292243598868500")
+                }
+        }
+}
+mongos> 
+mongos> 
+mongos> db.sbtest1.find({"name":"yangyazhou", "c":{$gt:"     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628"}}).explain("allPlansExecution")
+{
+        "queryPlanner" : {
+                "mongosPlannerVersion" : 1,
+                "winningPlan" : {
+                        "stage" : "SINGLE_SHARD",
+                        "shards" : [
+                                {
+                                        "shardName" : "featdoc",
+                                        "connectionString" : "featdoc/172.23.240.29:28018,172.23.240.29:28028,172.23.240.29:28038",
+                                        "serverInfo" : {
+                                                "host" : "bogon",
+                                                "port" : 28018,
+                                                "version" : "3.6.6",
+                                                "gitVersion" : "6405d65b1d6432e138b44c13085d0c2fe235d6bd"
+                                        },
+                                        "plannerVersion" : 1,
+                                        "namespace" : "sbtest.sbtest1",
+                                        "indexFilterSet" : false,
+                                        "parsedQuery" : {
+                                                "$and" : [
+                                                        {
+                                                                "name" : {
+                                                                        "$eq" : "yangyazhou"
+                                                                }
+                                                        },
+                                                        {
+                                                                "c" : {
+                                                                        "$gt" : "     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628"
+                                                                }
+                                                        }
+                                                ]
+                                        },
+                                        "winningPlan" : {
+                                                "stage" : "FETCH",
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "keyPattern" : {
+                                                                "name" : 1,
+                                                                "k" : 1,
+                                                                "c" : 1
+                                                        },
+                                                        "indexName" : "name_1_k_1_c_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "name" : [ ],
+                                                                "k" : [ ],
+                                                                "c" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "name" : [
+                                                                        "[\"yangyazhou\", \"yangyazhou\"]"
+                                                                ],
+                                                                "k" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ],
+                                                                "c" : [
+                                                                        "(\"     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628\", {})"
+                                                                ]
+                                                        }
+                                                }
+                                        },
+                                        "rejectedPlans" : [ ]
+                                }
+                        ]
+                }
+        },
+        "executionStats" : {
+                "nReturned" : 18327,
+                "executionTimeMillis" : 304,
+                "totalKeysExamined" : 113583,
+                "totalDocsExamined" : 18327,
+                "executionStages" : {
+                        "stage" : "SINGLE_SHARD",
+                        "nReturned" : 18327,
+                        "executionTimeMillis" : 304,
+                        "totalKeysExamined" : 113583,
+                        "totalDocsExamined" : 18327,
+                        "totalChildMillis" : NumberLong(297),
+                        "shards" : [
+                                {
+                                        "shardName" : "featdoc",
+                                        "executionSuccess" : true,
+                                        "executionStages" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 18327,
+                                                "executionTimeMillisEstimate" : 270,
+                                                "works" : 113584,
+                                                "advanced" : 18327,
+                                                "needTime" : 95256,
+                                                "needYield" : 0,
+                                                "saveState" : 887,
+                                                "restoreState" : 887,
+                                                "isEOF" : 1,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 18327,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 18327,
+                                                        "executionTimeMillisEstimate" : 220,
+                                                        "works" : 113584,
+                                                        "advanced" : 18327,
+                                                        "needTime" : 95256,
+                                                        "needYield" : 0,
+                                                        "saveState" : 887,
+                                                        "restoreState" : 887,
+                                                        "isEOF" : 1,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "name" : 1,
+                                                                "k" : 1,
+                                                                "c" : 1
+                                                        },
+                                                        "indexName" : "name_1_k_1_c_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "name" : [ ],
+                                                                "k" : [ ],
+                                                                "c" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "name" : [
+                                                                        "[\"yangyazhou\", \"yangyazhou\"]"
+                                                                ],
+                                                                "k" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ],
+                                                                "c" : [
+                                                                        "(\"     86145084351-65310501014-74223525413-53687682696-85294071521-67662519776-08427002774-44361225205-09190198158-39502972628\", {})"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 113583,
+                                                        "seeks" : 95257,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        ]
+                },
+                "allPlansExecution" : [
+                        {
+                                "shardName" : "featdoc",
+                                "allPlans" : [ ]
+                        }
+                ]
+        },
+        "ok" : 1,
+        "operationTime" : Timestamp(1556419071, 1),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1556419072, 1),
+                "signature" : {
+                        "hash" : BinData(0,"9GLQ36ert4bZ+K5sVeLh33IHdD0="),
+                        "keyId" : NumberLong("6660292243598868500")
+                }
+        }
+}
+mongos> 
+
+
+
+mongos> db.sbtest1.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "sbtest.sbtest1"
+        },
+
+        {
+                "v" : 2,
+                "key" : {
+                        "name" : 1,
+                        "k" : 1,
+                        "c" : 1
+                },
+                "name" : "name_1_k_1_c_1",
+                "ns" : "sbtest.sbtest1",
+                "background" : true
+        }
+]
+mongos> 
+
