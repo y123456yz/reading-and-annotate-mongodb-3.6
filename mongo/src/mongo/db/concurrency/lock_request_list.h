@@ -42,7 +42,7 @@ namespace mongo {
  *
  * NOTE: This class should not be used for generic purposes and should not be used outside of
  * the Lock Manager library.
- */
+ */ //PartitionedLockHead.grantedList为该结构
 class LockRequestList {
 public:
     void push_front(LockRequest* request) {

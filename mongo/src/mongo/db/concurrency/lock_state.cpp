@@ -763,7 +763,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     } else if (resType != RESOURCE_MUTEX) { //库锁 表锁类型，进入这里面
         // This is all sanity checks that the global and flush locks are always be acquired
         // before any other lock has been acquired and they must be in sync with the nesting.
-        DEV {
+        DEV { //DEBUG开关打开才会进入
             const LockRequestsMap::Iterator itGlobal = _requests.find(resourceIdGlobal);
             invariant(itGlobal->recursiveCount > 0);
             invariant(itGlobal->mode != MODE_NONE);

@@ -136,7 +136,9 @@ MONGO_STATIC_ASSERT((sizeof(LockRequestStatusNames) / sizeof(LockRequestStatusNa
  *
  * Not thread-safe and should only be accessed under the LockManager's bucket lock. Must be locked
  * before locking a partition, not after.
- */ //LockRequest.lock为该类型
+ */ 
+//LockRequest.lock为该类型
+//LockManager::LockBucket.data为该类型
 struct LockHead {
 
     /**
@@ -348,13 +350,16 @@ struct LockHead {
  *
  * Not thread-safe, must be accessed under its partition lock.
  * May not lock a LockManager bucket while holding a partition lock.
- */ //LockRequest.partitionedLock为该类型
-struct PartitionedLockHead {
+ */ 
+ //LockRequest.partitionedLock为该类型
+ //每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]，见LockManager::lock
+struct PartitionedLockHead {  //LockManager::Partition::findOrInsert中new
 
-    void initNew(ResourceId resId) {
+    void initNew(ResourceId resId) { //链表结构初始化
         grantedList.reset();
     }
 
+	//把LockRequest对应的锁添加到grantedList
     void newRequest(LockRequest* request) {
         invariant(request->partitioned);
         invariant(!request->lock);
@@ -367,7 +372,8 @@ struct PartitionedLockHead {
     // Doubly-linked list of requests, which have been granted. Newly granted requests go to the end
     // of the queue. The PartitionedLockHead never contains anything but granted requests with
     // intent modes.
-    LockRequestList grantedList;
+    //PartitionedLockHead::newRequest把LockRequest对应的锁添加到grantedList
+    LockRequestList grantedList; //实际上是一个LockRequest类型的双向链表
 };
 
 void LockHead::migratePartitionedLockHeads() {
@@ -432,24 +438,29 @@ LockManager::~LockManager() {
     delete[] _partitions;
 }
 
+//LockerImpl<IsForMMAPV1>::lockBegin
 LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mode) {
     // Sanity check that requests are not being reused without proper cleanup
     invariant(request->status == LockRequest::STATUS_NEW);
     invariant(request->recursiveCount == 1);
 
+	//说明是否意向锁
     request->partitioned = (mode == MODE_IX || mode == MODE_IS);
     request->mode = mode;
 
     // For intent modes, try the PartitionedLockHead
-    if (request->partitioned) {
-        Partition* partition = _getPartition(request);
+    if (request->partitioned) { //如果是意向锁
+    	//根据lock id求余，该lock应该存入那个_partitions分区槽
+        Partition* partition = _getPartition(request); //查找对应分区
         stdx::lock_guard<SimpleMutex> scopedLock(partition->mutex);
 
-        // Fast path for intent locks
+        // Fast path for intent locks   
+        //Partition::find  该resID对应ResourceType类型的锁是否在partition分区槽中存在，如果存在，在返回对应的PartitionedLockHead
         PartitionedLockHead* partitionedLock = partition->find(resId);
 
-        if (partitionedLock) {
-            partitionedLock->newRequest(request);
+        if (partitionedLock) { //说明该request锁在对应的partition分区中
+        	//把request添加到PartitionedLockHead.grantedList链表
+            partitionedLock->newRequest(request); //PartitionedLockHead::newRequest
             return LOCK_OK;
         }
         // Unsuccessful: there was no PartitionedLockHead yet, so use regular LockHead.
@@ -461,6 +472,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     LockBucket* bucket = _getBucket(resId);
     stdx::lock_guard<SimpleMutex> scopedLock(bucket->mutex);
 
+	//LockBucket::findOrInsert
     LockHead* lock = bucket->findOrInsert(resId);
 
     // Start a partitioned lock if possible
@@ -804,12 +816,14 @@ void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
     invariant((lock->conflictModes == 0) ^ (lock->conflictList._front != nullptr));
 }
 
+//计算ResourceId对应的_lockBuckets[]槽位
 LockManager::LockBucket* LockManager::_getBucket(ResourceId resId) const {
     return &_lockBuckets[resId % _numLockBuckets];
 }
 
+//根据lock id求余，该lock应该存入那个_partitions槽
 LockManager::Partition* LockManager::_getPartition(LockRequest* request) const {
-    return &_partitions[request->locker->getId() % _numPartitions];
+    return &_partitions[request->locker->getId() % _numPartitions]; 
 }
 
 void LockManager::dump() const {
@@ -935,16 +949,19 @@ void LockManager::_dumpBucket(const LockBucket* bucket) const {
     }
 }
 
+//LockManager::lock调用，查看该resId是否在该Partition已经存在
+//每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]
 PartitionedLockHead* LockManager::Partition::find(ResourceId resId) {
     Map::iterator it = data.find(resId);
     return it == data.end() ? nullptr : it->second;
 }
 
+//如果ResourceId对应的PartitionedLockHead已经存在，则直接返回，不存在则new后返回
 PartitionedLockHead* LockManager::Partition::findOrInsert(ResourceId resId) {
     PartitionedLockHead* lock;
     Map::iterator it = data.find(resId);
     if (it == data.end()) {
-        lock = new PartitionedLockHead();
+        lock = new PartitionedLockHead(); //
         lock->initNew(resId);
 
         data.insert(Map::value_type(resId, lock));
@@ -954,6 +971,8 @@ PartitionedLockHead* LockManager::Partition::findOrInsert(ResourceId resId) {
     return lock;
 }
 
+//LockManager._lockBuckets[]为该类型
+//LockManager::lock
 LockHead* LockManager::LockBucket::findOrInsert(ResourceId resId) {
     LockHead* lock;
     Map::iterator it = data.find(resId);
@@ -1162,7 +1181,6 @@ std::string ResourceId::toString() const {
 
     return ss.str();
 }
-
 
 //
 // LockRequest

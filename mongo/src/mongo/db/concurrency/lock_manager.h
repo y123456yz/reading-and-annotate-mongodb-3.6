@@ -49,7 +49,9 @@ namespace mongo {
 /**
  * Entry point for the lock manager scheduling functionality. Don't use it directly, but
  * instead go through the Locker interface.
- */
+ */ 
+//LockManager globalLockManager;
+//DeadlockDetector._lockMgr为该类型
 class LockManager {
     MONGO_DISALLOW_COPYING(LockManager);
 
@@ -139,23 +141,27 @@ private:
     friend struct LockHead;
 
     // These types describe the locks hash table
-
-    struct LockBucket {
+    //LockManager._lockBuckets
+    //参考LockManager::lock
+    struct LockBucket { 
         SimpleMutex mutex;
         typedef unordered_map<ResourceId, LockHead*> Map;
-        Map data;
+        Map data; //data类型<ResourceId, LockHead*>
         LockHead* findOrInsert(ResourceId resId);
     };
 
     // Each locker maps to a partition that is used for resources acquired in intent modes
     // modes and potentially other modes that don't conflict with themselves. This avoids
     // contention on the regular LockHead in the lock manager.
+    //每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]
+    //LockManager._partitions[]数组位该类型，参考LockManager::lock理解
     struct Partition {
         PartitionedLockHead* find(ResourceId resId);
         PartitionedLockHead* findOrInsert(ResourceId resId);
         typedef unordered_map<ResourceId, PartitionedLockHead*> Map;
         SimpleMutex mutex;
-        Map data;
+        //查找LockManager::Partition::find  插入查找LockManager::Partition::findOrInsert
+        Map data; //data类型为<ResourceId, PartitionedLockHead>  
     };
 
     /**
@@ -217,11 +223,12 @@ private:
     */
     // LockManager::_numLockBuckets(128); //信号量默认赋值128
     static const unsigned _numLockBuckets;
-    LockBucket* _lockBuckets;
+    LockBucket* _lockBuckets; //数组类型
 
     //_partitions = new Partition[_numPartitions]; //32
     static const unsigned _numPartitions;
-    Partition* _partitions;
+    //每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]
+    Partition* _partitions; //数组类型
 };
 
 
@@ -310,7 +317,7 @@ private:
 
 
     // Not owned. Lifetime must be longer than that of the graph builder.
-    const LockManager& _lockMgr;
+    const LockManager& _lockMgr;  
     const LockerId _initialLockerId;
 
     UnprocessedNodesQueue _queue;
