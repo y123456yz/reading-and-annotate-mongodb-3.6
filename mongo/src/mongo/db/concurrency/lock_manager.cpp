@@ -57,18 +57,31 @@ static const int LockConflictsTable[] = {
     // MODE_NONE
     0,
 
-    // MODE_IS
+    // MODE_IS     表示MODE_IS和MODE_X不相容
     (1 << MODE_X),
 
-    // MODE_IX
-    (1 << MODE_S) | (1 << MODE_X),
+    // MODE_IX	   表示MODE_IS和MODE_S、MODE_X不相容						
+    (1 << MODE_S) | (1 << MODE_X),		
 
-    // MODE_S
+    // MODE_S      表示MODE_S和MODE_X、MODE_IX不相容
     (1 << MODE_IX) | (1 << MODE_X),
 
-    // MODE_X
+    // MODE_X	   表示MODE_X和MODE_X、MODE_IX、MODE_S、MODE_IS不相容
     (1 << MODE_S) | (1 << MODE_X) | (1 << MODE_IS) | (1 << MODE_IX),
 };
+/**
+ * Lock modes.
+ *
+ * Compatibility Matrix  相容性关系 +相容共存        +是兼容的   
+ *                                          Granted mode
+ *   ---------------.--------------------------------------------------------.
+ *   Requested Mode | MODE_NONE  MODE_IS   MODE_IX  MODE_S   MODE_X  |
+ *     MODE_IS      |      +        +         +        +        -    |
+ *     MODE_IX      |      +        +         +        -        -    |
+ *     MODE_S       |      +        +         -        +        -    |
+ *     MODE_X       |      +        -         -        -        -    |  加了MODE_X锁后，读写都不相容
+ * 官方文档https://docs.mongodb.com/manual/faq/concurrency/
+ */
 
 // Mask of modes
 const uint64_t intentModes = (1 << MODE_IS) | (1 << MODE_IX);
@@ -90,6 +103,7 @@ MONGO_STATIC_ASSERT((sizeof(LegacyLockModeNames) / sizeof(LegacyLockModeNames[0]
                     LockModesCount);
 
 // Helper functions for the lock modes
+//判断newMode类型锁和existingModesMask类型锁是否想容
 bool conflicts(LockMode newMode, uint32_t existingModesMask) {
     return (LockConflictsTable[newMode] & existingModesMask) != 0;
 }
@@ -98,6 +112,7 @@ uint32_t modeMask(LockMode mode) {
     return 1 << mode;
 }
 
+//对字符串str做hash 
 uint64_t hashStringData(StringData str) {
     char hash[16];
     MurmurHash3_x64_128(str.rawData(), str.size(), 0, hash);
@@ -107,6 +122,7 @@ uint64_t hashStringData(StringData str) {
 /**
  * Maps the resource id to a human-readable string.
  */
+//ResourceId资源类型,参考ResourceId
 static const char* ResourceTypeNames[] = {
     "Invalid", "Global", "MMAPV1Journal", "Database", "Collection", "Metadata", "Mutex"};
 
@@ -138,8 +154,8 @@ MONGO_STATIC_ASSERT((sizeof(LockRequestStatusNames) / sizeof(LockRequestStatusNa
  * before locking a partition, not after.
  */ 
 //LockRequest.lock为该类型
-//LockManager::LockBucket.data为该类型
-struct LockHead {
+//LockManager::LockBucket[].data为该类型
+struct LockHead { //LockHead::newRequest
 
     /**
      * Used for initialization of a LockHead, which might have been retrieved from cache and also in
@@ -171,6 +187,7 @@ struct LockHead {
      * Locates the request corresponding to the particular locker or returns nullptr. Must be called
      * with the bucket holding this lock head locked.
      */
+    //从grantedList和conflictList双向链表中查找该LockerId是否存在，并返回对应LockRequest
     LockRequest* findRequest(LockerId lockerId) const {
         // Check the granted queue first
         for (LockRequest* it = grantedList._front; it != nullptr; it = it->next) {
@@ -203,10 +220,13 @@ struct LockHead {
 
         // New lock request. Queue after all granted modes and after any already requested
         // conflicting modes
+        //判断request->mode与grantedModes是否相容，如果不相容则返回状态为LOCK_WAITING
         if (conflicts(request->mode, grantedModes) ||
             (!compatibleFirstCount && conflicts(request->mode, conflictModes))) {
+            //状态置位STATUS_WAITING
             request->status = LockRequest::STATUS_WAITING;
 
+			//request添加到conflictList列表
             // Put it on the conflict queue. Conflicts are granted front to back.
             if (request->enqueueAtFront) {
                 conflictList.push_front(request);
@@ -214,15 +234,19 @@ struct LockHead {
                 conflictList.push_back(request);
             }
 
+			//相应conflictMode置位
             incConflictModeCount(request->mode);
 
             return LOCK_WAITING;
         }
 
+		//无冲突，则把该request添加到授权列表
         // No conflict, new request
         request->status = LockRequest::STATUS_GRANTED;
 
+		//添加到授权链表
         grantedList.push_back(request);
+		//授权模式置位
         incGrantedModeCount(request->mode);
 
         if (request->compatibleFirst) {
@@ -238,15 +262,18 @@ struct LockHead {
      */
     void migratePartitionedLockHeads();
 
+	
     // Methods to maintain the granted queue
+    //把mode添加到grantedModes
     void incGrantedModeCount(LockMode mode) {
         invariant(grantedCounts[mode] >= 0);
-        if (++grantedCounts[mode] == 1) {
+        if (++grantedCounts[mode] == 1) { //grantedCounts[mode]由0->1，并且对应grantedModes置位
             invariant((grantedModes & modeMask(mode)) == 0);
             grantedModes |= modeMask(mode);
         }
     }
 
+	//把mode从grantedCounts移除
     void decGrantedModeCount(LockMode mode) {
         invariant(grantedCounts[mode] >= 1);
         if (--grantedCounts[mode] == 0) {
@@ -256,6 +283,7 @@ struct LockHead {
     }
 
     // Methods to maintain the conflict queue
+    //把mode添加到conflictModes
     void incConflictModeCount(LockMode mode) {
         invariant(conflictCounts[mode] >= 0);
         if (++conflictCounts[mode] == 1) {
@@ -264,7 +292,8 @@ struct LockHead {
         }
     }
 
-    void decConflictModeCount(LockMode mode) {
+	//把mode从conflictModes移除
+    void decConflictModeCount(LockMode mode) { 
         invariant(conflictCounts[mode] >= 1);
         if (--conflictCounts[mode] == 0) {
             invariant((conflictModes & modeMask(mode)) == modeMask(mode));
@@ -282,14 +311,17 @@ struct LockHead {
 
     // Doubly-linked list of requests, which have been granted. Newly granted requests go to
     // the end of the queue. Conversion requests are granted from the beginning forward.
+    //对应LockRequest的双向链表，同一ResourceId的所有granted状态的LockRequest通过该链表链接起来
+    //无冲突，则把该request添加到授权列表 //LockHead::newRequest
     LockRequestList grantedList;
 
     // Counts the grants and coversion counts for each of the supported lock modes. These
     // counts should exactly match the aggregated modes on the granted list.
-    uint32_t grantedCounts[LockModesCount];
+    uint32_t grantedCounts[LockModesCount]; //无冲突，则把该request添加到授权列表 //LockHead::newRequest
 
     // Bit-mask of the granted + converting modes on the granted queue. Maintained in lock-step
     // with the grantedCounts array.
+    //默认为0， 赋值见incGrantedModeCount  decGrantedModeCount
     uint32_t grantedModes;
 
     //
@@ -300,6 +332,7 @@ struct LockHead {
     // with the set of granted modes. Requests are queued at the end of the queue and are
     // granted from the beginning forward, which gives these locks FIFO ordering. Exceptions
     // are high-priorty locks, such as the MMAP V1 flush lock.
+    //对应LockRequest的双向链表，同一ResourceId的所有conflict状态的LockRequest通过该链表链接起来
     LockRequestList conflictList;
 
     // Counts the conflicting requests for each of the lock modes. These counts should exactly
@@ -308,11 +341,13 @@ struct LockHead {
 
     // Bit-mask of the conflict modes on the conflict queue. Maintained in lock-step with the
     // conflictCounts array.
+    //默认值为0，赋值见incConflictModeCount  decConflictModeCount
     uint32_t conflictModes;
 
     // References partitions that may have PartitionedLockHeads for this LockHead.
     // Non-empty implies the lock has no conflicts and only has intent modes as grantedModes.
     // TODO: Remove this vector and make LockHead a POD
+    //LockManager::lock中push  migratePartitionedLockHeads中pop
     std::vector<LockManager::Partition*> partitions;
 
     //
@@ -329,6 +364,7 @@ struct LockHead {
     // Counts the number of requests on the granted queue, which have requested that the policy
     // be switched to compatible-first. As long as this value is > 0, the policy will stay
     // compatible-first.
+    //newRequest自增，LockManager::unlock中自减
     uint32_t compatibleFirstCount;
 };
 
@@ -352,7 +388,7 @@ struct LockHead {
  * May not lock a LockManager bucket while holding a partition lock.
  */ 
  //LockRequest.partitionedLock为该类型
- //每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]，见LockManager::lock
+ //每个ResourceId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]，见LockManager::lock
 struct PartitionedLockHead {  //LockManager::Partition::findOrInsert中new
 
     void initNew(ResourceId resId) { //链表结构初始化
@@ -375,6 +411,7 @@ struct PartitionedLockHead {  //LockManager::Partition::findOrInsert中new
     //PartitionedLockHead::newRequest把LockRequest对应的锁添加到grantedList
     LockRequestList grantedList; //实际上是一个LockRequest类型的双向链表
 };
+
 
 void LockHead::migratePartitionedLockHeads() {
     invariant(partitioned());
@@ -451,14 +488,14 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     // For intent modes, try the PartitionedLockHead
     if (request->partitioned) { //如果是意向锁
     	//根据lock id求余，该lock应该存入那个_partitions分区槽
-        Partition* partition = _getPartition(request); //查找对应分区
+        Partition* partition = _getPartition(request); //查找对应分区槽
         stdx::lock_guard<SimpleMutex> scopedLock(partition->mutex);
 
         // Fast path for intent locks   
         //Partition::find  该resID对应ResourceType类型的锁是否在partition分区槽中存在，如果存在，在返回对应的PartitionedLockHead
         PartitionedLockHead* partitionedLock = partition->find(resId);
 
-        if (partitionedLock) { //说明该request锁在对应的partition分区中
+        if (partitionedLock) { //说明该ResourceId类型在对应的partition分区中
         	//把request添加到PartitionedLockHead.grantedList链表
             partitionedLock->newRequest(request); //PartitionedLockHead::newRequest
             return LOCK_OK;
@@ -492,6 +529,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     }
 
     request->partitioned = false;
+	//LockHead::newRequest
     return lock->newRequest(request);
 }
 
@@ -569,6 +607,7 @@ LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode
     }
 }
 
+//newRequest自增，LockManager::unlock中自减
 bool LockManager::unlock(LockRequest* request) {
     // Fast path for decrementing multiple references of the same lock. It is safe to do this
     // without locking, because 1) all calls for the same lock request must be done on the same

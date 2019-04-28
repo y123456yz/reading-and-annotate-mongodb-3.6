@@ -114,6 +114,9 @@ enum LockMode { //不同锁的统计在LockStats中实现
     MODE_S = 3,
     MODE_X = 4,
 
+    //static const char* LockModeNames[] = {"NONE", "IS", "IX", "S", "X"};
+    //static const char* LegacyLockModeNames[] = {"", "r", "w", "R", "W"};
+    
     // Counts the lock modes. Used for array size allocations, etc. Always insert new lock
     // modes above this entry.
     LockModesCount 
@@ -389,13 +392,14 @@ public:
  //LockerImpl._requests map表为该类型, ResourceId存入到该map表中  
 //LockRequest::initNew中构造该类
 struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
-    enum Status {
-        STATUS_NEW,
-        STATUS_GRANTED,
-        STATUS_WAITING,
+    enum Status { //status的字符串转换见LockRequestStatusNames
+        STATUS_NEW, //初始状态
+        STATUS_GRANTED, //授权状态，赋值见newRequest
+        STATUS_WAITING, //冲突，需要等待，赋值见newRequest
         STATUS_CONVERTING,
-
+        
         // Counts the rest. Always insert new status types above this entry.
+        //见LockRequestStatusNames
         StatusCount
     };
 
@@ -437,7 +441,8 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     //
     // Written at construction time by Locker
     // Read by LockManager on any thread
-    // No synchronization
+    // No synchronization 
+    //全局锁，并且锁类型为mode == MODE_S || mode == MODE_X
     bool compatibleFirst; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When set, an attempt is made to execute this request using partitioned lockheads. This speeds
@@ -468,6 +473,7 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Written by LockManager on any thread
     // Read by LockManager on any thread
     // Protected by LockHead bucket's mutex
+    //赋值见newRequest
     LockHead* lock;
 
     // Pointer to the partitioned lock to which this request belongs, or null if it is not
@@ -504,6 +510,7 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Written by LockManager on any thread
     // Read by LockManager on any thread
     // Protected by LockHead bucket's mutex
+    //对应的LockMode
     LockMode mode;
 
     // This value is different from MODE_NONE only if a conversion is requested for a lock and that
