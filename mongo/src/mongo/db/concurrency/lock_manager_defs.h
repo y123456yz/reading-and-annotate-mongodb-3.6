@@ -447,6 +447,8 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Written at construction time by LockManager
     // Read by LockManager on any thread
     // No synchronization
+    //LockManager::lock    LockRequest::initNew中赋值
+    //request->partitioned = (mode == MODE_IX || mode == MODE_IS);   意向锁该值才会为true
     bool partitioned;
 
     // How many times has LockManager::lock been called for this request. Locks are released when
