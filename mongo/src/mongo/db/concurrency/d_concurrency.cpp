@@ -135,7 +135,7 @@ bool Lock::ResourceMutex::isExclusivelyLocked(Locker* locker) {
 bool Lock::ResourceMutex::isAtLeastReadLocked(Locker* locker) {
     return locker->isLockHeldForMode(_rid, MODE_IS);
 }
-
+//Lock::DBLock::DBLock中构造使用，每个DBLock都有一个对应的全局锁_globalLock
 Lock::GlobalLock::GlobalLock(OperationContext* opCtx, LockMode lockMode, unsigned timeoutMs)
     : GlobalLock(opCtx, lockMode, timeoutMs, EnqueueOnly()) {
     waitForLock(timeoutMs);
@@ -198,6 +198,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
     : _id(RESOURCE_DATABASE, db),
       _opCtx(opCtx),
       _mode(mode),
+      //全局锁初始化构造
       _globalLock(opCtx, isSharedLockMode(_mode) ? MODE_IS : MODE_IX, UINT_MAX) {
     massert(28539, "need a valid database name", !db.empty() && nsIsDbOnly(db));
 
@@ -250,7 +251,7 @@ void Lock::DBLock::relockWithMode(LockMode newMode) {
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode));
 }
 
-
+//AutoGetCollection::AutoGetCollection构造
 Lock::CollectionLock::CollectionLock(Locker* lockState, StringData ns, LockMode mode)
     : _id(RESOURCE_COLLECTION, ns), _lockState(lockState) {
     massert(28538, "need a non-empty collection name", nsIsFull(ns));

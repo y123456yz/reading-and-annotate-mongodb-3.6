@@ -73,6 +73,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      LockMode modeDB,
                                      LockMode modeColl,
                                      ViewMode viewMode)
+    //这里先构造库锁，库锁Lock::DBLock->_globalLock里面会构造全局锁
     : AutoGetCollection(opCtx, nss, modeColl, viewMode, Lock::DBLock(opCtx, nss.db(), modeDB)) {}
 
 //上面的AutoGetCollection::AutoGetCollection调用
@@ -83,6 +84,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      Lock::DBLock lock)
     : _viewMode(viewMode),
       _autoDb(opCtx, nss.db(), std::move(lock)),
+      //这里构造集合锁
       _collLock(opCtx->lockState(), nss.ns(), modeColl),
       _coll(_autoDb.getDb() ? _autoDb.getDb()->getCollection(opCtx, nss) : nullptr) {
     Database* db = _autoDb.getDb();
