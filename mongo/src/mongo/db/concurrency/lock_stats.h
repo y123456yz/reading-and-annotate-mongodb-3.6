@@ -199,6 +199,7 @@ private:
     // more detailed stats for it.
     //数组全局锁  库锁  表锁
     PerModeLockStatCounters _stats[ResourceTypesCount];
+    //polog相关统计
     PerModeLockStatCounters _oplogStats;
 };
 

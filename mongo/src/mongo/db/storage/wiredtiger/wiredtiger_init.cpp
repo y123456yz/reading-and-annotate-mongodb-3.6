@@ -61,7 +61,7 @@ class WiredTigerFactory : public StorageEngine::Factory {
 public:
     virtual ~WiredTigerFactory() {}
 	//ServiceContextMongoD::initializeGlobalStorageEngine()中调用执行，执行该WiredTigerFactory::create
-	//根据params参数构造KVStorageEngine类
+	//根据params参数构造KVStorageEngine类  
     virtual StorageEngine* create(const StorageGlobalParams& params,
                                   const StorageEngineLockFile* lockFile) const {
         if (lockFile && lockFile->createdByUncleanShutdown()) {
