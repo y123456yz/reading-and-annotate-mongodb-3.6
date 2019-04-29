@@ -138,7 +138,7 @@ https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0
 > * .getmore querey查找命令执行过程重新分析  
 > * .符合索引范围查询过程的解析增加文档记录  
 > * .lockManager详细注释分析  
-> * .
+> * .AutoGetCollection初始化构造过程及其与锁的关系分析  
 > * .
 > * .
 > * .

@@ -161,15 +161,17 @@ Lock::GlobalLock::GlobalLock(GlobalLock&& otherLock)
     otherLock._result = LOCK_INVALID;
 }
 
+//Lock::GlobalLock::GlobalLock中调用
 void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
     if (_opCtx->lockState()->shouldConflictWithSecondaryBatchApplication()) {
         _pbwm.lock(MODE_IS);
     }
 
-	//LockerImpl<IsForMMAPV1>::_lockGlobalBegin
+	//LockerImpl:lockGlobalBegin->LockerImpl<IsForMMAPV1>::_lockGlobalBegin
     _result = _opCtx->lockState()->lockGlobalBegin(lockMode, Milliseconds(timeoutMs));
 }
 
+//Lock::GlobalLock::GlobalLock
 void Lock::GlobalLock::waitForLock(unsigned timeoutMs) {
     if (_result == LOCK_WAITING) {
         _result = _opCtx->lockState()->lockGlobalComplete(Milliseconds(timeoutMs));
@@ -184,13 +186,14 @@ void Lock::GlobalLock::waitForLock(unsigned timeoutMs) {
     }
 }
 
+//解锁
 void Lock::GlobalLock::_unlock() {
     if (isLocked()) {
         _opCtx->lockState()->unlockGlobal(); //LockerImpl<IsForMMAPV1>::unlockGlobal
         _result = LOCK_INVALID;
     }
 }
-
+//AutoGetCollection::AutoGetCollection
 Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
     : _id(RESOURCE_DATABASE, db),
       _opCtx(opCtx),
@@ -208,7 +211,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
     }
 
 	//LockerImpl<IsForMMAPV1>::lock
-    invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode));
+    invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode)); //OperationContext::lockState->LockerImpl<>::lock
 }
 
 Lock::DBLock::DBLock(DBLock&& otherLock)
@@ -229,6 +232,7 @@ Lock::DBLock::DBLock(DBLock&& otherLock)
 */
 Lock::DBLock::~DBLock() {
     if (_mode != MODE_NONE) {
+		//OperationContext::lockState->LockerImpl<>::unlock
         _opCtx->lockState()->unlock(_id); //~GlobalLock
     }
 }
@@ -320,5 +324,155 @@ void Lock::ResourceLock::unlock() {
         _result = LOCK_INVALID;
     }
 }
+
+/*
+Breakpoint 1, mongo::Lock::GlobalLock::_enqueue (this=this@entry=0x7f0c83f3fdc8, lockMode=lockMode@entry=mongo::MODE_IX, timeoutMs=timeoutMs@entry=4294967295) at src/mongo/db/concurrency/d_concurrency.cpp:171
+171         _result = _opCtx->lockState()->lockGlobalBegin(lockMode, Milliseconds(timeoutMs));
+(gdb) bt
+#0  mongo::Lock::GlobalLock::_enqueue (this=this@entry=0x7f0c83f3fdc8, lockMode=lockMode@entry=mongo::MODE_IX, timeoutMs=timeoutMs@entry=4294967295) at src/mongo/db/concurrency/d_concurrency.cpp:171
+#1  0x00007f0c85f57dac in mongo::Lock::GlobalLock::GlobalLock (this=0x7f0c83f3fdc8, opCtx=0x7f0c8ba3c400, lockMode=mongo::MODE_IX, timeoutMs=4294967295, enqueueOnly=...) at src/mongo/db/concurrency/d_concurrency.cpp:152
+#2  0x00007f0c85f57f38 in mongo::Lock::GlobalLock::GlobalLock (this=0x7f0c83f3fdc8, opCtx=<optimized out>, lockMode=<optimized out>, timeoutMs=4294967295) at src/mongo/db/concurrency/d_concurrency.cpp:140
+#3  0x00007f0c85f57fda in mongo::Lock::DBLock::DBLock (this=0x7f0c83f3fd90, opCtx=0x7f0c8ba3c400, db=..., mode=mongo::MODE_IX) at src/mongo/db/concurrency/d_concurrency.cpp:201
+#4  0x00007f0c84eefd14 in mongo::AutoGetCollection::AutoGetCollection (this=0x7f0c83f400a8, opCtx=0x7f0c8ba3c400, nss=..., modeDB=<optimized out>, modeColl=mongo::MODE_IX, viewMode=mongo::AutoGetCollection::kViewsForbidden)
+    at src/mongo/db/db_raii.cpp:76
+#5  0x00007f0c84bca2d2 in AutoGetCollection (modeAll=mongo::MODE_IX, nss=..., opCtx=0x7f0c8ba3c400, this=0x7f0c83f400a8) at src/mongo/db/db_raii.h:92
+#6  emplace_assign<mongo::OperationContext*&, mongo::NamespaceString const&, mongo::LockMode> (this=0x7f0c83f400a0) at src/third_party/boost-1.60.0/boost/optional/optional.hpp:494
+#7  emplace<mongo::OperationContext*&, mongo::NamespaceString const&, mongo::LockMode> (this=0x7f0c83f400a0) at src/third_party/boost-1.60.0/boost/optional/optional.hpp:981
+#8  operator() (__closure=0x7f0c83f3ffc0) at src/mongo/db/ops/write_ops_exec.cpp:358
+#9  insertBatchAndHandleErrors (out=0x7f0c83f3ffa0, lastOpFixer=0x7f0c83f3ff80, batch=..., wholeOp=..., opCtx=0x7f0c8ba3c400) at src/mongo/db/ops/write_ops_exec.cpp:371
+#10 mongo::performInserts (opCtx=opCtx@entry=0x7f0c8ba3c400, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:534
+#11 0x00007f0c84bb146e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:315
+#12 0x00007f0c84bab008 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:229
+#13 0x00007f0c85b73f3f in mongo::Command::publicRun (this=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands.cpp:387
+#14 0x00007f0c84aef622 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f0c8ba6f3c0, request=..., command=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f0c8ba3c400)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#15 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f0c8ba3c400, command=command@entry=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:760
+#16 0x00007f0c84af0194 in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f0c83f404f0) at src/mongo/db/service_entry_point_mongod.cpp:881
+#17 0x00007f0c84af0194 in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#18 0x00007f0c84af0f30 in runCommands (message=..., opCtx=0x7f0c8ba3c400) at src/mongo/db/service_entry_point_mongod.cpp:891
+#19 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f0c8ba3c400, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1214
+#20 0x00007f0c84afd95a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:455
+#21 0x00007f0c84af8a9f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:532
+#22 0x00007f0c84afc4de in operator() (__closure=0x7f0c882c87e0) at src/mongo/transport/service_state_machine.cpp:573
+#23 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#24 0x00007f0c85a390e2 in operator() (this=0x7f0c83f42550) at /usr/local/include/c++/5.4.0/functional:2267
+#25 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f0c882c1480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#26 0x00007f0c84af768d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f0c8ba64390, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:577
+#27 0x00007f0c84afa031 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f0c8ba64390, status=...) at src/mongo/transport/service_state_machine.cpp:358
+#28 0x00007f0c84afac2b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:314
+#29 0x00007f0c84af8b31 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:529
+#30 0x00007f0c84afc4de in operator() (__closure=0x7f0c882c8960) at src/mongo/transport/service_state_machine.cpp:573
+#31 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#32 0x00007f0c85a39645 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#33 operator() (__closure=0x7f0c880d06e0) at src/mongo/transport/service_executor_synchronous.cpp:144
+#34 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#35 0x00007f0c85f8a3c4 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#36 mongo::(anonymous namespace)::runFunc (ctx=0x7f0c882c8780) at src/mongo/transport/service_entry_point_utils.cpp:55
+#37 0x00007f0c82c5de25 in start_thread () from /lib64/libpthread.so.0
+#38 0x00007f0c8298b34d in clone () from /lib64/libc.so.6
+(gdb) b /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/src/mongo/db/concurrency/d_concurrency.cpp:214
+Breakpoint 2 at 0x7f0c85f5803f: file src/mongo/db/concurrency/d_concurrency.cpp, line 214.
+(gdb) b /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/src/mongo/db/concurrency/d_concurrency.cpp:260
+Breakpoint 3 at 0x7f0c85f5742e: file src/mongo/db/concurrency/d_concurrency.cpp, line 260.
+(gdb) c
+Continuing.
+
+Breakpoint 2, mongo::Lock::DBLock::DBLock (this=0x7f0c83f3fd90, opCtx=0x7f0c8ba3c400, db=..., mode=<optimized out>) at src/mongo/db/concurrency/d_concurrency.cpp:214
+214         invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode)); //OperationContext::lockState->LockerImpl<>::lock
+(gdb) bt
+#0  mongo::Lock::DBLock::DBLock (this=0x7f0c83f3fd90, opCtx=0x7f0c8ba3c400, db=..., mode=<optimized out>) at src/mongo/db/concurrency/d_concurrency.cpp:214
+#1  0x00007f0c84eefd14 in mongo::AutoGetCollection::AutoGetCollection (this=0x7f0c83f400a8, opCtx=0x7f0c8ba3c400, nss=..., modeDB=<optimized out>, modeColl=mongo::MODE_IX, viewMode=mongo::AutoGetCollection::kViewsForbidden)
+    at src/mongo/db/db_raii.cpp:76
+#2  0x00007f0c84bca2d2 in AutoGetCollection (modeAll=mongo::MODE_IX, nss=..., opCtx=0x7f0c8ba3c400, this=0x7f0c83f400a8) at src/mongo/db/db_raii.h:92
+#3  emplace_assign<mongo::OperationContext*&, mongo::NamespaceString const&, mongo::LockMode> (this=0x7f0c83f400a0) at src/third_party/boost-1.60.0/boost/optional/optional.hpp:494
+#4  emplace<mongo::OperationContext*&, mongo::NamespaceString const&, mongo::LockMode> (this=0x7f0c83f400a0) at src/third_party/boost-1.60.0/boost/optional/optional.hpp:981
+#5  operator() (__closure=0x7f0c83f3ffc0) at src/mongo/db/ops/write_ops_exec.cpp:358
+#6  insertBatchAndHandleErrors (out=0x7f0c83f3ffa0, lastOpFixer=0x7f0c83f3ff80, batch=..., wholeOp=..., opCtx=0x7f0c8ba3c400) at src/mongo/db/ops/write_ops_exec.cpp:371
+#7  mongo::performInserts (opCtx=opCtx@entry=0x7f0c8ba3c400, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:534
+#8  0x00007f0c84bb146e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:315
+#9  0x00007f0c84bab008 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:229
+#10 0x00007f0c85b73f3f in mongo::Command::publicRun (this=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands.cpp:387
+#11 0x00007f0c84aef622 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f0c8ba6f3c0, request=..., command=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f0c8ba3c400)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#12 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f0c8ba3c400, command=command@entry=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:760
+#13 0x00007f0c84af0194 in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f0c83f404f0) at src/mongo/db/service_entry_point_mongod.cpp:881
+#14 0x00007f0c84af0194 in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#15 0x00007f0c84af0f30 in runCommands (message=..., opCtx=0x7f0c8ba3c400) at src/mongo/db/service_entry_point_mongod.cpp:891
+#16 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f0c8ba3c400, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1214
+#17 0x00007f0c84afd95a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:455
+#18 0x00007f0c84af8a9f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:532
+#19 0x00007f0c84afc4de in operator() (__closure=0x7f0c882c87e0) at src/mongo/transport/service_state_machine.cpp:573
+#20 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#21 0x00007f0c85a390e2 in operator() (this=0x7f0c83f42550) at /usr/local/include/c++/5.4.0/functional:2267
+#22 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f0c882c1480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#23 0x00007f0c84af768d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f0c8ba64390, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:577
+#24 0x00007f0c84afa031 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f0c8ba64390, status=...) at src/mongo/transport/service_state_machine.cpp:358
+#25 0x00007f0c84afac2b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:314
+#26 0x00007f0c84af8b31 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:529
+#27 0x00007f0c84afc4de in operator() (__closure=0x7f0c882c8960) at src/mongo/transport/service_state_machine.cpp:573
+#28 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#29 0x00007f0c85a39645 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#30 operator() (__closure=0x7f0c880d06e0) at src/mongo/transport/service_executor_synchronous.cpp:144
+#31 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#32 0x00007f0c85f8a3c4 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#33 mongo::(anonymous namespace)::runFunc (ctx=0x7f0c882c8780) at src/mongo/transport/service_entry_point_utils.cpp:55
+#34 0x00007f0c82c5de25 in start_thread () from /lib64/libpthread.so.0
+#35 0x00007f0c8298b34d in clone () from /lib64/libc.so.6
+(gdb) c
+Continuing.
+
+Breakpoint 3, mongo::Lock::CollectionLock::CollectionLock (this=0x7f0c83f40140, lockState=0x7f0c8ba77000, ns=..., mode=mongo::MODE_IX) at src/mongo/db/concurrency/d_concurrency.cpp:260
+260         if (supportsDocLocking()) {
+(gdb) bt
+#0  mongo::Lock::CollectionLock::CollectionLock (this=0x7f0c83f40140, lockState=0x7f0c8ba77000, ns=..., mode=mongo::MODE_IX) at src/mongo/db/concurrency/d_concurrency.cpp:260
+#1  0x00007f0c84eef875 in mongo::AutoGetCollection::AutoGetCollection (this=0x7f0c83f400a8, opCtx=0x7f0c8ba3c400, nss=..., modeColl=mongo::MODE_IX, viewMode=<optimized out>, lock=...) at src/mongo/db/db_raii.cpp:86
+#2  0x00007f0c84eefd2f in mongo::AutoGetCollection::AutoGetCollection (this=0x7f0c83f400a8, opCtx=0x7f0c8ba3c400, nss=..., modeDB=<optimized out>, modeColl=mongo::MODE_IX, viewMode=mongo::AutoGetCollection::kViewsForbidden)
+    at src/mongo/db/db_raii.cpp:76
+#3  0x00007f0c84bca2d2 in AutoGetCollection (modeAll=mongo::MODE_IX, nss=..., opCtx=0x7f0c8ba3c400, this=0x7f0c83f400a8) at src/mongo/db/db_raii.h:92
+#4  emplace_assign<mongo::OperationContext*&, mongo::NamespaceString const&, mongo::LockMode> (this=0x7f0c83f400a0) at src/third_party/boost-1.60.0/boost/optional/optional.hpp:494
+#5  emplace<mongo::OperationContext*&, mongo::NamespaceString const&, mongo::LockMode> (this=0x7f0c83f400a0) at src/third_party/boost-1.60.0/boost/optional/optional.hpp:981
+#6  operator() (__closure=0x7f0c83f3ffc0) at src/mongo/db/ops/write_ops_exec.cpp:358
+#7  insertBatchAndHandleErrors (out=0x7f0c83f3ffa0, lastOpFixer=0x7f0c83f3ff80, batch=..., wholeOp=..., opCtx=0x7f0c8ba3c400) at src/mongo/db/ops/write_ops_exec.cpp:371
+#8  mongo::performInserts (opCtx=opCtx@entry=0x7f0c8ba3c400, wholeOp=...) at src/mongo/db/ops/write_ops_exec.cpp:534
+#9  0x00007f0c84bb146e in mongo::(anonymous namespace)::CmdInsert::runImpl (this=<optimized out>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:315
+#10 0x00007f0c84bab008 in mongo::(anonymous namespace)::WriteCommand::enhancedRun (this=<optimized out>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands/write_commands/write_commands.cpp:229
+#11 0x00007f0c85b73f3f in mongo::Command::publicRun (this=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f0c8ba3c400, request=..., result=...) at src/mongo/db/commands.cpp:387
+#12 0x00007f0c84aef622 in runCommandImpl (startOperationTime=..., replyBuilder=0x7f0c8ba6f3c0, request=..., command=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, opCtx=0x7f0c8ba3c400)
+    at src/mongo/db/service_entry_point_mongod.cpp:506
+#13 mongo::(anonymous namespace)::execCommandDatabase (opCtx=0x7f0c8ba3c400, command=command@entry=0x7f0c86e253a0 <mongo::(anonymous namespace)::cmdInsert>, request=..., replyBuilder=<optimized out>)
+    at src/mongo/db/service_entry_point_mongod.cpp:760
+#14 0x00007f0c84af0194 in mongo::(anonymous namespace)::<lambda()>::operator()(void) const (__closure=__closure@entry=0x7f0c83f404f0) at src/mongo/db/service_entry_point_mongod.cpp:881
+#15 0x00007f0c84af0194 in mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=<optimized out>, m=...)
+#16 0x00007f0c84af0f30 in runCommands (message=..., opCtx=0x7f0c8ba3c400) at src/mongo/db/service_entry_point_mongod.cpp:891
+#17 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f0c8ba3c400, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1214
+#18 0x00007f0c84afd95a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:455
+#19 0x00007f0c84af8a9f in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:532
+#20 0x00007f0c84afc4de in operator() (__closure=0x7f0c882c87e0) at src/mongo/transport/service_state_machine.cpp:573
+#21 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#22 0x00007f0c85a390e2 in operator() (this=0x7f0c83f42550) at /usr/local/include/c++/5.4.0/functional:2267
+#23 mongo::transport::ServiceExecutorSynchronous::schedule(std::function<void ()>, mongo::transport::ServiceExecutor::ScheduleFlags) (this=this@entry=0x7f0c882c1480, task=..., 
+    flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse) at src/mongo/transport/service_executor_synchronous.cpp:125
+#24 0x00007f0c84af768d in mongo::ServiceStateMachine::_scheduleNextWithGuard (this=this@entry=0x7f0c8ba64390, guard=..., flags=flags@entry=mongo::transport::ServiceExecutor::kMayRecurse, 
+    ownershipModel=ownershipModel@entry=mongo::ServiceStateMachine::kOwned) at src/mongo/transport/service_state_machine.cpp:577
+#25 0x00007f0c84afa031 in mongo::ServiceStateMachine::_sourceCallback (this=this@entry=0x7f0c8ba64390, status=...) at src/mongo/transport/service_state_machine.cpp:358
+#26 0x00007f0c84afac2b in mongo::ServiceStateMachine::_sourceMessage (this=this@entry=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:314
+#27 0x00007f0c84af8b31 in mongo::ServiceStateMachine::_runNextInGuard (this=0x7f0c8ba64390, guard=...) at src/mongo/transport/service_state_machine.cpp:529
+#28 0x00007f0c84afc4de in operator() (__closure=0x7f0c882c8960) at src/mongo/transport/service_state_machine.cpp:573
+#29 std::_Function_handler<void(), mongo::ServiceStateMachine::_scheduleNextWithGuard(mongo::ServiceStateMachine::ThreadGuard, mongo::transport::ServiceExecutor::ScheduleFlags, mongo::ServiceStateMachine::Ownership)::<lambda()> >::_M_invoke(const std::_Any_data &) (__functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#30 0x00007f0c85a39645 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#31 operator() (__closure=0x7f0c880d06e0) at src/mongo/transport/service_executor_synchronous.cpp:144
+#32 std::_Function_handler<void(), mongo::transport::ServiceExecutorSynchronous::schedule(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExecutor::ScheduleFlags)::<lambda()> >::_M_invoke(const std::_Any_data &) (
+    __functor=...) at /usr/local/include/c++/5.4.0/functional:1871
+#33 0x00007f0c85f8a3c4 in operator() (this=<optimized out>) at /usr/local/include/c++/5.4.0/functional:2267
+#34 mongo::(anonymous namespace)::runFunc (ctx=0x7f0c882c8780) at src/mongo/transport/service_entry_point_utils.cpp:55
+*/
 
 }  // namespace mongo

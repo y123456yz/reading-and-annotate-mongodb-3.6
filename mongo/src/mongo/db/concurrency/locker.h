@@ -48,7 +48,7 @@ namespace mongo {
 //LockerImpl  locker_noop继承该类
 //LockRequest.locker为该类型
 
-//struct LockRequest{Locker* locker}  LockRequest.locker为该类
+//struct LockRequest{Locker* locker}  LockRequest.locker  OperationContext._locker为该类
 class Locker {
     MONGO_DISALLOW_COPYING(Locker);
 

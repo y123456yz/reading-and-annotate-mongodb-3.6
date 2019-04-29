@@ -102,7 +102,7 @@ public:
     stdx::thread::id getThreadId() const override;
 
     virtual LockResult lockGlobal(LockMode mode);
-    //shutdownTask中调用
+    //shutdownTask中调用   
     virtual LockResult lockGlobalBegin(LockMode mode, Milliseconds timeout) { 
         return _lockGlobalBegin(mode, timeout);
     }
@@ -181,7 +181,7 @@ public:
 private:
     friend class AutoYieldFlushLockForMMAPV1Commit;
 
-    //见下面的_requests
+    //见下面的_requests，意思是一次性分配最多16个KV，K为ResourceId，V为LockRequest
     typedef FastMapNoAlloc<ResourceId, LockRequest, 16> LockRequestsMap;
 
     /**
@@ -213,7 +213,7 @@ private:
     //
     // This has to be locked inside const methods, hence the mutable.
     mutable SpinLock _lock;
-    //往map表添加赋值见LockerImpl<IsForMMAPV1>::lockBegin  所有Locker都记录在该map表中
+    //往map表添加赋值见LockerImpl<>::lockBegin  所有Locker都记录在该map表中
     LockRequestsMap _requests;
 
     // Reuse the notification object across requests so we don't have to create a new mutex

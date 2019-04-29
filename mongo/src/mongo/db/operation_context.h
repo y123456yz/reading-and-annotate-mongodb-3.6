@@ -161,6 +161,7 @@ public:
     /**
      * Interface for locking.  Caller DOES NOT own pointer.
      */
+    //Lock::DBLock::DBLock中调用
     Locker* lockState() const {
         return _locker.get();
     }
@@ -487,6 +488,7 @@ private:
     boost::optional<LogicalSessionId> _lsid;
     boost::optional<TxnNumber> _txnNumber;
 
+    //Lock::DBLock::DBLock中调用使用
     std::unique_ptr<Locker> _locker; //wiredtiger对应的锁为DefaultLockerImpl
 
     //OperationContext::_recoveryUnit为RecoveryUnit类类型，对应WiredTigerRecoveryUnit类

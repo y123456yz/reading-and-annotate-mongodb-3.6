@@ -2,12 +2,12 @@ processManagement:
   fork: true
 systemLog:
   destination: file
-  path: /data/db/logs/mongod.log
+  path: /data/test/logs/mongod.log
   logAppend: true
 storage:
   journal:
     enabled: true
-  dbPath: /data/db/data/
+  dbPath: /data/test/data/
   directoryPerDB: true
   engine: wiredTiger
   wiredTiger:
@@ -19,7 +19,7 @@ storage:
     indexConfig:
       prefixCompression: true
 net:
-   port: 27017
+   port: 27117
    maxIncomingConnections: 10000
    bindIpAll: true
 operationProfiling:

@@ -52,7 +52,7 @@ AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, LockMode mode)
 
 AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, Lock::DBLock lock)
     : _dbLock(std::move(lock)), _db(dbHolder().get(opCtx, ns)) {}
-
+//insertBatchAndHandleErrors
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
                                      const UUID& uuid,
@@ -67,7 +67,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
         sleepFor(Milliseconds(data["waitForMillis"].numberInt()));
     }
 }
-
+//insertBatchAndHandleErrors
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
                                      LockMode modeDB,
@@ -75,6 +75,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      ViewMode viewMode)
     : AutoGetCollection(opCtx, nss, modeColl, viewMode, Lock::DBLock(opCtx, nss.db(), modeDB)) {}
 
+//上面的AutoGetCollection::AutoGetCollection调用
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
                                      LockMode modeColl,

@@ -87,7 +87,7 @@ class AutoGetCollection {
 
 public:
     AutoGetCollection(OperationContext*, const NamespaceString&, const UUID&, LockMode modeAll);
-
+    //insertBatchAndHandleErrors
     AutoGetCollection(OperationContext* opCtx, const NamespaceString& nss, LockMode modeAll)
         : AutoGetCollection(opCtx, nss, modeAll, modeAll, ViewMode::kViewsForbidden) {}
 

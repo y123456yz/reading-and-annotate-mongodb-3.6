@@ -179,7 +179,7 @@ public:
      *
      * NOTE: Does not acquire flush lock.
      */  //GlobalWrite  GlobalrRead全局读锁和全局写锁继承该类
-    class GlobalLock {
+    class GlobalLock { //DBLock._globalLock
     public:
         class EnqueueOnly {};
 
@@ -223,7 +223,7 @@ public:
         void _unlock();
 
         OperationContext* const _opCtx;
-        LockResult _result;
+        LockResult _result; //lock是否成功等
         ResourceLock _pbwm;
         const bool _isOutermostLock;
     };
@@ -313,6 +313,7 @@ storageEngine.writeOplog(...);
         LockMode _mode;
 
         // Acquires the global lock on our behalf.
+        //Lock::DBLock::DBLock中构造
         GlobalLock _globalLock;
     };
 

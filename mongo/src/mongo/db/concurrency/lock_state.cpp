@@ -49,7 +49,7 @@ namespace {
 
 /**
  * Partitioned global lock statistics, so we don't hit the same bucket.
- */ //PartitionedInstanceWideLockStats globalStats;
+ */ //PartitionedInstanceWideLockStats globalStats;   分区槽统计相关
 class PartitionedInstanceWideLockStats {
     MONGO_DISALLOW_COPYING(PartitionedInstanceWideLockStats);
 
@@ -125,6 +125,7 @@ const ResourceId resourceIdMMAPV1Flush =
     ResourceId(RESOURCE_MMAPV1_FLUSH, ResourceId::SINGLETON_MMAPV1_FLUSH);
 
 // How often (in millis) to check for deadlock if a lock has not been granted for some time
+//超过这么多时间都没有获取到锁，则判断为死锁
 const Milliseconds DeadlockTimeout = Milliseconds(500);
 
 // Dispenses unique LockerId identifiers
@@ -173,12 +174,13 @@ bool shouldDelayUnlock(ResourceId resId, LockMode mode) {
 
 }  // namespace
 
-
+//写锁
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::isW() const {
     return getLockMode(resourceIdGlobal) == MODE_X;
 }
 
+//读锁
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::isR() const {
     return getLockMode(resourceIdGlobal) == MODE_S;
@@ -334,6 +336,8 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESO
 db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
 */
 
+//LockerImpl<IsForMMAPV1>::_lockGlobalBegin和Lock::GlobalLock::_unlock对应，一个上锁，一个解锁
+
 //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
 //Lock::GlobalLock::_enqueue      LockerImpl<IsForMMAPV1>::lockGlobal中调用  
 //lock_state.h中的lockGlobalBegin函数调用  
@@ -425,6 +429,7 @@ void LockerImpl<IsForMMAPV1>::downgradeGlobalXtoSForMMAPV1() {
     }
 }
 
+//LockerImpl<IsForMMAPV1>::_lockGlobalBegin和Lock::GlobalLock::_unlock对应，一个上锁，一个解锁
 //Lock::GlobalLock::_unlock
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::unlockGlobal() {
@@ -449,6 +454,7 @@ bool LockerImpl<IsForMMAPV1>::unlockGlobal() {
     return true;
 }
 
+//WriteUnitOfWork中调用
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::beginWriteUnitOfWork() {
     // Sanity check that write transactions under MMAP V1 have acquired the flush lock, so we
@@ -458,6 +464,7 @@ void LockerImpl<IsForMMAPV1>::beginWriteUnitOfWork() {
     _wuowNestingLevel++;
 }
 
+//~WriteUnitOfWork()  WriteUnitOfWork::commit调用
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
     invariant(_wuowNestingLevel > 0);
@@ -481,6 +488,8 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
 
 //全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
 //RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+
+//LockerImpl<IsForMMAPV1>::lock和LockerImpl<IsForMMAPV1>::unlock对应
 
 //Lock::DBLock::DBLock  Lock::DBLock::relockWithMode
 //Lock::CollectionLock::CollectionLock
@@ -509,6 +518,7 @@ void LockerImpl<IsForMMAPV1>::downgrade(ResourceId resId, LockMode newMode) {
     globalLockManager.downgrade(it.objAddr(), newMode);
 }
 
+//LockerImpl<IsForMMAPV1>::lock和LockerImpl<IsForMMAPV1>::unlock对应
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::unlock(ResourceId resId) {
     LockRequestsMap::Iterator it = _requests.find(resId);
@@ -728,8 +738,9 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     LockRequest* request;
     bool isNew = true; //说明request是最新构造的，false说明是之前_requests已经存在的
 
+
     LockRequestsMap::Iterator it = _requests.find(resId); 
-    if (!it) { //如果resId不在_requests表中，则添加进去
+    if (!it) { //如果resId不在_requests map表中，则添加进去
         scoped_spinlock scopedLock(_lock);
         LockRequestsMap::Iterator itNew = _requests.insert(resId);
 		
@@ -738,7 +749,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
 		
 		//获取LockRequest 上面的LockRequest::initNew生成
         request = itNew.objAddr();//FastMapNoAlloc::IteratorImpl::objAddr
-    } else {
+    } else { //resId已经存在于_requests，则获取该resId对应的LockRequest
         request = it.objAddr();
         isNew = false;
     }

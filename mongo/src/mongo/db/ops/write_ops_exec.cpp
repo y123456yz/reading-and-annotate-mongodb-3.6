@@ -355,6 +355,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
                 uasserted(ErrorCodes::InternalError, "failAllInserts failpoint active!");
             }
 
+			//通过这里最终调用AutoGetCollection构造函数
             collection.emplace(opCtx, wholeOp.getNamespace(), MODE_IX);
             if (collection->getCollection()) //已经有该集合了
                 break;
@@ -455,7 +456,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
         // This is the only part of finishCurOp we need to do for inserts because they reuse the
         // top-level curOp. The rest is handled by the top-level entrypoint.
         //performInserts函数执行完成后，需要调用该函数
-        curOp.done(); //执行完成
+        curOp.done(); //执行完成    
         Top::get(opCtx->getServiceContext())
             .record(opCtx,
                     wholeOp.getNamespace().ns(),
@@ -536,6 +537,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
         bytesInBatch = 0;
 
         if (canContinue && !fixedDoc.isOK()) {
+			//insert统计计数
             globalOpCounters.gotInsert();
             try {
                 uassertStatusOK(fixedDoc.getStatus());
