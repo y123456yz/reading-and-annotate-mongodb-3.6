@@ -71,7 +71,9 @@ public:
      * See LockMode for the supported modes. Unlike DBLock/Collection lock, this will not do
      * any additional checks/upgrades or global locking. Use ResourceLock for locking
      * resources other than RESOURCE_GLOBAL, RESOURCE_DATABASE and RESOURCE_COLLECTION.
-     */
+     */ 
+     //GlobalLock._pbwm 
+     //ExclusiveLock继承该类
     class ResourceLock {
         MONGO_DISALLOW_COPYING(ResourceLock);
 
@@ -224,7 +226,8 @@ public:
 
         OperationContext* const _opCtx;
         LockResult _result; //lock是否成功等
-        ResourceLock _pbwm;
+        //赋值见Lock::GlobalLock::GlobalLock
+        ResourceLock _pbwm; 
         const bool _isOutermostLock;
     };
 

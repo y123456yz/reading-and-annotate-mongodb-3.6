@@ -355,7 +355,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
                 uasserted(ErrorCodes::InternalError, "failAllInserts failpoint active!");
             }
 
-			//通过这里最终调用AutoGetCollection构造函数
+			//通过这里最终调用AutoGetCollection构造函数，锁构造初始化也在这里
             collection.emplace(opCtx, wholeOp.getNamespace(), MODE_IX);
             if (collection->getCollection()) //已经有该集合了
                 break;
