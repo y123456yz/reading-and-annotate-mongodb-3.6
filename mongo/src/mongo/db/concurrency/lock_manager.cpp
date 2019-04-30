@@ -153,6 +153,11 @@ MONGO_STATIC_ASSERT((sizeof(LockRequestStatusNames) / sizeof(LockRequestStatusNa
  * Not thread-safe and should only be accessed under the LockManager's bucket lock. Must be locked
  * before locking a partition, not after.
  */ 
+ 
+/*
+LockHead是对应于某个ResourceId的锁对象。LockHead维护着所有对该ResourceId的锁请求。
+LockHead由ConflictList和GrantList组成。ConflictList是该锁的等待队列， GrantList是持有锁的对象链表。
+*/
 //LockRequest.lock为该类型
 //LockManager::LockBucket[].data为该类型
 struct LockHead { //LockHead::newRequest
@@ -210,6 +215,15 @@ struct LockHead { //LockHead::newRequest
      * Finish creation of request and put it on the lockhead's conflict or granted queues. Returns
      * LOCK_WAITING for conflict case and LOCK_OK otherwise.
      */
+    /* https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
+	一个锁请求，如果和GrantList无冲突，就将其添加到GrantList中，并加锁成功，否则就加到ConflictList中，并
+	等待grantedModes变更时，从ConflictList中选择一批与grantedModes兼容的加锁请求进入GrantList。 这是很显然
+	的调度策略。不过这个调度策略无法避免一个问题，如果ConflictList中有X锁在等待，而GrantedList中的IS/IX锁
+	源源不断的进来，那么X锁就一直得不到调度。
+	
+	为了解决这个问题，MongoDB中为加锁操作增加了compatibleFirst参数。 
+	*/ 
+	//LockManager::lock
     LockResult newRequest(LockRequest* request) {
         invariant(!request->partitionedLock);
         request->lock = this;
@@ -221,8 +235,17 @@ struct LockHead { //LockHead::newRequest
         // New lock request. Queue after all granted modes and after any already requested
         // conflicting modes
         //判断request->mode与grantedModes是否相容，如果不相容则返回状态为LOCK_WAITING
+        
+        //如果锁请求与该锁目前的grantModes冲突，则进入等待
         if (conflicts(request->mode, grantedModes) ||
-            (!compatibleFirstCount && conflicts(request->mode, conflictModes))) {
+			//检验锁资源上的compatibleFirstCount, 该变量可以解释为：锁资源的GrantList中compatibleFirst=true的
+			//属性的锁请求的元素的个数。如果GrantList中无compatibleFirst的锁请求，且conflictList非空
+			//（有等待的锁请求），则将请求加入到conflictList中。
+
+			//和grantedMode不冲突，但和conflictModes冲突，依然进入等待,这样可以避免如果只判断grantedMode，则新进来的IX IS等就会加入
+			//grantedMode,这样就会有大量IX IS锁加入到grantedMode，conflictModes就很难等到从conflictList移动到grantedLIST中，conflictList
+			//中的请求就很可能会饿死
+			(!compatibleFirstCount && conflicts(request->mode, conflictModes))) {
             //状态置位STATUS_WAITING
             request->status = LockRequest::STATUS_WAITING;
 
@@ -262,6 +285,15 @@ struct LockHead { //LockHead::newRequest
      */
     void migratePartitionedLockHeads();
 
+	/* https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
+	思考与尝试
+	我们分析了MongoDB中意向锁的结构图，假设我们现在对db1加了大量的IS锁，现在我们要对db1加IX锁，为了检
+	查IX锁是否和GrantList冲突，需要对GrantList进行遍历进行冲突检测，这样做是不高效的。
+
+	引用计数数组
+	为了解决这个问题，MongoDB为GrantList和ConflictList增加了引用计数数组。在将一个对象增加到GrantList中时，
+	顺带对grantedCounts[mode] 累加，如果grantedCounts[mode]是从0到1的变化， 则将grantedModes对应的bitMask设置为1。 从GrantList中删除对象时，是一个逆向的对称操作。这样，在判断某个模式是否与GrantList中已有对象冲突时，可以通过对grantedModes和待加节点的mode进行比较，将时间复杂度从O(n)降到O(1)。
+	*/
 	
     // Methods to maintain the granted queue
     //把mode添加到grantedModes
@@ -313,6 +345,7 @@ struct LockHead { //LockHead::newRequest
     // the end of the queue. Conversion requests are granted from the beginning forward.
     //对应LockRequest的双向链表，同一ResourceId的所有granted状态的LockRequest通过该链表链接起来
     //无冲突，则把该request添加到授权列表 //LockHead::newRequest
+    //LockHead由ConflictList和GrantList组成。ConflictList是该锁的等待队列， GrantList是持有锁的对象链表。
     LockRequestList grantedList;
 
     // Counts the grants and coversion counts for each of the supported lock modes. These
@@ -333,6 +366,8 @@ struct LockHead { //LockHead::newRequest
     // granted from the beginning forward, which gives these locks FIFO ordering. Exceptions
     // are high-priorty locks, such as the MMAP V1 flush lock.
     //对应LockRequest的双向链表，同一ResourceId的所有conflict状态的LockRequest通过该链表链接起来
+    //LockHead由ConflictList和GrantList组成。ConflictList是该锁的等待队列， GrantList是持有锁的对象链表。
+    //参考https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
     LockRequestList conflictList;
 
     // Counts the conflicting requests for each of the lock modes. These counts should exactly
@@ -364,7 +399,8 @@ struct LockHead { //LockHead::newRequest
     // Counts the number of requests on the granted queue, which have requested that the policy
     // be switched to compatible-first. As long as this value is > 0, the policy will stay
     // compatible-first.
-    //newRequest自增，LockManager::unlock中自减
+    //newRequest自增，LockManager::unlock中自减 
+    //锁资源的GrantList中compatibleFirst=true的属性的锁请求的元素的个数。
     uint32_t compatibleFirstCount;
 };
 
@@ -411,7 +447,6 @@ struct PartitionedLockHead {  //LockManager::Partition::findOrInsert中new
     //PartitionedLockHead::newRequest把LockRequest对应的锁添加到grantedList
     LockRequestList grantedList; //实际上是一个LockRequest类型的双向链表
 };
-
 
 void LockHead::migratePartitionedLockHeads() {
     invariant(partitioned());
@@ -498,6 +533,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
 
         if (partitionedLock) { //说明该ResourceId类型在对应的partition分区中
         	//把request添加到PartitionedLockHead.grantedList链表
+        	//一个锁请求，如果和GrantList无冲突，就将其添加到GrantList中，并加锁成功，否则就加到ConflictList中
             partitionedLock->newRequest(request); //PartitionedLockHead::newRequest
             return LOCK_OK;
         }
@@ -659,7 +695,7 @@ bool LockManager::unlock(LockRequest* request) {
     } else if (request->status == LockRequest::STATUS_WAITING) {
         // This cancels a pending lock request
         invariant(request->recursiveCount == 0);
-
+		//grantedModes变更时，从ConflictList中选择一批与grantedModes兼容的加锁请求进入GrantList
         lock->conflictList.remove(request);
         lock->decConflictModeCount(request->mode);
 
@@ -856,6 +892,11 @@ void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
     invariant((lock->conflictModes == 0) ^ (lock->conflictList._front != nullptr));
 }
 
+/*
+上图中，意向锁划分为128个元素的BucketsArray, BucketsArray可以无锁访问，一个lock(ResourceId, LockMode)操作，
+首先通过Hash(ResourceId)%128 找到对于的bucket，这一步无锁操作非常重要，充分利用了不同ResourceId的无关性，
+使得意向锁模块具备水平扩展性。
+*/
 //计算ResourceId对应的_lockBuckets[]槽位
 LockManager::LockBucket* LockManager::_getBucket(ResourceId resId) const {
     return &_lockBuckets[resId % _numLockBuckets];
@@ -1078,6 +1119,11 @@ std::string DeadlockDetector::toString() const {
     return sb.str();
 }
 
+/*
+死锁检测
+MongoDB意向锁的死锁检测基于广度优先遍历(BFS)算法。某个锁请求是否会产生死锁，等价于 “从有向图中的一点出发，
+是否可以找到一个环”。
+*/
 void DeadlockDetector::_processNextNode(const UnprocessedNode& node) {
     // Locate the request
     LockManager::LockBucket* bucket = _lockMgr._getBucket(node.resId);
