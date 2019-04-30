@@ -139,7 +139,15 @@ struct InitialSyncerOptions {
  *
  * Entry Points:
  *      -- startup: Start initial sync.
- */
+ 一个initial-sync 包括六步（阅读rs_initialSync.cpp:_initialSync函数的逻辑)。
+
+删除本地除local库以外的所有db
+选取一个源节点，将源节点中的所有db导入到本地（注意，此处只导入数据，不导入索引）
+将2）开始执行到执行结束中源产生的oplog 应用到本地
+将3）开始执行到执行结束中源产生的oplog 应用到本地
+从源将所有table的索引在本地重建（导入索引）
+将5）开始执行到执行结束中源产生的oplog 应用到本地
+ */ //参考https://cloud.tencent.com/developer/article/1004384
 class InitialSyncer {
     MONGO_DISALLOW_COPYING(InitialSyncer);
 

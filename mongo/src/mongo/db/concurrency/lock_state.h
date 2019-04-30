@@ -82,6 +82,12 @@ private:
  * @param IsForMMAPV1 Whether to compile-in the flush lock functionality, which is specific to
  *          the way the MMAP V1 (legacy) storag engine does commit concurrency control.
  */
+/*
+typedef LockerImpl<false> DefaultLockerImpl;
+typedef LockerImpl<true> MMAPV1LockerImpl;
+*/ 
+//wiredtiger对应DefaultLockerImpl 
+//该结构是OperationContext._locker成员
 template <bool IsForMMAPV1>   
 class LockerImpl : public Locker {
 public:
@@ -262,6 +268,7 @@ public:
     }
 };
 
+//该结构是OperationContext._locker成员
 typedef LockerImpl<false> DefaultLockerImpl;
 typedef LockerImpl<true> MMAPV1LockerImpl;
 

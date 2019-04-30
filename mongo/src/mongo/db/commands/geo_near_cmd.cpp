@@ -61,6 +61,7 @@ namespace mongo {
 using std::unique_ptr;
 using std::stringstream;
 
+//Mongodb Geo2dË÷ÒýÔ­Àí  https://cloud.tencent.com/developer/article/1004794
 class Geo2dFindNearCmd : public ErrmsgCommandDeprecated {
 public:
     Geo2dFindNearCmd() : ErrmsgCommandDeprecated("geoNear") {}

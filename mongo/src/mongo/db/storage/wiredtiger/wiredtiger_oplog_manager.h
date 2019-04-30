@@ -105,6 +105,7 @@ private:
     RecordId _oplogMaxAtStartup = RecordId(0);  // Guarded by oplogVisibilityStateMutex.
     bool _opsWaitingForJournal = false;         // Guarded by oplogVisibilityStateMutex.
 
+    //参考http://www.mongoing.com/archives/25302  事务，时间戳与混合逻辑时钟
     AtomicUInt64 _oplogReadTimestamp;
 };
 }  // namespace mongo

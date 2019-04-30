@@ -485,6 +485,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     request->partitioned = (mode == MODE_IX || mode == MODE_IS);
     request->mode = mode;
 
+	/*首先查找request对应哪个分区槽，如果该槽位有对应的resId， 然后添加到槽位的对应链表中 */
     // For intent modes, try the PartitionedLockHead
     if (request->partitioned) { //如果是意向锁
     	//根据lock id求余，该lock应该存入那个_partitions分区槽
@@ -991,7 +992,7 @@ void LockManager::_dumpBucket(const LockBucket* bucket) const {
 //LockManager::lock调用，查看该resId是否在该Partition已经存在
 //每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]
 PartitionedLockHead* LockManager::Partition::find(ResourceId resId) {
-    Map::iterator it = data.find(resId);
+    Map::iterator it = data.find(resId); //data类型为<ResourceId, PartitionedLockHead>  下面findOrInsert中的Map::value_type(resId, lock)
     return it == data.end() ? nullptr : it->second;
 }
 
