@@ -143,9 +143,12 @@ private:
 
     // These types describe the locks hash table
     //LockManager._lockBuckets
+    //每个Bucket是ResourceId->LockHead的哈希表。该哈希表被Bucket对象中的mutex保护。
     //参考LockManager::lock
     struct LockBucket { 
         SimpleMutex mutex;
+        //LockHead是对应于某个ResourceId的锁对象。LockHead维护着所有对该ResourceId的锁请求。
+        //LockHead由ConflictList和GrantList组成。ConflictList是该锁的等待队列， GrantList是持有锁的对象链表。
         typedef unordered_map<ResourceId, LockHead*> Map;
         Map data; //data类型<ResourceId, LockHead*>
         LockHead* findOrInsert(ResourceId resId);
@@ -222,6 +225,11 @@ private:
     _lockBuckets = new LockBucket[_numLockBuckets]; //128
     _partitions = new Partition[_numPartitions]; //32
     */
+/*
+上图中，意向锁划分为128个元素的BucketsArray, BucketsArray可以无锁访问，一个lock(ResourceId, LockMode)操作，
+首先通过Hash(ResourceId)%128 找到对于的bucket，这一步无锁操作非常重要，充分利用了不同ResourceId的无关性，
+使得意向锁模块具备水平扩展性。
+*/
     // LockManager::_numLockBuckets(128); //信号量默认赋值128
     static const unsigned _numLockBuckets;
     LockBucket* _lockBuckets; //数组类型
@@ -241,7 +249,7 @@ private:
  *
  * Implemented as a separate class in order to facilitate diagnostics and also unit-testing for
  * cases where locks come and go in parallel with deadlock detection.
- */
+ */ //死锁检测,核心代码见DeadlockDetector::_processNextNode
 class DeadlockDetector {
 public:
     /**
