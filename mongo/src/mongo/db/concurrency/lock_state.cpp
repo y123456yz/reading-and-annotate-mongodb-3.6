@@ -174,7 +174,7 @@ bool shouldDelayUnlock(ResourceId resId, LockMode mode) {
 
 }  // namespace
 
-//写锁
+//写锁   //LockerImpl结构是OperationContext._locker成员, wiredtiger对应DefaultLockerImpl
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::isW() const {
     return getLockMode(resourceIdGlobal) == MODE_X;
@@ -731,7 +731,7 @@ void LockerImpl<IsForMMAPV1>::restoreLockState(const Locker::LockSnapshot& state
 //RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
 
 //全局锁_lockGlobalBegin    库锁 写锁 LockResult LockerImpl<IsForMMAPV1>::lock 都会执行该函数
-template <bool IsForMMAPV1>
+template <bool IsForMMAPV1>  ////wiredtiger存储引擎LockerImpl对应DefaultLockerImpl
 LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     dassert(!getWaitingResource().isValid());
 

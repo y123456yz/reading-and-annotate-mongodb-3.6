@@ -167,7 +167,7 @@ void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
         _pbwm.lock(MODE_IS);
     }
 
-	//LockerImpl:lockGlobalBegin->LockerImpl<IsForMMAPV1>::_lockGlobalBegin
+	//LockerImpl:lockGlobalBegin->LockerImpl<>::_lockGlobalBegin
     _result = _opCtx->lockState()->lockGlobalBegin(lockMode, Milliseconds(timeoutMs));
 }
 

@@ -52,7 +52,25 @@ using std::unique_ptr;
 using std::vector;
 
 namespace {
+/* https://cloud.tencent.com/developer/article/1004435
+chunk分裂的执行过程
+1) 向对应的mongod 发起splitVector 命令，获得一个chunk的可分裂点
+2) mongos 拿到这些分裂点后，向mongod发起splitChunk 命令
 
+splitVector执行过程：
+
+1) 计算出collection的文档的 avgRecSize= coll.size/ coll.count
+2) 计算出分裂后的chunk中，每个chunk应该有的count数， split_count = maxChunkSize / (2 * avgRecSize)
+3) 线性遍历collection 的shardkey 对应的index的 [chunk_min_index, chunk_max_index] 范围，在遍历过程中利用split_count 分割出若干spli
+
+splitChunk执行过程：
+
+1) 获得待执行collection的分布式锁（向configSvr 的mongod中写入一条记录实现）
+2) 刷新（向configSvr读取）本shard的版本号，检查是否和命令发起者携带的版本号一致
+3) 向configSvr中写入分裂后的chunk信息，成功后修改本地的chunk信息与shard的版本号
+4) 向configSvr中写入变更日志
+5) 通知mongos操作完成，mongos修改自身元数据
+*/
 class SplitChunkCommand : public ErrmsgCommandDeprecated {
 public:
     SplitChunkCommand() : ErrmsgCommandDeprecated("splitChunk") {}

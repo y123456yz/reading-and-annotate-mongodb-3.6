@@ -106,6 +106,8 @@ https://www.jianshu.com/p/d838a5905303
  * 官方文档https://docs.mongodb.com/manual/faq/concurrency/
  */ //四种模式的锁，锁放入ticketHolders指针数组
 
+//文章参考 https://yq.aliyun.com/articles/655101 浅析MongoDB中的意向锁
+
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
 enum LockMode { //不同锁的统计在LockStats中实现
     MODE_NONE = 0,
