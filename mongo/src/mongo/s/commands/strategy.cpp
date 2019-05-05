@@ -183,7 +183,21 @@ void execCommandClient(OperationContext* opCtx,
     }
 
     c->incrementCommandsExecuted(); //该命令的执行次数自增
+	/*
+	//mongod
+	db/commands.h:    virtual bool shouldAffectCommandCounter() const = 0;
+	db/commands.h:    bool shouldAffectCommandCounter() const override {
+	db/commands/find_cmd.cpp:    bool shouldAffectCommandCounter() const override {
+	db/commands/getmore_cmd.cpp:    bool shouldAffectCommandCounter() const override {
+	db/commands/killcursors_common.h:    bool shouldAffectCommandCounter() const final {
+	db/commands/write_commands/write_commands.cpp:    bool shouldAffectCommandCounter() const final {
+	db/service_entry_point_mongod.cpp:        if (command->shouldAffectCommandCounter()) {
 
+	//mongos的下面两个命令是返回false，其他默认是ture
+	s/commands/cluster_find_cmd.cpp:    bool shouldAffectCommandCounter() const final {
+	s/commands/cluster_getmore_cmd.cpp:    bool shouldAffectCommandCounter() const final {
+	s/commands/strategy.cpp:    if (c->shouldAffectCommandCounter()) {
+	*/
     if (c->shouldAffectCommandCounter()) {
         globalOpCounters.gotCommand();
     }

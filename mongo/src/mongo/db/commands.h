@@ -242,6 +242,254 @@ public:
 /**
  * Serves as a base for server commands. See the constructor for more details.
  */ 
+
+/* mongo√¸¡Ó
+[root@bogon mongo]# grep "public BasicCommand {" * -r
+db/auth/sasl_commands.cpp:class CmdSaslStart : public BasicCommand {
+db/auth/sasl_commands.cpp:class CmdSaslContinue : public BasicCommand {
+db/commands.h:[root@bogon s]# grep "public BasicCommand {" * -r
+db/commands.h:client/shard_connection.cpp:class ShardedPoolStats : public BasicCommand {
+db/commands.h:commands/cluster_add_shard_cmd.cpp:class AddShardCmd : public BasicCommand {
+db/commands.h:commands/cluster_add_shard_to_zone_cmd.cpp:class AddShardToZoneCmd : public BasicCommand {
+db/commands.h:commands/cluster_available_query_options_cmd.cpp:class AvailableQueryOptions : public BasicCommand {
+db/commands.h:commands/cluster_compact_cmd.cpp:class CompactCmd : public BasicCommand {
+db/commands.h:commands/cluster_control_balancer_cmd.cpp:class BalancerControlCommand : public BasicCommand {
+db/commands.h:commands/cluster_drop_cmd.cpp:class DropCmd : public BasicCommand {
+db/commands.h:commands/cluster_drop_database_cmd.cpp:class DropDatabaseCmd : public BasicCommand {
+db/commands.h:commands/cluster_explain_cmd.cpp:class ClusterExplainCmd : public BasicCommand {
+db/commands.h:commands/cluster_find_and_modify_cmd.cpp:class FindAndModifyCmd : public BasicCommand {
+db/commands.h:commands/cluster_find_cmd.cpp:class ClusterFindCmd : public BasicCommand {
+db/commands.h:commands/cluster_flush_router_config_cmd.cpp:class FlushRouterConfigCmd : public BasicCommand {
+db/commands.h:commands/cluster_get_last_error_cmd.cpp:class GetLastErrorCmd : public BasicCommand {
+db/commands.h:commands/cluster_get_shard_map_cmd.cpp:class CmdGetShardMap : public BasicCommand {
+db/commands.h:commands/cluster_get_shard_version_cmd.cpp:class GetShardVersion : public BasicCommand {
+db/commands.h:commands/cluster_getmore_cmd.cpp://class ClusterGetMoreCmd final : public BasicCommand { yang add change
+db/commands.h:commands/cluster_getmore_cmd.cpp:class ClusterGetMoreCmd : public BasicCommand {
+db/commands.h:commands/cluster_index_filter_cmd.cpp:class ClusterIndexFilterCmd : public BasicCommand {
+db/commands.h:commands/cluster_is_db_grid_cmd.cpp:class IsDbGridCmd : public BasicCommand {
+db/commands.h:commands/cluster_is_master_cmd.cpp:class CmdIsMaster : public BasicCommand {
+db/commands.h:commands/cluster_kill_op.cpp:class ClusterKillOpCommand : public BasicCommand {
+db/commands.h:commands/cluster_list_databases_cmd.cpp:class ListDatabasesCmd : public BasicCommand {
+db/commands.h:commands/cluster_list_shards_cmd.cpp:class ListShardsCmd : public BasicCommand {
+db/commands.h:commands/cluster_move_primary_cmd.cpp:class MoveDatabasePrimaryCommand : public BasicCommand {
+db/commands.h:commands/cluster_multicast.cpp:class MulticastCmd : public BasicCommand {
+db/commands.h:commands/cluster_netstat_cmd.cpp:class NetStatCmd : public BasicCommand {
+db/commands.h:commands/cluster_pipeline_cmd.cpp:class ClusterPipelineCommand : public BasicCommand {
+db/commands.h:commands/cluster_plan_cache_cmd.cpp:class ClusterPlanCacheCmd : public BasicCommand {
+db/commands.h:commands/cluster_remove_shard_cmd.cpp:class RemoveShardCmd : public BasicCommand {
+db/commands.h:commands/cluster_remove_shard_from_zone_cmd.cpp:class RemoveShardFromZoneCmd : public BasicCommand {
+db/commands.h:commands/cluster_reset_error_cmd.cpp:class CmdShardingResetError : public BasicCommand {
+db/commands.h:commands/cluster_set_feature_compatibility_version_cmd.cpp:class SetFeatureCompatibilityVersionCmd : public BasicCommand {
+db/commands.h:commands/cluster_shard_collection_cmd.cpp:class ShardCollectionCmd : public BasicCommand {
+db/commands.h:commands/cluster_update_zone_key_range_cmd.cpp:class UpdateZoneKeyRangeCmd : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdCreateUser : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdUpdateUser : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdDropUser : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdDropAllUsersFromDatabase : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdGrantRolesToUser : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdRevokeRolesFromUser : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdUsersInfo : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdCreateRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdUpdateRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdGrantPrivilegesToRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdRevokePrivilegesFromRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdGrantRolesToRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdRevokeRolesFromRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdDropRole : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdDropAllRolesFromDatabase : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdRolesInfo : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdInvalidateUserCache : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdMergeAuthzCollections : public BasicCommand {
+db/commands.h:commands/cluster_user_management_commands.cpp:class CmdAuthSchemaUpgrade : public BasicCommand {
+db/commands.h:commands/cluster_whats_my_uri_cmd.cpp:class WhatsMyUriCmd : public BasicCommand {
+db/commands.h:commands/commands_public.cpp:class PublicGridCommand : public BasicCommand {
+db/commands.h:class ErrmsgCommandDeprecated : public BasicCommand {
+db/commands/authentication_commands.cpp:class CmdGetNonce : public BasicCommand {
+db/commands/authentication_commands.cpp:class CmdLogout : public BasicCommand {
+db/commands/authentication_commands.h:class CmdAuthenticate : public BasicCommand {
+db/commands/clone.cpp:class CmdClone : public BasicCommand {
+db/commands/conn_pool_stats.cpp:class PoolStats final : public BasicCommand {
+db/commands/conn_pool_sync.cpp:class PoolFlushCmd : public BasicCommand {
+db/commands/connection_status.cpp:class CmdConnectionStatus : public BasicCommand {
+db/commands/count_cmd.cpp:class CmdCount : public BasicCommand {
+db/commands/cpuload.cpp:class CPULoadCommand : public BasicCommand {
+db/commands/current_op_common.h:class CurrentOpCommandBase : public BasicCommand {
+db/commands/dbcheck.cpp:class DbCheckCmd : public BasicCommand {
+db/commands/dbcommands.cpp:class CmdDropDatabase : public BasicCommand {
+db/commands/dbcommands.cpp:class CmdCreate : public BasicCommand {
+db/commands/dbcommands.cpp:class CmdFileMD5 : public BasicCommand {
+db/commands/dbcommands.cpp:class CollectionModCommand : public BasicCommand {
+db/commands/dbcommands.cpp:class CmdWhatsMyUri : public BasicCommand {
+db/commands/dbcommands.cpp:class AvailableQueryOptions : public BasicCommand {
+db/commands/distinct.cpp:class DistinctCommand : public BasicCommand {
+db/commands/drop_indexes.cpp:class CmdDropIndexes : public BasicCommand {
+db/commands/end_sessions_command.cpp:class EndSessionsCommand final : public BasicCommand {
+db/commands/explain_cmd.cpp:class CmdExplain : public BasicCommand {
+db/commands/find_and_modify.cpp:class CmdFindAndModify : public BasicCommand {
+db/commands/find_cmd.cpp:class FindCmd : public BasicCommand {
+db/commands/generic.cpp:class CmdBuildInfo : public BasicCommand {
+db/commands/generic.cpp:class PingCommand : public BasicCommand {
+db/commands/generic.cpp:class FeaturesCmd : public BasicCommand {
+db/commands/generic.cpp:class HostInfoCmd : public BasicCommand {
+db/commands/generic.cpp:class LogRotateCmd : public BasicCommand {
+db/commands/generic.cpp:class ListCommandsCmd : public BasicCommand {
+db/commands/generic.cpp:class CmdForceError : public BasicCommand {
+db/commands/generic.cpp:class ClearLogCmd : public BasicCommand {
+db/commands/generic.cpp:class CmdGetCmdLineOpts : public BasicCommand {
+db/commands/get_last_error.cpp:class CmdResetError : public BasicCommand {
+db/commands/get_last_error.cpp:class CmdGetPrevError : public BasicCommand {
+db/commands/getmore_cmd.cpp:class GetMoreCmd : public BasicCommand {
+db/commands/group_cmd.cpp:class GroupCommand : public BasicCommand {
+db/commands/index_filter_commands.h:class IndexFilterCommand : public BasicCommand {
+db/commands/isself.cpp:class IsSelfCommand : public BasicCommand {
+db/commands/kill_all_sessions_by_pattern_command.cpp:class KillAllSessionsByPatternCommand final : public BasicCommand {
+db/commands/kill_all_sessions_command.cpp:class KillAllSessionsCommand final : public BasicCommand {
+db/commands/kill_op.cpp:class KillOpCommand : public BasicCommand {
+db/commands/kill_sessions_command.cpp:class KillSessionsCommand final : public BasicCommand {
+db/commands/killcursors_common.h:class KillCursorsCmdBase : public BasicCommand {
+db/commands/list_collections.cpp:class CmdListCollections : public BasicCommand {
+db/commands/list_databases.cpp:class CmdListDatabases : public BasicCommand {
+db/commands/list_indexes.cpp:class CmdListIndexes : public BasicCommand {
+db/commands/lock_info.cpp:class CmdLockInfo : public BasicCommand {
+db/commands/mr.cpp:class MapReduceFinishCommand : public BasicCommand {
+db/commands/oplog_note.cpp:class AppendOplogNoteCmd : public BasicCommand {
+db/commands/parallel_collection_scan.cpp:class ParallelCollectionScanCmd : public BasicCommand {
+db/commands/pipeline_command.cpp:class PipelineCommand : public BasicCommand {
+db/commands/plan_cache_commands.h:class PlanCacheCommand : public BasicCommand {
+db/commands/reap_logical_session_cache_now.cpp:class ReapLogicalSessionCacheNowCommand final : public BasicCommand {
+db/commands/refresh_logical_session_cache_now.cpp:class RefreshLogicalSessionCacheNowCommand final : public BasicCommand {
+db/commands/refresh_sessions_command.cpp:class RefreshSessionsCommand final : public BasicCommand {
+db/commands/refresh_sessions_command_internal.cpp:class RefreshSessionsCommandInternal final : public BasicCommand {
+db/commands/repair_cursor.cpp:class RepairCursorCmd : public BasicCommand {
+db/commands/resize_oplog.cpp:class CmdReplSetResizeOplog : public BasicCommand {
+db/commands/server_status.cpp:class CmdServerStatus : public BasicCommand {
+db/commands/set_feature_compatibility_version_command.cpp:class SetFeatureCompatibilityVersionCommand : public BasicCommand {
+db/commands/shutdown.h:class CmdShutdown : public BasicCommand {
+db/commands/snapshot_management.cpp:class CmdMakeSnapshot final : public BasicCommand {
+db/commands/snapshot_management.cpp:class CmdSetCommittedSnapshot final : public BasicCommand {
+db/commands/start_session_command.cpp:class StartSessionCommand final : public BasicCommand {
+db/commands/test_commands.cpp:class CmdSleep : public BasicCommand {
+db/commands/test_commands.cpp:class CapTrunc : public BasicCommand {
+db/commands/test_commands.cpp:class EmptyCapped : public BasicCommand {
+db/commands/top_command.cpp:class TopCommand : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdCreateUser : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdUpdateUser : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdDropUser : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdDropAllUsersFromDatabase : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdGrantRolesToUser : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdRevokeRolesFromUser : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdUsersInfo : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdCreateRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdUpdateRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdGrantPrivilegesToRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdRevokePrivilegesFromRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdGrantRolesToRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdRevokeRolesFromRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdDropRole : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdDropAllRolesFromDatabase : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdRolesInfo : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdInvalidateUserCache : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdGetCacheGeneration : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdMergeAuthzCollections : public BasicCommand {
+db/commands/user_management_commands.cpp:class CmdAuthSchemaUpgrade : public BasicCommand {
+db/commands/validate.cpp:class ValidateCmd : public BasicCommand {
+db/exec/stagedebug_cmd.cpp:class StageDebugCmd : public BasicCommand {
+db/ftdc/ftdc_commands.cpp:class GetDiagnosticDataCommand final : public BasicCommand {
+db/repl/master_slave.cpp:class HandshakeCmd : public BasicCommand {
+db/repl/repl_set_command.h:class ReplSetCommand : public BasicCommand {
+db/repl/replication_info.cpp:class CmdIsMaster : public BasicCommand {
+db/s/config/configsvr_add_shard_command.cpp:class ConfigSvrAddShardCommand : public BasicCommand {
+db/s/config/configsvr_add_shard_to_zone_command.cpp:class ConfigSvrAddShardToZoneCommand : public BasicCommand {
+db/s/config/configsvr_commit_chunk_migration_command.cpp:class ConfigSvrCommitChunkMigrationCommand : public BasicCommand {
+db/s/config/configsvr_control_balancer_command.cpp:class ConfigSvrBalancerControlCommand : public BasicCommand {
+db/s/config/configsvr_create_database_command.cpp:class ConfigSvrCreateDatabaseCommand : public BasicCommand {
+db/s/config/configsvr_enable_sharding_command.cpp:class ConfigSvrEnableShardingCommand : public BasicCommand {
+db/s/config/configsvr_merge_chunk_command.cpp:class ConfigSvrMergeChunkCommand : public BasicCommand {
+db/s/config/configsvr_move_chunk_command.cpp:class ConfigSvrMoveChunkCommand : public BasicCommand {
+db/s/config/configsvr_move_primary_command.cpp:class ConfigSvrMovePrimaryCommand : public BasicCommand {
+db/s/config/configsvr_remove_shard_command.cpp:class ConfigSvrRemoveShardCommand : public BasicCommand {
+db/s/config/configsvr_remove_shard_from_zone_command.cpp:class ConfigSvrRemoveShardFromZoneCommand : public BasicCommand {
+db/s/config/configsvr_shard_collection_command.cpp:class ConfigSvrShardCollectionCommand : public BasicCommand {
+db/s/config/configsvr_split_chunk_command.cpp:class ConfigSvrSplitChunkCommand : public BasicCommand {
+db/s/config/configsvr_update_zone_key_range_command.cpp:class ConfigsvrUpdateZoneKeyRangeCommand : public BasicCommand {
+db/s/flush_routing_table_cache_updates_command.cpp:class FlushRoutingTableCacheUpdates : public BasicCommand {
+db/s/get_shard_version_command.cpp:class GetShardVersion : public BasicCommand {
+db/s/migration_chunk_cloner_source_legacy_commands.cpp:class InitialCloneCommand : public BasicCommand {
+db/s/migration_chunk_cloner_source_legacy_commands.cpp:class TransferModsCommand : public BasicCommand {
+db/s/migration_chunk_cloner_source_legacy_commands.cpp:class MigrateSessionCommand : public BasicCommand {
+db/s/migration_destination_manager_legacy_commands.cpp:class RecvChunkStatusCommand : public BasicCommand {
+db/s/migration_destination_manager_legacy_commands.cpp:class RecvChunkCommitCommand : public BasicCommand {
+db/s/migration_destination_manager_legacy_commands.cpp:class RecvChunkAbortCommand : public BasicCommand {
+db/s/move_chunk_command.cpp:class MoveChunkCommand : public BasicCommand {
+db/s/sharding_state_command.cpp:class ShardingStateCmd : public BasicCommand {
+db/s/unset_sharding_command.cpp:class UnsetShardingCommand : public BasicCommand {
+db/storage/mmap_v1/journal_latency_test_cmd.cpp:class JournalLatencyTestCmd : public BasicCommand {
+s/client/shard_connection.cpp:class ShardedPoolStats : public BasicCommand {
+s/commands/cluster_add_shard_cmd.cpp:class AddShardCmd : public BasicCommand {
+s/commands/cluster_add_shard_to_zone_cmd.cpp:class AddShardToZoneCmd : public BasicCommand {
+s/commands/cluster_available_query_options_cmd.cpp:class AvailableQueryOptions : public BasicCommand {
+s/commands/cluster_compact_cmd.cpp:class CompactCmd : public BasicCommand {
+s/commands/cluster_control_balancer_cmd.cpp:class BalancerControlCommand : public BasicCommand {
+s/commands/cluster_drop_cmd.cpp:class DropCmd : public BasicCommand {
+s/commands/cluster_drop_database_cmd.cpp:class DropDatabaseCmd : public BasicCommand {
+s/commands/cluster_explain_cmd.cpp:class ClusterExplainCmd : public BasicCommand {
+s/commands/cluster_find_and_modify_cmd.cpp:class FindAndModifyCmd : public BasicCommand {
+s/commands/cluster_find_cmd.cpp:class ClusterFindCmd : public BasicCommand {
+s/commands/cluster_flush_router_config_cmd.cpp:class FlushRouterConfigCmd : public BasicCommand {
+s/commands/cluster_get_last_error_cmd.cpp:class GetLastErrorCmd : public BasicCommand {
+s/commands/cluster_get_shard_map_cmd.cpp:class CmdGetShardMap : public BasicCommand {
+s/commands/cluster_get_shard_version_cmd.cpp:class GetShardVersion : public BasicCommand {
+s/commands/cluster_getmore_cmd.cpp://class ClusterGetMoreCmd final : public BasicCommand { yang add change
+s/commands/cluster_getmore_cmd.cpp:class ClusterGetMoreCmd : public BasicCommand {
+s/commands/cluster_index_filter_cmd.cpp:class ClusterIndexFilterCmd : public BasicCommand {
+s/commands/cluster_is_db_grid_cmd.cpp:class IsDbGridCmd : public BasicCommand {
+s/commands/cluster_is_master_cmd.cpp:class CmdIsMaster : public BasicCommand {
+s/commands/cluster_kill_op.cpp:class ClusterKillOpCommand : public BasicCommand {
+s/commands/cluster_list_databases_cmd.cpp:class ListDatabasesCmd : public BasicCommand {
+s/commands/cluster_list_shards_cmd.cpp:class ListShardsCmd : public BasicCommand {
+s/commands/cluster_move_primary_cmd.cpp:class MoveDatabasePrimaryCommand : public BasicCommand {
+s/commands/cluster_multicast.cpp:class MulticastCmd : public BasicCommand {
+s/commands/cluster_netstat_cmd.cpp:class NetStatCmd : public BasicCommand {
+s/commands/cluster_pipeline_cmd.cpp:class ClusterPipelineCommand : public BasicCommand {
+s/commands/cluster_plan_cache_cmd.cpp:class ClusterPlanCacheCmd : public BasicCommand {
+s/commands/cluster_remove_shard_cmd.cpp:class RemoveShardCmd : public BasicCommand {
+s/commands/cluster_remove_shard_from_zone_cmd.cpp:class RemoveShardFromZoneCmd : public BasicCommand {
+s/commands/cluster_reset_error_cmd.cpp:class CmdShardingResetError : public BasicCommand {
+s/commands/cluster_set_feature_compatibility_version_cmd.cpp:class SetFeatureCompatibilityVersionCmd : public BasicCommand {
+s/commands/cluster_shard_collection_cmd.cpp:class ShardCollectionCmd : public BasicCommand {
+s/commands/cluster_update_zone_key_range_cmd.cpp:class UpdateZoneKeyRangeCmd : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdCreateUser : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdUpdateUser : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdDropUser : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdDropAllUsersFromDatabase : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdGrantRolesToUser : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdRevokeRolesFromUser : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdUsersInfo : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdCreateRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdUpdateRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdGrantPrivilegesToRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdRevokePrivilegesFromRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdGrantRolesToRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdRevokeRolesFromRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdDropRole : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdDropAllRolesFromDatabase : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdRolesInfo : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdInvalidateUserCache : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdMergeAuthzCollections : public BasicCommand {
+s/commands/cluster_user_management_commands.cpp:class CmdAuthSchemaUpgrade : public BasicCommand {
+s/commands/cluster_whats_my_uri_cmd.cpp:class WhatsMyUriCmd : public BasicCommand {
+s/commands/commands_public.cpp:class PublicGridCommand : public BasicCommand {
+[root@bogon mongo]# 
+[root@bogon mongo]# 
+[root@bogon mongo]# grep "public Command {" * -r
+db/commands.h:[root@bogon s]# grep "public Command {" * -r
+db/commands.h:commands/cluster_write_cmd.cpp:class ClusterWriteCmd : public Command {
+db/commands.h:class BasicCommand : public Command {
+db/commands/write_commands/write_commands.cpp:class WriteCommand : public Command {
+s/commands/cluster_write_cmd.cpp:class ClusterWriteCmd : public Command {
+[root@bogon mongo]# 
+*/
+
 /*
 √¸¡Ó◊¢≤·ø…“‘≤Œøº
 src/mongo/db/auth/action_types.txt:"enableProfiler",

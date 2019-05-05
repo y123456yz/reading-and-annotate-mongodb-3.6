@@ -320,7 +320,7 @@ function execute_delete_inserts()
 
       result = conn[tnum]:delete_one({_id = id})      
 
-      while not pcall(function () mongodb_database:command("findAndModify", "sbtest" .. tnum  ,
+      while not pcall(function () mongodb_database:command("insert", "sbtest" .. tnum  ,
                                              { query = { _id= id }, 
                                                update = { ["$set"] = { k = k, c=c_val, pad=pad_val} }, 
                                                upsert="true" }) end ) do

@@ -39,6 +39,7 @@ LockStats<CounterType>::LockStats() {
     reset();
 }
 
+
 template <typename CounterType>
 void LockStats<CounterType>::report(BSONObjBuilder* builder) const {
     // All indexing below starts from offset 1, because we do not want to report/account
@@ -50,6 +51,64 @@ void LockStats<CounterType>::report(BSONObjBuilder* builder) const {
     _report(builder, "oplog", _oplogStats);
 }
 
+
+/*  LockStats<>::_report 中获取相关信息
+featdoc:PRIMARY> 
+featdoc:PRIMARY> db.serverStatus().locks
+{
+        "Global" : {
+                "acquireCount" : {
+                        "r" : NumberLong(1447),
+                        "w" : NumberLong(40),
+                        "W" : NumberLong(9)
+                },
+                "acquireWaitCount" : {
+                        "w" : NumberLong(1),
+                        "W" : NumberLong(2)
+                },
+                "timeAcquiringMicros" : {
+                        "w" : NumberLong(8569),
+                        "W" : NumberLong(268)
+                }
+        },
+        "Database" : {
+                "acquireCount" : {
+                        "r" : NumberLong(689),
+                        "w" : NumberLong(18),
+                        "R" : NumberLong(7),
+                        "W" : NumberLong(16)
+                }
+        },
+        "Collection" : {
+                "acquireCount" : {
+                        "r" : NumberLong(358),
+                        "w" : NumberLong(8)
+                }
+        },
+        "oplog" : {
+                "acquireCount" : {
+                        "r" : NumberLong(331),
+                        "w" : NumberLong(12)
+                }
+        }
+}
+featdoc:PRIMARY> db.serverStatus().globalLock
+{
+        "totalTime" : NumberLong(170653000),
+        "currentQueue" : {
+                "total" : 0,
+                "readers" : 0,
+                "writers" : 0
+        },
+        "activeClients" : {
+                "total" : 29,
+                "readers" : 0,
+                "writers" : 0
+        }
+}
+featdoc:PRIMARY> 
+featdoc:PRIMARY> 
+*/
 template <typename CounterType>
 void LockStats<CounterType>::_report(BSONObjBuilder* builder,
                                      const char* sectionName,

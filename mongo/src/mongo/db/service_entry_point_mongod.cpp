@@ -1157,6 +1157,9 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 */
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 //class ServiceEntryPointMongod final : public ServiceEntryPointImpl
+
+//ServiceEntryPointMongod::handleRequest(mongod)  ServiceEntryPointMongos::handleRequest(mongos)请求处理
+
 //mongod服务对于客户端请求的处理  ServiceStateMachine::_processMessage或者loopbackBuildResponse中调用
 DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const Message& m) {
     // before we lock...
@@ -1272,11 +1275,12 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     const bool shouldSample = serverGlobalParams.sampleRate == 1.0
         ? true
         : c.getPrng().nextCanonicalDouble() < serverGlobalParams.sampleRate;
-
-	//慢日志记录
+ 
+	//慢日志记录  slowlog record
     if (shouldLogOpDebug || (shouldSample && debug.executionTimeMicros > logThresholdMs * 1000LL)) {
-        Locker::LockerInfo lockerInfo;
-        opCtx->lockState()->getLockerInfo(&lockerInfo);
+        Locker::LockerInfo lockerInfo;  
+		//OperationContext::lockState  LockerImpl<>::getLockerInfo
+        opCtx->lockState()->getLockerInfo(&lockerInfo); 
         log() << debug.report(&c, currentOp, lockerInfo.stats); //记录慢日志到日志文件
     }
 

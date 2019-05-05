@@ -161,7 +161,7 @@ public:
     /**
      * Interface for locking.  Caller DOES NOT own pointer.
      */
-    //Lock::DBLock::DBLock中调用
+    //Lock::DBLock::DBLock中调用  慢日志记录参考ServiceEntryPointMongod::handleRequest
     Locker* lockState() const {
         return _locker.get();
     }
@@ -489,6 +489,7 @@ private:
     boost::optional<TxnNumber> _txnNumber;
 
     //Lock::DBLock::DBLock中调用使用,赋值见ServiceContextMongoD::_newOpCtx
+    //慢日志记录参考ServiceEntryPointMongod::handleRequest
     std::unique_ptr<Locker> _locker; //wiredtiger对应的锁为DefaultLockerImpl
 
     //OperationContext::_recoveryUnit为RecoveryUnit类类型，对应WiredTigerRecoveryUnit类

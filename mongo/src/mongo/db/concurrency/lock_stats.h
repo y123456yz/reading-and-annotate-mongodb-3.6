@@ -133,7 +133,7 @@ public:
         CounterOps::add(get(resId, mode).numWaits, 1);
     }
 
-    //PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
+    //LockerImpl<>::lockComplete->PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
     void recordWaitTime(ResourceId resId, LockMode mode, int64_t waitMicros) {
         CounterOps::add(get(resId, mode).combinedWaitTimeMicros, waitMicros);
     }

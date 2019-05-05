@@ -130,6 +130,8 @@ Breakpoint 1, mongo::ServiceEntryPointMongos::handleRequest (this=<optimized out
 //conn-xx线程处理解析完客户端请求后，在NetworkInterfaceASIO::startCommand中的op->_strand.post([this, op, getConnectionStartTime]完成数据异步交接，而后数据由Network线程处理
 //后端应答后，conn线程在BatchWriteExec::executeBatch->while (!ars.done()) {}等待后端应答后发送应答给客户端
 
+//ServiceEntryPointMongod::handleRequest  ServiceEntryPointMongos::handleRequest请求处理
+
 //ServiceStateMachine::_processMessage
 DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const Message& message) {
     // Release any cached egress connections for client back to pool before destroying

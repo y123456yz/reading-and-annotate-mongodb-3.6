@@ -493,6 +493,7 @@ void print_run_mode(sb_test_t *test)
 
 /* Main worker test thread */
 
+/*
 static void *worker_thread(void *arg)
 {
   ......
@@ -501,12 +502,12 @@ static void *worker_thread(void *arg)
     ......
     request = get_request(test, thread_id);
 
-    /* check if we shall execute it */
+    / * check if we shall execute it * /
     if (request.type != SB_REQ_TYPE_NULL)
     { 
       //对应执行lua回调sb_lua_op_execute_request
       if (execute_request(test, &request, thread_id))
-        break; /* break if error returned (terminates only one thread) */
+        break; / * break if error returned (terminates only one thread) * /
     }
     
     ......
@@ -516,7 +517,7 @@ static void *worker_thread(void *arg)
     test->ops.thread_done(thread_id);
 
   return NULL;
-}
+}*/
 
 
 static void *worker_thread(void *arg)

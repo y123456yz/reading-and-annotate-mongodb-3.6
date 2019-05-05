@@ -453,7 +453,7 @@ string OpDebug::report(Client* client,
         query = curop.opDescription();
     }
 
-    if (!query.isEmpty()) {
+    if (!query.isEmpty()) { 
         s << " command: ";
         if (iscommand) {
             Command* curCommand = curop.getCommand();
