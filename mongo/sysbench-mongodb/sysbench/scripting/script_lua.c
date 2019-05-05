@@ -273,10 +273,19 @@ sb_request_t sb_lua_get_request(int thread_id)
   return req;
 }
 
+/*
 int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
 {
-  ......
-  /* Prepare log message */
+    log_msg_t           msg;
+    log_msg_oper_t      op_msg;
+    unsigned int         restart;
+    lua_State           *L = states[thread_id];
+    
+    (void)sb_req;  
+    
+    / * Prepare log message * /
+
+  / * Prepare log message * /
   msg.type = LOG_MSG_TYPE_OPER;
   msg.data = &op_msg;
   
@@ -312,7 +321,7 @@ int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
   } while (restart);
 
   return 0;
-}
+}*/
 
 
 //worker_thread

@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/yyz/sysbench-dev-mongodb-support-1.0'
+ac_pwd='/home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/usr/bin/mkdir -p'
@@ -675,7 +675,7 @@ finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
 finish_eval=''
 hardcode_into_libs='yes'
 sys_lib_search_path_spec='/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0 /home/yyz/gcc-5.4/lib64 /lib64 /usr/lib64 '
-sys_lib_dlsearch_path_spec='/lib64 /usr/lib64 /lib /usr/lib /usr/lib64/atlas /usr/lib64/dyninst /usr/lib64/iscsi /usr/lib64/mysql /usr/lib64/qt-3.3/lib /usr/lib64/xulrunner '
+sys_lib_dlsearch_path_spec='/lib64 /usr/lib64 /lib /usr/lib /usr/lib64/atlas /usr/lib64/dyninst /usr/lib64/iscsi /usr/lib64/llvm /usr/lib64/mysql /usr/lib64/qt-3.3/lib /usr/lib64/xulrunner '
 hardcode_action='immediate'
 enable_dlopen='unknown'
 enable_dlopen_self='unknown'
@@ -941,12 +941,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/usr/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/yyz/sysbench-dev-mongodb-support-1.0/config/install-sh"
-S["MAKEINFO"]="${SHELL} /home/yyz/sysbench-dev-mongodb-support-1.0/config/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/yyz/sysbench-dev-mongodb-support-1.0/config/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/yyz/sysbench-dev-mongodb-support-1.0/config/missing automake-1.13"
-S["AUTOCONF"]="${SHELL} /home/yyz/sysbench-dev-mongodb-support-1.0/config/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/yyz/sysbench-dev-mongodb-support-1.0/config/missing aclocal-1.13"
+S["install_sh"]="${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/install-sh"
+S["MAKEINFO"]="${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing automake-1.13"
+S["AUTOCONF"]="${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing aclocal-1.13"
 S["VERSION"]="1.0"
 S["PACKAGE"]="sysbench"
 S["CYGPATH_W"]="echo"

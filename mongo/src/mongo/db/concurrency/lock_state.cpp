@@ -49,7 +49,65 @@ namespace {
 
 /**
  * Partitioned global lock statistics, so we don't hit the same bucket.
- */ //PartitionedInstanceWideLockStats globalStats;   分区槽统计相关
+ */ 
+/*  LockStats<>::_report 中获取相关信息
+featdoc:PRIMARY> 
+featdoc:PRIMARY> db.serverStatus().locks
+{
+        "Global" : {
+                "acquireCount" : {
+                        "r" : NumberLong(1447),
+                        "w" : NumberLong(40),
+                        "W" : NumberLong(9)
+                },
+                "acquireWaitCount" : {
+                        "w" : NumberLong(1),
+                        "W" : NumberLong(2)
+                },
+                "timeAcquiringMicros" : {
+                        "w" : NumberLong(8569),
+                        "W" : NumberLong(268)
+                }
+        },
+        "Database" : {
+                "acquireCount" : {
+                        "r" : NumberLong(689),
+                        "w" : NumberLong(18),
+                        "R" : NumberLong(7),
+                        "W" : NumberLong(16)
+                }
+        },
+        "Collection" : {
+                "acquireCount" : {
+                        "r" : NumberLong(358),
+                        "w" : NumberLong(8)
+                }
+        },
+        "oplog" : {
+                "acquireCount" : {
+                        "r" : NumberLong(331),
+                        "w" : NumberLong(12)
+                }
+        }
+}
+featdoc:PRIMARY> db.serverStatus().globalLock
+{
+        "totalTime" : NumberLong(170653000),
+        "currentQueue" : {
+                "total" : 0,
+                "readers" : 0,
+                "writers" : 0
+        },
+        "activeClients" : {
+                "total" : 29,
+                "readers" : 0,
+                "writers" : 0
+        }
+}
+featdoc:PRIMARY> 
+featdoc:PRIMARY> 
+*/
+//PartitionedInstanceWideLockStats globalStats;   分区槽统计相关
 class PartitionedInstanceWideLockStats {
     MONGO_DISALLOW_COPYING(PartitionedInstanceWideLockStats);
 
@@ -69,7 +127,7 @@ public:
         _get(id).recordWait(resId, mode);
     }
 
-	//PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
+	//LockerImpl<>::lockComplete->PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
     void recordWaitTime(LockerId id, ResourceId resId, LockMode mode, uint64_t waitMicros) {
         _get(id).recordWaitTime(resId, mode, waitMicros);
     }
@@ -612,6 +670,7 @@ ResourceId LockerImpl<IsForMMAPV1>::getWaitingResource() const {
     return ResourceId();
 }
 
+//慢日志记录参考ServiceEntryPointMongod::handleRequest
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::getLockerInfo(LockerInfo* lockerInfo) const {
     invariant(lockerInfo);
@@ -802,8 +861,8 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     return result;
 }
 
-//LockerImpl<IsForMMAPV1>::lockGlobalComplete
-//LockerImpl<IsForMMAPV1>::lock
+//LockerImpl<>::lockGlobalComplete
+//LockerImpl<>::lock
 
 //循环等待lock结果，知道LOCK_OK或者LOCK_DEADLOCK或者超时，超时时间timeout ms超时
 template <bool IsForMMAPV1>
@@ -839,6 +898,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
         const uint64_t elapsedTimeMicros = curTimeMicros - startOfCurrentWaitTime;
         startOfCurrentWaitTime = curTimeMicros;
 
+		//等待锁的时间记录下来
         globalStats.recordWaitTime(_id, resId, mode, elapsedTimeMicros);
         _stats.recordWaitTime(resId, mode, elapsedTimeMicros);
 

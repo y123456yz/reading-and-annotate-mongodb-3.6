@@ -416,11 +416,11 @@ StatusWith<unique_ptr<QueryRequest>>
     if (first.type() == BinData && first.binDataType() == BinDataType::newUUID) {
         auto uuid = uassertStatusOK(UUID::parse(first));
         auto qr = stdx::make_unique<QueryRequest>(uuid);
-		//解析并检查bson文档内容及格式
+		//解析并检查bson文档内容及格式  QueryRequest::parseFromFindCommand
         return parseFromFindCommand(std::move(qr), cmdObj, isExplain);
     } else {
         auto qr = stdx::make_unique<QueryRequest>(nss);
-		//解析并检查bson文档内容及格式
+		//解析并检查bson文档内容及格式  QueryRequest::parseFromFindCommand
         return parseFromFindCommand(std::move(qr), cmdObj, isExplain);
     }
 }
