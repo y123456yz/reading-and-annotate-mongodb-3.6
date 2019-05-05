@@ -114,15 +114,15 @@ class PartitionedInstanceWideLockStats {
 public:
     PartitionedInstanceWideLockStats() {}
 
-	//PartitionedInstanceWideLockStats::recordAcquisition
+	//LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
 	//LockerImpl<IsForMMAPV1>::lockBegin中执行
     void recordAcquisition(LockerId id, ResourceId resId, LockMode mode) {
         _get(id).recordAcquisition(resId, mode);
     }
 
 	
-	//PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
-	//LockerImpl<IsForMMAPV1>::lockBegin中执行
+	//LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
+	//LockerImpl<>::lockBegin中执行
     void recordWait(LockerId id, ResourceId resId, LockMode mode) {
         _get(id).recordWait(resId, mode);
     }
@@ -132,7 +132,7 @@ public:
         _get(id).recordWaitTime(resId, mode, waitMicros);
     }
 
-	//PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
+	//LockerImpl<>::lockComplete->PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
     void recordDeadlock(ResourceId resId, LockMode mode) {
         _get(resId).recordDeadlock(resId, mode);
     }
@@ -675,11 +675,14 @@ template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::getLockerInfo(LockerInfo* lockerInfo) const {
     invariant(lockerInfo);
 
+	//赋初值
     // Zero-out the contents
     lockerInfo->locks.clear();
     lockerInfo->waitingResource = ResourceId();
+	//LockStatCounters::reset
     lockerInfo->stats.reset();
 
+	//获取当前的实时统计信息
     _lock.lock();
     LockRequestsMap::ConstIterator it = _requests.begin();
     while (!it.finished()) {
@@ -695,6 +698,7 @@ void LockerImpl<IsForMMAPV1>::getLockerInfo(LockerInfo* lockerInfo) const {
     std::sort(lockerInfo->locks.begin(), lockerInfo->locks.end());
 
     lockerInfo->waitingResource = getWaitingResource();
+	//LockStatCounters::append
     lockerInfo->stats.append(_stats);
 }
 

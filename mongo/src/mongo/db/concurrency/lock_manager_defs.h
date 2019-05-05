@@ -45,6 +45,240 @@ struct LockHead;
 struct PartitionedLockHead;
 
 /*
+mode_x相关
+[root@bogon mongo]# grep "MODE_X" * -r | grep -v "test" |grep -v "mmap" | grep -v "//" | grep -v ".h" |grep -v "*" | grep -v "invariant" |grep -v "dassert" |grep -v "lock_manager" |grep -v "lock_state"
+db/catalog/capped_utils.cpp:    AutoGetDb autoDb(opCtx, collectionName.db(), MODE_X);
+db/catalog/capped_utils.cpp:    AutoGetDb autoDb(opCtx, collectionName.db(), MODE_X);
+db/catalog/coll_mod.cpp:    AutoGetDb autoDb(opCtx, dbName, MODE_X);
+db/catalog/coll_mod.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_X);
+db/catalog/coll_mod.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_X);
+db/catalog/coll_mod.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_X);
+db/catalog/coll_mod.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_X);
+db/catalog/collection_impl.cpp:            opCtx->lockState(), ResourceId(RESOURCE_METADATA, _ns.ns()), MODE_X};
+db/catalog/collection_impl.cpp:            opCtx->lockState(), ResourceId(RESOURCE_METADATA, _ns.ns()), MODE_X};
+db/catalog/create_collection.cpp:        Lock::DBLock dbXLock(opCtx, nss.db(), MODE_X);
+db/catalog/drop_collection.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_X);
+db/catalog/drop_database.cpp:        AutoGetDb autoDB(opCtx, dbName, MODE_X);
+db/catalog/drop_database.cpp:        AutoGetDb autoDB(opCtx, dbName, MODE_X);
+db/catalog/drop_database.cpp:        AutoGetDb autoDB(opCtx, dbName, MODE_X);
+db/catalog/drop_indexes.cpp:            AutoGetDb autoDb(opCtx, nss.db(), MODE_X);
+db/catalog/index_catalog_entry_impl.cpp:            opCtx->lockState(), ResourceId(RESOURCE_METADATA, _ns), MODE_X);
+db/catalog/rename_collection.cpp:        dbWriteLock.emplace(opCtx, source.db(), MODE_X);
+db/cloner.cpp:    Lock::DBLock dbWrite(opCtx, dbname, MODE_X);
+db/commands/clone.cpp:        Lock::DBLock dbXLock(opCtx, dbname, MODE_X);
+db/commands/collection_to_capped.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_X);
+db/commands/compact.cpp:        AutoGetDb autoDb(opCtx, db, MODE_X);
+db/commands/copydb.cpp:            Lock::DBLock lk(opCtx, todb, MODE_X);
+db/commands/cpuprofile.cpp:    Lock::DBLock dbXLock(opCtx, db, MODE_X);
+db/commands/cpuprofile.cpp:    Lock::DBLock dbXLock(opCtx, db, MODE_X);
+db/commands/create_indexes.cpp:        Lock::DBLock dbLock(opCtx, ns.db(), MODE_X);
+db/commands/dbcommands.cpp:        const LockMode dbMode = readOnly ? MODE_S : MODE_X;
+db/commands/drop_indexes.cpp:        Lock::DBLock dbXLock(opCtx, dbname, MODE_X);
+db/commands/mr.cpp:            AutoGetDb autoDb(_opCtx, _config.tempNamespace.db(), MODE_X);
+db/commands/mr.cpp:            Lock::DBLock lk(_opCtx, _config.incLong.db(), MODE_X);
+db/commands/mr.cpp:            Lock::DBLock lock(opCtx, _config.outputOptions.finalNamespace.db(), MODE_X);
+db/commands/validate.cpp:        auto collLk = stdx::make_unique<Lock::CollectionLock>(opCtx->lockState(), nss.ns(), MODE_X);
+db/concurrency/d_concurrency.cpp:    return locker->isLockHeldForMode(_rid, MODE_X);
+db/concurrency/d_concurrency.cpp:        _mode = MODE_X;
+db/db.cpp:    AutoGetOrCreateDb autoDb(opCtx, startupLogCollectionName.db(), mongo::MODE_X);
+db/db.cpp:        Lock::DBLock dbLock(opCtx, kSystemReplSetCollection.db(), MODE_X);
+db/db.cpp:    LockResult result = globalLocker->lockGlobalBegin(MODE_X, Milliseconds::max());
+db/db_raii.cpp:        if (mode != MODE_X) {
+db/index_builder.cpp:    Lock::DBLock dlk(&opCtx, ns.db(), MODE_X);
+db/index_rebuilder.cpp:        Lock::DBLock lk(opCtx, nss.db(), MODE_X);
+db/introspect.cpp:                autoGetDb.reset(new AutoGetDb(opCtx, dbName, MODE_X));
+db/introspect.cpp:                       (!wasLocked || opCtx->lockState()->isDbLockedForMode(dbName, MODE_X))) {
+db/ops/update.cpp:                  locker->isLockHeldForMode(ResourceId(RESOURCE_DATABASE, nsString.db()), MODE_X));
+db/ops/update.cpp:            Lock::DBLock lk(opCtx, nsString.db(), MODE_X);
+db/ops/write_ops_exec.cpp:        AutoGetOrCreateDb db(opCtx, ns.db(), MODE_X);
+db/ops/write_ops_exec.cpp:                           parsedUpdate.isIsolated() ? MODE_X : MODE_IX);
+db/ops/write_ops_exec.cpp:                                 parsedDelete.isIsolated() ? MODE_X : MODE_IX);
+db/repl/bgsync.cpp:                Lock::DBLock lk(opCtx, "local", MODE_X);
+db/repl/master_slave.cpp:        Lock::DBLock dblk(opCtx, "local", MODE_X);
+db/repl/oplog.cpp:            requestNss.ns(), supportsDocLocking() ? MODE_IX : MODE_X));
+db/repl/replication_coordinator_external_state_impl.cpp:        Lock::DBLock lock(opCtx, meDatabaseName, MODE_X);
+db/repl/replication_coordinator_external_state_impl.cpp:            Lock::DBLock dbWriteLock(opCtx, configDatabaseName, MODE_X);
+db/repl/replication_coordinator_external_state_impl.cpp:                Lock::DBLock dbWriteLock(opCtx, lastVoteDatabaseName, MODE_X);
+db/repl/replication_coordinator_impl.cpp:        opCtx, MODE_X, durationCount<Milliseconds>(stepdownTime), Lock::GlobalLock::EnqueueOnly());
+db/repl/replication_coordinator_impl.cpp:                globalLock.reset(new Lock::GlobalLock(opCtx, MODE_X, UINT_MAX));
+db/repl/replication_recovery.cpp:    Lock::CollectionLock oplogCollectionLoc(opCtx->lockState(), oplogNss.ns(), MODE_X);
+db/repl/rs_rollback.cpp:    Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback.cpp:    Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback.cpp:    Lock::DBLock dbLock(opCtx, dbName, MODE_X);
+db/repl/rs_rollback.cpp:        AutoGetDb dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback.cpp:            Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback.cpp:                Lock::DBLock docDbLock(opCtx, docNss.db(), MODE_X);
+db/repl/rs_rollback.cpp:        Lock::CollectionLock oplogCollectionLoc(opCtx->lockState(), oplogNss.ns(), MODE_X);
+db/repl/rs_rollback_no_uuid.cpp:                Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback_no_uuid.cpp:            Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback_no_uuid.cpp:        Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback_no_uuid.cpp:        Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/rs_rollback_no_uuid.cpp:                Lock::DBLock docDbLock(opCtx, docNss.db(), MODE_X);
+db/repl/rs_rollback_no_uuid.cpp:        Lock::CollectionLock oplogCollectionLoc(opCtx->lockState(), oplogNss.ns(), MODE_X);
+db/repl/storage_interface_impl.cpp:        AutoGetOrCreateDb db(opCtx.get(), nss.db(), MODE_X);
+db/repl/storage_interface_impl.cpp:        AutoGetOrCreateDb databaseWriteGuard(opCtx, nss.db(), MODE_X);
+db/repl/storage_interface_impl.cpp:        AutoGetDb autoDB(opCtx, nss.db(), MODE_X);
+db/repl/storage_interface_impl.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_X);
+db/repl/storage_interface_impl.cpp:        AutoGetDb autoDB(opCtx, fromNS.db(), MODE_X);
+db/repl/storage_interface_impl.cpp:    AutoGetDb autoDB(opCtx, "admin", MODE_X);
+db/repl/sync_tail.cpp:        Lock::DBLock dbLock(opCtx, nss.db(), MODE_X);
+db/repl/sync_tail.cpp:        AutoGetDb autoDb(opCtx, nss.db(), MODE_X);
+db/s/migration_destination_manager.cpp:        Lock::DBLock lk(opCtx, _nss.db(), MODE_X);
+db/s/migration_destination_manager.cpp:            Lock::CollectionLock clk(opCtx->lockState(), nss.ns(), MODE_X);
+db/s/migration_destination_manager.cpp:    AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
+db/s/migration_destination_manager.cpp:    AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/storage/wiredtiger/wiredtiger_record_store.cpp:            !opCtx->lockState()->isCollectionLockedForMode(_ns, MODE_X)) {
+db/storage/wiredtiger/wiredtiger_record_store.cpp:            !opCtx->lockState()->isCollectionLockedForMode(_ns, MODE_X)) {
+db/system_index.cpp:        AutoGetDb autoDb(opCtx, systemUsers.db(), MODE_X);
+
+
+
+mode_s相关
+[root@bogon mongo]# grep "MODE_S" * -r | grep -v "test" |grep -v "mmap" | grep -v "//" | grep -v ".h" |grep -v "*" | grep -v "invariant" |grep -v "dassert" |grep -v "lock_manager" |grep -v "lock_state"
+db/commands/dbcommands.cpp:        const LockMode dbMode = readOnly ? MODE_S : MODE_X;
+db/commands/dbcommands.cpp:        AutoGetDb autoDb(opCtx, ns, MODE_S);
+db/commands/list_collections.cpp:        AutoGetDb autoDb(opCtx, dbname, MODE_S);
+db/commands/mr.cpp:                unique_ptr<AutoGetDb> scopedAutoDb(new AutoGetDb(opCtx, config.nss.db(), MODE_S));
+db/commands/mr.cpp:                        scopedAutoDb = stdx::make_unique<AutoGetDb>(opCtx, config.nss.db(), MODE_S);
+db/commands/mr.cpp:                        scopedAutoDb.reset(new AutoGetDb(opCtx, config.nss.db(), MODE_S));
+db/repl/oplog_interface_local.cpp:      _collectionLock(opCtx->lockState(), collectionName, MODE_S),
+util/net/ssl_manager.cpp:#if defined(MONGO_CONFIG_HAVE_FIPS_MODE_SET)
+
+MODE_Is相关
+[root@bogon mongo]# grep "MODE_IS" * -r | grep -v "test" |grep -v "mmap" | grep -v "//" | grep -v ".h" |grep -v "*" | grep -v "invariant" |grep -v "dassert" |grep -v "lock_manager" |grep -v "lock_state"
+db/catalog/coll_mod.cpp:        Lock::GlobalLock lk(opCtx, MODE_IS, UINT_MAX);
+db/catalog/coll_mod.cpp:        Lock::GlobalLock lk(opCtx, MODE_IS, UINT_MAX);
+db/clientcursor.cpp:        _opCtx->lockState()->isCollectionLockedForMode(_cursor->_nss.ns(), MODE_IS);
+db/clientcursor.cpp:        _opCtx->lockState()->isCollectionLockedForMode(_cursor->_nss.ns(), MODE_IS);
+db/commands/count_cmd.cpp:        Lock::DBLock dbLock(opCtx, dbname, MODE_IS);
+db/commands/count_cmd.cpp:        Lock::DBLock dbLock(opCtx, dbname, MODE_IS);
+db/commands/find_cmd.cpp:        Lock::DBLock dbSLock(opCtx, dbname, MODE_IS);
+db/commands/fsync.cpp:            Lock::GlobalLock global(opCtx, MODE_IS, UINT_MAX);
+db/commands/list_databases.cpp:            Lock::GlobalLock lk(opCtx, MODE_IS, UINT_MAX);
+db/commands/list_databases.cpp:                Lock::DBLock dbLock(opCtx, dbname, MODE_IS);
+db/commands/list_indexes.cpp:        Lock::DBLock dbSLock(opCtx, dbname, MODE_IS);
+db/commands/mr.cpp:            AutoGetCollection autoColl(opCtx, _config.incLong, MODE_IS);
+db/commands/parallel_collection_scan.cpp:        Lock::DBLock dbSLock(opCtx, dbname, MODE_IS);
+db/commands/run_aggregate.cpp:    AutoGetDb autoDb(opCtx, request.getNamespaceString().db(), MODE_IS);
+db/commands/run_aggregate.cpp:            AutoGetCollection origNssCtx(opCtx, origNss, MODE_IS);
+db/concurrency/d_concurrency.cpp:    return locker->isLockHeldForMode(_rid, MODE_IS);
+db/concurrency/d_concurrency.cpp:        _pbwm.lock(MODE_IS);
+db/cursor_manager.cpp:        AutoGetCollectionOrView ctx(opCtx, NamespaceString(ns), MODE_IS);
+db/db_raii.cpp:        AutoGetDb autoDb(_opCtx, nss.db(), MODE_IS);
+db/db_raii.cpp:    Lock::DBLock dbSLock(opCtx, dbName, MODE_IS);
+db/db_raii.cpp:            opCtx, nss, MODE_IS, AutoGetCollection::ViewMode::kViewsForbidden, std::move(dbSLock));
+db/db_raii.cpp:    _autoColl.emplace(opCtx, nss, MODE_IS, MODE_IS, viewMode);
+db/db_raii.cpp:    _autoColl.emplace(opCtx, nss, MODE_IS, viewMode, std::move(lock));
+db/db_raii.cpp:        _autoColl.emplace(opCtx, nss, MODE_IS);
+db/db_raii.cpp:          opCtx, nss, viewMode, Lock::DBLock(opCtx, nss.db(), MODE_IS)) {}
+db/pipeline/document_source_cursor.cpp:    AutoGetDb dbLock(opCtx, _exec->nss().db(), MODE_IS);
+db/pipeline/document_source_cursor.cpp:    Lock::CollectionLock collLock(opCtx->lockState(), _exec->nss().ns(), MODE_IS);
+db/pipeline/pipeline_d.cpp:            AutoGetCollection autoColl(_ctx->opCtx, _ctx->ns, MODE_IS);
+db/pipeline/pipeline_d.cpp:            AutoGetCollection autoColl(_ctx->opCtx, nss, collectionUUID, MODE_IS);
+db/query/find.cpp:            AutoGetDb autoDb(opCtx, nssForCurOp->db(), MODE_IS);
+db/repl/oplog_interface_local.cpp:    : _dbLock(opCtx, nsToDatabase(collectionName), MODE_IS),
+db/repl/replication_coordinator_external_state_impl.cpp:                               AutoGetCollection oplog(opCtx, kRsOplogNamespace, MODE_IS);
+db/repl/replication_coordinator_external_state_impl.cpp:    AutoGetCollection oplog(opCtx, NamespaceString::kRsOplogNamespace, MODE_IS);
+db/repl/storage_interface_impl.cpp:        auto collectionAccessMode = isFind ? MODE_IS : MODE_IX;
+db/repl/storage_interface_impl.cpp:    AutoGetCollection oplog(opCtx, NamespaceString::kRsOplogNamespace, MODE_IS);
+db/repl/sync_tail.cpp:        Lock::DBLock dbLock(opCtx, nsToDatabaseSubstring(ns), MODE_IS);
+db/s/active_migrations_registry.cpp:        AutoGetCollection autoColl(opCtx, nss.get(), MODE_IS);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IS);
+db/s/migration_source_manager.cpp:            AutoGetCollection autoColl(opCtx, _args.getNss(), MODE_IS);
+db/s/migration_source_manager.cpp:            AutoGetCollection autoColl(opCtx, _args.getNss(), MODE_IS);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IS);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IS);
+db/s/split_vector.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IS);
+db/session_catalog.cpp:    AutoGetCollection autoColl(opCtx, NamespaceString::kSessionTransactionsTableNamespace, MODE_IS);
+db/sessions_collection_rs.cpp:                    MODE_IS,
+db/storage/wiredtiger/wiredtiger_server_status.cpp:    Lock::GlobalLock lk(opCtx, LockMode::MODE_IS, UINT_MAX);
+db/transaction_reaper.cpp:        Lock::DBLock lk(opCtx, NamespaceString::kSessionTransactionsTableNamespace.db(), MODE_IS);
+db/transaction_reaper.cpp:            opCtx->lockState(), NamespaceString::kSessionTransactionsTableNamespace.ns(), MODE_IS);
+db/ttl.cpp:            AutoGetCollection autoGetCollection(&opCtx, collectionNSS, MODE_IS);
+db/views/durable_view_catalog.cpp:    Lock::CollectionLock lk(opCtx->lockState(), _db->getSystemViewsName(), MODE_IS);
+
+mode_ix相关
+[root@bogon mongo]# grep "MODE_IX" * -r | grep -v "test" |grep -v "mmap" | grep -v "//" | grep -v ".h" |grep -v "*" | grep -v "invariant" |grep -v "dassert" |grep -v "lock_manager" |grep -v "lock_state"
+db/catalog/rename_collection.cpp:        AutoGetCollection autoTmpColl(opCtx, tmpName, MODE_IX);
+db/catalog/rename_collection.cpp:            lockState->downgrade(globalLockResourceId, MODE_IX);
+db/commands/create_indexes.cpp:            Lock::CollectionLock colLock(opCtx->lockState(), ns.ns(), MODE_IX);
+db/commands/find_and_modify.cpp:            AutoGetCollection autoColl(opCtx, nsString, MODE_IX);
+db/commands/find_and_modify.cpp:            AutoGetCollection autoColl(opCtx, nsString, MODE_IX);
+db/commands/find_and_modify.cpp:                AutoGetOrCreateDb autoDb(opCtx, dbName, MODE_IX);
+db/commands/find_and_modify.cpp:                Lock::CollectionLock collLock(opCtx->lockState(), nsString.ns(), MODE_IX);
+db/commands/find_and_modify.cpp:                AutoGetOrCreateDb autoDb(opCtx, dbName, MODE_IX);
+db/commands/find_and_modify.cpp:                Lock::CollectionLock collLock(opCtx->lockState(), nsString.ns(), MODE_IX);
+db/commands/oplog_note.cpp:    Lock::GlobalLock lock(opCtx, MODE_IX, 1);
+db/commands/validate.cpp:        AutoGetDb ctx(opCtx, nss.db(), MODE_IX);
+db/concurrency/d_concurrency.cpp:    _lockState->lock(_id, MODE_IX);
+db/concurrency/d_concurrency.cpp:    _lockState->lock(resourceIdOplog, MODE_IX);
+db/concurrency/deferred_writer.cpp:    agc = stdx::make_unique<AutoGetCollection>(opCtx, _nss, MODE_IX);
+db/concurrency/deferred_writer.cpp:        agc = stdx::make_unique<AutoGetCollection>(opCtx, _nss, MODE_IX);
+db/db_raii.cpp:      _autodb(opCtx, _nss.db(), MODE_IX),
+db/db_raii.cpp:      _collk(opCtx->lockState(), ns, MODE_IX),
+db/exec/stagedebug_cmd.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/index_builder.cpp:                    Lock::CollectionLock colLock(opCtx->lockState(), ns.ns(), MODE_IX);
+db/introspect.cpp:                autoGetDb.reset(new AutoGetDb(opCtx, dbName, MODE_IX));
+db/introspect.cpp:            Lock::CollectionLock collLock(opCtx->lockState(), db->getProfilingNS(), MODE_IX);
+db/ops/write_ops_exec.cpp:                           parsedUpdate.isIsolated() ? MODE_X : MODE_IX);
+db/ops/write_ops_exec.cpp:                                 parsedDelete.isIsolated() ? MODE_X : MODE_IX);
+db/read_concern.cpp:        Lock::DBLock lk(opCtx, "local", MODE_IX);
+db/read_concern.cpp:        Lock::CollectionLock lock(opCtx->lockState(), "local.oplog.rs", MODE_IX);
+db/repl/apply_ops.cpp:                        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/repl/apply_ops.cpp:        dbWriteLock.emplace(opCtx, dbName, MODE_IX);
+db/repl/mock_repl_coord_server_fixture.cpp:    AutoGetCollection autoColl(opCtx(), NamespaceString::kRsOplogNamespace, MODE_IX);
+db/repl/noop_writer.cpp:    Lock::GlobalLock lock(opCtx, MODE_IX, 1);
+db/repl/oplog.cpp:    Lock::DBLock lk(opCtx, NamespaceString::kLocalDb, MODE_IX);
+db/repl/oplog.cpp:    Lock::CollectionLock lock(opCtx->lockState(), _oplogCollectionName, MODE_IX);
+db/repl/oplog.cpp:    Lock::DBLock lk(opCtx, "local", MODE_IX);
+db/repl/oplog.cpp:    Lock::CollectionLock lock(opCtx->lockState(), _oplogCollectionName, MODE_IX);
+db/repl/oplog.cpp:            requestNss.ns(), supportsDocLocking() ? MODE_IX : MODE_X));
+db/repl/oplog.cpp:        AutoGetCollection autoColl(opCtx, NamespaceString(_oplogCollectionName), MODE_IX);
+db/repl/replication_recovery.cpp:    AutoGetDb autoDb(opCtx, oplogNss.db(), MODE_IX);
+db/repl/rs_rollback.cpp:        Lock::DBLock oplogDbLock(opCtx, oplogNss.db(), MODE_IX);
+db/repl/rs_rollback_no_uuid.cpp:        Lock::DBLock oplogDbLock(opCtx, oplogNss.db(), MODE_IX);
+db/repl/storage_interface_impl.cpp:        AutoGetCollection coll(opCtx.get(), nss, MODE_IX);
+db/repl/storage_interface_impl.cpp:        autoColl = stdx::make_unique<AutoGetCollection>(opCtx.get(), nss, MODE_IX);
+db/repl/storage_interface_impl.cpp:    AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/repl/storage_interface_impl.cpp:        auto collectionAccessMode = isFind ? MODE_IS : MODE_IX;
+db/repl/storage_interface_impl.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/repl/storage_interface_impl.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/repl/storage_interface_impl.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/repl/sync_tail.cpp:            Lock::DBLock dbLock(opCtx, nss.db(), MODE_IX);
+db/repl/sync_tail.cpp:            Lock::CollectionLock collLock(opCtx->lockState(), actualNss.ns(), MODE_IX);
+db/s/collection_range_deleter.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/s/collection_range_deleter.cpp:                    opCtx, NamespaceString::kServerConfigurationNamespace, MODE_IX);
+db/s/collection_range_deleter.cpp:        AutoGetCollection autoColl(opCtx, nss, MODE_IX);
+db/s/migration_destination_manager.cpp:        Lock::DBLock dlk(opCtx, nss.db(), MODE_IX);
+db/s/migration_destination_manager.cpp:    AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
+db/s/migration_destination_manager.cpp:    AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/migration_source_manager.cpp:    AutoGetCollection autoColl(opCtx, NamespaceString::kRsOplogNamespace, MODE_IX);
+db/s/migration_source_manager.cpp:        AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
+db/s/session_catalog_migration_destination.cpp:                opCtx, NamespaceString::kSessionTransactionsTableNamespace.db(), MODE_IX);
+db/s/session_catalog_migration_source.cpp:        AutoGetCollection autoColl(opCtx, NamespaceString::kRsOplogNamespace, MODE_IX);
+db/session.cpp:    AutoGetCollection autoColl(opCtx, NamespaceString::kSessionTransactionsTableNamespace, MODE_IX);
+db/session.cpp:            Lock::DBLock configDBLock(opCtx, NamespaceString::kConfigDb, MODE_IX);
+db/sessions_collection_rs.cpp:                    MODE_IX,
+db/sessions_collection_rs.cpp:        MODE_IX,
+db/sessions_collection_rs.cpp:                    MODE_IX,
+db/sessions_collection_rs.cpp:        MODE_IX,
+db/storage/wiredtiger/wiredtiger_record_store_mongod.cpp:            AutoGetDb autoDb(&opCtx, _ns.db(), MODE_IX);
+db/storage/wiredtiger/wiredtiger_record_store_mongod.cpp:            Lock::CollectionLock collectionLock(opCtx.lockState(), _ns.ns(), MODE_IX);
+db/ttl.cpp:        AutoGetCollection autoGetCollection(opCtx, collectionNSS, MODE_IX);
+db/views/durable_view_catalog.cpp:            opCtx->lockState()->isDbLockedForMode(_db->name(), MODE_IX));
+
+*/
+
+/*
 MongoDB 加锁时，有四种模式【MODE_IS、MODE_IX、MODE_S、MODE_X】，MODE_S， MODE_X 很容易理解，分别是互斥读锁、
 互斥写锁，MODE_IS、MODE_IX是为了实现层次锁模型引入的，称为意向读锁、意向写锁，锁之间的竞争情况如上图所示。
 

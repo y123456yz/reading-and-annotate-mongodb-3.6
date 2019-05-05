@@ -39,12 +39,13 @@ LockStats<CounterType>::LockStats() {
     reset();
 }
 
-
+//总的锁统计打印
 template <typename CounterType>
 void LockStats<CounterType>::report(BSONObjBuilder* builder) const {
     // All indexing below starts from offset 1, because we do not want to report/account
     // position 0, which is a sentinel value for invalid resource/no lock.
     for (int i = 1; i < ResourceTypesCount; i++) {
+		//每种不同ResourceType类型的统计信息分开打印
         _report(builder, resourceTypeName(static_cast<ResourceType>(i)), _stats[i]);
     }
 
@@ -109,6 +110,8 @@ featdoc:PRIMARY> db.serverStatus().globalLock
 featdoc:PRIMARY> 
 featdoc:PRIMARY> 
 */
+
+//上面的LockStats<>::report
 template <typename CounterType>
 void LockStats<CounterType>::_report(BSONObjBuilder* builder,
                                      const char* sectionName,
@@ -123,7 +126,7 @@ void LockStats<CounterType>::_report(BSONObjBuilder* builder,
         std::unique_ptr<BSONObjBuilder> numAcquires;
         for (int mode = 1; mode < LockModesCount; mode++) {
             const long long value = CounterOps::get(stat.modeStats[mode].numAcquisitions);
-            if (value > 0) {
+            if (value > 0) { //只有大于0才打印
                 if (!numAcquires) {
                     if (!section) {
                         section.reset(new BSONObjBuilder(builder->subobjStart(sectionName)));
@@ -141,7 +144,7 @@ void LockStats<CounterType>::_report(BSONObjBuilder* builder,
         std::unique_ptr<BSONObjBuilder> numWaits;
         for (int mode = 1; mode < LockModesCount; mode++) {
             const long long value = CounterOps::get(stat.modeStats[mode].numWaits);
-            if (value > 0) {
+            if (value > 0) { //只有大于0才打印，也就是有处于wait状态
                 if (!numWaits) {
                     if (!section) {
                         section.reset(new BSONObjBuilder(builder->subobjStart(sectionName)));
@@ -154,7 +157,7 @@ void LockStats<CounterType>::_report(BSONObjBuilder* builder,
         }
     }
 
-    // Total time waiting
+    // Total time waiting  具体的等待时间
     {
         std::unique_ptr<BSONObjBuilder> timeAcquiring;
         for (int mode = 1; mode < LockModesCount; mode++) {
@@ -173,7 +176,7 @@ void LockStats<CounterType>::_report(BSONObjBuilder* builder,
         }
     }
 
-    // Deadlocks
+    // Deadlocks  死锁相关统计
     {
         std::unique_ptr<BSONObjBuilder> deadlockCount;
         for (int mode = 1; mode < LockModesCount; mode++) {
