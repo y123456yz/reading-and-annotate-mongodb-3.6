@@ -72,9 +72,11 @@ struct CounterOps {
 
 /**
  * Bundle of locking statistics values.
- */
+ */ //
+//LockStats._stats  
+//LockStats._stats统计展示在LockStats<>::_report
 template <typename CounterType>
-struct LockStatCounters {
+struct LockStatCounters { 
     template <typename OtherType>
     void append(const LockStatCounters<OtherType>& other) {
         CounterOps::add(numAcquisitions, other.numAcquisitions);
@@ -83,6 +85,7 @@ struct LockStatCounters {
         CounterOps::add(numDeadlocks, other.numDeadlocks);
     }
 
+    //LockerImpl<>::getLockerInfo
     void reset() {
         CounterOps::set(numAcquisitions, 0);
         CounterOps::set(numWaits, 0);
@@ -90,13 +93,13 @@ struct LockStatCounters {
         CounterOps::set(numDeadlocks, 0);
     }
 
-    //PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
+    //LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
     CounterType numAcquisitions;
-    //PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
+    //LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
     CounterType numWaits;
-    //PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
+    //LockerImpl<>::lockComplete->PartitionedInstanceWideLockStats::recordWaitTime->LockStats::recordWaitTime
     CounterType combinedWaitTimeMicros;
-    //PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
+    //LockerImpl<>::lockComplete->PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
     CounterType numDeadlocks;
 };
 
@@ -121,14 +124,14 @@ public:
      */
     LockStats();
 
-    //PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
-    //LockerImpl<IsForMMAPV1>::lockBegin
+    //LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
+    //LockerImpl<>::lockBegin
     void recordAcquisition(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numAcquisitions, 1);
     }
 
-    //PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
-    //LockerImpl<IsForMMAPV1>::lockBegin
+    //LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordWait->LockStats::recordWait
+    //LockerImpl<>::lockBegin
     void recordWait(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numWaits, 1);
     }
@@ -138,7 +141,7 @@ public:
         CounterOps::add(get(resId, mode).combinedWaitTimeMicros, waitMicros);
     }
 
-    //PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
+    //LockerImpl<>::lockComplete->PartitionedInstanceWideLockStats::recordDeadlock->LockStats::recordDeadlock
     void recordDeadlock(ResourceId resId, LockMode mode) {
         CounterOps::add(get(resId, mode).numDeadlocks, 1);
     }
@@ -197,9 +200,9 @@ private:
 
     // Split the lock stats per resource type and special-case the oplog so we can collect
     // more detailed stats for it.
-    //数组全局锁  库锁  表锁
-    PerModeLockStatCounters _stats[ResourceTypesCount];
-    //polog相关统计
+    //数组全局锁  库锁  表锁   LockStats<CounterType>::report中打印输出
+    PerModeLockStatCounters _stats[ResourceTypesCount]; 
+    //polog相关统计   LockStats<CounterType>::report中打印输出
     PerModeLockStatCounters _oplogStats;
 };
 
