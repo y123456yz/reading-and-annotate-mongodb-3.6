@@ -510,7 +510,7 @@ LockManager::~LockManager() {
     delete[] _partitions;
 }
 
-//LockerImpl<IsForMMAPV1>::lockBegin
+//LockerImpl<>::lockBegin
 LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mode) {
     // Sanity check that requests are not being reused without proper cleanup
     invariant(request->status == LockRequest::STATUS_NEW);

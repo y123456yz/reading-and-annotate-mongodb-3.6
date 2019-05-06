@@ -228,6 +228,8 @@ private:
 
     // Per-locker locking statistics. Reported in the slow-query log message and through
     // db.currentOp. Complementary to the per-instance locking statistics.
+    //LockerImpl._stats  SingleThreadedLockStats类型  代表的是本次请求相关的锁统计  慢日志中体现
+    //慢日志打印见(ServiceEntryPointMongod::handleRequest)
     SingleThreadedLockStats _stats;
 
     // Delays release of exclusive/intent-exclusive locked resources until the write unit of

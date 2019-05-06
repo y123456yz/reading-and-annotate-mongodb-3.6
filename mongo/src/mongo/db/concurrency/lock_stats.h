@@ -206,9 +206,10 @@ private:
     PerModeLockStatCounters _oplogStats;
 };
 
-//LockerImpl._stats为该类型
+//LockerImpl._stats为该类型  代表的是本次请求相关的锁统计  慢日志中体现 (ServiceEntryPointMongod::handleRequest)
 typedef LockStats<int64_t> SingleThreadedLockStats;
-//PartitionedInstanceWideLockStats._partitions[]数组为该类型
+//PartitionedInstanceWideLockStats._partitions[]数组为该类型  
+//LockStats<>::_report(db.serverStatus().locks查看)中获取相关信息,这里面是总的锁相关的统计
 typedef LockStats<AtomicInt64> AtomicLockStats;
 
 

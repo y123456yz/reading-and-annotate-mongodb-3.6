@@ -88,7 +88,8 @@ class UnreplicatedWritesBlock;
 //RecoveryUnit，OperationContext, WriteUnitOfWork三个的关系见http://www.mongoing.com/archives/5476
 //ServiceContextMongoD继承ServiceContext，ServiceContextMongoD包含生成OperationContext类的接口， 
 //ServiceContext包含OperationContext成员，见UniqueOperationContext
-//ServiceContextMongoD::_newOpCtx 中会构造该类  WriteUnitOfWork._opCtx为该类类型
+//ServiceContextMongoD::_newOpCtx  ServiceContext::makeOperationContext Client::makeOperationContext 
+//ServiceStateMachine::_processMessage中会构造该类  WriteUnitOfWork._opCtx为该类类型
 class OperationContext : public Decorable<OperationContext> {
     MONGO_DISALLOW_COPYING(OperationContext);
 

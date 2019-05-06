@@ -259,8 +259,8 @@ void ServiceContext::ClientDeleter::operator()(Client* client) const {
 
 //Client::makeOperationContext()  _initAndListen中调用
 ServiceContext::UniqueOperationContext ServiceContext::makeOperationContext(Client* client) {
-	//获取一个UniqueOperationContext类   
-	//ServiceContextMongoD::_newOpCtx
+	//获取一个OperationContext类   
+	//ServiceContextMongoD::_newOpCtx 
     auto opCtx = _newOpCtx(client, _nextOpId.fetchAndAdd(1));
     auto observer = _clientObservers.begin();
     try {
