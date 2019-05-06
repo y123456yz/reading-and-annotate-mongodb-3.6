@@ -279,6 +279,33 @@ db/views/durable_view_catalog.cpp:            opCtx->lockState()->isDbLockedForM
 */
 
 /*
+https://docs.mongodb.com/manual/faq/concurrency/
+
+Lock Mode	Description
+R	Represents Shared (S) lock.
+W	Represents Exclusive (X) lock.
+r	Represents Intent Shared (IS) lock.
+w	Represents Intent Exclusive (IX) lock.
+
+
+What locks are taken by some common client operations??
+The following table lists some operations and the types of locks they use for document level locking storage engines:
+
+Operation	                            Database	Collection
+Issue a query	                        r (Intent Shared)	r (Intent Shared)
+Insert data	                            w (Intent Exclusive)	w (Intent Exclusive)
+Remove data	                            w (Intent Exclusive)	w (Intent Exclusive)
+Update data	                            w (Intent Exclusive)	w (Intent Exclusive)
+Perform Aggregation	r (Intent Shared)	r (Intent Shared)
+Create an index (Foreground)	        W (Exclusive)	 
+Create an index (Background)	        w (Intent Exclusive)	w (Intent Exclusive)
+List collections	                    r (Intent Shared)
+                                        Changed in version 4.0.
+Map-reduce	                            W (Exclusive) and R (Shared)	w (Intent Exclusive) and r (Intent Shared)
+
+
+
+
 MongoDB 加锁时，有四种模式【MODE_IS、MODE_IX、MODE_S、MODE_X】，MODE_S， MODE_X 很容易理解，分别是互斥读锁、
 互斥写锁，MODE_IS、MODE_IX是为了实现层次锁模型引入的，称为意向读锁、意向写锁，锁之间的竞争情况如上图所示。
 

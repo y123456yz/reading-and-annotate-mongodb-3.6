@@ -137,8 +137,9 @@ bool Lock::ResourceMutex::isAtLeastReadLocked(Locker* locker) {
 }
 //Lock::DBLock::DBLock中构造使用，每个DBLock都有一个对应的全局锁_globalLock
 Lock::GlobalLock::GlobalLock(OperationContext* opCtx, LockMode lockMode, unsigned timeoutMs)
-    : GlobalLock(opCtx, lockMode, timeoutMs, EnqueueOnly()) {
-    waitForLock(timeoutMs);
+    : GlobalLock(opCtx, lockMode, timeoutMs, EnqueueOnly()) //这里构造函数中调用Lock::GlobalLock::_enqueue获取全局锁
+{
+    waitForLock(timeoutMs); //这里面等待获取全局锁，直到超时或者获取到锁
 }
 
 Lock::GlobalLock::GlobalLock(OperationContext* opCtx,
@@ -174,6 +175,7 @@ void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
 //Lock::GlobalLock::GlobalLock
 void Lock::GlobalLock::waitForLock(unsigned timeoutMs) {
     if (_result == LOCK_WAITING) {
+		//LockerImpl<>::lockGlobalComplete 这里面等待获取全局锁，直到超时或者获取到锁
         _result = _opCtx->lockState()->lockGlobalComplete(Milliseconds(timeoutMs));
     }
 

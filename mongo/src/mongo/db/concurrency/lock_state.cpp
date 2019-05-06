@@ -107,7 +107,8 @@ featdoc:PRIMARY> db.serverStatus().globalLock
 featdoc:PRIMARY> 
 featdoc:PRIMARY> 
 */
-//PartitionedInstanceWideLockStats globalStats;   分区槽统计相关
+//PartitionedInstanceWideLockStats globalStats;   
+//LockStats<>::_report(db.serverStatus().locks查看)中获取相关信息,这里面是总的锁相关的统计
 class PartitionedInstanceWideLockStats {
     MONGO_DISALLOW_COPYING(PartitionedInstanceWideLockStats);
 
@@ -372,12 +373,12 @@ Locker::ClientState LockerImpl<IsForMMAPV1>::getClientState() const {
     return state;
 }
 
-//LockerImpl<IsForMMAPV1>::restoreLockState
+//LockerImpl<>::restoreLockState
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockGlobal(LockMode mode) {
     LockResult result = _lockGlobalBegin(mode, Milliseconds::max());
 
-    if (result == LOCK_WAITING) {
+    if (result == LOCK_WAITING) { //一直等待，获取到锁或者超时才返回
         result = lockGlobalComplete(Milliseconds::max());
     }
 
@@ -397,11 +398,12 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RE
 //LockerImpl<IsForMMAPV1>::_lockGlobalBegin和Lock::GlobalLock::_unlock对应，一个上锁，一个解锁
 
 //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
-//Lock::GlobalLock::_enqueue      LockerImpl<IsForMMAPV1>::lockGlobal中调用  
-//lock_state.h中的lockGlobalBegin函数调用  
 
 //全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
 //RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+
+//Lock::GlobalLock::_enqueue->lock_state.h中的lockGlobalBegin调用
+//LockerImpl<>::lockGlobal中调用  
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
@@ -443,6 +445,7 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
     return result;
 }
 
+//LockerImpl<>::lockGlobal   Lock::GlobalLock::waitForLock
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockGlobalComplete(Milliseconds timeout) {
     return lockComplete(resourceIdGlobal, getLockMode(resourceIdGlobal), timeout, false);
@@ -567,6 +570,7 @@ LockResult LockerImpl<IsForMMAPV1>::lock(ResourceId resId,
     // unsuccessful result that the lock manager would return is LOCK_WAITING.
     invariant(result == LOCK_WAITING);
 
+	//一直等待获取到锁或者超时才返回
     return lockComplete(resId, mode, timeout, checkDeadlock);
 }
 
@@ -868,7 +872,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
 //LockerImpl<>::lockGlobalComplete
 //LockerImpl<>::lock
 
-//循环等待lock结果，知道LOCK_OK或者LOCK_DEADLOCK或者超时，超时时间timeout ms超时
+//循环等待lock结果，直到LOCK_OK或者LOCK_DEADLOCK或者超时，超时时间timeout ms超时
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
                                                  LockMode mode,

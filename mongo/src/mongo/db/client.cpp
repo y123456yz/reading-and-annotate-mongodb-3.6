@@ -128,6 +128,7 @@ void Client::reportState(BSONObjBuilder& builder) {
     }
 }
 
+//ServiceStateMachine::_processMessage
 ServiceContext::UniqueOperationContext Client::makeOperationContext() {
 	//获取一个UniqueOperationContext类
     return getServiceContext()->makeOperationContext(this); //ServiceContext::makeOperationContext

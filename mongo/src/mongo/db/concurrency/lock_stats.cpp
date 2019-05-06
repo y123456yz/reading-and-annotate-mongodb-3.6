@@ -32,6 +32,7 @@
 
 #include "mongo/bson/bsonobjbuilder.h"
 
+
 namespace mongo {
 
 template <typename CounterType>
@@ -53,62 +54,88 @@ void LockStats<CounterType>::report(BSONObjBuilder* builder) const {
 }
 
 
-/*  LockStats<>::_report 中获取相关信息
-featdoc:PRIMARY> 
-featdoc:PRIMARY> db.serverStatus().locks
+/*  
+慢日志打印(ServiceEntryPointMongod::handleRequest):command test.coll appName: "MongoDB Shell" command: insert { insert: "coll", ordered: true, $db: "test" } ninserted:1 keysInserted:1 numYields:0 reslen:29 locks:{ Global: { acquireCount: { r: 3, w: 3 } }, Database: { acquireCount: { w: 2, W: 1 } }, Collection: { acquireCount: { w: 2 } } } protocol:op_msg 109ms
+LockStats<>::_report(db.serverStatus().locks查看)中获取相关信息,这里面是总的锁相关的统计，慢日志中的锁统计(ServiceEntryPointMongod::handleRequest)是本次请求的统计信息
+xxx:PRIMARY> db.serverStatus().locks
 {
         "Global" : {
                 "acquireCount" : {
-                        "r" : NumberLong(1447),
-                        "w" : NumberLong(40),
-                        "W" : NumberLong(9)
+                        "r" : NumberLong("17617143695"),
+                        "w" : NumberLong("11947836421"),
+                        "W" : NumberLong(35)
                 },
                 "acquireWaitCount" : {
-                        "w" : NumberLong(1),
-                        "W" : NumberLong(2)
+                        "r" : NumberLong(4),
+                        "W" : NumberLong(1)
                 },
                 "timeAcquiringMicros" : {
-                        "w" : NumberLong(8569),
-                        "W" : NumberLong(268)
+                        "r" : NumberLong(129),
+                        "W" : NumberLong(20)
                 }
         },
         "Database" : {
                 "acquireCount" : {
-                        "r" : NumberLong(689),
-                        "w" : NumberLong(18),
-                        "R" : NumberLong(7),
-                        "W" : NumberLong(16)
+                        "r" : NumberLong("2829647342"),
+                        "w" : NumberLong("11947416025"),
+                        "R" : NumberLong(2297),
+                        "W" : NumberLong(1627)
+                },
+                "acquireWaitCount" : {
+                        "r" : NumberLong(145),
+                        "w" : NumberLong(26),
+                        "R" : NumberLong(4),
+                        "W" : NumberLong(526)
+                },
+                "timeAcquiringMicros" : {
+                        "r" : NumberLong(88451075),
+                        "w" : NumberLong(283554),
+                        "R" : NumberLong(6752),
+                        "W" : NumberLong(199217964)
                 }
         },
         "Collection" : {
                 "acquireCount" : {
-                        "r" : NumberLong(358),
-                        "w" : NumberLong(8)
+                        "r" : NumberLong(68744265),
+                        "w" : NumberLong("6094202311"),
+                        "W" : NumberLong(1)
+                }
+        },
+        "Metadata" : {
+                "acquireCount" : {
+                        "W" : NumberLong(237705)
+                },
+                "acquireWaitCount" : {
+                        "W" : NumberLong(124590)
+                },
+                "timeAcquiringMicros" : {
+                        "W" : NumberLong("2830270433")
                 }
         },
         "oplog" : {
                 "acquireCount" : {
-                        "r" : NumberLong(331),
-                        "w" : NumberLong(12)
+                        "r" : NumberLong("2756294155"),
+                        "w" : NumberLong("5853209026")
                 }
         }
 }
-featdoc:PRIMARY> db.serverStatus().globalLock
+daijia_intelligent:PRIMARY> 
+daijia_intelligent:PRIMARY> db.serverStatus().globalLock
 {
-        "totalTime" : NumberLong(170653000),
+        "totalTime" : NumberLong("4062644000000"),
         "currentQueue" : {
                 "total" : 0,
                 "readers" : 0,
                 "writers" : 0
         },
         "activeClients" : {
-                "total" : 29,
+                "total" : 68,
                 "readers" : 0,
                 "writers" : 0
         }
 }
-featdoc:PRIMARY> 
-featdoc:PRIMARY> 
+daijia_intelligent:PRIMARY> 
+
 */
 
 //上面的LockStats<>::report
