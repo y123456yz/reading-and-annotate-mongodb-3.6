@@ -290,6 +290,7 @@ void CondVarLockGrantNotification::clear() {
     _result = LOCK_INVALID;
 }
 
+//条件变量等待唤醒或者超时自动唤醒返回     LockerImpl<>::lockComplete
 LockResult CondVarLockGrantNotification::wait(Milliseconds timeout) {
     stdx::unique_lock<stdx::mutex> lock(_mutex);
     return _cond.wait_for(
@@ -298,11 +299,13 @@ LockResult CondVarLockGrantNotification::wait(Milliseconds timeout) {
         : LOCK_TIMEOUT;
 }
 
+//LockManager::_onLockModeChanged->CondVarLockGrantNotification::notify唤醒等待线程
 void CondVarLockGrantNotification::notify(ResourceId resId, LockResult result) {
     stdx::unique_lock<stdx::mutex> lock(_mutex);
     invariant(_result == LOCK_INVALID);
     _result = result;
 
+	//条件变量，唤醒所有的等待(wait)线程。
     _cond.notify_all();
 }
 
@@ -899,7 +902,8 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
     while (true) {
         // It is OK if this call wakes up spuriously, because we re-evaluate the remaining
         // wait time anyways.
-        result = _notify.wait(waitTime);
+        //等待条件变量被唤醒，LockManager::_onLockModeChanged->CondVarLockGrantNotification::notify唤醒等待线程
+        result = _notify.wait(waitTime); //CondVarLockGrantNotification::wait
 
         // Account for the time spent waiting on the notification object
         const uint64_t curTimeMicros = curTimeMicros64();
