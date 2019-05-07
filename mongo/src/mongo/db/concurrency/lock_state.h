@@ -40,7 +40,7 @@ namespace mongo {
 /**
  * Notfication callback, which stores the last notification result and signals a condition
  * variable, which can be waited on.
- */
+ */ //LockerImpl._notify成员
 class CondVarLockGrantNotification : public LockGrantNotification {
     MONGO_DISALLOW_COPYING(CondVarLockGrantNotification);
 
@@ -64,6 +64,7 @@ private:
 
     // These two go together to implement the conditional variable pattern.
     stdx::mutex _mutex;
+    //条件变量
     stdx::condition_variable _cond;
 
     // Result from the last call to notify

@@ -782,6 +782,7 @@ void LockManager::_cleanupUnusedLocksInBucket(LockBucket* bucket) {
     }
 }
 
+//LockManager::unlock  LockManager::downgrade调用
 void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
     // Unblock any converting requests (because conversions are still counted as granted and
     // are on the granted queue).
@@ -820,6 +821,7 @@ void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
                 iter->mode = iter->convertMode;
                 iter->convertMode = MODE_NONE;
 
+				//唤醒等待锁的线程 CondVarLockGrantNotification::notify
                 iter->notify->notify(lock->resourceId, LOCK_OK);
             }
         }
@@ -877,6 +879,7 @@ void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
             newlyCompatibleFirst |= (lock->compatibleFirstCount++ == 0);
         }
 
+		//唤醒等待锁的线程 CondVarLockGrantNotification::notify
         iter->notify->notify(lock->resourceId, LOCK_OK);
 
         // Small optimization - nothing is compatible with a newly granted MODE_X, so no point in
