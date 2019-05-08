@@ -95,7 +95,7 @@ MONGO_STATIC_ASSERT((sizeof(LockConflictsTable) / sizeof(LockConflictsTable[0]))
  */
 static const char* LockModeNames[] = {"NONE", "IS", "IX", "S", "X"};
 
-static const char* LegacyLockModeNames[] = {"", "r", "w", "R", "W"};
+static const char* LegacyLockModeNames[] = {"", "r", "w", "R", "W"}; //和上面的LockModeNames 一一对应
 
 // Ensure we do not add new modes without updating the names array
 MONGO_STATIC_ASSERT((sizeof(LockModeNames) / sizeof(LockModeNames[0])) == LockModesCount);
@@ -486,6 +486,8 @@ void LockHead::migratePartitionedLockHeads() {
 //
 
 // Have more buckets than CPUs to reduce contention on lock and caches
+//拥有比cpu更多的桶来减少对锁和缓存的竞争
+//CmdLockInfo::run    db.runCommand({lockInfo: 1})命令获取锁输出信息
 const unsigned LockManager::_numLockBuckets(128); //信号量默认赋值128
 
 // Balance scalability of intent locks against potential added cost of conflicting locks.
@@ -753,6 +755,7 @@ void LockManager::cleanupUnusedLocks() {
     }
 }
 
+//LockManager::getLockInfoBSON中调用
 void LockManager::_cleanupUnusedLocksInBucket(LockBucket* bucket) {
     LockBucket::Map::iterator it = bucket->data.begin();
     size_t deletedLockHeads = 0;
@@ -782,7 +785,7 @@ void LockManager::_cleanupUnusedLocksInBucket(LockBucket* bucket) {
     }
 }
 
-//LockManager::unlock  LockManager::downgrade调用
+//LockManager::unlock  LockManager::downgrade调用  唤醒之前LOCK_WAIT的部分等待线程
 void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
     // Unblock any converting requests (because conversions are still counted as granted and
     // are on the granted queue).
@@ -923,6 +926,7 @@ void LockManager::dump() const {
     }
 }
 
+//LockManager::getLockInfoBSON
 void LockManager::_dumpBucketToBSON(const std::map<LockerId, BSONObj>& lockToClientMap,
                                     const LockBucket* bucket,
                                     BSONObjBuilder* result) {
@@ -970,6 +974,88 @@ void LockManager::_buildBucketBSON(const LockRequest* iter,
     locks->append(info.obj());
 }
 
+/*
+featdoc:PRIMARY> use admin
+switched to db admin
+featdoc:PRIMARY> db.runCommand({lockInfo: 1})
+{
+        "lockInfo" : [
+                {
+                        "resourceId" : "{2305843009213693953: Global, 1}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn65",
+                                        "connectionId" : 65,
+                                        "client" : "127.0.0.1:52223",
+                                        "opid" : 1414386
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{9695931499680953263: Collection, 472559462826177455}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn60",
+                                        "connectionId" : 60,
+                                        "client" : "172.23.240.29:43066",
+                                        "opid" : 1412163
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn59",
+                                        "connectionId" : 59,
+                                        "client" : "172.23.240.29:43019",
+                                        "opid" : 1412143
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{8576409733318454219: Database, 1658880705677372363}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn60",
+                                        "connectionId" : 60,
+                                        "client" : "172.23.240.29:43066",
+                                        "opid" : 1412163
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn59",
+                                        "connectionId" : 59,
+                                        "client" : "172.23.240.29:43019",
+                                        "opid" : 1412143
+                                }
+                        ],
+                        "pending" : [ ]
+                }
+        ],
+        "ok" : 1
+}
+featdoc:PRIMARY>
+//要有流量的时候才会有输出，才会有锁信息   上面是sysbench一个线程压测的数据
+*/
+
+//CmdLockInfo::run    db.runCommand({lockInfo: 1})命令获取输出信息
 void LockManager::getLockInfoBSON(const std::map<LockerId, BSONObj>& lockToClientMap,
                                   BSONObjBuilder* result) {
     BSONArrayBuilder lockInfo;
@@ -987,6 +1073,7 @@ void LockManager::getLockInfoBSON(const std::map<LockerId, BSONObj>& lockToClien
     result->append("lockInfo", lockInfo.arr());
 }
 
+//mmap存储引擎才会用这个
 void LockManager::_dumpBucket(const LockBucket* bucket) const {
     for (LockBucket::Map::const_iterator it = bucket->data.begin(); it != bucket->data.end();
          it++) {

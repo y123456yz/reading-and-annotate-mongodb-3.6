@@ -140,7 +140,7 @@ https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0
 > * .lockManager详细注释分析  
 > * .AutoGetCollection初始化构造过程及其与锁的关系分析  
 > * .命令汇总，lock stats分析
-> * .
+> * .use admin;db.runCommand({lockInfo: 1})命令锁信息详细分析  
 > * .
 > * .
 > * .
