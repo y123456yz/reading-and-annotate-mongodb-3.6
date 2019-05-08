@@ -47,6 +47,86 @@ using std::stringstream;
 /**
  * Admin command to display global lock information
  */
+/*
+featdoc:PRIMARY> use admin
+switched to db admin
+featdoc:PRIMARY> db.runCommand({lockInfo: 1})
+{
+        "lockInfo" : [
+                {
+                        "resourceId" : "{2305843009213693953: Global, 1}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn65",
+                                        "connectionId" : 65,
+                                        "client" : "127.0.0.1:52223",
+                                        "opid" : 1414386
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{9695931499680953263: Collection, 472559462826177455}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn60",
+                                        "connectionId" : 60,
+                                        "client" : "172.23.240.29:43066",
+                                        "opid" : 1412163
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn59",
+                                        "connectionId" : 59,
+                                        "client" : "172.23.240.29:43019",
+                                        "opid" : 1412143
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{8576409733318454219: Database, 1658880705677372363}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn60",
+                                        "connectionId" : 60,
+                                        "client" : "172.23.240.29:43066",
+                                        "opid" : 1412163
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn59",
+                                        "connectionId" : 59,
+                                        "client" : "172.23.240.29:43019",
+                                        "opid" : 1412143
+                                }
+                        ],
+                        "pending" : [ ]
+                }
+        ],
+        "ok" : 1
+}
+featdoc:PRIMARY>
+//要有流量的时候才会有输出，才会有锁信息
+*/ //use admin;  db.runCommand({lockInfo: 1})
 class CmdLockInfo : public BasicCommand {
 public:
     virtual bool slaveOk() const {
@@ -104,6 +184,7 @@ public:
             }
         }
 
+		//LockManager::getLockInfoBSON
         getGlobalLockManager()->getLockInfoBSON(lockToClientMap, &result);
         return true;
     }
