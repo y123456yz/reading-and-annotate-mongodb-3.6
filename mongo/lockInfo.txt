@@ -1,0 +1,659 @@
+10 multhread sysbench 
+
+use admin
+featdoc:PRIMARY> db.runCommand({lockInfo: 1})
+{
+        "lockInfo" : [
+                {
+                        "resourceId" : "{2305843009213693953: Global, 1}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn73",
+                                        "connectionId" : 73,
+                                        "client" : "127.0.0.1:52233",
+                                        "opid" : 1591821
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn76",
+                                        "connectionId" : 76,
+                                        "client" : "127.0.0.1:52237",
+                                        "opid" : 1591814
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn72",
+                                        "connectionId" : 72,
+                                        "client" : "127.0.0.1:52232",
+                                        "opid" : 1591822
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn77",
+                                        "connectionId" : 77,
+                                        "client" : "127.0.0.1:52239",
+                                        "opid" : 1591817
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn75",
+                                        "connectionId" : 75,
+                                        "client" : "127.0.0.1:52236",
+                                        "opid" : 1591816
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn70",
+                                        "connectionId" : 70,
+                                        "client" : "127.0.0.1:52229",
+                                        "opid" : 1591815
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn71",
+                                        "connectionId" : 71,
+                                        "client" : "127.0.0.1:52231",
+                                        "opid" : 1591820
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn74",
+                                        "connectionId" : 74,
+                                        "client" : "127.0.0.1:52234",
+                                        "opid" : 1591819
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn69",
+                                        "connectionId" : 69,
+                                        "client" : "127.0.0.1:52230",
+                                        "opid" : 1591818
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn78",
+                                        "connectionId" : 78,
+                                        "client" : "127.0.0.1:52238",
+                                        "opid" : 1591813
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{2305843009213693954: Global, 2}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn76",
+                                        "connectionId" : 76,
+                                        "client" : "127.0.0.1:52237",
+                                        "opid" : 1591814
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn73",
+                                        "connectionId" : 73,
+                                        "client" : "127.0.0.1:52233",
+                                        "opid" : 1591821
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn77",
+                                        "connectionId" : 77,
+                                        "client" : "127.0.0.1:52239",
+                                        "opid" : 1591817
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn75",
+                                        "connectionId" : 75,
+                                        "client" : "127.0.0.1:52236",
+                                        "opid" : 1591816
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn72",
+                                        "connectionId" : 72,
+                                        "client" : "127.0.0.1:52232",
+                                        "opid" : 1591822
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn71",
+                                        "connectionId" : 71,
+                                        "client" : "127.0.0.1:52231",
+                                        "opid" : 1591820
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn74",
+                                        "connectionId" : 74,
+                                        "client" : "127.0.0.1:52234",
+                                        "opid" : 1591819
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn69",
+                                        "connectionId" : 69,
+                                        "client" : "127.0.0.1:52230",
+                                        "opid" : 1591818
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn70",
+                                        "connectionId" : 70,
+                                        "client" : "127.0.0.1:52229",
+                                        "opid" : 1591815
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn78",
+                                        "connectionId" : 78,
+                                        "client" : "127.0.0.1:52238",
+                                        "opid" : 1591813
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{10791842835121520164: Collection, 1568470798266744356}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn69",
+                                        "connectionId" : 69,
+                                        "client" : "127.0.0.1:52230",
+                                        "opid" : 1591818
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn77",
+                                        "connectionId" : 77,
+                                        "client" : "127.0.0.1:52239",
+                                        "opid" : 1591817
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn78",
+                                        "connectionId" : 78,
+                                        "client" : "127.0.0.1:52238",
+                                        "opid" : 1591813
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn72",
+                                        "connectionId" : 72,
+                                        "client" : "127.0.0.1:52232",
+                                        "opid" : 1591822
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn73",
+                                        "connectionId" : 73,
+                                        "client" : "127.0.0.1:52233",
+                                        "opid" : 1591821
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn74",
+                                        "connectionId" : 74,
+                                        "client" : "127.0.0.1:52234",
+                                        "opid" : 1591819
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn70",
+                                        "connectionId" : 70,
+                                        "client" : "127.0.0.1:52229",
+                                        "opid" : 1591815
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn76",
+                                        "connectionId" : 76,
+                                        "client" : "127.0.0.1:52237",
+                                        "opid" : 1591814
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{7559643306956554405: Database, 642114279315472549}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn78",
+                                        "connectionId" : 78,
+                                        "client" : "127.0.0.1:52238",
+                                        "opid" : 1591813
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn72",
+                                        "connectionId" : 72,
+                                        "client" : "127.0.0.1:52232",
+                                        "opid" : 1591822
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn73",
+                                        "connectionId" : 73,
+                                        "client" : "127.0.0.1:52233",
+                                        "opid" : 1591821
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn74",
+                                        "connectionId" : 74,
+                                        "client" : "127.0.0.1:52234",
+                                        "opid" : 1591819
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn75",
+                                        "connectionId" : 75,
+                                        "client" : "127.0.0.1:52236",
+                                        "opid" : 1591816
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn77",
+                                        "connectionId" : 77,
+                                        "client" : "127.0.0.1:52239",
+                                        "opid" : 1591817
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn70",
+                                        "connectionId" : 70,
+                                        "client" : "127.0.0.1:52229",
+                                        "opid" : 1591815
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn71",
+                                        "connectionId" : 71,
+                                        "client" : "127.0.0.1:52231",
+                                        "opid" : 1591820
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn69",
+                                        "connectionId" : 69,
+                                        "client" : "127.0.0.1:52230",
+                                        "opid" : 1591818
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn76",
+                                        "connectionId" : 76,
+                                        "client" : "127.0.0.1:52237",
+                                        "opid" : 1591814
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{9695931499680953263: Collection, 472559462826177455}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn71",
+                                        "connectionId" : 71,
+                                        "client" : "127.0.0.1:52231",
+                                        "opid" : 1591820
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn76",
+                                        "connectionId" : 76,
+                                        "client" : "127.0.0.1:52237",
+                                        "opid" : 1591814
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn78",
+                                        "connectionId" : 78,
+                                        "client" : "127.0.0.1:52238",
+                                        "opid" : 1591813
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn73",
+                                        "connectionId" : 73,
+                                        "client" : "127.0.0.1:52233",
+                                        "opid" : 1591821
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn77",
+                                        "connectionId" : 77,
+                                        "client" : "127.0.0.1:52239",
+                                        "opid" : 1591817
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn75",
+                                        "connectionId" : 75,
+                                        "client" : "127.0.0.1:52236",
+                                        "opid" : 1591816
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn72",
+                                        "connectionId" : 72,
+                                        "client" : "127.0.0.1:52232",
+                                        "opid" : 1591822
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn74",
+                                        "connectionId" : 74,
+                                        "client" : "127.0.0.1:52234",
+                                        "opid" : 1591819
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn69",
+                                        "connectionId" : 69,
+                                        "client" : "127.0.0.1:52230",
+                                        "opid" : 1591818
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn70",
+                                        "connectionId" : 70,
+                                        "client" : "127.0.0.1:52229",
+                                        "opid" : 1591815
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{10071838183249294778: Collection, 848466146394518970}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn71",
+                                        "connectionId" : 71,
+                                        "client" : "127.0.0.1:52231",
+                                        "opid" : 1591820
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{8576409733318454219: Database, 1658880705677372363}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn76",
+                                        "connectionId" : 76,
+                                        "client" : "127.0.0.1:52237",
+                                        "opid" : 1591814
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn73",
+                                        "connectionId" : 73,
+                                        "client" : "127.0.0.1:52233",
+                                        "opid" : 1591821
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn77",
+                                        "connectionId" : 77,
+                                        "client" : "127.0.0.1:52239",
+                                        "opid" : 1591817
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn75",
+                                        "connectionId" : 75,
+                                        "client" : "127.0.0.1:52236",
+                                        "opid" : 1591816
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn72",
+                                        "connectionId" : 72,
+                                        "client" : "127.0.0.1:52232",
+                                        "opid" : 1591822
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn71",
+                                        "connectionId" : 71,
+                                        "client" : "127.0.0.1:52231",
+                                        "opid" : 1591820
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn74",
+                                        "connectionId" : 74,
+                                        "client" : "127.0.0.1:52234",
+                                        "opid" : 1591819
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn69",
+                                        "connectionId" : 69,
+                                        "client" : "127.0.0.1:52230",
+                                        "opid" : 1591818
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn70",
+                                        "connectionId" : 70,
+                                        "client" : "127.0.0.1:52229",
+                                        "opid" : 1591815
+                                },
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn78",
+                                        "connectionId" : 78,
+                                        "client" : "127.0.0.1:52238",
+                                        "opid" : 1591813
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{9606474259399195352: Collection, 383102222544419544}",
+                        "granted" : [
+                                {
+                                        "mode" : "IX",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn75",
+                                        "connectionId" : 75,
+                                        "client" : "127.0.0.1:52236",
+                                        "opid" : 1591816
+                                }
+                        ],
+                        "pending" : [ ]
+                }
+        ],
+        "ok" : 1
+}
+featdoc:PRIMARY> 
+
