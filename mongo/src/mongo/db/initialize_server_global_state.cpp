@@ -233,7 +233,8 @@ MONGO_INITIALIZER_GENERAL(ServerLogRedirection,
                       "Syslog requested in Windows build; command line processor logic error");
 #else
         using logger::SyslogAppender;
-
+		//sb << serverGlobalParams.binaryName << "." << serverGlobalParams.port << ".allsql_record";
+		//上面这句显示就是  May 08 15:34:33 bogon mongos.29018.allsql_record[19523]: 
         StringBuilder sb;
         sb << serverGlobalParams.binaryName << "." << serverGlobalParams.port;
         openlog(strdup(sb.str().c_str()), LOG_PID | LOG_CONS, serverGlobalParams.syslogFacility);
