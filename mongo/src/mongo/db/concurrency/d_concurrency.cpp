@@ -164,7 +164,7 @@ Lock::GlobalLock::GlobalLock(GlobalLock&& otherLock)
 
 //Lock::GlobalLock::GlobalLock中调用
 void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
-    if (_opCtx->lockState()->shouldConflictWithSecondaryBatchApplication()) {
+    if (_opCtx->lockState()->shouldConflictWithSecondaryBatchApplication()) { //和同步相关
         _pbwm.lock(MODE_IS);
     }
 
@@ -304,6 +304,7 @@ void Lock::OplogIntentWriteLock::serializeIfNeeded() {
     }
 }
 
+//db/repl/sync_tail.cpp:    Lock::ParallelBatchWriterMode pbwm(opCtx->lockState());
 Lock::ParallelBatchWriterMode::ParallelBatchWriterMode(Locker* lockState)
     : _pbwm(lockState, resourceIdParallelBatchWriterMode, MODE_X),
       _lockState(lockState),

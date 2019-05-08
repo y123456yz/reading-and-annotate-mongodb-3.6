@@ -350,6 +350,7 @@ public:
     void setShouldConflictWithSecondaryBatchApplication(bool newValue) {
         _shouldConflictWithSecondaryBatchApplication = newValue;
     }
+    //和同步相关，参考Lock::ParallelBatchWriterMode::ParallelBatchWriterMode
     bool shouldConflictWithSecondaryBatchApplication() const {
         return _shouldConflictWithSecondaryBatchApplication;
     }
@@ -358,6 +359,7 @@ protected:
     Locker() {}
 
 private:
+    //和同步相关，参考Lock::ParallelBatchWriterMode::ParallelBatchWriterMode
     bool _shouldConflictWithSecondaryBatchApplication = true;
 };
 

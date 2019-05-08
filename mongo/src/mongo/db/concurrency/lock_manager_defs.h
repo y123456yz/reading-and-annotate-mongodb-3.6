@@ -478,7 +478,7 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESO
 db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
 */
 //不同类型的锁统计在LockStats中实现
-enum ResourceType {
+enum ResourceType { //ResourceType::getType
     // Types used for special resources, use with a hash id from ResourceId::SingletonHashIds.
     RESOURCE_INVALID = 0,
     //全局锁
@@ -510,6 +510,11 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdGlobal = ResourceId(RES
 db/concurrency/lock_state.cpp:const ResourceId resourceIdLocalDB = ResourceId(RESOURCE_DATABASE, StringData("local"));
 db/concurrency/lock_state.cpp:const ResourceId resourceIdOplog = ResourceId(RESOURCE_COLLECTION, StringData("local.oplog.rs"));
 db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
+
+const ResourceId resourceIdGlobal = ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_GLOBAL);
+const ResourceId resourceIdParallelBatchWriterMode =
+    ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_PARALLEL_BATCH_WRITER_MODE);
+
 */ //全局锁 库锁 表锁分别会对应一个该类结构，和ResourceType配合
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
 
@@ -524,8 +529,14 @@ public:
      * Assign hash ids for special resources to avoid accidental reuse of ids. For ids used
      * with the same ResourceType, the order here must be the same as the locking order.
      */
+    /*
+    const ResourceId resourceIdGlobal = ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_GLOBAL);
+    const ResourceId resourceIdParallelBatchWriterMode =
+        ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_PARALLEL_BATCH_WRITER_MODE);
+    */
     enum SingletonHashIds {
         SINGLETON_INVALID = 0,
+        //和同步相关，参考Lock::ParallelBatchWriterMode::ParallelBatchWriterMode
         SINGLETON_PARALLEL_BATCH_WRITER_MODE,
         SINGLETON_GLOBAL,
         SINGLETON_MMAPV1_FLUSH,
@@ -549,6 +560,7 @@ public:
         return _fullHash < rhs._fullHash;
     }
 
+    //ResourceId::toString调用，配合ResourceId::fullHash阅读              
     ResourceType getType() const {
         return static_cast<ResourceType>(_fullHash >> (64 - resourceTypeBits));
     }
