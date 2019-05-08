@@ -488,7 +488,7 @@ void LockHead::migratePartitionedLockHeads() {
 // Have more buckets than CPUs to reduce contention on lock and caches
 //拥有比cpu更多的桶来减少对锁和缓存的竞争
 //CmdLockInfo::run    db.runCommand({lockInfo: 1})命令获取锁输出信息
-const unsigned LockManager::_numLockBuckets(128); //信号量默认赋值128
+const unsigned LockManager::_numLockBuckets(128); //信号量默认赋值128   全局桶，所有客户端请求共用
 
 // Balance scalability of intent locks against potential added cost of conflicting locks.
 // The exact value doesn't appear very important, but should be power of two
@@ -755,7 +755,7 @@ void LockManager::cleanupUnusedLocks() {
     }
 }
 
-//LockManager::getLockInfoBSON中调用
+//LockManager::getLockInfoBSON中调用  把bucket中mode信息为空的lock节点清除掉
 void LockManager::_cleanupUnusedLocksInBucket(LockBucket* bucket) {
     LockBucket::Map::iterator it = bucket->data.begin();
     size_t deletedLockHeads = 0;
@@ -766,7 +766,7 @@ void LockManager::_cleanupUnusedLocksInBucket(LockBucket* bucket) {
             lock->migratePartitionedLockHeads();
         }
 
-        if (lock->grantedModes == 0) {
+        if (lock->grantedModes == 0) {//没有mode信息，则直接清除
             invariant(lock->grantedModes == 0);
             invariant(lock->grantedList._front == nullptr);
             invariant(lock->grantedList._back == nullptr);
@@ -926,7 +926,7 @@ void LockManager::dump() const {
     }
 }
 
-//LockManager::getLockInfoBSON
+//LockManager::getLockInfoBSON    db.runCommand({lockInfo: 1})触发打印
 void LockManager::_dumpBucketToBSON(const std::map<LockerId, BSONObj>& lockToClientMap,
                                     const LockBucket* bucket,
                                     BSONObjBuilder* result) {
@@ -938,9 +938,11 @@ void LockManager::_dumpBucketToBSON(const std::map<LockerId, BSONObj>& lockToCli
             continue;
         }
 
+		//ResourceId::toString
         result->append("resourceId", lock->resourceId.toString());
-
+	
         BSONArrayBuilder grantedLocks;
+		//获取授权列表信息
         for (const LockRequest* iter = lock->grantedList._front; iter != nullptr;
              iter = iter->next) {
             _buildBucketBSON(iter, lockToClientMap, bucket, &grantedLocks);
@@ -948,6 +950,7 @@ void LockManager::_dumpBucketToBSON(const std::map<LockerId, BSONObj>& lockToCli
         result->append("granted", grantedLocks.arr());
 
         BSONArrayBuilder pendingLocks;
+		//获取冲突列表信息
         for (const LockRequest* iter = lock->conflictList._front; iter != nullptr;
              iter = iter->next) {
             _buildBucketBSON(iter, lockToClientMap, bucket, &pendingLocks);
@@ -1064,7 +1067,7 @@ void LockManager::getLockInfoBSON(const std::map<LockerId, BSONObj>& lockToClien
         stdx::lock_guard<SimpleMutex> scopedLock(bucket->mutex);
 
         _cleanupUnusedLocksInBucket(bucket);
-        if (!bucket->data.empty()) {
+        if (!bucket->data.empty()) { //输出该bucket上拥有mode信息的节点信息
             BSONObjBuilder b;
             _dumpBucketToBSON(lockToClientMap, bucket, &b);
             lockInfo.append(b.obj());
@@ -1342,8 +1345,11 @@ ResourceId::ResourceId(ResourceType type, const std::string& ns)
 
 ResourceId::ResourceId(ResourceType type, uint64_t hashId) : _fullHash(fullHash(type, hashId)) {}
 
+//_dumpBucketToBSON     db.runCommand({lockInfo: 1}) 触发打印
 std::string ResourceId::toString() const {
     StringBuilder ss;
+	// "resourceId" : "{2305843009213693953: Global, 1}",
+	//ResourceId::getType
     ss << "{" << _fullHash << ": " << resourceTypeName(getType()) << ", " << getHashId();
     if (getType() == RESOURCE_MUTEX) {
         ss << ", " << Lock::ResourceMutex::getName(*this);
@@ -1401,6 +1407,7 @@ bool isModeCovered(LockMode mode, LockMode coveringMode) {
         LockConflictsTable[coveringMode];
 }
 
+//ResourceId::toString
 const char* resourceTypeName(ResourceType resourceType) {
     return ResourceTypeNames[resourceType];
 }

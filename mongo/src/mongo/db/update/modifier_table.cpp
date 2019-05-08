@@ -139,6 +139,7 @@ MONGO_INITIALIZER(ModifierTable)(InitializerContext* context) {
     return Status::OK();
 }
 
+
 ModifierType getType(StringData typeStr) {
     NameMap::const_iterator it = MODIFIER_NAME_MAP->find(typeStr);
     if (it == MODIFIER_NAME_MAP->end()) {

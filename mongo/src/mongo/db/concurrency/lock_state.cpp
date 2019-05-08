@@ -797,10 +797,10 @@ void LockerImpl<IsForMMAPV1>::restoreLockState(const Locker::LockSnapshot& state
     invariant(_modeForTicket != MODE_NONE);
 }
 
-//全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
-//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+//全局锁上锁过程LockerImpl<>::_lockGlobalBegin   
+//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<>::lock
 
-//全局锁_lockGlobalBegin    库锁 写锁 LockResult LockerImpl<IsForMMAPV1>::lock 都会执行该函数
+//全局锁_lockGlobalBegin    库锁 写锁 LockResult LockerImpl<>::lock 都会执行该函数
 template <bool IsForMMAPV1>  ////wiredtiger存储引擎LockerImpl对应DefaultLockerImpl
 LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     dassert(!getWaitingResource().isValid());
@@ -1127,6 +1127,11 @@ template class LockerImpl<false>;
 const ResourceId resourceIdLocalDB = ResourceId(RESOURCE_DATABASE, StringData("local"));
 const ResourceId resourceIdOplog = ResourceId(RESOURCE_COLLECTION, StringData("local.oplog.rs"));
 const ResourceId resourceIdAdminDB = ResourceId(RESOURCE_DATABASE, StringData("admin"));
+
+/*
+db/concurrency/d_concurrency.cpp:      _pbwm(opCtx->lockState(), resourceIdParallelBatchWriterMode),
+db/concurrency/d_concurrency.cpp:    : _pbwm(lockState, resourceIdParallelBatchWriterMode, MODE_X),
+*/ //和同步相关，参考Lock::ParallelBatchWriterMode::ParallelBatchWriterMode
 const ResourceId resourceIdParallelBatchWriterMode =
     ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_PARALLEL_BATCH_WRITER_MODE);
 
