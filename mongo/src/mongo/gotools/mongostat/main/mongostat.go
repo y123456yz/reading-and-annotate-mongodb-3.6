@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+"fmt"
 
 	"github.com/mongodb/mongo-tools/common/log"
 	"github.com/mongodb/mongo-tools/common/options"
@@ -222,6 +223,7 @@ func main() {
 	}
 
 	var discoverChan chan string
+        fmt.Fprintf(os.Stderr, "yang test %t", statOpts.Discover)
 	if statOpts.Discover {
 		discoverChan = make(chan string, 128)
 	}
@@ -239,7 +241,6 @@ func main() {
 	for _, v := range seedHosts {
 		stat.AddNewNode(v)
 	}
-
 	// kick it off
 	err = stat.Run()
 	formatter.Finish()

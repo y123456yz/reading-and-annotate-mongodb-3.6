@@ -390,7 +390,7 @@ public:
 } cmdUpdate;
 
 //class CmdDelete final : public WriteCommand { //yang add change
-class CmdDelete : public WriteCommand {
+class CmdDelete : public WriteCommand { //db.xx.remove操作也是转换为delete执行的
 public:
     CmdDelete() : WriteCommand("delete") {}
 

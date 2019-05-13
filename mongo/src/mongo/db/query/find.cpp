@@ -128,6 +128,7 @@ void beginQueryOp(OperationContext* opCtx,
     curOp->setNS_inlock(nss.ns());
 }
 
+//FindCmd::run
 void endQueryOp(OperationContext* opCtx,
                 Collection* collection,
                 const PlanExecutor& exec,

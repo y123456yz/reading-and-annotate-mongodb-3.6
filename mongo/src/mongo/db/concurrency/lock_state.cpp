@@ -377,6 +377,7 @@ Locker::ClientState LockerImpl<IsForMMAPV1>::getClientState() const {
 }
 
 //LockerImpl<>::restoreLockState
+//全局锁获取实际上不是走的这里，而是Lock::GlobalLock::_enqueue->lock_state.h中的lockGlobalBegin->LockerImpl<>::_lockGlobalBegin
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockGlobal(LockMode mode) {
     LockResult result = _lockGlobalBegin(mode, Milliseconds::max());
@@ -402,12 +403,12 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RE
 
 //serverStatus.globalLock 或者 mongostat （qr|qw ar|aw指标）能查看mongod globalLock的各个指标情况。
 
-//全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
-//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+//全局锁上锁过程LockerImpl<>::_lockGlobalBegin   
+//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<>::lock
 
 //Lock::GlobalLock::_enqueue->lock_state.h中的lockGlobalBegin调用
 //LockerImpl<>::lockGlobal中调用  
-template <bool IsForMMAPV1>
+template <bool IsForMMAPV1>  //等待获取全局锁成功见Lock::GlobalLock::GlobalLock->Lock::GlobalLock::waitForLock->LockerImpl<>::lockGlobalComplete
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
     if (_modeForTicket == MODE_NONE) {
@@ -448,7 +449,7 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
     return result;
 }
 
-//LockerImpl<>::lockGlobal   Lock::GlobalLock::waitForLock
+//LockerImpl<>::lockGlobal    Lock::GlobalLock::GlobalLock->Lock::GlobalLock::waitForLock
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockGlobalComplete(Milliseconds timeout) {
     return lockComplete(resourceIdGlobal, getLockMode(resourceIdGlobal), timeout, false);
@@ -551,9 +552,9 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
 }
 
 //全局锁上锁过程LockerImpl<IsForMMAPV1>::_lockGlobalBegin   
-//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<IsForMMAPV1>::lock
+//RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<>::lock
 
-//LockerImpl<IsForMMAPV1>::lock和LockerImpl<IsForMMAPV1>::unlock对应
+//LockerImpl<>::lock和LockerImpl<>::unlock对应
 
 //Lock::DBLock::DBLock  Lock::DBLock::relockWithMode
 //Lock::CollectionLock::CollectionLock

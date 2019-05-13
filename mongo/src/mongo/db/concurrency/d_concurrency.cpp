@@ -195,12 +195,12 @@ void Lock::GlobalLock::_unlock() {
         _result = LOCK_INVALID;
     }
 }
-//AutoGetCollection::AutoGetCollection
+//insertBatchAndHandleErrors->AutoGetCollection::AutoGetCollection
 Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
     : _id(RESOURCE_DATABASE, db),
       _opCtx(opCtx),
       _mode(mode),
-      //全局锁初始化构造
+      //全局锁初始化构造  Lock::GlobalLock::GlobalLock
       _globalLock(opCtx, isSharedLockMode(_mode) ? MODE_IS : MODE_IX, UINT_MAX) {
     massert(28539, "need a valid database name", !db.empty() && nsIsDbOnly(db));
 
@@ -213,7 +213,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
         _mode = MODE_X;
     }
 
-	//LockerImpl<IsForMMAPV1>::lock
+	//LockerImpl<>::lock
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode)); //OperationContext::lockState->LockerImpl<>::lock
 }
 

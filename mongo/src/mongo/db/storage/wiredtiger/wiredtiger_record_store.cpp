@@ -1232,8 +1232,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV≤Â»Îwiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
-		log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id
-				<< " value:" << redact(record.data.toBson());
+		log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

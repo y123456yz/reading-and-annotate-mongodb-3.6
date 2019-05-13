@@ -73,7 +73,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      LockMode modeDB,
                                      LockMode modeColl,
                                      ViewMode viewMode)
-    //这里先构造库锁，库锁Lock::DBLock->_globalLock里面会构造全局锁
+    //这里先构造库锁，库锁Lock::DBLock::DBLock->_globalLock里面会构造全局锁
     : AutoGetCollection(opCtx, nss, modeColl, viewMode, Lock::DBLock(opCtx, nss.db(), modeDB)) {}
 
 //上面的AutoGetCollection::AutoGetCollection调用
@@ -147,6 +147,7 @@ AutoStatsTracker::~AutoStatsTracker() {
                 curOp->getNS(),
                 curOp->getLogicalOp(),
                 _lockType,
+                //这里把消耗的时间记录下来
                 durationCount<Microseconds>(curOp->elapsedTimeExcludingPauses()),
                 curOp->isCommand(),
                 curOp->getReadWriteType());

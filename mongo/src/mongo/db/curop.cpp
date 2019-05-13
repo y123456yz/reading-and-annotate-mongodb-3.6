@@ -145,7 +145,7 @@ BSONObj upconvertGetMoreEntry(const NamespaceString& nss, CursorId cursorId, int
  * The stack itself is represented in the _parent pointers of the CurOp class.
  */ //CurOp可以参考runQuery  performInserts(insert操作)
  //所有的CurOpStack都会存入到CurOp._curopStack
-class CurOp::CurOpStack {
+class CurOp::CurOpStack { 
     MONGO_DISALLOW_COPYING(CurOpStack);
 
 public:
@@ -262,6 +262,7 @@ void CurOp::setNS_inlock(StringData ns) {
     _ns = ns.toString();
 }
 
+//execCommandDatabase   ServiceEntryPointMongod::handleRequest
 void CurOp::ensureStarted() { //例如runQuery中会调用
     if (_start == 0) {
         _start = curTimeMicros64();
@@ -341,6 +342,8 @@ void appendAsObjOrString(StringData name,
 }
 }  // namespace
 
+////use admin;  db.runCommand({lockInfo: 1})
+//CmdLockInfo::run
 void CurOp::reportState(BSONObjBuilder* builder, bool truncateOps) {
     if (_start) {
         builder->append("secs_running", durationCount<Seconds>(elapsedTimeTotal()));
@@ -424,7 +427,7 @@ LockStats<>::_report(db.serverStatus().locks查看)中获取相关信息,这里面是总的锁相
 
 command test.coll appName: "MongoDB Shell" command: insert { insert: "coll", ordered: true, $db: "test" } ninserted:1 keysInserted:1 numYields:0 reslen:29 locks:{ Global: { acquireCount: { r: 3, w: 3 } }, Database: { acquireCount: { w: 2, W: 1 } }, Collection: { acquireCount: { w: 2 } } } protocol:op_msg 109ms
 慢日志记录 
-*/ //ServiceEntryPointMongod::handleRequest中执行，拼接日志字符串
+*/ //ServiceEntryPointMongod::handleRequest  finishCurOp中执行，拼接日志字符串
 string OpDebug::report(Client* client,
                        const CurOp& curop,
                        const SingleThreadedLockStats& lockStats) const {
@@ -537,6 +540,7 @@ string OpDebug::report(Client* client,
         s << " protocol:" << getProtoString(networkOp);
     }
 
+	//executionTimeMicros赋值见elapsedTimeExcludingPauses
     s << " " << (executionTimeMicros / 1000) << "ms";
 
     return s.str();
@@ -628,7 +632,7 @@ void OpDebug::append(const CurOp& curop,
         b.append("planSummary", curop.getPlanSummary());
     }
 
-    if (!execStats.isEmpty()) {
+    if (!execStats.isEmpty()) { //赋值见endQueryOp
         b.append("execStats", execStats);
     }
 }
