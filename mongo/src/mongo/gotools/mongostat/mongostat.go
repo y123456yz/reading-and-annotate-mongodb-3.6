@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+        "os"
+        "fmt"
 
 	"github.com/mongodb/mongo-tools/common/db"
 	"github.com/mongodb/mongo-tools/common/log"
@@ -275,7 +277,8 @@ func (node *NodeMonitor) Poll(discover chan string, checkShards bool) (*status.S
 
 	err = s.DB("admin").Run(bson.D{{"serverStatus", 1}, {"recordStats", 0}}, stat)
 	if err != nil {
-		log.Logvf(log.DebugLow, "got error calling serverStatus against server %v", node.host)
+	        fmt.Fprintf(os.Stderr, "yang test xxx 1111111111111111111111\r\n")
+        	log.Logvf(log.DebugLow, "got error calling serverStatus against server %v", node.host)
 		return nil, err
 	}
 	statMap := make(map[string]interface{})
@@ -293,13 +296,18 @@ func (node *NodeMonitor) Poll(discover chan string, checkShards bool) (*status.S
 			discover <- host
 		}
 	}
+
+        fmt.Fprintf(os.Stderr, "yang test xxx 1111111111111111111111\r\n")
 	node.alias = stat.Host
 	stat.Host = node.host
+        fmt.Printf("%+v  %t\r\n", stat, checkShards)
 	if discover != nil && stat != nil && status.IsMongos(stat) && checkShards {
 		log.Logvf(log.DebugLow, "checking config database to discover shards")
 		shardCursor := s.DB("config").C("shards").Find(bson.M{}).Iter()
 		shard := ConfigShard{}
 		for shardCursor.Next(&shard) {
+                        
+                        fmt.Fprintf(os.Stderr, "yang test xxx %s", shard.Host)
 			shardHosts := strings.Split(shard.Host, ",")
 			for _, shardHost := range shardHosts {
 				discover <- shardHost
@@ -375,6 +383,7 @@ func (mstat *MongoStat) Run() error {
 		go func() {
 			for {
 				newHost := <-mstat.Discovered
+                                fmt.Fprintf(os.Stderr, "yang test %s", newHost)
 				err := mstat.AddNewNode(newHost)
 				if err != nil {
 					log.Logvf(log.Always, "can't add discovered node %v: %v", newHost, err)

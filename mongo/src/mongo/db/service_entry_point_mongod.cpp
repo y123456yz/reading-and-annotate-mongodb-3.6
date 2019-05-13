@@ -744,7 +744,7 @@ void execCommandDatabase(OperationContext* opCtx,
 
         bool retval = false;
 
-        CurOp::get(opCtx)->ensureStarted();
+        CurOp::get(opCtx)->ensureStarted(); //记录开始时间，结束时间见ServiceEntryPointMongod::handleRequest->currentOp.done()
 
         command->incrementCommandsExecuted();
 
@@ -1170,6 +1170,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 	//str::stream s;
 	//s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
 	//log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
+	log() << "yang test ........ServiceEntryPointMongod::handleRequest 11";
 
     DbMessage dbmsg(m);
 	
@@ -1208,7 +1209,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 
 	//启动的时候设置的参数默认是100ms,当操作超过了这个时间且启动时设置--profile为1或者2  
     long long logThresholdMs = serverGlobalParams.slowMS;
-	//时mongodb将记录这次慢操作,1为只记录慢操作,即操作时间大于了设置的slowMS,2表示记录所有操作  
+	//时mongodb将记录这次慢操作,1为只记录慢操作,即操作时间大于了设置的配置,2表示记录所有操作  
     bool shouldLogOpDebug = shouldLog(logger::LogSeverity::Debug(1));
 
     DbResponse dbresponse;
@@ -1262,8 +1263,10 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
             debug.exceptionInfo = ue.toStatus();
         }
     }
+
+	
     currentOp.ensureStarted();
-    currentOp.done();
+    currentOp.done(); //结束时间确定，开始时间在//execCommandDatabase->ensureStarted
     debug.executionTimeMicros = durationCount<Microseconds>(currentOp.elapsedTimeExcludingPauses());
 
     Top::get(opCtx->getServiceContext())
@@ -1276,11 +1279,13 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         ? true
         : c.getPrng().nextCanonicalDouble() < serverGlobalParams.sampleRate;
  
-	//慢日志记录  slowlog record
+	//慢日志记录  slowlog record     慢日志除了这里打印外，update和delete操作的打印在finishCurOp
     if (shouldLogOpDebug || (shouldSample && debug.executionTimeMicros > logThresholdMs * 1000LL)) {
         Locker::LockerInfo lockerInfo;  
 		//OperationContext::lockState  LockerImpl<>::getLockerInfo
         opCtx->lockState()->getLockerInfo(&lockerInfo); 
+
+		//OpDebug::report
         log() << debug.report(&c, currentOp, lockerInfo.stats); //记录慢日志到日志文件
     }
 

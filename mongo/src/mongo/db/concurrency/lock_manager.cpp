@@ -572,6 +572,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     return lock->newRequest(request);
 }
 
+//LockerImpl<>::lockBegin
 LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode newMode) {
     // If we are here, we already hold the lock in some mode. In order to keep it simple, we do
     // not allow requesting a conversion while a lock is already waiting or pending conversion.
@@ -646,7 +647,6 @@ LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode
     }
 }
 
-//newRequest自增，LockManager::unlock中自减
 bool LockManager::unlock(LockRequest* request) {
     // Fast path for decrementing multiple references of the same lock. It is safe to do this
     // without locking, because 1) all calls for the same lock request must be done on the same

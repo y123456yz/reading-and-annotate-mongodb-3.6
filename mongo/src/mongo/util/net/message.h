@@ -61,6 +61,7 @@ enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
     
     dbCommandReply = 2011,
     dbCompressed = 2012,
+    //getProtoString
     dbMsg = 2013,  //3.6版本实际上insert find都是走的该op，参考ServiceEntryPointMongod::handleRequest
 };
 

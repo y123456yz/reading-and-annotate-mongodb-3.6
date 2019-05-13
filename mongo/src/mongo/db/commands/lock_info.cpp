@@ -175,7 +175,8 @@ public:
             // Operation context specific information
             if (clientOpCtx) {
                 BSONObjBuilder infoBuilder;
-                // The client information
+                // The client information   
+                //CurOp::reportState
                 client->reportState(infoBuilder);
 
                 infoBuilder.append("opid", clientOpCtx->getOpID());

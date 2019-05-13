@@ -82,6 +82,7 @@ void _appendUserInfo(const CurOp& c, BSONObjBuilder& builder, AuthorizationSessi
 }  // namespace
 
 
+//慢日志记录到system.profile集合
 void profile(OperationContext* opCtx, NetworkOp op) {
     // Initialize with 1kb at start in order to avoid realloc later
     BufBuilder profileBufBuilder(1024);

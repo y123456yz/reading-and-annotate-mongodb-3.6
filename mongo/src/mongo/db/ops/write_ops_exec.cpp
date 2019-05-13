@@ -82,6 +82,7 @@ MONGO_FP_DECLARE(failAllInserts);
 MONGO_FP_DECLARE(failAllUpdates);
 MONGO_FP_DECLARE(failAllRemoves);
 
+//performUpdates   performDeletes
 void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
     try {
         curOp->done();
@@ -103,18 +104,21 @@ void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
             LOG(3) << "Caught Assertion in " << redact(logicalOpToString(curOp->getLogicalOp()))
                    << ": " << curOp->debug().exceptionInfo.toString();
         }
-
+		
         const bool logAll = logger::globalLogDomain()->shouldLog(logger::LogComponent::kCommand,
                                                                  logger::LogSeverity::Debug(1));
         const bool logSlow = executionTimeMicros > (serverGlobalParams.slowMS * 1000LL);
-
+		
         const bool shouldSample = serverGlobalParams.sampleRate == 1.0
             ? true
             : opCtx->getClient()->getPrng().nextCanonicalDouble() < serverGlobalParams.sampleRate;
-
-        if (logAll || (shouldSample && logSlow)) {
+		
+		//update和delete慢日志这里会记录一次，并且外层的ServiceEntryPointMongod::handleRequest还有记录一次
+        if (logAll || (shouldSample && logSlow)) {//ServiceEntryPointMongod::handleRequest中也会有输出打印
             Locker::LockerInfo lockerInfo;
             opCtx->lockState()->getLockerInfo(&lockerInfo);
+
+			//OpDebug::report
             log() << curOp->debug().report(opCtx->getClient(), *curOp, lockerInfo.stats);
         }
 
@@ -360,7 +364,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             if (collection->getCollection()) //已经有该集合了
                 break;
 
-            collection.reset();  // unlock.  没有则创建集合及相关的索引文件
+            collection.reset();  //    没有则创建集合及相关的索引文件
             makeCollection(opCtx, wholeOp.getNamespace()); 
         }
 
@@ -448,6 +452,7 @@ SingleWriteResult makeWriteResultForInsertOrDeleteRetry() {
 }  // namespace
 
 //以前老版本receivedInsert中调用，3.6新版本在CmdInsert::runImpl中调用
+//performDeletes(CmdDelete::runImpl)  performUpdates(CmdUpdate::runImpl)  performInserts(CmdInsert::runImpl)分别对应删除、更新、插入
 WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     auto& curOp = *CurOp::get(opCtx);
@@ -456,7 +461,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
         // This is the only part of finishCurOp we need to do for inserts because they reuse the
         // top-level curOp. The rest is handled by the top-level entrypoint.
         //performInserts函数执行完成后，需要调用该函数
-        curOp.done(); //执行完成    
+        curOp.done(); //performInserts执行完成后调用，记录执行结束时间    
         Top::get(opCtx->getServiceContext())
             .record(opCtx,
                     wholeOp.getNamespace().ns(),
@@ -652,6 +657,7 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
     return result;
 }
 
+//performDeletes(CmdDelete::runImpl)  performUpdates(CmdUpdate::runImpl)  performInserts(CmdInsert::runImpl)
 WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     uassertStatusOK(userAllowedWriteNS(wholeOp.getNamespace()));
@@ -663,7 +669,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
     size_t stmtIdIndex = 0;
     WriteResult out;
     out.results.reserve(wholeOp.getUpdates().size());
-
+	
     for (auto&& singleOp : wholeOp.getUpdates()) {
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
         if (opCtx->getTxnNumber()) {
@@ -684,7 +690,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
             stdx::lock_guard<Client> lk(*opCtx->getClient());
             curOp.setCommand_inlock(cmd);
         }
-        ON_BLOCK_EXIT([&] { finishCurOp(opCtx, &curOp); });
+        ON_BLOCK_EXIT([&] { finishCurOp(opCtx, &curOp); }); //计算整个操作消耗的时间
         try {
             lastOpFixer.startingOp();
             out.results.emplace_back(
@@ -780,6 +786,7 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
     return result;
 }
 
+//performDeletes(CmdDelete::runImpl)  performUpdates(CmdUpdate::runImpl)  performInserts(CmdInsert::runImpl)
 WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     uassertStatusOK(userAllowedWriteNS(wholeOp.getNamespace()));
@@ -791,6 +798,7 @@ WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& who
     size_t stmtIdIndex = 0;
     WriteResult out;
     out.results.reserve(wholeOp.getDeletes().size());
+	log() << "yang test ........................ performDeletes";
 
     for (auto&& singleOp : wholeOp.getDeletes()) {
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);

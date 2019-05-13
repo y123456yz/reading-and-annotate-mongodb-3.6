@@ -1,6 +1,10 @@
 Building MongoDB
 ================
 
+build mongo-tools  mongostat mongotop 
+cd ./mongo/src/mongo/gotools
+sh build.sh
+
 To build MongoDB, you will need:
 
 * A modern C++ compiler. One of the following is required.

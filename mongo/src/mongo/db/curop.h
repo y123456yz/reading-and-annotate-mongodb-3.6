@@ -118,12 +118,14 @@ public:
     long long keysDeleted{0};   // Number of index keys removed.
     long long writeConflicts{0};
 
+    //赋值见endQueryOp
     BSONObj execStats;  // Owned here.
 
     // error handling
     Status exceptionInfo = Status::OK();
 
     // response info
+    //赋值见elapsedTimeExcludingPauses
     long long executionTimeMicros{0};
     long long nreturned{-1};
     int responseLength{-1};
@@ -280,11 +282,14 @@ public:
     bool isStarted() const {
         return _start > 0;
     }
+
+    //开始时间  elapsedTimeTotal
     long long startTime() {  // micros
         ensureStarted();
-        return _start;
+        return _start; //_start赋值见CurOp::ensureStarted
     }
-    void done() {
+    //结束时间  finishCurOp(delete  update)   performInserts(insert)  ServiceEntryPointMongod::handleRequest中执行
+    void done() { //_start赋值见CurOp::ensureStarted
         _end = curTimeMicros64();
     }
     bool isDone() const {
@@ -344,13 +349,14 @@ public:
      * If this op has not yet been started, returns 0.
      *
      * Illegal to call while the timer is paused.
-     */
+     */ //AutoStatsTracker::~AutoStatsTracker  finishCurOp ServiceEntryPointMongod::handleRequest记录消耗的时间
     Microseconds elapsedTimeExcludingPauses() {
         invariant(!_lastPauseTime);
         if (!isStarted()) {
             return Microseconds{0};
         }
 
+        //消耗的总时间，不包括paused的时间
         return elapsedTimeTotal() - _totalPausedDuration;
     }
 
@@ -461,6 +467,7 @@ private:
     long long _start{0}; //该操作的起始时间 CurOp::ensureStarted
 
     // The time at which this CurOp instance was marked as done.
+    //CurOp::done赋值
     long long _end{0};
 
     // The time at which this CurOp instance had its timer paused, or 0 if the timer is not
