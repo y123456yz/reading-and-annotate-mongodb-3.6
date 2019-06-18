@@ -1,6 +1,10 @@
 # reading-and-annotate-mongodb-3.6.1
 mongodb-3.6.1源码注释分析，持续更新
-
+  
+### .为什么需要对mongodb开源版本做二次开发:  
+===================================  
+* [为何需要对开源mongodb社区版本做二次开发](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/development_mongodb.md)  
+  
 ### .mongos架构性能瓶颈:  
 ===================================  
 > * 瓶颈1、LISTEN操作由listen线程负责，只有一个线程负责listen/accept操作，在高并发场景下会成为性能瓶颈。解决办法：重复利用reuse_port功能，多个线程同时进行listen监听同一个端口    
