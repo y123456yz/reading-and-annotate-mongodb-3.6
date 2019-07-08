@@ -19,7 +19,7 @@ storage:
     indexConfig:
       prefixCompression: true
 net:
-   port: 27117
+   port: 33320
    maxIncomingConnections: 10000
    bindIpAll: true
 operationProfiling:

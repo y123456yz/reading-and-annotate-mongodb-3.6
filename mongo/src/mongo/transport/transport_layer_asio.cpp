@@ -129,6 +129,17 @@ void TransportLayerASIO::end(const SessionHandle& session) {
     asioSession->shutdown();
 }
 
+void TransportLayerASIO::anetSetReuseAddr(int fd) {
+    int yes = 1;
+    /* Make sure connection-intensive things like the redis benckmark
+     * will be able to close/open sockets a zillion of times */
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+        error() << "setsockopt SO_REUSEADDR failed";
+    }
+    return;
+}
+
+
 //TransportLayerASIO::start  accept´¦Àí
 //TransportLayerASIO::setup() listen¼àÌý
 
@@ -184,6 +195,7 @@ Status TransportLayerASIO::setup() {
 
             GenericAcceptor acceptor(*_acceptorIOContext);
             acceptor.open(endpoint.protocol());
+			//SO_REUSEADDRÅäÖÃ
             acceptor.set_option(GenericAcceptor::reuse_address(true));
 
             acceptor.non_blocking(true, ec);
@@ -205,6 +217,7 @@ Status TransportLayerASIO::setup() {
                 }
             }
 #endif
+	
             _acceptors.emplace_back(std::make_pair(std::move(addr), std::move(acceptor)));
         }
     }
