@@ -1,0 +1,19 @@
+
+security:
+   keyFile: /home/mongodb/taxi_business/mongos/mongos_1/keys/keyfile
+
+systemLog:
+  destination: file
+  logAppend: true
+  path: /home/mongodb/taxi_business/mongos/mongos_1/logs/mongos.log
+
+processManagement:
+  fork: true
+  pidFilePath: /home/mongodb/taxi_business/mongos/mongos_1/mongos.pid
+
+net:
+  port: 33320
+  maxIncomingConnections: 20000
+
+sharding:
+  configDB: featdoc/127.0.0.1:8000,127.0.0.1:8001,127.0.0.1:8002
