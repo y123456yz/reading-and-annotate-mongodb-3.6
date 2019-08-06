@@ -1,5 +1,5 @@
 ./autogen.sh
-./configure
+./configure --without-mysql
 make
 sudo make install #optionally
 
