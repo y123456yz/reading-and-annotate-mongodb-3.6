@@ -299,6 +299,7 @@ DiskLoc RecordStoreV1Base::getPrevRecordInExtent(OperationContext* opCtx,
     return result;
 }
 
+//oplog–¥»Î¥Ê¥¢“˝«Ê  CollectionImpl::insertDocumentsForOplog
 Status RecordStoreV1Base::insertRecordsWithDocWriter(OperationContext* opCtx,
                                                      const DocWriter* const* docs,
                                                      const Timestamp*,

@@ -302,6 +302,7 @@ StatusWithMatchExpression CollectionImpl::parseValidator(
     return statusWithMatcher;
 }
 
+//oplog–¥»Î¥Ê¥¢“˝«Ê  _logOpsInner
 Status CollectionImpl::insertDocumentsForOplog(OperationContext* opCtx,
                                                const DocWriter* const* docs,
                                                Timestamp* timestamps,

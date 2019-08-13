@@ -76,6 +76,7 @@ public:
 namespace repl {
 class ReplSettings;
 
+//²Î¿¼logInsertOps
 struct OplogLink {
     OplogLink() = default;
 
