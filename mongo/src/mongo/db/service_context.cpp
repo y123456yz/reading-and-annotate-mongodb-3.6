@@ -199,7 +199,7 @@ transport::ServiceExecutor* ServiceContext::getServiceExecutor() const {
     return _serviceExecutor.get();
 }
 
-//_initAndListen中有调用
+//_initAndListen中有调用 赋值为OpObserverImpl类
 void ServiceContext::setOpObserver(std::unique_ptr<OpObserver> opObserver) {
     _opObserver = std::move(opObserver);
 }

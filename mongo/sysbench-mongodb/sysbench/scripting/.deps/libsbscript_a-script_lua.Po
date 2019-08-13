@@ -6,10 +6,10 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/unistd.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
@@ -23,23 +23,23 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
  /usr/include/endian.h /usr/include/bits/endian.h \
  /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
  /usr/include/xlocale.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/fcntl.h /usr/include/bits/fcntl.h \
  /usr/include/bits/fcntl-linux.h /usr/include/bits/uio.h \
  /usr/include/sys/types.h /usr/include/sys/sysmacros.h \
- /usr/include/bits/pthreadtypes.h /usr/include/bits/stat.h \
- /usr/include/sys/stat.h /usr/include/stdlib.h \
+ /usr/include/bits/pthreadtypes.h /usr/include/linux/falloc.h \
+ /usr/include/bits/stat.h /usr/include/sys/stat.h /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/alloca.h /usr/include/bits/stdlib-float.h \
  /usr/include/string.h /usr/include/bits/string.h \
  /usr/include/bits/string2.h /usr/include/bits/timex.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/inttypes.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
  /usr/local/include/libbson-1.0/bson-atomic.h \
  /usr/local/include/libbson-1.0/bson-context.h \
  /usr/local/include/libbson-1.0/bson-types.h \
@@ -152,7 +152,7 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
 
 /usr/include/gnu/stubs-64.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 /usr/include/bits/types.h:
 
@@ -164,7 +164,7 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
 
 /usr/include/wchar.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -218,9 +218,9 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
 
 /usr/include/xlocale.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -248,6 +248,8 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
 
 /usr/include/bits/pthreadtypes.h:
 
+/usr/include/linux/falloc.h:
+
 /usr/include/bits/stat.h:
 
 /usr/include/sys/stat.h:
@@ -270,7 +272,7 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
 
 /usr/include/bits/timex.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -278,7 +280,7 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
 
 /usr/include/inttypes.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
 
 /usr/local/include/libbson-1.0/bson-atomic.h:
 

@@ -1,2 +1,7 @@
 scons mongod -j 3
 
+
+Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-build-BRpFUf/subprocess32/ 执行如下命令
+python -m pip install --upgrade --force pip 
+pip install setuptools==33.1.1
+sudo yum install python-devel

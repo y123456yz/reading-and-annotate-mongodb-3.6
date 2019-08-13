@@ -50,10 +50,10 @@
 #define HAVE_LARGE_PAGES 1
 
 /* Define to 1 if you have the `aio' library (-laio). */
-#define HAVE_LIBAIO 1
+/* #undef HAVE_LIBAIO */
 
 /* Define to 1 if your system has <libaio.h> header file */
-#define HAVE_LIBAIO_H 1
+/* #undef HAVE_LIBAIO_H */
 
 /* Define if you have the attachsql library. */
 /* #undef HAVE_LIBATTACHSQL */
@@ -248,7 +248,7 @@
 #define USE_MONGODB 1
 
 /* Define to 1 if you want to compile with MySQL support */
-#define USE_MYSQL 1
+/* #undef USE_MYSQL */
 
 /* Define to 1 if you want to compile with Oracle support */
 /* #undef USE_ORACLE */

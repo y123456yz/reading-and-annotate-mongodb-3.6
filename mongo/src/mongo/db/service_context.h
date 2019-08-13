@@ -521,7 +521,7 @@ private:
 
     /**
      * The registered OpObserver.
-     */
+     */ //赋值见ServiceContext::setOpObserver  //_initAndListen中有调用 赋值为OpObserverImpl类
     std::unique_ptr<OpObserver> _opObserver;
     //注意_tickSource  _fastClockSource  _preciseClockSource的区别
     std::unique_ptr<TickSource> _tickSource;

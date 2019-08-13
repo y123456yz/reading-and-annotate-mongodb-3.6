@@ -206,6 +206,25 @@ void Top::appendLatencyStats(StringData ns, bool includeHistograms, BSONObjBuild
     builder->append("latencyStats", latencyStatsBuilder.obj());
 }
 
+////mongod读写的时间延迟统计  ServiceEntryPointMongod::handleRequest
+/*
+featdoc_1:PRIMARY> db.serverStatus().opLatencies
+{
+        "reads" : {
+                "latency" : NumberLong(10756983),
+                "ops" : NumberLong(39463)
+        },
+        "writes" : {
+                "latency" : NumberLong(43305),
+                "ops" : NumberLong(8)
+        },
+        "commands" : {
+                "latency" : NumberLong(117648772),
+                "ops" : NumberLong(144200)
+        }
+}
+featdoc_1:PRIMARY> 
+*/
 void Top::incrementGlobalLatencyStats(OperationContext* opCtx,
                                       uint64_t latency,
                                       Command::ReadWriteType readWriteType) {

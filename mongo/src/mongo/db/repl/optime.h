@@ -160,6 +160,7 @@ public:
 
 private:
     Timestamp _timestamp;
+    //赋值见OpTime初始化构造
     long long _term = kInitialTerm;
 };
 

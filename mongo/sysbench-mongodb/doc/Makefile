@@ -212,19 +212,19 @@ am__relativize = \
     dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
   done; \
   reldir="$$dir2"
-ACLOCAL = ${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing aclocal-1.13
+ACLOCAL = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing aclocal-1.13
 AMTAR = $${TAR-tar}
 AM_CFLAGS = -W -Wall -Wextra -Wpointer-arith -Wbad-function-cast   -Wstrict-prototypes -Wnested-externs -Winline   -funroll-loops  -Wundef -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wcast-align        -pthread -I/usr/local/include/libmongoc-1.0 -I/usr/local/include/libbson-1.0 -L/usr/local/lib -lsasl2 -lssl -lcrypto -lrt -lmongoc-1.0 -lbson-1.0
 AM_CPPFLAGS =  -I$(top_srcdir)/sysbench
 AM_DEFAULT_VERBOSITY = 1
 AM_LDFLAGS =  -L/usr/local/lib -lsasl2 -lssl -lcrypto -lrt -lmongoc-1.0 -lbson-1.0
 AR = ar
-AUTOCONF = ${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing autoconf
-AUTOHEADER = ${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing autoheader
-AUTOMAKE = ${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing automake-1.13
+AUTOCONF = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing autoconf
+AUTOHEADER = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing autoheader
+AUTOMAKE = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing automake-1.13
 AWK = gawk
-CAT_ENTRY_END = -->
-CAT_ENTRY_START = <!--
+CAT_ENTRY_END = 
+CAT_ENTRY_START = 
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CC_VERSION = gcc (GCC) 5.4.0
@@ -260,18 +260,18 @@ LIBATTACHSQL_PREFIX =
 LIBDRIZZLE = 
 LIBDRIZZLE_PREFIX = 
 LIBOBJS = 
-LIBS = -laio -lm 
+LIBS = -lm 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBATTACHSQL = 
 LTLIBDRIZZLE = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing makeinfo
+MAKEINFO = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
-MYSQL_CFLAGS = -I/usr/include/mysql
-MYSQL_LIBS = -L/usr/lib64/mysql -lmysqlclient -lpthread -lz -lm -lssl -lcrypto -ldl
+MYSQL_CFLAGS = 
+MYSQL_LIBS = 
 NM = /usr/bin/nm -B
 NMEDIT = 
 OBJDUMP = objdump
@@ -299,13 +299,13 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = strip
 VERSION = 1.0
-XML_CATALOG = /etc/xml/catalog
+XML_CATALOG = 
 XSLTPROC = xsltproc
-XSLTPROC_FLAGS = --nonet
-abs_builddir = /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/doc
-abs_srcdir = /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/doc
-abs_top_builddir = /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb
-abs_top_srcdir = /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb
+XSLTPROC_FLAGS = 
+abs_builddir = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/doc
+abs_srcdir = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/doc
+abs_top_builddir = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb
+abs_top_srcdir = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -335,14 +335,14 @@ host_vendor = unknown
 htmldir = $(prefix)/share/doc/sysbench
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/install-sh
+install_sh = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
-mysqlconfig = /usr/bin/mysql_config
+mysqlconfig = 
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 pgconfig = 
@@ -705,16 +705,16 @@ uninstall-am: uninstall-dist_htmlDATA
 	uninstall-dist_htmlDATA
 
 
-manual.html: ${top_srcdir}/doc/manual.xml
-	XML_CATALOG_FILES=$(XML_CATALOG_FILES) $(XSLTPROC) $(XSLTPROC_FLAGS) -o $@ $(XHTML_STYLESHEET) $<
+#manual.html: ${top_srcdir}/doc/manual.xml
+#	XML_CATALOG_FILES=$(XML_CATALOG_FILES) $(XSLTPROC) $(XSLTPROC_FLAGS) -o $@ $(XHTML_STYLESHEET) $<
 
-chunk: ${top_srcdir}/doc/manual.xml
-	$(XSLTPROC) $(XSLTPROC_FLAGS) $(CHUNK_XHTML_STYLESHEET) $<
+#chunk: ${top_srcdir}/doc/manual.xml
+#	$(XSLTPROC) $(XSLTPROC_FLAGS) $(CHUNK_XHTML_STYLESHEET) $<
 
-#chunk:
+chunk:
 
-#manual.html:
-#	touch $@
+manual.html:
+	touch $@
 
 clean-local:
 	$(RM) -f *.html

@@ -276,6 +276,7 @@ StorageInterfaceImpl::createCollectionForBulkLoading(
     return {std::move(loader)};
 }
 
+//StorageInterfaceImpl::initializeRollbackID
 Status StorageInterfaceImpl::insertDocument(OperationContext* opCtx,
                                             const NamespaceString& nss,
                                             const TimestampedBSONObj& doc,

@@ -487,6 +487,7 @@ private:
 
     //事务相关，参考http://www.mongoing.com/%3Fp%3D6084
     boost::optional<LogicalSessionId> _lsid;
+    //赋值来源见//initializeOperationSessionInfo中赋值
     boost::optional<TxnNumber> _txnNumber;
 
     //Lock::DBLock::DBLock中调用使用,赋值见ServiceContextMongoD::_newOpCtx

@@ -5,9 +5,9 @@ lobject.o: lobject.c /usr/include/stdc-predef.h /usr/include/ctype.h \
  /usr/include/bits/typesizes.h /usr/include/endian.h \
  /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
  /usr/include/bits/byteswap-16.h /usr/include/xlocale.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  /usr/include/stdio.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/stdlib.h \
@@ -19,8 +19,8 @@ lobject.o: lobject.c /usr/include/stdc-predef.h /usr/include/ctype.h \
  /usr/include/bits/stdlib-float.h /usr/include/string.h \
  /usr/include/bits/string.h /usr/include/bits/string2.h lua.h luaconf.h \
  ../../../../config/config.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
@@ -59,11 +59,11 @@ lobject.o: lobject.c /usr/include/stdc-predef.h /usr/include/ctype.h \
 
 /usr/include/xlocale.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 /usr/include/stdio.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 /usr/include/libio.h:
 
@@ -115,9 +115,9 @@ luaconf.h:
 
 ../../../../config/config.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 

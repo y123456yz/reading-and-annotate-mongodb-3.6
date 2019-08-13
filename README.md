@@ -151,6 +151,14 @@ https://github.com/y123456yz/reading-and-annotate-rocksdb-6.1.2
 > * .AutoGetCollection初始化构造过程及其与锁的关系分析  
 > * .命令汇总，lock stats分析
 > * .use admin;db.runCommand({lockInfo: 1})命令锁信息详细分析  
+> * .mongod读写时间延迟分析  
+> * .OpObserverImpl类oplog操作接口实现分析 
+> * .initializeOperationSessionInfo osi解析数据包分析，提取txn  
+> * .
+> * .
+> * .
+> * .
+> * .
 > * .
 > * .
 > * .

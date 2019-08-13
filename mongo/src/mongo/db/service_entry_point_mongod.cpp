@@ -1269,6 +1269,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     currentOp.done(); //结束时间确定，开始时间在//execCommandDatabase->ensureStarted
     debug.executionTimeMicros = durationCount<Microseconds>(currentOp.elapsedTimeExcludingPauses());
 
+	//mongod读写的时间延迟统计  ServiceEntryPointMongod::handleRequest
     Top::get(opCtx->getServiceContext())
         .incrementGlobalLatencyStats(
             opCtx,
