@@ -1,10 +1,9 @@
 ltablib.o: ltablib.c /usr/include/stdc-predef.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
- lua.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h lua.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  luaconf.h ../../../../config/config.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h /usr/include/bits/posix1_lim.h \
@@ -17,19 +16,19 @@ ltablib.o: ltablib.c /usr/include/stdc-predef.h \
 
 /usr/include/stdc-predef.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 lua.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 luaconf.h:
 
 ../../../../config/config.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 

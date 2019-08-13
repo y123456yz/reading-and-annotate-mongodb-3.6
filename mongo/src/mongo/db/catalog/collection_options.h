@@ -47,7 +47,7 @@ extern bool enableCollectionUUIDs;  // TODO(SERVER-27993) Replace based on upgra
  * with the collection until it is dropped, so even across renames. A copied collection must have
  * its own new unique UUID though.
  */
-using CollectionUUID = UUID;
+using CollectionUUID = UUID;  //UUID代表唯一标识码
 //CollectionOptions.uuid成员
 using OptionalCollectionUUID = boost::optional<CollectionUUID>;
 

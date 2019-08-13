@@ -32,7 +32,7 @@
 
 namespace mongo {
 
-//_initAndListen会使用该类
+//_initAndListen会使用该类  oplog相关操作在该接口实现
 class OpObserverImpl : public OpObserver {
     MONGO_DISALLOW_COPYING(OpObserverImpl);
 

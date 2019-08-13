@@ -122,8 +122,10 @@ void DataFileSync::_flushed(int ms) {
 }
 
 
+//MAMP存储引擎相关
 class MemJournalServerStatusMetric : public ServerStatusMetric {
 public:
+	//db.serverstatus.mem.其他统计项在class MemBase 类中实现
     MemJournalServerStatusMetric() : ServerStatusMetric(".mem.mapped") {}
     virtual void appendAtLeaf(BSONObjBuilder& b) const {
         int m = MemoryMappedFile::totalMappedLengthInMB();

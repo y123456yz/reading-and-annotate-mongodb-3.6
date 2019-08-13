@@ -381,11 +381,13 @@ void OperationContext::markKilled(ErrorCodes::Error killCode) {
     }
 }
 
+//initializeOperationSessionInfo
 void OperationContext::setLogicalSessionId(LogicalSessionId lsid) {
     invariant(!_lsid);
     _lsid = std::move(lsid);
 }
 
+//initializeOperationSessionInfo÷–∏≥÷µ
 void OperationContext::setTxnNumber(TxnNumber txnNumber) {
     invariant(_lsid);
     invariant(!_txnNumber);

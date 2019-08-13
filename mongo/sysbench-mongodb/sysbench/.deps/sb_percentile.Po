@@ -2,7 +2,7 @@ sb_percentile.o: sb_percentile.c /usr/include/stdc-predef.h \
  ../config/config.h /usr/include/stdlib.h /usr/include/features.h \
  /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/endian.h /usr/include/bits/endian.h \
  /usr/include/bits/byteswap.h /usr/include/bits/types.h \
@@ -23,7 +23,7 @@ sb_percentile.o: sb_percentile.c /usr/include/stdc-predef.h \
  /usr/include/bits/setjmp.h sb_logger.h sb_global.h sb_options.h \
  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
  /usr/include/wchar.h \
- /home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h sb_list.h sb_timer.h /usr/include/sys/time.h
 
@@ -43,7 +43,7 @@ sb_percentile.o: sb_percentile.c /usr/include/stdc-predef.h \
 
 /usr/include/gnu/stubs-64.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 /usr/include/bits/waitflags.h:
 
@@ -133,7 +133,7 @@ sb_options.h:
 
 /usr/include/wchar.h:
 
-/home/yyz/gcc-5.4/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 /usr/include/bits/stdio_lim.h:
 

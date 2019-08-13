@@ -315,6 +315,7 @@ void appendSessionInfo(OperationContext* opCtx,
     }
 }
 
+//logInsertOps
 OplogDocWriter _logOpWriter(OperationContext* opCtx,
                             const char* opstr,
                             const NamespaceString& nss,
@@ -330,7 +331,7 @@ OplogDocWriter _logOpWriter(OperationContext* opCtx,
                             const OplogLink& oplogLink) {
     BSONObjBuilder b(256);
 
-    b.append("ts", optime.getTimestamp());
+    b.append("ts", optime.getTimestamp()); //oplog时间戳
     if (optime.getTerm() != -1)
         b.append("t", optime.getTerm());
     b.append("h", hashNew);
@@ -450,6 +451,7 @@ OpTime logOp(OperationContext* opCtx,
     return slot.opTime;
 }
 
+//OpObserverImpl::onInserts
 std::vector<OpTime> logInsertOps(OperationContext* opCtx,
                                  const NamespaceString& nss,
                                  OptionalCollectionUUID uuid,
@@ -473,7 +475,7 @@ std::vector<OpTime> logInsertOps(OperationContext* opCtx,
     Lock::DBLock lk(opCtx, "local", MODE_IX);
     Lock::CollectionLock lock(opCtx->lockState(), _oplogCollectionName, MODE_IX);
 
-    WriteUnitOfWork wuow(opCtx);
+    WriteUnitOfWork wuow(opCtx); //单行事物初始化
 
     OperationSessionInfo sessionInfo;
     OplogLink oplogLink;
@@ -494,7 +496,7 @@ std::vector<OpTime> logInsertOps(OperationContext* opCtx,
             _getNextOpTimes(opCtx, oplog, 1, &insertStatementOplogSlot);
         }
         writers.emplace_back(_logOpWriter(opCtx,
-                                          "i",
+                                          "i",  
                                           nss,
                                           uuid,
                                           begin[i].doc,
@@ -520,7 +522,7 @@ std::vector<OpTime> logInsertOps(OperationContext* opCtx,
     auto lastOpTime = opTimes.back();
     invariant(!lastOpTime.isNull());
     _logOpsInner(opCtx, nss, basePtrs.get(), timestamps.get(), count, oplog, lastOpTime);
-    wuow.commit();
+    wuow.commit(); //事物提交
     return opTimes;
 }
 

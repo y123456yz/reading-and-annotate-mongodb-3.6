@@ -57,7 +57,7 @@
 #include "mongo/util/hex.h"
 #include "mongo/util/log.h"
 #include "mongo/util/mongoutils/str.h"
-#include <faiss/IndexFlat.h>
+//#include <faiss/IndexFlat.h>
 
 //#define TRACING_ENABLED 0  yang change
 #define TRACING_ENABLED 1

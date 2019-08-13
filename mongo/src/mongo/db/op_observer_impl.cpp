@@ -121,6 +121,7 @@ BSONObj makeCollModCmdObj(const BSONObj& collModCmd,
     return cmdObjBuilder.obj();
 }
 
+//获取当前时间
 Date_t getWallClockTimeForOpLog(OperationContext* opCtx) {
     auto const clockSource = opCtx->getServiceContext()->getFastClockSource();
     return clockSource->now();
@@ -300,6 +301,11 @@ void OpObserverImpl::onCreateIndex(OperationContext* opCtx,
     }
 }
 
+/* db.test21.insert({})
+featdoc_1:PRIMARY> db.oplog.rs.find().sort({"ts":-1}).limit(1)
+{ "ts" : Timestamp(1565678085, 1), "t" : NumberLong(3), "h" : NumberLong("2408236785374215015"), "v" : 2, "op" : "i", "ns" : "test21.test21", "wall" : ISODate("2019-08-13T06:34:45.084Z"), "o" : { "_id" : ObjectId("5d525a0513cc7f11ab8672ed"), "name" : "yangyazhou" } }
+*/
+//CollectionImpl::insertDocuments中调用写oplog
 void OpObserverImpl::onInserts(OperationContext* opCtx,
                                const NamespaceString& nss,
                                OptionalCollectionUUID uuid,
@@ -308,6 +314,7 @@ void OpObserverImpl::onInserts(OperationContext* opCtx,
                                bool fromMigrate) {
     Session* const session = opCtx->getTxnNumber() ? OperationContextSession::get(opCtx) : nullptr;
 
+	//获取当前时间
     const auto lastWriteDate = getWallClockTimeForOpLog(opCtx);
 
     const auto opTimeList =

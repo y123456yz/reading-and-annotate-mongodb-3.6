@@ -379,7 +379,7 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
         return status;
     invariant(sid == opCtx->recoveryUnit()->getSnapshotId());
 
-	// 更新Oplog
+	// 更新Oplog  OpObserverImpl::onInserts
     getGlobalServiceContext()->getOpObserver()->onInserts(
         opCtx, ns(), uuid(), begin, end, fromMigrate);
 

@@ -39,6 +39,8 @@
 
 namespace mongo {
 
+//execCommandDatabase  execCommandDatabase中执行
+//每个op操作都会调用该函数
 void initializeOperationSessionInfo(OperationContext* opCtx,
                                     const BSONObj& requestBody,
                                     bool requiresAuth,
@@ -58,7 +60,24 @@ void initializeOperationSessionInfo(OperationContext* opCtx,
             return;
         }
     }
+	/*
+	OperationSessionInfoFromClient:
+	  description: "Parser for pulling out the sessionId/txnNumber combination from commands"
+	  strict: false
+	  fields:
+		lsid:
+		  type: LogicalSessionFromClient
+		  cpp_name: sessionId
+		  optional: true
+		txnNumber:
+		  description: "The transaction number relative to the session in which a particular write
+						operation executes."
+		  type: TxnNumber
+		  optional: true
 
+	*/
+	//从requestBody内容按照mongo/db/logical_session_id.idl格式解析,并赋值给OperationSessionInfo类，通过osi返回
+	//OperationSessionInfoFromClient类见mongo/build/opt/mongo/db/logical_session_id_gen.h  logical_session_id_gen.cpp
     auto osi = OperationSessionInfoFromClient::parse("OperationSessionInfo"_sd, requestBody);
 
     if (osi.getSessionId()) {
@@ -95,6 +114,7 @@ void initializeOperationSessionInfo(OperationContext* opCtx,
                 "Transaction number cannot be negative",
                 *osi.getTxnNumber() >= 0);
 
+		//每个op操作都会调用一次该函数，从而产生一个不同的事物ID
         opCtx->setTxnNumber(*osi.getTxnNumber());
     }
 }

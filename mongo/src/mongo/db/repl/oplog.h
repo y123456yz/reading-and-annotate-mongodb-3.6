@@ -55,13 +55,14 @@ struct OplogSlot {
     std::int64_t hash = 0;
 };
 
-//初始化赋值可以参考performInserts
+//初始化赋值可以参考performInserts    
 struct InsertStatement {
 public:
     InsertStatement() = default;
     explicit InsertStatement(BSONObj toInsert) : doc(toInsert) {}
 
     InsertStatement(StmtId statementId, BSONObj toInsert) : stmtId(statementId), doc(toInsert) {}
+    //StorageInterfaceImpl::insertDocument
     InsertStatement(StmtId statementId, BSONObj toInsert, OplogSlot os)
         : stmtId(statementId), oplogSlot(os), doc(toInsert) {}
     InsertStatement(BSONObj toInsert, Timestamp ts, long long term)
@@ -104,6 +105,7 @@ extern int OPLOG_VERSION;
  * Log insert(s) to the local oplog.
  * Returns the OpTime of every insert.
  */
+//OpObserverImpl::onInserts
 std::vector<OpTime> logInsertOps(OperationContext* opCtx,
                                  const NamespaceString& nss,
                                  OptionalCollectionUUID uuid,
