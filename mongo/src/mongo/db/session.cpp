@@ -350,6 +350,7 @@ void Session::invalidate() {
     _hasIncompleteHistory = false;
 }
 
+//logInsertOps
 repl::OpTime Session::getLastWriteOpTime(TxnNumber txnNumber) const {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
     _checkValid(lg);

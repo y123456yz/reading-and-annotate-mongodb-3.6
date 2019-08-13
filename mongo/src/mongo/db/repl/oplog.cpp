@@ -315,6 +315,8 @@ void appendSessionInfo(OperationContext* opCtx,
     }
 }
 
+//{ "ts" : Timestamp(1565717260, 1), "t" : NumberLong(4), "h" : NumberLong("-1784017568799766097"), "v" : 2, "op" : "i", "ns" : "test.test", "wall" : ISODate("2019-08-13T17:27:40.237Z"), "o" : { "_id" : ObjectId("5d52f30c0b35d1f643a803a1"), "age" : 333 } }
+//构造上面的wall及以前的字符串，也就是"o"以前的部分，o以后的是数据内容，在
 //logInsertOps
 OplogDocWriter _logOpWriter(OperationContext* opCtx,
                             const char* opstr,
@@ -477,12 +479,13 @@ std::vector<OpTime> logInsertOps(OperationContext* opCtx,
 
     WriteUnitOfWork wuow(opCtx); //单行事物初始化
 
-    OperationSessionInfo sessionInfo;
+    OperationSessionInfo sessionInfo; //在mongo/build/opt/mongo/db/logical_session_id_gen.h中定义，不是在源码目录，编译的时候生成
     OplogLink oplogLink;
 
     if (session) {
         sessionInfo.setSessionId(*opCtx->getLogicalSessionId());
         sessionInfo.setTxnNumber(*opCtx->getTxnNumber());
+		//Session::getLastWriteOpTime
         oplogLink.prevOpTime = session->getLastWriteOpTime(*opCtx->getTxnNumber());
     }
 
@@ -495,6 +498,8 @@ std::vector<OpTime> logInsertOps(OperationContext* opCtx,
         if (insertStatementOplogSlot.opTime.isNull()) {
             _getNextOpTimes(opCtx, oplog, 1, &insertStatementOplogSlot);
         }
+
+		//这里构造oplog内容 //构造wall及以前的字符串，也就是"o"以前的部分，o以后的是数据内容在basePtrs中
         writers.emplace_back(_logOpWriter(opCtx,
                                           "i",  
                                           nss,
@@ -515,12 +520,17 @@ std::vector<OpTime> logInsertOps(OperationContext* opCtx,
 
     std::unique_ptr<DocWriter const* []> basePtrs(new DocWriter const*[count]);
     for (size_t i = 0; i < count; i++) {
-        basePtrs[i] = &writers[i];
+        basePtrs[i] = &writers[i]; //具体的doc操作的内容
     }
 
     invariant(!opTimes.empty());
     auto lastOpTime = opTimes.back();
     invariant(!lastOpTime.isNull());
+/* db.test21.insert({})
+featdoc_1:PRIMARY> db.oplog.rs.find().sort({"ts":-1}).limit(1)
+{ "ts" : Timestamp(1565678085, 1), "t" : NumberLong(3), "h" : NumberLong("2408236785374215015"), "v" : 2, "op" : "i", "ns" : "test21.test21", "wall" : ISODate("2019-08-13T06:34:45.084Z"), "o" : { "_id" : ObjectId("5d525a0513cc7f11ab8672ed"), "name" : "yangyazhou" } }
+*/
+	//按照指定格式写入oplog表
     _logOpsInner(opCtx, nss, basePtrs.get(), timestamps.get(), count, oplog, lastOpTime);
     wuow.commit(); //事物提交
     return opTimes;

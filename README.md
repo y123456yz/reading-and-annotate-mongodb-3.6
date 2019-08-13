@@ -154,7 +154,7 @@ https://github.com/y123456yz/reading-and-annotate-rocksdb-6.1.2
 > * .mongod读写时间延迟分析  
 > * .OpObserverImpl类oplog操作接口实现分析 
 > * .initializeOperationSessionInfo osi解析数据包分析，提取txn  
-> * .
+> * .oplog格式构造过程分析  
 > * .
 > * .
 > * .
