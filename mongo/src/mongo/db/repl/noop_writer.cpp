@@ -50,6 +50,7 @@ namespace {
 
 MONGO_EXPORT_SERVER_PARAMETER(writePeriodicNoops, bool, true);
 
+//主从可以通过在oplog中定期增加periodic noop来进行同步
 const auto kMsgObj = BSON("msg"
                           << "periodic noop");
 
@@ -124,6 +125,7 @@ NoopWriter::~NoopWriter() {
     stopWritingPeriodicNoops();
 }
 
+//ReplicationCoordinatorExternalStateImpl::startNoopWriter  默认十秒执行一次
 Status NoopWriter::startWritingPeriodicNoops(OpTime lastKnownOpTime) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     _lastKnownOpTime = lastKnownOpTime;
@@ -139,6 +141,13 @@ void NoopWriter::stopWritingPeriodicNoops() {
     _noopRunner.reset();
 }
 
+/*
+featdoc_1:PRIMARY> 
+featdoc_1:PRIMARY> db.oplog.rs.find().sort({"ts":-1}).limit(1)
+{ "ts" : Timestamp(1565771474, 1), "t" : NumberLong(5), "h" : NumberLong("-6325785047449693380"), "v" : 2, "op" : "n", "ns" : "", "wall" : ISODate("2019-08-14T08:31:14.623Z"), "o" : { "msg" : "periodic noop" } }
+*/
+//主从可以通过在oplog中定期增加periodic noop来进行同步   默认十秒执行一次
+//NoopWriter::startWritingPeriodicNoops
 void NoopWriter::_writeNoop(OperationContext* opCtx) {
     // Use GlobalLock + lockMMAPV1Flush instead of DBLock to allow return when the lock is not
     // available. It may happen when the primary steps down and a shared global lock is acquired.
