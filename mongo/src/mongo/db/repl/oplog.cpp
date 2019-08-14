@@ -315,6 +315,17 @@ void appendSessionInfo(OperationContext* opCtx,
     }
 }
 
+/* db.sbtest1.insert({"k":33333333})对应oplog如下:
+{ "ts" : Timestamp(1565773378, 1), "t" : NumberLong(5), "h" : NumberLong("3471099613165476209"), "v" : 2, "op" : "i", "ns" : "sbtest.sbtest1", 
+"ui" : UUID("0a57441a-ac22-440c-b6b6-70c14a86ee97"), "wall" : ISODate("2019-08-14T09:02:58.925Z"), "o" : { "_id" : ObjectId("5d53ce42e9268fccc8d9587c"), 
+"k" : 33333333 } }
+
+db.sbtest1.update({"k" : 16322011},{"$set":{"c":"xxxxxxxxx"}}对应oplog如下:  注意o2就是查询条件，查询条件{"k" : 16322011}被转换为了唯一索引{ "_id" : 234503495 }
+{ "ts" : Timestamp(1565773013, 1), "t" : NumberLong(5), "h" : NumberLong("7730774179341427202"), "v" : 2, "op" : "u", "ns" : "sbtest.sbtest1", 
+"ui" : UUID("0a57441a-ac22-440c-b6b6-70c14a86ee97"), "o2" : { "_id" : 234503495 }, "wall" : ISODate("2019-08-14T08:56:53.279Z"), 
+"o" : { "$v" : 1, "$set" : { "c" : "xxxxxxxxx" } } }
+*/
+
 //{ "ts" : Timestamp(1565717260, 1), "t" : NumberLong(4), "h" : NumberLong("-1784017568799766097"), "v" : 2, "op" : "i", "ns" : "test.test", "wall" : ISODate("2019-08-13T17:27:40.237Z"), "o" : { "_id" : ObjectId("5d52f30c0b35d1f643a803a1"), "age" : 333 } }
 //构造上面的wall及以前的字符串，也就是"o"以前的部分，o以后的是数据内容，在
 //logInsertOps
@@ -348,7 +359,7 @@ OplogDocWriter _logOpWriter(OperationContext* opCtx,
     if (fromMigrate)
         b.appendBool("fromMigrate", true);
 
-    if (o2)
+    if (o2) //查询条件
         b.append("o2", *o2);
 
     invariant(wallTime != Date_t{});

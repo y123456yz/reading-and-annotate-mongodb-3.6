@@ -908,6 +908,13 @@ void ReplicationCoordinatorExternalStateImpl::onDurable(const JournalListener::T
     repl::getGlobalReplicationCoordinator()->setMyLastDurableOpTimeForward(token);
 }
 
+/*
+featdoc_1:PRIMARY> 
+featdoc_1:PRIMARY> db.oplog.rs.find().sort({"ts":-1}).limit(1)
+{ "ts" : Timestamp(1565771474, 1), "t" : NumberLong(5), "h" : NumberLong("-6325785047449693380"), "v" : 2, "op" : "n", "ns" : "", "wall" : ISODate("2019-08-14T08:31:14.623Z"), "o" : { "msg" : "periodic noop" } }
+*/
+//主从可以通过在oplog中定期增加periodic noop来进行同步
+//ReplicationCoordinatorImpl::signalDrainComplete
 void ReplicationCoordinatorExternalStateImpl::startNoopWriter(OpTime opTime) {
     invariant(_noopWriter);
     _noopWriter->startWritingPeriodicNoops(opTime).transitional_ignore();
