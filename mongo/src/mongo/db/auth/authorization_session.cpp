@@ -160,7 +160,7 @@ Status AuthorizationSession::addAndAuthorizeUser(OperationContext* opCtx,
                                                  const UserName& userName) {
     User* user;
     AuthorizationManager* authzManager = AuthorizationManager::get(opCtx->getServiceContext());
-	//AuthorizationManager::acquireUser //从mongod-cfg获取用户权限信息
+	//AuthorizationManager::acquireUser //从mongod-cfg获取用户权限信息  
     Status status = authzManager->acquireUser(opCtx, userName, &user);
     if (!status.isOK()) {
         return status;
