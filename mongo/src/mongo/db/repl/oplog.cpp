@@ -324,6 +324,10 @@ db.sbtest1.update({"k" : 16322011},{"$set":{"c":"xxxxxxxxx"}}¶ÔÓ¦oplogÈçÏÂ:  ×¢Ò
 { "ts" : Timestamp(1565773013, 1), "t" : NumberLong(5), "h" : NumberLong("7730774179341427202"), "v" : 2, "op" : "u", "ns" : "sbtest.sbtest1", 
 "ui" : UUID("0a57441a-ac22-440c-b6b6-70c14a86ee97"), "o2" : { "_id" : 234503495 }, "wall" : ISODate("2019-08-14T08:56:53.279Z"), 
 "o" : { "$v" : 1, "$set" : { "c" : "xxxxxxxxx" } } }
+
+db.sbtest1.remove({"k" : 16322011}) ¶ÔÓ¦oplogÈçÏÂ: ×¢Òâo¾ÍÊÇÒªÉ¾³ýµÄÄÚÈÝ£¬²éÑ¯Ìõ¼þ{"k" : 16322011}±»×ª»»ÎªÁËÎ¨Ò»Ë÷Òý{ "_id" : 234503495 }
+{ "ts" : Timestamp(1565786241, 1), "t" : NumberLong(5), "h" : NumberLong("-233455444770319895"), "v" : 2, "op" : "d", "ns" : "sbtest.sbtest1", "ui" : UUID("0a57441a-ac22-440c-b6b6-70c14a86ee97"), 
+"wall" : ISODate("2019-08-14T12:37:21.139Z"), "o" : { "_id" : 234503495 } }  
 */
 
 //{ "ts" : Timestamp(1565717260, 1), "t" : NumberLong(4), "h" : NumberLong("-1784017568799766097"), "v" : 2, "op" : "i", "ns" : "test.test", "wall" : ISODate("2019-08-13T17:27:40.237Z"), "o" : { "_id" : ObjectId("5d52f30c0b35d1f643a803a1"), "age" : 333 } }
