@@ -503,6 +503,7 @@ bool runCommandImpl(OperationContext* opCtx,
                 opCtx, command->getName(), lastOpBeforeRun, &inPlaceReplyBob);
         });
 
+		
         result = command->publicRun(opCtx, request, inPlaceReplyBob);
 
         // Nothing in run() should change the writeConcern.

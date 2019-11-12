@@ -1129,6 +1129,7 @@ int mongodb_insert_document(db_conn_t *con, const char *database_name, const cha
   res = mongoc_collection_insert(collection, MONGOC_INSERT_NONE, doc, mongodb_write_concern, &error);
   if (!res) {
     log_text(LOG_FATAL,"error in insert (%s)",error.message);
+     //exit(0);
      thread_stats[con->thread_id].errors++;
   }
   //db_update_thread_stats();

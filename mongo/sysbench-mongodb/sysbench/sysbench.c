@@ -198,6 +198,9 @@ static pthread_attr_t  thread_attr;
 
 /* structures to handle queue of events, needed for tx_rate mode */
 pthread_mutex_t           event_queue_mutex;
+pthread_mutex_t           global_id_mutex;
+unsigned int global_id = 0;
+
 static sb_list_t          event_queue;
 static pthread_cond_t     event_queue_cv;
 static event_queue_elem_t queue_array[MAX_QUEUE_LEN];
@@ -848,6 +851,7 @@ static int run_test(sb_test_t *test)
     return 1;
 
   pthread_mutex_init(&sb_globals.exec_mutex, NULL);
+  pthread_mutex_init(&global_id_mutex, NULL);
 
 
   pthread_mutex_init(&event_queue_mutex, NULL);    

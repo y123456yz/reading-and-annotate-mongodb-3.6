@@ -35,14 +35,23 @@
 namespace mongo {
 namespace {
 
-static constexpr Minutes kDefaultCursorTimeoutMinutes{10};
+//db.adminCommand({setParameter: 1, cursorTimeoutMillis: 10}));
+//(db.adminCommand({setParameter: 1, clientCursorMonitorFrequencySecs: 1}));
+//初始化见宏定义MONGO_EXPORT_SERVER_PARAMETER，这里面会定义ServerParameterSet
 
+static constexpr Minutes kDefaultCursorTimeoutMinutes{10};
 MONGO_EXPORT_SERVER_PARAMETER(clientCursorMonitorFrequencySecs, int, 4);
 MONGO_EXPORT_SERVER_PARAMETER(cursorTimeoutMillis,
                               long long,
                               durationCount<Milliseconds>(kDefaultCursorTimeoutMinutes));
 
 }  // namespace
+
+MONGO_EXPORT_SERVER_PARAMETER(mongosSlowLogLevelMs, int, 100);
+
+long long getMongosSlowLogLevelMs() {
+    return mongosSlowLogLevelMs.load();
+}
 
 int getClientCursorMonitorFrequencySecs() {
     return clientCursorMonitorFrequencySecs.load();

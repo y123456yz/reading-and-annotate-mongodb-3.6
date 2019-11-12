@@ -25,6 +25,8 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kCommand
+#include "mongo/util/log.h"
 
 #include "mongo/platform/basic.h"
 
@@ -110,10 +112,21 @@ public:
         }
         const GetMoreRequest& request = parseStatus.getValue();
 
+		
         auto response = ClusterFind::runGetMore(opCtx, request);
         if (!response.isOK()) {
             return appendCommandStatus(result, response.getStatus());
         }
+
+		
+		//log() << "yang test ..... getmore resp:" << response.toBSON().toString(false);
+		log() << "yang test .... getmore cmd:" << cmdObj.toString(false);
+		Client* client = opCtx->getClient();
+		if (client->hasRemote()) {
+            const HostAndPort hp = client->getRemote();
+
+				log() << cmdObj.toString(false) << " time(ms):" << (int)10 << "from:" << hp.host() << "port:" << hp.port();;
+        } 
 
         response.getValue().addToBSON(CursorResponse::ResponseType::SubsequentResponse, &result);
         return true;

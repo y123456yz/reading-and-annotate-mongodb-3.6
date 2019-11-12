@@ -34,6 +34,9 @@ namespace mongo {
 
 int getClientCursorMonitorFrequencySecs();
 
+long long getMongosSlowLogLevelMs();
+
+
 // Period of time after which mortal cursors are killed for inactivity. Configurable with server
 // parameter "cursorTimeoutMillis".
 long long getCursorTimeoutMillis();

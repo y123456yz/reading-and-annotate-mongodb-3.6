@@ -1343,7 +1343,7 @@ int sb_lua_mongodb_create_index(lua_State *L)
   return mongodb_create_index(ctxt->con, sb_get_value_string("mongo-database-name"), collection_name, indexed_field_name, indexed_field_name2);
 }
 
-int sb_lua_mongodb_insert(lua_State *L)
+int sb_lua_mongodb_insert1(lua_State *L)
 {
   sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
   bson_t *doc;
@@ -1365,11 +1365,54 @@ int sb_lua_mongodb_insert(lua_State *L)
   return mongodb_insert_document(ctxt->con, sb_get_value_string("mongo-database-name"),col,doc);
 }  
 
-int sb_lua_mongodb_oltp_insert(lua_State *L)
+#include <sys/types.h>
+#include <pthread.h>
+#include <sys/syscall.h> 
+
+
+extern unsigned int global_id;
+extern pthread_mutex_t           global_id_mutex;
+int sb_lua_mongodb_insert(lua_State *L)
+{
+  sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
+  bson_t *doc;
+  unsigned int id = 0;
+  
+  const char *c, *pad, *col;
+   assert(lua_isstring(L,1));
+   assert(lua_isnumber(L,2));
+  // assert(lua_isnumber(L,3));
+   assert(lua_isstring(L,4));
+   assert(lua_isstring(L,5));
+   col = lua_tostring(L,1);
+   //const int id = lua_tonumber(L,2);
+   //const int k = lua_tonumber(L,3);
+   //const char *k = lua_tostring(L,3);
+   
+   pthread_mutex_lock(&global_id_mutex);
+   global_id++;
+   id = global_id;
+   //printf("yang test ............. id:%d  pid:%lu\r\n", id, syscall(SYS_gettid));
+   pthread_mutex_unlock(&global_id_mutex);
+   pad = lua_tostring(L,7);
+   c = lua_tostring(L,5);
+
+  doc = BCON_NEW("_id", BCON_INT32(id) , "k", BCON_UTF8(pad) , "c", BCON_UTF8(pad), "pad", 
+    BCON_UTF8(pad), "yangtest1", BCON_UTF8(c), "yangtest2", BCON_UTF8(c));
+  assert(ctxt->con!=NULL);
+  assert(ctxt->con->ptr!=NULL);
+  assert(doc!=NULL);
+  return mongodb_insert_document(ctxt->con, sb_get_value_string("mongo-database-name"),col,doc);
+}  
+
+
+int sb_lua_mongodb_oltp_insert1(lua_State *L)
 {
   sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
   bson_t *doc;
   const char *c, *pad,*pad1,*pad2, *col;
+
+  
   //例如mongodb_oltp_insert("sbtest" .. sb_rand(1, oltp_tables_count), sb_rand(oltp_table_size*2, oltp_table_size*3) + thread_id, sb_rand(1, oltp_table_size), c_val, pad_val)
   //lua_isstring(L,x)分别获取对应第x个参数
   assert(lua_isstring(L,1));
@@ -1394,6 +1437,38 @@ int sb_lua_mongodb_oltp_insert(lua_State *L)
   return mongodb_oltp_insert_document(ctxt->con, sb_get_value_string("mongo-database-name"),col,doc);
 }  
 
+
+int sb_lua_mongodb_oltp_insert(lua_State *L)
+{
+  sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
+  bson_t *doc;
+  const char *c, *pad,*pad1,*pad2, *col;
+
+  //例如mongodb_oltp_insert("sbtest" .. sb_rand(1, oltp_tables_count), sb_rand(oltp_table_size*2, oltp_table_size*3) + thread_id, sb_rand(1, oltp_table_size), c_val, pad_val)
+  //lua_isstring(L,x)分别获取对应第x个参数
+  assert(lua_isstring(L,1));
+  assert(lua_isnumber(L,2));
+ // assert(lua_isnumber(L,3));
+  assert(lua_isstring(L,4));
+  assert(lua_isstring(L,5));
+  col = lua_tostring(L,1);
+  const int id = lua_tonumber(L,2);
+  //const int k = lua_tonumber(L,3);
+  //const char *k = lua_tostring(L,3);
+  c = lua_tostring(L,4);
+  pad = lua_tostring(L,7);
+  pad1 = lua_tostring(L,5);
+  pad2 = lua_tostring(L,5); 
+  
+  //该结构对应的bson内容为:
+  //{ "_id" : 120333738, "k" : 17320087, "c" : "     83920826771-75851334403-47642163465-46478743738-61823424291-80161037234-99069099876-33117729199-40500918569-01122484432", "pad" : "     24495195069-93680011483-24014912776-73910544579-81843393778" }
+  doc = BCON_NEW("_id", BCON_INT32(id) , "k", BCON_UTF8(pad) , "c", BCON_UTF8(pad), "pad", 
+    BCON_UTF8(pad), "yangtest1", BCON_UTF8(pad1), "yangtest2", BCON_UTF8(pad1));
+  assert(ctxt->con!=NULL);
+  assert(ctxt->con->ptr!=NULL);
+  assert(doc!=NULL);
+  return mongodb_oltp_insert_document(ctxt->con, sb_get_value_string("mongo-database-name"),col,doc);
+}  
 
 int sb_lua_mongodb_remove(lua_State *L)
 {
@@ -1456,7 +1531,7 @@ int sb_lua_mongodb_generic_query(lua_State *L)
   assert(lua_isstring(L,3));
   const char *col = lua_tostring(L,1);
   const char *query = lua_tostring(L,2);
-  const char *fields = lua_tostring(L,2);
+  //const char *fields = lua_tostring(L,2);
   return mongodb_generic_query(ctxt->con, sb_get_value_string("mongo-database-name"),col,query,fields);
 }
 

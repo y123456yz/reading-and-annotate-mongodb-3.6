@@ -126,7 +126,9 @@ libsbscript_a-script_lua.o: script_lua.c /usr/include/stdc-predef.h \
  ../../sysbench/tests/sb_mutex.h ../../sysbench/db_driver.h \
  ../../sysbench/sysbench.h ../../sysbench/sb_percentile.h lua/src/lua.h \
  lua/src/luaconf.h lua/src/lualib.h lua/src/lua.h lua/src/lauxlib.h \
- sb_script.h ../../sysbench/sb_rnd.h
+ sb_script.h ../../sysbench/sb_rnd.h /usr/include/sys/syscall.h \
+ /usr/include/asm/unistd.h /usr/include/asm/unistd_64.h \
+ /usr/include/bits/syscall.h
 
 /usr/include/stdc-predef.h:
 
@@ -511,3 +513,11 @@ lua/src/lauxlib.h:
 sb_script.h:
 
 ../../sysbench/sb_rnd.h:
+
+/usr/include/sys/syscall.h:
+
+/usr/include/asm/unistd.h:
+
+/usr/include/asm/unistd_64.h:
+
+/usr/include/bits/syscall.h:
