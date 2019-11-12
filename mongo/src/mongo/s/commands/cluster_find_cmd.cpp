@@ -25,6 +25,8 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kCommand
+
 
 #include "mongo/platform/basic.h"
 
@@ -41,6 +43,7 @@
 #include "mongo/s/commands/cluster_aggregate.h"
 #include "mongo/s/commands/strategy.h"
 #include "mongo/s/query/cluster_find.h"
+#include "mongo/util/log.h"
 
 namespace mongo {
 namespace {
@@ -166,7 +169,13 @@ public:
             return appendCommandStatus(result, qr.getStatus());
         }
 
+		const auto& query = qr.getValue();
+		BSONObj findCmd=query->asFindCommand();
+		log() << "yang test .... find cmd:" << cmdObj.toString(false);
+		log() << "yang test ...222. find cmd:" << findCmd.toString(false);
+		
         const boost::intrusive_ptr<ExpressionContext> expCtx;
+
         auto cq = CanonicalQuery::canonicalize(opCtx,
                                                std::move(qr.getValue()),
                                                expCtx,
@@ -223,6 +232,9 @@ public:
             firstBatch.append(obj);
         }
         firstBatch.done(cursorId.getValue(), nss.ns());
+		//obj
+		//log() << "yang test ...222. firstBatch:" << result.done().toString(false); ½á¹û
+		//log() << "yang test ...222. firstBatch:" << firstBatch.getBatch().obj().toString(false);
         return true;
     }
 

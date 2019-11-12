@@ -97,6 +97,7 @@ private:
     bool _allowedToChangeAtRuntime;
 };
 
+//有些定义在宏定义MONGO_EXPORT_SERVER_PARAMETER中
 class ServerParameterSet {
 public:
     typedef std::map<std::string, ServerParameter*> Map;

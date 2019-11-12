@@ -275,6 +275,8 @@ class TicketServerParameter : public ServerParameter {
 
 public:
     TicketServerParameter(TicketHolder* holder, const std::string& name)
+		//db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=2GB" })
+		//db.adminCommand( { getParameter : "1", wiredTigerEngineRuntimeConfig : 1  } )
         : ServerParameter(ServerParameterSet::getGlobal(), name, true, true), _holder(holder) {}
 
     virtual void append(OperationContext* opCtx, BSONObjBuilder& b, const std::string& name) {

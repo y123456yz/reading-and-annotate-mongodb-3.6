@@ -49,6 +49,9 @@
 #include "mongo/s/write_ops/batched_command_response.h"
 #include "mongo/util/log.h"
 #include "mongo/util/timer.h"
+#include "mongo/db/cursor_server_params.h"
+
+#include <syslog.h>
 
 namespace mongo {
 namespace {
@@ -266,9 +269,19 @@ public:
                 globalOpCounters.gotDelete();
             }
         }
+
+		Client* client = opCtx->getClient();
+		if (client->hasRemote()) {
+            const HostAndPort hp = client->getRemote();
+			log() << redact(batchedRequest.toBSON()) << " 111111 time(ms):" << (int)consumeTime << "from:" << hp.host() << "port:" << hp.port();
+        } 
+
+		if (getMongosSlowLogLevelMs() <= consumeTime/1000)
+			log() << batchedRequest.toBSON() << " time(us):" << (int)consumeTime;
+
 		
 		char buf[200];
-		snprintf(buf, sizeof(buf), " time(ms):%d", (int)consumeTime);
+		snprintf(buf, sizeof(buf), " time(us):%d", (int)consumeTime);
 		//syslog(LOG_MAKEPRI(LOG_USER, LOG_INFO), "%s", batchedRequest.jsonString().c_str());
 		syslog(LOG_MAKEPRI(LOG_USER, LOG_INFO), "%s", (batchedRequest.toString() + buf).c_str());
 		

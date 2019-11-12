@@ -25,6 +25,8 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kCommand
+#include "mongo/util/log.h"
 
 #include "mongo/platform/basic.h"
 
@@ -194,10 +196,15 @@ private:
                             BSONObjBuilder* result) {
         const auto response = [&] {
             std::vector<AsyncRequestsSender::Request> requests;
+
+			BSONObj rq = filterCommandRequestForPassthrough(cmdObj);
             requests.emplace_back(
                 shardId,
-                appendShardVersion(filterCommandRequestForPassthrough(cmdObj), shardVersion));
+                //appendShardVersion(filterCommandRequestForPassthrough(cmdObj), shardVersion));
+                appendShardVersion(rq, shardVersion));
 
+			log() << "yang test .... findandmodify cmd:" << cmdObj.toString(false);
+			log() << "yang test ..333.. findandmodify cmd:" << rq.toString(false);
             AsyncRequestsSender ars(opCtx,
                                     Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor(),
                                     nss.db().toString(),
