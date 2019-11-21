@@ -192,6 +192,8 @@ ProtocolSet computeProtocolSet(const WireVersionInfo version) {
     return result;
 }
 
+//检查协议是否兼容，一般不同版本会有不兼容现象，例如:
+//remote host has incompatible wire version: IncompatibleServerVersion: Server min and max wire version are incompatible (0,5) with client min wire version (6,6)
 Status validateWireVersion(const WireVersionInfo client, const WireVersionInfo server) {
     // Since this is defined in the code, it should always hold true since this is the versions that
     // mongos/d wants to connect to.

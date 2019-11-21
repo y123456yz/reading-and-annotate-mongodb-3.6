@@ -1,5 +1,5 @@
 scons mongod -j 3
-
+ scons mongod --rocksdb=on -j 2 VERBOSE=on CPPPATH=/usr/rocksdb-4.13.5_install/include/ LIBPATH=/usr/rocksdb-4.13.5_install/lib/
 
 Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-build-BRpFUf/subprocess32/ 执行如下命令
 python -m pip install --upgrade --force pip 
