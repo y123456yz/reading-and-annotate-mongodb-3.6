@@ -5,7 +5,10 @@ mongodb-3.6.1源码注释分析，持续更新
 ===================================  
 * [为何需要对开源mongodb社区版本做二次开发，需要做哪些必备二次开发](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/development_mongodb.md)  
 * [对开源mongodb社区版本做二次开发收益列表](https://my.oschina.net/u/4087916/blog/3063529)  
-  
+
+### .mongodb性能优化、采坑、问题定位解决等:   
+  * [百万级高并发mongodb集群性能数十倍提升优化实践(上篇)](https://my.oschina.net/u/4087916/blog/3141909)      
+    
 ### .mongos架构性能瓶颈:  
 ===================================  
 > * 瓶颈1、LISTEN操作由listen线程负责，只有一个线程负责listen/accept操作，在高并发场景下会成为性能瓶颈。解决办法：重复利用reuse_port功能，多个线程同时进行listen监听同一个端口    
