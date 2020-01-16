@@ -1531,7 +1531,7 @@ int sb_lua_mongodb_generic_query(lua_State *L)
   assert(lua_isstring(L,3));
   const char *col = lua_tostring(L,1);
   const char *query = lua_tostring(L,2);
-  //const char *fields = lua_tostring(L,2);
+  const char *fields = lua_tostring(L,2);
   return mongodb_generic_query(ctxt->con, sb_get_value_string("mongo-database-name"),col,query,fields);
 }
 

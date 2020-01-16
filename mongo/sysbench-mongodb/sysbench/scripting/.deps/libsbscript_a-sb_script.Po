@@ -3,10 +3,10 @@ libsbscript_a-sb_script.o: sb_script.c /usr/include/stdc-predef.h \
  /usr/include/stdio.h /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
@@ -37,8 +37,8 @@ libsbscript_a-sb_script.o: sb_script.c /usr/include/stdc-predef.h \
  /usr/include/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
  /usr/include/asm-generic/errno-base.h /usr/include/ctype.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
@@ -46,9 +46,9 @@ libsbscript_a-sb_script.o: sb_script.c /usr/include/stdc-predef.h \
  /usr/include/bits/fcntl-linux.h /usr/include/bits/uio.h \
  /usr/include/linux/falloc.h /usr/include/bits/stat.h \
  /usr/include/sys/stat.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/inttypes.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
  /usr/local/include/libbson-1.0/bson-atomic.h \
  /usr/local/include/libbson-1.0/bson-context.h \
  /usr/local/include/libbson-1.0/bson-types.h \
@@ -106,7 +106,6 @@ libsbscript_a-sb_script.o: sb_script.c /usr/include/stdc-predef.h \
  /usr/include/netinet/tcp.h /usr/include/sys/un.h \
  /usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h \
  /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h \
- /usr/local/include/libmongoc-1.0/mongoc-ssl.h \
  /usr/local/include/libmongoc-1.0/mongoc-uri.h \
  /usr/local/include/libmongoc-1.0/mongoc-client-pool.h \
  /usr/local/include/libmongoc-1.0/mongoc-error.h \
@@ -122,9 +121,7 @@ libsbscript_a-sb_script.o: sb_script.c /usr/include/stdc-predef.h \
  /usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h \
  /usr/local/include/libmongoc-1.0/mongoc-stream-socket.h \
  /usr/local/include/libmongoc-1.0/mongoc-version.h \
- /usr/local/include/libmongoc-1.0/mongoc-version-functions.h \
- /usr/local/include/libmongoc-1.0/mongoc-rand.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-tls.h
+ /usr/local/include/libmongoc-1.0/mongoc-version-functions.h
 
 /usr/include/stdc-predef.h:
 
@@ -146,7 +143,7 @@ sb_script.h:
 
 /usr/include/gnu/stubs-64.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 /usr/include/bits/types.h:
 
@@ -158,7 +155,7 @@ sb_script.h:
 
 /usr/include/wchar.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -280,9 +277,9 @@ script_lua.h:
 
 /usr/include/ctype.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -310,7 +307,7 @@ script_lua.h:
 
 /usr/include/sys/stat.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -318,7 +315,7 @@ script_lua.h:
 
 /usr/include/inttypes.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
 
 /usr/local/include/libbson-1.0/bson-atomic.h:
 
@@ -458,8 +455,6 @@ script_lua.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-ssl.h:
-
 /usr/local/include/libmongoc-1.0/mongoc-uri.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-client-pool.h:
@@ -491,7 +486,3 @@ script_lua.h:
 /usr/local/include/libmongoc-1.0/mongoc-version.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-version-functions.h:
-
-/usr/local/include/libmongoc-1.0/mongoc-rand.h:
-
-/usr/local/include/libmongoc-1.0/mongoc-stream-tls.h:

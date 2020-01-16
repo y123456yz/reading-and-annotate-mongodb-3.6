@@ -6,12 +6,12 @@ db_driver.o: db_driver.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
  /usr/include/bits/byteswap-16.h /usr/include/xlocale.h \
  /usr/include/string.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
  /usr/include/bits/string.h /usr/include/bits/string2.h \
  /usr/include/stdlib.h /usr/include/strings.h /usr/include/assert.h \
  db_driver.h sysbench.h /usr/include/stdio.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/bits/waitflags.h \
  /usr/include/bits/waitstatus.h /usr/include/sys/types.h \
@@ -33,8 +33,8 @@ db_driver.o: db_driver.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
  /usr/include/asm-generic/errno-base.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
@@ -42,9 +42,9 @@ db_driver.o: db_driver.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/bits/fcntl-linux.h /usr/include/bits/uio.h \
  /usr/include/linux/falloc.h /usr/include/bits/stat.h \
  /usr/include/sys/stat.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/inttypes.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
  /usr/local/include/libbson-1.0/bson-atomic.h \
  /usr/local/include/libbson-1.0/bson-context.h \
  /usr/local/include/libbson-1.0/bson-types.h \
@@ -102,7 +102,6 @@ db_driver.o: db_driver.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/netinet/tcp.h /usr/include/sys/un.h \
  /usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h \
  /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h \
- /usr/local/include/libmongoc-1.0/mongoc-ssl.h \
  /usr/local/include/libmongoc-1.0/mongoc-uri.h \
  /usr/local/include/libmongoc-1.0/mongoc-client-pool.h \
  /usr/local/include/libmongoc-1.0/mongoc-error.h \
@@ -118,9 +117,7 @@ db_driver.o: db_driver.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h \
  /usr/local/include/libmongoc-1.0/mongoc-stream-socket.h \
  /usr/local/include/libmongoc-1.0/mongoc-version.h \
- /usr/local/include/libmongoc-1.0/mongoc-version-functions.h \
- /usr/local/include/libmongoc-1.0/mongoc-rand.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-tls.h
+ /usr/local/include/libmongoc-1.0/mongoc-version-functions.h
 
 /usr/include/stdc-predef.h:
 
@@ -154,7 +151,7 @@ db_driver.o: db_driver.c /usr/include/stdc-predef.h ../config/config.h \
 
 /usr/include/string.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 /usr/include/bits/string.h:
 
@@ -178,7 +175,7 @@ sysbench.h:
 
 /usr/include/wchar.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -274,9 +271,9 @@ sb_percentile.h:
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -304,7 +301,7 @@ sb_percentile.h:
 
 /usr/include/sys/stat.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -312,7 +309,7 @@ sb_percentile.h:
 
 /usr/include/inttypes.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
 
 /usr/local/include/libbson-1.0/bson-atomic.h:
 
@@ -452,8 +449,6 @@ sb_percentile.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-ssl.h:
-
 /usr/local/include/libmongoc-1.0/mongoc-uri.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-client-pool.h:
@@ -485,7 +480,3 @@ sb_percentile.h:
 /usr/local/include/libmongoc-1.0/mongoc-version.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-version-functions.h:
-
-/usr/local/include/libmongoc-1.0/mongoc-rand.h:
-
-/usr/local/include/libmongoc-1.0/mongoc-stream-tls.h:

@@ -129,8 +129,8 @@ am_sysbench_OBJECTS = sysbench.$(OBJEXT) sb_timer.$(OBJEXT) \
 	sb_barrier.$(OBJEXT)
 sysbench_OBJECTS = $(am_sysbench_OBJECTS)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = drivers/mysql/libsbmysql.a \
-	$(am__DEPENDENCIES_1)
+#am__DEPENDENCIES_2 = drivers/mysql/libsbmysql.a \
+#	$(am__DEPENDENCIES_1)
 #am__DEPENDENCIES_3 = drivers/drizzle/libsbdrizzle.a \
 #	$(am__DEPENDENCIES_1)
 #am__DEPENDENCIES_4 =  \
@@ -300,7 +300,7 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS = -L/usr/local/lib
+LDFLAGS = 
 LIBATTACHSQL = 
 LIBATTACHSQL_PREFIX = 
 LIBDRIZZLE = 
@@ -316,8 +316,8 @@ LTLIBOBJS =
 MAKEINFO = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
-MYSQL_CFLAGS = -I/usr/include/mysql
-MYSQL_LIBS = -L/usr/lib64/mysql -lmysqlclient -lpthread -lz -lm -ldl -lssl -lcrypto
+MYSQL_CFLAGS = 
+MYSQL_LIBS = 
 NM = /usr/bin/nm -B
 NMEDIT = 
 OBJDUMP = objdump
@@ -379,16 +379,16 @@ host_cpu = x86_64
 host_os = linux-gnu
 host_vendor = unknown
 htmldir = ${docdir}
-includedir = ${prefix}/include
+includedir = /usr/local/include/libmongoc-1.0:/usr/local/include/libbson-1.0
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/config/install-sh
-libdir = ${exec_prefix}/lib
+libdir = /usr/local/include/libmongoc-1.0:/usr/local/include/libbson-1.0
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
-mysqlconfig = /usr/bin/mysql_config
+mysqlconfig = 
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 pgconfig = 
@@ -410,7 +410,7 @@ top_srcdir = ..
 SUBDIRS = drivers tests scripting .
 
 # The following check will be extended as new database drivers will be added
-mysql_ldadd = drivers/mysql/libsbmysql.a $(MYSQL_LIBS)
+#mysql_ldadd = drivers/mysql/libsbmysql.a $(MYSQL_LIBS)
 #drizzle_ldadd = drivers/drizzle/libsbdrizzle.a $(LIBDRIZZLE)
 #attachsql_ldadd = drivers/attachsql/libsbattachsql.a $(LIBATTACHSQL)
 #ora_ldadd = drivers/oracle/libsboracle.a $(ORA_LIBS)

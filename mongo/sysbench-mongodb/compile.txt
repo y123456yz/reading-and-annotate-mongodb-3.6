@@ -3,5 +3,10 @@
 make
 sudo make install #optionally
 
+
+ yum install cyrus-sasl-devel
+yum -y install openssl openssl-devel
+
+mongo-c-driver 必须是1.11.0版本，否则编译不通过
 https://www.percona.com/blog/2016/05/13/benchmark-mongodb-sysbench/
 
