@@ -272,7 +272,7 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0 /usr/local/lib64 /lib64 /usr/lib64 "
+sys_lib_search_path_spec="/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0 /usr/local/gcc-5.4.0/lib64 /lib64 /usr/lib64 "
 
 # Run-time system search path for libraries.
 sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib /usr/lib64/mysql "

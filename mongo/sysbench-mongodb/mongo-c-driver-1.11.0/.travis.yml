@@ -1,0 +1,56 @@
+language: c
+
+compiler:
+  - gcc
+  - clang
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  # https://github.com/Homebrew/homebrew-core/issues/26358
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink python; fi
+  # "brew install" can succeed but return 1 if it has "caveats".
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mongodb || true; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew services start mongodb; fi
+
+before_script:
+  # Add an IPv6 config - see the corresponding Travis issue
+  # https://github.com/travis-ci/travis-ci/issues/8361
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+      sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6';
+    fi
+
+services: mongodb
+
+env:
+  - CFLAGS="$CFLAGS -Werror -Wno-cast-align"
+
+addons:
+  apt:
+    packages:
+      - gdb
+
+script:
+  - sudo sh -c 'echo "\n::1 localhost\n" >> /etc/hosts'
+  - ulimit -a
+  - ulimit -c unlimited || true
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAINTAINER_FLAGS=ON -ENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF .
+  - make -j 8
+  - make check
+
+
+after_failure:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gdb; fi
+  - find /cores . -name \*core\* -exec ./.travis.scripts/debug-core.sh {} \;
+
+# Exclude gcc on osx since it's just an alias for clang.
+matrix:
+  exclude:
+  - compiler: gcc
+    os: osx
+
+git:
+  depth: 20

@@ -2,10 +2,10 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/stdio.h /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h \
  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
@@ -36,8 +36,8 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/bits/siginfo.h /usr/include/bits/sigaction.h \
  /usr/include/bits/sigcontext.h /usr/include/bits/sigstack.h \
  /usr/include/sys/ucontext.h /usr/include/bits/sigthread.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h sysbench.h \
@@ -48,9 +48,9 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/local/include/libbson-1.0/bson-compat.h \
  /usr/local/include/libbson-1.0/bson-config.h \
  /usr/local/include/libbson-1.0/bson-macros.h /usr/include/ctype.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/inttypes.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
+ /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
  /usr/local/include/libbson-1.0/bson-atomic.h \
  /usr/local/include/libbson-1.0/bson-context.h \
  /usr/local/include/libbson-1.0/bson-types.h \
@@ -108,7 +108,6 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/include/sys/un.h \
  /usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h \
  /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h \
- /usr/local/include/libmongoc-1.0/mongoc-ssl.h \
  /usr/local/include/libmongoc-1.0/mongoc-uri.h \
  /usr/local/include/libmongoc-1.0/mongoc-client-pool.h \
  /usr/local/include/libmongoc-1.0/mongoc-error.h \
@@ -124,9 +123,7 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
  /usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h \
  /usr/local/include/libmongoc-1.0/mongoc-stream-socket.h \
  /usr/local/include/libmongoc-1.0/mongoc-version.h \
- /usr/local/include/libmongoc-1.0/mongoc-version-functions.h \
- /usr/local/include/libmongoc-1.0/mongoc-rand.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-tls.h sb_rnd.h \
+ /usr/local/include/libmongoc-1.0/mongoc-version-functions.h sb_rnd.h \
  sb_thread.h sb_barrier.h
 
 /usr/include/stdc-predef.h:
@@ -145,7 +142,7 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
 
 /usr/include/gnu/stubs-64.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stddef.h:
 
 /usr/include/bits/types.h:
 
@@ -157,7 +154,7 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
 
 /usr/include/wchar.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdarg.h:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -289,9 +286,9 @@ sysbench.o: sysbench.c /usr/include/stdc-predef.h ../config/config.h \
 
 /usr/include/bits/sigthread.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/limits.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -347,7 +344,7 @@ sb_percentile.h:
 
 /usr/include/ctype.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -355,7 +352,7 @@ sb_percentile.h:
 
 /usr/include/inttypes.h:
 
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
+/usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
 
 /usr/local/include/libbson-1.0/bson-atomic.h:
 
@@ -493,8 +490,6 @@ sb_percentile.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-ssl.h:
-
 /usr/local/include/libmongoc-1.0/mongoc-uri.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-client-pool.h:
@@ -526,10 +521,6 @@ sb_percentile.h:
 /usr/local/include/libmongoc-1.0/mongoc-version.h:
 
 /usr/local/include/libmongoc-1.0/mongoc-version-functions.h:
-
-/usr/local/include/libmongoc-1.0/mongoc-rand.h:
-
-/usr/local/include/libmongoc-1.0/mongoc-stream-tls.h:
 
 sb_rnd.h:
 
