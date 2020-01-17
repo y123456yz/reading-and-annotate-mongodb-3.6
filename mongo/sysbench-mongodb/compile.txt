@@ -1,5 +1,8 @@
+yum install mysql-devel gcc gcc-devel python-devel
+yum install mysql
+
 ./autogen.sh
-./configure --without-mysql
+./configure 
 make
 sudo make install #optionally
 
