@@ -248,7 +248,7 @@
 #define USE_MONGODB 1
 
 /* Define to 1 if you want to compile with MySQL support */
-/* #undef USE_MYSQL */
+#define USE_MYSQL 1
 
 /* Define to 1 if you want to compile with Oracle support */
 /* #undef USE_ORACLE */
