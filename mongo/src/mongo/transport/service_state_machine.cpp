@@ -129,13 +129,16 @@ class ServiceStateMachine::ThreadGuard {
 
 public:
     explicit ThreadGuard(ServiceStateMachine* ssm) : _ssm{ssm} {
+		//如果ServiceStateMachine._owned=kUnowned,则ServiceStateMachine._owned赋值为kOwned
         auto owned = _ssm->_owned.compareAndSwap(Ownership::kUnowned, Ownership::kOwned);
-        if (owned == Ownership::kStatic) {
+        if (owned == Ownership::kStatic) { //sync线程模式
             dassert(haveClient());
             dassert(Client::getCurrent() == _ssm->_dbClientPtr);
             _haveTakenOwnership = true;
             return;
         }
+
+		//adaptive async线程模式走下面的模式
 
 #ifdef MONGO_CONFIG_DEBUG_BUILD
         invariant(owned == Ownership::kUnowned);
@@ -143,14 +146,14 @@ public:
 #endif
 
         // Set up the thread name
-        auto oldThreadName = getThreadName();
+        auto oldThreadName = getThreadName(); //改线程名前的线程名称临时保存起来
         if (oldThreadName != _ssm->_threadName) {
 			//记录下之前的线程名
             _ssm->_oldThreadName = getThreadName().toString();
-			//log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
-            setThreadName(_ssm->_threadName);
+			log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_oldThreadName;
+            setThreadName(_ssm->_threadName); //把当前线程改名为_threadName
 			//sleep(60);
-			//log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
+			log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
         }
 
         // Swap the current Client so calls to cc() work as expected
@@ -194,6 +197,7 @@ public:
 #endif
     }
 
+	//ServiceStateMachine::_scheduleNextWithGuard
     void markStaticOwnership() {
         dassert(static_cast<bool>(*this));
         _ssm->_owned.store(Ownership::kStatic);
@@ -207,14 +211,14 @@ public:
         dassert(owned != Ownership::kUnowned);
         dassert(_ssm->_owningThread.load() == stdx::this_thread::get_id());
 #endif
-        if (owned != Ownership::kStatic) {
+        if (owned != Ownership::kStatic) {//async线程池模式满足if条件
             if (haveClient()) {
                 _ssm->_dbClient = Client::releaseCurrent();
             }
 
             if (!_ssm->_oldThreadName.empty()) {
 				
-                setThreadName(_ssm->_oldThreadName); //恢复到老线程
+                setThreadName(_ssm->_oldThreadName); //恢复到老线程名
             }
         }
 
@@ -267,9 +271,10 @@ ServiceStateMachine::ServiceStateMachine(ServiceContext* svcContext,
       _dbClient{svcContext->makeClient("conn", std::move(session))},
       _dbClientPtr{_dbClient.get()},
       //真正生效在ServiceStateMachine::ThreadGuard
-      _threadName{str::stream() << "conn----yangtest" << _session()->id()} {} //线程名
+      _threadName{str::stream() << "conn-yang" << _session()->id()} {} //线程名
 
 const transport::SessionHandle& ServiceStateMachine::_session() const {
+	//该客户端链接信息在该结构中，也就是ASIOSession
     return _sessionHandle;
 }
 
@@ -392,9 +397,9 @@ void ServiceStateMachine::_sinkCallback(Status status) {
               << _session()->remote() << " (connection id: " << _session()->id() << ")";
         _state.store(State::EndSession);
         return _runNextInGuard(std::move(guard));
-    } else if (_inExhaust) {
+    } else if (_inExhaust) { //3.6.1版本都不会满足，因为exhaust功能没用起来
         _state.store(State::Process);
-    } else {
+    } else { //正常流程始终进入该分支
         _state.store(State::Source);
     }
 
@@ -466,8 +471,9 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
         toSink.header().setResponseToMsgId(_inMessage.header().getId());
 
         // If this is an exhaust cursor, don't source more Messages
+        //3.6.1版本，Exhaust还没有用起来，所以不会进入_inExhaust = true;
         if (dbresponse.exhaustNS.size() > 0 && setExhaustMessage(&_inMessage, dbresponse)) {
-            _inExhaust = true;
+            _inExhaust = true;  
         } else {
             _inExhaust = false;
             _inMessage.reset();
@@ -556,7 +562,9 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 
 //ServiceEntryPointImpl::startSession中执行  启动
 void ServiceStateMachine::start(Ownership ownershipModel) {
-    _scheduleNextWithGuard( //暂时性的变为conn线程名 //线程更名也在这里面  "conn-"线程名  该函数执行完后自动恢复为原来的listen线程
+    _scheduleNextWithGuard( 
+		//暂时性的变为conn线程名 //线程更名也在这里面  "conn-"线程名  
+		//ServiceStateMachine::start中的ThreadGuard(this)中线程名赋值为conn-x，这里把线程改名为conn-x
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
 }
 
@@ -564,16 +572,24 @@ void ServiceStateMachine::start(Ownership ownershipModel) {
 void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {
+	//func在ServiceExecutorSynchronous::schedule中执行
     auto func = [ ssm = shared_from_this(), ownershipModel ] {
+		//ServiceStateMachine::start中的ThreadGuard(this)中线程名赋值为conn-x
         ThreadGuard guard(ssm.get());  //对应ThreadGuard& operator=(ThreadGuard&& other)
-        if (ownershipModel == Ownership::kStatic)
+        if (ownershipModel == Ownership::kStatic) //说明是sync mode
             guard.markStaticOwnership();
+		log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 22";
 		//对应:ServiceStateMachine::_runNextInGuard
 		////ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)中执行
         ssm->_runNextInGuard(std::move(guard)); //新链接conn线程中需要执行的task
     };
+
+	log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 11";
+
+	//和ServiceStateMachine::start中的ThreadGuard(this)对应
     guard.release();
 	//ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)
+	//第一次进入该函数的时候在这里面创建新线程
     Status status = _serviceContext->getServiceExecutor()->schedule(std::move(func), flags);
     if (status.isOK()) {
         return;

@@ -71,20 +71,23 @@ MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorMaxQueueLatencyMicros, int,
 // Threads will exit themselves if they spent less than this percentage of the time they ran
 // doing actual work.
 //如果一个线程处理网络请求的时间/总时间(处理请求时间)+空闲时间  也就是如果线程比较空闲
+//执行 IO 操作的时间小于 adaptiveServiceExecutorIdlePctThreshold 比例时，则会自动销毁线程
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorIdlePctThreshold, int, 60);
 
 // Tasks scheduled with MayRecurse may be called recursively if the recursion depth is below this
 // value.
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRecursionLimit, int, 8);
 
-//db.serverStatus().network获取
+//db.serverStatus().network.serviceExecutorTaskStats获取
 constexpr auto kTotalQueued = "totalQueued"_sd;
 constexpr auto kTotalExecuted = "totalExecuted"_sd;
 constexpr auto kTasksQueued = "tasksQueued"_sd;
 constexpr auto kDeferredTasksQueued = "deferredTasksQueued"_sd;
+//在线程池内执行的时间，单位微秒。注意这个时间是所有worker的线程的汇总信息，包含历史worker的统计时间。
 constexpr auto kTotalTimeExecutingUs = "totalTimeExecutingMicros"_sd;
 constexpr auto kTotalTimeRunningUs = "totalTimeRunningMicros"_sd;
 constexpr auto kTotalTimeQueuedUs = "totalTimeQueuedMicros"_sd;
+// 正在使用(有IO操作)的worker线程数
 constexpr auto kThreadsInUse = "threadsInUse"_sd;
 constexpr auto kThreadsRunning = "threadsRunning"_sd;
 constexpr auto kThreadsPending = "threadsPending"_sd;
@@ -141,11 +144,13 @@ struct ServerParameterOptions : public ServiceExecutorAdaptive::Options {
 thread_local ServiceExecutorAdaptive::ThreadState* ServiceExecutorAdaptive::_localThreadState =
     nullptr;
 
-//ServiceExecutorAdaptive类构造函数
+//ServiceExecutorAdaptive类构造函数 
+//TransportLayerManager::createWithConfig赋值调用
 ServiceExecutorAdaptive::ServiceExecutorAdaptive(ServiceContext* ctx,
                                                  std::shared_ptr<asio::io_context> ioCtx)
     : ServiceExecutorAdaptive(ctx, std::move(ioCtx), stdx::make_unique<ServerParameterOptions>()) {}
 
+//上面的TransportLayerManager::createWithConfig调用
 ServiceExecutorAdaptive::ServiceExecutorAdaptive(ServiceContext* ctx,
                                                  std::shared_ptr<asio::io_context> ioCtx,
                                                  std::unique_ptr<Options> config)
@@ -393,7 +398,7 @@ void ServiceExecutorAdaptive::_startWorkerThread() {
 
     lk.unlock();
 
-    const auto launchResult =
+    const auto launchResult = //线程回调函数为_workerThreadRoutine
         launchServiceWorkerThread([this, num, it] { _workerThreadRoutine(num, it); });
 
     if (!launchResult.isOK()) {
@@ -427,6 +432,7 @@ Milliseconds ServiceExecutorAdaptive::_getThreadJitter() const {
     return Milliseconds{jitter};
 }
 
+//在线程池内执行的时间，单位微秒。注意这个时间是所有worker的线程的汇总信息，包含历史worker的统计时间。
 TickSource::Tick ServiceExecutorAdaptive::_getThreadTimerTotal(ThreadTimer which) const {
     TickSource::Tick accumulator;
     switch (which) {

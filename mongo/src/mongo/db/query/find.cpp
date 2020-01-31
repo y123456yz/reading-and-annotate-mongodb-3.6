@@ -706,8 +706,8 @@ std::string runQuery(OperationContext* opCtx,
             pinnedCursor.getCursor()->slaveReadTill(slaveReadTill);
         }
 
-        // TODO document
-        if (qr.isExhaust()) {
+        // TODO document  
+        if (qr.isExhaust()) { //3.6.1版本还没用起来，也就是不会进入改if
             curOp.debug().exhaust = true;
         }
 

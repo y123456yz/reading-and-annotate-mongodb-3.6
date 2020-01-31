@@ -1,6 +1,10 @@
+
+
+
 yum install mysql-devel gcc gcc-devel python-devel
 yum install mysql
 
+ yum install openssl-devel
 ./autogen.sh
 ./configure 
 make
@@ -11,5 +15,12 @@ sudo make install #optionally
 yum -y install openssl openssl-devel
 
 mongo-c-driver 必须是1.11.0版本，否则编译不通过
+i
+mkdir cmake-build
+cd cmake-build
+rm -rf *  清空cmake-build目录内容
+cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_SSL=OPENSSL ..                 这样编译否则报错luster: Authentication failed: The SCRAM_SHA_1 authentication mechanism requires libmongoc built with ENABLE_SSL
+make -j 3
+make install
 https://www.percona.com/blog/2016/05/13/benchmark-mongodb-sysbench/
 

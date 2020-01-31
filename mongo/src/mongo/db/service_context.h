@@ -411,7 +411,7 @@ public:
 
     /**
      * Returns the tick/clock source set in this context.
-     */
+     */ ////makeMongoDServiceContext ->ServiceContext::setTickSource
     TickSource* getTickSource() const {
         return _tickSource.get();
     }
@@ -489,7 +489,7 @@ private:
 
     /**
      * The TransportLayer.  ServiceContext:_transportLayer
-     */ //对应TransportLayerManager
+     */ //对应TransportLayerManager._tls  即transportLayerASIO
     std::unique_ptr<transport::TransportLayer> _transportLayer;
 
     /**
@@ -524,6 +524,7 @@ private:
      */ //赋值见ServiceContext::setOpObserver  //_initAndListen中有调用 赋值为OpObserverImpl类
     std::unique_ptr<OpObserver> _opObserver;
     //注意_tickSource  _fastClockSource  _preciseClockSource的区别
+    //makeMongoDServiceContext ->ServiceContext::setTickSource中调用
     std::unique_ptr<TickSource> _tickSource;
 
     /**

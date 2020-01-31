@@ -182,7 +182,7 @@ PeriodicRunner* ServiceContext::getPeriodicRunner() const {
 }
 
 transport::TransportLayer* ServiceContext::getTransportLayer() const {
-    return _transportLayer.get();
+    return _transportLayer.get();//对应TransportLayerManager._tls  即transportLayerASIO
 }
 
 //ServiceEntryPointMongod或者ServiceEntryPointMongos
@@ -204,7 +204,7 @@ void ServiceContext::setOpObserver(std::unique_ptr<OpObserver> opObserver) {
     _opObserver = std::move(opObserver);
 }
 
-//makeMongoDServiceContext 中调用
+//makeMongoDServiceContext ->ServiceContext::setTickSource中调用
 void ServiceContext::setTickSource(std::unique_ptr<TickSource> newSource) {
     _tickSource = std::move(newSource);
 }
@@ -225,7 +225,8 @@ void ServiceContext::setServiceEntryPoint(std::unique_ptr<ServiceEntryPoint> sep
 
 //_initAndListen中执行 mongos在runMongosServer
 void ServiceContext::setTransportLayer(std::unique_ptr<transport::TransportLayer> tl) {
-    _transportLayer = std::move(tl);
+	//对应transportLayerASIO
+	_transportLayer = std::move(tl);
 }
 
 /*
@@ -236,7 +237,7 @@ if (config->serviceExecutor == "adaptive") { //异步方式
     ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorSynchronous>(ctx));
 }
 */
-//createWithConfig中执行
+//TransportLayerManager::createWithConfig中执行
 void ServiceContext::setServiceExecutor(std::unique_ptr<transport::ServiceExecutor> exec) {
     _serviceExecutor = std::move(exec);
 }

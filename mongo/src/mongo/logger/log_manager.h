@@ -56,6 +56,8 @@ public:
     /**
      * Gets the global domain for this manager.  It has no name.
      */
+     //参考 LogComponent::toStringData  对应的是各个模块名
+     //#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kNetwork 这样来定义是那个模块
     ComponentMessageLogDomain* getGlobalDomain() {
         return &_globalDomain;
     }

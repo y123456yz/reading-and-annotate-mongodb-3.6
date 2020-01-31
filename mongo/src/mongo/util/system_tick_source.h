@@ -38,7 +38,7 @@ namespace mongo {
  * is about 10 trillion ticks. As long as there are fewer than 100 ticks per nanosecond,
  * timer durations of 2.5 years will be supported. Since a typical tick duration will be
  * under 10 per nanosecond, if not below 1 per nanosecond, this should not be an issue.
- */
+ */ //时间搓相关
 class SystemTickSource final : public TickSource {
 public:
     TickSource::Tick getTicks() override;

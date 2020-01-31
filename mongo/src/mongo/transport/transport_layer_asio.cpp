@@ -75,6 +75,8 @@ TransportLayerASIO::Options::Options(const ServerGlobalParams* params)
 
 TransportLayerASIO::TransportLayerASIO(const TransportLayerASIO::Options& opts,
                                        ServiceEntryPoint* sep)
+    //boost::asio::io_context用于网络IO事件循环
+    //可以参考https://blog.csdn.net/qq_35976351/article/details/90373124
     : _workerIOContext(std::make_shared<asio::io_context>()),
       _acceptorIOContext(stdx::make_unique<asio::io_context>()),
 #ifdef MONGO_CONFIG_SSL
@@ -141,6 +143,7 @@ void TransportLayerASIO::anetSetReuseAddr(int fd) {
 
 //TransportLayerASIO::start  accept处理
 //TransportLayerASIO::setup() listen监听
+//新链接到来后，在TransportLayerASIO::start中执行
 
 //创建套接字并bind, TransportLayerManager::setup中执行
 Status TransportLayerASIO::setup() {
@@ -192,6 +195,16 @@ Status TransportLayerASIO::setup() {
                 fassertFailedNoTrace(40488);
             }
 
+			/* boost.asio套接字使用过程
+			.acceptor使用方式
+				传统使用
+				open();bind();listen()
+				新的使用
+				通过构造函数，传入endpoint，直接完成open(),bind(),listen()
+				调用accept()可以接收新的连接
+
+				acceptor用来存储socket相关的信息
+			*/
             GenericAcceptor acceptor(*_acceptorIOContext);
             acceptor.open(endpoint.protocol());
 			//SO_REUSEADDR配置
@@ -216,7 +229,8 @@ Status TransportLayerASIO::setup() {
                 }
             }
 #endif
-	
+
+			//socket对应得套接字_acceptors相关处理在后续的TransportLayerASIO::start
             _acceptors.emplace_back(std::make_pair(std::move(addr), std::move(acceptor)));
         }
     }
@@ -243,6 +257,11 @@ Status TransportLayerASIO::setup() {
     return Status::OK();
 }
 
+//TransportLayerASIO::start  accept处理
+//TransportLayerASIO::setup() listen监听
+//新链接到来后，在TransportLayerASIO::start中执行
+
+
 //TransportLayerManager::start中执行   参考boost::ASIO
 Status TransportLayerASIO::start() { //listen线程处理
     stdx::lock_guard<stdx::mutex> lk(_mutex);
@@ -250,6 +269,8 @@ Status TransportLayerASIO::start() { //listen线程处理
 
 	
 	warning() << "222 yang test  TransportLayerASIO::start";
+	//这里专门起一个线程做listen相关的accept事件处理
+	//注意套接字的初始化 bind listen操作由initandlisten完成，listen线程只是负责accept事件的循环处理
     _listenerThread = stdx::thread([this] {
         setThreadName("listener"); //新线程为listen线程
         while (_running.load()) {
@@ -264,6 +285,7 @@ Status TransportLayerASIO::start() { //listen线程处理
                 fassertFailed(40491);
             }
         }
+		//db.shutdown的时候，会走到这里
 		warning() << "yang test  TransportLayerASIO::start end";
     }); //创建listener线程
 
@@ -324,6 +346,7 @@ void TransportLayerASIO::shutdown() {
 }
 
 const std::shared_ptr<asio::io_context>& TransportLayerASIO::getIOContext() {
+	//网络IO上下文，在TransportLayerManager::createWithConfig中复制给adaptive或者synchronous
     return _workerIOContext;
 }
 
@@ -340,6 +363,7 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
             return;
         }
 
+		//每个新的链接都会new一个新的ASIOSession
         std::shared_ptr<ASIOSession> session(new ASIOSession(this, std::move(peerSocket)));
 
 		//新的链接处理ServiceEntryPointImpl::startSession

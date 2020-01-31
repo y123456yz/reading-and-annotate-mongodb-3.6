@@ -47,11 +47,13 @@ namespace {
 // value.
 MONGO_EXPORT_SERVER_PARAMETER(synchronousServiceExecutorRecursionLimit, int, 8);
 
+//当前线程数，也就是当前conn线程数量
 constexpr auto kThreadsRunning = "threadsRunning"_sd;
 constexpr auto kExecutorLabel = "executor"_sd;
 constexpr auto kExecutorName = "passthrough"_sd;
 }  // namespace
 
+//线程级别的变量，只针对本链接session对应的线程
 thread_local std::deque<ServiceExecutor::Task> ServiceExecutorSynchronous::_localWorkQueue = {}; //链接入队
 thread_local int ServiceExecutorSynchronous::_localRecursionDepth = 0;
 thread_local int64_t ServiceExecutorSynchronous::_localThreadIdleCounter = 0;
@@ -72,8 +74,10 @@ Status ServiceExecutorSynchronous::start() {
     return Status::OK();
 }
 
+//实际上测试发现db.shutdown的时候并没有进入该函数
 Status ServiceExecutorSynchronous::shutdown(Milliseconds timeout) {
     LOG(3) << "Shutting down passthrough executor";
+	log() << "Shutting down passthrough executor";
 
     _stillRunning.store(false);
 
@@ -110,6 +114,7 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
                 stdx::this_thread::yield();//让listener线程本次不参与CPU调度，也就是放慢脚步
             }
         }
+		//log() << "yang test Starting ServiceExecutorSynchronous::schedule 11";
 
         // Execute task directly (recurse) if allowed by the caller as it produced better
         // performance in testing. Try to limit the amount of recursion so we don't blow up the
@@ -122,8 +127,10 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
         if ((flags & ScheduleFlags::kMayRecurse) &&  //等待下次入队
             (_localRecursionDepth < synchronousServiceExecutorRecursionLimit.loadRelaxed())) {
             ++_localRecursionDepth;
+			//log() << "yang test Starting ServiceExecutorSynchronous::schedule 33";
             task();
         } else {
+        	//log() << "yang test Starting ServiceExecutorSynchronous::schedule 22";
             _localWorkQueue.emplace_back(std::move(task)); //入队
         }
         return Status::OK();
@@ -131,23 +138,40 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
 
     // First call to schedule() for this connection, spawn a worker thread that will push jobs
     // into the thread local job queue.
-    LOG(3) << "Starting new executor thread in passthrough mode";
+    log() << "Starting new executor thread in passthrough mode";
 
+	//创建conn线程，执行对应的task
     Status status = launchServiceWorkerThread([ this, task = std::move(task) ] {
-        _numRunningWorkerThreads.addAndFetch(1);
+		//这个func是线程回调函数
+	
+        int ret = _numRunningWorkerThreads.addAndFetch(1);
 
 		//task对应 ServiceStateMachine::_runNextInGuard
         _localWorkQueue.emplace_back(std::move(task));
+		//每个新链接都会在该while中循环进行网络IO处理和DB storage处理
         while (!_localWorkQueue.empty() && _stillRunning.loadRelaxed()) {
             _localRecursionDepth = 1;
+			//log() << "Starting new executor thread in passthrough mode yang tesst 11 size:" << _localWorkQueue.size() << "  _numRunningWorkerThreads:" << ret;
+			//队列中获取一个task，并执行, task执行过程中会走入SSM状态机，会一直循环，除非该线程对应的客户端关闭链接才会走到下面的_localWorkQueue.pop_front();
 			//对应:ServiceStateMachine::_runNextInGuard  该线程负责接收新链接的所有数据包解析处理
-            _localWorkQueue.front()(); //队列中获取一个task，并执行
+            _localWorkQueue.front()(); 
+			
             _localWorkQueue.pop_front();  //去除该task删除
+            
+        }
+		ret = _numRunningWorkerThreads.subtractAndFetch(1);
+		//log() << "Starting new executor thread in passthrough mode yang tesst 22 size:" << _localWorkQueue.size() << "	_numRunningWorkerThreads:" << ret;
+		if (ret == 0) { //当最后一个链接断开的时候会走到该if
+        //if (_numRunningWorkerThreads.subtractAndFetch(1) == 0) { //
+        	//说明已经没有可用链接了，shutdown可以真正退出了
+        	//mongo shell敲shutdown的时候，只有当没有任何链接存在的时候才能真正的退出
+            _shutdownCondition.notify_all();
+			//log() << "Starting new executor thread in passthrough mode yang tesst 44";
         }
 
-        if (_numRunningWorkerThreads.subtractAndFetch(1) == 0) { //
-            _shutdownCondition.notify_all();
-        }
+		//客户端对应链接断开的时候走到这里
+		LOG(3) << "Starting new executor thread in passthrough mode yang tesst end ";
+		//log() << "Starting new executor thread in passthrough mode yang tesst end ";
     });
 
     return status;

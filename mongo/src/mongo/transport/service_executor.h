@@ -62,7 +62,7 @@ public:
 
         // MayYieldBeforeSchedule indicates that the executor may yield on the current thread before
         // scheduling the task.
-        kMayYieldBeforeSchedule = 1 << 3,
+        kMayYieldBeforeSchedule = 1 << 3, //等待一个调度的时间，下次执行
     };
 
     /*

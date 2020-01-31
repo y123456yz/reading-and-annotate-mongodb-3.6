@@ -442,6 +442,13 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
     string config = ss.str();
     log() << "wiredtiger_open config: " << config;
     _wtOpenConfig = config;
+
+	/*
+	2020-01-26T09:51:52.304+0800 I STORAGE  [initandlisten] 
+	wiredtiger_open config: create,cache_size=61440M,session_max=20000,eviction=(threads_min=4,threads_max=4),
+	config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),
+	file_manager=(close_idle_time=100000),statistics_log=(wait=0),verbose=(recovery_progress),
+	*/
     int ret = wiredtiger_open(path.c_str(), &_eventHandler, config.c_str(), &_conn);
     // Invalid argument (EINVAL) is usually caused by invalid configuration string.
     // We still fassert() but without a stack trace.

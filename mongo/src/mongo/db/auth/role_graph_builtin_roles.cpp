@@ -111,7 +111,7 @@ void operator+=(ActionSet& target, const ActionSet& source) {
 // is authorized to perform
 // Note: we suppress clang-format for this function because we want each enum value on a separate
 // line
-// clang-format off
+// clang-format off  每种role对应有那些action再这里定义
 MONGO_INITIALIZER(AuthorizationBuiltinRoles)(InitializerContext* context) {
     // Read role
     readRoleActions
@@ -125,7 +125,7 @@ MONGO_INITIALIZER(AuthorizationBuiltinRoles)(InitializerContext* context) {
         << ActionType::listIndexes
         << ActionType::planCacheRead;
 
-    // Read-write role
+    // Read-write role 注意这里是追加 
     readWriteRoleActions += readRoleActions;
     readWriteRoleActions
         << ActionType::convertToCapped  // db admin gets this also

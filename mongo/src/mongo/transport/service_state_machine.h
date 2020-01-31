@@ -51,7 +51,13 @@ namespace mongo {
  * lifecycle of each user request as a state machine. It is the glue between the stateless
  * ServiceEntryPoint and TransportLayer that ties network and database logic together for a
  * user.
- */ //ServiceEntryPointImpl::startSessionÖĞÓĞĞÂÁ´½ÓµÄÊ±ºò¹¹ÔìÒ»¸ö¸ÃÀà
+
+ ServiceStateMachine±£´æµ¥¸ö¿Í»§¶ËÁ¬½ÓµÄ×´Ì¬£¬²¢½«Ã¿¸öÓÃ»§ÇëÇóµÄÉúÃüÖÜÆÚ±íÊ¾ÎªÒ»¸ö×´Ì¬»ú¡£
+ ËüÊÇÎŞ×´Ì¬µÄServiceEntryPointºÍTransportLayerÖ®¼äµÄÇÅÁº£¬ÎªÓÃ»§½«ÍøÂçºÍÊı¾İ¿âÂß¼­ÁªÏµÔÚÒ»Æğ¡£
+ */ 
+ //TransportLayerASIO::_acceptConnection(Ã¿¸öĞÂÁ´½Ó¶¼»á´´½¨Ò»¸öĞÂµÄsession) -> ServiceEntryPointImpl::startSession->ServiceStateMachine::create(Ã¿¸öĞÂÁ´½Ó¶ÔÓ¦Ò»¸öServiceStateMachine½á¹¹)
+ //ServiceEntryPointImpl::startSessionÖĞÓĞĞÂÁ´½ÓµÄÊ±ºò¹¹ÔìÒ»¸ö¸ÃÀà  
+ //ServiceStateMachineÍøÂçÊÕ·¢×´Ì¬»ú
 class ServiceStateMachine : public std::enable_shared_from_this<ServiceStateMachine> {
     ServiceStateMachine(ServiceStateMachine&) = delete;
     ServiceStateMachine& operator=(ServiceStateMachine&) = delete;
@@ -92,6 +98,7 @@ EndSession  ¶ÁĞ´Òì³££¬»òÕßÁ´½ÓÒì³£µÄÊ±ºò½øÈë¸Ã×´Ì¬£¬±íÊ¾Á´½ÓÒì³£ĞèÒª½øĞĞsession»
 Ended   ¸ÃÁ´½Ó»ØÊÕÍê±Ï£¬²»ÔÙ¿ÉÓÃ    ServiceStateMachine::_cleanupSession
 */
     enum class State {
+        //ServiceStateMachine::ServiceStateMachine¹¹Ôìº¯Êı³õÊ¼×´Ì¬
         Created,     // The session has been created, but no operations have been performed yet
         Source,      // Request a new Message from the network to handle
         SourceWait,  // Wait for the new Message to arrive from the network
@@ -112,7 +119,13 @@ Ended   ¸ÃÁ´½Ó»ØÊÕÍê±Ï£¬²»ÔÙ¿ÉÓÃ    ServiceStateMachine::_cleanupSession
      *
      * kUnowned is used internally to mark that the SSM is inactive.
      */
-    enum class Ownership { kUnowned, kOwned, kStatic };
+    enum class Ownership { 
+    kUnowned,  
+    //Èç¹ûÊÇtransport::Mode::kSynchronousÒ»¸öÁ´½ÓÒ»¸öÏß³ÌÄ£Ê½£¬ÔòÕû¸ö¹ı³ÌÖĞ¶¼ÊÇÍ¬Ò»¸öÏß³Ì´¦Àí£¬ËùÒÔ²»ĞèÒª¸ü¸ÄÏß³ÌÃû
+	//Èç¹ûÊÇasyncÒì²½Ïß³Ì³ØÄ£Ê½£¬Ôò´¦ÀíÁ´½ÓµÄ¹ı³ÌÖĞ»á´ÓconnÏß³Ì±äÎªworkerÏß³Ì
+    kOwned, 
+    kStatic 
+    };
 
     /*
      * runNext() will run the current state of the state machine. It also handles all the error
@@ -231,7 +244,7 @@ private:
     ServiceContext* const _serviceContext;
     
     //TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
-    transport::SessionHandle _sessionHandle; //Ä¬ÈÏ¶ÔÓ¦ASIOSession
+    transport::SessionHandle _sessionHandle; //Ä¬ÈÏ¶ÔÓ¦ASIOSession 
     ServiceContext::UniqueClient _dbClient;
     const Client* _dbClientPtr;
     const std::string _threadName;

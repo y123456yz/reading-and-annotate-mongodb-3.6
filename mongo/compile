@@ -9,6 +9,8 @@ sudo yum install python-devel
 
 scons --disable-warnings-as-errors --release --ssl --opt=on 
 
+strip mongos可以把mongos二进制文件更小
+
 stdc库问题可以在编译时候加上-static-libstdc++，通过静态库解决
 
 pip安装module

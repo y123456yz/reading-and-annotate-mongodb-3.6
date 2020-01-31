@@ -69,6 +69,11 @@ public:
     void appendStats(BSONObjBuilder* bob) const override;
 
 private:
+/* thread_local变量初始化
+thread_local std::deque<ServiceExecutor::Task> ServiceExecutorSynchronous::_localWorkQueue = {}; //链接入队
+thread_local int ServiceExecutorSynchronous::_localRecursionDepth = 0;
+thread_local int64_t ServiceExecutorSynchronous::_localThreadIdleCounter = 0;
+*/
     static thread_local std::deque<Task> _localWorkQueue;
     static thread_local int _localRecursionDepth;
     static thread_local int64_t _localThreadIdleCounter;
@@ -78,7 +83,8 @@ private:
     mutable stdx::mutex _shutdownMutex;
     stdx::condition_variable _shutdownCondition;
 
-    //当前conn线程数，参考ServiceExecutorSynchronous::schedul
+    //当前conn线程数，参考ServiceExecutorSynchronous::schedul 
+    //注意，这是个全局的，表示有多少个线程，前面的_localWorkQueue等是线程级别的
     AtomicWord<size_t> _numRunningWorkerThreads{0};
     size_t _numHardwareCores{0}; //cpu个数
 };

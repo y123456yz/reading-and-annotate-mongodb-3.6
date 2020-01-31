@@ -1,0 +1,44 @@
+processManagement:
+  fork: true
+systemLog:
+  destination: file
+  path: /data/logs/mongod.log
+  logAppend: true
+storage:
+  journal:
+    enabled: true
+  dbPath: /data/db
+  directoryPerDB: true
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 40
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: none
+    indexConfig:
+      prefixCompression: false
+net:
+   port: 8003
+   maxIncomingConnections: 20000
+   bindIpAll: true
+#   transportLayer: legacy
+   serviceExecutor: adaptive
+
+operationProfiling:
+   slowOpThresholdMs: 100
+   mode: slowOp
+
+#replication:
+#   oplogSizeMB: 20480
+#   replSetName: 363
+
+#security:
+#   keyFile: /data1/mongodb/363/keys/keyfile363
+#   clusterAuthMode: keyFile
+#   authorization: enabled
+
+#sharding:
+#   clusterRole: shardsvr
+#   archiveMovedChunks: true
+

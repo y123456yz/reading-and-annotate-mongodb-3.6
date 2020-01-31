@@ -126,7 +126,7 @@ inline LogstreamBuilder warning(logger::LogComponent component) {
 
 /**
  * Returns a LogstreamBuilder for logging a message with LogSeverity::Log().
- */
+ */ //第一个参数是模块名，第二个是线程名
 inline LogstreamBuilder log() {
     return LogstreamBuilder(logger::globalLogDomain(),
                             getThreadName(),
@@ -168,6 +168,8 @@ inline bool shouldLog(logger::LogSeverity severity) {
 }
 
 }  // namespace
+
+//例如log(LogComponent::kNetwork) << "shutdown: going to XXXX"; 则打印是NETWORK模块日志
 
 //命令行中-vvvvvv这样来设置日志级别，v越多，打印越多  -v LOG(1)可以输出  -vv LOG(1) LOG(2)可以输出，以此类推
 // MONGO_LOG uses log component from MongoLogDefaultComponent from current or global namespace.
