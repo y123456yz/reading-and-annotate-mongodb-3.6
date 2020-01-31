@@ -35,9 +35,11 @@ libsbmysql_a-drv_mysql.o: drv_mysql.c /usr/include/stdc-predef.h \
  ../../../sysbench/tests/sb_fileio.h ../../../sysbench/tests/sb_memory.h \
  ../../../sysbench/tests/sb_threads.h ../../../sysbench/tests/sb_mutex.h \
  ../../../sysbench/sb_percentile.h /usr/local/include/libbson-1.0/bson.h \
- /usr/local/include/libbson-1.0/bson-compat.h \
- /usr/local/include/libbson-1.0/bson-config.h \
- /usr/local/include/libbson-1.0/bson-macros.h /usr/include/errno.h \
+ /usr/local/include/libbson-1.0/bson/bson.h \
+ /usr/local/include/libbson-1.0/bson/bson-compat.h \
+ /usr/local/include/libbson-1.0/bson/bson-prelude.h \
+ /usr/local/include/libbson-1.0/bson/bson-config.h \
+ /usr/local/include/libbson-1.0/bson/bson-macros.h /usr/include/errno.h \
  /usr/include/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
  /usr/include/asm-generic/errno-base.h /usr/include/ctype.h \
@@ -53,52 +55,57 @@ libsbmysql_a-drv_mysql.o: drv_mysql.c /usr/include/stdc-predef.h \
  /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/inttypes.h \
  /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h \
- /usr/local/include/libbson-1.0/bson-atomic.h \
- /usr/local/include/libbson-1.0/bson-context.h \
- /usr/local/include/libbson-1.0/bson-types.h \
- /usr/local/include/libbson-1.0/bson-endian.h \
- /usr/local/include/libbson-1.0/bson-clock.h \
- /usr/local/include/libbson-1.0/bson-decimal128.h \
- /usr/local/include/libbson-1.0/bson-error.h \
- /usr/local/include/libbson-1.0/bson-iter.h \
- /usr/local/include/libbson-1.0/bson.h \
- /usr/local/include/libbson-1.0/bson-json.h \
- /usr/local/include/libbson-1.0/bson-keys.h \
- /usr/local/include/libbson-1.0/bson-md5.h \
- /usr/local/include/libbson-1.0/bson-memory.h \
- /usr/local/include/libbson-1.0/bson-oid.h \
- /usr/local/include/libbson-1.0/bson-reader.h \
- /usr/local/include/libbson-1.0/bson-string.h \
- /usr/local/include/libbson-1.0/bson-utf8.h \
- /usr/local/include/libbson-1.0/bson-value.h \
- /usr/local/include/libbson-1.0/bson-version.h \
- /usr/local/include/libbson-1.0/bson-version-functions.h \
- /usr/local/include/libbson-1.0/bson-writer.h \
- /usr/local/include/libbson-1.0/bcon.h \
+ /usr/local/include/libbson-1.0/bson/bson-atomic.h \
+ /usr/local/include/libbson-1.0/bson/bson-context.h \
+ /usr/local/include/libbson-1.0/bson/bson-types.h \
+ /usr/local/include/libbson-1.0/bson/bson-endian.h \
+ /usr/local/include/libbson-1.0/bson/bson-clock.h \
+ /usr/local/include/libbson-1.0/bson/bson-decimal128.h \
+ /usr/local/include/libbson-1.0/bson/bson-error.h \
+ /usr/local/include/libbson-1.0/bson/bson-iter.h \
+ /usr/local/include/libbson-1.0/bson/bson.h \
+ /usr/local/include/libbson-1.0/bson/bson-json.h \
+ /usr/local/include/libbson-1.0/bson/bson-keys.h \
+ /usr/local/include/libbson-1.0/bson/bson-md5.h \
+ /usr/local/include/libbson-1.0/bson/bson-memory.h \
+ /usr/local/include/libbson-1.0/bson/bson-oid.h \
+ /usr/local/include/libbson-1.0/bson/bson-reader.h \
+ /usr/local/include/libbson-1.0/bson/bson-string.h \
+ /usr/local/include/libbson-1.0/bson/bson-utf8.h \
+ /usr/local/include/libbson-1.0/bson/bson-value.h \
+ /usr/local/include/libbson-1.0/bson/bson-version.h \
+ /usr/local/include/libbson-1.0/bson/bson-version-functions.h \
+ /usr/local/include/libbson-1.0/bson/bson-writer.h \
+ /usr/local/include/libbson-1.0/bson/bcon.h \
  /usr/local/include/libbson-1.0/bcon.h \
  /usr/local/include/libmongoc-1.0/mongoc.h \
- /usr/local/include/libmongoc-1.0/mongoc-macros.h \
- /usr/local/include/libmongoc-1.0/mongoc-apm.h \
- /usr/local/include/libmongoc-1.0/mongoc-host-list.h \
- /usr/local/include/libmongoc-1.0/mongoc-server-description.h \
- /usr/local/include/libmongoc-1.0/mongoc-read-prefs.h \
- /usr/local/include/libmongoc-1.0/mongoc-config.h \
- /usr/local/include/libmongoc-1.0/mongoc-topology-description.h \
- /usr/local/include/libmongoc-1.0/mongoc-bulk-operation.h \
- /usr/local/include/libmongoc-1.0/mongoc-write-concern.h \
- /usr/local/include/libmongoc-1.0/mongoc-change-stream.h \
- /usr/local/include/libmongoc-1.0/mongoc-client.h \
- /usr/local/include/libmongoc-1.0/mongoc-collection.h \
- /usr/local/include/libmongoc-1.0/mongoc-flags.h \
- /usr/local/include/libmongoc-1.0/mongoc-cursor.h \
- /usr/local/include/libmongoc-1.0/mongoc-index.h \
- /usr/local/include/libmongoc-1.0/mongoc-read-concern.h \
- /usr/local/include/libmongoc-1.0/mongoc-find-and-modify.h \
- /usr/local/include/libmongoc-1.0/mongoc-database.h \
- /usr/local/include/libmongoc-1.0/mongoc-gridfs.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream.h \
- /usr/local/include/libmongoc-1.0/mongoc-iovec.h /usr/include/sys/uio.h \
- /usr/local/include/libmongoc-1.0/mongoc-socket.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc.h \
+ /usr/local/include/libbson-1.0/bson/bson.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-macros.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-prelude.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-apm.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-host-list.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-server-description.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-read-prefs.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-config.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-topology-description.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-bulk-operation.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-write-concern.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-change-stream.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-client.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-client-side-encryption.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-collection.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-flags.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-cursor.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-index.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-read-concern.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-find-and-modify.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-database.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-stream.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-iovec.h \
+ /usr/include/sys/uio.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-socket.h \
  /usr/include/arpa/inet.h /usr/include/netinet/in.h \
  /usr/include/sys/socket.h /usr/include/bits/socket.h \
  /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
@@ -108,24 +115,28 @@ libsbmysql_a-drv_mysql.o: drv_mysql.c /usr/include/stdc-predef.h \
  /usr/include/bits/poll.h /usr/include/netdb.h /usr/include/rpc/netdb.h \
  /usr/include/bits/siginfo.h /usr/include/bits/netdb.h \
  /usr/include/netinet/tcp.h /usr/include/sys/un.h \
- /usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h \
- /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h \
- /usr/local/include/libmongoc-1.0/mongoc-uri.h \
- /usr/local/include/libmongoc-1.0/mongoc-client-pool.h \
- /usr/local/include/libmongoc-1.0/mongoc-error.h \
- /usr/local/include/libmongoc-1.0/mongoc-gridfs-file-page.h \
- /usr/local/include/libmongoc-1.0/mongoc-init.h \
- /usr/local/include/libmongoc-1.0/mongoc-matcher.h \
- /usr/local/include/libmongoc-1.0/mongoc-handshake.h \
- /usr/local/include/libmongoc-1.0/mongoc-opcode.h \
- /usr/local/include/libmongoc-1.0/mongoc-log.h \
- /usr/local/include/libmongoc-1.0/mongoc-client-session.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-buffered.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-file.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h \
- /usr/local/include/libmongoc-1.0/mongoc-stream-socket.h \
- /usr/local/include/libmongoc-1.0/mongoc-version.h \
- /usr/local/include/libmongoc-1.0/mongoc-version-functions.h
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-file.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-file-list.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-ssl.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-uri.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-client-pool.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-error.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-bucket.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-file-page.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-init.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-matcher.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-handshake.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-opcode.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-log.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-client-session.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-buffered.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-file.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-gridfs.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-socket.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-version.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-version-functions.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-rand.h \
+ /usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-tls.h
 
 /usr/include/stdc-predef.h:
 
@@ -277,11 +288,15 @@ libsbmysql_a-drv_mysql.o: drv_mysql.c /usr/include/stdc-predef.h \
 
 /usr/local/include/libbson-1.0/bson.h:
 
-/usr/local/include/libbson-1.0/bson-compat.h:
+/usr/local/include/libbson-1.0/bson/bson.h:
 
-/usr/local/include/libbson-1.0/bson-config.h:
+/usr/local/include/libbson-1.0/bson/bson-compat.h:
 
-/usr/local/include/libbson-1.0/bson-macros.h:
+/usr/local/include/libbson-1.0/bson/bson-prelude.h:
+
+/usr/local/include/libbson-1.0/bson/bson-config.h:
+
+/usr/local/include/libbson-1.0/bson/bson-macros.h:
 
 /usr/include/errno.h:
 
@@ -337,99 +352,107 @@ libsbmysql_a-drv_mysql.o: drv_mysql.c /usr/include/stdc-predef.h \
 
 /usr/local/gcc-5.4.0/lib/gcc/x86_64-unknown-linux-gnu/5.4.0/include/stdbool.h:
 
-/usr/local/include/libbson-1.0/bson-atomic.h:
+/usr/local/include/libbson-1.0/bson/bson-atomic.h:
 
-/usr/local/include/libbson-1.0/bson-context.h:
+/usr/local/include/libbson-1.0/bson/bson-context.h:
 
-/usr/local/include/libbson-1.0/bson-types.h:
+/usr/local/include/libbson-1.0/bson/bson-types.h:
 
-/usr/local/include/libbson-1.0/bson-endian.h:
+/usr/local/include/libbson-1.0/bson/bson-endian.h:
 
-/usr/local/include/libbson-1.0/bson-clock.h:
+/usr/local/include/libbson-1.0/bson/bson-clock.h:
 
-/usr/local/include/libbson-1.0/bson-decimal128.h:
+/usr/local/include/libbson-1.0/bson/bson-decimal128.h:
 
-/usr/local/include/libbson-1.0/bson-error.h:
+/usr/local/include/libbson-1.0/bson/bson-error.h:
 
-/usr/local/include/libbson-1.0/bson-iter.h:
+/usr/local/include/libbson-1.0/bson/bson-iter.h:
 
-/usr/local/include/libbson-1.0/bson.h:
+/usr/local/include/libbson-1.0/bson/bson.h:
 
-/usr/local/include/libbson-1.0/bson-json.h:
+/usr/local/include/libbson-1.0/bson/bson-json.h:
 
-/usr/local/include/libbson-1.0/bson-keys.h:
+/usr/local/include/libbson-1.0/bson/bson-keys.h:
 
-/usr/local/include/libbson-1.0/bson-md5.h:
+/usr/local/include/libbson-1.0/bson/bson-md5.h:
 
-/usr/local/include/libbson-1.0/bson-memory.h:
+/usr/local/include/libbson-1.0/bson/bson-memory.h:
 
-/usr/local/include/libbson-1.0/bson-oid.h:
+/usr/local/include/libbson-1.0/bson/bson-oid.h:
 
-/usr/local/include/libbson-1.0/bson-reader.h:
+/usr/local/include/libbson-1.0/bson/bson-reader.h:
 
-/usr/local/include/libbson-1.0/bson-string.h:
+/usr/local/include/libbson-1.0/bson/bson-string.h:
 
-/usr/local/include/libbson-1.0/bson-utf8.h:
+/usr/local/include/libbson-1.0/bson/bson-utf8.h:
 
-/usr/local/include/libbson-1.0/bson-value.h:
+/usr/local/include/libbson-1.0/bson/bson-value.h:
 
-/usr/local/include/libbson-1.0/bson-version.h:
+/usr/local/include/libbson-1.0/bson/bson-version.h:
 
-/usr/local/include/libbson-1.0/bson-version-functions.h:
+/usr/local/include/libbson-1.0/bson/bson-version-functions.h:
 
-/usr/local/include/libbson-1.0/bson-writer.h:
+/usr/local/include/libbson-1.0/bson/bson-writer.h:
 
-/usr/local/include/libbson-1.0/bcon.h:
+/usr/local/include/libbson-1.0/bson/bcon.h:
 
 /usr/local/include/libbson-1.0/bcon.h:
 
 /usr/local/include/libmongoc-1.0/mongoc.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-macros.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-apm.h:
+/usr/local/include/libbson-1.0/bson/bson.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-host-list.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-macros.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-server-description.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-prelude.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-read-prefs.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-apm.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-config.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-host-list.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-topology-description.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-server-description.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-bulk-operation.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-read-prefs.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-write-concern.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-config.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-change-stream.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-topology-description.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-client.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-bulk-operation.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-collection.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-write-concern.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-flags.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-change-stream.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-cursor.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-client.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-index.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-client-side-encryption.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-read-concern.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-collection.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-find-and-modify.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-flags.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-database.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-cursor.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-gridfs.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-index.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-stream.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-read-concern.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-iovec.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-find-and-modify.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-database.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-stream.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-iovec.h:
 
 /usr/include/sys/uio.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-socket.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-socket.h:
 
 /usr/include/arpa/inet.h:
 
@@ -471,38 +494,46 @@ libsbmysql_a-drv_mysql.o: drv_mysql.c /usr/include/stdc-predef.h \
 
 /usr/include/sys/un.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-gridfs-file.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-file.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-gridfs-file-list.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-file-list.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-uri.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-ssl.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-client-pool.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-uri.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-error.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-client-pool.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-gridfs-file-page.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-error.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-init.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-bucket.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-matcher.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-gridfs-file-page.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-handshake.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-init.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-opcode.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-matcher.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-log.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-handshake.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-client-session.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-opcode.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-stream-buffered.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-log.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-stream-file.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-client-session.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-stream-gridfs.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-buffered.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-stream-socket.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-file.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-version.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-gridfs.h:
 
-/usr/local/include/libmongoc-1.0/mongoc-version-functions.h:
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-socket.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-version.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-version-functions.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-rand.h:
+
+/usr/local/include/libmongoc-1.0/mongoc/mongoc-stream-tls.h:

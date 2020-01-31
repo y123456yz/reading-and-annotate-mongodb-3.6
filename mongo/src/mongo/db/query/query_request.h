@@ -379,6 +379,7 @@ public:
         return _exhaust;
     }
 
+    //3.6.1版本该功能没有用起来，该接口没有任何地方调用
     void setExhaust(bool exhaust) {
         _exhaust = exhaust;
     }

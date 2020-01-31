@@ -1070,7 +1070,7 @@ ExitCode _initAndListen(int listenPort) {
     }
 
     MONGO_IDLE_THREAD_BLOCK;
-    return waitForShutdown();
+    return waitForShutdown(); //只有shutdown的时候才会返回
 }
 
 ExitCode initAndListen(int listenPort) {
@@ -1267,6 +1267,8 @@ MONGO_INITIALIZER_GENERAL(setSSLManagerType, MONGO_NO_PREREQUISITES, ("SSLManage
 
 // NOTE: This function may be called at any time after registerShutdownTask is called below. It
 // must not depend on the prior execution of mongo initializers or the existence of threads.
+
+//shutdownTask中调用
 void shutdownTask() {
     Client::initThreadIfNotAlready();
 
@@ -1276,7 +1278,8 @@ void shutdownTask() {
     // Shutdown the TransportLayer so that new connections aren't accepted
     if (auto tl = serviceContext->getTransportLayer()) {
         log(LogComponent::kNetwork) << "shutdown: going to close listening sockets...";
-        tl->shutdown();
+		//TransportLayerASIO::shutdown
+        tl->shutdown(); 
     }
 
     if (serviceContext->getGlobalStorageEngine()) {

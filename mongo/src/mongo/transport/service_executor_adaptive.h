@@ -197,8 +197,9 @@ private:
     enum class ThreadTimer { Running, Executing };
     TickSource::Tick _getThreadTimerTotal(ThreadTimer which) const;
 
+    ////TransportLayerManager::createWithConfig赋值，链接上的数据读写生效见ServiceExecutorAdaptive::scheduleshut
     std::shared_ptr<asio::io_context> _ioContext; //早期ASIO中叫io_service 
-
+    //TransportLayerManager::createWithConfig赋值调用
     std::unique_ptr<Options> _config;
 
     mutable stdx::mutex _threadsMutex;
@@ -206,6 +207,7 @@ private:
     //worker-controller thread   ServiceExecutorAdaptive::start中创建
     stdx::thread _controllerThread;
 
+    //TransportLayerManager::createWithConfig赋值调用
     TickSource* const _tickSource;
     AtomicWord<bool> _isRunning{false};
 
@@ -215,6 +217,7 @@ private:
     AtomicWord<int> _threadsInUse{0};
     AtomicWord<int> _tasksQueued{0};
     AtomicWord<int> _deferredTasksQueued{0};
+    //TransportLayerManager::createWithConfig赋值调用
     TickTimer _lastScheduleTimer;
     AtomicWord<TickSource::Tick> _pastThreadsSpentExecuting{0};
     AtomicWord<TickSource::Tick> _pastThreadsSpentRunning{0};

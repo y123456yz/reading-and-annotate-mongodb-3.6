@@ -1372,7 +1372,31 @@ int sb_lua_mongodb_insert1(lua_State *L)
 
 extern unsigned int global_id;
 extern pthread_mutex_t           global_id_mutex;
-int sb_lua_mongodb_insert(lua_State *L)
+
+
+int sb_lua_mongodb_insert_src(lua_State *L)
+{
+  sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
+  bson_t *doc;
+  const char *c, *pad, *col;
+  assert(lua_isstring(L,1));
+  assert(lua_isnumber(L,2));
+  assert(lua_isnumber(L,3));
+  assert(lua_isstring(L,4));
+  assert(lua_isstring(L,5));
+  col = lua_tostring(L,1);
+  const int id = lua_tonumber(L,2);
+  const int k = lua_tonumber(L,3);
+  c = lua_tostring(L,4);
+  pad = lua_tostring(L,5);
+  doc = BCON_NEW("_id", BCON_INT32(id), "k", BCON_INT32(k), "c", BCON_UTF8(c), "pad", BCON_UTF8(pad));
+  assert(ctxt->con!=NULL);
+  assert(ctxt->con->ptr!=NULL);
+  assert(doc!=NULL);
+  return mongodb_insert_document(ctxt->con, sb_get_value_string("mongo-database-name"),col,doc);
+}
+
+int sb_lua_mongodb_insert1(lua_State *L)
 {
   sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
   bson_t *doc;
@@ -1406,7 +1430,7 @@ int sb_lua_mongodb_insert(lua_State *L)
 }  
 
 
-int sb_lua_mongodb_oltp_insert1(lua_State *L)
+int sb_lua_mongodb_oltp_insert(lua_State *L)
 {
   sb_lua_ctxt_t *ctxt = sb_lua_get_context(L);
   bson_t *doc;

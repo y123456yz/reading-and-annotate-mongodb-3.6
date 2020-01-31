@@ -85,6 +85,7 @@ LogComponent LogComponent::parent() const {
     invariant(false);
 }
 
+//mongo::logger::LogComponent::kDefault
 StringData LogComponent::toStringData() const {
     switch (_value) {
         case kDefault:

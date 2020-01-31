@@ -95,6 +95,9 @@ ServiceEntryPointImpl::ServiceEntryPointImpl(ServiceContext* svcCtx) : _svcCtx(s
 #16 0x00007f1d42a0de25 in start_thread () from /lib64/libpthread.so.0
 */ 
 //新的链接到来或者关闭都要走到这里  ServiceEntryPointImpl::startSession中listen线程执行
+//TransportLayerASIO::_acceptConnection调用，每个新链接都会创建一个新的session
+//TransportLayerASIO::_acceptConnection(每个新链接都会创建一个新的session) -> ServiceEntryPointImpl::startSession->ServiceStateMachine::create(每个新链接对应一个ServiceStateMachine结构)
+
 void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //session对应ASIOSession
     // Setup the restriction environment on the Session, if the Session has local/remote Sockaddrs
     const auto& remoteAddr = session->remote().sockAddr();
@@ -138,7 +141,8 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
         return;
     }
  
-    if (!quiet) { //建链接打印
+    if (!quiet) { //建链接打印  
+    //I NETWORK  [listener] connection accepted from 1 127.0.0.1:42816 #1 (1 connection now open)
         const auto word = (connectionCount == 1 ? " connection"_sd : " connections"_sd);
         log() << "connection accepted from 1 " << session->remote() << " #" << session->id() << " ("
               << connectionCount << word << " now open)";
@@ -162,6 +166,8 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
     });
 
     auto ownership = ServiceStateMachine::Ownership::kOwned;
+	//如果是transport::Mode::kSynchronous一个链接一个线程模式，则整个过程中都是同一个线程处理，所以不需要更改线程名
+	//如果是async异步线程池模式，则处理链接的过程中会从conn线程变为worker线程
     if (transportMode == transport::Mode::kSynchronous) {
         ownership = ServiceStateMachine::Ownership::kStatic;
     }

@@ -154,7 +154,17 @@ private:
     // the io_context), so that we destroy any existing acceptors or
     // other io_service associated state before we drop the refcount
     // on the io_context, which may destroy it.
-    std::shared_ptr<asio::io_context> _workerIOContext;
+    //boost::asio::io_context用于网络IO事件循环
+    //可以参考https://blog.csdn.net/qq_35976351/article/details/90373124
+    //_acceptorIOContext针对socket()对应的fd1,也就是处理accept事件，accept事件到来会创建一个新的链接fd2
+    //_workerIOContext处理后续的新链接fd2上的所有读写事件，fd2网络IO数据收发真正生效见ServiceExecutorAdaptive::_workerThreadRoutine
+    
+    //TransportLayerASIO::TransportLayerASIO中构造  
+    //网络worker IO fd2上下文，在TransportLayerManager::createWithConfig中被赋值给ServiceExecutorAdaptive._ioContext   
+    //fd2数据收发见ServiceExecutorAdaptive::schedule
+    std::shared_ptr<asio::io_context> _workerIOContext; 
+    
+    // 真正生效接收新的链接见TransportLayerASIO::start   
     std::unique_ptr<asio::io_context> _acceptorIOContext;
 
 #ifdef MONGO_CONFIG_SSL

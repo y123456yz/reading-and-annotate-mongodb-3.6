@@ -58,7 +58,7 @@ void* runFunc(void* ctx) {
 }
 }  // namespace
 
-//创建线程worker-
+//创建线程
 Status launchServiceWorkerThread(stdx::function<void()> task) {
 
     try {

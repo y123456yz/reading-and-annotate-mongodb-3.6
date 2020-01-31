@@ -166,6 +166,7 @@ void setThreadName(StringData name) {
 #endif
 }
 
+//获取当前线程号
 StringData getThreadName() {
     if (MONGO_unlikely(!mongoInitializersHaveRun)) {
         // 'getThreadName' has been called before dynamic initialization for this

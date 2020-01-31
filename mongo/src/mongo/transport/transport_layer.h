@@ -57,6 +57,7 @@ class TicketImpl;
 //这个新的session被传入到数据库(通过ServiceEntryPoint)，数据库会调用额外的方法来管理这个session
 
 //ServiceContext:_transportLayer，setTransportLayer中让该类和TransportLayer关联
+//新版本都是使用asio不是使用legacy
 //TransportLayerASIO TransportLayerLegacy继承TransportLayer，对应asio和legacy网络框架, TransportLayerManager也继承该类
 class TransportLayer { //TransportLayerManager继承该类  
     MONGO_DISALLOW_COPYING(TransportLayer);

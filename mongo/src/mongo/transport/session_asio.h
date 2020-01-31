@@ -51,6 +51,7 @@ namespace transport {
 using GenericSocket = asio::generic::stream_protocol::socket;
 
 //createWithConfig  TransportLayerASIO::_acceptConnection中根据配置构造使用
+//记录链接相关的信息，如对端地址等
 class TransportLayerASIO::ASIOSession : public Session {
     MONGO_DISALLOW_COPYING(ASIOSession);
 
