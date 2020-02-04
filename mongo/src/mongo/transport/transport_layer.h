@@ -59,7 +59,7 @@ class TicketImpl;
 //ServiceContext:_transportLayer，setTransportLayer中让该类和TransportLayer关联
 //新版本都是使用asio不是使用legacy
 //TransportLayerASIO TransportLayerLegacy继承TransportLayer，对应asio和legacy网络框架, TransportLayerManager也继承该类
-class TransportLayer { //TransportLayerManager继承该类  
+class TransportLayer { //TransportLayerManager继承该类    TransportLayerManager::createWithConfig构造使用
     MONGO_DISALLOW_COPYING(TransportLayer);
 
 public:

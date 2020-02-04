@@ -239,7 +239,7 @@ if (config->serviceExecutor == "adaptive") { //异步方式
 */
 //TransportLayerManager::createWithConfig中执行
 void ServiceContext::setServiceExecutor(std::unique_ptr<transport::ServiceExecutor> exec) {
-    _serviceExecutor = std::move(exec);
+    _serviceExecutor = std::move(exec); 
 }
 
 void ServiceContext::ClientDeleter::operator()(Client* client) const {

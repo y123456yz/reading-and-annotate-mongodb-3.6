@@ -55,6 +55,7 @@ public:
         kEmptyFlags = 1 << 0,
 
         // Deferred tasks will never get a new thread launched to run them.
+        //ÑÓ³ÙÈÎÎñ
         kDeferredTask = 1 << 1,
 
         // MayRecurse indicates that a task may be run recursively.

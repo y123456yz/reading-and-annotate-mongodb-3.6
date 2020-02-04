@@ -403,6 +403,9 @@ protected:
  * Create a global variable of type "TYPE" named "NAME" with the given INITIAL_VALUE.  The
  * value may be set at startup or at runtime.
  */
+//https://docs.mongodb.com/v3.6/reference/command/setParameter/#dbcmd.setParameter
+//该宏定义的变量都可以通过db.adminCommand( { <command> } )进行在线修改
+//例如db.adminCommand( { setParameter: 1, adaptiveServiceExecutorReservedThreads: 10} ) 
 #define MONGO_EXPORT_SERVER_PARAMETER(NAME, TYPE, INITIAL_VALUE) \
     MONGO_EXPORT_SERVER_PARAMETER_IMPL(                          \
         NAME, TYPE, INITIAL_VALUE, ServerParameterType::kStartupAndRuntime)
