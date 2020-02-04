@@ -59,6 +59,7 @@ namespace transport {
 }
 */
 
+//构建使用见TransportLayerManager::createWithConfig,最终赋值给ServiceContext._serviceExecutor
 //ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式，他们的作用是处理链接相关的线程模型
 class ServiceExecutorAdaptive : public ServiceExecutor {
 public:
@@ -116,23 +117,29 @@ public:
     }
 
 private:
+    //计算ticks差值，也就是时间差值
     class TickTimer {
     public:
         explicit TickTimer(TickSource* tickSource)
             : _tickSource(tickSource),
+              //1000，也就是1s钟包含1000个ticks，也就是1个ticks代表1ms
               _ticksPerMillisecond(_tickSource->getTicksPerSecond() / 1000),
+              //初始化获取时间ticks
               _start(_tickSource->getTicks()) {
             invariant(_ticksPerMillisecond > 0);
         }
 
+        //start到当前的时间差
         TickSource::Tick sinceStartTicks() const {
             return _tickSource->getTicks() - _start.load();
         }
 
+        //以ms为精度，两个时间差值对应的ticks数，也就是相差ticks ms
         Milliseconds sinceStart() const {
             return Milliseconds{sinceStartTicks() / _ticksPerMillisecond};
         }
 
+        //初始时间tick
         void reset() {
             _start.store(_tickSource->getTicks());
         }
@@ -147,6 +154,7 @@ private:
     public:
         CumulativeTickTimer(TickSource* ts) : _timer(ts) {}
 
+        //总的时间记录到_accumulator
         TickSource::Tick markStopped() {
             stdx::lock_guard<stdx::mutex> lk(_mutex);
             invariant(_running);
@@ -156,6 +164,7 @@ private:
             return curTime;
         }
 
+        //记录开始时间
         void markRunning() {
             stdx::lock_guard<stdx::mutex> lk(_mutex);
             invariant(!_running);
@@ -163,6 +172,7 @@ private:
             _running = true;
         }
 
+        //获取总的时间记录
         TickSource::Tick totalTime() const {
             stdx::lock_guard<stdx::mutex> lk(_mutex);
             if (!_running)
@@ -171,8 +181,10 @@ private:
         }
 
     private:
+        //用于计算时间差值
         TickTimer _timer;
         mutable stdx::mutex _mutex;
+        //总时间tick
         TickSource::Tick _accumulator = 0;
         bool _running = false;
     };
@@ -180,8 +192,11 @@ private:
     struct ThreadState {
         ThreadState(TickSource* ts) : running(ts), executing(ts) {}
 
+        //本线程本次循环消耗的时间，包括IO等待和执行对应网络事件对应task的时间,参考ServiceExecutorAdaptive::_workerThreadRoutine 
         CumulativeTickTimer running;
+        //记录本线程执行task消耗的总时间，因为worker线程的一次循环里面可能会递归多次执行ServiceStateMachine::_scheduleNextWithGuard
         TickSource::Tick executingCurRun;
+        //记录单次task被执行的时间，参考ServiceExecutorAdaptive::schedule
         CumulativeTickTimer executing;
         int recursionDepth = 0;
     };
@@ -197,7 +212,8 @@ private:
     enum class ThreadTimer { Running, Executing };
     TickSource::Tick _getThreadTimerTotal(ThreadTimer which) const;
 
-    ////TransportLayerManager::createWithConfig赋值，链接上的数据读写生效见ServiceExecutorAdaptive::scheduleshut
+    //TransportLayerManager::createWithConfig赋值，链接上的数据读写生效见ServiceExecutorAdaptive::schedule 
+    //也就是TransportLayerASIO._workerIOContext  adaptive模式，所有线程共用所有accept新链接对应的网络IO上下文
     std::shared_ptr<asio::io_context> _ioContext; //早期ASIO中叫io_service 
     //TransportLayerManager::createWithConfig赋值调用
     std::unique_ptr<Options> _config;
@@ -212,6 +228,18 @@ private:
     AtomicWord<bool> _isRunning{false};
 
     // These counters are used to detect stuck threads and high task queuing.
+	//kTotalQueued:总的入队任务数,也就是调用ServiceStateMachine::_scheduleNextWithGuard->ServiceExecutorAdaptive::schedule的次数
+    //kExecutorName：adaptive
+    //kTotalExecuted: 总执行的任务数
+    //kTasksQueued: 当前入队还没执行的task数
+    //_deferredTasksQueued: 当前入队还没执行的deferredTask数
+    //kThreadsInUse: 当前正在执行task的线程
+    //kTotalQueued=kDeferredTasksQueued(deferred task)+kTasksQueued(普通task)
+    //kThreadsPending代表当前刚创建或者正在启动的线程总数，也就是创建起来还没有执行task的线程数
+    //kThreadsRunning代表已经执行过task的线程总数，也就是这些线程不是刚刚创建起来的
+	//kTotalTimeRunningUs:记录这个退出的线程生命期内执行任务的总时间
+	//kTotalTimeExecutingUs：记录这个退出的线程生命期内运行的总时间(包括等待IO及运行IO任务的时间)
+	//kTotalTimeQueuedUs: 从任务被调度入队，到真正被执行这段过程的时间，也就是等待被调度的时间
     AtomicWord<int> _threadsRunning{0};
     AtomicWord<int> _threadsPending{0};
     AtomicWord<int> _threadsInUse{0};

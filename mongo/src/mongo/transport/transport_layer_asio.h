@@ -161,7 +161,7 @@ private:
     
     //TransportLayerASIO::TransportLayerASIO中构造  
     //网络worker IO fd2上下文，在TransportLayerManager::createWithConfig中被赋值给ServiceExecutorAdaptive._ioContext   
-    //fd2数据收发见ServiceExecutorAdaptive::schedule
+    //fd2数据收发见ServiceExecutorAdaptive::schedule, ServiceExecutorSynchronous线程模式不需要_workerIOContext，因为一个线程和一个session对应，而ServiceExecutorAdaptive模式是多个线程复用网络IO，所以需要
     std::shared_ptr<asio::io_context> _workerIOContext; 
     
     // 真正生效接收新的链接见TransportLayerASIO::start   

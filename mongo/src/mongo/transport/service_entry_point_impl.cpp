@@ -119,7 +119,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
 */ //kAsynchronous  kSynchronous
     auto transportMode = _svcCtx->getServiceExecutor()->transportMode();
 	
-	//ServiceStateMachine::ServiceStateMachine  这里面设置线程名conn+num
+	//ServiceStateMachine::ServiceStateMachine  这里面设置线程名conn+num存到_threadName变量,真正修改线程名见ServiceStateMachine::ThreadGuard
     auto ssm = ServiceStateMachine::create(_svcCtx, session, transportMode);
     {
         stdx::lock_guard<decltype(_sessionsMutex)> lk(_sessionsMutex);

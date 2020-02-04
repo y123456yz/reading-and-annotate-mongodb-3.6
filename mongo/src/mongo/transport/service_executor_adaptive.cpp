@@ -49,33 +49,42 @@ namespace transport {
 namespace {
 // The executor will always keep this many number of threads around. If the value is -1,
 // (the default) then it will be set to number of cores / 2.
-//赋值见ServerParameterOptions
+//实时在线调整db.adminCommand( { setParameter: 1, adaptiveServiceExecutorReservedThreads: 10} ) 
+
+//最少默认都要这么多个线程运行
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorReservedThreads, int, 1); //yang change debug
 
 // Each worker thread will allow ASIO to run for this many milliseconds before checking
 // whether it should exit
+//在判断该线程是否应该销毁之前，线程可以运行网络异步ASIO相关的功能这么多时间
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRunTimeMillis, int, 5000);
 
 // The above parameter will be offset of some random value between -runTimeJitters/
 // +runTimeJitters so that not all threads are starting/stopping execution at the same time
+//随机数，保证所有线程不会同时创建和销毁
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRunTimeJitterMillis, int, 500);
 
 // This is the maximum amount of time the controller thread will sleep before doing any
 // stuck detection
+//controller控制线程最大睡眠时间
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorStuckThreadTimeoutMillis, int, 250);
 
 // The maximum allowed latency between when a task is scheduled and a thread is started to
 // service it.
+//任务被调度等待执行的最长时间
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorMaxQueueLatencyMicros, int, 500);
 
 // Threads will exit themselves if they spent less than this percentage of the time they ran
 // doing actual work.
-//如果一个线程处理网络请求的时间/总时间(处理请求时间)+空闲时间  也就是如果线程比较空闲
+//如果一个线程处理请求的时间/总时间(处理请求时间)+空闲时间  也就是如果线程比较空闲
 //执行 IO 操作的时间小于 adaptiveServiceExecutorIdlePctThreshold 比例时，则会自动销毁线程
+//线程空闲百分百
+
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorIdlePctThreshold, int, 60);
 
 // Tasks scheduled with MayRecurse may be called recursively if the recursion depth is below this
 // value.
+//任务递归调用的深度最大值
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRecursionLimit, int, 8);
 
 //db.serverStatus().network.serviceExecutorTaskStats获取
@@ -94,8 +103,10 @@ constexpr auto kThreadsPending = "threadsPending"_sd;
 constexpr auto kExecutorLabel = "executor"_sd;
 constexpr auto kExecutorName = "adaptive"_sd;
 
+//ticks转换为以us为单位的值
 int64_t ticksToMicros(TickSource::Tick ticks, TickSource* tickSource) {
     invariant(tickSource->getTicksPerSecond() >= 1000000);
+	//一个us包含多少个ticks,默认1
     static const auto ticksPerMicro = tickSource->getTicksPerSecond() / 1000000;
     return ticks / ticksPerMicro;
 }
@@ -103,7 +114,7 @@ int64_t ticksToMicros(TickSource::Tick ticks, TickSource* tickSource) {
 struct ServerParameterOptions : public ServiceExecutorAdaptive::Options {
     int reservedThreads() const final {
         int value = adaptiveServiceExecutorReservedThreads.load();
-        if (value == -1) { //默认先从数等于CPU核心数/2
+        if (value == -1) { //默认线程数等于CPU核心数/2
             ProcessInfo pi;
             value = pi.getNumAvailableCores().value_or(pi.getNumCores()) / 2;
             value = std::max(value, 2);
@@ -114,26 +125,33 @@ struct ServerParameterOptions : public ServiceExecutorAdaptive::Options {
         return value;
     }
 
+	//在判断该线程是否应该销毁之前，线程可以运行网络异步ASIO相关的功能这么多时间
     Milliseconds workerThreadRunTime() const final {
         return Milliseconds{adaptiveServiceExecutorRunTimeMillis.load()};
     }
 
+	////随机数，保证所有线程不会同时创建和销毁
     int runTimeJitter() const final {
         return adaptiveServiceExecutorRunTimeJitterMillis.load();
     }
-
+	
+	//controller控制线程最大睡眠时间
     Milliseconds stuckThreadTimeout() const final {
         return Milliseconds{adaptiveServiceExecutorStuckThreadTimeoutMillis.load()};
     }
-
+	
+	//worker-control线程等待work pending线程的时间  参考ServiceExecutorAdaptive::_controllerThreadRoutine
     Microseconds maxQueueLatency() const final {
         return Microseconds{adaptiveServiceExecutorMaxQueueLatencyMicros.load()};
     }
 
+	//线程空闲百分百，决定worker线程是否退出及其controller线程启动新的worker线程
+	//参考ServiceExecutorAdaptive::_controllerThreadRoutine
     int idlePctThreshold() const final {
         return adaptiveServiceExecutorIdlePctThreshold.load();
     }
 
+	//任务递归调用的深度最大值
     int recursionLimit() const final {
         return adaptiveServiceExecutorRecursionLimit.load();
     }
@@ -199,10 +217,17 @@ Status ServiceExecutorAdaptive::shutdown(Milliseconds timeout) {
 //ServiceStateMachine::_scheduleNextWithGuard
 //ServiceStateMachine::_scheduleNextWithGuard  
 //adaptive模式，分发链接的线程给_ioContext
+
+//ServiceExecutorAdaptive::schedule中任务入队，ServiceExecutorAdaptive::_workerThreadRoutine出对执行
 Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, ScheduleFlags flags) {
-    auto scheduleTime = _tickSource->getTicks();
+	//获取当前时间
+	auto scheduleTime = _tickSource->getTicks();
+
+	//kTasksQueued: 当前入队还没执行的task数
+    //_deferredTasksQueued: 当前入队还没执行的deferredTask数
+	//defered task和普通task分开记录   _totalQueued=_deferredTasksQueued+_tasksQueued
     auto pendingCounterPtr = (flags & kDeferredTask) ? &_deferredTasksQueued : &_tasksQueued;
-    pendingCounterPtr->addAndFetch(1);
+    pendingCounterPtr->addAndFetch(1); 
 
     if (!_isRunning.load()) {
         return {ErrorCodes::ShutdownInProgress, "Executor is not running"};
@@ -212,19 +237,26 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 		//worker线程回调会执行该wrappedTask，
         pendingCounterPtr->subtractAndFetch(1);
         auto start = _tickSource->getTicks();
-        _totalSpentQueued.addAndFetch(start - scheduleTime); //从接受链接，到该网络请求被worker线程开始处理的时间
+		//从任务被调度入队，到真正被执行这段过程的时间，也就是等待被调度的时间
+        _totalSpentQueued.addAndFetch(start - scheduleTime); //从任务被调度入队，到真正被执行这段过程的时间
 
         if (_localThreadState->recursionDepth++ == 0) {
+			//记录wrappedTask被worker线程调度执行的起始时间
             _localThreadState->executing.markRunning();
+			//当前正在执行wrappedTask的线程加1
             _threadsInUse.addAndFetch(1);
         }
 
 		//guard实际上是在 _ioContext->run_for(runTime.toSystemDuration());中调用的
+		//ServiceExecutorAdaptive::_workerThreadRoutine执行wrappedTask后会调用guard这里的func 
         const auto guard = MakeGuard([this, start] {
             if (--_localThreadState->recursionDepth == 0) {
+				//wrappedTask任务被执行消耗的总时间   _localThreadState->executing.markStopped()代表任务该task执行的时间
                 _localThreadState->executingCurRun += _localThreadState->executing.markStopped();
-                _threadsInUse.subtractAndFetch(1);
+				//下面的task()执行完后，正在执行task的线程-1
+				_threadsInUse.subtractAndFetch(1);
             }
+			//总执行的任务数，task没执行一次增加一次
             _totalExecuted.addAndFetch(1);
         });
 
@@ -240,17 +272,19 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     // can be called immediately and recursively.
     /*
 	post 优先将任务排进处理队列，然后返回，任务会在某个时机被完成。
-	dispatch会即时请求io_service去调用指定的任务。
+	dispatch的任务会立刻执行
 	*/ //队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
     if ((flags & kMayRecurse) &&
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {
-        _ioContext->dispatch(std::move(wrappedTask)); //io_context在asio的早期版本叫做
-    } else {
+        //
+        _ioContext->dispatch(std::move(wrappedTask));  
+    } else { //入队
         _ioContext->post(std::move(wrappedTask));
     }
 
     _lastScheduleTimer.reset();
-    _totalQueued.addAndFetch(1); //队列中的网络链接总数
+	//总的入队任务数,也就是调用ServiceStateMachine::_scheduleNextWithGuard->ServiceExecutorAdaptive::schedule的次数
+    _totalQueued.addAndFetch(1); 
 
     // Deferred tasks never count against the thread starvation avoidance. For other tasks, we
     // notify the controller thread that a task has been scheduled and we should monitor thread
@@ -262,8 +296,10 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     return Status::OK();
 }
 
+//判断队列中的任务数和可用线程数大小，避免任务task饥饿
 bool ServiceExecutorAdaptive::_isStarved() const {
     // If threads are still starting, then assume we won't be starved pretty soon, return false
+    //如果有正在启动的线程，则直接返回
     if (_threadsPending.load() > 0)
         return false;
 
@@ -276,6 +312,7 @@ bool ServiceExecutorAdaptive::_isStarved() const {
     // executing
     auto available = _threadsRunning.load() - _threadsInUse.load();
 
+	//队列中的任务数大于可用线程数，说明worker压力过大，需要创建新的worker线程
     return (tasksQueued > available);
 }
 
@@ -295,6 +332,7 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
 
     while (_isRunning.load()) {
         // Make sure that the timer gets reset whenever this loop completes
+        //一次while结束的时候执行对应func ,也就是结束的时候计算为起始时间
         const auto timerResetGuard =
             MakeGuard([&sinceLastControlRound] { sinceLastControlRound.reset(); });
 
@@ -306,9 +344,15 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
 
         double utilizationPct;
         {
+			//获取所有线程执行任务的总时间
             auto spentExecuting = _getThreadTimerTotal(ThreadTimer::Executing);
+			//获取所有线程整个生命周期时间(包括空闲时间+执行任务时间+创建线程的时间)
             auto spentRunning = _getThreadTimerTotal(ThreadTimer::Running);
+
+			//也就是while中执行一次这个过程中spentExecuting差值，
+			//也就是spentExecuting代表while一次循环的Executing time开始值, lastSpentExecuting代表一次循环对应的结束time值
             auto diffExecuting = spentExecuting - lastSpentExecuting;
+			////也就是spentRunning代表while一次循环的running time开始值, lastSpentRunning代表一次循环对应的结束time值
             auto diffRunning = spentRunning - lastSpentRunning;
 
             // If no threads have run yet, then don't update anything
@@ -318,12 +362,14 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
                 lastSpentExecuting = spentExecuting;
                 lastSpentRunning = spentRunning;
 
+				//一次while循环过程中所有线程执行任务的时间和线程运行总时间的比值
                 utilizationPct = diffExecuting / static_cast<double>(diffRunning);
                 utilizationPct *= 100;
             }
         }
 
         // If the wait timed out then either the executor is idle or stuck
+        //也就是本while()执行一次的时间差值
         if (sinceLastControlRound.sinceStart() >= _config->stuckThreadTimeout()) {
             // Each call to schedule updates the last schedule ticks so we know the last time a
             // task was scheduled
@@ -347,7 +393,9 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
             continue;
         }
 
+		//当前的worker线程数
         auto threadsRunning = _threadsRunning.load();
+		//保证线程池中worker线程数最少都要reservedThreads个
         if (threadsRunning < _config->reservedThreads()) {
             log() << "Starting " << _config->reservedThreads() - threadsRunning
                   << " to replenish reserved worker threads";
@@ -359,15 +407,20 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
         // If the utilization percentage is lower than our idle threshold, then the threads we
         // already have aren't saturated and we shouldn't consider adding new threads at this
         // time.
+
+		//所有worker线程非空闲占比小于该阀值，说明压力不大，不需要增加worker线程数
         if (utilizationPct < _config->idlePctThreshold()) {
             continue;
         }
+		//走到这里，说明整体worker工作压力还是很大的
 
         // While there are threads pending sleep for 50 microseconds (this is our thread latency
         // perf budget).
         //
         // If waiting for pending threads takes longer than the stuckThreadTimeout, then the
         // pending threads may be stuck and we should loop back around.
+        //我们在这里循环stuckThreadTimeout毫秒，直到我们等待worker线程创建起来并正常运行task
+        //因为如果有正在创建的worker线程，我们等待一小会，最多等待stuckThreadTimeout ms
         do {
             stdx::this_thread::sleep_for(_config->maxQueueLatency().toSystemDuration());
         } while ((_threadsPending.load() > 0) &&
@@ -377,6 +430,7 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
         // If the number of pending tasks is greater than the number of running threads minus the
         // number of tasks executing (the number of free threads), then start a new worker to
         // avoid starvation.
+        //队列中任务数多余可用空闲线程数，说明压力有点大，给线程池增加一个新的线程
         if (_isStarved()) {
             log() << "Starting worker thread to avoid starvation.";
             _startWorkerThread();
@@ -389,11 +443,14 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
 void ServiceExecutorAdaptive::_startWorkerThread() {
     stdx::unique_lock<stdx::mutex> lk(_threadsMutex);
 	//warning() << "yang test   _startWorkerThread:  num1:" << _threads.size();
-    auto it = _threads.emplace(_threads.begin(), _tickSource); //该_threads list中追加一个thread，线程增加一个
+	//该stdx::list list中追加一个ThreadState
     auto num = _threads.size();
+    auto it = _threads.emplace(_threads.begin(), _tickSource); 
 	warning() << "yang test   _startWorkerThread: 22222 num2:" << _threads.size();
 
+	//_threadsPending代表当前刚创建或者正在创建的线程总数，也就是创建起来还没有执行task的线程数
     _threadsPending.addAndFetch(1);
+	//_threadsRunning代表已经执行过task的线程总数，也就是这些线程不是刚刚创建起来的
     _threadsRunning.addAndFetch(1);
 
     lk.unlock();
@@ -432,25 +489,25 @@ Milliseconds ServiceExecutorAdaptive::_getThreadJitter() const {
     return Milliseconds{jitter};
 }
 
-//在线程池内执行的时间，单位微秒。注意这个时间是所有worker的线程的汇总信息，包含历史worker的统计时间。
+//在线程池内执行的时间。注意这个时间是所有worker的线程的汇总信息，包含历史worker的统计时间。
 TickSource::Tick ServiceExecutorAdaptive::_getThreadTimerTotal(ThreadTimer which) const {
     TickSource::Tick accumulator;
-    switch (which) {
+    switch (which) { //获取生命周期已经结束的线程执行任务的总时间
         case ThreadTimer::Running:
             accumulator = _pastThreadsSpentRunning.load();
             break;
-        case ThreadTimer::Executing:
+        case ThreadTimer::Executing: //获取生命周期已经结束的线程整个生命周期时间(包括空闲时间+执行任务时间)
             accumulator = _pastThreadsSpentExecuting.load();
             break;
     }
 
     stdx::lock_guard<stdx::mutex> lk(_threadsMutex);
-    for (auto& thread : _threads) {
+    for (auto& thread : _threads) { 
         switch (which) {
-            case ThreadTimer::Running:
+            case ThreadTimer::Running://获取当前线程池中所有工作线程执行任务时间
                 accumulator += thread.running.totalTime();
                 break;
-            case ThreadTimer::Executing:
+            case ThreadTimer::Executing: //获取当前线程池中所有工作线程整个生命周期时间(包括空闲时间+执行任务时间)
                 accumulator += thread.executing.totalTime();
                 break;
         }
@@ -462,6 +519,8 @@ TickSource::Tick ServiceExecutorAdaptive::_getThreadTimerTotal(ThreadTimer which
 //ServiceExecutorAdaptive::_startWorkerThread
 //worker-x线程默认是CPU/2个，但是在controller线程会根据负载在_controllerThreadRoutine中动态调整worker线程数
 //如果controller线程发现负载高，那么worker线程数也就是增加，如果负载下去了，worker线程根据自身情况来觉得是否退出消耗自身线程
+
+//ServiceExecutorAdaptive::schedule中任务入队，ServiceExecutorAdaptive::_workerThreadRoutine出对执行
 void ServiceExecutorAdaptive::_workerThreadRoutine(
     int threadId, ServiceExecutorAdaptive::ThreadList::iterator state) {
 
@@ -477,13 +536,19 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
     // When a thread is pending, it will only try to run one task through ASIO, and report back
     // as soon as possible so that the thread controller knows not to keep starting threads while
     // the threads it's already created are finishing starting up.
-    bool stillPending = true; //表示该线程调用run_one_for,
+    //该线程第一次执行while中的任务的时候为ture，后面都是false
+    bool stillPending = true; //表示该线程是刚创建起来的，还没有执行任何一个task
 
+	//MakeGuard构造的是一个零时变量，则函数退出后会执行func，也就是本线程自动退出销毁的时候执行
     const auto guard = MakeGuard([this, &stillPending, state] {
+    	//()中的func在消耗的时候会执行，也就是该函数退出的时候需要消耗guard，在析构函数中调用该func
         if (stillPending)
             _threadsPending.subtractAndFetch(1);
+		//线程退出后，当前正在运行的线程数减1
         _threadsRunning.subtractAndFetch(1);
+		//记录这个退出的线程生命期内执行任务的总时间
         _pastThreadsSpentRunning.addAndFetch(state->running.totalTime());
+		//记录这个退出的线程生命期内运行的总时间(包括等待IO及运行IO任务的时间)
         _pastThreadsSpentExecuting.addAndFetch(state->executing.totalTime());
 
         {
@@ -502,19 +567,24 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
         dassert(runTime.count() > 0);
 
         // Reset ticksSpentExecuting timer
+        //本次循环执行task的时间，不包括网络IO等待时间
         state->executingCurRun = 0;
 
         try {
             asio::io_context::work work(*_ioContext);
             // If we're still "pending" only try to run one task, that way the controller will
             // know that it's okay to start adding threads to avoid starvation again.
-            state->running.markRunning(); //
-            //这里面会调用ServiceExecutorAdaptive::schedule对应的task,线程名也就睡被改为conn线程
+            state->running.markRunning(); //记录开始时间，也就是任务执行开始时间
+            //这里面会调用ServiceExecutorAdaptive::schedule对应的task,线程名也被改为conn线程
             //在该线程异步操作过程中，通过ServiceStateMachine::_sinkCallback  ServiceStateMachine::_sourceCallback把worker线程改为conn线程
-            if (stillPending) {
+
+			//执行ServiceExecutorAdaptive::schedule中对应的task
+			if (stillPending) {
 				//在一定时间内处理事件循环，阻塞到任务被完成同时没用其他任务派遣，或者直到io_context调用 stop() 函数停止 或 超时 为止
-                _ioContext->run_one_for(runTime.toSystemDuration());
+				//执行一个任务就会返回
+				_ioContext->run_one_for(runTime.toSystemDuration());
             } else {  // Otherwise, just run for the full run period
+            	//_ioContext对应的所有任务都执行完成后才会返回
                 _ioContext->run_for(runTime.toSystemDuration());
             }
 			
@@ -527,7 +597,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
                 _ioContext->restart();
             // If an exceptione escaped from ASIO, then break from this thread and start a new one.
         } catch (std::exception& e) {
-        	//抛异常说明压力大，一般都是，因此可以考虑增加线程池大小
+        	//网络IO处理过程中异常了，则该线程退出销毁，同时则创建一个新线程
             log() << "Exception escaped worker thread: " << e.what()
                   << " Starting new worker thread.";
             _startWorkerThread();
@@ -537,6 +607,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
             _startWorkerThread();
             break;
         }
+		//本线程本次循环消耗的时间，包括IO等待和执行对应网络事件对应task的时间
         auto spentRunning = state->running.markStopped();
 
         // If we're still pending, let the controller know and go back around for another go
@@ -544,7 +615,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
         // Otherwise we can think about exiting if the last call to run_for() wasn't very
         // productive
         
-        if (stillPending) { //该线程继续执行，这次该线程调用run_for
+        if (stillPending) { //该线程第一次执行while中的任务的时候为ture，后面都是false
             _threadsPending.subtractAndFetch(1);
             stillPending = false;
         } else if (_threadsRunning.load() > _config->reservedThreads()) { //
@@ -556,6 +627,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
 
             // First get the ratio of ticks spent executing to ticks spent running. We expect this
             // to be <= 1.0
+            //代表本次循环该线程真正处理任务的时间与本次循环总时间(总时间包括IO等待和IO任务处理时间)
             double executingToRunning = state->executingCurRun / static_cast<double>(spentRunning);
 
             // Multiply that by 100 to get the percentage of time spent executing tasks. We expect
@@ -565,6 +637,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
 
             int pctExecuting = static_cast<int>(executingToRunning);
 			//线程很多，超过了指定配置，并且满足这个条件，该worker线程会退出，线程比较空闲，退出
+			//如果线程真正处理任务执行时间占比小于该值，则说明本线程比较空闲，可以退出。
             if (pctExecuting < _config->idlePctThreshold()) {
                 log() << "Thread was only executing tasks " << pctExecuting << "% over the last "
                       << runTime << ". Exiting thread.";
@@ -578,6 +651,19 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
 void ServiceExecutorAdaptive::appendStats(BSONObjBuilder* bob) const {
 	//下面的第一列是名,第二列是对应的值，如"totalTimeRunningMicros" : NumberLong("69222621699"),
     BSONObjBuilder section(bob->subobjStart("serviceExecutorTaskStats"));
+	//kTotalQueued:总的入队任务数,也就是调用ServiceStateMachine::_scheduleNextWithGuard->ServiceExecutorAdaptive::schedule的次数
+    //kExecutorName：adaptive
+    //kTotalExecuted: 总执行的任务数
+    //kTasksQueued: 当前入队还没执行的task数
+    //_deferredTasksQueued: 当前入队还没执行的deferredTask数
+    //kThreadsInUse: 当前正在执行task的线程
+    //kTotalQueued=kDeferredTasksQueued(deferred task)+kTasksQueued(普通task)
+    //kThreadsPending代表当前刚创建或者正在启动的线程总数，也就是创建起来还没有执行task的线程数
+    //kThreadsRunning代表已经执行过task的线程总数，也就是这些线程不是刚刚创建起来的
+	//kTotalTimeRunningUs:记录这个退出的线程生命期内执行任务的总时间
+	//kTotalTimeExecutingUs：记录这个退出的线程生命期内运行的总时间(包括等待IO及运行IO任务的时间)
+	//kTotalTimeQueuedUs: 从任务被调度入队，到真正被执行这段过程的时间，也就是等待被调度的时间
+
     section << kExecutorLabel << kExecutorName                                             //
             << kTotalQueued << _totalQueued.load()                                         //
             << kTotalExecuted << _totalExecuted.load()                                     //

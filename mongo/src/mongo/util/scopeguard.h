@@ -83,6 +83,11 @@ inline RefToValue<T> ByRef(T& t) {
 
 */
 
+/*
+ScopeGuard的作用是确保资源面对异常时总能被成功释放，就算没有正常返回。惯用法让我们在构造函数里获取资源，当因为异常或者正常作用域结束，
+那么在析构函数里释放资源。总是能释放资源。如果没有异常抛出则正常结束，只是有异常发生或者没有正常退出时释放资源。
+可以参考https://www.cnblogs.com/qicosmos/archive/2013/11/13/3421333.html
+*/
 
 class ScopeGuardImplBase {
     ScopeGuardImplBase& operator=(const ScopeGuardImplBase&);
@@ -125,6 +130,11 @@ public:
 /// Changes to the original code by Joshua Lehrer:
 /// http://www.lehrerfamily.com/scopeguard.html
 ////////////////////////////////////////////////////////////////
+/*
+ScopeGuard的作用是确保资源面对异常时总能被成功释放，就算没有正常返回。惯用法让我们在构造函数里获取资源，当因为异常或者正常作用域结束，
+那么在析构函数里释放资源。总是能释放资源。如果没有异常抛出则正常结束，只是有异常发生或者没有正常退出时释放资源。
+可以参考https://www.cnblogs.com/qicosmos/archive/2013/11/13/3421333.html
+*/
 
 typedef const ScopeGuardImplBase& ScopeGuard;
 
@@ -135,6 +145,7 @@ public:
         return ScopeGuardImpl0<F>(fun);
     }
 
+    //MakeGuard构造的是一个零时变量，则函数退出后会执行func
     ~ScopeGuardImpl0() throw() {
         SafeExecute(*this);
     }
@@ -207,6 +218,11 @@ protected:
     const P2 p2_;
 };
 
+/*
+ScopeGuard的作用是确保资源面对异常时总能被成功释放，就算没有正常返回。惯用法让我们在构造函数里获取资源，当因为异常或者正常作用域结束，
+那么在析构函数里释放资源。总是能释放资源。如果没有异常抛出则正常结束，只是有异常发生或者没有正常退出时释放资源。
+可以参考https://www.cnblogs.com/qicosmos/archive/2013/11/13/3421333.html
+*/
 template <typename F, typename P1, typename P2>
 inline ScopeGuardImpl2<F, P1, P2> MakeGuard(F fun, P1 p1, P2 p2) {
     return ScopeGuardImpl2<F, P1, P2>::MakeGuard(fun, p1, p2);

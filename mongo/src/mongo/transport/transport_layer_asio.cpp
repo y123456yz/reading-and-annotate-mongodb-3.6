@@ -63,6 +63,7 @@
 namespace mongo {
 namespace transport {
 
+//网络模块相关参数
 TransportLayerASIO::Options::Options(const ServerGlobalParams* params)
     : port(params->port),
       ipList(params->bind_ip),
@@ -279,7 +280,8 @@ Status TransportLayerASIO::start() { //listen线程处理
 			//_acceptorIOContext和_acceptors是关联的，见TransportLayerASIO::setup
             try {
 				warning() << "yang test  TransportLayerASIO::start";
-                _acceptorIOContext->run(); //异步调度_acceptConnection中的ServiceEntryPointImpl::startSession
+				//异步调度_acceptConnection中的TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession
+                _acceptorIOContext->run(); 
             } catch (...) {
                 severe() << "Uncaught exception in the listener: " << exceptionToStatus();
                 fassertFailed(40491);
@@ -289,7 +291,6 @@ Status TransportLayerASIO::start() { //listen线程处理
 		warning() << "yang test  TransportLayerASIO::start end";
     }); //创建listener线程
 
-	//下面逻辑是mongosMain线程处理
 	warning() << "111 yang test  TransportLayerASIO::start";
 	/*
 	现在的默认配置都是该模型:
@@ -345,9 +346,10 @@ void TransportLayerASIO::shutdown() {
     }
 }
 
+//TransportLayerManager::createWithConfig
 const std::shared_ptr<asio::io_context>& TransportLayerASIO::getIOContext() {
 	//网络IO上下文，在TransportLayerManager::createWithConfig中复制给adaptive或者synchronous
-    return _workerIOContext;
+    return _workerIOContext; 
 }
 
 //TransportLayerASIO::start  这里的acceptor和TransportLayerASIO::start中的_acceptorIOContext是关联的

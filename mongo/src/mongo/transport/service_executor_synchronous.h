@@ -53,6 +53,7 @@ namespace transport {
 }
 */
 
+//构建使用见TransportLayerManager::createWithConfig,最终赋值给ServiceContext._serviceExecutor
 //ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式，他们的作用是处理链接相关的线程模型
 class ServiceExecutorSynchronous final : public ServiceExecutor {
 public:

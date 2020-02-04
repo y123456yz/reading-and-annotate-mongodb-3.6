@@ -48,6 +48,11 @@ namespace mongo {
 
 namespace {
 
+
+//tick精度，默认是kMicrosPerSecond，一秒钟包含kMicrosPerSecond个tick
+//每个tick代表一个时间单位，1个tick可以代表一个us，也可以代表一个ns，不同的硬件和操作系统值不一样
+
+//1s=1000ms=1000*1000us=1000*1000*1000ns
 const int64_t kMillisPerSecond = 1000;
 const int64_t kMicrosPerSecond = 1000 * kMillisPerSecond;
 const int64_t kNanosPerSecond = 1000 * kMicrosPerSecond;
@@ -60,19 +65,23 @@ const int64_t kNanosPerSecond = 1000 * kMicrosPerSecond;
  * Define ticksPerSecond before init to ensure correct relative sequencing
  * regardless of how it is initialized (static or dynamic).
  */
+//默认1个ticks代表1ms
 TickSource::Tick ticksPerSecond = kMicrosPerSecond;
 
 // "Generic" implementation for _timerNow.
+//获取当前时间搓
 TickSource::Tick _timerNowGeneric() {
     return curTimeMicros64();
 }
 
 // Function pointer to timer implementation.
 // Overridden in initTickSource() with better implementation where available.
+//获取当前时间搓
 TickSource::Tick (*_timerNow)() = &_timerNowGeneric;
 
 SystemTickSource globalSystemTickSource;
 
+//WINDOS系统
 #if defined(_WIN32)
 
 /**
@@ -100,7 +109,7 @@ void initTickSource() {
 /**
  * Implementation for timer on systems that support the
  * POSIX clock API and CLOCK_MONOTONIC clock.
- */
+ */ //获取当前时间搓   POSIX monotonic clock如果支持，走该define
 TickSource::Tick timerNowPosixMonotonicClock() {
     timespec the_time;
     long long result;
@@ -144,6 +153,7 @@ MONGO_INITIALIZER(SystemTickSourceInit)(InitializerContext* context) {
     return Status::OK();
 }
 
+//获取当前时间搓
 TickSource::Tick SystemTickSource::getTicks() {
     return _timerNow();
 }
@@ -152,6 +162,7 @@ TickSource::Tick SystemTickSource::getTicksPerSecond() {
     return ticksPerSecond;
 }
 
+//构造一个全局的TickSource
 SystemTickSource* SystemTickSource::get() {
     static const auto globalSystemTickSource = stdx::make_unique<SystemTickSource>();
     return globalSystemTickSource.get();

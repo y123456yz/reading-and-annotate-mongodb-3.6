@@ -147,7 +147,7 @@ std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
             MONGO_UNREACHABLE;
         }
 
-		//构造TransportLayerASIO::ASIOSession类
+		//构造TransportLayerASIO类
         auto transportLayerASIO = stdx::make_unique<transport::TransportLayerASIO>(opts, sep);
 
 		//ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式
