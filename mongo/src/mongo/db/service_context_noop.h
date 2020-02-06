@@ -32,6 +32,7 @@
 
 namespace mongo {
 
+//mongos服务上下文，mongoSMain对应的文件setGlobalServiceContext定义赋值
 class ServiceContextNoop : public ServiceContext {
 public:
     StorageEngine* getGlobalStorageEngine() override;

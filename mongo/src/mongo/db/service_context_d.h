@@ -40,7 +40,7 @@ class StorageEngineLockFile;
 //ServiceContextMongoD->ServiceContext(包含ServiceContext成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 
-//_initAndListen中会构造使用该类  
+//_initAndListen中会构造使用该类   
 class ServiceContextMongoD final : public ServiceContext {
 public:
     //下面的FactoryMap _storageFactories;使用

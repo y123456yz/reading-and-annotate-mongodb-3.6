@@ -54,8 +54,11 @@ class Session;
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 
-//class ServiceEntryPointMongod final : public ServiceEntryPointImpl
-//ServiceEntryPointMongod和ServiceEntryPointMongos继承该类
+
+//_initAndListen->(serviceContext->setServiceEntryPoint)
+
+//class ServiceEntryPointMongod final : public ServiceEntryPointImpl   ServiceEntryPointMongod::ServiceEntryPointImpl
+//ServiceEntryPointMongod和ServiceEntryPointMongos继承该类，记录全局的session链接相关信息
 class ServiceEntryPointImpl : public ServiceEntryPoint {
     MONGO_DISALLOW_COPYING(ServiceEntryPointImpl);
 
@@ -76,18 +79,25 @@ public:
     }
 
 private:
+    //一个新链接对应一个ServiceStateMachine保存到ServiceEntryPointImpl._sessions中
     using SSMList = stdx::list<std::shared_ptr<ServiceStateMachine>>;
     using SSMListIterator = SSMList::iterator;
 
-    ServiceContext* const _svcCtx;
+    //赋值ServiceEntryPointImpl::ServiceEntryPointImpl
+    //对应ServiceContextMongoD(mongod)或者ServiceContextNoop(mongos)类
+    ServiceContext* const _svcCtx; 
+    //该成员变量在代码中没有使用
     AtomicWord<std::size_t> _nWorkers;
 
     mutable stdx::mutex _sessionsMutex;
     stdx::condition_variable _shutdownCondition;
+    //一个新链接对应一个ssm保存到ServiceEntryPointImpl._sessions中
     SSMList _sessions;
 
     size_t _maxNumConnections{DEFAULT_MAX_CONN};
+    //当前的总链接数，不包括关闭的链接
     AtomicWord<size_t> _currentConnections{0};
+    //所有的链接，包括已经关闭的链接
     AtomicWord<size_t> _createdConnections{0};
 };
 

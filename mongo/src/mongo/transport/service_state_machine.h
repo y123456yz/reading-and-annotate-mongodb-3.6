@@ -57,7 +57,8 @@ namespace mongo {
  */ 
  //TransportLayerASIO::_acceptConnection(每个新链接都会创建一个新的session) -> ServiceEntryPointImpl::startSession->ServiceStateMachine::create(每个新链接对应一个ServiceStateMachine结构)
  //ServiceEntryPointImpl::startSession中有新链接的时候构造一个该类  
- //ServiceStateMachine网络收发状态机
+ //ServiceStateMachine网络收发状态机  
+ //一个新链接对应一个ServiceStateMachine保存到ServiceEntryPointImpl._sessions中
 class ServiceStateMachine : public std::enable_shared_from_this<ServiceStateMachine> {
     ServiceStateMachine(ServiceStateMachine&) = delete;
     ServiceStateMachine& operator=(ServiceStateMachine&) = delete;

@@ -232,6 +232,7 @@ Status TransportLayerASIO::setup() {
 #endif
 
 			//socket对应得套接字_acceptors相关处理在后续的TransportLayerASIO::start
+			////一个acceptors代表bing绑定和监听的地址
             _acceptors.emplace_back(std::make_pair(std::move(addr), std::move(acceptor)));
         }
     }
@@ -298,7 +299,7 @@ Status TransportLayerASIO::start() { //listen线程处理
 	当线程太多时，线程切换的开销也会变大，但因为mongdb后端是持久化的存储，切换开销相比IO的开销还是要小得多。
 
 	如果配置了net  adaptive，则会复用链接
-	*/
+	*/ //一个acceptors代表bing绑定和监听的地址
     for (auto& acceptor : _acceptors) { //bind绑定的时候赋值，见TransportLayerASIO::setup
         acceptor.second.listen(serverGlobalParams.listenBacklog);
         _acceptConnection(acceptor.second);    //异步accept处理在该函数中
