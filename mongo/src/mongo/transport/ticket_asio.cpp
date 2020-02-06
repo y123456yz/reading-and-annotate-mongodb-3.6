@@ -80,6 +80,7 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
 
     _target->setData(std::move(_buffer));
     networkCounter.hitPhysicalIn(_target->size());
+	//TransportLayerASIO::ASIOTicket::finishFill
     finishFill(Status::OK());
 }
 
@@ -127,6 +128,7 @@ void TransportLayerASIO::ASIOSourceTicket::fillImpl() {
     const auto initBufSize = kHeaderSize;
     _buffer = SharedBuffer::allocate(initBufSize);
 
+	//¶ÁÈ¡Êý¾Ý TransportLayerASIO::ASIOSession::read
     session->read(isSync(),
                   asio::buffer(_buffer.get(), initBufSize),
                   [this](const std::error_code& ec, size_t size) { _headerCallback(ec, size); });

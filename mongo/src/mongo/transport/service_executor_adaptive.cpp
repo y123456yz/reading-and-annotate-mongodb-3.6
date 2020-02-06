@@ -273,6 +273,7 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     /*
 	post 优先将任务排进处理队列，然后返回，任务会在某个时机被完成。
 	dispatch的任务会立刻执行
+	参考https://www.cnblogs.com/zhiranok/archive/2011/09/04/boost_asio_io_service_CPP.html 早期版本Io_servie，现在版本Io_context
 	*/ //队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
     if ((flags & kMayRecurse) &&
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {

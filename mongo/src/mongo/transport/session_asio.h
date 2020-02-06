@@ -113,8 +113,9 @@ public:
 #else
         return _socket.is_open();
 #endif
-    }
-
+    }   
+    
+    //TransportLayerASIO::ASIOSourceTicket::fillImpl调用
     template <typename MutableBufferSequence, typename CompleteHandler>
     void read(bool sync, const MutableBufferSequence& buffers, CompleteHandler&& handler) {
 #ifdef MONGO_CONFIG_SSL
@@ -172,6 +173,7 @@ public:
     }
 
 private:
+    //从stream对应fd读取数据
     template <typename Stream, typename MutableBufferSequence, typename CompleteHandler>
     void opportunisticRead(bool sync,
                            Stream& stream,

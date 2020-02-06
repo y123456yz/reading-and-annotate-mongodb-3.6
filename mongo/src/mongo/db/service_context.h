@@ -111,7 +111,7 @@ protected:
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 
-//ServiceContextMongoD->ServiceContext   
+//ServiceContextMongoD(mongod)或者ServiceContextNoop(mongos)类继承该类
 //ServiceContext包含OperationContext成员，见UniqueOperationContext
 class ServiceContext : public Decorable<ServiceContext> {
     MONGO_DISALLOW_COPYING(ServiceContext);
@@ -494,7 +494,7 @@ private:
 
     /**
      * The service entry point
-     */  ////ServiceEntryPointMongod  ServiceEntryPointMongos
+     */  //ServiceEntryPointMongod  ServiceEntryPointMongos   
     std::unique_ptr<ServiceEntryPoint> _serviceEntryPoint;
 
     /**

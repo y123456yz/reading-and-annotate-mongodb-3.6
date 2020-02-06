@@ -125,7 +125,8 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
         stdx::lock_guard<decltype(_sessionsMutex)> lk(_sessionsMutex);
         connectionCount = _sessions.size() + 1; //连接数自增
         if (connectionCount <= _maxNumConnections) {
-			//新来的链接对应的session保存到_sessions链表
+			//新来的链接对应的session保存到_sessions链表  
+			//一个新链接对应一个ssm保存到ServiceEntryPointImpl._sessions中
             ssmIt = _sessions.emplace(_sessions.begin(), ssm);
             _currentConnections.store(connectionCount);
             _createdConnections.addAndFetch(1);

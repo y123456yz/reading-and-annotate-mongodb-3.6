@@ -84,6 +84,7 @@ private:
     void _bodyCallback(const std::error_code& ec, size_t size);
 
     SharedBuffer _buffer;
+    //¸³Öµ¼ûTransportLayerASIO::ASIOSourceTicket::_bodyCallback
     Message* _target;
 };
 
