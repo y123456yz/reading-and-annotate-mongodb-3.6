@@ -355,7 +355,8 @@ const std::shared_ptr<asio::io_context>& TransportLayerASIO::getIOContext() {
 
 //TransportLayerASIO::start  这里的acceptor和TransportLayerASIO::start中的_acceptorIOContext是关联的
 void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
-    auto acceptCb = [this, &acceptor](const std::error_code& ec, GenericSocket peerSocket) mutable {
+	//新链接到来时候的回调函数
+	auto acceptCb = [this, &acceptor](const std::error_code& ec, GenericSocket peerSocket) mutable {
         if (!_running.load())
             return;
 
@@ -373,6 +374,8 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
         _sep->startSession(std::move(session));
         _acceptConnection(acceptor); //递归，知道处理完所有的网络accept事件
     };
+
+	//GenericAcceptor = asio::basic_socket_acceptor<asio::generic::stream_protocol>;
 
 	//新连接到来，最终的acceptCb是由TransportLayerASIO::start  listen线程来处理
     acceptor.async_accept(*_workerIOContext, std::move(acceptCb)); //异步接收处理，新链接到来listen线程调用acceptCb回调
