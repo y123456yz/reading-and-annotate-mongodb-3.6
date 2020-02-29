@@ -67,8 +67,7 @@ namespace asio {
  * acceptor.listen();
  * @endcode
  */
-template <typename Protocol
-    ASIO_SVC_TPARAM_DEF1(= socket_acceptor_service<Protocol>)>
+template <typename Protocol ASIO_SVC_TPARAM_DEF1(= socket_acceptor_service<Protocol>)>
 class basic_socket_acceptor
   : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
     public socket_base

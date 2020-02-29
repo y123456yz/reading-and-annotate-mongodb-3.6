@@ -164,10 +164,10 @@ private:
     //fd2数据收发见ServiceExecutorAdaptive::schedule, ServiceExecutorSynchronous线程模式不需要_workerIOContext，因为一个线程和一个session对应，而ServiceExecutorAdaptive模式是多个线程复用网络IO，所以需要
     std::shared_ptr<asio::io_context> _workerIOContext; 
     
-    // 真正生效接收新的链接见TransportLayerASIO::start   
-    std::unique_ptr<asio::io_context> _acceptorIOContext;
 
 #ifdef MONGO_CONFIG_SSL
+    // 真正生效接收新的链接见TransportLayerASIO::start   
+    std::unique_ptr<asio::io_context> _acceptorIOContext;  
     std::unique_ptr<asio::ssl::context> _sslContext;
 #endif
     //赋值见TransportLayerASIO::setup，创建套接字，然后bind

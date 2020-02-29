@@ -1621,6 +1621,7 @@ if env.TargetOSIs('posix'):
                          "-fno-strict-aliasing",
                          "-ggdb",
                          "-pthread",
+                         "-static-libstdc++",
                          "-Wall",
                          "-Wsign-compare",
                          "-Wno-unknown-pragmas",
