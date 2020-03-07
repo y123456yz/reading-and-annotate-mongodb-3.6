@@ -113,8 +113,12 @@ public:
       per_descriptor_data& source_descriptor_data);
 
   // Post a reactor operation for immediate completion.
+	//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept
+	//->start_accept_op->epoll_reactor::post_immediate_completion
+  //reactive_socket_service_base::start_accept_op调用
   void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
+  	//scheduler::post_immediate_completion  op入队  
     scheduler_.post_immediate_completion(op, is_continuation);
   }
 

@@ -135,6 +135,7 @@ void scheduler::init_task()
   }
 }
 
+//mongodb中的accept新链接过程TransportLayerASIO::start()->io_context::run->scheduler::run中调用
 std::size_t scheduler::run(asio::error_code& ec)
 {
   ec = asio::error_code();
@@ -176,6 +177,7 @@ std::size_t scheduler::run_one(asio::error_code& ec)
   return do_run_one(lock, this_thread, ec);
 }
 
+//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 {
   ec = asio::error_code();
@@ -277,6 +279,8 @@ void scheduler::compensating_work_started()
   ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
 }
 
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
+//->start_accept_op->epoll_reactor::post_immediate_completion
 void scheduler::post_immediate_completion(
     scheduler::operation* op, bool is_continuation)
 {
@@ -358,6 +362,9 @@ void scheduler::abandon_operations(
   ops2.push(ops);
 }
 
+//mongodb中的accept新链接过程TransportLayerASIO::start()->io_context::run->scheduler::run中调用
+
+//根据epoll获取对应读写事件，然后在队列op_queue_中取出统一执行
 std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
     scheduler::thread_info& this_thread,
     const asio::error_code& ec)
@@ -365,7 +372,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
   while (!stopped_)
   {
     if (!op_queue_.empty())
-    {
+    { //队列中已经没有可以指向得回调了，则继续epoll_wait等待获取对应事件回调
       // Prepare to execute first handler from queue.
       operation* o = op_queue_.front();
       op_queue_.pop();
@@ -388,10 +395,11 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         // as soon as possible.
         //scheduler::do_run_one->epoll_reactor::run
         //通过epoll获取所有得网络事件op入队到private_op_queue, 最终再通过scheduler::poll_one scheduler::poll入队到op_queue_
-        task_->run(more_handlers ? 0 : -1, this_thread.private_op_queue);
+		//epoll_reactor::run
+		task_->run(more_handlers ? 0 : -1, this_thread.private_op_queue);
       }
       else
-      { //循环执行所有队列上得op回调
+      { //循环执行所有队列上得op回调，op是在前面得if中入队得
         std::size_t task_result = o->task_result_;
 
         if (more_handlers && !one_thread_)
@@ -402,7 +410,23 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         // Ensure the count of outstanding work is decremented on block exit.
         work_cleanup on_exit = { this, &lock, &this_thread };
         (void)on_exit;
-
+		/*
+		asio::detail::reactive_socket_recv_op<
+		 asio::mutable_buffers_1, asio::detail::read_op
+		 <
+		  asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, asio::mutable_buffer const*, asio::detail::transfer_all_t, 
+		 void mongo::transport::TransportLayerASIO::ASIOSession::opportunisticRead<asio::basic_stream_socket<asio::generic::stream_protocol
+		 >, 
+		 asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}
+		>
+		 
+		  (
+		   bool, asio::basic_stream_socket<asio::generic::stream_protocol>&, 
+		   asio::mutable_buffers_1 const&, 
+		   mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}&&
+		  )
+		::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
+		*/
         // Complete the operation. May throw an exception. Deletes the object.
         o->complete(this, ec, task_result);
 
@@ -419,6 +443,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
   return 0;
 }
 
+//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
     scheduler::thread_info& this_thread, long usec,
     const asio::error_code& ec)
@@ -454,6 +479,8 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
       // Run the task. May throw an exception. Only block if the operation
       // queue is empty and we're not polling, otherwise we want to return
       // as soon as possible.
+      //scheduler::do_run_one->epoll_reactor::run
+      //通过epoll获取所有得网络事件op入队到private_op_queue, 最终再通过scheduler::poll_one scheduler::poll入队到op_queue_
       task_->run(more_handlers ? 0 : usec, this_thread.private_op_queue);
     }
 
@@ -484,9 +511,26 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
+  /*
+  asio::detail::reactive_socket_recv_op<
+   asio::mutable_buffers_1, asio::detail::read_op
+   <
+	asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, asio::mutable_buffer const*, asio::detail::transfer_all_t, 
+   void mongo::transport::TransportLayerASIO::ASIOSession::opportunisticRead<asio::basic_stream_socket<asio::generic::stream_protocol
+   >, 
+   asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}
+  >
+   
+	(
+	 bool, asio::basic_stream_socket<asio::generic::stream_protocol>&, 
+	 asio::mutable_buffers_1 const&, 
+	 mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}&&
+	)
+  ::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
+  */
   o->complete(this, ec, task_result);
 
-  return 1;
+  return 1;  
 }
 
 //scheduler::poll_one  scheduler::poll

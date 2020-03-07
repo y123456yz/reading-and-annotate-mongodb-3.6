@@ -27,7 +27,6 @@ namespace detail {
 class thread_info_base;
 
 // Base class for things that manage threads (scheduler, win_iocp_io_context).
-//thread_contextºÃ≥–∏√¿‡
 class thread_context
 {
 public:

@@ -343,9 +343,13 @@ public:
    * acceptor.open(asio::ip::tcp::v4());
    * @endcode
    */
-  void open(const protocol_type& protocol = protocol_type())
+  //basic_socket_acceptor::open
+  //mongodb中的TransportLayerASIO::setup->basic_socket_acceptor::open->reactive_socket_service::open
+  void open(const protocol_type& protocol = protocol_type()) //protocol对应stream_protocol,见TransportLayerASIO::setup
   {
-    asio::error_code ec;
+    asio::error_code ec; 
+	//reactive_socket_service::open     basic_socket_acceptor::get_implementation
+	//this->get_implementation()对应stream_protocol实现
     this->get_service().open(this->get_implementation(), protocol, ec);
     asio::detail::throw_error(ec, "open");
   }
@@ -677,11 +681,12 @@ public:
    * asio::ip::tcp::acceptor::reuse_address option(true);
    * acceptor.set_option(option);
    * @endcode
-   */
+   */ //mongodb的TransportLayerASIO::setup调用
   template <typename SettableSocketOption>
   void set_option(const SettableSocketOption& option)
   {
     asio::error_code ec;
+	//mongodb的TransportLayerASIO::setup->reactive_socket_service::set_option
     this->get_service().set_option(this->get_implementation(), option, ec);
     asio::detail::throw_error(ec, "set_option");
   }
@@ -1654,8 +1659,10 @@ public:
   template <typename MoveAcceptHandler>
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
+  //io_context::run获取op执行，basic_socket_acceptor::async_accept入队op
+      //mongodb中TransportLayerASIO::_acceptConnection调用
   async_accept(asio::io_context& io_context,
-      ASIO_MOVE_ARG(MoveAcceptHandler) handler)
+      ASIO_MOVE_ARG(MoveAcceptHandler) handler)//也就是basic_socket_acceptor::async_accept
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
@@ -1672,7 +1679,10 @@ public:
       void (asio::error_code,
         typename Protocol::socket)> init(handler); //定义一个async_completion结构，结构名init
 
-    this->get_service().async_accept(this->get_implementation(),
+	//this也就是basic_socket_acceptor类
+	//basic_io_object::get_service（也就是mongodb中的TransportLayerASIO._workerIOContext)
+	//this->get_service()也就是reactive_socket_service，reactive_socket_service::async_accept
+	this->get_service().async_accept(this->get_implementation(), //this->get_implementation()对应stream_protocol
         &io_context, static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get(); //也就是handler()执行的结果
@@ -1947,6 +1957,7 @@ public:
    * acceptor.async_accept(io_context2, endpoint, accept_handler);
    * @endcode
    */
+
   template <typename MoveAcceptHandler>
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
@@ -1968,7 +1979,9 @@ public:
       void (asio::error_code,
         typename Protocol::socket)> init(handler);
 
-    this->get_service().async_accept(this->get_implementation(),
+	//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept
+	//this->get_service()对应basic_socket_acceptor
+	this->get_service().async_accept(this->get_implementation(),
         &io_context, &peer_endpoint, init.completion_handler);
 
     return init.result.get();

@@ -55,18 +55,23 @@ io_context::~io_context()
 {
 }
 
+//io_context::run获取op执行，basic_socket_acceptor::async_accept入队op
+//mongodb中的TransportLayerASIO::start()->io_context::run中调用
 io_context::count_type io_context::run()
 {
   asio::error_code ec;
+  //scheduler::run
   count_type s = impl_.run(ec);
   asio::detail::throw_error(ec);
   return s;
 }
 
+
+//mongodb中的TransportLayerASIO::start()中调用
 #if !defined(ASIO_NO_DEPRECATED)
 io_context::count_type io_context::run(asio::error_code& ec)
 {
-  return impl_.run(ec);
+  return impl_.run(ec); //scheduler::run
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 

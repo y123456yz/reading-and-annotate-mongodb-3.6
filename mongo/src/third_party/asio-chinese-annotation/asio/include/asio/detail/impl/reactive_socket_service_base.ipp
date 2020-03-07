@@ -168,6 +168,7 @@ asio::error_code reactive_socket_service_base::cancel(
   return ec;
 }
 
+//mongodb中的TransportLayerASIO::setup->basic_socket_acceptor::open->reactive_socket_service::open
 asio::error_code reactive_socket_service_base::do_open(
     reactive_socket_service_base::base_implementation_type& impl,
     int af, int type, int protocol, asio::error_code& ec)
@@ -182,7 +183,7 @@ asio::error_code reactive_socket_service_base::do_open(
   if (sock.get() == invalid_socket)
     return ec;
 
-  //epoll_reactor::register_descriptor
+  //epoll_reactor::register_descriptor  epoll注册，也就是fd和epoll关联
   if (int err = reactor_.register_descriptor(sock.get(), impl.reactor_data_))
   {
     ec = asio::error_code(err,
@@ -232,6 +233,7 @@ asio::error_code reactive_socket_service_base::do_assign(
   return ec;
 }
 
+//reactive_socket_service_base::start_accept_op
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl,
     int op_type, reactor_op* op, bool is_continuation,
@@ -243,15 +245,17 @@ void reactive_socket_service_base::start_op(
         || socket_ops::set_internal_non_blocking(
           impl.socket_, impl.state_, true, op->ec_))
     {
+      //epoll_reactor::start_op
       reactor_.start_op(op_type, impl.socket_,
           impl.reactor_data_, op, is_continuation, is_non_blocking);
       return;
     }
   }
-
+  //epoll_reactor::post_immediate_completion
   reactor_.post_immediate_completion(op, is_continuation);
 }
 
+//mongodb accept接收链接流程TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
 void reactive_socket_service_base::start_accept_op(
     reactive_socket_service_base::base_implementation_type& impl,
     reactor_op* op, bool is_continuation, bool peer_is_open)
@@ -261,7 +265,10 @@ void reactive_socket_service_base::start_accept_op(
   else
   {
     op->ec_ = asio::error::already_open;
-    reactor_.post_immediate_completion(op, is_continuation);
+	
+	//mongodb accept接收链接流程TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept
+	//->start_accept_op->epoll_reactor::post_immediate_completion
+    reactor_.post_immediate_completion(op, is_continuation);//epoll_reactor::post_immediate_completion
   }
 }
 

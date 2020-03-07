@@ -597,7 +597,7 @@ private:
   detail::signal_init<> init_;
 #endif
 
-  // The implementation.  impl_type对应scheduler
+  // The implementation.  impl_type对应scheduler  
   impl_type& impl_;
 };
 
@@ -711,7 +711,7 @@ private:
   explicit executor_type(io_context& i) : io_context_(i) {}
 
   // The underlying io_context.
-  io_context& io_context_;
+  io_context& io_context_;  
 };
 
 #if !defined(ASIO_NO_DEPRECATED)

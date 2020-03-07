@@ -67,6 +67,7 @@ io_context::get_executor() ASIO_NOEXCEPT
 
 #if defined(ASIO_HAS_CHRONO)
 
+//mongo::transport::ServiceExecutorAdaptive::_workerThreadRoutine调用走到这里
 template <typename Rep, typename Period>
 std::size_t io_context::run_for(
     const chrono::duration<Rep, Period>& rel_time)

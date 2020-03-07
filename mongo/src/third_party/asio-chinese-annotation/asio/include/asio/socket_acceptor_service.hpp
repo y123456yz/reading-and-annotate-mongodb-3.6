@@ -64,6 +64,7 @@ private:
 #elif defined(ASIO_HAS_IOCP)
   typedef detail::win_iocp_socket_service<Protocol> service_impl_type;
 #else
+  //socket_acceptor_service.service_impl_
   typedef detail::reactive_socket_service<Protocol> service_impl_type;
 #endif
 
@@ -345,6 +346,7 @@ public:
       void (asio::error_code,
         typename Protocol::socket)> init(handler);
 
+	//reactive_socket_service::async_accept
     service_impl_.async_accept(impl,
         peer_io_context, peer_endpoint, init.completion_handler);
 
@@ -360,6 +362,7 @@ private:
   }
 
   // The platform-specific implementation.
+  //reactive_socket_service
   service_impl_type service_impl_;
 };
 
