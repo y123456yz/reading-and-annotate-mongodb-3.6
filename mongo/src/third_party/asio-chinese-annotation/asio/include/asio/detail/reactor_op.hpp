@@ -23,6 +23,7 @@
 namespace asio {
 namespace detail {
 
+//也就是op回调
 class reactor_op
   : public operation
 {

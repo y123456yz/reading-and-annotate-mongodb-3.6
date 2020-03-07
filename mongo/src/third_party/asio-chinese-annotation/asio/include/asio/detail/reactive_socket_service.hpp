@@ -48,15 +48,16 @@ namespace detail {
 io操作完成后的回调类。
 */
 
-//basic_io_object(asio::io_context& io_context)中构造
+////socket_acceptor_service.service_impl_参与为该类型
+//basic_io_object(asio::io_context& io_context)中构造    mongodb Protocol对应stream_protocol，见TransportLayerASIO::setup
 template <typename Protocol>
 class reactive_socket_service :
   public service_base<reactive_socket_service<Protocol> >,
   public reactive_socket_service_base
 {
 public:
-  // The protocol type.
-  typedef Protocol protocol_type;
+  // The protocol type.  mongodb Protocol对应stream_protocol，见TransportLayerASIO::setup
+  typedef Protocol protocol_type; //stream_protocol
 
   // The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
@@ -75,6 +76,7 @@ public:
     }
 
     // The protocol associated with the socket.
+    // mongodb Protocol对应stream_protocol，见TransportLayerASIO::setup
     protocol_type protocol_;
   };
 
@@ -126,8 +128,9 @@ public:
   }
 
   // Open a new socket implementation.
-  asio::error_code open(implementation_type& impl,
-      const protocol_type& protocol, asio::error_code& ec)
+  //mongodb中的TransportLayerASIO::setup->basic_socket_acceptor::open->reactive_socket_service::open
+  asio::error_code open(implementation_type& impl, //impl对应stream_protocol实现
+      const protocol_type& protocol, asio::error_code& ec) //也就是reactive_socket_service::open
   {
     if (!do_open(impl, protocol.family(),
           protocol.type(), protocol.protocol(), ec))
@@ -152,6 +155,7 @@ public:
   }
 
   // Bind the socket to the specified local endpoint.
+   //mongodb的TransportLayerASIO::setup->basic_socket_acceptor::non_blocking->reactive_socket_service::bind
   asio::error_code bind(implementation_type& impl,
       const endpoint_type& endpoint, asio::error_code& ec)
   {
@@ -160,6 +164,7 @@ public:
   }
 
   // Set a socket option.
+  //mongodb的TransportLayerASIO::setup->reactive_socket_service::set_option
   template <typename Option>
   asio::error_code set_option(implementation_type& impl,
       const Option& option, asio::error_code& ec)
@@ -443,7 +448,7 @@ public:
 
   // Start an asynchronous accept. The peer and peer_endpoint objects must be
   // valid until the accept's handler is invoked.
-  template <typename Socket, typename Handler>
+   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer,
       endpoint_type* peer_endpoint, Handler& handler)
   {
@@ -460,6 +465,7 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_accept"));
 
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
     start_accept_op(impl, p.p, is_continuation, peer.is_open());
     p.v = p.p = 0;
   }
@@ -467,9 +473,11 @@ public:
 #if defined(ASIO_HAS_MOVE)
   // Start an asynchronous accept. The peer_endpoint object must be valid until
   // the accept's handler is invoked.
+  //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept(asio::io_context& io_context,ASIO_MOVE_ARG(MoveAcceptHandler) handler)
+  //->reactive_socket_service::async_accept
   template <typename Handler>
-  void async_accept(implementation_type& impl,
-      asio::io_context* peer_io_context,
+  void async_accept(implementation_type& impl, //也就是stream_protocol
+      asio::io_context* peer_io_context, //对应mongodb的_workerIOContext
       endpoint_type* peer_endpoint, Handler& handler)
   {
     bool is_continuation =
@@ -479,6 +487,7 @@ public:
     typedef reactive_socket_move_accept_op<Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
+	//构造一个reactive_socket_move_accept_op，也就是op
     p.p = new (p.v) op(peer_io_context ? *peer_io_context : io_context_,
         impl.socket_, impl.state_, impl.protocol_, peer_endpoint, handler);
 

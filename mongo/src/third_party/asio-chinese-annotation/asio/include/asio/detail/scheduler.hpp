@@ -36,6 +36,7 @@ namespace detail {
 struct scheduler_thread_info;
 
 //在io_context.hpp中被定义为io_context_impl   typedef class scheduler io_context_impl;
+//io_context.impl_  epoll_reactor.scheduler_成员为该类  scheduler.task_成员为epoll_reactor
 class scheduler
   : public execution_context_service_base<scheduler>,
     public thread_context
@@ -182,7 +183,7 @@ private:
   reactor* task_; //epoll_reactor
 
   // Operation object to represent the position of the task in the queue.
-  struct task_operation : operation
+  struct task_operation : operation //用于标识队列头
   {
     task_operation() : operation(0) {}
   } task_operation_; //初始化添加到op_queue_队列，见init_task
@@ -195,7 +196,7 @@ private:
 
   // The queue of handlers that are ready to be delivered.
   //操作队列,操作队列用于存放一般性操作   队列头指向op_queue_，见init_task
-  //scheduler::post_deferred_completions  scheduler::poll_one scheduler::poll添加op到该队列
+  //scheduler::post_deferred_completions  scheduler::post_immediate_completion  scheduler::poll_one scheduler::poll添加op到该队列
   op_queue<operation> op_queue_;
 
   // Flag to indicate that the dispatcher has been stopped.

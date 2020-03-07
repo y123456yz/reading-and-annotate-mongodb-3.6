@@ -53,18 +53,19 @@ namespace detail
  * I/O objects do support move construction and move assignment.
  */
 #if !defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-template <typename IoObjectService>
+template <typename IoObjectService>//对应reactive_socket_service
 #else
 //template <typename IoObjectService, bool Movable = detail::service_has_move<IoObjectService>::value> yang add
 #endif
 
-class basic_io_object //basic_socket_acceptor
+class basic_io_object //basic_socket_acceptor继承该类
 {
 public:
   /// The type of the service that will be used to provide I/O operations.
   typedef IoObjectService service_type;
 
-  /// The underlying implementation type of I/O object.
+  /// The underlying implementation type of I/O object.  reactive_socket_service::implementation_type
+  //对应stream_protocol，见TransportLayerASIO::setup
   typedef typename service_type::implementation_type implementation_type;
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -112,6 +113,7 @@ protected:
    * Performs:
    * @code get_service().construct(get_implementation()); @endcode
    */
+   //basic_socket_acceptor类构造的时候构造,io_context对应mongodb的_acceptorIOContext
   explicit basic_io_object(asio::io_context& io_context)
     : service_(asio::use_service<IoObjectService>(io_context))
   {
@@ -156,27 +158,30 @@ protected:
   }
 
   /// Get the service associated with the I/O object.
+  //basic_socket_acceptor::async_accept中调用
   service_type& get_service()
-  {
+  { //reactive_socket_service
     return service_;
   }
 
   /// Get the service associated with the I/O object.
+  //basic_socket_acceptor::async_accept中调用
   const service_type& get_service() const
-  {
+  {//mongodb对应类型reactive_socket_service
     return service_;
   }
 
   /// Get the underlying implementation of the I/O object.
+  //获取网络IO得底层实现
   implementation_type& get_implementation()
   {
-    return implementation_;
+    return implementation_; //对应stream_protocol，见TransportLayerASIO::setup
   }
 
   /// Get the underlying implementation of the I/O object.
   const implementation_type& get_implementation() const
   {
-    return implementation_;
+    return implementation_; //对应stream_protocol，见TransportLayerASIO::setup
   }
 
 private:
@@ -185,10 +190,10 @@ private:
 
   // The service associated with the I/O object.
   
-  service_type& service_; //mongodb对应io_context
+  service_type& service_; //对应reactive_socket_service
 
   /// The underlying implementation of the I/O object.
-  
+  //底层实现 //对应stream_protocol，见TransportLayerASIO::setup
   implementation_type implementation_;
 };
 
@@ -298,7 +303,7 @@ private:
   //basic_io_object构造basic_io_object<ASIO_SVC_T>(io_context)  
   //mongodb 对应reactive_socket_service
   IoObjectService* service_;
-  //IO对象的底层实现
+  //IO对象的底层实现  对应stream_protocol
   implementation_type implementation_;
 };
 #endif // defined(ASIO_HAS_MOVE)

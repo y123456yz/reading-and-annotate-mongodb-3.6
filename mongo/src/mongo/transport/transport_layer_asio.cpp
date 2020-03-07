@@ -205,18 +205,22 @@ Status TransportLayerASIO::setup() {
 				调用accept()可以接收新的连接
 
 				acceptor用来存储socket相关的信息
-			*/
+			*/ 
+//using GenericAcceptor = asio::basic_socket_acceptor<asio::generic::stream_protocol>;
+
+			//_acceptorIOContext和_acceptors关联
             GenericAcceptor acceptor(*_acceptorIOContext);
-            acceptor.open(endpoint.protocol());
-			//SO_REUSEADDR配置
+			//epoll注册，也就是fd和epoll关联
+            acceptor.open(endpoint.protocol()); //basic_socket_acceptor::open
+			//SO_REUSEADDR配置  //basic_socket_acceptor::set_option
             acceptor.set_option(GenericAcceptor::reuse_address(true));
 
-            acceptor.non_blocking(true, ec);
+            acceptor.non_blocking(true, ec);  //basic_socket_acceptor::non_blocking
             if (ec) {
                 return errorCodeToStatus(ec);
             }
 
-            acceptor.bind(endpoint, ec); //bind绑定
+            acceptor.bind(endpoint, ec); //bind绑定 //basic_socket_acceptor::non_blocking
             if (ec) {
                 return errorCodeToStatus(ec);
             }
@@ -232,7 +236,7 @@ Status TransportLayerASIO::setup() {
 #endif
 
 			//socket对应得套接字_acceptors相关处理在后续的TransportLayerASIO::start
-			////一个acceptors代表bing绑定和监听的地址
+			//一个acceptors代表bing绑定和监听的地址
             _acceptors.emplace_back(std::make_pair(std::move(addr), std::move(acceptor)));
         }
     }
@@ -274,15 +278,17 @@ Status TransportLayerASIO::start() { //listen线程处理
 	//这里专门起一个线程做listen相关的accept事件处理
 	//注意套接字的初始化 bind listen操作由initandlisten完成，listen线程只是负责accept事件的循环处理
     _listenerThread = stdx::thread([this] {
-        setThreadName("listener"); //新线程为listen线程
+        setThreadName("listener"); //新线程为listen线程,循环处理accept请求
         while (_running.load()) {
 			
             asio::io_context::work work(*_acceptorIOContext); 
 			//_acceptorIOContext和_acceptors是关联的，见TransportLayerASIO::setup
             try {
 				warning() << "yang test  TransportLayerASIO::start";
+				//TransportLayerASIO::_acceptConnection中进行accept的op操作入队，TransportLayerASIO::start出对执行对应的accept op回调
 				//异步调度_acceptConnection中的TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession
-                _acceptorIOContext->run(); 
+				//回调函数见TransportLayerASIO::_acceptConnection
+				_acceptorIOContext->run();  //对应ASIO中得io_context::run
             } catch (...) {
                 severe() << "Uncaught exception in the listener: " << exceptionToStatus();
                 fassertFailed(40491);
@@ -300,6 +306,8 @@ Status TransportLayerASIO::start() { //listen线程处理
 
 	如果配置了net  adaptive，则会复用链接
 	*/ //一个acceptors代表bing绑定和监听的地址
+
+	//std::vector<std::pair<SockAddr, GenericAcceptor>> _acceptors;
     for (auto& acceptor : _acceptors) { //bind绑定的时候赋值，见TransportLayerASIO::setup
         acceptor.second.listen(serverGlobalParams.listenBacklog);
         _acceptConnection(acceptor.second);    //异步accept处理在该函数中
@@ -375,9 +383,12 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
         _acceptConnection(acceptor); //递归，知道处理完所有的网络accept事件
     };
 
+	//TransportLayerASIO::_acceptConnection中进行accept的op操作入队，TransportLayerASIO::start出对执行对应的accept op回调
+
 	//GenericAcceptor = asio::basic_socket_acceptor<asio::generic::stream_protocol>;
 
 	//新连接到来，最终的acceptCb是由TransportLayerASIO::start  listen线程来处理
+	//basic_socket_acceptor::async_accept，acceptCb回调见TransportLayerASIO::start ->io_context::run
     acceptor.async_accept(*_workerIOContext, std::move(acceptCb)); //异步接收处理，新链接到来listen线程调用acceptCb回调
 }
 

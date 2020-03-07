@@ -29,6 +29,7 @@
 namespace asio {
 namespace detail {
 
+//reactive_socket_move_accept_opºÃ≥–∏√¿‡
 template <typename Socket, typename Protocol>
 class reactive_socket_accept_op_base : public reactor_op
 {

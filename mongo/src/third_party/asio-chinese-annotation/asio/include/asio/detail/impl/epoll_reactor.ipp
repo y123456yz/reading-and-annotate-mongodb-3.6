@@ -431,7 +431,7 @@ void epoll_reactor::cleanup_descriptor_data(
   }
 }
 
-//epoll对应的网络回调及定时器处理
+//epoll对应的网络回调及定时器处理,获取epoll对应事件得回调入队到ops队列，在外层函数统一处理
 //scheduler::do_run_one
 void epoll_reactor::run(long usec, op_queue<operation>& ops)
 {
@@ -562,6 +562,7 @@ void epoll_reactor::interrupt()
   epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, interrupter_.read_descriptor(), &ev);
 }
 
+//epoll_reactor::epoll_reactor中调用
 int epoll_reactor::do_epoll_create()
 {
 #if defined(EPOLL_CLOEXEC)
@@ -588,6 +589,7 @@ int epoll_reactor::do_epoll_create()
   return fd;
 }
 
+//epoll_reactor::epoll_reactor中调用
 int epoll_reactor::do_timerfd_create()
 {
 #if defined(ASIO_HAS_TIMERFD)

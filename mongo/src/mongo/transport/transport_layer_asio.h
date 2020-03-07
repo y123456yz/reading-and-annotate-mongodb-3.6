@@ -166,11 +166,13 @@ private:
     
 
 #ifdef MONGO_CONFIG_SSL
-    // 真正生效接收新的链接见TransportLayerASIO::start   
+    // 真正生效接收新的链接见TransportLayerASIO::start    
+    //_acceptorIOContext和_acceptors关联，见TransportLayerASIO::setup 
     std::unique_ptr<asio::io_context> _acceptorIOContext;  
     std::unique_ptr<asio::ssl::context> _sslContext;
 #endif
-    //赋值见TransportLayerASIO::setup，创建套接字，然后bind
+    //赋值见TransportLayerASIO::setup，创建套接字，然后bind  一台服务器可以bind多个IP地址，所以是vector
+    //_acceptorIOContext和_acceptors关联，见TransportLayerASIO::setup
     std::vector<std::pair<SockAddr, GenericAcceptor>> _acceptors;
 
     // Only used if _listenerOptions.async is false.
