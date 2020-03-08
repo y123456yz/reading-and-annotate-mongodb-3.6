@@ -29,7 +29,7 @@
 namespace asio {
 namespace detail {
 
-//reactive_socket_move_accept_op继承该类
+//reactive_socket_move_accept_op::reactive_socket_accept_op_base::reactor_op继承关系
 template <typename Socket, typename Protocol>
 class reactive_socket_accept_op_base : public reactor_op
 {
@@ -146,6 +146,8 @@ private:
 #if defined(ASIO_HAS_MOVE)
 
 template <typename Protocol, typename Handler>
+//reactive_socket_service::async_accept中构造使用 
+//reactive_socket_move_accept_op::reactive_socket_accept_op_base::reactor_op继承关系
 class reactive_socket_move_accept_op :
   private Protocol::socket,
   public reactive_socket_accept_op_base<typename Protocol::socket, Protocol>

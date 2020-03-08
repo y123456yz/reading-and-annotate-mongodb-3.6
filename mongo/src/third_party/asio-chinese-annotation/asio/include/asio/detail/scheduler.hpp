@@ -81,7 +81,10 @@ public:
   ASIO_DECL void restart();
 
   // Notify that some work has started.
-  void work_started()
+  //scheduler::post_immediate_completion   scheduler::post_immediate_completion
+  //epoll_reactor::schedule_timer  epoll_reactor::start_op
+  //work_finished和work_started对应
+  void work_started() //计数，代表当前有多少个线程正在运行
   {
     ++outstanding_work_;
   }
@@ -195,8 +198,10 @@ private:
   atomic_count outstanding_work_;
 
   // The queue of handlers that are ready to be delivered.
+  // //scheduler.op_queue_和descriptor_state.op_queue_的联系见epoll_reactor::cancel_ops
   //操作队列,操作队列用于存放一般性操作   队列头指向op_queue_，见init_task
-  //scheduler::post_deferred_completions  scheduler::post_immediate_completion  scheduler::poll_one scheduler::poll添加op到该队列
+  //入队scheduler::post_deferred_completions  scheduler::post_immediate_completion  scheduler::poll_one scheduler::poll添加op到该队列
+  //出队执行scheduler::do_run_one   scheduler::do_wait_one  scheduler::do_poll_one
   op_queue<operation> op_queue_;
 
   // Flag to indicate that the dispatcher has been stopped.

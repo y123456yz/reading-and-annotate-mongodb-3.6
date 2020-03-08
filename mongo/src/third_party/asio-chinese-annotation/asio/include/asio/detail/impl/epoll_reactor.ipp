@@ -148,7 +148,7 @@ void epoll_reactor::init_task()
 }
 
 //reactive_socket_service_base::do_assign  reactive_socket_service_base::do_open
-//把套接字descriptor注册到epoll时间集中
+//把套接字descriptor注册到epoll事件集中
 int epoll_reactor::register_descriptor(socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {
@@ -171,7 +171,9 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   epoll_event ev = { 0, { 0 } };
   ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET;
   descriptor_data->registered_events_ = ev.events;
-  ev.data.ptr = descriptor_data;
+  //赋值记录到ev.data.ptr中，当对应网络事件到底执行回调的时候可以通过该指针获取descriptor_data
+  ev.data.ptr = descriptor_data; 
+  
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
   {
@@ -318,12 +320,14 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
       epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
     }
   }
-
+  //入队
   descriptor_data->op_queue_[op_type].push(op);
+  //scheduler::work_started
   scheduler_.work_started();
 }
 
 //取出descriptor_data队列上的op入队到scheduler.op_queue_
+//把descriptor_state.op_queue_队列上的op重新入队到scheduler.op_queue_  
 void epoll_reactor::cancel_ops(socket_type,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {
@@ -345,6 +349,7 @@ void epoll_reactor::cancel_ops(socket_type,
 
   descriptor_lock.unlock();
 
+  //把descriptor_state.op_queue_队列上的op重新入队到scheduler.op_queue_  
   scheduler_.post_deferred_completions(ops);
 }
 

@@ -255,6 +255,7 @@ std::size_t scheduler::poll_one(asio::error_code& ec)
   return do_poll_one(lock, this_thread, ec);
 }
 
+//scheduler::work_finished
 void scheduler::stop()
 {
   mutex::scoped_lock lock(mutex_);
@@ -340,10 +341,11 @@ void scheduler::post_deferred_completions(
 #endif // defined(ASIO_HAS_THREADS)
 
     mutex::scoped_lock lock(mutex_);
-    op_queue_.push(ops);
+    op_queue_.push(ops); //scheduler.op_queue_
     wake_one_thread_and_unlock(lock);
   }
 }
+
 
 //入队
 void scheduler::do_dispatch(
@@ -428,6 +430,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 		::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
 		*/
         // Complete the operation. May throw an exception. Deletes the object.
+        //scheduler_operation::complete
         o->complete(this, ec, task_result);
 
         return 1;
@@ -442,6 +445,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 
   return 0;
 }
+
 
 //ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
@@ -532,6 +536,7 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
 
   return 1;  
 }
+
 
 //scheduler::poll_one  scheduler::poll
 std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,

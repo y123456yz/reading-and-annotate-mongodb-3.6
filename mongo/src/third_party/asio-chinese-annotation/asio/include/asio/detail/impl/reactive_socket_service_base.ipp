@@ -242,7 +242,7 @@ void reactive_socket_service_base::start_op(
   if (!noop)
   {
     if ((impl.state_ & socket_ops::non_blocking)
-        || socket_ops::set_internal_non_blocking(
+        || socket_ops::set_internal_non_blocking( //套接字非阻塞设置
           impl.socket_, impl.state_, true, op->ec_))
     {
       //epoll_reactor::start_op
@@ -261,7 +261,7 @@ void reactive_socket_service_base::start_accept_op(
     reactor_op* op, bool is_continuation, bool peer_is_open) //peer_is_open为false
 {
   if (!peer_is_open) //走该分支
-    //epoll_reactor::read_op
+    				//epoll_reactor::read_op
     start_op(impl, reactor::read_op, op, is_continuation, true, false);
   else
   {
