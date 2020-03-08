@@ -233,9 +233,9 @@ asio::error_code reactive_socket_service_base::do_assign(
   return ec;
 }
 
-//reactive_socket_service_base::start_accept_op
+//reactive_socket_service_base::start_accept_op  reactive_socket_service::async_receive_from
 void reactive_socket_service_base::start_op(
-    reactive_socket_service_base::base_implementation_type& impl,
+    reactive_socket_service_base::base_implementation_type& impl, //impl对应stream_protocol
     int op_type, reactor_op* op, bool is_continuation,
     bool is_non_blocking, bool noop)
 {
@@ -257,10 +257,11 @@ void reactive_socket_service_base::start_op(
 
 //mongodb accept接收链接流程TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
 void reactive_socket_service_base::start_accept_op(
-    reactive_socket_service_base::base_implementation_type& impl,
-    reactor_op* op, bool is_continuation, bool peer_is_open)
+    reactive_socket_service_base::base_implementation_type& impl, //impl对应stream_protocol
+    reactor_op* op, bool is_continuation, bool peer_is_open) //peer_is_open为false
 {
-  if (!peer_is_open)
+  if (!peer_is_open) //走该分支
+    //epoll_reactor::read_op
     start_op(impl, reactor::read_op, op, is_continuation, true, false);
   else
   {
@@ -272,6 +273,7 @@ void reactive_socket_service_base::start_accept_op(
   }
 }
 
+//针对客户端发起链接
 void reactive_socket_service_base::start_connect_op(
     reactive_socket_service_base::base_implementation_type& impl,
     reactor_op* op, bool is_continuation,
@@ -287,6 +289,7 @@ void reactive_socket_service_base::start_connect_op(
           || op->ec_ == asio::error::would_block)
       {
         op->ec_ = asio::error_code();
+		//epoll_reactor::read_op
         reactor_.start_op(reactor::connect_op, impl.socket_,
             impl.reactor_data_, op, is_continuation, false);
         return;
