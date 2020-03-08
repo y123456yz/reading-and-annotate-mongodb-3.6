@@ -59,10 +59,12 @@ public:
     socket_type socket_; //套接字fd
 
     // The current state of the socket.
+    //不同的sock类型，取值不同，见reactive_socket_service_base::do_open
     socket_ops::state_type state_;
 
     // Per-descriptor data used by the reactor.
-    //epoll_reactor::descriptor_state  每个链接对应的私有参数信息
+    //epoll_reactor::descriptor_state  每个链接fd对应的私有参数信息
+    //真正赋值见reactive_socket_service_base::do_open->epoll_reactor::register_descriptor
     reactor::per_descriptor_data reactor_data_;
   };
 

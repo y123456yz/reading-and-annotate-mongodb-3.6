@@ -66,7 +66,6 @@ io_context::count_type io_context::run()
   return s;
 }
 
-
 //mongodb中的TransportLayerASIO::start()中调用
 #if !defined(ASIO_NO_DEPRECATED)
 io_context::count_type io_context::run(asio::error_code& ec)

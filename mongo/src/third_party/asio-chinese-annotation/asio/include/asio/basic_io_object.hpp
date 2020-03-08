@@ -67,6 +67,7 @@ public:
   /// The underlying implementation type of I/O object.  reactive_socket_service::implementation_type
   //对应stream_protocol，见TransportLayerASIO::setup
   //reactive_socket_service::implementation_type
+  //指定协议，mongod对应stream_protocol(见TransportLayerASIO::setup)及fd和对应的epoll私有参数信息
   typedef typename service_type::implementation_type implementation_type;
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -175,11 +176,12 @@ protected:
   /// Get the underlying implementation of the I/O object.
   //获取网络IO得底层实现
   implementation_type& get_implementation()
-  {
+  {//指定协议，mongod对应stream_protocol(见TransportLayerASIO::setup)及fd和对应的epoll私有参数信息
     return implementation_; //对应stream_protocol，见TransportLayerASIO::setup
   }
 
   /// Get the underlying implementation of the I/O object.
+  //指定协议，mongod对应stream_protocol(见TransportLayerASIO::setup)及fd和对应的epoll私有参数信息
   const implementation_type& get_implementation() const
   {
     return implementation_; //对应stream_protocol，见TransportLayerASIO::setup
@@ -195,6 +197,7 @@ private:
 
   /// The underlying implementation of the I/O object.
   //底层实现 //对应stream_protocol，见TransportLayerASIO::setup
+  //指定协议，mongod对应stream_protocol(见TransportLayerASIO::setup)及fd和对应的epoll私有参数信息
   implementation_type implementation_;
 };
 

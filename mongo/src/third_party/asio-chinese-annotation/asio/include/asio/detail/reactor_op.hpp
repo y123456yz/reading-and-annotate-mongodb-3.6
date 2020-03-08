@@ -23,9 +23,12 @@
 namespace asio {
 namespace detail {
 
-//也就是op回调
+//也就是op回调  参考reactive_socket_service::async_accept->start_accept_op  epoll_reactor::register_internal_descriptor
+//reactive_socket_move_accept_op::reactive_socket_accept_op_base::reactor_op继承关系
+
+//reactive_socket_accept_op_base继承该类
 class reactor_op
-  : public operation
+  : public operation //也就是scheduler_operation
 {
 public:
   // The error code to be passed to the completion handler.

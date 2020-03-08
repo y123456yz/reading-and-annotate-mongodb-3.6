@@ -51,7 +51,8 @@ public:
     write_op = 1, //reactive_socket_service_base::async_wait
     connect_op = 1, //reactive_socket_service_base::start_connect_op
     except_op = 2, //reactive_socket_service_base::async_wait
-    max_ops = 3 };
+    max_ops = 3 
+    };
 
   // Per-descriptor queues.   op操作队列     //reactive_socket_service_base.reactor_data_为该类型
   class descriptor_state : operation   
@@ -67,7 +68,10 @@ public:
 	//epoll_reactor::deregister_descriptor置为-1
     int descriptor_; //句柄 epoll_reactor::register_descriptor  epoll_reactor::register_internal_descriptor
     uint32_t registered_events_;
-    op_queue<reactor_op> op_queue_[max_ops];
+	//入队epoll_reactor::start_op  epoll_reactor::register_internal_descriptor
+	//出队执行见epoll_reactor::cancel_ops
+	//scheduler.op_queue_和descriptor_state.op_queue_的联系见epoll_reactor::cancel_ops
+    op_queue<reactor_op> op_queue_[max_ops]; 
     bool try_speculative_[max_ops];
 	//epoll_reactor::deregister_descriptor置为true
     bool shutdown_;
