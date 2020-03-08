@@ -66,6 +66,7 @@ public:
 
   /// The underlying implementation type of I/O object.  reactive_socket_service::implementation_type
   //¶ÔÓ¦stream_protocol£¬¼ûTransportLayerASIO::setup
+  //reactive_socket_service::implementation_type
   typedef typename service_type::implementation_type implementation_type;
 
 #if !defined(ASIO_NO_DEPRECATED)

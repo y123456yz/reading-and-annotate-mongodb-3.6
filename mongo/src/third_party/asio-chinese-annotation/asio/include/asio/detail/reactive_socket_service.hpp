@@ -66,8 +66,9 @@ public:
   typedef socket_type native_handle_type;
 
   // The implementation type of the socket.
-  struct implementation_type :
-    reactive_socket_service_base::base_implementation_type
+  //指定协议，mongod对应stream_protocol(见TransportLayerASIO::setup)及fd和对应的epoll私有参数信息
+  struct implementation_type : //也就是和reactive_socket_service::implementation_type
+    reactive_socket_service_base::base_implementation_type //存储fd和该fd对应的epoll私有参数信息
   {
     // Default constructor.
     implementation_type()
@@ -364,7 +365,7 @@ public:
   template <typename Handler>
   void async_receive_from(implementation_type& impl,
       const null_buffers&, endpoint_type& sender_endpoint,
-      socket_base::message_flags flags, Handler& handler)
+      socket_base::message_flags flags, Handler& handler) //也就是reactive_socket_service::async_receive_from
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);

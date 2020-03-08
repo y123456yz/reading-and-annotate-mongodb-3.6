@@ -94,7 +94,7 @@
 
 namespace asio {
 namespace detail {
-
+typedef int socket_type; //yang add
 #if defined(ASIO_WINDOWS_RUNTIME)
 const int max_addr_v4_str_len = 256;
 const int max_addr_v6_str_len = 256;

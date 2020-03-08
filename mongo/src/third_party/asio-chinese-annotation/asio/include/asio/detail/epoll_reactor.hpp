@@ -46,11 +46,15 @@ private:
   typedef conditionally_enabled_mutex mutex;
 
 public:
-  enum op_types { read_op = 0, write_op = 1,
-    connect_op = 1, except_op = 2, max_ops = 3 };
+  enum op_types {  //搜索reactor::read_op reactor::write_op 
+  	read_op = 0, //reactive_socket_service_base::start_accept_op  reactive_socket_service_base::async_wait
+    write_op = 1, //reactive_socket_service_base::async_wait
+    connect_op = 1, //reactive_socket_service_base::start_connect_op
+    except_op = 2, //reactive_socket_service_base::async_wait
+    max_ops = 3 };
 
-  // Per-descriptor queues.   op操作队列
-  class descriptor_state : operation
+  // Per-descriptor queues.   op操作队列     //reactive_socket_service_base.reactor_data_为该类型
+  class descriptor_state : operation   
   {
     friend class epoll_reactor;
     friend class object_pool_access;

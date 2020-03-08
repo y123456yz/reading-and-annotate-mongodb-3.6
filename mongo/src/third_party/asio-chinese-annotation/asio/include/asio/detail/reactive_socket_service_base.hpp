@@ -46,19 +46,23 @@ namespace detail {
 class reactive_socket_service_base
 {
 public:
-  // The native type of a socket.
-  typedef socket_type native_handle_type;
+  // The native type of a socket.  typedef int socket_type;
+  typedef socket_type native_handle_type; //套接字fd
 
   // The implementation type of the socket.
-  struct base_implementation_type
+  //reactive_socket_service::implementation_type继承该类
+  struct base_implementation_type 
   {
     // The native socket representation.
-    socket_type socket_;
+    
+	//typedef int socket_type;
+    socket_type socket_; //套接字fd
 
     // The current state of the socket.
     socket_ops::state_type state_;
 
     // Per-descriptor data used by the reactor.
+    //epoll_reactor::descriptor_state  每个链接对应的私有参数信息
     reactor::per_descriptor_data reactor_data_;
   };
 
@@ -196,7 +200,7 @@ public:
   // write, or to have pending error conditions.
   template <typename Handler>
   void async_wait(base_implementation_type& impl,
-      socket_base::wait_type w, Handler& handler)
+      socket_base::wait_type w, Handler& handler) //也就是reactive_socket_service_base::async_wait
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);

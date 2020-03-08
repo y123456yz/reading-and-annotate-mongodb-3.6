@@ -231,6 +231,7 @@ void epoll_reactor::move_descriptor(socket_type,
   source_descriptor_data = 0;
 }
 
+//reactive_socket_service_base::start_op
 //op入队到套接字descriptor对应的队列，然后等待调度
 void epoll_reactor::start_op(int op_type, socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data, reactor_op* op,
