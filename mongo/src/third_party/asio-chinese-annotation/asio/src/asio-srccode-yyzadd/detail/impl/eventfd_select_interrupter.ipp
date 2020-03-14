@@ -116,6 +116,8 @@ void eventfd_select_interrupter::recreate()
   open_descriptors();
 }
 
+//epoll_reactor::epoll_reactor  epoll_reactor::notify_fork 调用
+//预先通过write_fd写8个字节，这8个字节一直保留。 内容为数字1
 void eventfd_select_interrupter::interrupt()
 {
   uint64_t counter(1UL);

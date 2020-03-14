@@ -46,16 +46,20 @@ private:
   typedef conditionally_enabled_mutex mutex;
 
 public:
+//reactive_socket_accept_op_base(新连接)	reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
+  //descriptor_state.op_queue_[op_types]
   enum op_types {  //搜索reactor::read_op reactor::write_op 
-  	read_op = 0, //reactive_socket_service_base::start_accept_op  reactive_socket_service_base::async_wait
-    write_op = 1, //reactive_socket_service_base::async_wait
-    connect_op = 1, //reactive_socket_service_base::start_connect_op
-    except_op = 2, //reactive_socket_service_base::async_wait
+  //accept获取对应新链接fd，见reactive_socket_accept_op_base
+  	read_op = 0,  //新链接到来或者数据到来
+    write_op = 1,  //写数据
+    connect_op = 1,  //客户端发起链接相关
+    except_op = 2, 
     max_ops = 3 
     };
 
   // Per-descriptor queues.   op操作队列     //reactive_socket_service_base.reactor_data_为该类型
-  class descriptor_state : operation   
+  //这里的operation初始化为epoll_reactor::descriptor_state::do_complete，见epoll_reactor::descriptor_state::descriptor_state   
+  class descriptor_state : operation 
   {
     friend class epoll_reactor;
     friend class object_pool_access;
@@ -68,9 +72,9 @@ public:
 	//epoll_reactor::deregister_descriptor置为-1
     int descriptor_; //句柄 epoll_reactor::register_descriptor  epoll_reactor::register_internal_descriptor
     uint32_t registered_events_;
-	//入队epoll_reactor::start_op  epoll_reactor::register_internal_descriptor
-	//出队执行见epoll_reactor::cancel_ops
-	//scheduler.op_queue_和descriptor_state.op_queue_的联系见epoll_reactor::cancel_ops
+	//入队epoll_reactor::start_op  epoll_reactor::register_internal_descriptor注册到epoll
+	//参考epoll_reactor::descriptor_state::perform_io,
+	//reactive_socket_accept_op_base(新连接)	reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
     op_queue<reactor_op> op_queue_[max_ops]; 
     bool try_speculative_[max_ops];
 	//epoll_reactor::deregister_descriptor置为true
@@ -79,7 +83,10 @@ public:
     ASIO_DECL descriptor_state(bool locking);
     void set_ready_events(uint32_t events) { task_result_ = events; }
     void add_ready_events(uint32_t events) { task_result_ |= events; }
-    ASIO_DECL operation* perform_io(uint32_t events);
+
+	//perform_io和do_complete的具体实现参考reactor_op的各种继承类，如reactive_socket_accept_op_base  reactive_socket_recv_op_base等
+    //具体实现mongodb使用了reactive_socket_accept_op_base	reactive_socket_recv_op_base reactive_socket_send_op_base
+	ASIO_DECL operation* perform_io(uint32_t events);
     ASIO_DECL static void do_complete(
         void* owner, operation* base,
         const asio::error_code& ec, std::size_t bytes_transferred);
@@ -237,7 +244,9 @@ private:
   mutex mutex_;
 
   // The interrupter is used to break a blocking epoll_wait call.
-  select_interrupter interrupter_;
+  //eventfd_select_interrupter
+  //eventfd_select_interrupter, eventfd类似pipe，用于两个线程见事件通知
+  select_interrupter interrupter_;  
 
   // The epoll file descriptor.
   int epoll_fd_;

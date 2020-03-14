@@ -202,6 +202,8 @@ asio::error_code reactive_socket_service_base::do_open(
   return ec;
 }
 
+////reactive_socket_move_accept_op::do_complete->reactive_socket_accept_op_base::do_assign
+//有新链接的时候会调用对应assign把新链接fd注册到epoll事件集
 asio::error_code reactive_socket_service_base::do_assign(
     reactive_socket_service_base::base_implementation_type& impl, int type,
     const reactive_socket_service_base::native_handle_type& native_socket,
@@ -234,6 +236,7 @@ asio::error_code reactive_socket_service_base::do_assign(
 }
 
 //reactive_socket_service_base::start_accept_op  reactive_socket_service::async_receive_from
+//reactive_socket_service_base::async_wait
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl, //impl对应stream_protocol
     int op_type, reactor_op* op, bool is_continuation,

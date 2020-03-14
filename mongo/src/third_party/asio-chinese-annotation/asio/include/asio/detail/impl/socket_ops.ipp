@@ -220,6 +220,8 @@ void complete_iocp_accept(socket_type s,
 
 #else // defined(ASIO_HAS_IOCP)
 
+//reactive_socket_accept_op_base::do_perform
+//accept接收新链接
 bool non_blocking_accept(socket_type s,
     state_type state, socket_addr_type* addr, std::size_t* addrlen,
     asio::error_code& ec, socket_type& new_socket)

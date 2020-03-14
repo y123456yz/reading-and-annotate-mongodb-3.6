@@ -42,6 +42,7 @@ class scheduler
     public thread_context
 {
 public:
+  ////reactor_op继承该类
   typedef scheduler_operation operation;
 
   // Constructor. Specifies the number of concurrent threads that are likely to
@@ -173,25 +174,31 @@ private:
 
   // Whether to optimise for single-threaded use cases.
   //初始化的时候赋值，见scheduler::scheduler  如果一个线程为true
+  //表示本scheduler由一个线程运行还是多个线程运行
   const bool one_thread_;
 
   // Mutex to protect access to internal data.
+  //全局锁，多线程互斥
   mutable mutex mutex_;
 
   // Event to wake up blocked threads.
-  event wakeup_event_;
+  event wakeup_event_; 
 
   // The task to be run by this service.
   //scheduler包含一个reactor，scheduler通过reactor模拟proactor：用户面对的接口一致，但数据的复制是在用户态而非内核态完成。
   reactor* task_; //epoll_reactor
 
   // Operation object to represent the position of the task in the queue.
-  struct task_operation : operation //用于标识队列头
+  //初始化添加到op_queue_队列，见init_task  
+  //scheduler::task_cleanup也加入到全局op_queue_队列
+  struct task_operation : operation //特殊的op
   {
+	//这个特殊op的作用是保证从epoll_wait返回值中获取到一批网络事件对应的IO回调op接入全局队列op_queue_后，都加上该特殊op到队列中
     task_operation() : operation(0) {}
-  } task_operation_; //初始化添加到op_queue_队列，见init_task
+  } task_operation_;  
 
   // Whether the task has been interrupted.
+  //将本线程的私有队列放入全局队列中，然后用task_operation_来标记一个线程私有队列的结束。
   bool task_interrupted_;
 
   // The count of unfinished work.
@@ -202,9 +209,10 @@ private:
   //操作队列,操作队列用于存放一般性操作   队列头指向op_queue_，见init_task
   //入队scheduler::post_deferred_completions  scheduler::post_immediate_completion  scheduler::poll_one scheduler::poll添加op到该队列
   //出队执行scheduler::do_run_one   scheduler::do_wait_one  scheduler::do_poll_one
-  op_queue<operation> op_queue_;
+  op_queue<operation> op_queue_; ////队列的o就是reactor_op的complete_func
 
   // Flag to indicate that the dispatcher has been stopped.
+  //stop_all_threads中置为true, 为true后，将不再处理epoll相关事件，参考scheduler::do_run_one
   bool stopped_;
 
   // Flag to indicate that the dispatcher has been shut down.

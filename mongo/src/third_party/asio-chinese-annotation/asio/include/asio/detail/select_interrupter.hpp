@@ -33,8 +33,10 @@ namespace detail {
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
 typedef socket_select_interrupter select_interrupter;
 #elif defined(ASIO_HAS_EVENTFD)
+//eventfd具体与pipe类似，用来完成两个线程之间事件触发通知
 typedef eventfd_select_interrupter select_interrupter;
 #else
+//eventfd具体与pipe类似，用来完成两个线程之间事件触发通知
 typedef pipe_select_interrupter select_interrupter;
 #endif
 

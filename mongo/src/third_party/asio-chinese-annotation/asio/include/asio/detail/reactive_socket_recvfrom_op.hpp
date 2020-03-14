@@ -28,6 +28,7 @@
 namespace asio {
 namespace detail {
 
+//reactive_socket_recvfrom_opºÃ≥–∏√¿‡
 template <typename MutableBufferSequence, typename Endpoint>
 class reactive_socket_recvfrom_op_base : public reactor_op
 {

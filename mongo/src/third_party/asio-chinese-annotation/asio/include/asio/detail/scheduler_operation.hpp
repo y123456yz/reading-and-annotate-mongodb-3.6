@@ -35,6 +35,7 @@ class scheduler_operation //scheduler类中使用  执行见scheduler::do_run_one
 public:
   typedef scheduler_operation operation_type;
 
+  //执行见epoll_reactor::descriptor_state::do_complete
   void complete(void* owner, const asio::error_code& ec,
       std::size_t bytes_transferred)
   {
@@ -66,9 +67,12 @@ protected:
 private:
   friend class op_queue_access;
   scheduler_operation* next_;
+  //真正执行见epoll_reactor::descriptor_state::do_complete
+  //perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
   func_type func_;
 protected:
   friend class scheduler;
+  //获取epoll_wait返回的event信息，赋值见set_ready_events add_ready_events
   unsigned int task_result_; // Passed into bytes transferred.
 };
 

@@ -115,6 +115,7 @@ void eventfd_select_interrupter::recreate()
   open_descriptors();
 }
 
+//ÏòeventfdĞ´ÈëÊı×Ö1
 void eventfd_select_interrupter::interrupt()
 {
   uint64_t counter(1UL);

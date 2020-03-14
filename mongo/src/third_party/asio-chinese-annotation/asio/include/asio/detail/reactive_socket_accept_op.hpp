@@ -34,9 +34,12 @@ template <typename Socket, typename Protocol>
 class reactive_socket_accept_op_base : public reactor_op
 {
 public:
+  //reactive_socket_move_accept_op中构造赋值
   reactive_socket_accept_op_base(socket_type socket,
       socket_ops::state_type state, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint, func_type complete_func)
+      //accept获取新链接fd，在这里面reactive_socket_accept_op_base::do_perform, 
+      //complete_func对应接收到新链接后获取到accept获取到新fd的时候对应的回调，也就是TransportLayerASIO::_acceptConnection中的回调
     : reactor_op(&reactive_socket_accept_op_base::do_perform, complete_func),
       socket_(socket),
       state_(state),
@@ -47,16 +50,20 @@ public:
   {
   }
 
+  //reactive_socket_accept_op_base构造函数中赋值给reactor_op
   static status do_perform(reactor_op* base)
   {
     reactive_socket_accept_op_base* o(
         static_cast<reactive_socket_accept_op_base*>(base));
 
     socket_type new_socket = invalid_socket;
+	
     status result = socket_ops::non_blocking_accept(o->socket_,
         o->state_, o->peer_endpoint_ ? o->peer_endpoint_->data() : 0,
         o->peer_endpoint_ ? &o->addrlen_ : 0, o->ec_, new_socket)
     ? done : not_done;
+
+	//新的链接信息赋值给base
     o->new_socket_.reset(new_socket);
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_accept", o->ec_));
@@ -64,12 +71,14 @@ public:
     return result;
   }
 
-  void do_assign()
+  //在外层继承类中的do_complete中执行
+  void do_assign() //do_complete->do_assign->
   {
     if (new_socket_.get() != invalid_socket)
     {
       if (peer_endpoint_)
         peer_endpoint_->resize(addrlen_);
+	  //reactive_socket_service_base::do_assign
       peer_.assign(protocol_, new_socket_.get(), ec_);
       if (!ec_)
         new_socket_.release();
@@ -77,10 +86,11 @@ public:
   }
 
 private:
-  socket_type socket_;
+  socket_type socket_; //sock套接字sd
   socket_ops::state_type state_;
+  //accept获取到的新链接fd，见reactive_socket_accept_op_base::do_perform
   socket_holder new_socket_;
-  Socket& peer_;
+  Socket& peer_; //对应reactive_socket_move_accept_op，见reactive_socket_move_accept_op构造函数
   Protocol protocol_;
   typename Protocol::endpoint* peer_endpoint_;
   std::size_t addrlen_;
@@ -178,7 +188,7 @@ public:
     handler_work<Handler> w(o->handler_);
 
     // On success, assign new connection to peer socket object.
-    if (owner)
+    if (owner) //reactive_socket_move_accept_op::do_assign
       o->do_assign();
 
     ASIO_HANDLER_COMPLETION((*o));

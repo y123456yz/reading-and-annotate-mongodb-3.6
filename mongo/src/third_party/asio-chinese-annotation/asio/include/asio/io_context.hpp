@@ -157,8 +157,6 @@ typedef class scheduler io_context_impl;
  * ...
  * work.reset(); // Allow run() to exit. @endcode
  */
-//参考https://www.cnblogs.com/zhiranok/archive/2011/09/04/boost_asio_io_service_CPP.html 
-//早期版本Io_servie，现在版本Io_context
 
 //对应mongodb的TransportLayerASIO._acceptorIOContext   TransportLayerASIO._workerIOContext
 //io_context的主要功能：接受任务，处理io事件，处理回调。

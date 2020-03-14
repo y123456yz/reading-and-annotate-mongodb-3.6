@@ -29,6 +29,7 @@ namespace asio {
 namespace detail {
 
 template <typename MutableBufferSequence>
+//reactive_socket_recv_opºÃ≥–∏√¿‡
 class reactive_socket_recv_op_base : public reactor_op
 {
 public:
