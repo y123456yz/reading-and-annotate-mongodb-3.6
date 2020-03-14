@@ -31,6 +31,7 @@ class thread_context
 {
 public:
   // Per-thread call stack to track the state of each thread in the context.
+  //²Î¿¼scheduler.ippÀïÃæËÑË÷thread_call_stack
   typedef call_stack<thread_context, thread_info_base> thread_call_stack;
 };
 

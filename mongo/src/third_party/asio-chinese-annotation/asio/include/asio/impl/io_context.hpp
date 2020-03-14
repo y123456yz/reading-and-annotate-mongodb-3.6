@@ -87,6 +87,7 @@ std::size_t io_context::run_until(
 }
 
 template <typename Rep, typename Period>
+//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->
 std::size_t io_context::run_one_for(
     const chrono::duration<Rep, Period>& rel_time)
 {
@@ -94,6 +95,8 @@ std::size_t io_context::run_one_for(
 }
 
 template <typename Clock, typename Duration>
+//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until
+//->schedule::wait_one
 std::size_t io_context::run_one_until(
     const chrono::time_point<Clock, Duration>& abs_time)
 {
@@ -105,6 +108,7 @@ std::size_t io_context::run_one_until(
       rel_time = chrono::seconds(1);
 
     asio::error_code ec;
+	//schedule::wait_one
     std::size_t s = impl_.wait_one(
         static_cast<long>(chrono::duration_cast<
           chrono::microseconds>(rel_time).count()), ec);
@@ -128,6 +132,7 @@ inline void io_context::reset()
   restart();
 }
 
+//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
 io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
@@ -138,6 +143,7 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 
   async_completion<CompletionHandler, void ()> init(handler);
 
+  //scheduler::can_dispatch
   if (impl_.can_dispatch())
   {
     detail::fenced_block b(detail::fenced_block::full);
@@ -151,12 +157,15 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
       typename handler_type<CompletionHandler, void ()>::type> op;
     typename op::ptr p = { detail::addressof(init.completion_handler),
       op::ptr::allocate(init.completion_handler), 0 };
-    p.p = new (p.v) op(init.completion_handler);
+    p.p = new (p.v) op(init.completion_handler); //获取op操作，也就是handler回调
 
     ASIO_HANDLER_CREATION((*this, *p.p,
           "io_context", this, 0, "dispatch"));
 
-    impl_.do_dispatch(p.p);
+	
+	//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
+	//->scheduler::do_dispatch
+    impl_.do_dispatch(p.p); //scheduler::do_dispatch
     p.v = p.p = 0;
   }
 
@@ -165,6 +174,8 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
+//->scheduler::post_immediate_completion
 io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
@@ -186,6 +197,7 @@ io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
   ASIO_HANDLER_CREATION((*this, *p.p,
         "io_context", this, 0, "post"));
 
+  //scheduler::post_immediate_completion
   impl_.post_immediate_completion(p.p, is_continuation);
   p.v = p.p = 0;
 

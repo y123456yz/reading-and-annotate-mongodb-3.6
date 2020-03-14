@@ -28,6 +28,7 @@ namespace asio {
 namespace detail {
 
 // Mutex adapter used to conditionally enable or disable locking.
+//用于线程的唤醒，等待条件变量等  //scheduler.wakeup_event_为该类型成员
 class conditionally_enabled_event
   : private noncopyable
 {
@@ -50,6 +51,7 @@ public:
   }
 
   // Signal all waiters.
+  //唤醒所有休眠线程
   void signal_all(conditionally_enabled_mutex::scoped_lock& lock)
   {
     if (lock.mutex_.enabled_)
@@ -65,6 +67,7 @@ public:
   }
 
   // If there's a waiter, unlock the mutex and signal it.
+  //释放锁，或者唤醒等待条件变量的线程
   bool maybe_unlock_and_signal_one(
       conditionally_enabled_mutex::scoped_lock& lock)
   {
@@ -82,6 +85,7 @@ public:
   }
 
   // Wait for the event to become signalled.
+  //等待条件变量
   void wait(conditionally_enabled_mutex::scoped_lock& lock)
   {
     if (lock.mutex_.enabled_)

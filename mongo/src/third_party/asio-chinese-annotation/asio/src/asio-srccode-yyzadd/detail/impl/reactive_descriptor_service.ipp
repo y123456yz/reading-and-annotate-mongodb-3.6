@@ -177,6 +177,7 @@ boost::system::error_code reactive_descriptor_service::cancel(
   return ec;
 }
 
+//reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 void reactive_descriptor_service::start_op(
     reactive_descriptor_service::implementation_type& impl,
     int op_type, reactor_op* op, bool is_continuation,
@@ -188,6 +189,7 @@ void reactive_descriptor_service::start_op(
         descriptor_ops::set_internal_non_blocking(
           impl.descriptor_, impl.state_, true, op->ec_))
     {
+      //epoll_reactor::start_op
       reactor_.start_op(op_type, impl.descriptor_,
           impl.reactor_data_, op, is_continuation, is_non_blocking);
       return;

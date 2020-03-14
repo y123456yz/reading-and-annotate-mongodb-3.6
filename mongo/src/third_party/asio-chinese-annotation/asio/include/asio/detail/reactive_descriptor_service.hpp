@@ -335,7 +335,7 @@ public:
 
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
           &impl, impl.descriptor_, "async_read_some"));
-
+ 
     start_op(impl, reactor::read_op, p.p, is_continuation, true,
         buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence>::all_empty(buffers));
