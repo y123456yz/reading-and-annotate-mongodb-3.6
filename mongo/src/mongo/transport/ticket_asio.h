@@ -35,6 +35,7 @@
 namespace mongo {
 namespace transport {
 
+//TransportLayerASIO类的相关接口使用
 class TransportLayerASIO::ASIOTicket : public TicketImpl {
     MONGO_DISALLOW_COPYING(ASIOTicket);
 
@@ -69,9 +70,15 @@ private:
     const Date_t _expiration;
 
     TicketCallback _fillCallback;
+    //ServiceStateMachine::_sourceMessage可以看出，kSynchronous模式为true，adaptive模式为false
     bool _fillSync;
 };
 
+/*
+Ticket_asio.h (src\mongo\transport):class TransportLayerASIO::ASIOSourceTicket : public TransportLayerASIO::ASIOTicket {
+Ticket_asio.h (src\mongo\transport):class TransportLayerASIO::ASIOSinkTicket : public TransportLayerASIO::ASIOTicket {
+*/
+//TransportLayerASIO类的相关接口使用
 class TransportLayerASIO::ASIOSourceTicket : public TransportLayerASIO::ASIOTicket {
 public:
     ASIOSourceTicket(const ASIOSessionHandle& session, Date_t expiration, Message* msg);
@@ -88,6 +95,7 @@ private:
     Message* _target;
 };
 
+//TransportLayerASIO类的相关接口使用
 class TransportLayerASIO::ASIOSinkTicket : public TransportLayerASIO::ASIOTicket {
 public:
     ASIOSinkTicket(const ASIOSessionHandle& session, Date_t expiration, const Message& msg);
@@ -102,3 +110,4 @@ private:
 
 }  // namespace transport
 }  // namespace mongo
+

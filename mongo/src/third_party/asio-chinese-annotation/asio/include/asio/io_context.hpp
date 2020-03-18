@@ -45,6 +45,7 @@ Boost.Asio代码风格。Asio为了可读性将部分较复杂的类的声明和实现分成了两个头文件，
 #include "asio/detail/push_options.hpp"
 
 
+
 namespace asio {
 
 /*
@@ -157,6 +158,24 @@ typedef class scheduler io_context_impl;
  * ...
  * work.reset(); // Allow run() to exit. @endcode
  */
+
+/* mongodb中相关类型的应用
+namespace asio {
+class io_context;
+
+template <typename Protocol>
+class basic_socket_acceptor;
+
+namespace generic {
+class stream_protocol;
+}  // namespace generic
+
+namespace ssl {
+class context;
+}  // namespace ssl
+}  // namespace asio
+*/
+
 //参考https://www.cnblogs.com/zhiranok/archive/2011/09/04/boost_asio_io_service_CPP.html 
 //早期版本Io_servie，现在版本Io_context
 

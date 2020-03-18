@@ -41,10 +41,10 @@
 namespace mongo {
 namespace transport {
 namespace {
+	//mongo协议头部长度  TransportLayerASIO::ASIOSourceTicket::fillImpl
 constexpr auto kHeaderSize = sizeof(MSGHEADER::Value);
 
 }  // namespace
-
 
 std::shared_ptr<TransportLayerASIO::ASIOSession> TransportLayerASIO::ASIOTicket::getSession() {
     auto session = _session.lock();
@@ -55,6 +55,7 @@ std::shared_ptr<TransportLayerASIO::ASIOSession> TransportLayerASIO::ASIOTicket:
     return session;
 }
 
+//ServiceStateMachine::_sourceMessage可以看出，kSynchronous模式为true，adaptive模式为false
 bool TransportLayerASIO::ASIOTicket::isSync() const {
     return _fillSync;
 }
@@ -72,6 +73,7 @@ TransportLayerASIO::ASIOSinkTicket::ASIOSinkTicket(const ASIOSessionHandle& sess
                                                    const Message& msg)
     : ASIOTicket(session, expiration), _msgToSend(msg) {}
 //TransportLayerASIO::ASIOSourceTicket::_headerCallback
+//_headerCallback对header读取后解析header头部获取到对应的msg长度，然后开始body部分处理
 void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& ec, size_t size) {
     if (ec) {
         finishFill(errorCodeToStatus(ec));
@@ -80,11 +82,13 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
 
     _target->setData(std::move(_buffer));
     networkCounter.hitPhysicalIn(_target->size());
-	//TransportLayerASIO::ASIOTicket::finishFill
-    finishFill(Status::OK());
+	//TransportLayerASIO::ASIOTicket::finishFill  
+    finishFill(Status::OK()); //包体内容读完后，开始下一阶段的处理  
+    //报文读取完后的下一阶段就是报文内容处理，开始走ServiceStateMachine::_processMessage
 }
 
 //TransportLayerASIO::ASIOSourceTicket::fillImpl
+//fillImpl从协议栈读取到数据后开始解析，如果数据内容足够，则调用finishFill做进一步处理，否则继续调用read继续读数据
 void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code& ec, size_t size) {
     if (ec) {
         finishFill(errorCodeToStatus(ec));
@@ -107,19 +111,25 @@ void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code
         return;
     }
 
+	//说明数据部分也读取出来了，一个完整的mongo报文读取完毕
     if (msgLen == size) {
         finishFill(Status::OK());
         return;
     }
 
-    _buffer.realloc(msgLen);
+	//内容还不够一个mongo协议报文，继续读取body长度字节的数据，读取完毕后开始body处理
+    _buffer.realloc(msgLen); //注意这里是realloc，保证头部和body在同一个buffer中
     MsgData::View msgView(_buffer.get());
 
+
+	//读取数据 TransportLayerASIO::ASIOSession::read
     session->read(isSync(),
                   asio::buffer(msgView.data(), msgView.dataLen()),
                   [this](const std::error_code& ec, size_t size) { _bodyCallback(ec, size); });
 }
 
+//读取mongo协议报文头部，协议栈返回后调用_headerCallback回调
+//TransportLayerASIO::ASIOTicket::fill
 void TransportLayerASIO::ASIOSourceTicket::fillImpl() {
     auto session = getSession();
     if (!session)
@@ -130,12 +140,12 @@ void TransportLayerASIO::ASIOSourceTicket::fillImpl() {
 
 	//读取数据 TransportLayerASIO::ASIOSession::read
     session->read(isSync(),
-                  asio::buffer(_buffer.get(), initBufSize),
+                  asio::buffer(_buffer.get(), initBufSize), //先读取头部字段出来
                   [this](const std::error_code& ec, size_t size) { _headerCallback(ec, size); });
 }
 
 void TransportLayerASIO::ASIOSinkTicket::_sinkCallback(const std::error_code& ec, size_t size) {
-    networkCounter.hitPhysicalOut(_msgToSend.size());
+    networkCounter.hitPhysicalOut(_msgToSend.size()); //发送的网络字节数统计
     finishFill(ec ? errorCodeToStatus(ec) : Status::OK());
 }
 
@@ -149,7 +159,8 @@ void TransportLayerASIO::ASIOSinkTicket::fillImpl() {
                    [this](const std::error_code& ec, size_t size) { _sinkCallback(ec, size); });
 }
 
-void TransportLayerASIO::ASIOTicket::finishFill(Status status) {
+//ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->TransportLayerASIO::ASIOTicket::fill->TransportLayerASIO::ASIOTicket::finishFill
+void TransportLayerASIO::ASIOTicket::finishFill(Status status) { //每一个阶段处理完后都通过这里执行相应的回调
     // We want to make sure that a Ticket can only be filled once; filling a ticket invalidates it.
     // So we check that the _fillCallback is set, then move it out of the ticket and into a local
     // variable, and then call that. It's illegal to interact with the ticket after calling the
@@ -157,9 +168,10 @@ void TransportLayerASIO::ASIOTicket::finishFill(Status status) {
     // variables in ASIOTicket after it gets called.
     invariant(_fillCallback);
     auto fillCallback = std::move(_fillCallback);
-    fillCallback(status); //TransportLayerASIO::asyncWait
+    fillCallback(status); //TransportLayerASIO::asyncWait中赋值，可以是ServiceStateMachine::_sourceCallback
 }
 
+//ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->TransportLayerASIO::ASIOTicket::fill->TransportLayerASIO::ASIOTicket::finishFill
 void TransportLayerASIO::ASIOTicket::fill(bool sync, TicketCallback&& cb) {
     _fillSync = sync;
     dassert(!_fillCallback);
