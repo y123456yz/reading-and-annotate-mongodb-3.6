@@ -139,6 +139,7 @@ public:
 /// a local copy of the handler, and then create an async_result for the
 /// handler.
 //template <typename CompletionToken, typename Signature>  //yang change
+//执行后的结果放这里面记录
 struct async_completion
 {
   /// The real handler type to be used for the asynchronous operation.

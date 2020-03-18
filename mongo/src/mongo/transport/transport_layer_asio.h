@@ -44,6 +44,7 @@
 #include "mongo/util/net/ssl_options.h"
 #include "mongo/util/net/ssl_types.h"
 
+//mongodb使用的asio异步网络库的部分核心类型
 namespace asio {
 class io_context;
 

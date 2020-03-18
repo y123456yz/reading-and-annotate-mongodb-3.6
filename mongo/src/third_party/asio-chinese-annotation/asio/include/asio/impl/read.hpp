@@ -227,6 +227,7 @@ namespace detail
   template <typename AsyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition,
       typename ReadHandler>
+  ////mongodb通过TransportLayerASIO::ASIOSession::async_read->asio::async_read->start_read_buffer_sequence_op
   class read_op
     : detail::base_from_completion_cond<CompletionCondition>
   {
@@ -262,6 +263,7 @@ namespace detail
     }
 #endif // defined(ASIO_HAS_MOVE)
 
+	//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op中执行
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -269,9 +271,12 @@ namespace detail
       switch (start_ = start)
       {
         case 1:
+		//可用buffer还有多少字节，就最多只能读这么多字节
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
+		//异步读数据，数据读取完毕后执行handler_
         do
         {
+          //buffered_read_stream::async_read_some
           stream_.async_read_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(read_op)(*this));
           return; default:
@@ -286,9 +291,11 @@ namespace detail
     }
 
   //private:
+    //也就是GenericSocket，就是链接套接字相关信息，建TransportLayerASIO::ASIOSession::opportunisticRead
     AsyncReadStream& stream_;
+    //读数据的buffer，度过程是一个追加的过程，见operator()
     asio::detail::consuming_buffers<mutable_buffer,
-        MutableBufferSequence, MutableBufferIterator> buffers_;
+        MutableBufferSequence, MutableBufferIterator> buffers_; //读数据的buffer
     int start_;
     ReadHandler handler_;
   };
@@ -352,14 +359,16 @@ namespace detail
   template <typename AsyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition,
       typename ReadHandler>
-  inline void start_read_buffer_sequence_op(AsyncReadStream& stream,
+  //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op
+  inline void start_read_buffer_sequence_op(AsyncReadStream& stream, //AsyncReadStream也就是GenericSocket
       const MutableBufferSequence& buffers, const MutableBufferIterator&,
       CompletionCondition completion_condition, ReadHandler& handler)
   {
+    //构造detail::read_op  read_op::operator() 读取数据执行回调
     detail::read_op<AsyncReadStream, MutableBufferSequence,
       MutableBufferIterator, CompletionCondition, ReadHandler>(
         stream, buffers, completion_condition, handler)(
-          asio::error_code(), 0, 1);
+          asio::error_code(), 0, 1); //read_op::operator()
   }
 } // namespace detail
 
@@ -409,7 +418,8 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
 inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
-async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+
+async_read(AsyncReadStream& s, const MutableBufferSequence& buffers, 
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
@@ -430,11 +440,14 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   return init.result.get();
 }
 
+//mongodb  通过TransportLayerASIO::ASIOSession::opportunisticRead走到这里  AsyncReadStream就是GenericSocket
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
 inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
-async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+    //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead走到这里
+    //AsyncReadStream也就是GenericSocket
+async_read(AsyncReadStream& s, const MutableBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
     ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
@@ -444,9 +457,11 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
+  //构造执行结果
   async_completion<ReadHandler,
     void (asio::error_code, std::size_t)> init(handler);
 
+  //这里面进行数据的真正读写和handler回调
   detail::start_read_buffer_sequence_op(s, buffers,
       asio::buffer_sequence_begin(buffers), transfer_all(),
       init.completion_handler);

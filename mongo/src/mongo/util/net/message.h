@@ -185,7 +185,7 @@ inline const char* logicalOpToString(LogicalOp logicalOp) {
 namespace MSGHEADER {
 
 #pragma pack(1)
-/**
+/**  头部读取参考:TransportLayerASIO::ASIOSourceTicket::fillImpl
  * See http://dochub.mongodb.org/core/mongowireprotocol
  */ //MSGHEADER::Layout
 struct Layout {

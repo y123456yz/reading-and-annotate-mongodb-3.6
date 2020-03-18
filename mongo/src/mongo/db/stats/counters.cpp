@@ -218,5 +218,6 @@ void NetworkCounter::append(BSONObjBuilder& b) {
 OpCounters globalOpCounters;
 OpCounters replOpCounters;
 //见class Network : public ServerStatusSection
-NetworkCounter networkCounter;
+// TransportLayerASIO::ASIOSourceTicket::_bodyCallback计算入口流量
+NetworkCounter networkCounter; 
 }

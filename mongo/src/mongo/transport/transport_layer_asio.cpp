@@ -77,7 +77,6 @@ TransportLayerASIO::Options::Options(const ServerGlobalParams* params)
 TransportLayerASIO::TransportLayerASIO(const TransportLayerASIO::Options& opts,
                                        ServiceEntryPoint* sep)
     //boost::asio::io_context用于网络IO事件循环
-    //可以参考https://blog.csdn.net/qq_35976351/article/details/90373124
     : _workerIOContext(std::make_shared<asio::io_context>()),
       _acceptorIOContext(stdx::make_unique<asio::io_context>()),
 #ifdef MONGO_CONFIG_SSL
@@ -115,11 +114,13 @@ Status TransportLayerASIO::wait(Ticket&& ticket) {
 
     return waitStatus;
 }
-//TransportLayerASIO::ASIOTicket::finishFill
+
+//ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->ASIOTicket::fill
 void TransportLayerASIO::asyncWait(Ticket&& ticket, TicketCallback callback) {
     auto ownedASIOTicket = std::shared_ptr<TicketImpl>(getOwnedTicketImpl(std::move(ticket)));
     auto asioTicket = checked_cast<ASIOTicket*>(ownedASIOTicket.get());
 
+	//ASIOTicket::fill
     asioTicket->fill(
         false,
         [ callback = std::move(callback),
