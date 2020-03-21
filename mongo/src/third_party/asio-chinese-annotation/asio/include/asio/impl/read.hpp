@@ -83,6 +83,7 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
   return bytes_transferred;
 }
 
+//同步读  opportunisticRead中调用
 template <typename SyncReadStream, typename MutableBufferSequence>
 inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     asio::error_code& ec,
@@ -262,6 +263,18 @@ namespace detail
     {
     }
 #endif // defined(ASIO_HAS_MOVE)
+	//reactive_socket_service_base::start_accept_op  
+//mongodb accept接收链接流程:
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+
+//mongodb读取流程:
+//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+//->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+
+//write发送数据流程:
+//mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+//->reactive_socket_service_base::start_op
+
 
 	//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator中执行
     void operator()(const asio::error_code& ec,
@@ -276,7 +289,7 @@ namespace detail
 		//异步读数据，数据读取完毕后执行handler_
         do
         {
-          //basic_stream_socket::async_write_some  basic_stream_socket.hpp
+          //basic_stream_socket::async_read_some  basic_stream_socket.hpp
           stream_.async_read_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(read_op)(*this));
           return; default:
@@ -360,6 +373,20 @@ namespace detail
   template <typename AsyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition,
       typename ReadHandler>
+
+  //reactive_socket_service_base::start_accept_op  
+  //mongodb accept接收链接流程:
+  //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+  
+  //mongodb读取流程:
+  //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+  //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+  
+  //write发送数据流程:
+  //mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+  //->reactive_socket_service_base::start_op
+
+  
   //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op
   inline void start_read_buffer_sequence_op(AsyncReadStream& stream, //AsyncReadStream也就是GenericSocket
       const MutableBufferSequence& buffers, const MutableBufferIterator&,

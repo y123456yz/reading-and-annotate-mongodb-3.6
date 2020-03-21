@@ -244,7 +244,20 @@ namespace detail
     {
     }
 #endif // defined(ASIO_HAS_MOVE)
+	//reactive_socket_service_base::start_accept_op  
+	//mongodb accept接收链接流程:
+	//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+	
+	//mongodb读取流程:
+	//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+	//->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+	
+	//write发送数据流程:
+	//mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+	//->reactive_socket_service_base::start_op
 
+
+	//mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -252,23 +265,29 @@ namespace detail
       switch (start_ = start)
       {
         case 1:
+		//检查buffer中的数据是否已write到内核协议栈完毕
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
         do
-        {
+        { //如果没有写完毕，继续异步写
+        //basic_stream_socket::async_write_some
           stream_.async_write_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
+		  //说明还有未写入协议栈的数据，继续等待调度写，指定全部buffer数据写到协议栈完成
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
         } while (max_size > 0);
 
+		//数据写发送完成，执行对应handler_
         handler_(ec, buffers_.total_consumed());
       }
     }
 
   //private:
+    //mongodb中定义using GenericSocket = asio::generic::stream_protocol::socket; 也就是basic_stream_socket，参考类stream_protocol
+    //也就是GenericSocket，就是链接套接字相关信息，建TransportLayerASIO::ASIOSession::opportunisticWrite
     AsyncWriteStream& stream_;
     asio::detail::consuming_buffers<const_buffer,
         ConstBufferSequence, ConstBufferIterator> buffers_;
@@ -335,6 +354,21 @@ namespace detail
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename ConstBufferIterator, typename CompletionCondition,
       typename WriteHandler>
+  //reactive_socket_service_base::start_accept_op  
+  //mongodb accept接收链接流程:
+  //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+  
+  //mongodb读取流程:
+  //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+  //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+  
+  //write发送数据流程:
+  //mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+  //->reactive_socket_service_base::start_op
+
+
+  
+  ////mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op
   inline void start_write_buffer_sequence_op(AsyncWriteStream& stream,
       const ConstBufferSequence& buffers, const ConstBufferIterator&,
       CompletionCondition completion_condition, WriteHandler& handler)
@@ -418,12 +452,27 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename WriteHandler>
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
+
+//reactive_socket_service_base::start_accept_op  
+//mongodb accept接收链接流程:
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+
+//mongodb读取流程:
+//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+//->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+
+//write发送数据流程:
+//mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+//->reactive_socket_service_base::start_op
+
+
+//mongodb中通过opportunisticWrite->asio::async_write
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type*)
-{
+    >::type*) //也就是asio::async_write
+{ 
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
@@ -643,9 +692,10 @@ async_write(AsyncWriteStream& s,
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
+
 async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b,
-    ASIO_MOVE_ARG(WriteHandler) handler)
+    ASIO_MOVE_ARG(WriteHandler) handler) 
 {
   return async_write(s, basic_streambuf_ref<Allocator>(b),
       ASIO_MOVE_CAST(WriteHandler)(handler));
