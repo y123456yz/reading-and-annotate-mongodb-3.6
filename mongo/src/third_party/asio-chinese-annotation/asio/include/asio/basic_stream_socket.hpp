@@ -45,8 +45,10 @@ namespace asio {
  */
 template <typename Protocol
     ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>)>
+//mongodb中通过GenericSocket到这里，using GenericSocket = asio::generic::stream_protocol::socket;
+//读写async_read_some write_some的相关接口在该文件后部定义 
 class basic_stream_socket
-  : public basic_socket<Protocol ASIO_SVC_TARG>
+  : public basic_socket<Protocol ASIO_SVC_TARG> //ASIO_SVC_TARG对应stream_socket_service
 {
 public:
   /// The native representation of a socket.
@@ -664,6 +666,7 @@ public:
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
+	//basic_stream_socket::get_service
     this->get_service().async_receive(this->get_implementation(),
         buffers, flags, init.completion_handler);
 
@@ -767,10 +770,10 @@ public:
    * std::vector.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  ASIO_INITFN_RESULT_TYPE(WriteHandler,
-      void (asio::error_code, std::size_t))
+  //ASIO_INITFN_RESULT_TYPE(WriteHandler, void (asio::error_code, std::size_t)) yang change
+
   async_write_some(const ConstBufferSequence& buffers,
-      ASIO_MOVE_ARG(WriteHandler) handler)
+      ASIO_MOVE_ARG(WriteHandler) handler) //本函数也就是basic_stream_socket::async_write_some
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
@@ -889,9 +892,10 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
-  ASIO_INITFN_RESULT_TYPE(ReadHandler,
-      void (asio::error_code, std::size_t))
+  //template <typename MutableBufferSequence, typename ReadHandler> yang change
+  //ASIO_INITFN_RESULT_TYPE(ReadHandler,  void (asio::error_code, std::size_t)) yang change
+  //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+  //->basic_stream_socket::async_read_some中执行
   async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
@@ -906,6 +910,7 @@ public:
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
+	//reactive_socket_service::async_receive
     this->get_service().async_receive(this->get_implementation(),
         buffers, 0, init.completion_handler);
 

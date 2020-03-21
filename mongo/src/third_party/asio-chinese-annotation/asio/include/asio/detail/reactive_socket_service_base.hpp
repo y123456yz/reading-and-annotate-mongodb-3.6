@@ -334,10 +334,12 @@ public:
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
+  //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+  //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
   template <typename MutableBufferSequence, typename Handler>
   void async_receive(base_implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler& handler)
+      socket_base::message_flags flags, Handler& handler) //也就是reactive_socket_service_base::async_receive
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);

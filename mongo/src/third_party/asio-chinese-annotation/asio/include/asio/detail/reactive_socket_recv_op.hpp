@@ -28,6 +28,7 @@
 namespace asio {
 namespace detail {
 
+//reactive_socket_recv_op继承该类
 template <typename MutableBufferSequence>
 class reactive_socket_recv_op_base : public reactor_op
 {
@@ -74,6 +75,8 @@ private:
   socket_base::message_flags flags_;
 };
 
+//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+//->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中构造reactive_socket_recv_op类
 template <typename MutableBufferSequence, typename Handler>
 class reactive_socket_recv_op :
   public reactive_socket_recv_op_base<MutableBufferSequence>

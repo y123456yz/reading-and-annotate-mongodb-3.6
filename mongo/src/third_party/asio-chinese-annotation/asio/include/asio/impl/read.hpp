@@ -263,7 +263,7 @@ namespace detail
     }
 #endif // defined(ASIO_HAS_MOVE)
 
-	//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op中执行
+	//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator中执行
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -276,7 +276,7 @@ namespace detail
 		//异步读数据，数据读取完毕后执行handler_
         do
         {
-          //buffered_read_stream::async_read_some
+          //basic_stream_socket::async_write_some  basic_stream_socket.hpp
           stream_.async_read_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(read_op)(*this));
           return; default:
@@ -291,9 +291,10 @@ namespace detail
     }
 
   //private:
+    //mongodb中定义using GenericSocket = asio::generic::stream_protocol::socket; 也就是basic_stream_socket，参考类stream_protocol
     //也就是GenericSocket，就是链接套接字相关信息，建TransportLayerASIO::ASIOSession::opportunisticRead
-    AsyncReadStream& stream_;
-    //读数据的buffer，度过程是一个追加的过程，见operator()
+    AsyncReadStream& stream_; 
+    //读数据的buffer，过程是一个追加的过程，见operator()
     asio::detail::consuming_buffers<mutable_buffer,
         MutableBufferSequence, MutableBufferIterator> buffers_; //读数据的buffer
     int start_;
