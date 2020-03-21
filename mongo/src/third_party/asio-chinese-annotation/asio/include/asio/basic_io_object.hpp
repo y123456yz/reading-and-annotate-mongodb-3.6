@@ -160,7 +160,8 @@ protected:
   }
 
   /// Get the service associated with the I/O object.
-  //basic_socket_acceptor::async_accept中调用
+  //basic_socket_acceptor::async_accept   basic_stream_socket::get_service中调用
+  //basic_stream_socket::async_read_some  basic_stream_socket::get_service中调用
   service_type& get_service()
   { //reactive_socket_service
     return service_;

@@ -173,6 +173,7 @@ template <typename Stream>
 template <typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
+//buffered_read_stream::async_read_some
 buffered_read_stream<Stream>::async_fill(
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -257,6 +258,7 @@ namespace detail
       {
       }
 #endif // defined(ASIO_HAS_MOVE)
+
 
     void operator()(const asio::error_code& ec, std::size_t)
     {
@@ -370,6 +372,7 @@ template <typename Stream>
 template <typename MutableBufferSequence, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
+//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator中执行
 buffered_read_stream<Stream>::async_read_some(
     const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler)
@@ -382,13 +385,16 @@ buffered_read_stream<Stream>::async_read_some(
     void (asio::error_code, std::size_t)> init(handler);
 
   using asio::buffer_size;
+  //storage_有空间
   if (buffer_size(buffers) == 0 || !storage_.empty())
   {
     next_layer_.async_read_some(ASIO_MUTABLE_BUFFER(0, 0),
+		//buffered_read_some_handler::operator
         detail::buffered_read_some_handler<
           MutableBufferSequence, ASIO_HANDLER_TYPE(
             ReadHandler, void (asio::error_code, std::size_t))>(
-            storage_, buffers, init.completion_handler));
+            storage_, buffers, init.completion_handler) //buffered_read_some_handler::operator
+            );
   }
   else
   {

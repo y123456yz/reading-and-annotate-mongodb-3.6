@@ -54,7 +54,13 @@ namespace asio {
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+
+ Basic_datagram_socket.hpp (include\asio):	: public basic_socket<Protocol ASIO_SVC_TARG>
+ Basic_raw_socket.hpp (include\asio):  : public basic_socket<Protocol ASIO_SVC_TARG>
+ Basic_seq_packet_socket.hpp (include\asio):  : public basic_socket<Protocol ASIO_SVC_TARG>
+ Basic_stream_socket.hpp (include\asio):  : public basic_socket<Protocol ASIO_SVC_TARG> 
  */
+//basic_stream_socket继承该类，ASIO_SVC_TPARAM对应stream_socket_service
 template <typename Protocol ASIO_SVC_TPARAM>
 class basic_socket
   : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
