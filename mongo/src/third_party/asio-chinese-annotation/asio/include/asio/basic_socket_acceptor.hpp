@@ -1659,6 +1659,20 @@ public:
   template <typename MoveAcceptHandler>
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
+	  //reactive_socket_service_base::start_accept_op  
+	  //mongodb accept接收链接流程:
+	  //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+	  
+	  //mongodb读取流程:
+	  //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+	  //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+	  
+	  //write发送数据流程:
+	  //mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+	  //->reactive_socket_service_base::start_op
+
+
+  
   //io_context::run获取op执行，basic_socket_acceptor::async_accept入队op
       //mongodb中TransportLayerASIO::_acceptConnection调用
   async_accept(asio::io_context& io_context, //io_context对应mongod的_workerIOContext

@@ -360,11 +360,12 @@ private:
 };
 
 /// Adapts basic_streambuf to the dynamic buffer sequence type requirements.
-#if defined(GENERATING_DOCUMENTATION)
+/*#if defined(GENERATING_DOCUMENTATION)
 template <typename Allocator = std::allocator<char> >
 #else
 template <typename Allocator>
-#endif
+#endif*/
+//write.hpp中的asio::async_write构造该类
 class basic_streambuf_ref
 {
 public:
