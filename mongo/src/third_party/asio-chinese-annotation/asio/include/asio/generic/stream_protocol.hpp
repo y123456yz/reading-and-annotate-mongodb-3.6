@@ -107,6 +107,7 @@ public:
   typedef basic_endpoint<stream_protocol> endpoint;
 
   /// The generic socket type.
+  //read_op.stream_为该类型
   typedef basic_stream_socket<stream_protocol> socket;
 
 #if !defined(ASIO_NO_IOSTREAM)

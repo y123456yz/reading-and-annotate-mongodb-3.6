@@ -597,6 +597,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  *     asio::transfer_all(),
  *     handler); @endcode
  */
+
+//实际读取的时候在buffers中有指定读取的数据长度
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,

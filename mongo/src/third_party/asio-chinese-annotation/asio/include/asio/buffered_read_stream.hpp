@@ -245,6 +245,7 @@ private:
   Stream next_layer_;
 
   // The data in the buffer.
+  //读的数据首先到这里
   detail::buffered_stream_storage storage_;
 };
 

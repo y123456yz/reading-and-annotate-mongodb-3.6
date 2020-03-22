@@ -41,6 +41,11 @@ namespace transport {
  *
  * Ticket implementations are specific to a TransportLayer implementation.
  */
+/*
+Mock_ticket.h (src\mongo\transport):class MockTicket : public TicketImpl {
+Ticket_asio.h (src\mongo\transport):class TransportLayerASIO::ASIOTicket : public TicketImpl {
+Transport_layer_legacy.h (src\mongo\transport):    class LegacyTicket : public TicketImpl {
+*/
 class TicketImpl {
     MONGO_DISALLOW_COPYING(TicketImpl);
 

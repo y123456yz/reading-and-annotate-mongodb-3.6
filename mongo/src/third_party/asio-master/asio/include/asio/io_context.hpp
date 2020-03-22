@@ -146,8 +146,6 @@ namespace detail {
  * ...
  * work.reset(); // Allow run() to exit. @endcode
  */
-//参考https://www.cnblogs.com/zhiranok/archive/2011/09/04/boost_asio_io_service_CPP.html 
-//早期版本Io_servie，现在版本Io_context
 class io_context
   : public execution_context
 {

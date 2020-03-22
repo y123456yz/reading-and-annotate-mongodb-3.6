@@ -235,8 +235,17 @@ asio::error_code reactive_socket_service_base::do_assign(
   return ec;
 }
 
-//reactive_socket_service_base::start_accept_op  reactive_socket_service::async_receive_from
-//reactive_socket_service_base::async_wait
+//reactive_socket_service_base::start_accept_op  
+//mongodb accept接收链接流程:
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept->start_accept_op
+
+//mongodb读取流程:
+//mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+//->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中执行
+
+//write发送数据流程:
+//mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op()->basic_stream_socket::async_write_some
+//->reactive_socket_service_base::start_op
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl, //impl对应stream_protocol
     int op_type, reactor_op* op, bool is_continuation,
