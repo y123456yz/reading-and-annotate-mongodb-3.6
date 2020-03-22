@@ -27,6 +27,7 @@
 namespace asio {
 namespace detail {
 
+//bufferÏà¹Ø²Ù×÷
 class buffered_stream_storage
 {
 public:

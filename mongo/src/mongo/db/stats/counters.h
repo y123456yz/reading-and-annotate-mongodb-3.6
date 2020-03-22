@@ -98,6 +98,7 @@ extern OpCounters globalOpCounters;
 extern OpCounters replOpCounters;
 
 //全局变量NetworkCounter networkCounter;
+//网络相关的统计  mongo.networkCounter成员为该类型
 class NetworkCounter {
 public:
     // Increment the counters for the number of bytes read directly off the wire

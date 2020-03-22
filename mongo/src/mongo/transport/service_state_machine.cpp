@@ -314,10 +314,11 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     if (_transportMode == transport::Mode::kSynchronous) {
         _sourceCallback([this](auto ticket) {
             MONGO_IDLE_THREAD_BLOCK;
-			//TransportLayerASIO::wait   epoll_waitµÈ´ý
+			//TransportLayerASIO::wait  
             return _session()->getTransportLayer()->wait(std::move(ticket));
         }(std::move(ticket))); 
     } else if (_transportMode == transport::Mode::kAsynchronous) {
+    	//TransportLayerASIO::asyncWait
         _session()->getTransportLayer()->asyncWait( 
             std::move(ticket), [this](Status status) { _sourceCallback(status); });
     }

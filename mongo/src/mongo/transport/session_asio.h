@@ -52,6 +52,7 @@ using GenericSocket = asio::generic::stream_protocol::socket;
 
 //createWithConfig  TransportLayerASIO::_acceptConnection中根据配置构造使用
 //记录链接相关的信息，如对端地址等
+//TransportLayerASIO类的相关接口使用
 class TransportLayerASIO::ASIOSession : public Session {
     MONGO_DISALLOW_COPYING(ASIOSession);
 
@@ -117,6 +118,7 @@ public:
     
     //TransportLayerASIO::ASIOSourceTicket::fillImpl调用
     template <typename MutableBufferSequence, typename CompleteHandler>
+    //buffers参数里面携带有buffer的size长度
     void read(bool sync, const MutableBufferSequence& buffers, CompleteHandler&& handler) {
 #ifdef MONGO_CONFIG_SSL
         if (_sslSocket) {
@@ -172,15 +174,18 @@ public:
 #endif
     }
 
+//TransportLayerASIO::ASIOSourceTicket::fillImpl调用
 private:
-    //从stream对应fd读取数据
+    //从stream对应fd读取数据   read和write指定长度的数据后，执行对应的回调handler
     template <typename Stream, typename MutableBufferSequence, typename CompleteHandler>
+    //一次性读size字节如果成功，则直接执行handler，否则没写完的数据通过异步方式继续读，写完后执行对应handler
     void opportunisticRead(bool sync,
                            Stream& stream,
-                           const MutableBufferSequence& buffers,
+                           const MutableBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                            CompleteHandler&& handler) {
         std::error_code ec;
         auto size = asio::read(stream, buffers, ec);
+        //协议栈内容已经读完了，但是还不够size字节，则继续异步读取
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
             // asio::read is a loop internally, so some of buffers may have been read into already.
             // So we need to adjust the buffers passed into async_read to be offset by size, if
@@ -198,11 +203,13 @@ private:
     template <typename Stream, typename ConstBufferSequence, typename CompleteHandler>
     void opportunisticWrite(bool sync,
                             Stream& stream,
-                            const ConstBufferSequence& buffers,
+                            const ConstBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                             CompleteHandler&& handler) {
         std::error_code ec;
-        auto size = asio::write(stream, buffers, ec);
+        auto size = asio::write(stream, buffers, ec); 
+        //一次性写size字节如果成功，则直接执行handler，否则没写完的数据通过异步方式继续写，写完后执行对应handler
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
+        //一般当内核协议栈buffer写满后，会返回try_again
             // asio::write is a loop internally, so some of buffers may have been read into already.
             // So we need to adjust the buffers passed into async_write to be offset by size, if
             // size is > 0.
