@@ -269,6 +269,7 @@ public:
     ASIO_HANDLER_CREATION((scheduler_.context(),
           *p.p, "deadline_timer", &impl, 0, "async_wait"));
 
+	//epoll_reactor::schedule_timer
     scheduler_.schedule_timer(timer_queue_, impl.expiry, impl.timer_data, p.p);
     p.v = p.p = 0;
   }
