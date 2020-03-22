@@ -110,6 +110,8 @@ public:
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Cancel any asynchronous wait operations associated with the timer.
+    //mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+  //->deadline_timer_service::cancel->epoll_reactor::cancel_timer
   std::size_t cancel(implementation_type& impl, asio::error_code& ec)
   {
     return service_impl_.cancel(impl, ec);
@@ -145,7 +147,12 @@ public:
   }
 
   /// Set the expiry time for the timer relative to now.
-  std::size_t expires_after(implementation_type& impl,
+  //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+  //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+  //->epoll_reactor::cancel_timer
+
+  waitable_timer_service
+  std::size_t expires_after(implementation_type& impl,  
       const duration& expiry_time, asio::error_code& ec)
   {
     return service_impl_.expires_after(impl, expiry_time, ec);

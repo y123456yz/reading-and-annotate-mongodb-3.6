@@ -56,6 +56,7 @@ private:
   friend class timer_queue_set;
 
   // Next timer queue in the set.
+  //所有的timer_queue通过该链表链接在一起，一个timer_queue_base对应一个timer_queue
   timer_queue_base* next_;
 };
 

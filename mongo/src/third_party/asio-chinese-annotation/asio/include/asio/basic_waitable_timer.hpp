@@ -146,7 +146,7 @@ class basic_waitable_timer;
  */
 template <typename Clock, typename WaitTraits ASIO_SVC_TPARAM>
 class basic_waitable_timer
-  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>
+  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T> //ASIO_SVC_T对应deadline_timer_service
 {
 public:
   /// The type of the executor associated with the object.
@@ -322,9 +322,13 @@ public:
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
-  std::size_t cancel()
+	//mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+	//->deadline_timer_service::cancel->epoll_reactor::cancel_timer
+
+  std::size_t cancel() //也就是basic_waitable_timer::cancel
   {
     asio::error_code ec;
+	//deadline_timer_service::cancel
     std::size_t s = this->get_service().cancel(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
     return s;
@@ -531,9 +535,13 @@ public:
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
-  std::size_t expires_after(const duration& expiry_time)
+   //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+   //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+   //->epoll_reactor::cancel_timer
+ std::size_t expires_after(const duration& expiry_time) //也就是basic_waitable_timer::expires_after
   {
     asio::error_code ec;
+	//waitable_timer_service::expires_after
     std::size_t s = this->get_service().expires_after(
         this->get_implementation(), expiry_time, ec);
     asio::detail::throw_error(ec, "expires_after");
@@ -667,6 +675,17 @@ public:
   template <typename WaitHandler>
   ASIO_INITFN_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
+    //mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+  //->deadline_timer_service::cancel->epoll_reactor::cancel_timer
+
+  
+    //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+   //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+   //->epoll_reactor::cancel_timer
+
+
+  //mongodb通过AsyncTimerASIO::async_wait->basic_waitable_timer::async_wait->waitable_timer_service::async_wait
+   //->deadline_timer_service::async_wait->epoll_reactor::schedule_timer
   async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
@@ -680,6 +699,7 @@ public:
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
+	//waitable_timer_service::async_wait
     this->get_service().async_wait(this->get_implementation(),
         init.completion_handler);
 

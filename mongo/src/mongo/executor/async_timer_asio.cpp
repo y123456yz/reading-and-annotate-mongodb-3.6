@@ -42,9 +42,22 @@ namespace executor {
 AsyncTimerASIO::AsyncTimerASIO(asio::io_service::strand* strand, Milliseconds expiration)
     : _strand(strand), _timer(_strand->get_io_service(), expiration.toSystemDuration()) {}
 
+  //mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+//->deadline_timer_service::cancel->epoll_reactor::cancel_timer
+
+
+  //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+ //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+ //->epoll_reactor::cancel_timer
+
+
+//mongodb通过AsyncTimerASIO::async_wait->basic_waitable_timer::async_wait->waitable_timer_service::async_wait
+ //->deadline_timer_service::async_wait->epoll_reactor::schedule_timer
+
 void AsyncTimerASIO::cancel() {
     std::error_code ec;
-    _timer.cancel(ec);
+	
+	_timer.cancel(ec);
     if (ec) {
         log() << "Failed to cancel timer: " << ec.message();
     }

@@ -150,6 +150,7 @@ socket_type reactive_socket_service_base::release(
   return sock;
 }
 
+//AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel->epoll_reactor::cancel_ops
 asio::error_code reactive_socket_service_base::cancel(
     reactive_socket_service_base::base_implementation_type& impl,
     asio::error_code& ec)
@@ -163,6 +164,7 @@ asio::error_code reactive_socket_service_base::cancel(
   ASIO_HANDLER_OPERATION((reactor_.context(),
         "socket", &impl, impl.socket_, "cancel"));
 
+  //epoll_reactor::cancel_ops
   reactor_.cancel_ops(impl.socket_, impl.reactor_data_);
   ec = asio::error_code();
   return ec;
