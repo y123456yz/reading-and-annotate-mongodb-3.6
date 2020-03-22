@@ -603,6 +603,17 @@ int epoll_reactor::do_timerfd_create()
 {
 #if defined(ASIO_HAS_TIMERFD)
 # if defined(TFD_CLOEXEC)
+//它是用来创建一个定时器描述符timerfd
+/*
+/* 
+timerfd_create（）函数创建一个定时器对象，同时返回一个与之关联的文件描述符。
+clockid：clockid标识指定的时钟计数器，可选值（CLOCK_REALTIME、CLOCK_MONOTONIC。。。）
+CLOCK_REALTIME:系统实时时间,随系统实时时间改变而改变,即从UTC1970-1-1 0:0:0开始计时,中间时刻如果系统时间被用户改成其他,则对应的时间相应改变
+CLOCK_MONOTONIC:从系统启动这一刻起开始计时,不受系统时间被用户改变的影响
+flags：参数flags（TFD_NONBLOCK(非阻塞模式)/TFD_CLOEXEC（表示当程序执行exec函数时本fd将被系统自动关闭,表示不传递）
+*/
+
+*/
   int fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 # else // defined(TFD_CLOEXEC)
   int fd = -1;
@@ -611,6 +622,7 @@ int epoll_reactor::do_timerfd_create()
 
   if (fd == -1 && errno == EINVAL)
   {
+    
     fd = timerfd_create(CLOCK_MONOTONIC, 0);
     if (fd != -1)
       ::fcntl(fd, F_SETFD, FD_CLOEXEC);
@@ -635,12 +647,14 @@ void epoll_reactor::free_descriptor_state(epoll_reactor::descriptor_state* s)
   registered_descriptors_.free(s);
 }
 
+//epoll_reactor::add_timer_queue中调用
 void epoll_reactor::do_add_timer_queue(timer_queue_base& queue)
 {
   mutex::scoped_lock lock(mutex_);
   timer_queues_.insert(&queue);
 }
 
+//epoll_reactor::remove_timer_queue中调用
 void epoll_reactor::do_remove_timer_queue(timer_queue_base& queue)
 {
   mutex::scoped_lock lock(mutex_);
@@ -654,6 +668,8 @@ void epoll_reactor::update_timeout()
   {
     itimerspec new_timeout;
     itimerspec old_timeout;
+
+	//获取
     int flags = get_timeout(new_timeout);
     timerfd_settime(timer_fd_, flags, &new_timeout, &old_timeout);
     return;
@@ -662,21 +678,25 @@ void epoll_reactor::update_timeout()
   interrupt();
 }
 
+//获取队列中
 int epoll_reactor::get_timeout(int msec)
 {
   // By default we will wait no longer than 5 minutes. This will ensure that
   // any changes to the system clock are detected after no longer than this.
   const int max_msec = 5 * 60 * 1000;
+  //timer_queue_set::wait_duration_msec->
   return timer_queues_.wait_duration_msec(
       (msec < 0 || max_msec < msec) ? max_msec : msec);
 }
 
 #if defined(ASIO_HAS_TIMERFD)
+//获取下一个timer的过期时间点
 int epoll_reactor::get_timeout(itimerspec& ts)
 {
   ts.it_interval.tv_sec = 0;
   ts.it_interval.tv_nsec = 0;
 
+  //执行timer_queue::wait_duration_msec
   long usec = timer_queues_.wait_duration_usec(5 * 60 * 1000 * 1000);
   ts.it_value.tv_sec = usec / 1000000;
   ts.it_value.tv_nsec = usec ? (usec % 1000000) * 1000 : 1;
