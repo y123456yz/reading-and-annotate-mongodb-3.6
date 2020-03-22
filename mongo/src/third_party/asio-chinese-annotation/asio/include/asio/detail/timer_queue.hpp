@@ -32,17 +32,19 @@ namespace asio {
 namespace detail {
 
 template <typename Time_Traits>
+//timer_queue_base接口的实现类  timer_queue_set.first_成员为该类型 
 class timer_queue
   : public timer_queue_base
 {
 public:
   // The time type.
+  //posix_time::ptime
   typedef typename Time_Traits::time_type time_type;
 
   // The duration type.
   typedef typename Time_Traits::duration_type duration_type;
 
-  // Per-timer data.
+  // Per-timer data.   //timer_queue.timers_
   class per_timer_data
   {
   public:
@@ -56,12 +58,14 @@ public:
     friend class timer_queue;
 
     // The operations waiting on the timer.
+    //该定时器定时时间到的时候需要执行的op操作
     op_queue<wait_op> op_queue_;
 
     // The index of the timer in the heap.
     std::size_t heap_index_;
 
     // Pointers to adjacent timers in a linked list.
+    //把timer链接在一起组成双向链表，加入到timers_头部
     per_timer_data* next_;
     per_timer_data* prev_;
   };
@@ -76,6 +80,7 @@ public:
   // Add a new timer to the queue. Returns true if this is the timer that is
   // earliest in the queue, in which case the reactor's event demultiplexing
   // function call may need to be interrupted and restarted.
+  //epoll_reactor::schedule_timer中调用
   bool enqueue_timer(const time_type& time, per_timer_data& timer, wait_op* op)
   {
     // Enqueue the timer object.
@@ -90,13 +95,18 @@ public:
       {
         // Put the new timer at the correct position in the heap. This is done
         // first since push_back() can throw due to allocation failure.
+        //当前heap_ 数组大小,也就是当前heap_数组已经加入了多少个heap_entry节点
         timer.heap_index_ = heap_.size();
         heap_entry entry = { time, &timer };
+
+		//新的timer构造一个heap_entry加入到heap_数组
         heap_.push_back(entry);
+		//新的entry节点按照time在heap_数组中快速排序
         up_heap(heap_.size() - 1);
       }
 
       // Insert the new timer into the linked list of active timers.
+      //timer添加到timers_队列头部，组成双向链表
       timer.next_ = timers_;
       timer.prev_ = 0;
       if (timers_)
@@ -105,24 +115,27 @@ public:
     }
 
     // Enqueue the individual timer operation.
-    timer.op_queue_.push(op);
+    timer.op_queue_.push(op); //op入队到本timer的op队列
 
     // Interrupt reactor only if newly added timer is first to expire.
     return timer.heap_index_ == 0 && timer.op_queue_.front() == op;
   }
 
   // Whether there are no timers in the queue.
+  //timers_队列没有timer
   virtual bool empty() const
   {
     return timers_ == 0;
   }
 
   // Get the time for the timer that is earliest in the queue.
+  //epoll_reactor::get_timeout
   virtual long wait_duration_msec(long max_duration) const
   {
     if (heap_.empty())
       return max_duration;
 
+	//获取heap_数组中第一个timer距离当前时间的时间差(ms)，也就是还有多少ms第一个timer到来
     return this->to_msec(
         Time_Traits::to_posix_duration(
           Time_Traits::subtract(heap_[0].time_, Time_Traits::now())),
@@ -130,6 +143,8 @@ public:
   }
 
   // Get the time for the timer that is earliest in the queue.
+  //epoll_reactor::get_timeout中执行
+  //获取heap_数组中第一个timer距离当前时间的时间差(us)，也就是还有多少ms第一个timer到来
   virtual long wait_duration_usec(long max_duration) const
   {
     if (heap_.empty())
@@ -142,6 +157,8 @@ public:
   }
 
   // Dequeue all timers not later than the current time.
+  //获取heap_中已经到期的timer，并取出对应的ops入队到ops队列
+  //timer_queue_set::get_ready_timers中调用
   virtual void get_ready_timers(op_queue<operation>& ops)
   {
     if (!heap_.empty())
@@ -157,6 +174,8 @@ public:
   }
 
   // Dequeue all timers.
+  //获取timers_队列中的所有timer添加到ops队列
+  //timer_queue_set::get_all_timers中调用
   virtual void get_all_timers(op_queue<operation>& ops)
   {
     while (timers_)
@@ -172,6 +191,7 @@ public:
   }
 
   // Cancel and dequeue operations for the given timer.
+  //epoll_reactor::cancel_timer中调用
   std::size_t cancel_timer(per_timer_data& timer, op_queue<operation>& ops,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)())
   {
@@ -217,6 +237,7 @@ public:
 
 private:
   // Move the item at the given index up the heap to its correct position.
+  //对heap_数组中的成员按照time_过期时间快速排序
   void up_heap(std::size_t index)
   {
     while (index > 0)
@@ -230,6 +251,7 @@ private:
   }
 
   // Move the item at the given index down the heap to its correct position.
+  //对heap_数组中的成员按照time_过期时间快速排序
   void down_heap(std::size_t index)
   {
     std::size_t child = index * 2 + 1;
@@ -258,6 +280,7 @@ private:
   }
 
   // Remove a timer from the heap and list of timers.
+  //从heap_中移除timer   timer::queue::get_ready_timers
   void remove_timer(per_timer_data& timer)
   {
     // Remove the timer from the heap.
@@ -281,6 +304,7 @@ private:
     }
 
     // Remove the timer from the linked list of active timers.
+    //把timer从timers_队列中移除
     if (timers_ == &timer)
       timers_ = timer.next_;
     if (timer.prev_)
@@ -307,6 +331,7 @@ private:
   }
 
   // Helper function to convert a duration into milliseconds.
+  //d转换为ms
   template <typename Duration>
   long to_msec(const Duration& d, long max_duration) const
   {
@@ -321,6 +346,7 @@ private:
   }
 
   // Helper function to convert a duration into microseconds.
+  //d转换为us
   template <typename Duration>
   long to_usec(const Duration& d, long max_duration) const
   {
@@ -335,18 +361,24 @@ private:
   }
 
   // The head of a linked list of all active timers.
-  per_timer_data* timers_;
+  //所有的timer定时器都通过给链表链接在一起(双向链表)
+  per_timer_data* timers_;  
 
+  //每个timer有2个成员，一个记录时间，一个记录timer的私有数据
   struct heap_entry
   {
     // The time when the timer should fire.
-    time_type time_;
+    //time_traits.hpp中定义typedef boost::posix_time::ptime time_type;  
+    //记录定时器某个时间点过期
+    time_type time_; //也就是posix_time::ptimet  
 
     // The associated timer with enqueued operations.
+    //记录本timer的一些私有数据
     per_timer_data* timer_;
   };
 
   // The heap of timers, with the earliest timer at the front.
+  //每个timer对应一个heap_entry节点，方便更加heap_entry.heap_进入快速排序，目的是可以快速定位那个timer到期
   std::vector<heap_entry> heap_;
 };
 

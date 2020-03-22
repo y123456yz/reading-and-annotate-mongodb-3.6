@@ -24,17 +24,20 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+//初始化构造
 timer_queue_set::timer_queue_set()
   : first_(0)
 {
 }
 
+//q加入timer_queue集
 void timer_queue_set::insert(timer_queue_base* q)
 {
   q->next_ = first_;
   first_ = q;
 }
 
+//q从timer_queue集移除
 void timer_queue_set::erase(timer_queue_base* q)
 {
   if (first_)
@@ -58,39 +61,49 @@ void timer_queue_set::erase(timer_queue_base* q)
   }
 }
 
+//first_链表中的所有timer_queue集都没有timer了
 bool timer_queue_set::all_empty() const
 {
   for (timer_queue_base* p = first_; p; p = p->next_)
+  	//timer_queue::empty
     if (!p->empty())
       return false;
   return true;
 }
 
+//获取队列中离现在最近的timer的时间(ms)
 long timer_queue_set::wait_duration_msec(long max_duration) const
 {
   long min_duration = max_duration;
   for (timer_queue_base* p = first_; p; p = p->next_)
+  	//timer_queue::wait_duration_msec
     min_duration = p->wait_duration_msec(min_duration);
   return min_duration;
 }
 
+//获取队列中离现在最近的timer的时间(us)
 long timer_queue_set::wait_duration_usec(long max_duration) const
 {
   long min_duration = max_duration;
   for (timer_queue_base* p = first_; p; p = p->next_)
+  	//timer_queue::wait_duration_usec
     min_duration = p->wait_duration_usec(min_duration);
   return min_duration;
 }
 
+//获取heap_中已经到期的timer，并取出对应的ops入队到ops队列
 void timer_queue_set::get_ready_timers(op_queue<operation>& ops)
 {
   for (timer_queue_base* p = first_; p; p = p->next_)
+  	//timer_queue::get_ready_timers
     p->get_ready_timers(ops);
 }
 
+//获取timers_队列中的所有timer添加到ops队列
 void timer_queue_set::get_all_timers(op_queue<operation>& ops)
 {
   for (timer_queue_base* p = first_; p; p = p->next_)
+  	//timer_queue::get_all_timers
     p->get_all_timers(ops);
 }
 

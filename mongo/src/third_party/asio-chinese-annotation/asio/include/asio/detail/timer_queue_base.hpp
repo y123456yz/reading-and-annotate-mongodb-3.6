@@ -25,6 +25,7 @@
 namespace asio {
 namespace detail {
 
+//timer_queue_set.first_成员为该类型   timer_queue继承该类,接口实现都在timer_queue类
 class timer_queue_base
   : private noncopyable
 {
@@ -32,6 +33,7 @@ public:
   // Constructor.
   timer_queue_base() : next_(0) {}
 
+  //以下接口的实现在继承类timer_queue中
   // Destructor.
   virtual ~timer_queue_base() {}
 

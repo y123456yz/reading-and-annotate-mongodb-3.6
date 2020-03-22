@@ -24,9 +24,12 @@ namespace asio {
 namespace detail {
 
 //epoll_reactor.timer_queues_   epoll实现的定时器相关
+//定时器操作相关接口 epoll_reactor.timer_queues_成员为该类型   epoll实现的定时器相关
 class timer_queue_set
 {
 public:
+
+  //以下接口定义见timer_queue_set.ipp
   // Constructor.
   ASIO_DECL timer_queue_set();
 
@@ -52,6 +55,8 @@ public:
   ASIO_DECL void get_all_timers(op_queue<operation>& ops);
 
 private:
+  //first_队列上面的成员类型为timer_queue类，该类继承timer_queue_base类(timer_queue_base的接口实现在timer_queue)
+  //一个timer_queue_base代表一个timer_queue
   timer_queue_base* first_;
 };
 
@@ -65,3 +70,4 @@ private:
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_TIMER_QUEUE_SET_HPP
+

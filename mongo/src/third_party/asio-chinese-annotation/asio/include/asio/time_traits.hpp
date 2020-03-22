@@ -32,10 +32,10 @@ struct time_traits;
 
 /// Time traits specialised for posix_time.
 template <>
-struct time_traits<boost::posix_time::ptime>
+struct time_traits <boost::posix_time::ptime>
 {
   /// The time type.
-  typedef boost::posix_time::ptime time_type;
+  typedef boost::posix_time::ptime time_type;  
 
   /// The duration type.
   typedef boost::posix_time::time_duration duration_type;
