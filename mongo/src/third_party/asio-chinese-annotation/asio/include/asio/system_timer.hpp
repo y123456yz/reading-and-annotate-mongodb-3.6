@@ -33,6 +33,7 @@ namespace asio {
  * typedef basic_waitable_timer<boost::chrono::system_clock> timer;
  * @endcode
  */
+//mongodb中timer使用可以参考AsyncTimerASIO
 typedef basic_waitable_timer<chrono::system_clock> system_timer;
 
 } // namespace asio

@@ -22,6 +22,7 @@
 namespace asio {
 namespace detail {
 
+//以下接口是开放给
 template <typename Time_Traits>
 void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& queue)
 {
@@ -56,6 +57,9 @@ void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
     update_timeout();
 }
 
+//mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+//->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+//->epoll_reactor::cancel_timer
 template <typename Time_Traits>
 std::size_t epoll_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data& timer,

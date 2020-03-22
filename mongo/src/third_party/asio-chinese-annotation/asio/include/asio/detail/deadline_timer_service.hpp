@@ -42,6 +42,7 @@ namespace asio {
 namespace detail {
 
 template <typename Time_Traits>
+	//basic_waitable_timer类中会用到
 class deadline_timer_service
   : public service_base<deadline_timer_service<Time_Traits> >
 {
@@ -129,6 +130,17 @@ public:
   }
 
   // Cancel any asynchronous wait operations associated with the timer.
+  //mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+  //->deadline_timer_service::cancel->epoll_reactor::cancel_timer
+
+  
+    //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+   //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+   //->epoll_reactor::cancel_timer
+
+
+  //mongodb通过AsyncTimerASIO::async_wait->basic_waitable_timer::async_wait->waitable_timer_service::async_wait
+   //->deadline_timer_service::async_wait->epoll_reactor::schedule_timer
   std::size_t cancel(implementation_type& impl, asio::error_code& ec)
   {
     if (!impl.might_have_pending_waits)
@@ -139,7 +151,7 @@ public:
 
     ASIO_HANDLER_OPERATION((scheduler_.context(),
           "deadline_timer", &impl, 0, "cancel"));
-
+    //epoll_reactor::cancel_timer
     std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
     ec = asio::error_code();
@@ -186,6 +198,9 @@ public:
   }
 
   // Set the expiry time for the timer as an absolute time.
+     //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+   //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+   //->epoll_reactor::cancel_timer
   std::size_t expires_at(implementation_type& impl,
       const time_type& expiry_time, asio::error_code& ec)
   {
@@ -196,6 +211,9 @@ public:
   }
 
   // Set the expiry time for the timer relative to now.
+   //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+   //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+   //->epoll_reactor::cancel_timer
   std::size_t expires_after(implementation_type& impl,
       const duration_type& expiry_time, asio::error_code& ec)
   {
@@ -225,6 +243,18 @@ public:
   }
 
   // Start an asynchronous wait on the timer.
+  //mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+  //->deadline_timer_service::cancel->epoll_reactor::cancel_timer
+
+  
+    //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+   //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+   //->epoll_reactor::cancel_timer
+
+
+  //mongodb通过AsyncTimerASIO::async_wait->basic_waitable_timer::async_wait->waitable_timer_service::async_wait
+   //->deadline_timer_service::async_wait->epoll_reactor::schedule_timer
+
   template <typename Handler>
   void async_wait(implementation_type& impl, Handler& handler)
   {

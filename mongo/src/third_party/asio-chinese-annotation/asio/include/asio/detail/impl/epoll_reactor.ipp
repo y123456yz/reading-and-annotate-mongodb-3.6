@@ -328,6 +328,8 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
 
 //取出descriptor_data队列上的op入队到scheduler.op_queue_
 //把descriptor_state.op_queue_队列上的op重新入队到scheduler.op_queue_  
+
+//AsyncTimerASIO::cancel->basic_waitable_timer::cancel->reactive_socket_service_base::cancel->epoll_reactor::cancel_ops
 void epoll_reactor::cancel_ops(socket_type,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {
@@ -548,6 +550,7 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为desc
   if (check_timers)
   {
     mutex::scoped_lock common_lock(mutex_);
+	//把定时器到期的timer对应的op回调添加到ops
     timer_queues_.get_ready_timers(ops);
 
 #if defined(ASIO_HAS_TIMERFD)
@@ -678,7 +681,7 @@ void epoll_reactor::update_timeout()
   interrupt();
 }
 
-//获取队列中
+
 int epoll_reactor::get_timeout(int msec)
 {
   // By default we will wait no longer than 5 minutes. This will ensure that
@@ -691,6 +694,8 @@ int epoll_reactor::get_timeout(int msec)
 
 #if defined(ASIO_HAS_TIMERFD)
 //获取下一个timer的过期时间点
+//获取队列中离当前时间最近的timer对应的时间信息(ms),如果离当前最近的时间超过5分钟，则取5分钟
+//epoll_reactor::run中调用
 int epoll_reactor::get_timeout(itimerspec& ts)
 {
   ts.it_interval.tv_sec = 0;
