@@ -329,7 +329,6 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
 //取出descriptor_data队列上的op入队到scheduler.op_queue_
 //把descriptor_state.op_queue_队列上的op重新入队到scheduler.op_queue_  
 
-//AsyncTimerASIO::cancel->basic_waitable_timer::cancel->reactive_socket_service_base::cancel->epoll_reactor::cancel_ops
 void epoll_reactor::cancel_ops(socket_type,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {

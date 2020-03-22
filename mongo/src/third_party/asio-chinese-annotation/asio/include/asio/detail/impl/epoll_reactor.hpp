@@ -24,6 +24,7 @@ namespace detail {
 
 //以下接口是开放给
 template <typename Time_Traits>
+//deadline_timer_service::deadline_timer_service构造函数中调用
 void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& queue)
 {
   //调用epoll_reactor::do_add_timer_queue
@@ -36,6 +37,19 @@ void epoll_reactor::remove_timer_queue(timer_queue<Time_Traits>& queue)
   //调用epoll_reactor::do_remove_timer_queue
   do_remove_timer_queue(queue);
 }
+
+// Cancel any asynchronous wait operations associated with the timer.
+//mongodb通过AsyncTimerASIO::cancel->basic_waitable_timer::cancel->waitable_timer_service::cancel
+//->deadline_timer_service::cancel->epoll_reactor::cancel_timer
+
+
+  //mongodb通过AsyncTimerASIO::expireAfter->basic_waitable_timer::expires_after->waitable_timer_service::expires_after
+ //->deadline_timer_service::expires_after->deadline_timer_service::expires_at->deadline_timer_service::cancel
+ //->epoll_reactor::cancel_timer
+
+
+//mongodb通过AsyncTimerASIO::async_wait->basic_waitable_timer::async_wait->waitable_timer_service::async_wait
+ //->deadline_timer_service::async_wait->epoll_reactor::schedule_timer
 
 template <typename Time_Traits>
 void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
