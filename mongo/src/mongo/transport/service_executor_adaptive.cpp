@@ -272,6 +272,10 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     // If the task is allowed to recurse and we are not over the depth limit, dispatch it so it
     // can be called immediately and recursively.
     /*
+	//accept流程
+	//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
+	//->start_accept_op->epoll_reactor::post_immediate_completion
+	
 	//普通read write op操作入队流程
 	//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 	//->scheduler::post_immediate_completion
@@ -281,10 +285,11 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 	//普通读写read write 从队列获取op执行流程
 	//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 	//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until->schedule::wait_one
+
     
 	post 优先将任务排进处理队列，然后返回，任务会在某个时机被完成。
 	dispatch的任务会立刻执行
-	参考https://www.cnblogs.com/zhiranok/archive/2011/09/04/boost_asio_io_service_CPP.html 早期版本Io_servie，现在版本Io_context
+	早期版本Io_servie，现在版本Io_context
 	*/ //队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
     if ((flags & kMayRecurse) &&
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {

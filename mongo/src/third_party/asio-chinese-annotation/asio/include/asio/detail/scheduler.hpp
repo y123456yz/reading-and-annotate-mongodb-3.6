@@ -84,7 +84,7 @@ public:
   // Notify that some work has started.
   //scheduler::post_immediate_completion   scheduler::post_immediate_completion
   //epoll_reactor::schedule_timer  epoll_reactor::start_op
-  //work_finished和work_started对应
+  //work_finished和work_started对应      io_context::work::work中调用
   void work_started() //计数，代表当前有多少个线程正在运行
   {
     ++outstanding_work_;
