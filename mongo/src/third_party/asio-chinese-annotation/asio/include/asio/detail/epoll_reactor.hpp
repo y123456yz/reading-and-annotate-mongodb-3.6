@@ -241,6 +241,7 @@ private:
   scheduler& scheduler_;
 
   // Mutex to protect access to internal data.
+  //全局锁
   mutex mutex_;
 
   // The interrupter is used to break a blocking epoll_wait call.
@@ -249,12 +250,15 @@ private:
   select_interrupter interrupter_;  
 
   // The epoll file descriptor.
+  //epoll fd
   int epoll_fd_;
 
   // The timer file descriptor.
+  //timer fd
   int timer_fd_;
 
   // The timer queues.
+  //timer队列集
   timer_queue_set timer_queues_;
 
   // Whether the service has been shut down.

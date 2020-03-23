@@ -212,6 +212,20 @@ private:
     enum class ThreadTimer { Running, Executing };
     TickSource::Tick _getThreadTimerTotal(ThreadTimer which) const;
 
+//accept流程
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
+//->start_accept_op->epoll_reactor::post_immediate_completion
+
+//普通read write op操作入队流程
+//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
+//->scheduler::post_immediate_completion
+//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
+//->scheduler::do_dispatch
+
+//普通读写read write 从队列获取op执行流程
+//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
+//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until->schedule::wait_one
+
     //TransportLayerManager::createWithConfig赋值，链接上的数据读写生效见ServiceExecutorAdaptive::schedule 
     //也就是TransportLayerASIO._workerIOContext  adaptive模式，所有线程共用所有accept新链接对应的网络IO上下文
     std::shared_ptr<asio::io_context> _ioContext; //早期ASIO中叫io_service 

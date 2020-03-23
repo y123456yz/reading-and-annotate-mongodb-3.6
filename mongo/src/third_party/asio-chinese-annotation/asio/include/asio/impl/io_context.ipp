@@ -31,13 +31,16 @@
 
 #include "asio/detail/push_options.hpp"
 
+//io_context类的接口主要用于操作impl_(也就是scheduler的相关接口)
 namespace asio {
 
+//io_context类初始化构造
 io_context::io_context()
   : impl_(add_impl(new impl_type(*this, ASIO_CONCURRENCY_HINT_DEFAULT)))
 {
 }
 
+//io_context类初始化构造
 io_context::io_context(int concurrency_hint)
   : impl_(add_impl(new impl_type(*this, concurrency_hint == 1
           ? ASIO_CONCURRENCY_HINT_1 : concurrency_hint)))
@@ -77,7 +80,7 @@ io_context::count_type io_context::run(asio::error_code& ec)
 io_context::count_type io_context::run_one()
 {
   asio::error_code ec;
-  count_type s = impl_.run_one(ec);
+  count_type s = impl_.run_one(ec);//scheduler::run_one
   asio::detail::throw_error(ec);
   return s;
 }
@@ -85,14 +88,14 @@ io_context::count_type io_context::run_one()
 #if !defined(ASIO_NO_DEPRECATED)
 io_context::count_type io_context::run_one(asio::error_code& ec)
 {
-  return impl_.run_one(ec);
+  return impl_.run_one(ec);//scheduler::run_one
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 io_context::count_type io_context::poll()
 {
   asio::error_code ec;
-  count_type s = impl_.poll(ec);
+  count_type s = impl_.poll(ec); //scheduler::poll
   asio::detail::throw_error(ec);
   return s;
 }
@@ -100,14 +103,14 @@ io_context::count_type io_context::poll()
 #if !defined(ASIO_NO_DEPRECATED)
 io_context::count_type io_context::poll(asio::error_code& ec)
 {
-  return impl_.poll(ec);
+  return impl_.poll(ec);//scheduler::poll
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 io_context::count_type io_context::poll_one()
 {
   asio::error_code ec;
-  count_type s = impl_.poll_one(ec);
+  count_type s = impl_.poll_one(ec);//scheduler::poll_one
   asio::detail::throw_error(ec);
   return s;
 }
@@ -115,23 +118,23 @@ io_context::count_type io_context::poll_one()
 #if !defined(ASIO_NO_DEPRECATED)
 io_context::count_type io_context::poll_one(asio::error_code& ec)
 {
-  return impl_.poll_one(ec);
+  return impl_.poll_one(ec);//scheduler::poll_one
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 void io_context::stop()
 {
-  impl_.stop();
+  impl_.stop();//scheduler::stop
 }
 
 bool io_context::stopped() const
 {
-  return impl_.stopped();
+  return impl_.stopped(); //scheduler::stopped
 }
 
 void io_context::restart()
 {
-  impl_.restart();
+  impl_.restart();//scheduler::restart
 }
 
 io_context::service::service(asio::io_context& owner)

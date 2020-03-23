@@ -232,7 +232,7 @@ io_context::executor_type::on_work_started() const ASIO_NOEXCEPT
 inline void
 io_context::executor_type::on_work_finished() const ASIO_NOEXCEPT
 {
-  io_context_.impl_.work_finished();
+  io_context_.impl_.work_finished(); //scheduler::post_immediate_completion
 }
 
 template <typename Function, typename Allocator>
@@ -307,6 +307,7 @@ io_context::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
+//mongodb中的TransportLayerASIO::start()调用，表示listener线程处理io_context上面的accept事件
 inline io_context::work::work(asio::io_context& io_context)
   : io_context_impl_(io_context.impl_)
 {
@@ -320,7 +321,7 @@ inline io_context::work::work(const work& other)
 }
 
 inline io_context::work::~work()
-{
+{//scheduler::post_immediate_completion
   io_context_impl_.work_finished();
 }
 

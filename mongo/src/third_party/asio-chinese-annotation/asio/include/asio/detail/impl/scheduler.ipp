@@ -437,7 +437,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
   //stop_all_threads中置为true, 为true后，将不再处理epoll相关事件，参考scheduler::do_run_one
   while (!stopped_)
   {
-    //每次从op_queue（其实是一个侵入性链表）里拿出头节点，然后处理。
+    //每次从op_queue（其实是一个链表）里拿出头节点，然后处理。
     if (!op_queue_.empty())
     { //队列中已经没有可以指向得回调了，则继续epoll_wait等待获取对应事件回调
       // Prepare to execute first handler from queue.

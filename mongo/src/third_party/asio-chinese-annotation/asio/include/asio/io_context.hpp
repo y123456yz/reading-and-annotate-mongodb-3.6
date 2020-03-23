@@ -177,7 +177,6 @@ class context;
 }  // namespace asio
 */
 
-//参考https://www.cnblogs.com/zhiranok/archive/2011/09/04/boost_asio_io_service_CPP.html 
 //早期版本Io_servie，现在版本Io_context
 
 //对应mongodb的TransportLayerASIO._acceptorIOContext   TransportLayerASIO._workerIOContext
@@ -785,6 +784,7 @@ private:
   void operator=(const work& other);
 
   // The io_context implementation.
+  //也就是scheduler
   detail::io_context_impl& io_context_impl_;
 };
 #endif // !defined(ASIO_NO_DEPRECATED)
