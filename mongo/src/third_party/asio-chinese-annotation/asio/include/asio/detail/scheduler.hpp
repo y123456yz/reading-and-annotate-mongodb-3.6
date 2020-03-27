@@ -97,7 +97,7 @@ public:
   // Notify that some work has finished.
   void work_finished()
   {
-    if (--outstanding_work_ == 0)
+    if (--outstanding_work_ == 0) //如果处理IO的线程数为0了，那就没必要做schedule调度了，通知epoll停止处理
       stop();
   }
 
