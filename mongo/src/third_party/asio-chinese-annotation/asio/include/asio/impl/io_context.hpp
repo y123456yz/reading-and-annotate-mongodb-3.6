@@ -76,6 +76,7 @@ std::size_t io_context::run_for(
 }
 
 template <typename Clock, typename Duration>
+//mongo::transport::ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for
 std::size_t io_context::run_until(
     const chrono::time_point<Clock, Duration>& abs_time)
 {
@@ -95,28 +96,35 @@ std::size_t io_context::run_one_for(
 }
 
 template <typename Clock, typename Duration>
+//mongo::transport::ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->io_context::run_one_until
+
 //mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until
 //->schedule::wait_one
+//调度运行schedule::wait_one的时间最长持续到abs_time这个时间点
 std::size_t io_context::run_one_until(
-    const chrono::time_point<Clock, Duration>& abs_time)
+    const chrono::time_point<Clock, Duration>& abs_time) //abs_time表示运行该函数到期的绝对事件点
 {
   typename Clock::time_point now = Clock::now();
   while (now < abs_time)
   {
+    //在本循环中还需要运行多久
     typename Clock::duration rel_time = abs_time - now;
+	//最多一次循环执行1s，也就是schedule::wait_one最多单次wait 1s
     if (rel_time > chrono::seconds(1))
       rel_time = chrono::seconds(1);
 
     asio::error_code ec;
-	//schedule::wait_one
+	//schedule::wait_one 从操作队列中获取对应的operation执行，如果获取到operation并执行成功则返回1，否则返回0
     std::size_t s = impl_.wait_one(
         static_cast<long>(chrono::duration_cast<
           chrono::microseconds>(rel_time).count()), ec);
     asio::detail::throw_error(ec);
 
+	//已经获取执行完一个operation，则直接返回，否则继续循环调度schedule::wait_one获取operation执行
     if (s || impl_.stopped())
       return s;
 
+	//重新计算当前时间
     now = Clock::now();
   }
 
@@ -226,13 +234,13 @@ io_context::executor_type::context() const ASIO_NOEXCEPT
 inline void
 io_context::executor_type::on_work_started() const ASIO_NOEXCEPT
 {
-  io_context_.impl_.work_started();
+  io_context_.impl_.work_started();//scheduler::work_started
 }
 
 inline void
 io_context::executor_type::on_work_finished() const ASIO_NOEXCEPT
 {
-  io_context_.impl_.work_finished(); //scheduler::post_immediate_completion
+  io_context_.impl_.work_finished(); //scheduler::work_finished
 }
 
 template <typename Function, typename Allocator>

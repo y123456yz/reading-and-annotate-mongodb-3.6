@@ -439,7 +439,7 @@ void epoll_reactor::cleanup_descriptor_data(
 }
 
 //epoll对应的网络回调及定时器处理,获取epoll对应事件得回调入队到ops队列，在外层函数统一处理
-//scheduler::do_run_one
+//scheduler::do_run_one    如果stopped_=true则永远不会进入该分支
 void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为descriptor_state
 {
   // This code relies on the fact that the scheduler queues the reactor task
@@ -709,6 +709,7 @@ int epoll_reactor::get_timeout(itimerspec& ts)
 }
 #endif // defined(ASIO_HAS_TIMERFD)
 
+//下面的epoll_reactor::descriptor_state::perform_io中构造使用
 struct epoll_reactor::perform_io_cleanup_on_block_exit
 {
   explicit perform_io_cleanup_on_block_exit(epoll_reactor* r)
@@ -813,7 +814,6 @@ void epoll_reactor::descriptor_state::do_complete(
     }
   }
 }
-
 } // namespace detail
 } // namespace asio
 

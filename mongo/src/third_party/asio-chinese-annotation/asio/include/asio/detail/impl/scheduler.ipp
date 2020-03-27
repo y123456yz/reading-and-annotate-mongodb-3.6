@@ -217,11 +217,12 @@ std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
-  //线程入队到top
+  //线程入队到top链表
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
+  //从操作队列中获取对应的operation执行，如果获取到operation并执行成功则返回1，否则返回0
   return do_wait_one(lock, this_thread, usec, ec);
 }
 
@@ -533,10 +534,10 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 //ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 //mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until->schedule::wait_one
 
-
-
 //ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 //wait一段时间  
+
+//从操作队列中获取对应的operation执行，如果获取到operation并执行成功则返回1，否则返回0
 std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
     scheduler::thread_info& this_thread, long usec,
     const asio::error_code& ec)
@@ -547,16 +548,17 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
     return 0;
 
   operation* o = op_queue_.front();
-  if (o == 0)
+  if (o == 0) //如果队列为空，则等待usec
   {
     //等待被唤醒
     wakeup_event_.clear(lock);
     wakeup_event_.wait_for_usec(lock, usec);
     usec = 0; // Wait at most once.
+    //等一会儿后我们继续判断队列中是否有可执行的op
     o = op_queue_.front();
   }
 
-  if (o == &task_operation_) //op_queue_队列上面没用IO op操作，于是通过epoll_wait获取加入对应队列
+  if (o == &task_operation_) //op_queue_队列上面没用IO op操作，于是通过epoll_wait获取网络IO事件信息对应的op加入对应队列
   {
     op_queue_.pop();
     bool more_handlers = (!op_queue_.empty());
@@ -696,9 +698,11 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
   return 1;
 }
 
+//scheduler::stop调用
 void scheduler::stop_all_threads(
     mutex::scoped_lock& lock)
 {
+  //不再处理epoll相关事件，参考scheduler::do_run_one
   stopped_ = true;
   //唤醒所有wakeup_event_.wait休眠等待线程
   wakeup_event_.signal_all(lock);

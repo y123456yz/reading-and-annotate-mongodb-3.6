@@ -45,6 +45,7 @@ public:
     }
 
     // Push the key/value pair on to the stack.
+    //KV入队到top_队列，例如线程的入队可以参考scheduler::wait_one
     context(Key* k, Value& v)
       : key_(k),
         value_(&v),
@@ -82,6 +83,7 @@ public:
     Value* value_;
 
     // The next element in the stack.
+    //kv通过next_指针链接在一起
     context* next_;
   };
 
@@ -89,6 +91,7 @@ public:
 
   // Determine whether the specified owner is on the stack. Returns address of
   // key if present, 0 otherwise.
+  //K是否在top队列中
   static Value* contains(Key* k)
   {
     context* elem = top_;
@@ -110,6 +113,8 @@ public:
 
 private:
   // The top of the stack of calls for the current thread.
+  //线程队列头部
+  //KV入队到top_队列，例如线程的入队可以参考scheduler::wait_one
   static tss_ptr<context> top_;
 };
 
