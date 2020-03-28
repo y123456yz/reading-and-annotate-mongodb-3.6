@@ -102,6 +102,7 @@ public:
   }
 
   // Return whether a handler can be dispatched immediately.
+  //本线程是否在线程队列，如果已经在线程队列返回true
   bool can_dispatch()
   {
     return thread_call_stack::contains(this) != 0;
@@ -202,6 +203,7 @@ private:
   bool task_interrupted_;
 
   // The count of unfinished work.
+  //该io_context(也和scheduler对应，一个io_context对应一个scheduler)上运行的线程数
   atomic_count outstanding_work_;
 
   // The queue of handlers that are ready to be delivered.

@@ -329,8 +329,10 @@ void scheduler::post_immediate_completion(
     scheduler::operation* op, bool is_continuation)
 {
 #if defined(ASIO_HAS_THREADS)
+  ////mongodb  asio::async_read(), asio::async_write(), asio::async_connect(), is_continuation默认返回true
   if (one_thread_ || is_continuation)
-  {
+  { //如果本线程已经注册到thread队列，也就是本线程之前已执行过opration操作任务，则把新入队的这个op指派给本线程继续执行
+  //例如一个读取一个新链接fd上的数据，如果前一次是线程1读取套接字数据，但是数据不满足一个mongo协议，则下次还是本线程继续读，避免其他线程来读，如果一个完整mongo报文被多个不同线程读取，则乱套了
     if (thread_info_base* this_thread = thread_call_stack::contains(this))
     {
       ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
@@ -342,6 +344,7 @@ void scheduler::post_immediate_completion(
   (void)is_continuation;
 #endif // defined(ASIO_HAS_THREADS)
 
+//该io_context上相关的工作线程数自增
   work_started();
 
 //默认多线程，所以这里需要对队列加锁

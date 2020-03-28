@@ -180,11 +180,11 @@ struct async_completion
     is_same<CompletionToken, completion_handler_type>::value,
     completion_handler_type&, completion_handler_type>::type completion_handler;
 #else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  completion_handler_type completion_handler; //实际上就是token
+  completion_handler_type completion_handler; //completion_handler代表handler，result为handler执行的结果
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// The result of the asynchronous operation's initiating function.
-  async_result<typename decay<CompletionToken>::type, Signature> result; //token执行的结果
+  async_result<typename decay<CompletionToken>::type, Signature> result; //completion_handler执行的结果
 };
 
 namespace detail {

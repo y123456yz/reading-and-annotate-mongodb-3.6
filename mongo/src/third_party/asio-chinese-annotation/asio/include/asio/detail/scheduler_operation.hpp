@@ -29,7 +29,7 @@ class scheduler;
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
 //class scheduler_operation ASIO_INHERIT_TRACKED_HANDLER  yang change
-//reactor_op继承该类
+//reactor_op  completion_handler继承该类
 class scheduler_operation //scheduler类中使用  执行见scheduler::do_run_one
 {
 public:
