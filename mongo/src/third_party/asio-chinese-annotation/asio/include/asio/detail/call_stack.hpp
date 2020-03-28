@@ -91,7 +91,7 @@ public:
 
   // Determine whether the specified owner is on the stack. Returns address of
   // key if present, 0 otherwise.
-  //K是否在top队列中
+  //K是否在top队列中，可以参考thread_call_stack::contains(this);
   static Value* contains(Key* k)
   {
     context* elem = top_;

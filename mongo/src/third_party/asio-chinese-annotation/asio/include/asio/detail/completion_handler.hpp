@@ -28,6 +28,7 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
+	//io_context::dispatch  io_context::post中构造使用
 class completion_handler : public operation
 {
 public:

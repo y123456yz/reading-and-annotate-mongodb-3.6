@@ -151,16 +151,18 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 
   async_completion<CompletionHandler, void ()> init(handler);
 
-  //scheduler::can_dispatch
+  //scheduler::can_dispatch  本线程已经加入到了工作线程队列，直接执行handler
   if (impl_.can_dispatch())
   {
     detail::fenced_block b(detail::fenced_block::full);
+	//直接运行handler
     asio_handler_invoke_helpers::invoke(
         init.completion_handler, init.completion_handler);
   }
   else
   {
     // Allocate and construct an operation to wrap the handler.
+    //构造complete handler,completion_handler继承基础operation 
     typedef detail::completion_handler<
       typename handler_type<CompletionHandler, void ()>::type> op;
     typename op::ptr p = { detail::addressof(init.completion_handler),
@@ -173,7 +175,7 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 	
 	//mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 	//->scheduler::do_dispatch
-    impl_.do_dispatch(p.p); //scheduler::do_dispatch
+    impl_.do_dispatch(p.p); //scheduler::do_dispatch op入队
     p.v = p.p = 0;
   }
 
@@ -192,10 +194,11 @@ io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 
   async_completion<CompletionHandler, void ()> init(handler);
 
-  bool is_continuation =
+  bool is_continuation =   //mongodb  asio::async_read(), asio::async_write(), asio::async_connect(), 默认返回true
     asio_handler_cont_helpers::is_continuation(init.completion_handler);
 
   // Allocate and construct an operation to wrap the handler.
+  //构造complete handler,completion_handler继承基础operation 
   typedef detail::completion_handler<
     typename handler_type<CompletionHandler, void ()>::type> op;
   typename op::ptr p = { detail::addressof(init.completion_handler),
