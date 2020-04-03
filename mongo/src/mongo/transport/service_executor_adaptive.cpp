@@ -78,7 +78,7 @@ MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorMaxQueueLatencyMicros, int,
 // doing actual work.
 //如果一个线程处理请求的时间/总时间(处理请求时间)+空闲时间  也就是如果线程比较空闲
 //执行 IO 操作的时间小于 adaptiveServiceExecutorIdlePctThreshold 比例时，则会自动销毁线程
-//线程空闲百分百
+//线程空闲百分百    Thread was only executing tasks 60% over the last 5096ms. Exiting thread.
 //db.adminCommand( { setParameter: 1, adaptiveServiceExecutorIdlePctThreshold: 30} ) 
 
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorIdlePctThreshold, int, 60);

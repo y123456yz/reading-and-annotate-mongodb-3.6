@@ -341,7 +341,6 @@ void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
 }
 
 //mongos  TransportLayerASIO::asyncWait
-//ServiceStateMachine::_sourceMessage中epoll_wait返回，也就是协议栈的数据已经读到用户态空间
 void ServiceStateMachine::_sourceCallback(Status status) {
     // The first thing to do is create a ThreadGuard which will take ownership of the SSM in this
     // thread.
@@ -532,7 +531,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 	*/
     try {
         switch (curState) { 
-            case State::Source: //epoll异步网络时间触发，一般是有数据到来
+            case State::Source: 
                 _sourceMessage(std::move(guard));
                 break;
             case State::Process:
