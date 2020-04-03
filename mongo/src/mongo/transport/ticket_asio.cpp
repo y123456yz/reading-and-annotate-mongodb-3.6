@@ -130,7 +130,7 @@ void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code
 
 //读取mongo协议报文头部，协议栈返回后调用_headerCallback回调
 //TransportLayerASIO::ASIOTicket::fill
-void TransportLayerASIO::ASIOSourceTicket::fillImpl() {
+void TransportLayerASIO::ASIOSourceTicket::fillImpl() {  //接收的fillImpl
     auto session = getSession();
     if (!session)
         return;
@@ -149,6 +149,7 @@ void TransportLayerASIO::ASIOSinkTicket::_sinkCallback(const std::error_code& ec
     finishFill(ec ? errorCodeToStatus(ec) : Status::OK());
 }
 
+//发送的fillImpl
 void TransportLayerASIO::ASIOSinkTicket::fillImpl() {
     auto session = getSession();
     if (!session)
