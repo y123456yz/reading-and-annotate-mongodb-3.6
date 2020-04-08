@@ -29,7 +29,7 @@ namespace detail {
 // primary template uses the new executors framework.
 template <typename Handler, typename Executor
     = typename associated_executor<Handler>::type>
-class handler_work
+class handler_work  //completion_handler类中使用
 {
 public:
   explicit handler_work(Handler& handler) ASIO_NOEXCEPT
@@ -51,6 +51,7 @@ public:
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
+    //system_executor::dispatch 直接执行handler
     executor_.dispatch(ASIO_MOVE_CAST(Function)(function),
         associated_allocator<Handler>::get(handler));
   }

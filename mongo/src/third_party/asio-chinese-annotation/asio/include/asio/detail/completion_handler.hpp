@@ -29,18 +29,19 @@ namespace detail {
 
 template <typename Handler>
 	//io_context::dispatch  io_context::post中构造使用
-class completion_handler : public operation
+class completion_handler : public operation   //reactor_op  completion_handler继承operation
 {
 public:
   ASIO_DEFINE_HANDLER_PTR(completion_handler);
 
   completion_handler(Handler& h)
-    : operation(&completion_handler::do_complete),
+    : operation(&completion_handler::do_complete),  //completion_handler对应的func
       handler_(ASIO_MOVE_CAST(Handler)(h))
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler>::start(handler_); //handler_work::start
   }
 
+  //真正执行在scheduler::do_wait_one->operation::complete->completion_handler::do_complete
   static void do_complete(void* owner, operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)

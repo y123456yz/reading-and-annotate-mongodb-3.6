@@ -85,7 +85,7 @@ public:
   //scheduler::post_immediate_completion   scheduler::post_immediate_completion
   //epoll_reactor::schedule_timer  epoll_reactor::start_op
   //work_finished和work_started对应      io_context::work::work中调用
-  void work_started() //计数，代表当前有多少个线程正在运行
+  void work_started() //计数，代表当前有多少个任务正在运行
   {
     ++outstanding_work_;
   }
@@ -97,7 +97,7 @@ public:
   // Notify that some work has finished.
   void work_finished()
   {
-    if (--outstanding_work_ == 0) //如果处理IO的线程数为0了，那就没必要做schedule调度了，通知epoll停止处理
+    if (--outstanding_work_ == 0) //如果处理IO的任务数为0了，那就没必要做schedule调度了，通知epoll停止处理
       stop();
   }
 
@@ -203,7 +203,7 @@ private:
   bool task_interrupted_;
 
   // The count of unfinished work.
-  //该io_context(也和scheduler对应，一个io_context对应一个scheduler)上运行的线程数
+  //该io_context(也和scheduler对应，一个io_context对应一个scheduler)上运行的任务数
   atomic_count outstanding_work_;
 
   // The queue of handlers that are ready to be delivered.

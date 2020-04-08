@@ -78,7 +78,7 @@ private:
 Ticket_asio.h (src\mongo\transport):class TransportLayerASIO::ASIOSourceTicket : public TransportLayerASIO::ASIOTicket {
 Ticket_asio.h (src\mongo\transport):class TransportLayerASIO::ASIOSinkTicket : public TransportLayerASIO::ASIOTicket {
 */
-//TransportLayerASIO类的相关接口使用
+//TransportLayerASIO类的相关接口使用   TransportLayerASIO::sourceMessage构造使用
 class TransportLayerASIO::ASIOSourceTicket : public TransportLayerASIO::ASIOTicket {
 public:
     ASIOSourceTicket(const ASIOSessionHandle& session, Date_t expiration, Message* msg);
@@ -91,7 +91,8 @@ private:
     void _bodyCallback(const std::error_code& ec, size_t size);
 
     SharedBuffer _buffer;
-    //赋值见TransportLayerASIO::ASIOSourceTicket::_bodyCallback
+    //数据赋值见TransportLayerASIO::ASIOSourceTicket::_bodyCallback
+    //初始空间赋值见ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
     Message* _target;
 };
 

@@ -29,13 +29,15 @@ class scheduler;
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
 //class scheduler_operation ASIO_INHERIT_TRACKED_HANDLER  yang change
-//reactor_op  completion_handler继承该类
+//descriptor_state reactor_op  completion_handler继承该类
 class scheduler_operation //scheduler类中使用  执行见scheduler::do_run_one
 {
 public:
   typedef scheduler_operation operation_type;
+  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //completion_handler类:对应completion_handler::do_complete
 
-  //执行见epoll_reactor::descriptor_state::do_complete
+  //reactor_op  completion_handler中赋值func_
   void complete(void* owner, const asio::error_code& ec,
       std::size_t bytes_transferred)
   {
@@ -68,7 +70,8 @@ private:
   friend class op_queue_access;
   scheduler_operation* next_;
   //真正执行见epoll_reactor::descriptor_state::do_complete
-  //perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //completion_handler类:对应completion_handler::do_complete
   func_type func_;
 protected:
   friend class scheduler;

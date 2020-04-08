@@ -219,7 +219,7 @@ Status ServiceExecutorAdaptive::shutdown(Milliseconds timeout) {
 //ServiceStateMachine::_scheduleNextWithGuard  
 //adaptive模式，分发链接的线程给_ioContext
 
-//ServiceExecutorAdaptive::schedule中任务入队，ServiceExecutorAdaptive::_workerThreadRoutine出对执行
+//ServiceExecutorAdaptive::schedule中任务入队(listener线程)，ServiceExecutorAdaptive::_workerThreadRoutine(worker线程)出对执行
 Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, ScheduleFlags flags) {
 	//获取当前时间
 	auto scheduleTime = _tickSource->getTicks();
@@ -537,7 +537,7 @@ TickSource::Tick ServiceExecutorAdaptive::_getThreadTimerTotal(ThreadTimer which
 //worker-x线程默认是CPU/2个，但是在controller线程会根据负载在_controllerThreadRoutine中动态调整worker线程数
 //如果controller线程发现负载高，那么worker线程数也就是增加，如果负载下去了，worker线程根据自身情况来觉得是否退出消耗自身线程
 
-//ServiceExecutorAdaptive::schedule中任务入队，ServiceExecutorAdaptive::_workerThreadRoutine出对执行
+//ServiceExecutorAdaptive::schedule中任务入队(listener线程)，ServiceExecutorAdaptive::_workerThreadRoutine(worker线程)出对执行
 void ServiceExecutorAdaptive::_workerThreadRoutine(
     int threadId, ServiceExecutorAdaptive::ThreadList::iterator state) {
 
@@ -602,7 +602,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
 				_ioContext->run_one_for(runTime.toSystemDuration());
             } else {  // Otherwise, just run for the full run period
             	//_ioContext对应的所有任务都执行完成后才会返回
-                _ioContext->run_for(runTime.toSystemDuration());
+                _ioContext->run_for(runTime.toSystemDuration()); //io_context::run_for
             }
 			
             // _ioContext->run_one() will return when all the scheduled handlers are completed, and

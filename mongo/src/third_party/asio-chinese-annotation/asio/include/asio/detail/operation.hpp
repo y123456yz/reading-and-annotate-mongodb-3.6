@@ -29,7 +29,7 @@ namespace detail {
 #if defined(ASIO_HAS_IOCP)
 typedef win_iocp_operation operation;
 #else
-//reactor_op  completion_handler继承该类
+//descriptor_state  reactor_op  completion_handler继承该类
 typedef scheduler_operation operation;
 #endif
 
