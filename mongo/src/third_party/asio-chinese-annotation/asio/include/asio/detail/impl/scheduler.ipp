@@ -210,7 +210,7 @@ std::size_t scheduler::run_one(asio::error_code& ec)
 std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 {
   ec = asio::error_code();
-  if (outstanding_work_ == 0)
+  if (outstanding_work_ == 0) //如果连工作线程都没有，则说明没有调度的意义，停止所有调度
   {
     stop();
     return 0;

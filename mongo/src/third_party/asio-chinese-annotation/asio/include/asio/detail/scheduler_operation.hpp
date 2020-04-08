@@ -29,7 +29,10 @@ class scheduler;
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
 //class scheduler_operation ASIO_INHERIT_TRACKED_HANDLER  yang change
+
 //descriptor_state reactor_op  completion_handler继承该类
+
+//reactor_op  completion_handler继承该类        mongodb中operation分为三种，一种是completion_handler，另一种是reactor_op，还有一种descriptor_state
 class scheduler_operation //scheduler类中使用  执行见scheduler::do_run_one
 {
 public:

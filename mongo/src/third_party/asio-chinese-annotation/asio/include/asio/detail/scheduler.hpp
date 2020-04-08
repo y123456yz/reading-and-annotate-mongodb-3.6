@@ -42,7 +42,7 @@ class scheduler
     public thread_context
 {
 public:
-  ////reactor_op继承该类
+  //reactor_op  completion_handler继承该类    mongodb中operation分为两种，一种是completion_handler，另一种是reactor_op
   typedef scheduler_operation operation;
 
   // Constructor. Specifies the number of concurrent threads that are likely to
@@ -218,7 +218,7 @@ private:
   bool stopped_;
 
   // Flag to indicate that the dispatcher has been shut down.
-  bool shutdown_;
+  bool shutdown_; //
 
   // The concurrency hint used to initialise the scheduler.
   const int concurrency_hint_;
