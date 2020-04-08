@@ -75,7 +75,7 @@ public:
 	//入队epoll_reactor::start_op  epoll_reactor::register_internal_descriptor注册到epoll
 	//参考epoll_reactor::descriptor_state::perform_io,
 	//reactive_socket_accept_op_base(新连接)	reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
-    op_queue<reactor_op> op_queue_[max_ops]; 
+    op_queue<reactor_op> op_queue_[max_ops];  //epoll_reactor::start_op中op入队，执行在epoll_reactor::descriptor_state::perform_io
     bool try_speculative_[max_ops];
 	//epoll_reactor::deregister_descriptor置为true
     bool shutdown_;

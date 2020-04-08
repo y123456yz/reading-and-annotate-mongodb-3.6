@@ -76,7 +76,7 @@ struct associated_executor_impl<T, E,
  * get(t,e) and with return type @c type.
  */
 template <typename T, typename Executor = system_executor>
-struct associated_executor
+struct associated_executor //handler_work类中使用
 {
   /// If @c T has a nested type @c executor_type, <tt>T::executor_type</tt>.
   /// Otherwise @c Executor.

@@ -147,7 +147,7 @@ void epoll_reactor::init_task()
   scheduler_.init_task();
 }
 
-//reactive_socket_service_base::do_assign  reactive_socket_service_base::do_open
+//reactive_socket_service_base::do_assign(新链接fd对应epoll注册)  reactive_socket_service_base::do_open(socket套接字对应的epoll注册)
 //把套接字descriptor注册到epoll事件集中
 int epoll_reactor::register_descriptor(socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data) //套接字 回调等相关信息
@@ -537,7 +537,8 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为desc
       if (!ops.is_enqueued(descriptor_data))  //不在队列中，则添加
       {
         descriptor_data->set_ready_events(events[i].events);
-        ops.push(descriptor_data);
+		//epoll operation对应的回调函数是epoll_reactor::descriptor_state::do_complete
+        ops.push(descriptor_data); 
       }
       else  //descriptor_data已经在ops的队列中了
       {
@@ -636,6 +637,7 @@ flags：参数flags（TFD_NONBLOCK(非阻塞模式)/TFD_CLOEXEC（表示当程序执行exec函数时
 #endif // defined(ASIO_HAS_TIMERFD)
 }
 
+//epoll_reactor::register_descriptor
 epoll_reactor::descriptor_state* epoll_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
@@ -744,6 +746,7 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
   operation* first_op_;
 };
 
+//allocate_descriptor_state
 epoll_reactor::descriptor_state::descriptor_state(bool locking)
   : operation(&epoll_reactor::descriptor_state::do_complete),
     mutex_(locking)

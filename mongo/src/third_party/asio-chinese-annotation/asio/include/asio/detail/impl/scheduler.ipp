@@ -37,8 +37,8 @@ struct scheduler::task_cleanup
   ~task_cleanup()
   {
     if (this_thread_->private_outstanding_work > 0)
-    {
-      asio::detail::increment(
+    { //本线程上的私有任务后面会全部入队到全局op_queue_队列，全局任务数增加
+      asio::detail::increment( 
           scheduler_->outstanding_work_,
           this_thread_->private_outstanding_work);
     }
@@ -72,6 +72,7 @@ struct scheduler::work_cleanup
     {
       asio::detail::increment(
           scheduler_->outstanding_work_,
+          //这里-1是因为执行了一个op，见scheduler::do_wait_one中，再调用~work_cleanup析构函数的适合会执行一个op,所以少一个
           this_thread_->private_outstanding_work - 1);
     }
     else if (this_thread_->private_outstanding_work < 1)
@@ -489,25 +490,9 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         work_cleanup on_exit = { this, &lock, &this_thread };
 		//函数exit的时候执行前面的on_exit析构函数从而把this_thread.private_op_queue入队到scheduler.op_queue_
         (void)on_exit;
-		/*
-		asio::detail::reactive_socket_recv_op<
-		 asio::mutable_buffers_1, asio::detail::read_op
-		 <
-		  asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, asio::mutable_buffer const*, asio::detail::transfer_all_t, 
-		 void mongo::transport::TransportLayerASIO::ASIOSession::opportunisticRead<asio::basic_stream_socket<asio::generic::stream_protocol
-		 >, 
-		 asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}
-		>
-		 
-		  (
-		   bool, asio::basic_stream_socket<asio::generic::stream_protocol>&, 
-		   asio::mutable_buffers_1 const&, 
-		   mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}&&
-		  )
-		::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
-		*/
-        // Complete the operation. May throw an exception. Deletes the object.
-        //epoll_reactor::descriptor_state::do_complete
+
+		//reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  		//completion_handler类:对应completion_handler::do_complete
         o->complete(this, ec, task_result); //在外层的scheduler::run循环执行
 
         return 1;
@@ -618,23 +603,9 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  /*
-  asio::detail::reactive_socket_recv_op<
-   asio::mutable_buffers_1, asio::detail::read_op
-   <
-	asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, asio::mutable_buffer const*, asio::detail::transfer_all_t, 
-   void mongo::transport::TransportLayerASIO::ASIOSession::opportunisticRead<asio::basic_stream_socket<asio::generic::stream_protocol
-   >, 
-   asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}
-  >
-   
-	(
-	 bool, asio::basic_stream_socket<asio::generic::stream_protocol>&, 
-	 asio::mutable_buffers_1 const&, 
-	 mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}&&
-	)
-  ::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
-  */ //epoll_reactor::descriptor_state::do_complete
+  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //completion_handler类:对应completion_handler::do_complete
+
   o->complete(this, ec, task_result);
 
   return 1;  
@@ -695,7 +666,8 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  //epoll_reactor::descriptor_state::do_complete
+  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //completion_handler类:对应completion_handler::do_complete
   o->complete(this, ec, task_result);
 
   return 1;

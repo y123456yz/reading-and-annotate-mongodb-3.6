@@ -306,9 +306,10 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
 	//TransportLayerASIO::sourceMessage  TransportLayerASIO::ASIOSession  后面的wait asio会读取数据放入_inMessage
-    auto ticket = _session()->sourceMessage(&_inMessage); //Session::sourceMessage->TransportLayerASIO::sourceMessage
+	//ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
+    auto ticket = _session()->sourceMessage(&_inMessage); 
 
-    _state.store(State::SourceWait); //等待读完内核协议栈数据到用户态，或者epoll_wait超时才返回
+    _state.store(State::SourceWait); //等待读取协议栈中的数据
     guard.release();
 	//线程模型默认同步方式，也就是一个链接一个线程
     if (_transportMode == transport::Mode::kSynchronous) {
@@ -506,7 +507,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     dassert(curState != State::Ended);
 
     // If this is the first run of the SSM, then update its state to Source
-    if (curState == State::Created) {
+    if (curState == State::Created) { //初始状态
         curState = State::Source;
         _state.store(curState);
     }
@@ -532,7 +533,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 	*/
     try {
         switch (curState) { 
-            case State::Source: //epoll异步网络时间触发，一般是有数据到来
+            case State::Source: //开始去使能epoll，并读取数据解析
                 _sourceMessage(std::move(guard));
                 break;
             case State::Process:
@@ -579,13 +580,13 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
         ThreadGuard guard(ssm.get());  //对应ThreadGuard& operator=(ThreadGuard&& other)
         if (ownershipModel == Ownership::kStatic) //说明是sync mode
             guard.markStaticOwnership();
-		log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 22";
+		//log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 22";
 		//对应:ServiceStateMachine::_runNextInGuard
 		////ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)中执行
         ssm->_runNextInGuard(std::move(guard)); //新链接conn线程中需要执行的task
     };
 
-	log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 11";
+	//log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 11";
 
 	//和ServiceStateMachine::start中的ThreadGuard(this)对应
     guard.release();

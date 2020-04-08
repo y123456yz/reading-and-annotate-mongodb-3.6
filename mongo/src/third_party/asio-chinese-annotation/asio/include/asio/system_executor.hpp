@@ -29,7 +29,7 @@ class system_context;
  * permitted to run on arbitrary threads. The post() and defer() functions
  * schedule the function to run on an unspecified system thread pool, and
  * dispatch() invokes the function immediately.
- */
+ */ //Ê¹ÓÃ²Î¿¼associated_executor
 class system_executor
 {
 public:

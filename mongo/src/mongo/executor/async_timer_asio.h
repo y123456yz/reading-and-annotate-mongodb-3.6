@@ -36,6 +36,7 @@
 namespace mongo {
 namespace executor {
 
+//定时器相关接口，AsyncTimerASIO继承该类
 class AsyncTimerASIO final : public AsyncTimerInterface {
 public:
     AsyncTimerASIO(asio::io_service::strand* strand, Milliseconds expiration);
