@@ -178,6 +178,7 @@ boost::system::error_code reactive_descriptor_service::cancel(
 }
 
 //reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 void reactive_descriptor_service::start_op(
     reactive_descriptor_service::implementation_type& impl,
     int op_type, reactor_op* op, bool is_continuation,

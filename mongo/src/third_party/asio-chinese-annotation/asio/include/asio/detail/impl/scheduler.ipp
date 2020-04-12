@@ -190,19 +190,32 @@ std::size_t scheduler::run_one(asio::error_code& ec)
   return do_run_one(lock, this_thread, ec);
 }
 
-//accept流程
+/*
+//accept对应的状态机任务调度流程
 //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
 //->start_accept_op->epoll_reactor::post_immediate_completion
 
-//普通read write op操作入队流程
+//普通read write对应的状态机任务入队流程
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::post_immediate_completion
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::do_dispatch
 
-//普通读写read write 从队列获取op执行流程
-//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
-//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until->schedule::wait_one
+//普通读写read write对应的状态机任务出队流程
+//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one
+//->scheduler::do_wait_one调用
+//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for
+//->io_context::run_one_until->schedule::wait_one
+		|
+		|1.先进行状态机任务调度(也就是mongodb中TransportLayerASIO._workerIOContext  TransportLayerASIO._acceptorIOContext相关的任务)
+		|2.在执行步骤1对应调度任务过程中最终调用TransportLayerASIO::_acceptConnection、TransportLayerASIO::ASIOSourceTicket::fillImpl和
+		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)
+		|
+	    \|/
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+*/
 
 
 //ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
@@ -311,21 +324,33 @@ void scheduler::compensating_work_started()
   ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
 }
 
-//accept流程
+/*
+//accept对应的状态机任务调度流程
 //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
 //->start_accept_op->epoll_reactor::post_immediate_completion
 
-//普通read write op操作入队流程
+//普通read write对应的状态机任务入队流程
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::post_immediate_completion
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::do_dispatch
 
-//普通读写read write 从队列获取op执行流程
+//普通读写read write对应的状态机任务出队流程
 //ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one
 //->scheduler::do_wait_one调用
 //mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for
 //->io_context::run_one_until->schedule::wait_one
+		|
+		|1.先进行状态机任务调度(也就是mongodb中TransportLayerASIO._workerIOContext  TransportLayerASIO._acceptorIOContext相关的任务)
+		|2.在执行步骤1对应调度任务过程中最终调用TransportLayerASIO::_acceptConnection、TransportLayerASIO::ASIOSourceTicket::fillImpl和
+		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)
+		|
+	    \|/
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+*/
+
 void scheduler::post_immediate_completion(
     scheduler::operation* op, bool is_continuation)
 {
@@ -398,19 +423,32 @@ void scheduler::post_deferred_completions(
 }
 
 
-//accept流程
+/*
+//accept对应的状态机任务调度流程
 //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
 //->start_accept_op->epoll_reactor::post_immediate_completion
 
-//普通read write op操作入队流程
+//普通read write对应的状态机任务入队流程
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::post_immediate_completion
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::do_dispatch
 
-//普通读写read write 从队列获取op执行流程
-//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
-//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until->schedule::wait_one
+//普通读写read write对应的状态机任务出队流程
+//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one
+//->scheduler::do_wait_one调用
+//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for
+//->io_context::run_one_until->schedule::wait_one
+		|
+		|1.先进行状态机任务调度(也就是mongodb中TransportLayerASIO._workerIOContext  TransportLayerASIO._acceptorIOContext相关的任务)
+		|2.在执行步骤1对应调度任务过程中最终调用TransportLayerASIO::_acceptConnection、TransportLayerASIO::ASIOSourceTicket::fillImpl和
+		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)
+		|
+	    \|/
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+*/
 
 
 //入队
@@ -508,19 +546,32 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
   return 0;
 }
 
-//accept流程
+/*
+//accept对应的状态机任务调度流程
 //TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept
 //->start_accept_op->epoll_reactor::post_immediate_completion
 
-//普通read write op操作入队流程
+//普通read write对应的状态机任务入队流程
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::post_immediate_completion
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 //->scheduler::do_dispatch
 
-//普通读写read write 从队列获取op执行流程
-//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
-//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for->io_context::run_one_until->schedule::wait_one
+//普通读写read write对应的状态机任务出队流程
+//ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one
+//->scheduler::do_wait_one调用
+//mongodb中ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_one_for
+//->io_context::run_one_until->schedule::wait_one
+		|
+		|1.先进行状态机任务调度(也就是mongodb中TransportLayerASIO._workerIOContext  TransportLayerASIO._acceptorIOContext相关的任务)
+		|2.在执行步骤1对应调度任务过程中最终调用TransportLayerASIO::_acceptConnection、TransportLayerASIO::ASIOSourceTicket::fillImpl和
+		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)
+		|
+	    \|/
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+*/
 
 //ServiceExecutorAdaptive::_workerThreadRoutine->io_context::run_for->scheduler::wait_one->scheduler::do_wait_one调用
 //wait一段时间  

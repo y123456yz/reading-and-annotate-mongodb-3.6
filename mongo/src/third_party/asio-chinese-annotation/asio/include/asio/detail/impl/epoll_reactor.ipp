@@ -233,8 +233,9 @@ void epoll_reactor::move_descriptor(socket_type,
   source_descriptor_data = 0;
 }
 
-////reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
-//reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 void epoll_reactor::start_op(int op_type, socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data, reactor_op* op,
     bool is_continuation, bool allow_speculative)
