@@ -46,16 +46,25 @@ private:
   typedef conditionally_enabled_mutex mutex;
 
 public:
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+
 //reactive_socket_accept_op_base(新连接)	reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
   //descriptor_state.op_queue_[op_types]
   enum op_types {  //搜索reactor::read_op reactor::write_op 
   //accept获取对应新链接fd，见reactive_socket_accept_op_base
   	read_op = 0,  //新链接到来或者数据到来
     write_op = 1,  //写数据
-    connect_op = 1,  //客户端发起链接相关
+    connect_op = 1,  //客户端发起链接相关  reactive_socket_service_base::start_connect_op
     except_op = 2, 
     max_ops = 3 
     };
+
+  
+  //accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+  //读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+  //写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 
   // Per-descriptor queues.   op操作队列     //reactive_socket_service_base.reactor_data_为该类型
   //这里的operation初始化为epoll_reactor::descriptor_state::do_complete，见epoll_reactor::descriptor_state::descriptor_state   
@@ -72,9 +81,15 @@ public:
 	//epoll_reactor::deregister_descriptor置为-1
     int descriptor_; //句柄 epoll_reactor::register_descriptor  epoll_reactor::register_internal_descriptor
     uint32_t registered_events_;
+    
+	//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+	//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+	//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+	
 	//入队epoll_reactor::start_op  epoll_reactor::register_internal_descriptor注册到epoll
 	//参考epoll_reactor::descriptor_state::perform_io,
 	//reactive_socket_accept_op_base(新连接)	reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
+	//epoll各种不同的读 写 新链接 异常事件注册及其对应的回调都放该队列
     op_queue<reactor_op> op_queue_[max_ops];  //epoll_reactor::start_op中op入队，执行在epoll_reactor::descriptor_state::perform_io
     bool try_speculative_[max_ops];
 	//epoll_reactor::deregister_descriptor置为true

@@ -54,7 +54,7 @@ using std::stringstream;
 
 /**
  * Implements the MongoD side of the count command.
- */
+ */ //count命令，再command里面统计
 class CmdCount : public BasicCommand {
 public:
     CmdCount() : BasicCommand("count") {}
