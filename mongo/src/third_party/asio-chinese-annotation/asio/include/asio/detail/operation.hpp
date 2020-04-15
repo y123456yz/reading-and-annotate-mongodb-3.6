@@ -29,7 +29,7 @@ namespace detail {
 #if defined(ASIO_HAS_IOCP)
 typedef win_iocp_operation operation;
 #else
-//descriptor_state  reactor_op  completion_handler继承该类
+// reactor_op(网络IO事件处理任务)  completion_handler(全局任务)  descriptor_state(reactor_op对应的网络IO事件任务最终加入到该结构中由epoll触发处理) 
 typedef scheduler_operation operation;
 #endif
 

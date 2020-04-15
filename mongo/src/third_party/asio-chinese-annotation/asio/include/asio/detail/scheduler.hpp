@@ -183,6 +183,7 @@ private:
   mutable mutex mutex_;
 
   // Event to wake up blocked threads.
+  //唤醒等待锁得线程
   event wakeup_event_; 
 
   // The task to be run by this service.

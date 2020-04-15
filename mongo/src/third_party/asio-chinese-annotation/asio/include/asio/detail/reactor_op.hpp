@@ -39,9 +39,13 @@ Reactive_socket_send_op.hpp (include\asio\detail):class reactive_socket_send_op_
 Reactive_wait_op.hpp (include\asio\detail):class reactive_wait_op : public reactor_op
 Signal_set_service.ipp (include\asio\detail\impl):class signal_set_service::pipe_read_op : public reactor_op
 Signal_set_service.ipp (src\asio-srccode-yyzadd\detail\impl):class signal_set_service::pipe_read_op : public reactor_op
-*/ //mongodb使用了reactive_socket_accept_op_base   reactive_socket_recv_op_base reactive_socket_send_op_base
+*/ 
+
+// reactor_op(网络IO事件处理任务)  completion_handler(全局任务)继承该类 descriptor_state(reactor_op对应的网络IO事件任务最终加入到该结构中由epoll触发处理) 
+
+//mongodb使用了reactive_socket_accept_op_base   reactive_socket_recv_op_base reactive_socket_send_op_base
 //reactive_socket_accept_op_base继承该类,accept对应的op为reactive_socket_accept_op_base   
-class reactor_op 
+class reactor_op  //reactor_op对应的网络事件回调注册见epoll_reactor::start_op
 //descriptor_state.op_queue_[]队列是该类型，真正执行通过epoll_wait后和获取descriptor_state : operation回调信息    
   : public operation //也就是scheduler_operation
 {
