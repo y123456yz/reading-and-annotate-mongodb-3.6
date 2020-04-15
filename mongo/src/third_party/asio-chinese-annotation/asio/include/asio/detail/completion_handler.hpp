@@ -28,7 +28,8 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
-	//io_context::dispatch  io_context::post中构造使用
+// reactor_op(网络IO事件处理任务)  completion_handler(全局任务)继承该类 descriptor_state(reactor_op对应的网络IO事件任务最终加入到该结构中由epoll触发处理) 
+//io_context::dispatch  io_context::post中构造使用
 class completion_handler : public operation   //reactor_op  completion_handler继承operation
 {
 public:

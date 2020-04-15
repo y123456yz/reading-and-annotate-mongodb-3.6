@@ -28,6 +28,14 @@
 namespace asio {
 namespace detail {
 
+//accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
+//读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
+//EPOLL对应网络事件回调：reactive_socket_accept_op_base(新连接) reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
+//operation分类:reactor_op(网络IO事件处理任务)	completion_handler(全局任务) descriptor_state(reactor_op对应的网络IO事件任务最终加入到该结构中由epoll触发处理)
+
+
+
 //reactive_socket_recv_op继承该类
 template <typename MutableBufferSequence>
 //reactive_socket_recv_op继承该类

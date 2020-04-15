@@ -37,8 +37,8 @@ class scheduler_operation //scheduler类中使用  执行见scheduler::do_run_one
 {
 public:
   typedef scheduler_operation operation_type;
-  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
-  //completion_handler类:对应completion_handler::do_complete
+  //reactor_op类(对应网络事件处理任务):perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //completion_handler类(对应全局任务):对应completion_handler::do_complete
 
   //reactor_op  completion_handler中赋值func_
   void complete(void* owner, const asio::error_code& ec,
