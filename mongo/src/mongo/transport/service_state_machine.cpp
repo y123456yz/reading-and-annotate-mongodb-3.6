@@ -150,10 +150,10 @@ public:
         if (oldThreadName != _ssm->_threadName) {
 			//记录下之前的线程名
             _ssm->_oldThreadName = getThreadName().toString();
-			log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_oldThreadName;
+			//log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_oldThreadName;
             setThreadName(_ssm->_threadName); //把当前线程改名为_threadName
 			//sleep(60);
-			log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
+			//log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
         }
 
         // Swap the current Client so calls to cc() work as expected
@@ -655,3 +655,4 @@ void ServiceStateMachine::_cleanupSession(ThreadGuard guard) {
 }
 
 }  // namespace mongo
+

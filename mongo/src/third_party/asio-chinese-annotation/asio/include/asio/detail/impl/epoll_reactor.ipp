@@ -723,14 +723,16 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
     : reactor_(r), first_op_(0)
   {
   }
-
+ 
   ~perform_io_cleanup_on_block_exit()
-  {
-    if (first_op_)
+  { 
+    //配合epoll_reactor::descriptor_state::perform_io阅读，可以看出第一个op由本线程获取，其他op放入到勒ops_队列
+    //队首的op任务由本线程处理，其他op任务放入全局任务队列，由线程池中线程调度执行
+	if (first_op_)
     {
       // Post the remaining completed operations for invocation.
       if (!ops_.empty())
-	  	//scheduler::post_deferred_completions
+	  	//scheduler::post_deferred_completions，op任务放入全局队列，延迟执行
         reactor_->scheduler_.post_deferred_completions(ops_);
 
       // A user-initiated operation has completed, but there's no need to
@@ -742,6 +744,8 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
       // No user-initiated operations have completed, so we need to compensate
       // for the work_finished() call that the scheduler will make once this
       // operation returns.
+
+	  //队首的线程由本线程处理，其他op任务放入全局任务队列
       reactor_->scheduler_.compensating_work_started();
     }
   }
@@ -759,6 +763,7 @@ epoll_reactor::descriptor_state::descriptor_state(bool locking)
 }
 
 //epoll_reactor::descriptor_state::do_complete执行
+//网络IO相关的任务处理，如accept接收新链接、接收数据、发送数据
 operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
 {
   mutex_.lock();
@@ -778,7 +783,8 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
       {
        //reactive_socket_accept_op_base::do_perform  reactive_socket_recv_op_base::do_perform
   //reactive_socket_send_op_base::do_perform  分别对应新链接，读取数据，发送数据的底层实现
-        if (reactor_op::status status = op->perform())
+        if (reactor_op::status status = op->perform()) 
+		//status为true表示成功，false表示底层处理失败
         {
           op_queue_[j].pop();
           io_cleanup.ops_.push(op);
@@ -788,6 +794,7 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
             break;
           }
         }
+		//例如如果没读到一个完整的数据，则这里直接退出，继续循环处理其他网络数据，下次继续读取。
         else
           break;
       }
@@ -798,12 +805,19 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
   // be posted for later by the io_cleanup object's destructor.
    //这里只返回了第一个op，其他的op在~perform_io_cleanup_on_block_exit处理
   io_cleanup.first_op_ = io_cleanup.ops_.front();
-  io_cleanup.ops_.pop();
+  //把返回的第一个从队列中清除，剩余的op还在队列中
+  io_cleanup.ops_.pop(); 
+
+  //该逻辑的总体思路：队首的op任务由本线程处理，其他op任务放入全局任务队列，由线程池中线程调度执行
+
+  //只返回第一个op,外层的epoll_reactor::descriptor_state::do_complete中执行该op对应的complete
   return io_cleanup.first_op_;
 }
 
 //赋值给epoll_reactor::descriptor_state::descriptor_state:operation，见epoll_reactor::descriptor_state::descriptor_state
 //scheduler::do_run_one  scheduler::do_wait_one中执行
+
+//网络IO相关的任务处理，如accept接收新链接、接收数据、发送数据及其他们对应回调处理
 void epoll_reactor::descriptor_state::do_complete(
     void* owner, operation* base,
     const asio::error_code& ec, std::size_t bytes_transferred)
@@ -817,7 +831,10 @@ void epoll_reactor::descriptor_state::do_complete(
     //注意descriptor_data下有很大perform_func执行了，但是这里只有第一个perform_func对应的complete_func得到了执行
     //其他的complete_func在~perform_io_cleanup_on_block_exit析构函数中入队到scheduler.op_queue_，等待其他线程调度执行
     {
-      //执行complete_func，也就是mongodb模式为adaptive的task
+      //执行complete_func, 也就是reactive_socket_accept_op_base  reactive_socket_recv_op_base reactive_socket_send_op_base  
+      //这三个IO操作对应的complete_func回调
+
+	  //注意这里只执行了网络IO事件任务中的一个，其他的在perform_io中入队到全局队列中了，等待其他线程执行
       op->complete(owner, ec, 0);
     }
   }

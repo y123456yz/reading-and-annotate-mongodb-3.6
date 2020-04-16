@@ -508,7 +508,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         // as soon as possible.
         //scheduler::do_run_one->epoll_reactor::run
         //通过epoll获取所有得网络事件op入队到private_op_queue, 最终再通过scheduler::poll_one scheduler::poll入队到op_queue_
-		//epoll_reactor::run
+		//epoll_reactor::run      this_thread.private_op_queue队列成员的op类型为descriptor_state
 		task_->run(more_handlers ? 0 : -1, this_thread.private_op_queue);
 		//函数exit的时候执行前面的on_exit析构函数从而把this_thread.private_op_queue入队到scheduler.op_queue_
       }
@@ -529,8 +529,10 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 		//函数exit的时候执行前面的on_exit析构函数从而把this_thread.private_op_queue入队到scheduler.op_queue_
         (void)on_exit;
 
-		//reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
-  		//completion_handler类:对应completion_handler::do_complete
+		//这里的op包含两种: reactor_op(网络IO事件处理任务)对应的回调(accept新连接回调、读到一个完整mongo报文的回调， 写数据回调)  
+		//completion_handler(全局任务回调:TransportLayerASIO::_acceptConnection、ServiceExecutorAdaptive::schedule、ServiceExecutorAdaptive::_workerThreadRoutine)
+		
+
         o->complete(this, ec, task_result); //在外层的scheduler::run循环执行
 
         return 1;
@@ -620,7 +622,8 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
       // as soon as possible.
       //scheduler::do_run_one->epoll_reactor::run
       //通过epoll获取所有得网络事件op入队到private_op_queue, 最终再通过scheduler::poll_one scheduler::poll入队到op_queue_
-      task_->run(more_handlers ? 0 : usec, this_thread.private_op_queue);
+      //this_thread.private_op_queue队列成员的op类型为descriptor_state
+	  task_->run(more_handlers ? 0 : usec, this_thread.private_op_queue);
     }
 
     o = op_queue_.front();
@@ -654,9 +657,9 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
-  //completion_handler类:对应completion_handler::do_complete
 
+  //这里的op包含两种: reactor_op(网络IO事件处理任务)对应的回调(accept新连接回调、读到一个完整mongo报文的回调， 写数据回调)  
+  //completion_handler(全局任务回调:TransportLayerASIO::_acceptConnection、ServiceExecutorAdaptive::schedule、ServiceExecutorAdaptive::_workerThreadRoutine)
   o->complete(this, ec, task_result);
 
   return 1;  
@@ -686,7 +689,7 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
 
       // Run the task. May throw an exception. Only block if the operation
       // queue is empty and we're not polling, otherwise we want to return
-      // as soon as possible.
+      // as soon as possible.  this_thread.private_op_queue队列成员的op类型为descriptor_state
       task_->run(0, this_thread.private_op_queue);
     }
 
@@ -717,8 +720,8 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
-  //completion_handler类:对应completion_handler::do_complete
+  //这里的op包含两种: reactor_op(网络IO事件处理任务)对应的回调(accept新连接回调、读到一个完整mongo报文的回调， 写数据回调)  
+  //completion_handler(全局任务回调:TransportLayerASIO::_acceptConnection、ServiceExecutorAdaptive::schedule、ServiceExecutorAdaptive::_workerThreadRoutine)
   o->complete(this, ec, task_result);
 
   return 1;

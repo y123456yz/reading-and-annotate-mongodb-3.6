@@ -276,7 +276,7 @@ Status TransportLayerASIO::start() { //listen线程处理
     _running.store(true);
 
 	
-	warning() << "222 yang test  TransportLayerASIO::start";
+	//warning() << "222 yang test  TransportLayerASIO::start";
 	//这里专门起一个线程做listen相关的accept事件处理
 	//注意套接字的初始化 bind listen操作由initandlisten完成，listen线程只是负责accept事件的循环处理
     _listenerThread = stdx::thread([this] {
@@ -286,7 +286,7 @@ Status TransportLayerASIO::start() { //listen线程处理
             asio::io_context::work work(*_acceptorIOContext); 
 			//_acceptorIOContext和_acceptors是关联的，见TransportLayerASIO::setup
             try {
-				warning() << "yang test  TransportLayerASIO::start";
+				//warning() << "yang test  TransportLayerASIO::start";
 				//TransportLayerASIO::_acceptConnection中进行accept的op操作入队，TransportLayerASIO::start出对执行对应的accept op回调
 				//异步调度_acceptConnection中的TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession
 				//回调函数见TransportLayerASIO::_acceptConnection
@@ -297,10 +297,10 @@ Status TransportLayerASIO::start() { //listen线程处理
             }
         }
 		//db.shutdown的时候，会走到这里
-		warning() << "yang test  TransportLayerASIO::start end";
+		//warning() << "yang test  TransportLayerASIO::start end";
     }); //创建listener线程
 
-	warning() << "111 yang test  TransportLayerASIO::start";
+	//warning() << "111 yang test  TransportLayerASIO::start";
 	/*
 	现在的默认配置都是该模型:
 	mongod为每个连接创建一个线程，创建时做了一定优化，将栈空间设置为1M，减少了线程的内存开销。
