@@ -30,7 +30,9 @@ struct scheduler_thread_info : public thread_info_base
 {
   ////scheduler::do_run_one->epoll_reactor::run 获取对应op，
   // 最终再通过scheduler::poll_one scheduler::poll scheduler::task_cleanup和scheduler::work_cleanup析构函数入队到scheduler::op_queue_
-  op_queue<scheduler_operation> private_op_queue; //队列内容为descriptor_state : operation 
+  //private_op_queue队列成员的op类型为descriptor_state
+  op_queue<scheduler_operation> private_op_queue; 
+  
   long private_outstanding_work;
 };
 
