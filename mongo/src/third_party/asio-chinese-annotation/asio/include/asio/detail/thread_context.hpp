@@ -31,7 +31,7 @@ class thread_context
 {
 public:
   // Per-thread call stack to track the state of each thread in the context.
-  //参考scheduler.ipp里面搜索thread_call_stack
+  //参考scheduler.ipp里面搜索thread_call_stack    所以工作线程都会加入到call_stack.top_链表中
   typedef call_stack<thread_context, thread_info_base> thread_call_stack;
 };
 

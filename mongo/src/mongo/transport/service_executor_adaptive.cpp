@@ -49,7 +49,7 @@ namespace transport {
 namespace {
 // The executor will always keep this many number of threads around. If the value is -1,
 // (the default) then it will be set to number of cores / 2.
-//实时在线调整db.adminCommand( { setParameter: 1, adaptiveServiceExecutorReservedThreads: 10} ) 
+//实时在线调整db.adminCommand( { setParameter: 1, adaptiveServiceExecutorReservedThreads: 200} ) 
 
 //最少默认都要这么多个线程运行
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorReservedThreads, int, 1); //yang change debug
@@ -290,13 +290,35 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 		|
 		|1.先进行状态机任务调度(也就是mongodb中TransportLayerASIO._workerIOContext  TransportLayerASIO._acceptorIOContext相关的任务)
 		|2.在执行步骤1对应调度任务过程中最终调用TransportLayerASIO::_acceptConnection、TransportLayerASIO::ASIOSourceTicket::fillImpl和
-		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)
+		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册及获取到一个完整报文得回调(下面箭头部分)
 		|
 	    \|/
 //accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
 //读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 //写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 */
+
+	//reactive_socket_service_base::start_accept_op 
+	//mongodb accept异步接收链接流程: 
+	//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept(这里构造reactive_socket_accept_op_base，后续得epoll获取新链接得handler回调也在这里得do_complete中执行)
+	//->reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op中进行accept注册
+	
+	//mongodb异步读取流程:
+	 //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+	 //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
+	 //->reactive_socket_service_base::start_op中进行EPOLL事件注册
+	//mongodb同步读取流程:
+	 //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+	 //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
+	
+	//write发送异步数据流程: 
+	 //mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op() 
+	 //->basic_stream_socket::async_write_some->reactive_socket_service_base::async_send(这里构造reactive_socket_send_op_base，后续得epoll写数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
+	 //->reactive_socket_service_base::start_op->reactive_socket_service_base::start_op中进行EPOLL事件注册
+	//write同步发送数据流程:
+	 //同步写流程asio::write->write_buffer_sequence->basic_stream_socket::write_some->reactive_socket_service_base::send->socket_ops::sync_send(这里是真正得同步发送)
+	
+
 //队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
     if ((flags & kMayRecurse) &&
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {

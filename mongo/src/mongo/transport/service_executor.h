@@ -44,6 +44,7 @@ namespace transport {
 /*
  * This is the interface for all ServiceExecutors.
  */
+//ServiceExecutorAdaptive(动态线程池模式)和ServiceExecutorSynchronous(同步线程,一个链接一个线程)继承该类
 //ServiceContext:_serviceExecutor成员为该类类型，setServiceExecutor中让它和ServiceContext关联在一起，线程池相关的类
 class ServiceExecutor {
 public:

@@ -36,12 +36,13 @@ namespace detail {
 //operation分类:reactor_op(网络IO事件处理任务)	completion_handler(全局任务) descriptor_state(reactor_op对应的网络IO事件任务最终加入到该结构中由epoll触发处理)
 
 
-//reactive_socket_move_accept_op::reactive_socket_accept_op_base::reactor_op继承关系
+//reactive_socket_accept_op继承关系
 template <typename Socket, typename Protocol>
+//reactive_socket_service::async_accept中注册
 class reactive_socket_accept_op_base : public reactor_op
 {
 public:
-  //reactive_socket_move_accept_op中构造赋值
+  //reactive_socket_accept_op中构造赋值
   reactive_socket_accept_op_base(socket_type socket,
       socket_ops::state_type state, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint, func_type complete_func)

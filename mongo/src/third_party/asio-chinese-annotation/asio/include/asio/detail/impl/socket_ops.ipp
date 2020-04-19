@@ -221,7 +221,7 @@ void complete_iocp_accept(socket_type s,
 #else // defined(ASIO_HAS_IOCP)
 
 //reactive_socket_accept_op_base::do_perform
-//accept接收新链接
+//accept接收新链接   
 bool non_blocking_accept(socket_type s,
     state_type state, socket_addr_type* addr, std::size_t* addrlen,
     asio::error_code& ec, socket_type& new_socket)
@@ -787,6 +787,7 @@ signed_size_type recv(socket_type s, buf* bufs, size_t count,
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
+//同步方式直接read数据  同步读:reactive_socket_service_base::receive调用  异步读:reactive_socket_recv_op_base::do_perform
 size_t sync_recv(socket_type s, state_type state, buf* bufs,
     size_t count, int flags, bool all_empty, asio::error_code& ec)
 {

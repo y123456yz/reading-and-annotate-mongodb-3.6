@@ -111,7 +111,7 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
                 markThreadIdle();
             }
             if (_numRunningWorkerThreads.loadRelaxed() > _numHardwareCores) {
-                stdx::this_thread::yield();//让listener线程本次不参与CPU调度，也就是放慢脚步
+                stdx::this_thread::yield();//线程本次不参与CPU调度，也就是放慢脚步
             }
         }
 		//log() << "yang test Starting ServiceExecutorSynchronous::schedule 11";

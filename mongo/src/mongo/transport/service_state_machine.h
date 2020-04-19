@@ -245,7 +245,8 @@ private:
     ServiceContext* const _serviceContext;
     
     //TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
-    transport::SessionHandle _sessionHandle; //默认对应ASIOSession 
+    //记录对端信息、同时负责数据相关得读写
+    transport::SessionHandle _sessionHandle; //默认对应ASIOSession   
     ServiceContext::UniqueClient _dbClient;
     const Client* _dbClientPtr;
     const std::string _threadName;

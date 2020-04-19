@@ -231,9 +231,9 @@ std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
-  //线程入队到top链表
+  //线程入队到call_stack.top_链表
   thread_call_stack::context ctx(this, this_thread);
-
+  //上锁
   mutex::scoped_lock lock(mutex_);
 
   //从操作队列中获取对应的operation执行，如果获取到operation并执行成功则返回1，否则返回0
@@ -350,15 +350,13 @@ void scheduler::compensating_work_started()
 //读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 //写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 */
-
 void scheduler::post_immediate_completion(
-    scheduler::operation* op, bool is_continuation)
+    scheduler::operation* op, bool is_continuation) 
 {
 #if defined(ASIO_HAS_THREADS)
   ////mongodb  asio::async_read(), asio::async_write(), asio::async_connect(), is_continuation默认返回true
   if (one_thread_ || is_continuation)
   { //如果本线程已经注册到thread队列，也就是本线程之前已执行过opration操作任务，则把新入队的这个op指派给本线程继续执行
-  //例如一个读取一个新链接fd上的数据，如果前一次是线程1读取套接字数据，但是数据不满足一个mongo协议，则下次还是本线程继续读，避免其他线程来读，如果一个完整mongo报文被多个不同线程读取，则乱套了
     if (thread_info_base* this_thread = thread_call_stack::contains(this))
     {
       ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
@@ -599,14 +597,17 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
     o = op_queue_.front();
   }
 
-  if (o == &task_operation_) //op_queue_队列上面没用IO op操作，于是通过epoll_wait获取网络IO事件信息对应的op加入对应队列
+  //该op是一个特殊的op, 说明需求去获取epoll上面的网络时间任务来处理，避免网络IO长期不被处理而处于饥饿状态
+  if (o == &task_operation_) 
   {
     op_queue_.pop();
+	//队列上还有其他等待执行的任务
     bool more_handlers = (!op_queue_.empty());
 
     task_interrupted_ = more_handlers;
 
-    if (more_handlers && !one_thread_)
+	//既然队列上还有任务需要被调度执行，则通知其他线程可以继续获取队列任务执行了，这样可以提高并发
+    if (more_handlers && !one_thread_) 
       wakeup_event_.unlock_and_signal_one(lock);
     else
       lock.unlock();
