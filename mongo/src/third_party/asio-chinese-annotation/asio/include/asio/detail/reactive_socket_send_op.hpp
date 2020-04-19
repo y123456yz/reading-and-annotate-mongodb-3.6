@@ -36,6 +36,7 @@ namespace detail {
 
 
 template <typename ConstBufferSequence>
+//reactive_socket_service_base::async_send中构造使用，reactive_socket_send_op基础该类
 class reactive_socket_send_op_base : public reactor_op
 {
 public:

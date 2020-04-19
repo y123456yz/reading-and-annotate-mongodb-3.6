@@ -336,7 +336,8 @@ void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     if (_transportMode == transport::Mode::kSynchronous) {
         _sinkCallback(_session()->getTransportLayer()->wait(std::move(ticket)));
     } else if (_transportMode == transport::Mode::kAsynchronous) {
-        _session()->getTransportLayer()->asyncWait(
+		//TransportLayerASIO::asyncWait
+		_session()->getTransportLayer()->asyncWait(
             std::move(ticket), [this](Status status) { _sinkCallback(status); });
     }
 }
@@ -352,6 +353,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
     auto remote = _session()->remote(); //获取客户端信息
 
     if (status.isOK()) {
+		//进入处理消息阶段
         _state.store(State::Process);
 
         // Since we know that we're going to process a message, call scheduleNext() immediately
@@ -361,6 +363,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
         // If this callback doesn't own the ThreadGuard, then we're being called recursively,
         // and the executor shouldn't start a new thread to process the message - it can use this
         // one just after this returns.
+        //接收到mongodb完整报文，还是由本线程处理后续得处理
         return _scheduleNextWithGuard(std::move(guard), ServiceExecutor::kMayRecurse);
     } else if (ErrorCodes::isInterruption(status.code()) ||
                ErrorCodes::isNetworkError(status.code())) {
@@ -570,6 +573,7 @@ void ServiceStateMachine::start(Ownership ownershipModel) {
 }
 
 //上面的ServiceStateMachine::start(新连接到来)  ServiceStateMachine::_sourceCallback(网络新数据到来触发)中执行
+//任务task等待入队调度
 void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {

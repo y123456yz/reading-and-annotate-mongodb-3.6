@@ -152,7 +152,7 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
   async_completion<CompletionHandler, void ()> init(handler);
 
   //scheduler::can_dispatch  本线程已经加入到了工作线程队列，直接执行handler
-  if (impl_.can_dispatch())
+  if (impl_.can_dispatch()) //本线程继续执行该handler
   {
     detail::fenced_block b(detail::fenced_block::full);
 	//直接运行handler
@@ -203,13 +203,34 @@ ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
 		|
 		|1.先进行状态机任务调度(也就是mongodb中TransportLayerASIO._workerIOContext	TransportLayerASIO._acceptorIOContext相关的任务)
 		|2.在执行步骤1对应调度任务过程中最终调用TransportLayerASIO::_acceptConnection、TransportLayerASIO::ASIOSourceTicket::fillImpl和
-		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)
+		|  TransportLayerASIO::ASIOSinkTicket::fillImpl进行新连接处理、数据读写事件epoll注册(下面箭头部分)及其对应回调
 		|
 		\|/
 //accept对应的新链接epoll事件注册流程:reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op
 //读数据epoll事件注册流程:reactive_descriptor_service::async_read_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 //写数据epoll事件注册流程:reactive_descriptor_service::async_write_some->reactive_descriptor_service::start_op->epoll_reactor::start_op
 */
+
+//reactive_socket_service_base::start_accept_op	
+//mongodb accept异步接收链接流程: 
+//TransportLayerASIO::_acceptConnection->basic_socket_acceptor::async_accept->reactive_socket_service::async_accept(这里构造reactive_socket_accept_op_base，后续得epoll获取新链接得handler回调也在这里得do_complete中执行)
+//->reactive_socket_service_base::start_accept_op->reactive_socket_service_base::start_op中进行accept注册
+
+//mongodb异步读取流程:
+ //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
+ //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
+ //->reactive_socket_service_base::start_op中进行EPOLL事件注册
+//mongodb同步读取流程:
+ //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+ //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
+
+//write发送异步数据流程: 
+ //mongodb中通过opportunisticWrite->asio::async_write->start_write_buffer_sequence_op->detail::write_op() 
+ //->basic_stream_socket::async_write_some->reactive_socket_service_base::async_send(这里构造reactive_socket_send_op_base，后续得epoll写数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
+ //->reactive_socket_service_base::start_op->reactive_socket_service_base::start_op中进行EPOLL事件注册
+//write同步发送数据流程:
+ //同步写流程asio::write->write_buffer_sequence->basic_stream_socket::write_some->reactive_socket_service_base::send->socket_ops::sync_send(这里是真正得同步发送)
+
 
 
 //mongodb的ServiceExecutorAdaptive::schedule调用->io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)

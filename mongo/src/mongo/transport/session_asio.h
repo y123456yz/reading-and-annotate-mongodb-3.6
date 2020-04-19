@@ -51,8 +51,8 @@ namespace transport {
 using GenericSocket = asio::generic::stream_protocol::socket;
 
 //createWithConfig  TransportLayerASIO::_acceptConnection中根据配置构造使用
-//记录链接相关的信息，如对端地址等
-//TransportLayerASIO类的相关接口使用
+//记录链接相关的信息，如对端地址等，同时数据调用ASIO相关读写相关也在该类中实现
+//TransportLayerASIO类的相关接口使用   ServiceStateMachine._sessionHandle为该成员类型  
 class TransportLayerASIO::ASIOSession : public Session {
     MONGO_DISALLOW_COPYING(ASIOSession);
 
@@ -184,16 +184,20 @@ private:
                            const MutableBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                            CompleteHandler&& handler) {
         std::error_code ec;
+        //先直接读
         auto size = asio::read(stream, buffers, ec);
         //协议栈内容已经读完了，但是还不够size字节，则继续异步读取
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
             // asio::read is a loop internally, so some of buffers may have been read into already.
             // So we need to adjust the buffers passed into async_read to be offset by size, if
             // size is > 0.
+            //buffers有大小size，实际读最多读size字节
             MutableBufferSequence asyncBuffers(buffers);
             if (size > 0) {
-                asyncBuffers += size;
+                asyncBuffers += size; //buffer offset向后移动
             }
+
+            //数据得读取及handler回调执行见asio库得read_op::operator
             asio::async_read(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else {
             handler(ec, size);
@@ -206,6 +210,7 @@ private:
                             const ConstBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                             CompleteHandler&& handler) {
         std::error_code ec;
+        //先直接写
         auto size = asio::write(stream, buffers, ec); 
         //一次性写size字节如果成功，则直接执行handler，否则没写完的数据通过异步方式继续写，写完后执行对应handler
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
@@ -217,6 +222,8 @@ private:
             if (size > 0) {
                 asyncBuffers += size;
             }
+
+            //数据得读取及handler回调执行见asio库得write_op::operator
             asio::async_write(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else {
             handler(ec, size);

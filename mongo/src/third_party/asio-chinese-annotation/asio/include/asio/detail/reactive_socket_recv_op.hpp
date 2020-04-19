@@ -59,7 +59,7 @@ public:
         static_cast<reactive_socket_recv_op_base*>(base));
 
     buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence> bufs(o->buffers_);
+        MutableBufferSequence> bufs(o->buffers_); //数据读到buffers_中
 
     status result = socket_ops::non_blocking_recv(o->socket_,
         bufs.buffers(), bufs.count(), o->flags_,
@@ -87,6 +87,7 @@ private:
 //mongodb通过TransportLayerASIO::ASIOSession::opportunisticRead->asio::async_read->start_read_buffer_sequence_op->read_op::operator
 //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive中构造reactive_socket_recv_op类
 template <typename MutableBufferSequence, typename Handler>
+//reactive_socket_service_base::async_receive中构造使用
 class reactive_socket_recv_op :
   public reactive_socket_recv_op_base<MutableBufferSequence>
 {

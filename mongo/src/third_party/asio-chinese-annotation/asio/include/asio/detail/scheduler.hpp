@@ -85,7 +85,7 @@ public:
   //scheduler::post_immediate_completion   scheduler::post_immediate_completion
   //epoll_reactor::schedule_timer  epoll_reactor::start_op
   //work_finished和work_started对应      io_context::work::work中调用
-  void work_started() //计数，代表当前有多少个任务正在运行
+  void work_started() //计数，实际上代表的是accept获取到的链接数
   {
     ++outstanding_work_;
   }
@@ -204,7 +204,9 @@ private:
   bool task_interrupted_;
 
   // The count of unfinished work.
-  //该io_context(也和scheduler对应，一个io_context对应一个scheduler)上运行的任务数
+  //该io_context(也和scheduler对应，一个io_context对应一个scheduler)上运行的描述符(含链接+定时器描述符)
+  //不包含socket描述符，因为socket()创建的套接字描述符对应的io_context用于处理accept事件，是一个单独的io_context
+  //实际上代表的是accept获取到的链接数fd个数+1(定时器fd)
   atomic_count outstanding_work_;
 
   // The queue of handlers that are ready to be delivered.
