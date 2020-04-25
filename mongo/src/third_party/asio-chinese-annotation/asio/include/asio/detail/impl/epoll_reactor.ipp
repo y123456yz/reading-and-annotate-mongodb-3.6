@@ -152,6 +152,7 @@ void epoll_reactor::init_task()
 int epoll_reactor::register_descriptor(socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data) //套接字 回调等相关信息
 {
+  //获取一个描述符descriptor_state信息，分配对应空间
   descriptor_data = allocate_descriptor_state();
 
   ASIO_HANDLER_REACTOR_REGISTRATION((
@@ -161,6 +162,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   {
     mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
+	//下面对descriptor_data进行相应的赋值
     descriptor_data->reactor_ = this;
     descriptor_data->descriptor_ = descriptor;
     descriptor_data->shutdown_ = false;
@@ -169,20 +171,17 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   }
 
   epoll_event ev = { 0, { 0 } };
-  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET; //注意这里是边沿触发
+  //同时把这些事件添加到epoll事件集，表示关注这些事件，注意这里是边沿触发
+  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET; 
   descriptor_data->registered_events_ = ev.events; 
   //赋值记录到ev.data.ptr中，当对应网络事件到底执行回调的时候可以通过该指针获取descriptor_data
   ev.data.ptr = descriptor_data; 
-  
+  //通过epoll_ctl把events添加到事件集，当对应事件发生，epoll_wait可以获取对应事件
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
   {
     if (errno == EPERM)
     {
-      // This file descriptor type is not supported by epoll. However, if it is
-      // a regular file then operations on it will not block. We will allow
-      // this descriptor to be used and fail later if an operation on it would
-      // otherwise require a trip through the reactor.
       descriptor_data->registered_events_ = 0;
       return 0;
     }
@@ -217,6 +216,7 @@ int epoll_reactor::register_internal_descriptor(
   epoll_event ev = { 0, { 0 } };
   ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET;
   descriptor_data->registered_events_ = ev.events;
+  //descriptor_data记录到该指针，epoll_reactor::run中通过对应事件获取该私有信息
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
@@ -281,6 +281,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
     return;
   }
 
+  //如果reactor_op还没有加入对应的op_queue_[i]队列，则EPOLL_CTL_MOD跟新epoll对应事件信息
   if (descriptor_data->op_queue_[op_type].empty())
   {
     if (allow_speculative
@@ -340,16 +341,18 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
       {
         descriptor_data->registered_events_ |= EPOLLOUT;
       }
-
+ 
       epoll_event ev = { 0, { 0 } };
       ev.events = descriptor_data->registered_events_;
+	  
       ev.data.ptr = descriptor_data;
+	  //再次跟新以下对应的IO事件
       epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
     }
   }
-  //入队
+  //把任务回调opration入队到descriptor_data的对应队列
   descriptor_data->op_queue_[op_type].push(op);
-  //scheduler::work_started
+  //scheduler::work_started  实际上就是链接数
   scheduler_.work_started();
 }
 
@@ -491,10 +494,12 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为desc
 
   // Block on the epoll descriptor.
   epoll_event events[128];
+  //epoll_wait获取到IO事件后返回，或者超时事件内没有对应网络IO事件，也返回
   int num_events = epoll_wait(epoll_fd_, events, 128, timeout);
  
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
   // Trace the waiting events.
+  //遍历获取对应的事件信息
   for (int i = 0; i < num_events; ++i)
   {
     void* ptr = events[i].data.ptr;
@@ -512,10 +517,13 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为desc
     else
     {
       unsigned event_mask = 0;
+	  //accept事件、网络数据到达事件
       if ((events[i].events & EPOLLIN) != 0)
         event_mask |= ASIO_HANDLER_REACTOR_READ_EVENT;
+	  //写事件
       if ((events[i].events & EPOLLOUT))
         event_mask |= ASIO_HANDLER_REACTOR_WRITE_EVENT;
+	  //异常事件
       if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0)
         event_mask |= ASIO_HANDLER_REACTOR_ERROR_EVENT;
       ASIO_HANDLER_REACTOR_EVENTS((context(),
@@ -534,6 +542,7 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为desc
   //IO事件类型有三种:interrupt,timer和普通的IO事件
   for (int i = 0; i < num_events; ++i)
   {
+    //该事件对应的私有信息指针，通过该指针就可以获取到对应的descriptor_data
     void* ptr = events[i].data.ptr;
     if (ptr == &interrupter_) //在epoll_reactor::interrupt注册
     {
@@ -560,14 +569,16 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops) //ops队列内容为desc
       // The descriptor operation doesn't count as work in and of itself, so we
       // don't call work_started() here. This still allows the scheduler to
       // stop if the only remaining operations are descriptor operations.
+      //通过ptr获取对应descriptor_data信息
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
       if (!ops.is_enqueued(descriptor_data))  //不在队列中，则添加
       {
+        //对应事件位图置位
         descriptor_data->set_ready_events(events[i].events);
 		//epoll operation对应的回调函数是epoll_reactor::descriptor_state::do_complete
         ops.push(descriptor_data); 
       }
-      else  //descriptor_data已经在ops的队列中了
+      else  //descriptor_data已经在ops的队列中了，对应事件位图置位
       {
         descriptor_data->add_ready_events(events[i].events);
       }
@@ -796,6 +807,7 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
   // out-of-band data is read before normal data.
   //分别对应链接到达或者数据来临、可以写数据、有紧急的数据可读(这里应该表示有带外数据到来)
   static const int flag[max_ops] = { EPOLLIN, EPOLLOUT, EPOLLPRI };
+  //循环处理各自不同的reactor_op(reactive_socket_accept_op_base   reactive_socket_recv_op_base reactive_socket_send_op_base)
   for (int j = max_ops - 1; j >= 0; --j)
   {
     if (events & (flag[j] | EPOLLERR | EPOLLHUP)) //有读写事件、或者epoll_wait有获取到异常，如链接断开等
@@ -805,9 +817,14 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
       {
        //reactive_socket_accept_op_base::do_perform  reactive_socket_recv_op_base::do_perform
   //reactive_socket_send_op_base::do_perform  分别对应新链接，读取数据，发送数据的底层实现
+  	//执行底层数据收发的perform_io，也就是如下：
+	//1. accept处理底层实现:reactive_socket_accept_op_base::do_perform 
+	//2. 读处理底层实现：reactive_socket_recv_op_base::do_perform
+	//3. 写处理底层实现：reactive_socket_send_op_base::do_perform
         if (reactor_op::status status = op->perform()) 
 		//status为true表示成功，false表示底层处理失败
         {
+          //取出对应的op，入队到临时队列io_cleanup.ops_
           op_queue_[j].pop();
           io_cleanup.ops_.push(op);
           if (status == reactor_op::done_and_exhausted)
@@ -816,7 +833,7 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
             break;
           }
         }
-		//例如如果没读到一个完整的数据，则这里直接退出，继续循环处理其他网络数据，下次继续读取。
+		//如果有异常
         else
           break;
       }
@@ -847,7 +864,7 @@ void epoll_reactor::descriptor_state::do_complete(
   if (owner)
   {
     descriptor_state* descriptor_data = static_cast<descriptor_state*>(base);
-    uint32_t events = static_cast<uint32_t>(bytes_transferred);
+    uint32_t events = static_cast<uint32_t>(bytes_transferred); //事件位图
 	//执行底层数据收发的perform_func
     if (operation* op = descriptor_data->perform_io(events)) //
     //注意descriptor_data下有很大perform_func执行了，但是这里只有第一个perform_func对应的complete_func得到了执行

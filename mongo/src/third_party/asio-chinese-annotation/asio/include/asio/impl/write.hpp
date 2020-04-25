@@ -282,9 +282,9 @@ namespace detail
         //basic_stream_socket::async_write_some
           stream_.async_write_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(write_op)(*this));
-          return; //注意这里已经return，后面得流程没用
+          return; //注意这里已经return 
 
-		  default: //为啥有这个流程???????
+		  default: //为啥有这个流程???????  当case不为1的时候走这里
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;

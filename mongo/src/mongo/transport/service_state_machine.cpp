@@ -363,7 +363,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
         // If this callback doesn't own the ThreadGuard, then we're being called recursively,
         // and the executor shouldn't start a new thread to process the message - it can use this
         // one just after this returns.
-        //接收到mongodb完整报文，还是由本线程处理后续得处理
+        
         return _scheduleNextWithGuard(std::move(guard), ServiceExecutor::kMayRecurse);
     } else if (ErrorCodes::isInterruption(status.code()) ||
                ErrorCodes::isNetworkError(status.code())) {

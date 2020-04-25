@@ -54,8 +54,8 @@ public:
   //descriptor_state.op_queue_[op_types]
   enum op_types {  //搜索reactor::read_op reactor::write_op 
   //accept获取对应新链接fd，见reactive_socket_accept_op_base
-  	read_op = 0,  //新链接到来或者数据到来
-    write_op = 1,  //写数据
+  	read_op = 0,  //新链接到来或者数据到来reactive_socket_accept_op_base  reactive_socket_recv_op_base
+    write_op = 1,  //写数据reactive_socket_send_op_base
     connect_op = 1,  //客户端发起链接相关  reactive_socket_service_base::start_connect_op
     except_op = 2, 
     max_ops = 3 
@@ -72,7 +72,7 @@ public:
   //这里的operation初始化为epoll_reactor::descriptor_state::do_complete，见epoll_reactor::descriptor_state::descriptor_state   
   
   // reactor_op(网络IO事件处理任务)  completion_handler(全局任务) descriptor_state(reactor_op对应的网络IO事件任务最终加入到该结构中由epoll触发处理)
-  //每个链接都对应一个descriptor_state结构，负责该链接的IO事件注册及回调处理
+  //所有链接私有信息都存放在descriptor_state结构，负责该链接的IO事件注册及回调处理
   class descriptor_state : operation  
   {
     friend class epoll_reactor;
@@ -95,18 +95,29 @@ public:
 	//参考epoll_reactor::descriptor_state::perform_io,
 	//reactive_socket_accept_op_base(新连接)	reactive_socket_recv_op_base(读) reactive_socket_send_op_base(写)
 	//epoll各种不同的读 写 新链接 异常事件注册及其对应的回调都放该队列
+
+	//套接字描述符对应的读、写、accept及异常事件各自对应的Opration任务分别入队到各自的数组队列中
+	//op_queue_[I],i也就是对应上面的op_types
+	//所有链接的reactor_op都存放于对应的数组队列中，统一管理
     op_queue<reactor_op> op_queue_[max_ops];  //epoll_reactor::start_op中op入队，执行在epoll_reactor::descriptor_state::perform_io
     bool try_speculative_[max_ops];
 	//epoll_reactor::deregister_descriptor置为true
     bool shutdown_;
 
+	//descriptor_state初始化构造
     ASIO_DECL descriptor_state(bool locking);
+	//epoll事件集对应的位图信息，每个位置1表示对应网络事件发生
+	//这些位图上的事件处理在epoll_reactor::descriptor_state::do_complete
     void set_ready_events(uint32_t events) { task_result_ = events; }
     void add_ready_events(uint32_t events) { task_result_ |= events; }
 
 	//perform_io和do_complete的具体实现参考reactor_op的各种继承类，如reactive_socket_accept_op_base  reactive_socket_recv_op_base等
     //具体实现mongodb使用了reactive_socket_accept_op_base	reactive_socket_recv_op_base reactive_socket_send_op_base
+
+	//对应accept、读、写事件的底层Io处理，实现见reactive_socket_accept_op_base	
+	//reactive_socket_recv_op_base reactive_socket_send_op_base
 	ASIO_DECL operation* perform_io(uint32_t events);
+	//epoll_reactor::descriptor_state::do_complete
     ASIO_DECL static void do_complete(
         void* owner, operation* base,
         const asio::error_code& ec, std::size_t bytes_transferred);
@@ -261,7 +272,7 @@ private:
   scheduler& scheduler_;
 
   // Mutex to protect access to internal data.
-  //全局锁
+  //事件私有信息保护锁
   mutex mutex_;
 
   // The interrupter is used to break a blocking epoll_wait call.

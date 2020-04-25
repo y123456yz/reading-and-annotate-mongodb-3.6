@@ -79,7 +79,7 @@ public:
     return result;
   }
 
-  //在外层继承类中的do_complete中执行
+  //在外层继承类中的do_complete中执行,把新的链接fd注册的epoll事件集中
   void do_assign() //do_complete->do_assign->
   {
     if (new_socket_.get() != invalid_socket)
@@ -98,10 +98,9 @@ private:
   socket_ops::state_type state_;
   //accept获取到的新链接fd，见reactive_socket_accept_op_base::do_perform
   socket_holder new_socket_;
-  Socket& peer_; //对应reactive_socket_move_accept_op，见reactive_socket_move_accept_op构造函数
-  Protocol protocol_;
+  //客户端地址信息记录在这里面
+  Socket& peer_; 
   typename Protocol::endpoint* peer_endpoint_;
-  std::size_t addrlen_;
 };
 
 template <typename Socket, typename Protocol, typename Handler>
@@ -131,7 +130,7 @@ public:
     handler_work<Handler> w(o->handler_);
 
     // On success, assign new connection to peer socket object.
-    if (owner)
+    if (owner)//reactive_socket_accept_op::do_assign
       o->do_assign();
 
     ASIO_HANDLER_COMPLETION((*o));
@@ -158,6 +157,7 @@ public:
   }
 
 private:
+	//接收到新链接的回调，mongodb中对应ServiceEntryPointImpl::startSession
   Handler handler_;
 };
 

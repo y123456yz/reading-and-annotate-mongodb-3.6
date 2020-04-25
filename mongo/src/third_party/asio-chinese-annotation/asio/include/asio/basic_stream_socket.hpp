@@ -972,7 +972,7 @@ public:
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-	//reactive_socket_service::async_receive
+	//reactive_socket_service_base::async_receive
     this->get_service().async_receive(this->get_implementation(),
         buffers, 0, init.completion_handler);
 

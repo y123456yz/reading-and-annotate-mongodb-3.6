@@ -111,6 +111,7 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
 template <typename SyncReadStream, typename DynamicBuffer,
     typename CompletionCondition>
 //同步读  opportunisticRead中调用  opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+//这里会保证读取到buffers可用空间字节数才会返回
 std::size_t read(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
@@ -303,7 +304,7 @@ namespace detail
               ASIO_MOVE_CAST(read_op)(*this));
           return;  //注意这里return了
 
-		  default: //为什么有下面得逻辑？
+		  default: //为什么有下面得逻辑？ 和前面的case保持同步，如果不为1走这里
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;

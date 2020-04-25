@@ -75,8 +75,10 @@ public:
   }
 
 private:
+  //fd
   socket_type socket_;
   socket_ops::state_type state_;
+  //发送的数据在该buffer中
   ConstBufferSequence buffers_;
   socket_base::message_flags flags_;
 };
