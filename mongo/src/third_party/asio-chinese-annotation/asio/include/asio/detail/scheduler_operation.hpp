@@ -33,14 +33,13 @@ class scheduler;
 //descriptor_state reactor_op  completion_handler继承该类
 
 //reactor_op  completion_handler  descriptor_state继承该类        mongodb中operation分为三种，一种是completion_handler，另一种是reactor_op，还有一种descriptor_state
-class scheduler_operation //scheduler类中使用  执行见scheduler::do_run_one
+class scheduler_operation //执行见scheduler::do_wait_one
 {
 public:
   typedef scheduler_operation operation_type;
-  //reactor_op类(对应网络事件处理任务):perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  
+  //reactor_op类(对应网络事件处理任务):epoll_reactor::descriptor_state::do_complete
   //completion_handler类(对应全局任务):对应completion_handler::do_complete
-
-  //reactor_op  completion_handler中赋值func_
   void complete(void* owner, const asio::error_code& ec,
       std::size_t bytes_transferred)
   {
@@ -71,14 +70,14 @@ protected:
 
 private:
   friend class op_queue_access;
-  scheduler_operation* next_;
-  //真正执行见epoll_reactor::descriptor_state::do_complete
-  //reactor_op类:perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
-  //completion_handler类:对应completion_handler::do_complete
+  
+  //reactor_op类(对应网络事件处理任务):epoll_reactor::descriptor_state::do_complete
+  //completion_handler类(对应全局任务):对应completion_handler::do_complete
   func_type func_;
 protected:
   friend class scheduler;
   //获取epoll_wait返回的event信息，赋值见set_ready_events add_ready_events
+  //所有的网络事件通过task_result_位图记录，生效见epoll_reactor::descriptor_state::do_complete
   unsigned int task_result_; // Passed into bytes transferred.
 };
 

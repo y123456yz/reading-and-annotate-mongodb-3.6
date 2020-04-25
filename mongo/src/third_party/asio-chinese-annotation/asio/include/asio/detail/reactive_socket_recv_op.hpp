@@ -78,8 +78,10 @@ public:
   }
 
 private:
+  //fd
   socket_type socket_;
   socket_ops::state_type state_;
+  //存储读取的数据的buf,里面需要读取数据的长度
   MutableBufferSequence buffers_;
   socket_base::message_flags flags_;
 };
@@ -104,6 +106,7 @@ public:
     handler_work<Handler>::start(handler_);
   }
 
+  //读取到一个完整的mongo数据后，回调在这里执行，实际上是工作线程从队列获取op执行的，见
   static void do_complete(void* owner, operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
@@ -146,3 +149,4 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_REACTIVE_SOCKET_RECV_OP_HPP
+

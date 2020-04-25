@@ -71,6 +71,7 @@ public:
 private:
   socket_type socket_;
   int protocol_type_;
+  
   MutableBufferSequence buffers_;
   Endpoint& sender_endpoint_;
   socket_base::message_flags flags_;

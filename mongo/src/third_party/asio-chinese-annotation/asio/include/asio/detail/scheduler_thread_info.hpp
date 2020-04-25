@@ -28,7 +28,7 @@ class scheduler_operation;
 
 struct scheduler_thread_info : public thread_info_base
 {
-  ////scheduler::do_run_one->epoll_reactor::run 获取对应op，
+  ////scheduler::do_wait_one->epoll_reactor::run 获取对应op，
   // 最终再通过scheduler::task_cleanup和scheduler::work_cleanup析构函数入队到scheduler::op_queue_
   //epoll相关的网络事件任务首先入队到私有队列private_op_queue，然后再入队到全局op_queue_队列，这样就可以一次性把获取到的网络事件任务入队到全局队列，只需要加锁一次
   //private_op_queue队列成员的op类型为descriptor_state，

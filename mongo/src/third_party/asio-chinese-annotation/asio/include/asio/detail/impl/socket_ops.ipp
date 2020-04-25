@@ -863,7 +863,7 @@ void complete_iocp_recv(state_type state,
 
 #else // defined(ASIO_HAS_IOCP)
 
-bool non_blocking_recv(socket_type s,
+bool non_blocking_recv(socket_type s, 
     buf* bufs, size_t count, int flags, bool is_stream,
     asio::error_code& ec, size_t& bytes_transferred)
 {

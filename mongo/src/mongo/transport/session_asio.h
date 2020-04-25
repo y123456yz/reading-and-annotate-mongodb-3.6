@@ -184,7 +184,7 @@ private:
                            const MutableBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                            CompleteHandler&& handler) {
         std::error_code ec;
-        //先直接读
+        //先直接同步方式从协议栈读取数据，直到读取到数据并且把协议栈数据读完
         auto size = asio::read(stream, buffers, ec);
         //协议栈内容已经读完了，但是还不够size字节，则继续异步读取
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
@@ -199,7 +199,8 @@ private:
 
             //数据得读取及handler回调执行见asio库得read_op::operator
             asio::async_read(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
-        } else {
+        } else { 
+        //直接read获取到size字节数据，则直接执行handler 
             handler(ec, size);
         }
     }

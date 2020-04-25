@@ -111,7 +111,7 @@ void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code
         return;
     }
 
-	//说明数据部分也读取出来了，一个完整的mongo报文读取完毕
+	//说明数据部分也读取出来了，一个完整的mongo报文读取完毕,也就是报文只带有头部，没有包体的协议请求
     if (msgLen == size) {
         finishFill(Status::OK());
         return;

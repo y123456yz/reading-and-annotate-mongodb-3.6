@@ -45,6 +45,8 @@ Signal_set_service.ipp (src\asio-srccode-yyzadd\detail\impl):class signal_set_se
 
 //mongodb使用了reactive_socket_accept_op_base   reactive_socket_recv_op_base reactive_socket_send_op_base
 //reactive_socket_accept_op_base继承该类,accept对应的op为reactive_socket_accept_op_base   
+
+////网络IO相关真正执行见epoll_reactor::descriptor_state::do_complete，然后调用reactor_op类的相应接口
 class reactor_op  //reactor_op对应的网络事件回调注册见epoll_reactor::start_op
 //descriptor_state.op_queue_[]队列是该类型，真正执行通过epoll_wait后和获取descriptor_state : operation回调信息    
   : public operation //也就是scheduler_operation
@@ -54,16 +56,20 @@ public:
   asio::error_code ec_;
 
   // The number of bytes transferred, to be passed to the completion handler.
+  //do_perform进行底层fd数据读写的字节数
   std::size_t bytes_transferred_;
 
   // Status returned by perform function. May be used to decide whether it is
   // worth performing more operations on the descriptor immediately.
+  //读取数据或者写数据
   enum status { not_done, done, done_and_exhausted };
 
   // Perform the operation. Returns true if it is finished.
   status perform() //执行perform_func_
   { //也就是reactive_socket_accept_op_base  reactive_socket_recv_op_base  
   //reactive_socket_send_op_base对应的do_perform
+
+  //epoll_reactor::descriptor_state::perform_io中调度执行
     return perform_func_(this);
   }
 
@@ -72,6 +78,7 @@ protected:
   //例如accept操作过程回调过程，一个执行accept操作，一个执行后续的complete_func操作(mongodb中的task)
   //例如recvmsg操作过程，一个执行reactive_socket_recv_op_base::do_perform(最终recvmsg)，一个执行后续complete_func操作(mongodb中的task)
   reactor_op(perform_func_type perform_func, func_type complete_func)
+  //例如接受数据的complete_func为reactive_socket_recv_op::do_complete
     : operation(complete_func),  //complete_func赋值给operation，在operation中执行
       bytes_transferred_(0),
       perform_func_(perform_func)
@@ -79,7 +86,7 @@ protected:
   }
 
 private:
-  //perform_func也就是底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
+  //perform_func也就是fd数据收发底层实现，赋值给reactor_op.perform_func_, complete_func赋值给父类operation的func,见reactor_op构造函数
   perform_func_type perform_func_;
 };
 
