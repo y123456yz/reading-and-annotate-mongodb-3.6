@@ -328,6 +328,7 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
 //·¢ËÍÊý¾Ý
 void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     // Sink our response to the client
+    //ServiceStateMachine::_sinkMessage->Session::sinkMessage->TransportLayerASIO::sinkMessage
     auto ticket = _session()->sinkMessage(toSink);
 
     _state.store(State::SinkWait);

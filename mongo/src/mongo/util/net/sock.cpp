@@ -159,6 +159,7 @@ const CString kKeepAliveInterval(X_STR_CONST("KeepAliveInterval"));
 #undef X_STR_CONST
 #endif
 
+//ASIOSession构造函数中调用
 void setSocketKeepAliveParams(int sock,
                               unsigned int maxKeepIdleSecs,
                               unsigned int maxKeepIntvlSecs) {

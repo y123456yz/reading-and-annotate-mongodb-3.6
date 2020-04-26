@@ -164,6 +164,7 @@ protected:
     Session();
 
 private:
+    //sessionIdCounter.addAndFetch(1) session×ÔÔö
     const Id _id;
 
     AtomicWord<TagMask> _tags;

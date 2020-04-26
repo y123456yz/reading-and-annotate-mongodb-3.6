@@ -75,10 +75,11 @@ class TransportLayerASIO final : public TransportLayer {
     MONGO_DISALLOW_COPYING(TransportLayerASIO);
 
 public:
-    struct Options {  //TransportLayerASIO::Options
+    struct Options {  //TransportLayerASIO::Options保持asio传输层相关参数信息
         explicit Options(const ServerGlobalParams* params);
-
+        //默认监听端口
         int port = ServerGlobalParams::DefaultDBPort;  // port to bind to
+        //ip配置列表，例如bindIp: 127.0.0.1,30.25.x.17，可以绑定多个IP
         std::string ipList;                            // addresses to bind to
 #ifndef _WIN32
         bool useUnixSockets = true;  // whether to allow UNIX sockets in ipList
@@ -86,7 +87,7 @@ public:
         bool enableIPv6 = false;                  // whether to allow IPv6 sockets in ipList
         //同步还是异步，赋值见createWithConfig
         Mode transportMode = Mode::kSynchronous;  // whether accepted sockets should be put into
-                                                  // non-blocking mode after they're accepted
+        //默认最大链接数限制，net.maxIncomingConnections配置                                         // non-blocking mode after they're accepted
         size_t maxConns = DEFAULT_MAX_CONN;       // maximum number of active connections
     };
 
@@ -124,7 +125,7 @@ private:
     using ASIOSessionHandle = std::shared_ptr<ASIOSession>;
     using ConstASIOSessionHandle = std::shared_ptr<const ASIOSession>;
     using GenericAcceptor = asio::basic_socket_acceptor<asio::generic::stream_protocol>;
-
+    
     void _acceptConnection(GenericAcceptor& acceptor);
 #ifdef MONGO_CONFIG_SSL
     SSLParams::SSLModes _sslMode() const;
@@ -185,7 +186,6 @@ private:
     */
     
     //boost::asio::io_context用于网络IO事件循环
-    //可以参考https://blog.csdn.net/qq_35976351/article/details/90373124
     //_acceptorIOContext针对socket()对应的fd1,也就是处理accept事件，accept事件到来会创建一个新的链接fd2
     //_workerIOContext处理后续的新链接fd2上的所有读写事件，fd2网络IO数据收发真正生效见ServiceExecutorAdaptive::_workerThreadRoutine
     
@@ -208,13 +208,16 @@ private:
     std::vector<std::pair<SockAddr, GenericAcceptor>> _acceptors;
 
     // Only used if _listenerOptions.async is false.
+    //listener线程，专门负责accept处理
     stdx::thread _listenerThread;
-
+	///服务入口，mongod和mongos有不同的入口点
     ServiceEntryPoint* const _sep = nullptr;
+	//运行状态标识
     AtomicWord<bool> _running{false};
 
-    //生效使用见TransportLayerASIO::setup
+    //生效使用见TransportLayerASIO::setup，配置来验ServerGlobalParams
     Options _listenerOptions;
+
 };
 
 }  // namespace transport

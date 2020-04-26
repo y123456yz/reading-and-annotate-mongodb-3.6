@@ -52,25 +52,33 @@ using GenericSocket = asio::generic::stream_protocol::socket;
 
 //createWithConfig  TransportLayerASIO::_acceptConnection中根据配置构造使用
 //记录链接相关的信息，如对端地址等，同时数据调用ASIO相关读写相关也在该类中实现
-//TransportLayerASIO类的相关接口使用   ServiceStateMachine._sessionHandle为该成员类型  
+//TransportLayerASIO类的相关接口使用   
+//ServiceStateMachine._sessionHandle  ASIOTicket._session为该成员类型  
 class TransportLayerASIO::ASIOSession : public Session {
     MONGO_DISALLOW_COPYING(ASIOSession);
 
 public:
+    //初始化构造 TransportLayerASIO::_acceptConnection调用
     ASIOSession(TransportLayerASIO* tl, GenericSocket socket)
         : _socket(std::move(socket)), _tl(tl) {
         std::error_code ec;
 
+        //异步方式设置为非阻塞读
         _socket.non_blocking(_tl->_listenerOptions.transportMode == Mode::kAsynchronous, ec);
         fassert(40490, ec.value() == 0);
 
+        //获取套接字的family
         auto family = endpointToSockAddr(_socket.local_endpoint()).getType();
+        //
         if (family == AF_INET || family == AF_INET6) {
+            //no_delay keep_alive套接字系统参数设置
             _socket.set_option(asio::ip::tcp::no_delay(true));
             _socket.set_option(asio::socket_base::keep_alive(true));
+            //KeepAlive系统参数设置
             setSocketKeepAliveParams(_socket.native_handle());
         }
 
+        //获取本端和对端地址
         _local = endpointToHostAndPort(_socket.local_endpoint());
         _remote = endpointToHostAndPort(_socket.remote_endpoint(ec));
         if (ec) {
@@ -309,16 +317,19 @@ private:
         }
     }
 #endif
-
+    //远端地址信息
     HostAndPort _remote;
+    //本段地址信息
     HostAndPort _local;
-
+    //赋值见TransportLayerASIO::_acceptConnection
+    //也就是fd，链接描述符
     GenericSocket _socket;
 #ifdef MONGO_CONFIG_SSL
     boost::optional<asio::ssl::stream<decltype(_socket)>> _sslSocket;
     bool _ranHandshake = false;
 #endif
 
+    
     TransportLayerASIO* const _tl;
 };
 

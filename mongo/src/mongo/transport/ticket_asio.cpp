@@ -46,6 +46,7 @@ constexpr auto kHeaderSize = sizeof(MSGHEADER::Value);
 
 }  // namespace
 
+//»ñÈ¡±¾ASIOTicketµÄsessionĞÅÏ¢
 std::shared_ptr<TransportLayerASIO::ASIOSession> TransportLayerASIO::ASIOTicket::getSession() {
     auto session = _session.lock();
     if (!session || !session->isOpen()) {
@@ -60,14 +61,17 @@ bool TransportLayerASIO::ASIOTicket::isSync() const {
     return _fillSync;
 }
 
+//³õÊ¼»¯¹¹ÔìASIOTicketÀà
 TransportLayerASIO::ASIOTicket::ASIOTicket(const ASIOSessionHandle& session, Date_t expiration)
     : _session(session), _sessionId(session->id()), _expiration(expiration) {}
 
+////³õÊ¼»¯¹¹ÔìASIOSourceTicketÀà
 TransportLayerASIO::ASIOSourceTicket::ASIOSourceTicket(const ASIOSessionHandle& session,
                                                        Date_t expiration,
                                                        Message* msg)
     : ASIOTicket(session, expiration), _target(msg) {}
 
+////³õÊ¼»¯¹¹ÔìASIOSinkTicketÀà
 TransportLayerASIO::ASIOSinkTicket::ASIOSinkTicket(const ASIOSessionHandle& session,
                                                    Date_t expiration,
                                                    const Message& msg)
@@ -80,7 +84,9 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
         return;
     }
 
+	//buffer×ª´æµ½_targetÖĞ
     _target->setData(std::move(_buffer));
+	//Á÷Á¿Í³¼Æ
     networkCounter.hitPhysicalIn(_target->size());
 	//TransportLayerASIO::ASIOTicket::finishFill  
     finishFill(Status::OK()); //°üÌåÄÚÈİ¶ÁÍêºó£¬¿ªÊ¼ÏÂÒ»½×¶ÎµÄ´¦Àí  
@@ -88,19 +94,22 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
 }
 
 //TransportLayerASIO::ASIOSourceTicket::fillImpl
-//fillImpl´ÓĞ­ÒéÕ»¶ÁÈ¡µ½Êı¾İºó¿ªÊ¼½âÎö£¬Èç¹ûÊı¾İÄÚÈİ×ã¹»£¬Ôòµ÷ÓÃfinishFill×ö½øÒ»²½´¦Àí£¬·ñÔò¼ÌĞøµ÷ÓÃread¼ÌĞø¶ÁÊı¾İ
+//fillImpl´ÓĞ­ÒéÕ»¶ÁÈ¡µ½Êı¾İºó¿ªÊ¼½âÎö£¬Èç¹ûÊı¾İÄÚÈİ×ã¹»Í·²¿×Ö¶Î£¬Ôòµ÷ÓÃfinishFill×ö½øÒ»²½´¦Àí£¬·ñÔò¼ÌĞøµ÷ÓÃread¼ÌĞø¶ÁÊı¾İ
+//¶ÁÈ¡µ½mongodb headerÍ·²¿ĞÅÏ¢ºóµÄ»Øµ÷´¦Àí
 void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code& ec, size_t size) {
     if (ec) {
         finishFill(errorCodeToStatus(ec));
         return;
     }
-
+	//»ñÈ¡sessionĞÅÏ¢
     auto session = getSession();
     if (!session)
         return;
-
+	//´Ó_bufferÖĞ»ñÈ¡Í·²¿ĞÅÏ¢
     MSGHEADER::View headerView(_buffer.get());
+	//»ñÈ¡message³¤¶È
     auto msgLen = static_cast<size_t>(headerView.getMessageLength());
+	//³¤¶ÈÌ«Ğ¡»òÕßÌ«´ó£¬Ö±½Ó±¨´í
     if (msgLen < kHeaderSize || msgLen > MaxMessageSizeBytes) {
         StringBuilder sb;
         sb << "recv(): message msgLen " << msgLen << " is invalid. "
@@ -122,10 +131,12 @@ void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code
     MsgData::View msgView(_buffer.get());
 
 
-	//¶ÁÈ¡Êı¾İ TransportLayerASIO::ASIOSession::read
+	//¶ÁÈ¡Êı¾İbody TransportLayerASIO::ASIOSession::read
     session->read(isSync(),
-                  asio::buffer(msgView.data(), msgView.dataLen()),
-                  [this](const std::error_code& ec, size_t size) { _bodyCallback(ec, size); });
+      //Êı¾İ¶ÁÈ¡µ½¸Ãbuffer				
+      asio::buffer(msgView.data(), msgView.dataLen()),
+      //¶ÁÈ¡³É¹¦ºóµÄ»Øµ÷´¦Àí
+      [this](const std::error_code& ec, size_t size) { _bodyCallback(ec, size); });
 }
 
 /*
@@ -179,13 +190,16 @@ void TransportLayerASIO::ASIOSinkTicket::_sinkCallback(const std::error_code& ec
 
 //·¢ËÍµÄfillImpl
 void TransportLayerASIO::ASIOSinkTicket::fillImpl() {
+	//»ñÈ¡¶ÔÓ¦session
     auto session = getSession();
     if (!session)
         return;
 
+	//·¢ËÍÊı¾İ TransportLayerASIO::ASIOSession::write
     session->write(isSync(),
-                   asio::buffer(_msgToSend.buf(), _msgToSend.size()),
-                   [this](const std::error_code& ec, size_t size) { _sinkCallback(ec, size); });
+	   asio::buffer(_msgToSend.buf(), _msgToSend.size()),
+	   //·¢ËÍÊı¾İ³É¹¦ºóµÄcallback»Øµ÷
+	   [this](const std::error_code& ec, size_t size) { _sinkCallback(ec, size); });
 }
 
 //ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->TransportLayerASIO::ASIOTicket::fill->TransportLayerASIO::ASIOTicket::finishFill
@@ -197,14 +211,21 @@ void TransportLayerASIO::ASIOTicket::finishFill(Status status) { //Ã¿Ò»¸ö½×¶Î´¦À
     // variables in ASIOTicket after it gets called.
     invariant(_fillCallback);
     auto fillCallback = std::move(_fillCallback);
+	//Êı¾İ½ÓÊÕ¶ÔÓ¦ServiceStateMachine::_sourceCallback
+	//Êı¾İ·¢ËÍ¶ÔÓ¦ServiceStateMachine::_sinkCallback
     fillCallback(status); //TransportLayerASIO::asyncWaitÖĞ¸³Öµ£¬¿ÉÒÔÊÇServiceStateMachine::_sourceCallback
 }
 
 //ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->TransportLayerASIO::ASIOTicket::fill->TransportLayerASIO::ASIOTicket::finishFill
 void TransportLayerASIO::ASIOTicket::fill(bool sync, TicketCallback&& cb) {
+	//Í¬²½»¹ÊÇÒì²½£¬ASIO¶ÔÓ¦Òì²½
     _fillSync = sync;
     dassert(!_fillCallback);
+	//cb¸³Öµ¸øfill»Øµ÷£¬cb½ÓÊÕÊı¾İ¹ı³Ì¶ÔÓ¦ServiceStateMachine::_sourceCallback
+	//£¬cb·¢ËÍÊı¾İ¹ı³Ì¶ÔÓ¦ServiceStateMachine::_sinkCallback
     _fillCallback = std::move(cb);
+	//½ÓÊÕ¶ÔÓ¦TransportLayerASIO::ASIOSourceTicket::fillImpl
+	//·¢ËÍ¶ÔÓ¦TransportLayerASIO::ASIOSinkTicket::fillImpl
     fillImpl();
 }
 

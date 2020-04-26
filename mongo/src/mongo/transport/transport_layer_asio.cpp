@@ -74,6 +74,7 @@ TransportLayerASIO::Options::Options(const ServerGlobalParams* params)
       maxConns(params->maxConns) {
 }
 
+//TransportLayerManager::createWithConfig中构造使用
 TransportLayerASIO::TransportLayerASIO(const TransportLayerASIO::Options& opts,
                                        ServiceEntryPoint* sep)
     //boost::asio::io_context用于网络IO事件循环
@@ -89,6 +90,7 @@ TransportLayerASIO::TransportLayerASIO(const TransportLayerASIO::Options& opts,
 TransportLayerASIO::~TransportLayerASIO() = default;
 
 //ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
+//构造对应SourceTicket
 Ticket TransportLayerASIO::sourceMessage(const SessionHandle& session,
                                          Message* message,
                                          Date_t expiration) {
@@ -97,6 +99,9 @@ Ticket TransportLayerASIO::sourceMessage(const SessionHandle& session,
     return {this, std::move(ticket)};
 }
 
+//ServiceStateMachine::_sinkMessage->Session::sinkMessage->TransportLayerASIO::sinkMessage
+
+//构造对应SinkTicket
 Ticket TransportLayerASIO::sinkMessage(const SessionHandle& session,
                                        const Message& message,
                                        Date_t expiration) {
@@ -106,22 +111,27 @@ Ticket TransportLayerASIO::sinkMessage(const SessionHandle& session,
 }
 
 //asio中的epoll_wait超时等待处理  ServiceStateMachine::_sourceMessage中会调用
+//asio数据收发同步处理
 Status TransportLayerASIO::wait(Ticket&& ticket) {
+	//接收对应ASIOSourceTicket，发送对应ASIOSinkTicket
     auto ownedASIOTicket = getOwnedTicketImpl(std::move(ticket));
     auto asioTicket = checked_cast<ASIOTicket*>(ownedASIOTicket.get());
 
     Status waitStatus = Status::OK();
+	//调用对应fill接口
     asioTicket->fill(true, [&waitStatus](Status result) { waitStatus = result; });
 
     return waitStatus;
 }
 
 //ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->ASIOTicket::fill
+//asio数据收发异步处理
 void TransportLayerASIO::asyncWait(Ticket&& ticket, TicketCallback callback) {
-    auto ownedASIOTicket = std::shared_ptr<TicketImpl>(getOwnedTicketImpl(std::move(ticket)));
+	//接收对应ASIOSourceTicket，发送对应ASIOSinkTicket
+	auto ownedASIOTicket = std::shared_ptr<TicketImpl>(getOwnedTicketImpl(std::move(ticket)));
     auto asioTicket = checked_cast<ASIOTicket*>(ownedASIOTicket.get());
 
-	//ASIOTicket::fill
+	//调用对应ASIOTicket::fill
     asioTicket->fill(
         false,
         [ callback = std::move(callback),
@@ -151,12 +161,14 @@ void TransportLayerASIO::anetSetReuseAddr(int fd) {
 //创建套接字并bind, TransportLayerManager::setup中执行
 Status TransportLayerASIO::setup() {
     std::vector<std::string> listenAddrs;
+	//如果不配置bindIp，则默认监听127这个地址
     if (_listenerOptions.ipList.empty()) {
         listenAddrs = {"127.0.0.1"};
         if (_listenerOptions.enableIPv6) {
             listenAddrs.emplace_back("::1");
         }
     } else {
+    	//配置文件中的bindIp:1.1.1.1,2.2.2.2，以逗号分隔符获取ip列表存入ipList
         boost::split(
             listenAddrs, _listenerOptions.ipList, boost::is_any_of(","), boost::token_compress_on);
     }
@@ -166,6 +178,7 @@ Status TransportLayerASIO::setup() {
         listenAddrs.emplace_back(makeUnixSockPath(_listenerOptions.port));
     }
 #endif
+    //遍历ip地址列表
     for (auto& ip : listenAddrs) {
         std::error_code ec;
         if (ip.empty()) {
@@ -173,7 +186,7 @@ Status TransportLayerASIO::setup() {
             continue;
         }
 
-		//填充创建套接字时需要的sockaddr_storage结构
+		//根据IP和端口构造对应SockAddr结构
         const auto addrs = SockAddr::createAll(
             ip, _listenerOptions.port, _listenerOptions.enableIPv6 ? AF_UNSPEC : AF_INET);
         if (addrs.empty()) {
@@ -216,7 +229,7 @@ Status TransportLayerASIO::setup() {
             acceptor.open(endpoint.protocol()); //basic_socket_acceptor::open
 			//SO_REUSEADDR配置  //basic_socket_acceptor::set_option
             acceptor.set_option(GenericAcceptor::reuse_address(true));
-
+			//非阻塞设置
             acceptor.non_blocking(true, ec);  //basic_socket_acceptor::non_blocking
             if (ec) {
                 return errorCodeToStatus(ec);
@@ -312,7 +325,8 @@ Status TransportLayerASIO::start() { //listen线程处理
 	//std::vector<std::pair<SockAddr, GenericAcceptor>> _acceptors;
     for (auto& acceptor : _acceptors) { //bind绑定的时候赋值，见TransportLayerASIO::setup
         acceptor.second.listen(serverGlobalParams.listenBacklog);
-        _acceptConnection(acceptor.second);    //异步accept处理在该函数中
+		//异步accept注册在该函数中
+        _acceptConnection(acceptor.second);     
     }
 
     const char* ssl = "";

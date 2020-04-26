@@ -53,12 +53,14 @@ TransportLayerManager::TransportLayerManager() = default;
 Ticket TransportLayerManager::sourceMessage(const SessionHandle& session,
                                             Message* message,
                                             Date_t expiration) {
-    return session->getTransportLayer()->sourceMessage(session, message, expiration);
+	//TransportLayerASIO::sourceMessage
+	return session->getTransportLayer()->sourceMessage(session, message, expiration);
 }
 
 Ticket TransportLayerManager::sinkMessage(const SessionHandle& session,
                                           const Message& message,
                                           Date_t expiration) {
+    //TransportLayerASIO::sinkMessage
     return session->getTransportLayer()->sinkMessage(session, message, expiration);
 }
 
@@ -71,6 +73,7 @@ void TransportLayerManager::asyncWait(Ticket&& ticket, TicketCallback callback) 
 }
 
 template <typename Callable>
+	//TransportLayerManager::shutdown调用，遍历tls，执行cb
 void TransportLayerManager::_foreach(Callable&& cb) const {
     {
         stdx::lock_guard<stdx::mutex> lk(_tlsMutex);
@@ -91,7 +94,8 @@ void TransportLayerManager::end(const SessionHandle& session) {
 //_initAndListen中调用
 Status TransportLayerManager::start() {
     for (auto&& tl : _tls) {
-        auto status = tl->start(); //TransportLayerASIO::start  accept处理
+		//TransportLayerASIO::start，开始accept初始化处理
+        auto status = tl->start();  
         if (!status.isOK()) {
             _tls.clear();
             return status;
@@ -102,6 +106,7 @@ Status TransportLayerManager::start() {
 }
 
 void TransportLayerManager::shutdown() {
+	//TransportLayerASIO::shutdown，传输层回收处理
     _foreach([](TransportLayer* tl) { tl->shutdown(); });
 }
 
@@ -110,8 +115,10 @@ void TransportLayerManager::shutdown() {
 // TODO Same comment as start() 
 //runMongosServer _initAndListen中运行
 Status TransportLayerManager::setup() {
+    //_tls来源见TransportLayerManager::createWithConfig返回的retVector
     for (auto&& tl : _tls) {
-        auto status = tl->setup(); //TransportLayerASIO::setup() listen监听
+		//TransportLayerASIO::setup() listen监听
+        auto status = tl->setup(); 
         if (!status.isOK()) {
             _tls.clear();
             return status;
@@ -121,12 +128,14 @@ Status TransportLayerManager::setup() {
     return Status::OK();
 }
 
+//实际上该接口没用，用得是TransportLayerManager::start
 Status TransportLayerManager::addAndStartTransportLayer(std::unique_ptr<TransportLayer> tl) {
     auto ptr = tl.get();
     {
         stdx::lock_guard<stdx::mutex> lk(_tlsMutex);
         _tls.emplace_back(std::move(tl));
     }
+	//TransportLayerASIO::start
     return ptr->start();
 }
 
@@ -134,14 +143,19 @@ Status TransportLayerManager::addAndStartTransportLayer(std::unique_ptr<Transpor
 std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
     const ServerGlobalParams* config, ServiceContext* ctx) {
     std::unique_ptr<TransportLayer> transportLayer;
+	//ServiceEntryPointMongod或者ServiceEntryPointMongos
     auto sep = ctx->getServiceEntryPoint();
+	//如果配置是asio模式
     if (config->transportLayer == "asio") {
+		//获取asio模式对应子配置信息
         transport::TransportLayerASIO::Options opts(config);
 
 		//同步方式还是异步方式，默认synchronous
         if (config->serviceExecutor == "adaptive") {
+			//动态线程池模型
             opts.transportMode = transport::Mode::kAsynchronous;
         } else if (config->serviceExecutor == "synchronous") {
+            //一个链接一个线程模型
             opts.transportMode = transport::Mode::kSynchronous;
         } else {
             MONGO_UNREACHABLE;
@@ -160,11 +174,13 @@ std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
 		//transportLayerASIO转换为transportLayer类
         transportLayer = std::move(transportLayerASIO);
     } else if (serverGlobalParams.transportLayer == "legacy") {
-        transport::TransportLayerLegacy::Options opts(config);
+		//获取legacy模式相关配置及初始化对应transportLayer
+		transport::TransportLayerLegacy::Options opts(config);
         transportLayer = stdx::make_unique<transport::TransportLayerLegacy>(opts, sep);
         ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorSynchronous>(ctx));
     }
 
+	//transportLayer转存到对应retVector数组中并返回
     std::vector<std::unique_ptr<TransportLayer>> retVector;
     retVector.emplace_back(std::move(transportLayer));
     return stdx::make_unique<TransportLayerManager>(std::move(retVector));

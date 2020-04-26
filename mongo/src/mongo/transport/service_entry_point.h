@@ -51,6 +51,7 @@ namespace mongo {
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 //ServiceContext:_serviceEntryPoint为该类型  setServiceEntryPoint让该类和ServiceContext关联起来
+//ServiceEntryPointMongod和ServiceEntryPointMongos继承ServiceEntryPointImpl，ServiceEntryPointImpl继承该类
 class ServiceEntryPoint { //服务入口点
     MONGO_DISALLOW_COPYING(ServiceEntryPoint);
 
