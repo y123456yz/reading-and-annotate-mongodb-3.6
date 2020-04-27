@@ -572,6 +572,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
 
     _localThreadState = &(*state);
     {
+		//worker-NÏß³ÌÃû
         std::string threadName = str::stream() << "worker-" << threadId;
         setThreadName(threadName);
     }

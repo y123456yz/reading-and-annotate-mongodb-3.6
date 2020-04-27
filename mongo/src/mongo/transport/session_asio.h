@@ -52,7 +52,8 @@ using GenericSocket = asio::generic::stream_protocol::socket;
 
 //createWithConfig  TransportLayerASIO::_acceptConnection中根据配置构造使用
 //记录链接相关的信息，如对端地址等，同时数据调用ASIO相关读写相关也在该类中实现
-//TransportLayerASIO类的相关接口使用   
+//调用boost-asio库接口实现数据收发，一个session对应一个链接信息
+
 //ServiceStateMachine._sessionHandle  ASIOTicket._session为该成员类型  
 class TransportLayerASIO::ASIOSession : public Session {
     MONGO_DISALLOW_COPYING(ASIOSession);
@@ -60,6 +61,7 @@ class TransportLayerASIO::ASIOSession : public Session {
 public:
     //初始化构造 TransportLayerASIO::_acceptConnection调用
     ASIOSession(TransportLayerASIO* tl, GenericSocket socket)
+        //fd描述符及TL初始化赋值
         : _socket(std::move(socket)), _tl(tl) {
         std::error_code ec;
 
@@ -86,18 +88,22 @@ public:
         }
     }
 
+    //获取该session对应的tl
     TransportLayer* getTransportLayer() const override {
         return _tl;
     }
 
+    //获取远端地址
     const HostAndPort& remote() const override {
         return _remote;
     }
 
+    //获取本端地址
     const HostAndPort& local() const override {
         return _local;
     }
 
+    //获取链接对应描述符信息
     GenericSocket& getSocket() {
 #ifdef MONGO_CONFIG_SSL
         if (_sslSocket) {
@@ -107,6 +113,7 @@ public:
         return _socket;
     }
 
+    //描述符回收处理
     void shutdown() {
         std::error_code ec;
         getSocket().cancel();
@@ -116,6 +123,7 @@ public:
         }
     }
 
+    //ASIOTicket::getSession中调用，标识该描述符是否已注册
     bool isOpen() const {
 #ifdef MONGO_CONFIG_SSL
         return _sslSocket ? _sslSocket->lowest_layer().is_open() : _socket.is_open();
@@ -127,6 +135,7 @@ public:
     //TransportLayerASIO::ASIOSourceTicket::fillImpl调用
     template <typename MutableBufferSequence, typename CompleteHandler>
     //buffers参数里面携带有buffer的size长度
+	//读取整个buffers数据，或者发送完成整个buffers数据后，执行handler回调
     void read(bool sync, const MutableBufferSequence& buffers, CompleteHandler&& handler) {
 #ifdef MONGO_CONFIG_SSL
         if (_sslSocket) {
@@ -163,6 +172,7 @@ public:
         } else {
 
 #endif
+            //真正的底层读取操作
             opportunisticRead(sync, _socket, buffers, std::forward<CompleteHandler>(handler));
 #ifdef MONGO_CONFIG_SSL
         }
@@ -176,6 +186,7 @@ public:
             opportunisticWrite(sync, *_sslSocket, buffers, std::forward<CompleteHandler>(handler));
         } else {
 #endif
+            //真正的写入操作
             opportunisticWrite(sync, _socket, buffers, std::forward<CompleteHandler>(handler));
 #ifdef MONGO_CONFIG_SSL
         }
@@ -208,7 +219,7 @@ private:
             //数据得读取及handler回调执行见asio库得read_op::operator
             asio::async_read(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else { 
-        //直接read获取到size字节数据，则直接执行handler 
+            //直接read获取到size字节数据，则直接执行handler 
             handler(ec, size);
         }
     }

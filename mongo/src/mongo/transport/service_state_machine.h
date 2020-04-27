@@ -113,18 +113,27 @@ Ended   该链接回收完毕，不再可用    ServiceStateMachine::_cleanupSession
     /*
      * When start() is called with Ownership::kOwned, the SSM will swap the Client/thread name
      * whenever it runs a stage of the state machine, and then unswap them out when leaving the SSM.
+     * 当使用Ownership::kOwned调用start()时，SSM将在运行状态机的某个阶段时交换客户机/线程名称，
+     * 然后在离开SSM时取消交换。
      *
      * With Ownership::kStatic, it will assume that the SSM will only ever be run from one thread,
      * and that thread will not be used for other SSM's. It will swap in the Client/thread name
      * for the first run and leave them in place.
+     *  Ownership::kStatic标识本SSM只会在本线程中运行，同时本线程不会运行其他SSM。
      *
      * kUnowned is used internally to mark that the SSM is inactive.
+     * kUnowned在内部用于标记SSM处于非活动状态。
      */
+    //所有权
     enum class Ownership { 
+    //该状态表示本状态机SSM处于非活跃状态
     kUnowned,  
     //如果是transport::Mode::kSynchronous一个链接一个线程模式，则整个过程中都是同一个线程处理，所以不需要更改线程名
 	//如果是async异步线程池模式，则处理链接的过程中会从conn线程变为worker线程
+	//该状态标识本状态机SSM归属于某个工作worker线程，处于活跃调度运行状态
     kOwned, 
+    //kSynchronous线程模型，一个链接对应一个SSM状态机，因此本状态机SSM始终由固定线程运行
+    //表示SSM固定归属于某个线程
     kStatic 
     };
 
@@ -238,32 +247,50 @@ private:
 
     AtomicWord<State> _state{State::Created};
 
-    //ServiceEntryPointMongod 
+    //ServiceEntryPointMongod ServiceEntryPointMongos mongod及mongos入口点
     ServiceEntryPoint* _sep;
+    //synchronous及adaptive模式
     transport::Mode _transportMode;
-
+    //ServiceContextMongoD(mongod)或者ServiceContextNoop(mongos)服务上下文
     ServiceContext* const _serviceContext;
     
     //TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
     //记录对端信息、同时负责数据相关得读写
-    transport::SessionHandle _sessionHandle; //默认对应ASIOSession   
+    transport::SessionHandle _sessionHandle; //默认对应ASIOSession 
+    //根据session构造对应client信息,ServiceStateMachine::ServiceStateMachine赋值
     ServiceContext::UniqueClient _dbClient;
+    //指向上面的_dbClient
     const Client* _dbClientPtr;
+    //由于worker线程会从ASIO的任务队列获取operation执行，存在一会儿做网络IO处理，一会儿做
+    //业务逻辑处理，所以由两种线程名:conn-xx、worker-x,同一个线程需要做2种处理，因此需要记录旧的线程名
+    //状态机线程名:conn-x
     const std::string _threadName;
+    //之前的线程名，
+    std::string _oldThreadName;
+
+    //ServiceEntryPointImpl::startSession->ServiceStateMachine::setCleanupHook中设置赋值
+    //session链接回收处理
     stdx::function<void()> _cleanupHook;
 
+    //exhaust cursor是否启用
+    //使用Exhaust类型的cursor，这样可以让mongo一批一批的返回查询结果，并且
+    //在client请求之前把数据stream过来。
     bool _inExhaust = false;
+    //如果启用了网络压缩，对应有一个compressorId
     boost::optional<MessageCompressorId> _compressorId;
+    //接收处理的message信息
     Message _inMessage; //赋值见ServiceStateMachine::_sourceMessage
 
+    //默认初始化kUnowned,标识本SSM状态机处于非活跃状态
     AtomicWord<Ownership> _owned{Ownership::kUnowned};
 #if MONGO_CONFIG_DEBUG_BUILD
+    //该SSM所属的线程
     AtomicWord<stdx::thread::id> _owningThread;
 #endif
-    std::string _oldThreadName;
 };
 
 template <typename T>
+//状态机的不同状态打印出来
 T& operator<<(T& stream, const ServiceStateMachine::State& state) {
     switch (state) {
         case ServiceStateMachine::State::Created:

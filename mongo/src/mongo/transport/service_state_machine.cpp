@@ -55,6 +55,7 @@
 
 namespace mongo {
 namespace {
+//使用Exhaust类型的cursor，这样可以让mongo一批一批的返回查询结果，并且在client请求之前把数据stream过来。
 // Set up proper headers for formatting an exhaust request, if we need to
 bool setExhaustMessage(Message* m, const DbResponse& dbresponse) {
     MsgData::View header = dbresponse.response.header();
@@ -128,42 +129,53 @@ class ServiceStateMachine::ThreadGuard {
     ThreadGuard& operator=(ThreadGuard&) = delete;
 
 public:
+	// create a ThreadGuard which will take ownership of the SSM in this thread.
+	//标记ssm所有权属于本线程
     explicit ThreadGuard(ServiceStateMachine* ssm) : _ssm{ssm} {
 		//如果ServiceStateMachine._owned=kUnowned,则ServiceStateMachine._owned赋值为kOwned
+		//如果本SSM对应所有权为kUnowned，则进入这里后表示本SSM归属于本线程了，因此所有权有了
         auto owned = _ssm->_owned.compareAndSwap(Ownership::kUnowned, Ownership::kOwned);
-        if (owned == Ownership::kStatic) { //sync线程模式
+        if (owned == Ownership::kStatic) { 
+			//sync线程模式,不需要更改线程名，SSM所有权归宿本线程
             dassert(haveClient());
             dassert(Client::getCurrent() == _ssm->_dbClientPtr);
             _haveTakenOwnership = true;
             return;
         }
 
-		//adaptive async线程模式走下面的模式
+		//adaptive 动态线程模式走下面的模式
 
 #ifdef MONGO_CONFIG_DEBUG_BUILD
         invariant(owned == Ownership::kUnowned);
+//In debug builds this also ensures that only one thread is working on the SSM at once.
         _ssm->_owningThread.store(stdx::this_thread::get_id());
 #endif
 
         // Set up the thread name
-        auto oldThreadName = getThreadName(); //改线程名前的线程名称临时保存起来
+        auto oldThreadName = getThreadName(); 
+		//改线程名前的线程名称临时保存起来
         if (oldThreadName != _ssm->_threadName) {
 			//记录下之前的线程名
             _ssm->_oldThreadName = getThreadName().toString();
 			//log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_oldThreadName;
-            setThreadName(_ssm->_threadName); //把当前线程改名为_threadName
+			//把运行本ssm状态机的线程名改为conn-x线程
+			setThreadName(_ssm->_threadName); //把当前线程改名为_threadName
 			//sleep(60);
 			//log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
         }
 
         // Swap the current Client so calls to cc() work as expected
+        //设置本线程对应client信息
         Client::setCurrent(std::move(_ssm->_dbClient));
+		//本状态机ssm所有权有了，归属于运行本ssm的线程
         _haveTakenOwnership = true;
     }
 
     // Constructing from a moved ThreadGuard invalidates the other thread guard.
+    //构造初始化，状态机及所有权赋值
     ThreadGuard(ThreadGuard&& other)
         : _ssm(other._ssm), _haveTakenOwnership(other._haveTakenOwnership) {
+        //原来的other所有权失效
         other._haveTakenOwnership = false;
     }
 
@@ -171,18 +183,22 @@ public:
         if (this != &other) {
             _ssm = other._ssm;
             _haveTakenOwnership = other._haveTakenOwnership;
+			//原来的other所有权失效
             other._haveTakenOwnership = false;
         }
+		//返回
         return *this;
     };
 
     ThreadGuard() = delete;
 
     ~ThreadGuard() {
+		//ssm所有权已确定，则析构的时候，调用release处理，恢复线程原有线程名
         if (_haveTakenOwnership)
             release();
     }
 
+	//获取所有权
     explicit operator bool() const {
 #ifdef MONGO_CONFIG_DEBUG_BUILD
         if (_haveTakenOwnership) {
@@ -198,11 +214,13 @@ public:
     }
 
 	//ServiceStateMachine::_scheduleNextWithGuard
+	//设置谁static类型
     void markStaticOwnership() {
         dassert(static_cast<bool>(*this));
         _ssm->_owned.store(Ownership::kStatic);
     }
 
+	//恢复原有线程名，同时把client信息从调度线程归还给状态机
     void release() {
         auto owned = _ssm->_owned.load();
 
@@ -211,18 +229,22 @@ public:
         dassert(owned != Ownership::kUnowned);
         dassert(_ssm->_owningThread.load() == stdx::this_thread::get_id());
 #endif
-        if (owned != Ownership::kStatic) {//async线程池模式满足if条件
+		//adaptive异步线程池模式满足if条件，表示SSM固定归属于某个线程
+        if (owned != Ownership::kStatic) {
+			//本线程拥有currentClient信息，于是把它归还给SSM状态机
             if (haveClient()) {
                 _ssm->_dbClient = Client::releaseCurrent();
             }
 
+			//恢复到以前的线程名
             if (!_ssm->_oldThreadName.empty()) {
-				
-                setThreadName(_ssm->_oldThreadName); //恢复到老线程名
+				//恢复到老线程名
+                setThreadName(_ssm->_oldThreadName); 
             }
         }
 
         // If the session has ended, then it's unsafe to do anything but call the cleanup hook.
+        //状态机状态进入end，则调用对应回收hook处理
         if (_ssm->state() == State::Ended) {
             // The cleanup hook gets moved out of _ssm->_cleanupHook so that it can only be called
             // once.
@@ -235,16 +257,20 @@ public:
             return;
         }
 
+		//该ssm状态机是否归属于某个线程
         _haveTakenOwnership = false;
         // If owned != Ownership::kOwned here then it can only equal Ownership::kStatic and we
         // should just return
+        //归属状态变为未知
         if (owned == Ownership::kOwned) {
             _ssm->_owned.store(Ownership::kUnowned);
         }
     }
 
 private:
+	//SSM归属于本线程
     ServiceStateMachine* _ssm;
+	//默认false，标识该状态机ssm不归属于任何线程
     bool _haveTakenOwnership = false;
 };
 
@@ -263,16 +289,27 @@ std::shared_ptr<ServiceStateMachine> ServiceStateMachine::create(ServiceContext*
 ServiceStateMachine::ServiceStateMachine(ServiceContext* svcContext,
                                          transport::SessionHandle session,
                                          transport::Mode transportMode)
+    //Created表示session会话已经创建
     : _state{State::Created},
+      //获取对应服务入口点，mongod入口点在ServiceEntryPointMongod类中实现
+      //mongos在ServiceEntryPointMongos mongod中实现
       _sep{svcContext->getServiceEntryPoint()},
+      //同步线程模式，还是adaptive异步线程池模式
       _transportMode(transportMode),
+      //服务上下文，mongod上下文为ServiceContextMongoD，
+      //mongos上下文为ServiceContextNoop
       _serviceContext(svcContext),
+      //每个链接对应一个session会话
       _sessionHandle(session),
+      //根据session构造对应client信息
       _dbClient{svcContext->makeClient("conn", std::move(session))},
+      //指向上面的_dbClient
       _dbClientPtr{_dbClient.get()},
-      //真正生效在ServiceStateMachine::ThreadGuard
-      _threadName{str::stream() << "conn-yang" << _session()->id()} {} //线程名
+      //真正生效在ServiceStateMachine::ThreadGuard 
+      //状态机专门负责网络收发过程状态转换，因此状态机处理流程都是网络相关处理，线程名为conn-x线程
+      _threadName{str::stream() << "conn-" << _session()->id()} {} //线程名
 
+//获取session信息
 const transport::SessionHandle& ServiceStateMachine::_session() const {
 	//该客户端链接信息在该结构中，也就是ASIOSession
     return _sessionHandle;
@@ -303,13 +340,16 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
 #17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
 #18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
 */  
+//网络状态机开始接收数据处理
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
 	//TransportLayerASIO::sourceMessage  TransportLayerASIO::ASIOSession  后面的wait asio会读取数据放入_inMessage
 	//ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
+	//获取本session接收数据的ticket，也就是ASIOSourceTicket
     auto ticket = _session()->sourceMessage(&_inMessage); 
 
-    _state.store(State::SourceWait); //等待读取协议栈中的数据
+	//进入等等接收数据状态
+    _state.store(State::SourceWait);  
     guard.release();
 	//线程模型默认同步方式，也就是一个链接一个线程
     if (_transportMode == transport::Mode::kSynchronous) {
@@ -568,8 +608,8 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 //ServiceEntryPointImpl::startSession中执行  启动
 void ServiceStateMachine::start(Ownership ownershipModel) {
     _scheduleNextWithGuard( 
-		//暂时性的变为conn线程名 //线程更名也在这里面  "conn-"线程名  
-		//ServiceStateMachine::start中的ThreadGuard(this)中线程名赋值为conn-x，这里把线程改名为conn-x
+		//listener线程暂时性的变为conn线程名，在_scheduleNextWithGuard中任
+		//务入队完成后，调用guard.release()恢复listener线程名
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
 }
 
@@ -578,19 +618,21 @@ void ServiceStateMachine::start(Ownership ownershipModel) {
 void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
                                                  transport::ServiceExecutor::ScheduleFlags flags,
                                                  Ownership ownershipModel) {
-	//func在ServiceExecutorSynchronous::schedule中执行
+	//该func在ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)中执行
+	//该任务func实际上由worker线程运行,worker线程从asio库的全局队列获取任务调度执行
     auto func = [ ssm = shared_from_this(), ownershipModel ] {
 		//ServiceStateMachine::start中的ThreadGuard(this)中线程名赋值为conn-x
-        ThreadGuard guard(ssm.get());  //对应ThreadGuard& operator=(ThreadGuard&& other)
-        if (ownershipModel == Ownership::kStatic) //说明是sync mode
+        ThreadGuard guard(ssm.get());  
+		//说明是sync mode,即一个链接一个线程模式
+        if (ownershipModel == Ownership::kStatic) 
             guard.markStaticOwnership();
-		//log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 22";
+
 		//对应:ServiceStateMachine::_runNextInGuard
-		////ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)中执行
         ssm->_runNextInGuard(std::move(guard)); //新链接conn线程中需要执行的task
     };
 
-	//log() << "yang test  ServiceStateMachine::_scheduleNextWithGuard 11";
+	
+	//下面的逻辑由listener线程运行
 
 	//和ServiceStateMachine::start中的ThreadGuard(this)对应
     guard.release();
