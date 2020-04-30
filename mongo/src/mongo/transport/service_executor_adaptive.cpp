@@ -320,11 +320,14 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 	
 
 //队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
-    if ((flags & kMayRecurse) &&
+    if ((flags & kMayRecurse) && //支持递归调用
+    	//递归深度还没达到上限，则还是由本线程继续调度执行wrappedTask任务
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {
+        //本线程立马直接执行，不用入队到队列等待调度执行
         //io_context::dispatch   io_context::dispatch 
         _ioContext->dispatch(std::move(wrappedTask));  
     } else { //入队   io_context::post
+    	//入队到schedule得全局队列，等待工作线程调度
         _ioContext->post(std::move(wrappedTask));
     }
 

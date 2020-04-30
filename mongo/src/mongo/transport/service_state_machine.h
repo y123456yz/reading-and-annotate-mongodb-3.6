@@ -87,28 +87,24 @@ public:
      * Source -> SourceWait -> Process -> SinkWait -> Process -> SinkWait ... (exhaust)
      * Source -> SourceWait -> Process -> Source (fire-and-forget)
      */
-/*
-各状态主要说明如下表所示:
-状态    说明    相关函数方法
-Created 新链接到来后进入该状态  ServiceStateMachine::create
-Source  表示mongodb用户态感知到epoll网络事件通知，开始读取内核态协议栈数据到用户态空间  ServiceStateMachine::_runNextInGuard ServiceStateMachine::_sourceMessage
-SourceWait  等待读完内核协议栈数据到用户态，或者epoll_wait超时才返回    ServiceStateMachine::_sourceMessage
-Process 读完内核协议栈数据空间到用户态返回，或者epoll_wait超时返回，读取完毕后进行数据解析分析处理  ServiceStateMachine::_sourceCallback ServiceStateMachine::_processMessage
-SinkWait    数据发送相关，等待发送数据发送完成或者超时  ServiceStateMachine::_sinkMessage
-EndSession  读写异常，或者链接异常的时候进入该状态，表示链接异常需要进行session回收处理 ServiceStateMachine::_runNextInGuard ServiceStateMachine::_sinkCallback ServiceStateMachine::_sourceCallback
-Ended   该链接回收完毕，不再可用    ServiceStateMachine::_cleanupSession
-*/
     enum class State {
         //ServiceStateMachine::ServiceStateMachine构造函数初始状态
         Created,     // The session has been created, but no operations have been performed yet
+        //ServiceStateMachine::_runNextInGuard开始进入接收网络数据状态
         Source,      // Request a new Message from the network to handle
+        //等待获取数据
         SourceWait,  // Wait for the new Message to arrive from the network
+        //处理接收到的数据
         Process,     // Run the Message through the database
+        //等待数据发送成功
         SinkWait,    // Wait for the database result to be sent by the network
+        //接收或者发送数据异常，则进入该状态
         EndSession,  // End the session - the ServiceStateMachine will be invalid after this
+        //session回收处理进入该状态
         Ended        // The session has ended. It is illegal to call any method besides
                      // state() if this is the current state.
     };
+
 
     /*
      * When start() is called with Ownership::kOwned, the SSM will swap the Client/thread name
@@ -284,7 +280,7 @@ private:
     //默认初始化kUnowned,标识本SSM状态机处于非活跃状态
     AtomicWord<Ownership> _owned{Ownership::kUnowned};
 #if MONGO_CONFIG_DEBUG_BUILD
-    //该SSM所属的线程
+    //该SSM所属的线程的线程号
     AtomicWord<stdx::thread::id> _owningThread;
 #endif
 };

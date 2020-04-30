@@ -60,6 +60,8 @@ public:
         kDeferredTask = 1 << 1,
 
         // MayRecurse indicates that a task may be run recursively.
+        //ServiceStateMachine::_sourceCallback中调用
+        //表示
         kMayRecurse = 1 << 2,
 
         // MayYieldBeforeSchedule indicates that the executor may yield on the current thread before
