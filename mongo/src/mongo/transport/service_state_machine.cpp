@@ -165,7 +165,7 @@ public:
         }
 
         // Swap the current Client so calls to cc() work as expected
-        //设置本线程对应client信息
+        //设置本线程对应client信息,一个链接对应一个client,标识本client当前归属于本线程处理
         Client::setCurrent(std::move(_ssm->_dbClient));
 		//本状态机ssm所有权有了，归属于运行本ssm的线程
         _haveTakenOwnership = true;
@@ -221,6 +221,7 @@ public:
     }
 
 	//恢复原有线程名，同时把client信息从调度线程归还给状态机
+	//boost-asio库中的队列任务调度和底层数据收发流程都切入到worker-n线程
     void release() {
         auto owned = _ssm->_owned.load();
 
@@ -347,10 +348,15 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
 	//ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
 	//获取本session接收数据的ticket，也就是ASIOSourceTicket
     auto ticket = _session()->sourceMessage(&_inMessage); 
-
+	//log() << "yang test ......1.... _sourceMessage:" << getThreadName(); 
 	//进入等等接收数据状态
     _state.store(State::SourceWait);  
+	//boost-asio库中的队列任务调度和底层数据收发流程都切入到worker-n线程
     guard.release();
+
+	//guard release后getTransportLayer()->asyncWait等待就进入worker-x线程,其他时候都是conn-x线程
+	
+	//log() << "yang test ......2.... _sourceMessage:" << getThreadName(); 
 	//线程模型默认同步方式，也就是一个链接一个线程
     if (_transportMode == transport::Mode::kSynchronous) {
         _sourceCallback([this](auto ticket) {
@@ -372,6 +378,7 @@ void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     auto ticket = _session()->sinkMessage(toSink);
 
     _state.store(State::SinkWait);
+	//boost-asio库中的队列任务调度和底层数据收发流程都切入到worker-n线程
     guard.release();
 
     if (_transportMode == transport::Mode::kSynchronous) {
@@ -393,6 +400,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
     dassert(state() == State::SourceWait);
     auto remote = _session()->remote(); //获取客户端信息
 
+	log() << "yang test .......... _sourceCallback:" << getThreadName(); 
     if (status.isOK()) {
 		//进入处理消息阶段
         _state.store(State::Process);
@@ -404,7 +412,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
         // If this callback doesn't own the ThreadGuard, then we're being called recursively,
         // and the executor shouldn't start a new thread to process the message - it can use this
         // one just after this returns.
-        
+        //kMayRecurse标识State::Process阶段得处理还是由本线程执行
         return _scheduleNextWithGuard(std::move(guard), ServiceExecutor::kMayRecurse);
     } else if (ErrorCodes::isInterruption(status.code()) ||
                ErrorCodes::isNetworkError(status.code())) {
@@ -429,6 +437,7 @@ void ServiceStateMachine::_sinkCallback(Status status) {
     // The first thing to do is create a ThreadGuard which will take ownership of the SSM in this
     // thread.
     ThreadGuard guard(this);
+	log() << "yang test ......1.... _sinkCallback:" << getThreadName(); 
 
     dassert(state() == State::SinkWait);
 
@@ -443,9 +452,9 @@ void ServiceStateMachine::_sinkCallback(Status status) {
         _state.store(State::EndSession);
         return _runNextInGuard(std::move(guard));
     } else if (_inExhaust) { //3.6.1版本都不会满足，因为exhaust功能没用起来
-        _state.store(State::Process);
+        _state.store(State::Process); //注意这里的状态是process
     } else { //正常流程始终进入该分支
-        _state.store(State::Source);
+        _state.store(State::Source); //注意这里的状态是Source,继续接收客户端请求
     }
 
     return _scheduleNextWithGuard(std::move(guard),
@@ -484,6 +493,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
 
 	//获取类MessageCompressorManager
     auto& compressorMgr = MessageCompressorManager::forSession(_session());
+	log() << "yang test ......1.... _processMessage:" << getThreadName(); 
 
     _compressorId = boost::none;
     if (_inMessage.operation() == dbCompressed) { //
@@ -554,6 +564,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
         curState = State::Source;
         _state.store(curState);
     }
+	log() << "yang test ......1.... _runNextInGuard:" << getThreadName(); 
 
     // Make sure the current Client got set correctly
     dassert(Client::getCurrent() == _dbClientPtr);
@@ -626,7 +637,8 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
 		//说明是sync mode,即一个链接一个线程模式
         if (ownershipModel == Ownership::kStatic) 
             guard.markStaticOwnership();
-
+		
+		log() << "yang test ......1.... _scheduleNextWithGuard:" << getThreadName(); 
 		//对应:ServiceStateMachine::_runNextInGuard
         ssm->_runNextInGuard(std::move(guard)); //新链接conn线程中需要执行的task
     };
@@ -635,6 +647,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
 	//下面的逻辑由listener线程运行
 
 	//和ServiceStateMachine::start中的ThreadGuard(this)对应
+	//boost-asio库中的队列任务调度和底层数据收发流程都切入到worker-n线程
     guard.release();
 	//ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)
 	//第一次进入该函数的时候在这里面创建新线程
