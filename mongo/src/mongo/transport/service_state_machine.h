@@ -91,14 +91,15 @@ public:
         //ServiceStateMachine::ServiceStateMachine构造函数初始状态
         Created,     // The session has been created, but no operations have been performed yet
         //ServiceStateMachine::_runNextInGuard开始进入接收网络数据状态
+        //_sourceMessage
         Source,      // Request a new Message from the network to handle
         //等待获取数据
         SourceWait,  // Wait for the new Message to arrive from the network
-        //处理接收到的数据
+        //处理接收到的数据  _processMessage  
         Process,     // Run the Message through the database
         //等待数据发送成功
         SinkWait,    // Wait for the database result to be sent by the network
-        //接收或者发送数据异常，则进入该状态
+        //接收或者发送数据异常，则进入该状态  _cleanupSession
         EndSession,  // End the session - the ServiceStateMachine will be invalid after this
         //session回收处理进入该状态
         Ended        // The session has ended. It is illegal to call any method besides
@@ -270,7 +271,7 @@ private:
 
     //exhaust cursor是否启用
     //使用Exhaust类型的cursor，这样可以让mongo一批一批的返回查询结果，并且
-    //在client请求之前把数据stream过来。
+    //在client请求之前把数据stream过来。   ?????? 该功能需要进一步确认
     bool _inExhaust = false;
     //如果启用了网络压缩，对应有一个compressorId
     boost::optional<MessageCompressorId> _compressorId;

@@ -60,6 +60,7 @@ thread_local int64_t ServiceExecutorSynchronous::_localThreadIdleCounter = 0;
 
 ServiceExecutorSynchronous::ServiceExecutorSynchronous(ServiceContext* ctx) {}
 
+//获取CPU个数
 Status ServiceExecutorSynchronous::start() {
     _numHardwareCores = [] {
         ProcessInfo p;
@@ -98,6 +99,7 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
         return Status{ErrorCodes::ShutdownInProgress, "Executor is not running"};
     }
 
+	//除了第一次进入该函数会走后面的创建线程流程，后续的任务进来都是进入该if循环，因为状态机中始终会有任务运行
     if (!_localWorkQueue.empty()) {
         /*
          * In perf testing we found that yielding after running a each request produced
@@ -124,13 +126,16 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
 		如果调用者允许，直接执行任务(递归)，因为它在测试中产生了更好的性能。尽量限制递归的数量，这样我们
 		就不会破坏堆栈，即使对于使用阻塞网络I/O的执行器来说，这是不应该发生的。
 		*/
-        if ((flags & ScheduleFlags::kMayRecurse) &&  //等待下次入队
+		//本线程优先处理对应链接的
+        if ((flags & ScheduleFlags::kMayRecurse) &&  //带kMayRecurse标识，则直接递归执行
             (_localRecursionDepth < synchronousServiceExecutorRecursionLimit.loadRelaxed())) {
             ++_localRecursionDepth;
-			//log() << "yang test Starting ServiceExecutorSynchronous::schedule 33";
+			if (_localRecursionDepth > 2)
+				log() << "yang test Starting digui ##  1111111111111 ServiceExecutorSynchronous::schedule, depth:" << _localRecursionDepth;
             task();
         } else {
-        	//log() << "yang test Starting ServiceExecutorSynchronous::schedule 22";
+        	if (_localRecursionDepth > 2)
+        		log() << "yang test Starting no digui ## 222222222222 ServiceExecutorSynchronous::schedule, depth:" << _localRecursionDepth;
             _localWorkQueue.emplace_back(std::move(task)); //入队
         }
         return Status::OK();
@@ -150,6 +155,8 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
         _localWorkQueue.emplace_back(std::move(task));
 		//每个新链接都会在该while中循环进行网络IO处理和DB storage处理
         while (!_localWorkQueue.empty() && _stillRunning.loadRelaxed()) {
+			if (_localRecursionDepth > 2)
+				log() << "yang test Starting while deal ## 333333333333 ServiceExecutorSynchronous::schedule, depth:" << _localRecursionDepth;
             _localRecursionDepth = 1;
 			//log() << "Starting new executor thread in passthrough mode yang tesst 11 size:" << _localWorkQueue.size() << "  _numRunningWorkerThreads:" << ret;
 			//队列中获取一个task，并执行, task执行过程中会走入SSM状态机，会一直循环，除非该线程对应的客户端关闭链接才会走到下面的_localWorkQueue.pop_front();
@@ -177,6 +184,32 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
     return status;
 }
 
+/*
+mongos> db.serverStatus().network
+{
+        "bytesIn" : NumberLong("32650556117"),
+        "bytesOut" : NumberLong("596811224034"),
+        "physicalBytesIn" : NumberLong("32650556117"),
+        "physicalBytesOut" : NumberLong("596811224034"),
+        "numRequests" : NumberLong(238541401),
+        "compression" : {
+                "snappy" : {
+                        "compressor" : {
+                                "bytesIn" : NumberLong("11389624237"),
+                                "bytesOut" : NumberLong("10122531881")
+                        },
+                        "decompressor" : {
+                                "bytesIn" : NumberLong("54878702006"),
+                                "bytesOut" : NumberLong("341091660385")
+                        }
+                }
+        },
+        "serviceExecutorTaskStats" : {
+                "executor" : "passthrough",
+                "threadsRunning" : 102
+        }
+}
+*/
 void ServiceExecutorSynchronous::appendStats(BSONObjBuilder* bob) const {
     BSONObjBuilder section(bob->subobjStart("serviceExecutorTaskStats"));
     section << kExecutorLabel << kExecutorName << kThreadsRunning

@@ -276,7 +276,7 @@ public:
 	   //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
 	   //->reactive_socket_service_base::start_op中进行EPOLL事件注册
 	  //mongodb同步读取流程:
-	   //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+	   //mongodb中opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
 	   //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
 	  
 	  //write发送异步数据流程: 
@@ -338,7 +338,7 @@ public:
   }
 
   // Receive some data from the peer. Returns the number of bytes received.
-  //同步读 mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+  //同步读 mongodb中opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
   //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
   template <typename MutableBufferSequence>
   size_t receive(base_implementation_type& impl,
@@ -376,7 +376,7 @@ public:
    //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
    //->reactive_socket_service_base::start_op中进行EPOLL事件注册
   //mongodb同步读取流程:
-   //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+   //mongodb中opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
    //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
   
   //write发送异步数据流程: 
