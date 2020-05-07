@@ -38,6 +38,7 @@ namespace asio {
 
 namespace detail
 {
+  //mongodb读真正走到这里  opportunisticRead
   template <typename SyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition>
   std::size_t read_buffer_sequence(SyncReadStream& s,
@@ -47,18 +48,24 @@ namespace detail
     ec = asio::error_code();
     asio::detail::consuming_buffers<mutable_buffer,
         MutableBufferSequence, MutableBufferIterator> tmp(buffers);
+	//int ret = 0;
+	//会再这里一直循环读，直到读取到buffers所需得数据，或者读完协议栈数据
     while (!tmp.empty())
     {
+      //ret = system("echo yang-test-start-mongodb1111detail::read_buffer_sequence 22  >> /asiotest.txt");
       if (std::size_t max_size = detail::adapt_completion_condition_result(
             completion_condition(ec, tmp.total_consumed())))
         tmp.consume(s.read_some(tmp.prepare(max_size), ec));
       else
         break;
     }
-    return tmp.total_consumed();;
+	//ret = system("echo yang-test-start-mongodb1111detail::read_buffer_sequence 44  >> /asiotest.txt");
+	//ret = 1;
+	return tmp.total_consumed();;
   }
 } // namespace detail
 
+//mongodb读真正走到这里  opportunisticRead
 template <typename SyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition>
 std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
@@ -67,6 +74,8 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
       is_mutable_buffer_sequence<MutableBufferSequence>::value
     >::type*)
 {
+  int ret =system("echo yang-test-start-mongodb1111detail::read_buffer_sequence  >> /asiotest.txt");
+	ret =1;
   return detail::read_buffer_sequence(s, buffers,
       asio::buffer_sequence_begin(buffers), completion_condition, ec);
 }
@@ -136,7 +145,9 @@ std::size_t read(SyncReadStream& s,
     bytes_available = std::min<std::size_t>(
           std::max<std::size_t>(512, b.capacity() - b.size()),
           std::min<std::size_t>(max_size, b.max_size() - b.size()));
+	system("echo yang-test-start-mongodb1111 >> /asiotest.txt");
   }
+  system("echo yang-test-start-mongodb222222 >> /asiotest.txt");
   return total_transferred;
 }
 

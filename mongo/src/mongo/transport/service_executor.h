@@ -56,16 +56,49 @@ public:
         kEmptyFlags = 1 << 0,
 
         // Deferred tasks will never get a new thread launched to run them.
-        //延迟任务
-        kDeferredTask = 1 << 1,
+        //延迟任务表示该任务不会触发控制线程去启动新的线程，针对adaptive线程模型有效
+        //生效见ServiceExecutorAdaptive::schedule
+        kDeferredTask = 1 << 1, //State::Source阶段拥有该标识
 
         // MayRecurse indicates that a task may be run recursively.
-        //ServiceStateMachine::_sourceCallback中调用
-        //表示
-        kMayRecurse = 1 << 2,
+
+        /*
+            递归执行过程(以递归深度3为例)：
+            task1_pop_run {
+                
+                task1_run()
+                //调用task2执行
+                task2_pop_run {
+                    task2_run() 
+                    task3_pop_run {
+                        task3_run() 
+                        //task3 end
+                        --recursionDepth
+                    }
+                    
+                    //task2 end
+                    --recursionDepth
+                }
+                
+                //task1 end
+                --recursionDepth
+            }
+         */
+
+        
+        //ServiceStateMachine::_sourceCallback中赋值调用
+        //真正生效见ServiceExecutorAdaptive::schedule
+        //表示本线程可以继续递归进行多个链接数据的_processMessage处理，一个线程同时处理最大adaptiveServiceExecutorRecursionLimit个链接的_processMessage处理
+
+        //_processMessage递归调用背景: (多次递归调度执行的是同一个链接上的多个mongo请求，整个过程属于同一个ssm)
+        //实际上一个线程从boost-asio库的全局队列获取任务执行，当链接数据通过_processMessage
+        //转发到后端进入SinkWait状态的时候，_sinkMessage可能会立马成功，就会进入到_sinkCallback
+        //进入到State::Source状态，在下一个调度中就会继续_sourceMessage->_sourceCallback进行递归调用
+        kMayRecurse = 1 << 2,  
 
         // MayYieldBeforeSchedule indicates that the executor may yield on the current thread before
         // scheduling the task.
+        //针对sync线程模式有效
         kMayYieldBeforeSchedule = 1 << 3, //等待一个调度的时间，下次执行
     };
 

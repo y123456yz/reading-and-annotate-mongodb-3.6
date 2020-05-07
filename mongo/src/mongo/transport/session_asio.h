@@ -204,7 +204,7 @@ private:
                            CompleteHandler&& handler) {
         std::error_code ec;
         //先直接同步方式从协议栈读取数据，直到读取到数据并且把协议栈数据读完
-        auto size = asio::read(stream, buffers, ec);
+        auto size = asio::read(stream, buffers, ec); //detail::read_buffer_sequence
         //协议栈内容已经读完了，但是还不够size字节，则继续异步读取
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
             // asio::read is a loop internally, so some of buffers may have been read into already.
@@ -215,13 +215,14 @@ private:
             if (size > 0) {
                 asyncBuffers += size; //buffer offset向后移动
             }
-
+            LOG(0) << "yang test ......... opportunisticRead";
             //数据得读取及handler回调执行见asio库得read_op::operator
             asio::async_read(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else { 
             //直接read获取到size字节数据，则直接执行handler 
             handler(ec, size);
         }
+        LOG(0) << "yang test ....2..... opportunisticRead:" << size;
     }
 
     template <typename Stream, typename ConstBufferSequence, typename CompleteHandler>
@@ -241,8 +242,8 @@ private:
             ConstBufferSequence asyncBuffers(buffers);
             if (size > 0) {
                 asyncBuffers += size;
-            }
-
+                }
+            LOG(0) << "yang test ......... opportunisticWrite";
             //数据得读取及handler回调执行见asio库得write_op::operator
             asio::async_write(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else {

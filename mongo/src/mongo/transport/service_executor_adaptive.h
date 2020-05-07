@@ -189,6 +189,7 @@ private:
         bool _running = false;
     };
 
+    //线程统计信息
     struct ThreadState {
         ThreadState(TickSource* ts) : running(ts), executing(ts) {}
 
@@ -198,6 +199,7 @@ private:
         TickSource::Tick executingCurRun;
         //记录单次task被执行的时间，参考ServiceExecutorAdaptive::schedule
         CumulativeTickTimer executing;
+        //同一线程执行任务的递归次数
         int recursionDepth = 0;
     };
 
@@ -289,6 +291,7 @@ private:
 
     // Tasks should signal this condition variable if they want the thread controller to
     // track their progress and do fast stuck detection
+    //条件变量，通知controler线程,通知见ServiceExecutorAdaptive::schedule，等待见_controllerThreadRoutine
     stdx::condition_variable _scheduleCondition;
 };
 

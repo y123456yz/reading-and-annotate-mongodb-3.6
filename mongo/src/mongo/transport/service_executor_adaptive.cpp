@@ -85,7 +85,12 @@ MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorIdlePctThreshold, int, 60);
 
 // Tasks scheduled with MayRecurse may be called recursively if the recursion depth is below this
 // value.
-//任务递归调用的深度最大值
+//_processMessage递归调用背景:
+//实际上一个线程从boost-asio库的全局队列获取任务执行的时候可能需要处理多个链接的数据，当第一个链接
+//数据通过_processMessage转发到后端进入SinkWait状态的时候，继续获取其他链接的数据，同时调用_sourceCallback
+//进入Process状态，最终在ServiceExecutorAdaptive::schedule中继续"递归"进行process阶段_processMessage处理
+
+//任务递归调用的深度最大值 
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRecursionLimit, int, 8);
 
 //db.serverStatus().network.serviceExecutorTaskStats获取
@@ -248,16 +253,16 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
             _threadsInUse.addAndFetch(1);
         }
 
-		//guard实际上是在 _ioContext->run_for(runTime.toSystemDuration());中调用的
 		//ServiceExecutorAdaptive::_workerThreadRoutine执行wrappedTask后会调用guard这里的func 
-        const auto guard = MakeGuard([this, start] {
+        const auto guard = MakeGuard([this, start] { //改函数在task()运行后执行
+        	//每执行一个任务完成，则递归深度自减
             if (--_localThreadState->recursionDepth == 0) {
 				//wrappedTask任务被执行消耗的总时间   _localThreadState->executing.markStopped()代表任务该task执行的时间
                 _localThreadState->executingCurRun += _localThreadState->executing.markStopped();
 				//下面的task()执行完后，正在执行task的线程-1
 				_threadsInUse.subtractAndFetch(1);
             }
-			//总执行的任务数，task没执行一次增加一次
+			//总执行的任务数，task每执行一次增加一次
             _totalExecuted.addAndFetch(1);
         });
 
@@ -308,7 +313,7 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 	 //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
 	 //->reactive_socket_service_base::start_op中进行EPOLL事件注册
 	//mongodb同步读取流程:
-	 //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+	 //mongodb中opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
 	 //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
 	
 	//write发送异步数据流程: 
@@ -319,12 +324,16 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 	 //同步写流程asio::write->write_buffer_sequence->basic_stream_socket::write_some->reactive_socket_service_base::send->socket_ops::sync_send(这里是真正得同步发送)
 	
 
-//队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
-    if ((flags & kMayRecurse) && //支持递归调用
+	//队列中的wrappedTask任务在ServiceExecutorAdaptive::_workerThreadRoutine中运行
+
+	//kMayRecurse标识的任务，会进行递归调用
+    if ((flags & kMayRecurse) && //递归调用，任务还是由本线程处理
     	//递归深度还没达到上限，则还是由本线程继续调度执行wrappedTask任务
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {
-        //本线程立马直接执行，不用入队到队列等待调度执行
+        //本线程立马直接执行wrappedTask任务，不用入队到boost-asio全局队列等待调度执行
         //io_context::dispatch   io_context::dispatch 
+        if(_localThreadState->recursionDepth > 2)
+			log() << "yang test .... _localThreadState->recursionDepth:" << _localThreadState->recursionDepth;
         _ioContext->dispatch(std::move(wrappedTask));  
     } else { //入队   io_context::post
     	//入队到schedule得全局队列，等待工作线程调度
@@ -338,7 +347,10 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     // Deferred tasks never count against the thread starvation avoidance. For other tasks, we
     // notify the controller thread that a task has been scheduled and we should monitor thread
     // starvation.
-    if (_isStarved() && !(flags & kDeferredTask)) {
+
+	//kDeferredTask真正生效在这里
+    if (_isStarved() && !(flags & kDeferredTask)) {//kDeferredTask真正生效在这里
+    	//条件变量，通知controler线程,通知见ServiceExecutorAdaptive::schedule，等待见_controllerThreadRoutine
         _scheduleCondition.notify_one();
     }
 

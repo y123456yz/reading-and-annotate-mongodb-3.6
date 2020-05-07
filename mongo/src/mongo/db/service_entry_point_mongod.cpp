@@ -1171,7 +1171,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 	//str::stream s;
 	//s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
 	//log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
-	log() << "yang test ........ServiceEntryPointMongod::handleRequest 11";
+	//log() << "yang test ........ServiceEntryPointMongod::handleRequest 11";
 
     DbMessage dbmsg(m);
 	

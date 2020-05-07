@@ -934,7 +934,7 @@ protected:
         if (TRACING_ENABLED || (parts & kWantKey)) { //根据索引KV中的V，也就是_id，获取对应的数据value给bson
             bson = KeyString::toBson(_key.getBuffer(), _key.getSize(), _idx.ordering(), _typeBits);
 
-            TRACE_CURSOR << " returning " << bson << ' ' << _id;
+            //TRACE_CURSOR << " returning " << bson << ' ' << _id;
         }
 
         return {{std::move(bson), _id}};
@@ -1258,7 +1258,7 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
     if (!data.getTypeBits().isAllZeros())
         value.appendTypeBits(data.getTypeBits());
 //	log(1) << "yang test WiredTigerIndexUnique::_insert key: " << redact(&key);  
-	log() << "yang test WiredTigerIndexUnique::_insert";
+	//log() << "yang test WiredTigerIndexUnique::_insert";
 
     WiredTigerItem valueItem(value.getBuffer(), value.getSize());
 	//WiredTigerIndex::setKey
@@ -1267,9 +1267,8 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
     int ret = WT_OP_CHECK(c->insert(c)); //插入
 
 	
-	auto& record = key;
-	log() << "yang test WiredTigerIndexUnique::_insert" << " key:" << redact(record)
-		<< " value:"<< id;
+	//auto& record = key;
+	//log() << "yang test WiredTigerIndexUnique::_insert" << " key:" << redact(record)<< " value:"<< id;
 	//	<< " value:" << redact(value.toBson());
 	
 
@@ -1461,13 +1460,13 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
                                         bool dupsAllowed) {
     invariant(dupsAllowed);
 
-    TRACE_INDEX << " key: " << keyBson << " id: " << id;
-	log() << "WT index (" << (const void*)this << ") ";
+    //TRACE_INDEX << " key: " << keyBson << " id: " << id;
+	//log() << "WT index (" << (const void*)this << ") ";
 	//log(1) << "yang test WiredTigerIndexStandard::_insert key: " << redact(&keyBson);
 
 
-	auto& keyBson1 = keyBson;
-	log() << "yang test WiredTigerIndexStandard::_insert" << " value:" << redact(keyBson1);
+	//auto& keyBson1 = keyBson;
+	//log() << "yang test WiredTigerIndexStandard::_insert" << " value:" << redact(keyBson1);
 	
     KeyString key(keyStringVersion(), keyBson, _ordering, id);
     WiredTigerItem keyItem(key.getBuffer(), key.getSize());

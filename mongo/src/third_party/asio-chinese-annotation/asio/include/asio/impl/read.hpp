@@ -37,7 +37,11 @@
 namespace asio {
 
 namespace detail
-{
+	
+//同步读  opportunisticRead中调用  
+//opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
+//这里会保证读取到buffers可用空间字节数才会返回
+{  //mongodb读真正走到这里  opportunisticRead
   template <typename SyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition>
   std::size_t read_buffer_sequence(SyncReadStream& s,
@@ -49,8 +53,10 @@ namespace detail
         MutableBufferSequence, MutableBufferIterator> tmp(buffers);
     while (!tmp.empty())
     {
+      //如果读取协议栈返回数据为空，则返回，说明没数据可读勒
       if (std::size_t max_size = detail::adapt_completion_condition_result(
             completion_condition(ec, tmp.total_consumed())))
+            //basic_stream_socket::read_some
         tmp.consume(s.read_some(tmp.prepare(max_size), ec));
       else
         break;
@@ -58,6 +64,8 @@ namespace detail
     return tmp.total_consumed();;
   }
 } // namespace detail
+//同步读  opportunisticRead中调用  opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
+//这里会保证读取到buffers可用空间字节数才会返回
 
 template <typename SyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition>
@@ -66,7 +74,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
     >::type*)
-{
+{   //mongodb读真正走到这里  opportunisticRead
   return detail::read_buffer_sequence(s, buffers,
       asio::buffer_sequence_begin(buffers), completion_condition, ec);
 }
@@ -110,8 +118,7 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
 
 template <typename SyncReadStream, typename DynamicBuffer,
     typename CompletionCondition>
-//同步读  opportunisticRead中调用  opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
-//这里会保证读取到buffers可用空间字节数才会返回
+
 std::size_t read(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
@@ -275,7 +282,7 @@ namespace detail
 	 //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
 	 //->reactive_socket_service_base::start_op中进行EPOLL事件注册
 	//mongodb同步读取流程:
-	 //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+	 //mongodb中opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
 	 //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
 	
 	//write发送异步数据流程: 
@@ -396,7 +403,7 @@ namespace detail
 	   //->basic_stream_socket::async_read_some->reactive_socket_service_base::async_receive(这里构造reactive_socket_recv_op，后续得epoll读数据及其读取到一个完整mongo报文得handler回调也在这里得do_complete中执行)
 	   //->reactive_socket_service_base::start_op中进行EPOLL事件注册
 	  //mongodb同步读取流程:
-	   //mongodb中opportunisticRead->asio:read->basic_stream_socket::read_some->basic_stream_socket::read_some
+	   //mongodb中opportunisticRead->asio:read->detail::read_buffer_sequence->basic_stream_socket::read_some->basic_stream_socket::read_some
 	   //reactive_socket_service_base::receive->socket_ops::sync_recv(这里直接读取数据)
 	  
 	  //write发送异步数据流程: 
