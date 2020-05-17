@@ -90,7 +90,7 @@ public:
         //真正生效见ServiceExecutorAdaptive::schedule
         //表示本线程可以继续递归进行多个链接数据的_processMessage处理，一个线程同时处理最大adaptiveServiceExecutorRecursionLimit个链接的_processMessage处理
 
-        //_processMessage递归调用背景: (多次递归调度执行的是同一个链接上的多个mongo请求，整个过程属于同一个ssm)
+        //_processMessage递归调用背景: (读取一个完整报文+后续处理，第二个任务递归调用) 多线程环境一个线程可以处理多个链接的请求，因为发送数据给客户端可能是异步的，所以存在同时处理多个链接请求的情况
         //实际上一个线程从boost-asio库的全局队列获取任务执行，当链接数据通过_processMessage
         //转发到后端进入SinkWait状态的时候，_sinkMessage可能会立马成功，就会进入到_sinkCallback
         //进入到State::Source状态，在下一个调度中就会继续_sourceMessage->_sourceCallback进行递归调用
@@ -98,7 +98,8 @@ public:
 
         // MayYieldBeforeSchedule indicates that the executor may yield on the current thread before
         // scheduling the task.
-        //针对sync线程模式有效
+        //针对sync线程模式有效,处理完一个完整请求并返回给客户端后，进行下一次请求处理的时候
+        //ServiceStateMachine::_sinkCallback赋值使用，真正生效见ServiceExecutorSynchronous::schedule
         kMayYieldBeforeSchedule = 1 << 3, //等待一个调度的时间，下次执行
     };
 

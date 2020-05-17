@@ -57,6 +57,7 @@ public:
 
   // The number of bytes transferred, to be passed to the completion handler.
   //do_perform进行底层fd数据读写的字节数
+  //是否从底层fd读取或者发送一个完整的mongodb报文的检查在read_op::operator()和write_op::operator()中实现
   std::size_t bytes_transferred_;
 
   // Status returned by perform function. May be used to decide whether it is

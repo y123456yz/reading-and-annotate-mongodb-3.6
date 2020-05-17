@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.o  -o bulk6 -Wl,-rpath,/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc:/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libbson libmongoc-1.0.so.0.0.0 -lrt -lresolv ../libbson/libbson-1.0.so.0.0.0 -lrt -lm -pthread 

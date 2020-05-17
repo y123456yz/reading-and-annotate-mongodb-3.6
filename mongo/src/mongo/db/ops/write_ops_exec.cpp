@@ -400,7 +400,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
     // Try to insert the batch one-at-a-time. This path is executed both for singular batches, and
     // for batches that failed all-at-once inserting.
     //一次性一条一条插入，上面的固定集合是一次性插入
-    log() << "yang test ...insertBatchAndHandleErrors.........getNamespace().ns():" << wholeOp.getNamespace().ns();
+    //log() << "yang test ...insertBatchAndHandleErrors.........getNamespace().ns():" << wholeOp.getNamespace().ns();
     for (auto it = batch.begin(); it != batch.end(); ++it) {
         globalOpCounters.gotInsert(); //insert操作计数
         try {

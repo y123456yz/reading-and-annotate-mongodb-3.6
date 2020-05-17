@@ -74,8 +74,8 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
       is_mutable_buffer_sequence<MutableBufferSequence>::value
     >::type*)
 {
-  int ret =system("echo yang-test-start-mongodb1111detail::read_buffer_sequence  >> /asiotest.txt");
-	ret =1;
+  //int ret =system("echo yang-test-start-mongodb1111detail::read_buffer_sequence  >> /asiotest.txt");
+	//ret =1;
   return detail::read_buffer_sequence(s, buffers,
       asio::buffer_sequence_begin(buffers), completion_condition, ec);
 }
@@ -145,9 +145,9 @@ std::size_t read(SyncReadStream& s,
     bytes_available = std::min<std::size_t>(
           std::max<std::size_t>(512, b.capacity() - b.size()),
           std::min<std::size_t>(max_size, b.max_size() - b.size()));
-	system("echo yang-test-start-mongodb1111 >> /asiotest.txt");
+	//system("echo yang-test-start-mongodb1111 >> /asiotest.txt");
   }
-  system("echo yang-test-start-mongodb222222 >> /asiotest.txt");
+  //system("echo yang-test-start-mongodb222222 >> /asiotest.txt");
   return total_transferred;
 }
 
@@ -277,6 +277,8 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t max_size;
+	  //int ret = system("echo operator-read-yang-test111-start-mongodb >> /asio.txt");
+		//  ret = 0;
       switch (start_ = start)
       {
         case 1:
@@ -287,11 +289,14 @@ namespace detail
               ASIO_MOVE_CAST(read_op)(*this));
           return; default:
           buffers_.consume(bytes_transferred);
+		  //ret = system("echo operator-read-yang-test2222-start-mongodb >> /asio.txt");
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
+		  //ret = system("echo operator-read-yang-test3333-start-mongodb >> /asio.txt");
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
         } while (max_size > 0);
-
+		//ret = system("echo operator-read-yang-test4444-start-mongodb >> /asio.txt");
+	
         handler_(ec, buffers_.total_consumed());
       }
     }

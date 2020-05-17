@@ -249,6 +249,8 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t max_size;
+	  //int ret3 = system("echo operator-writ2e1111-yang-test-start-mongodb >> /asio.txt");
+		//		  ret3 = 0;
       switch (start_ = start)
       {
         case 1:
@@ -258,11 +260,16 @@ namespace detail
           stream_.async_write_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(write_op)(*this));
           return; default:
+
+			//int ret = system("echo operator-write-yang-test2222-start-mongodb >> /asio.txt");
+		  //ret = 0;
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
         } while (max_size > 0);
+		//int ret2 = system("echo operator-writ2e3333-yang-test-start-mongodb >> /asio.txt");
+			//	  ret2 = 0;
 
         handler_(ec, buffers_.total_consumed());
       }

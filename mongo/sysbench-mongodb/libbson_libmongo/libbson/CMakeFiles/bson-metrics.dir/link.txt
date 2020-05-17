@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/bson-metrics.dir/examples/bson-metrics.c.o  -o bson-metrics -Wl,-rpath,/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libbson libbson-1.0.so.0.0.0 -lm -lrt -lm -pthread 

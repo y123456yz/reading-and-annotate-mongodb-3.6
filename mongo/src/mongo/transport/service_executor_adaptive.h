@@ -189,7 +189,7 @@ private:
         bool _running = false;
     };
 
-    //线程统计信息
+    //线程统计信息  注意:这里面是一个线程在一次循环中执行执行任务+等待任务的时间
     struct ThreadState {
         ThreadState(TickSource* ts) : running(ts), executing(ts) {}
 

@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/example-session.dir/examples/example-session.c.o  -o example-session -Wl,-rpath,/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc:/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libbson libmongoc-1.0.so.0.0.0 -lrt -lresolv ../libbson/libbson-1.0.so.0.0.0 -lrt -lm -pthread 

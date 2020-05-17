@@ -205,6 +205,10 @@ private:
         std::error_code ec;
         //先直接同步方式从协议栈读取数据，直到读取到数据并且把协议栈数据读完
         auto size = asio::read(stream, buffers, ec); //detail::read_buffer_sequence
+        /* 下面两行用来模拟异步读操作
+           auto size = 0;//asio::read(stream, buffers, ec); //detail::read_buffer_sequence
+        ec = asio::error::try_again;
+        */
         //协议栈内容已经读完了，但是还不够size字节，则继续异步读取
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
             // asio::read is a loop internally, so some of buffers may have been read into already.
@@ -215,14 +219,14 @@ private:
             if (size > 0) {
                 asyncBuffers += size; //buffer offset向后移动
             }
-            LOG(0) << "yang test ......... opportunisticRead";
+            //LOG(0) << "yang test ......... opportunisticRead";
             //数据得读取及handler回调执行见asio库得read_op::operator
             asio::async_read(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else { 
             //直接read获取到size字节数据，则直接执行handler 
             handler(ec, size);
         }
-        LOG(0) << "yang test ....2..... opportunisticRead:" << size;
+        //LOG(0) << "yang test ....2..... opportunisticRead:" << size;
     }
 
     template <typename Stream, typename ConstBufferSequence, typename CompleteHandler>
@@ -233,6 +237,11 @@ private:
         std::error_code ec;
         //先直接写
         auto size = asio::write(stream, buffers, ec); 
+
+        /*
+        auto size = 0; 加这两个用来模拟异步写
+        ec = asio::error::try_again;
+        */
         //一次性写size字节如果成功，则直接执行handler，否则没写完的数据通过异步方式继续写，写完后执行对应handler
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
         //一般当内核协议栈buffer写满后，会返回try_again
@@ -243,7 +252,7 @@ private:
             if (size > 0) {
                 asyncBuffers += size;
                 }
-            LOG(0) << "yang test ......... opportunisticWrite";
+            //LOG(0) << "yang test ......... opportunisticWrite";
             //数据得读取及handler回调执行见asio库得write_op::operator
             asio::async_write(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else {
