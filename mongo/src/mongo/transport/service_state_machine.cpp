@@ -466,7 +466,9 @@ void ServiceStateMachine::_sinkCallback(Status status) {
         _state.store(State::Source); //注意这里的状态是Source,继续接收客户端请求
     }
 
-	//正常流程走这里
+	//正常流程走这里,继续进行下一次的State::Source报文接收处理
+	//这里的kDeferredTask实际上也指定了工作线程下一次的接受mongodb报文这个阶段不会通过
+	//_scheduleCondition条件变量通知control控制线程
     return _scheduleNextWithGuard(std::move(guard),
                                   ServiceExecutor::kDeferredTask |
                                       ServiceExecutor::kMayYieldBeforeSchedule);
@@ -559,7 +561,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     }
 }
 
-//实际上没有使用
+//实际上没有使用  Service_state_machine_test.cpp才用
 void ServiceStateMachine::runNext() {
     return _runNextInGuard(ThreadGuard(this));
 }

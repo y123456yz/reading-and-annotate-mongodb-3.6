@@ -223,6 +223,11 @@ bool ServiceEntryPointImpl::shutdown(Milliseconds timeout) {
     return result;
 }
 
+/*
+mongos> db.serverStatus().connections
+{ "current" : 386, "available" : 8614, "totalCreated" : 2701134 }
+mongos> 
+*/
 ServiceEntryPoint::Stats ServiceEntryPointImpl::sessionStats() const {
 
     size_t sessionCount = _currentConnections.load();

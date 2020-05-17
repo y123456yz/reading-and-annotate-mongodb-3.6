@@ -56,22 +56,22 @@ MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorReservedThreads, int, 1); /
 
 // Each worker thread will allow ASIO to run for this many milliseconds before checking
 // whether it should exit
-//在判断该线程是否应该销毁之前，线程可以运行网络异步ASIO相关的功能这么多时间
+//工作线程从全局队列中获取任务执行，如果对了中没有任务则需要等待，该配置就是限制等待时间的最大值
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRunTimeMillis, int, 5000);
 
 // The above parameter will be offset of some random value between -runTimeJitters/
 // +runTimeJitters so that not all threads are starting/stopping execution at the same time
-//随机数，保证所有线程不会同时创建和销毁
+//如果配置为0，则任务入队从队列获取任务等待时间则不需要添加一个随机数
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorRunTimeJitterMillis, int, 500);
 
 // This is the maximum amount of time the controller thread will sleep before doing any
 // stuck detection
-//controller控制线程最大睡眠时间
+//保证control线程一次while循环操作(循环体里面判断是否需要增加线程池中线程，如果发现线程池压力大，则增加线程)的时间为该配置的值
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorStuckThreadTimeoutMillis, int, 250);
 
 // The maximum allowed latency between when a task is scheduled and a thread is started to
 // service it.
-//任务被调度等待执行的最长时间
+//如果control线程一次循环的时间不到adaptiveServiceExecutorStuckThreadTimeoutMillis，则do {} while()，直到保证本次while循环达到需要的时间值。 {}中就是简单的sleep，sleep的值就是本配置项的值。
 MONGO_EXPORT_SERVER_PARAMETER(adaptiveServiceExecutorMaxQueueLatencyMicros, int, 500);
 
 // Threads will exit themselves if they spent less than this percentage of the time they ran
@@ -119,9 +119,11 @@ int64_t ticksToMicros(TickSource::Tick ticks, TickSource* tickSource) {
 
 struct ServerParameterOptions : public ServiceExecutorAdaptive::Options {
     int reservedThreads() const final {
+		//如果没有配置adaptiveServiceExecutorReservedThreads
         int value = adaptiveServiceExecutorReservedThreads.load();
-        if (value == -1) { //默认线程数等于CPU核心数/2
+        if (value == -1) { 
             ProcessInfo pi;
+			//默认线程数等于CPU核心数/2
             value = pi.getNumAvailableCores().value_or(pi.getNumCores()) / 2;
             value = std::max(value, 2);
             adaptiveServiceExecutorReservedThreads.store(value);
@@ -131,12 +133,12 @@ struct ServerParameterOptions : public ServiceExecutorAdaptive::Options {
         return value;
     }
 
-	//在判断该线程是否应该销毁之前，线程可以运行网络异步ASIO相关的功能这么多时间
     Milliseconds workerThreadRunTime() const final {
         return Milliseconds{adaptiveServiceExecutorRunTimeMillis.load()};
     }
 
-	////随机数，保证所有线程不会同时创建和销毁
+
+	//如果配置为了0，则任务入队从队列获取任务等待时间则不需要添加一个随机数
     int runTimeJitter() const final {
         return adaptiveServiceExecutorRunTimeJitterMillis.load();
     }
@@ -239,6 +241,7 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
         return {ErrorCodes::ShutdownInProgress, "Executor is not running"};
     }
 
+	//这里面的task()执行后-task()执行前的时间才是CPU真正工作的时间
     auto wrappedTask = [ this, task = std::move(task), scheduleTime, pendingCounterPtr ] {
 		//worker线程回调会执行该wrappedTask，
         pendingCounterPtr->subtractAndFetch(1);
@@ -328,11 +331,12 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 
 	//kMayRecurse标识的任务，会进行递归调用
     if ((flags & kMayRecurse) && //递归调用，任务还是由本线程处理
+    //递归调用背景: (读取一个完整报文+后续处理，第二个任务递归调用) 多线程环境一个线程可以处理多个链接的请求，因为发送数据给客户端可能是异步的，所以存在同时处理多个链接请求的情况
     	//递归深度还没达到上限，则还是由本线程继续调度执行wrappedTask任务
         (_localThreadState->recursionDepth + 1 < _config->recursionLimit())) {
         //本线程立马直接执行wrappedTask任务，不用入队到boost-asio全局队列等待调度执行
         //io_context::dispatch   io_context::dispatch 
-        if(_localThreadState->recursionDepth > 2)
+        if(_localThreadState->recursionDepth > 2) //实际上永远不会大于2，从代码分析看出source阶段后进入process阶段的适合用了该标识，process的下一阶段任务已经没有该标识勒
 			log() << "yang test .... _localThreadState->recursionDepth:" << _localThreadState->recursionDepth;
         _ioContext->dispatch(std::move(wrappedTask));  
     } else { //入队   io_context::post
@@ -397,6 +401,7 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
         const auto timerResetGuard =
             MakeGuard([&sinceLastControlRound] { sinceLastControlRound.reset(); });
 
+		//等待工作线程通知,最多等待stuckThreadTimeout
         _scheduleCondition.wait_for(fakeLk, _config->stuckThreadTimeout().toSystemDuration());
 
         // If the executor has stopped, then stop the controller altogether
@@ -430,7 +435,8 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
         }
 
         // If the wait timed out then either the executor is idle or stuck
-        //也就是本while()执行一次的时间差值
+        //也就是本while()执行一次的时间差值，也就是上次走到这里的时间和本次走到这里的时间差值大于该阀值
+        //也就是控制线程太久没有判断线程池是否够用了
         if (sinceLastControlRound.sinceStart() >= _config->stuckThreadTimeout()) {
             // Each call to schedule updates the last schedule ticks so we know the last time a
             // task was scheduled
@@ -442,11 +448,14 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
             //
             // In that case we should start the reserve number of threads so fully unblock the
             // thread pool.
-            //
+            //use中的线程数=线程池中总的线程数，说明线程池中线程太忙了
             if ((_threadsInUse.load() == _threadsRunning.load()) &&
                 (sinceLastSchedule >= _config->stuckThreadTimeout())) {
                 log() << "Detected blocked worker threads, "
                       << "starting new reserve threads to unblock service executor";
+				//一次批量创建这么多线程，这里实际上有个问题，如果我们配置adaptiveServiceExecutorReservedThreads
+				//非常大，则这里会一次性创建非常多的线程，可能反而会成为系统瓶颈
+				//建议mongodb官方这里最好做一下上限限制
                 for (int i = 0; i < _config->reservedThreads(); i++) {
                     _startWorkerThread();
                 }
@@ -469,7 +478,7 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
         // already have aren't saturated and we shouldn't consider adding new threads at this
         // time.
 
-		//所有worker线程非空闲占比小于该阀值，说明压力不大，不需要增加worker线程数
+		//worker线程非空闲占比小于该阀值，说明压力不大，不需要增加worker线程数
         if (utilizationPct < _config->idlePctThreshold()) {
             continue;
         }
@@ -482,6 +491,8 @@ void ServiceExecutorAdaptive::_controllerThreadRoutine() {
         // pending threads may be stuck and we should loop back around.
         //我们在这里循环stuckThreadTimeout毫秒，直到我们等待worker线程创建起来并正常运行task
         //因为如果有正在创建的worker线程，我们等待一小会，最多等待stuckThreadTimeout ms
+
+		//保证一次while循环时间为stuckThreadTimeout
         do {
             stdx::this_thread::sleep_for(_config->maxQueueLatency().toSystemDuration());
         } while ((_threadsPending.load() > 0) &&
@@ -536,6 +547,7 @@ Milliseconds ServiceExecutorAdaptive::_getThreadJitter() const {
         return std::default_random_engine(seed());
     }();
 
+	//如果有配置则添加一个随机数
     auto jitterParam = _config->runTimeJitter();
     if (jitterParam == 0)
         return Milliseconds{0};
@@ -620,6 +632,7 @@ void ServiceExecutorAdaptive::_workerThreadRoutine(
         _deathCondition.notify_one();
     });
 
+	//是否增加一个随机数
     auto jitter = _getThreadJitter();
 
     while (_isRunning.load()) {

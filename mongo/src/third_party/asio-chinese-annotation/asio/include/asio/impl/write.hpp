@@ -286,6 +286,7 @@ namespace detail
 
 		  default: //为啥有这个流程???????  当case不为1的时候走这里
           buffers_.consume(bytes_transferred);
+		  //异步写一个完整mongodb协议报文到协议栈哈，都会走到这里
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
 		  //说明还有未写入协议栈的数据，继续等待调度写，指定全部buffer数据写到协议栈完成

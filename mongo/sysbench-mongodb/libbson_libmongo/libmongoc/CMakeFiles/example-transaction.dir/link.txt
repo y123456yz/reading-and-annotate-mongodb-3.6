@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/example-transaction.dir/examples/example-transaction.c.o  -o example-transaction -Wl,-rpath,/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc:/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libbson libmongoc-1.0.so.0.0.0 -lrt -lresolv ../libbson/libbson-1.0.so.0.0.0 -lrt -lm -pthread 

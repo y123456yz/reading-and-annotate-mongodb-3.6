@@ -118,7 +118,7 @@ Status TransportLayerASIO::wait(Ticket&& ticket) {
     auto asioTicket = checked_cast<ASIOTicket*>(ownedASIOTicket.get());
 
     Status waitStatus = Status::OK();
-	//调用对应fill接口
+	//调用对应fill接口 ASIOSourceTicket::fill 或者 ASIOSinkTicket::fill
     asioTicket->fill(true, [&waitStatus](Status result) { waitStatus = result; });
 
     return waitStatus;

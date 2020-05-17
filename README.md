@@ -18,7 +18,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
   
 源码中文已注释代码列表如下：
 ===================================   
-#### asio网络库/定时器源码实现注释(只注释mongodb相关实现的asio库代码)(100%注释):   
+#### boost-asio网络库/定时器源码实现注释(只注释mongodb相关实现的asio库代码)(100%注释):   
  *   [asio/include/asio/detail/impl/scheduler.ipp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/third_party/asio-chinese-annotation/asio/include/asio/detail/impl/scheduler.ipp) 
  *   [asio/include/asio/detail/impl/epoll_reactor.ipp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/third_party/asio-chinese-annotation/asio/include/asio/detail/impl/epoll_reactor.ipp) 
  *   [asio/include/asio/detail/scheduler.hpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/third_party/asio-chinese-annotation/asio/include/asio/detail/scheduler.hpp) 
@@ -41,7 +41,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [asio/include/asio/detail/scheduler_operation.hpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/third_party/asio-chinese-annotation/asio/include/asio/detail/scheduler_operation.hpp) 
  *   [asio/include/asio/detail/deadline_timer_service.hpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/third_party/asio-chinese-annotation/asio/include/asio/detail/deadline_timer_service.hpp) 
 
-#### mongodb网络模块(transport)处理实现(100%注释):     
+#### mongodb网络传输模块(transport)处理实现(100%注释):     
 ###### transport_layer传输层子模块: 
  *   [transport_layer_asio.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/transport_layer_asio.h) 
  *   [transport_layer_asio.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/transport_layer_asio.cpp) 
@@ -59,7 +59,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
 ###### service_state_machine状态机子模块(100%注释): 
  *   [service_state_machine.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_state_machine.h) 
  *   [service_state_machine.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_state_machine.cpp) 
-###### service_executor服务运行(网络线程模型)子模块(100%注释): 
+###### service_executor服务运行(工作线程模型)子模块(100%注释): 
  *   [service_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_executor.h) 
  *   [service_executor_adaptive.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_executor_adaptive.cpp) 
  *   [service_executor_adaptive.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_executor_adaptive.h) 

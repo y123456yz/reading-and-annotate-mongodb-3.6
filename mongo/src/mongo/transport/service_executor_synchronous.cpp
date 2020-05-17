@@ -110,6 +110,8 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
          //求后产生的性能提升为5%。
         if (flags & ScheduleFlags::kMayYieldBeforeSchedule) {
             if ((_localThreadIdleCounter++ & 0xf) == 0) {
+				//短暂休息会儿后再处理该链接的下一个用户请求
+				//实际上是调用TCMalloc MarkThreadTemporarilyIdle实现
                 markThreadIdle();
             }
             if (_numRunningWorkerThreads.loadRelaxed() > _numHardwareCores) {

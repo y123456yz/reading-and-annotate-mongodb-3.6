@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/bcon-col-view.dir/examples/bcon-col-view.c.o  -o bcon-col-view -Wl,-rpath,/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libbson libbson-1.0.so.0.0.0 -lrt -lm -pthread 
