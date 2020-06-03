@@ -67,7 +67,7 @@ src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.o
  ../src/libmongoc/src/mongoc/mongoc-version-functions.h
  ../src/libmongoc/src/mongoc/mongoc-write-concern.h
  ../src/libmongoc/src/mongoc/mongoc.h
- /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/bulk/bulk4.c
+ /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/bulk/bulk4.c
  src/libbson/src/bson/bson-config.h
  src/libbson/src/bson/bson-version.h
  src/libmongoc/src/mongoc/mongoc-config.h

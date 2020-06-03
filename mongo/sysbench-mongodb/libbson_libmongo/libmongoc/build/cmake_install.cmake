@@ -1,4 +1,4 @@
-# Install script for directory: /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/build
+# Install script for directory: /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/build
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/build/cmake/cmake_install.cmake")
+  include("/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/build/cmake/cmake_install.cmake")
 
 endif()
 

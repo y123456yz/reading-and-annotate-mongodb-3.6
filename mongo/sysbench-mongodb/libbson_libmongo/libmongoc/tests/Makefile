@@ -48,10 +48,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/yyz/mongo-c-driver-1.11.0
+CMAKE_SOURCE_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/yyz/mongo-c-driver-1.11.0/cmake-build
+CMAKE_BINARY_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -105,7 +105,7 @@ list_install_components/fast: list_install_components
 # Special rule for the target package
 package: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackConfig.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackConfig.cmake
 .PHONY : package
 
 # Special rule for the target package
@@ -127,7 +127,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackSourceConfig.cmake /root/yyz/mongo-c-driver-1.11.0/cmake-build/CPackSourceConfig.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackSourceConfig.cmake /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -148,14 +148,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/tests/CMakeFiles/progress.marks
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles 0
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/tests/CMakeFiles/progress.marks
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/clean
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/clean
 .PHONY : clean
 
 # The main clean target
@@ -165,17 +165,17 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/preinstall
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/preinstall
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/tests/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Help Target
@@ -203,6 +203,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

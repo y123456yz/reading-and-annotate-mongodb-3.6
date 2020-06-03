@@ -1,4 +1,4 @@
-# Install script for directory: /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/src/mongoc
+# Install script for directory: /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/src/mongoc
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

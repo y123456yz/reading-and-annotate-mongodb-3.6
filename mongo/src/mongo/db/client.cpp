@@ -66,27 +66,29 @@ void Client::initThreadIfNotAlready() {
     initThreadIfNotAlready(getThreadName());
 }
 
-//初始化一个名称desc线程
+//初始化一个名称desc线程     //desc代表线程名
 void Client::initThread(StringData desc, transport::SessionHandle session) {
     initThread(desc, getGlobalServiceContext(), std::move(session));
 }
 
-//设置当前线程名，参考_initAndListen
-void Client::initThread(StringData desc,
+//设置当前线程名，参考_initAndListen，同时获取当client信息currentClient
+void Client::initThread(StringData desc, //desc代表线程名
                         ServiceContext* service,
                         transport::SessionHandle session) {
     invariant(!haveClient());
 
     std::string fullDesc;
-    if (session) {
+    if (session) { //如果带有session信息，添加上对应的session id
         fullDesc = str::stream() << desc << session->id();
     } else {
         fullDesc = desc.toString();
     }
 
+	//设置线程名
     setThreadName(fullDesc);
 
     // Create the client obj, attach to thread
+    //ServiceContext::makeClient
     currentClient = service->makeClient(fullDesc, std::move(session));
 }
 
@@ -104,6 +106,7 @@ int64_t generateSeed(const std::string& desc) {
 }
 }  // namespace
 
+//例如ServiceContext::makeClient中构造
 Client::Client(std::string desc, ServiceContext* serviceContext, transport::SessionHandle session)
     : _serviceContext(serviceContext),
       _session(std::move(session)),
@@ -129,6 +132,7 @@ void Client::reportState(BSONObjBuilder& builder) {
 }
 
 //ServiceStateMachine::_processMessage
+//获取一个唯一得UniqueOperationContext
 ServiceContext::UniqueOperationContext Client::makeOperationContext() {
 	//获取一个UniqueOperationContext类
     return getServiceContext()->makeOperationContext(this); //ServiceContext::makeOperationContext

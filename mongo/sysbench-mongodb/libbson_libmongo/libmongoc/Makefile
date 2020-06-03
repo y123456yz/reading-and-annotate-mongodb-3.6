@@ -48,10 +48,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/yyz/mongo-c-driver-1.11.0
+CMAKE_SOURCE_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/yyz/mongo-c-driver-1.11.0/cmake-build
+CMAKE_BINARY_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -94,7 +94,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target package
 package: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackConfig.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackConfig.cmake
 .PHONY : package
 
 # Special rule for the target package
@@ -138,7 +138,7 @@ list_install_components/fast: list_install_components
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackSourceConfig.cmake /root/yyz/mongo-c-driver-1.11.0/cmake-build/CPackSourceConfig.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && /usr/local/bin/cpack --config ./CPackSourceConfig.cmake /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -148,14 +148,14 @@ package_source/fast: package_source
 
 # The main all target
 all: cmake_check_build_system
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/progress.marks
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles 0
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/progress.marks
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/clean
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/clean
 .PHONY : clean
 
 # The main clean target
@@ -165,22 +165,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/preinstall
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/preinstall
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/common-operations.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/common-operations.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/common-operations.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/common-operations.dir/rule
 
 # Convenience name for target.
@@ -190,12 +190,12 @@ common-operations: src/libmongoc/CMakeFiles/common-operations.dir/rule
 
 # fast build rule for target.
 common-operations/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/build
 .PHONY : common-operations/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk6.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk6.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk6.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk6.dir/rule
 
 # Convenience name for target.
@@ -205,12 +205,12 @@ bulk6: src/libmongoc/CMakeFiles/bulk6.dir/rule
 
 # fast build rule for target.
 bulk6/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/build
 .PHONY : bulk6/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk4.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk4.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk4.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk4.dir/rule
 
 # Convenience name for target.
@@ -220,12 +220,12 @@ bulk4: src/libmongoc/CMakeFiles/bulk4.dir/rule
 
 # fast build rule for target.
 bulk4/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/build
 .PHONY : bulk4/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk3.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk3.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk3.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk3.dir/rule
 
 # Convenience name for target.
@@ -235,12 +235,12 @@ bulk3: src/libmongoc/CMakeFiles/bulk3.dir/rule
 
 # fast build rule for target.
 bulk3/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/build
 .PHONY : bulk3/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk1.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk1.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk1.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk1.dir/rule
 
 # Convenience name for target.
@@ -250,12 +250,12 @@ bulk1: src/libmongoc/CMakeFiles/bulk1.dir/rule
 
 # fast build rule for target.
 bulk1/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/build
 .PHONY : bulk1/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk-collation.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk-collation.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk-collation.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk-collation.dir/rule
 
 # Convenience name for target.
@@ -265,12 +265,12 @@ bulk-collation: src/libmongoc/CMakeFiles/bulk-collation.dir/rule
 
 # fast build rule for target.
 bulk-collation/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/build
 .PHONY : bulk-collation/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/basic-aggregation.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/basic-aggregation.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/basic-aggregation.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/basic-aggregation.dir/rule
 
 # Convenience name for target.
@@ -280,12 +280,12 @@ basic-aggregation: src/libmongoc/CMakeFiles/basic-aggregation.dir/rule
 
 # fast build rule for target.
 basic-aggregation/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/build
 .PHONY : basic-aggregation/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/hello_mongoc.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/hello_mongoc.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/hello_mongoc.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/hello_mongoc.dir/rule
 
 # Convenience name for target.
@@ -295,12 +295,12 @@ hello_mongoc: src/libmongoc/CMakeFiles/hello_mongoc.dir/rule
 
 # fast build rule for target.
 hello_mongoc/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/build
 .PHONY : hello_mongoc/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/check.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/check.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/check.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/check.dir/rule
 
 # Convenience name for target.
@@ -310,12 +310,12 @@ check: src/libmongoc/CMakeFiles/check.dir/rule
 
 # fast build rule for target.
 check/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/check.dir/build.make src/libmongoc/CMakeFiles/check.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/check.dir/build.make src/libmongoc/CMakeFiles/check.dir/build
 .PHONY : check/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/aggregation1.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/aggregation1.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/aggregation1.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/aggregation1.dir/rule
 
 # Convenience name for target.
@@ -325,12 +325,12 @@ aggregation1: src/libmongoc/CMakeFiles/aggregation1.dir/rule
 
 # fast build rule for target.
 aggregation1/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/build
 .PHONY : aggregation1/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/rule
 
 # Convenience name for target.
@@ -340,12 +340,12 @@ test-mongoc-gssapi: src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/rule
 
 # fast build rule for target.
 test-mongoc-gssapi/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build
 .PHONY : test-mongoc-gssapi/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-scram.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-scram.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-scram.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-scram.dir/rule
 
 # Convenience name for target.
@@ -355,12 +355,12 @@ example-scram: src/libmongoc/CMakeFiles/example-scram.dir/rule
 
 # fast build rule for target.
 example-scram/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/build
 .PHONY : example-scram/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/mongoc-stat.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-stat.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-stat.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/mongoc-stat.dir/rule
 
 # Convenience name for target.
@@ -370,12 +370,12 @@ mongoc-stat: src/libmongoc/CMakeFiles/mongoc-stat.dir/rule
 
 # fast build rule for target.
 mongoc-stat/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/build
 .PHONY : mongoc-stat/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/mongoc_shared.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc_shared.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc_shared.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/mongoc_shared.dir/rule
 
 # Convenience name for target.
@@ -385,12 +385,12 @@ mongoc_shared: src/libmongoc/CMakeFiles/mongoc_shared.dir/rule
 
 # fast build rule for target.
 mongoc_shared/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/build
 .PHONY : mongoc_shared/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/mongoc_static.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc_static.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc_static.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/mongoc_static.dir/rule
 
 # Convenience name for target.
@@ -400,12 +400,12 @@ mongoc_static: src/libmongoc/CMakeFiles/mongoc_static.dir/rule
 
 # fast build rule for target.
 mongoc_static/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/build
 .PHONY : mongoc_static/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-command-monitoring.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-command-monitoring.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-command-monitoring.dir/rule
 
 # Convenience name for target.
@@ -415,12 +415,12 @@ example-command-monitoring: src/libmongoc/CMakeFiles/example-command-monitoring.
 
 # fast build rule for target.
 example-command-monitoring/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/build
 .PHONY : example-command-monitoring/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-command-with-opts.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-command-with-opts.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-command-with-opts.dir/rule
 
 # Convenience name for target.
@@ -430,12 +430,12 @@ example-command-with-opts: src/libmongoc/CMakeFiles/example-command-with-opts.di
 
 # fast build rule for target.
 example-command-with-opts/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/build
 .PHONY : example-command-with-opts/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-collection-watch.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-collection-watch.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-collection-watch.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-collection-watch.dir/rule
 
 # Convenience name for target.
@@ -445,12 +445,12 @@ example-collection-watch: src/libmongoc/CMakeFiles/example-collection-watch.dir/
 
 # fast build rule for target.
 example-collection-watch/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/build
 .PHONY : example-collection-watch/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/fam.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/fam.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/fam.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/fam.dir/rule
 
 # Convenience name for target.
@@ -460,12 +460,12 @@ fam: src/libmongoc/CMakeFiles/fam.dir/rule
 
 # fast build rule for target.
 fam/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/build
 .PHONY : fam/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/test-libmongoc.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/test-libmongoc.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/test-libmongoc.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/test-libmongoc.dir/rule
 
 # Convenience name for target.
@@ -475,12 +475,12 @@ test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/rule
 
 # fast build rule for target.
 test-libmongoc/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/build
 .PHONY : test-libmongoc/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/mongoc-ping.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-ping.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-ping.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/mongoc-ping.dir/rule
 
 # Convenience name for target.
@@ -490,12 +490,12 @@ mongoc-ping: src/libmongoc/CMakeFiles/mongoc-ping.dir/rule
 
 # fast build rule for target.
 mongoc-ping/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/build
 .PHONY : mongoc-ping/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/rule
 
 # Convenience name for target.
@@ -505,12 +505,12 @@ example-sdam-monitoring: src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/ru
 
 # fast build rule for target.
 example-sdam-monitoring/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build
 .PHONY : example-sdam-monitoring/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk5.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk5.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk5.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk5.dir/rule
 
 # Convenience name for target.
@@ -520,12 +520,12 @@ bulk5: src/libmongoc/CMakeFiles/bulk5.dir/rule
 
 # fast build rule for target.
 bulk5/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/build
 .PHONY : bulk5/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-create-indexes.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-create-indexes.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-create-indexes.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-create-indexes.dir/rule
 
 # Convenience name for target.
@@ -535,12 +535,12 @@ example-create-indexes: src/libmongoc/CMakeFiles/example-create-indexes.dir/rule
 
 # fast build rule for target.
 example-create-indexes/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/build
 .PHONY : example-create-indexes/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/mongoc-tail.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-tail.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-tail.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/mongoc-tail.dir/rule
 
 # Convenience name for target.
@@ -550,12 +550,12 @@ mongoc-tail: src/libmongoc/CMakeFiles/mongoc-tail.dir/rule
 
 # fast build rule for target.
 mongoc-tail/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/build
 .PHONY : mongoc-tail/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-pool.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-pool.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-pool.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-pool.dir/rule
 
 # Convenience name for target.
@@ -565,12 +565,12 @@ example-pool: src/libmongoc/CMakeFiles/example-pool.dir/rule
 
 # fast build rule for target.
 example-pool/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/build
 .PHONY : example-pool/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-gridfs.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-gridfs.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-gridfs.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-gridfs.dir/rule
 
 # Convenience name for target.
@@ -580,12 +580,12 @@ example-gridfs: src/libmongoc/CMakeFiles/example-gridfs.dir/rule
 
 # fast build rule for target.
 example-gridfs/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/build
 .PHONY : example-gridfs/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-session.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-session.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-session.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-session.dir/rule
 
 # Convenience name for target.
@@ -595,12 +595,12 @@ example-session: src/libmongoc/CMakeFiles/example-session.dir/rule
 
 # fast build rule for target.
 example-session/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/build
 .PHONY : example-session/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/bulk2.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk2.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/bulk2.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/bulk2.dir/rule
 
 # Convenience name for target.
@@ -610,12 +610,12 @@ bulk2: src/libmongoc/CMakeFiles/bulk2.dir/rule
 
 # fast build rule for target.
 bulk2/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/build
 .PHONY : bulk2/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/mongoc-dump.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-dump.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/mongoc-dump.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/mongoc-dump.dir/rule
 
 # Convenience name for target.
@@ -625,12 +625,12 @@ mongoc-dump: src/libmongoc/CMakeFiles/mongoc-dump.dir/rule
 
 # fast build rule for target.
 mongoc-dump/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/build
 .PHONY : mongoc-dump/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-client.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-client.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-client.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-client.dir/rule
 
 # Convenience name for target.
@@ -640,12 +640,12 @@ example-client: src/libmongoc/CMakeFiles/example-client.dir/rule
 
 # fast build rule for target.
 example-client/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/build
 .PHONY : example-client/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-transaction.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-transaction.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-transaction.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-transaction.dir/rule
 
 # Convenience name for target.
@@ -655,12 +655,12 @@ example-transaction: src/libmongoc/CMakeFiles/example-transaction.dir/rule
 
 # fast build rule for target.
 example-transaction/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/build
 .PHONY : example-transaction/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/example-update.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-update.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/example-update.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/example-update.dir/rule
 
 # Convenience name for target.
@@ -670,12 +670,12 @@ example-update: src/libmongoc/CMakeFiles/example-update.dir/rule
 
 # fast build rule for target.
 example-update/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/build
 .PHONY : example-update/fast
 
 # Convenience name for target.
 src/libmongoc/CMakeFiles/find-and-modify.dir/rule:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/find-and-modify.dir/rule
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f CMakeFiles/Makefile2 src/libmongoc/CMakeFiles/find-and-modify.dir/rule
 .PHONY : src/libmongoc/CMakeFiles/find-and-modify.dir/rule
 
 # Convenience name for target.
@@ -685,7 +685,7 @@ find-and-modify: src/libmongoc/CMakeFiles/find-and-modify.dir/rule
 
 # fast build rule for target.
 find-and-modify/fast:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/build
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/build
 .PHONY : find-and-modify/fast
 
 __/common/common-b64.o: __/common/common-b64.c.o
@@ -694,8 +694,8 @@ __/common/common-b64.o: __/common/common-b64.c.o
 
 # target to build an object file
 __/common/common-b64.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/common/common-b64.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/common/common-b64.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/common/common-b64.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/common/common-b64.c.o
 .PHONY : __/common/common-b64.c.o
 
 __/common/common-b64.i: __/common/common-b64.c.i
@@ -704,8 +704,8 @@ __/common/common-b64.i: __/common/common-b64.c.i
 
 # target to preprocess a source file
 __/common/common-b64.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/common/common-b64.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/common/common-b64.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/common/common-b64.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/common/common-b64.c.i
 .PHONY : __/common/common-b64.c.i
 
 __/common/common-b64.s: __/common/common-b64.c.s
@@ -714,8 +714,8 @@ __/common/common-b64.s: __/common/common-b64.c.s
 
 # target to generate assembly for a file
 __/common/common-b64.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/common/common-b64.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/common/common-b64.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/common/common-b64.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/common/common-b64.c.s
 .PHONY : __/common/common-b64.c.s
 
 __/libbson/tests/corpus-test.o: __/libbson/tests/corpus-test.c.o
@@ -724,7 +724,7 @@ __/libbson/tests/corpus-test.o: __/libbson/tests/corpus-test.c.o
 
 # target to build an object file
 __/libbson/tests/corpus-test.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o
 .PHONY : __/libbson/tests/corpus-test.c.o
 
 __/libbson/tests/corpus-test.i: __/libbson/tests/corpus-test.c.i
@@ -733,7 +733,7 @@ __/libbson/tests/corpus-test.i: __/libbson/tests/corpus-test.c.i
 
 # target to preprocess a source file
 __/libbson/tests/corpus-test.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.i
 .PHONY : __/libbson/tests/corpus-test.c.i
 
 __/libbson/tests/corpus-test.s: __/libbson/tests/corpus-test.c.s
@@ -742,7 +742,7 @@ __/libbson/tests/corpus-test.s: __/libbson/tests/corpus-test.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/corpus-test.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.s
 .PHONY : __/libbson/tests/corpus-test.c.s
 
 __/libbson/tests/test-atomic.o: __/libbson/tests/test-atomic.c.o
@@ -751,7 +751,7 @@ __/libbson/tests/test-atomic.o: __/libbson/tests/test-atomic.c.o
 
 # target to build an object file
 __/libbson/tests/test-atomic.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o
 .PHONY : __/libbson/tests/test-atomic.c.o
 
 __/libbson/tests/test-atomic.i: __/libbson/tests/test-atomic.c.i
@@ -760,7 +760,7 @@ __/libbson/tests/test-atomic.i: __/libbson/tests/test-atomic.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-atomic.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.i
 .PHONY : __/libbson/tests/test-atomic.c.i
 
 __/libbson/tests/test-atomic.s: __/libbson/tests/test-atomic.c.s
@@ -769,7 +769,7 @@ __/libbson/tests/test-atomic.s: __/libbson/tests/test-atomic.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-atomic.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.s
 .PHONY : __/libbson/tests/test-atomic.c.s
 
 __/libbson/tests/test-bcon-basic.o: __/libbson/tests/test-bcon-basic.c.o
@@ -778,7 +778,7 @@ __/libbson/tests/test-bcon-basic.o: __/libbson/tests/test-bcon-basic.c.o
 
 # target to build an object file
 __/libbson/tests/test-bcon-basic.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o
 .PHONY : __/libbson/tests/test-bcon-basic.c.o
 
 __/libbson/tests/test-bcon-basic.i: __/libbson/tests/test-bcon-basic.c.i
@@ -787,7 +787,7 @@ __/libbson/tests/test-bcon-basic.i: __/libbson/tests/test-bcon-basic.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-bcon-basic.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.i
 .PHONY : __/libbson/tests/test-bcon-basic.c.i
 
 __/libbson/tests/test-bcon-basic.s: __/libbson/tests/test-bcon-basic.c.s
@@ -796,7 +796,7 @@ __/libbson/tests/test-bcon-basic.s: __/libbson/tests/test-bcon-basic.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-bcon-basic.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.s
 .PHONY : __/libbson/tests/test-bcon-basic.c.s
 
 __/libbson/tests/test-bcon-extract.o: __/libbson/tests/test-bcon-extract.c.o
@@ -805,7 +805,7 @@ __/libbson/tests/test-bcon-extract.o: __/libbson/tests/test-bcon-extract.c.o
 
 # target to build an object file
 __/libbson/tests/test-bcon-extract.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o
 .PHONY : __/libbson/tests/test-bcon-extract.c.o
 
 __/libbson/tests/test-bcon-extract.i: __/libbson/tests/test-bcon-extract.c.i
@@ -814,7 +814,7 @@ __/libbson/tests/test-bcon-extract.i: __/libbson/tests/test-bcon-extract.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-bcon-extract.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.i
 .PHONY : __/libbson/tests/test-bcon-extract.c.i
 
 __/libbson/tests/test-bcon-extract.s: __/libbson/tests/test-bcon-extract.c.s
@@ -823,7 +823,7 @@ __/libbson/tests/test-bcon-extract.s: __/libbson/tests/test-bcon-extract.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-bcon-extract.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.s
 .PHONY : __/libbson/tests/test-bcon-extract.c.s
 
 __/libbson/tests/test-bson-corpus.o: __/libbson/tests/test-bson-corpus.c.o
@@ -832,7 +832,7 @@ __/libbson/tests/test-bson-corpus.o: __/libbson/tests/test-bson-corpus.c.o
 
 # target to build an object file
 __/libbson/tests/test-bson-corpus.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o
 .PHONY : __/libbson/tests/test-bson-corpus.c.o
 
 __/libbson/tests/test-bson-corpus.i: __/libbson/tests/test-bson-corpus.c.i
@@ -841,7 +841,7 @@ __/libbson/tests/test-bson-corpus.i: __/libbson/tests/test-bson-corpus.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-bson-corpus.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.i
 .PHONY : __/libbson/tests/test-bson-corpus.c.i
 
 __/libbson/tests/test-bson-corpus.s: __/libbson/tests/test-bson-corpus.c.s
@@ -850,7 +850,7 @@ __/libbson/tests/test-bson-corpus.s: __/libbson/tests/test-bson-corpus.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-bson-corpus.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.s
 .PHONY : __/libbson/tests/test-bson-corpus.c.s
 
 __/libbson/tests/test-bson-error.o: __/libbson/tests/test-bson-error.c.o
@@ -859,7 +859,7 @@ __/libbson/tests/test-bson-error.o: __/libbson/tests/test-bson-error.c.o
 
 # target to build an object file
 __/libbson/tests/test-bson-error.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o
 .PHONY : __/libbson/tests/test-bson-error.c.o
 
 __/libbson/tests/test-bson-error.i: __/libbson/tests/test-bson-error.c.i
@@ -868,7 +868,7 @@ __/libbson/tests/test-bson-error.i: __/libbson/tests/test-bson-error.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-bson-error.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.i
 .PHONY : __/libbson/tests/test-bson-error.c.i
 
 __/libbson/tests/test-bson-error.s: __/libbson/tests/test-bson-error.c.s
@@ -877,7 +877,7 @@ __/libbson/tests/test-bson-error.s: __/libbson/tests/test-bson-error.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-bson-error.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.s
 .PHONY : __/libbson/tests/test-bson-error.c.s
 
 __/libbson/tests/test-bson-version.o: __/libbson/tests/test-bson-version.c.o
@@ -886,7 +886,7 @@ __/libbson/tests/test-bson-version.o: __/libbson/tests/test-bson-version.c.o
 
 # target to build an object file
 __/libbson/tests/test-bson-version.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o
 .PHONY : __/libbson/tests/test-bson-version.c.o
 
 __/libbson/tests/test-bson-version.i: __/libbson/tests/test-bson-version.c.i
@@ -895,7 +895,7 @@ __/libbson/tests/test-bson-version.i: __/libbson/tests/test-bson-version.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-bson-version.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.i
 .PHONY : __/libbson/tests/test-bson-version.c.i
 
 __/libbson/tests/test-bson-version.s: __/libbson/tests/test-bson-version.c.s
@@ -904,7 +904,7 @@ __/libbson/tests/test-bson-version.s: __/libbson/tests/test-bson-version.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-bson-version.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.s
 .PHONY : __/libbson/tests/test-bson-version.c.s
 
 __/libbson/tests/test-bson.o: __/libbson/tests/test-bson.c.o
@@ -913,7 +913,7 @@ __/libbson/tests/test-bson.o: __/libbson/tests/test-bson.c.o
 
 # target to build an object file
 __/libbson/tests/test-bson.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o
 .PHONY : __/libbson/tests/test-bson.c.o
 
 __/libbson/tests/test-bson.i: __/libbson/tests/test-bson.c.i
@@ -922,7 +922,7 @@ __/libbson/tests/test-bson.i: __/libbson/tests/test-bson.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-bson.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.i
 .PHONY : __/libbson/tests/test-bson.c.i
 
 __/libbson/tests/test-bson.s: __/libbson/tests/test-bson.c.s
@@ -931,7 +931,7 @@ __/libbson/tests/test-bson.s: __/libbson/tests/test-bson.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-bson.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.s
 .PHONY : __/libbson/tests/test-bson.c.s
 
 __/libbson/tests/test-clock.o: __/libbson/tests/test-clock.c.o
@@ -940,7 +940,7 @@ __/libbson/tests/test-clock.o: __/libbson/tests/test-clock.c.o
 
 # target to build an object file
 __/libbson/tests/test-clock.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o
 .PHONY : __/libbson/tests/test-clock.c.o
 
 __/libbson/tests/test-clock.i: __/libbson/tests/test-clock.c.i
@@ -949,7 +949,7 @@ __/libbson/tests/test-clock.i: __/libbson/tests/test-clock.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-clock.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.i
 .PHONY : __/libbson/tests/test-clock.c.i
 
 __/libbson/tests/test-clock.s: __/libbson/tests/test-clock.c.s
@@ -958,7 +958,7 @@ __/libbson/tests/test-clock.s: __/libbson/tests/test-clock.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-clock.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.s
 .PHONY : __/libbson/tests/test-clock.c.s
 
 __/libbson/tests/test-decimal128.o: __/libbson/tests/test-decimal128.c.o
@@ -967,7 +967,7 @@ __/libbson/tests/test-decimal128.o: __/libbson/tests/test-decimal128.c.o
 
 # target to build an object file
 __/libbson/tests/test-decimal128.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o
 .PHONY : __/libbson/tests/test-decimal128.c.o
 
 __/libbson/tests/test-decimal128.i: __/libbson/tests/test-decimal128.c.i
@@ -976,7 +976,7 @@ __/libbson/tests/test-decimal128.i: __/libbson/tests/test-decimal128.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-decimal128.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.i
 .PHONY : __/libbson/tests/test-decimal128.c.i
 
 __/libbson/tests/test-decimal128.s: __/libbson/tests/test-decimal128.c.s
@@ -985,7 +985,7 @@ __/libbson/tests/test-decimal128.s: __/libbson/tests/test-decimal128.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-decimal128.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.s
 .PHONY : __/libbson/tests/test-decimal128.c.s
 
 __/libbson/tests/test-endian.o: __/libbson/tests/test-endian.c.o
@@ -994,7 +994,7 @@ __/libbson/tests/test-endian.o: __/libbson/tests/test-endian.c.o
 
 # target to build an object file
 __/libbson/tests/test-endian.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o
 .PHONY : __/libbson/tests/test-endian.c.o
 
 __/libbson/tests/test-endian.i: __/libbson/tests/test-endian.c.i
@@ -1003,7 +1003,7 @@ __/libbson/tests/test-endian.i: __/libbson/tests/test-endian.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-endian.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.i
 .PHONY : __/libbson/tests/test-endian.c.i
 
 __/libbson/tests/test-endian.s: __/libbson/tests/test-endian.c.s
@@ -1012,7 +1012,7 @@ __/libbson/tests/test-endian.s: __/libbson/tests/test-endian.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-endian.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.s
 .PHONY : __/libbson/tests/test-endian.c.s
 
 __/libbson/tests/test-fnv.o: __/libbson/tests/test-fnv.c.o
@@ -1021,7 +1021,7 @@ __/libbson/tests/test-fnv.o: __/libbson/tests/test-fnv.c.o
 
 # target to build an object file
 __/libbson/tests/test-fnv.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o
 .PHONY : __/libbson/tests/test-fnv.c.o
 
 __/libbson/tests/test-fnv.i: __/libbson/tests/test-fnv.c.i
@@ -1030,7 +1030,7 @@ __/libbson/tests/test-fnv.i: __/libbson/tests/test-fnv.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-fnv.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.i
 .PHONY : __/libbson/tests/test-fnv.c.i
 
 __/libbson/tests/test-fnv.s: __/libbson/tests/test-fnv.c.s
@@ -1039,7 +1039,7 @@ __/libbson/tests/test-fnv.s: __/libbson/tests/test-fnv.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-fnv.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.s
 .PHONY : __/libbson/tests/test-fnv.c.s
 
 __/libbson/tests/test-iso8601.o: __/libbson/tests/test-iso8601.c.o
@@ -1048,7 +1048,7 @@ __/libbson/tests/test-iso8601.o: __/libbson/tests/test-iso8601.c.o
 
 # target to build an object file
 __/libbson/tests/test-iso8601.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o
 .PHONY : __/libbson/tests/test-iso8601.c.o
 
 __/libbson/tests/test-iso8601.i: __/libbson/tests/test-iso8601.c.i
@@ -1057,7 +1057,7 @@ __/libbson/tests/test-iso8601.i: __/libbson/tests/test-iso8601.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-iso8601.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.i
 .PHONY : __/libbson/tests/test-iso8601.c.i
 
 __/libbson/tests/test-iso8601.s: __/libbson/tests/test-iso8601.c.s
@@ -1066,7 +1066,7 @@ __/libbson/tests/test-iso8601.s: __/libbson/tests/test-iso8601.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-iso8601.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.s
 .PHONY : __/libbson/tests/test-iso8601.c.s
 
 __/libbson/tests/test-iter.o: __/libbson/tests/test-iter.c.o
@@ -1075,7 +1075,7 @@ __/libbson/tests/test-iter.o: __/libbson/tests/test-iter.c.o
 
 # target to build an object file
 __/libbson/tests/test-iter.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o
 .PHONY : __/libbson/tests/test-iter.c.o
 
 __/libbson/tests/test-iter.i: __/libbson/tests/test-iter.c.i
@@ -1084,7 +1084,7 @@ __/libbson/tests/test-iter.i: __/libbson/tests/test-iter.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-iter.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.i
 .PHONY : __/libbson/tests/test-iter.c.i
 
 __/libbson/tests/test-iter.s: __/libbson/tests/test-iter.c.s
@@ -1093,7 +1093,7 @@ __/libbson/tests/test-iter.s: __/libbson/tests/test-iter.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-iter.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.s
 .PHONY : __/libbson/tests/test-iter.c.s
 
 __/libbson/tests/test-json.o: __/libbson/tests/test-json.c.o
@@ -1102,7 +1102,7 @@ __/libbson/tests/test-json.o: __/libbson/tests/test-json.c.o
 
 # target to build an object file
 __/libbson/tests/test-json.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o
 .PHONY : __/libbson/tests/test-json.c.o
 
 __/libbson/tests/test-json.i: __/libbson/tests/test-json.c.i
@@ -1111,7 +1111,7 @@ __/libbson/tests/test-json.i: __/libbson/tests/test-json.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-json.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.i
 .PHONY : __/libbson/tests/test-json.c.i
 
 __/libbson/tests/test-json.s: __/libbson/tests/test-json.c.s
@@ -1120,7 +1120,7 @@ __/libbson/tests/test-json.s: __/libbson/tests/test-json.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-json.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.s
 .PHONY : __/libbson/tests/test-json.c.s
 
 __/libbson/tests/test-oid.o: __/libbson/tests/test-oid.c.o
@@ -1129,7 +1129,7 @@ __/libbson/tests/test-oid.o: __/libbson/tests/test-oid.c.o
 
 # target to build an object file
 __/libbson/tests/test-oid.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o
 .PHONY : __/libbson/tests/test-oid.c.o
 
 __/libbson/tests/test-oid.i: __/libbson/tests/test-oid.c.i
@@ -1138,7 +1138,7 @@ __/libbson/tests/test-oid.i: __/libbson/tests/test-oid.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-oid.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.i
 .PHONY : __/libbson/tests/test-oid.c.i
 
 __/libbson/tests/test-oid.s: __/libbson/tests/test-oid.c.s
@@ -1147,7 +1147,7 @@ __/libbson/tests/test-oid.s: __/libbson/tests/test-oid.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-oid.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.s
 .PHONY : __/libbson/tests/test-oid.c.s
 
 __/libbson/tests/test-reader.o: __/libbson/tests/test-reader.c.o
@@ -1156,7 +1156,7 @@ __/libbson/tests/test-reader.o: __/libbson/tests/test-reader.c.o
 
 # target to build an object file
 __/libbson/tests/test-reader.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o
 .PHONY : __/libbson/tests/test-reader.c.o
 
 __/libbson/tests/test-reader.i: __/libbson/tests/test-reader.c.i
@@ -1165,7 +1165,7 @@ __/libbson/tests/test-reader.i: __/libbson/tests/test-reader.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-reader.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.i
 .PHONY : __/libbson/tests/test-reader.c.i
 
 __/libbson/tests/test-reader.s: __/libbson/tests/test-reader.c.s
@@ -1174,7 +1174,7 @@ __/libbson/tests/test-reader.s: __/libbson/tests/test-reader.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-reader.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.s
 .PHONY : __/libbson/tests/test-reader.c.s
 
 __/libbson/tests/test-string.o: __/libbson/tests/test-string.c.o
@@ -1183,7 +1183,7 @@ __/libbson/tests/test-string.o: __/libbson/tests/test-string.c.o
 
 # target to build an object file
 __/libbson/tests/test-string.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o
 .PHONY : __/libbson/tests/test-string.c.o
 
 __/libbson/tests/test-string.i: __/libbson/tests/test-string.c.i
@@ -1192,7 +1192,7 @@ __/libbson/tests/test-string.i: __/libbson/tests/test-string.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-string.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.i
 .PHONY : __/libbson/tests/test-string.c.i
 
 __/libbson/tests/test-string.s: __/libbson/tests/test-string.c.s
@@ -1201,7 +1201,7 @@ __/libbson/tests/test-string.s: __/libbson/tests/test-string.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-string.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.s
 .PHONY : __/libbson/tests/test-string.c.s
 
 __/libbson/tests/test-utf8.o: __/libbson/tests/test-utf8.c.o
@@ -1210,7 +1210,7 @@ __/libbson/tests/test-utf8.o: __/libbson/tests/test-utf8.c.o
 
 # target to build an object file
 __/libbson/tests/test-utf8.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o
 .PHONY : __/libbson/tests/test-utf8.c.o
 
 __/libbson/tests/test-utf8.i: __/libbson/tests/test-utf8.c.i
@@ -1219,7 +1219,7 @@ __/libbson/tests/test-utf8.i: __/libbson/tests/test-utf8.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-utf8.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.i
 .PHONY : __/libbson/tests/test-utf8.c.i
 
 __/libbson/tests/test-utf8.s: __/libbson/tests/test-utf8.c.s
@@ -1228,7 +1228,7 @@ __/libbson/tests/test-utf8.s: __/libbson/tests/test-utf8.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-utf8.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.s
 .PHONY : __/libbson/tests/test-utf8.c.s
 
 __/libbson/tests/test-value.o: __/libbson/tests/test-value.c.o
@@ -1237,7 +1237,7 @@ __/libbson/tests/test-value.o: __/libbson/tests/test-value.c.o
 
 # target to build an object file
 __/libbson/tests/test-value.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o
 .PHONY : __/libbson/tests/test-value.c.o
 
 __/libbson/tests/test-value.i: __/libbson/tests/test-value.c.i
@@ -1246,7 +1246,7 @@ __/libbson/tests/test-value.i: __/libbson/tests/test-value.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-value.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.i
 .PHONY : __/libbson/tests/test-value.c.i
 
 __/libbson/tests/test-value.s: __/libbson/tests/test-value.c.s
@@ -1255,7 +1255,7 @@ __/libbson/tests/test-value.s: __/libbson/tests/test-value.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-value.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.s
 .PHONY : __/libbson/tests/test-value.c.s
 
 __/libbson/tests/test-writer.o: __/libbson/tests/test-writer.c.o
@@ -1264,7 +1264,7 @@ __/libbson/tests/test-writer.o: __/libbson/tests/test-writer.c.o
 
 # target to build an object file
 __/libbson/tests/test-writer.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o
 .PHONY : __/libbson/tests/test-writer.c.o
 
 __/libbson/tests/test-writer.i: __/libbson/tests/test-writer.c.i
@@ -1273,7 +1273,7 @@ __/libbson/tests/test-writer.i: __/libbson/tests/test-writer.c.i
 
 # target to preprocess a source file
 __/libbson/tests/test-writer.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.i
 .PHONY : __/libbson/tests/test-writer.c.i
 
 __/libbson/tests/test-writer.s: __/libbson/tests/test-writer.c.s
@@ -1282,7 +1282,7 @@ __/libbson/tests/test-writer.s: __/libbson/tests/test-writer.c.s
 
 # target to generate assembly for a file
 __/libbson/tests/test-writer.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.s
 .PHONY : __/libbson/tests/test-writer.c.s
 
 __/tools/mongoc-stat.o: __/tools/mongoc-stat.c.o
@@ -1291,7 +1291,7 @@ __/tools/mongoc-stat.o: __/tools/mongoc-stat.c.o
 
 # target to build an object file
 __/tools/mongoc-stat.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/__/tools/mongoc-stat.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/__/tools/mongoc-stat.c.o
 .PHONY : __/tools/mongoc-stat.c.o
 
 __/tools/mongoc-stat.i: __/tools/mongoc-stat.c.i
@@ -1300,7 +1300,7 @@ __/tools/mongoc-stat.i: __/tools/mongoc-stat.c.i
 
 # target to preprocess a source file
 __/tools/mongoc-stat.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/__/tools/mongoc-stat.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/__/tools/mongoc-stat.c.i
 .PHONY : __/tools/mongoc-stat.c.i
 
 __/tools/mongoc-stat.s: __/tools/mongoc-stat.c.s
@@ -1309,458 +1309,8 @@ __/tools/mongoc-stat.s: __/tools/mongoc-stat.c.s
 
 # target to generate assembly for a file
 __/tools/mongoc-stat.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/__/tools/mongoc-stat.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-stat.dir/build.make src/libmongoc/CMakeFiles/mongoc-stat.dir/__/tools/mongoc-stat.c.s
 .PHONY : __/tools/mongoc-stat.c.s
-
-__/zlib-1.2.11/adler32.o: __/zlib-1.2.11/adler32.c.o
-
-.PHONY : __/zlib-1.2.11/adler32.o
-
-# target to build an object file
-__/zlib-1.2.11/adler32.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/adler32.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/adler32.c.o
-.PHONY : __/zlib-1.2.11/adler32.c.o
-
-__/zlib-1.2.11/adler32.i: __/zlib-1.2.11/adler32.c.i
-
-.PHONY : __/zlib-1.2.11/adler32.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/adler32.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/adler32.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/adler32.c.i
-.PHONY : __/zlib-1.2.11/adler32.c.i
-
-__/zlib-1.2.11/adler32.s: __/zlib-1.2.11/adler32.c.s
-
-.PHONY : __/zlib-1.2.11/adler32.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/adler32.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/adler32.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/adler32.c.s
-.PHONY : __/zlib-1.2.11/adler32.c.s
-
-__/zlib-1.2.11/compress.o: __/zlib-1.2.11/compress.c.o
-
-.PHONY : __/zlib-1.2.11/compress.o
-
-# target to build an object file
-__/zlib-1.2.11/compress.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/compress.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/compress.c.o
-.PHONY : __/zlib-1.2.11/compress.c.o
-
-__/zlib-1.2.11/compress.i: __/zlib-1.2.11/compress.c.i
-
-.PHONY : __/zlib-1.2.11/compress.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/compress.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/compress.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/compress.c.i
-.PHONY : __/zlib-1.2.11/compress.c.i
-
-__/zlib-1.2.11/compress.s: __/zlib-1.2.11/compress.c.s
-
-.PHONY : __/zlib-1.2.11/compress.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/compress.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/compress.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/compress.c.s
-.PHONY : __/zlib-1.2.11/compress.c.s
-
-__/zlib-1.2.11/crc32.o: __/zlib-1.2.11/crc32.c.o
-
-.PHONY : __/zlib-1.2.11/crc32.o
-
-# target to build an object file
-__/zlib-1.2.11/crc32.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/crc32.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/crc32.c.o
-.PHONY : __/zlib-1.2.11/crc32.c.o
-
-__/zlib-1.2.11/crc32.i: __/zlib-1.2.11/crc32.c.i
-
-.PHONY : __/zlib-1.2.11/crc32.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/crc32.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/crc32.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/crc32.c.i
-.PHONY : __/zlib-1.2.11/crc32.c.i
-
-__/zlib-1.2.11/crc32.s: __/zlib-1.2.11/crc32.c.s
-
-.PHONY : __/zlib-1.2.11/crc32.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/crc32.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/crc32.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/crc32.c.s
-.PHONY : __/zlib-1.2.11/crc32.c.s
-
-__/zlib-1.2.11/deflate.o: __/zlib-1.2.11/deflate.c.o
-
-.PHONY : __/zlib-1.2.11/deflate.o
-
-# target to build an object file
-__/zlib-1.2.11/deflate.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/deflate.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/deflate.c.o
-.PHONY : __/zlib-1.2.11/deflate.c.o
-
-__/zlib-1.2.11/deflate.i: __/zlib-1.2.11/deflate.c.i
-
-.PHONY : __/zlib-1.2.11/deflate.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/deflate.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/deflate.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/deflate.c.i
-.PHONY : __/zlib-1.2.11/deflate.c.i
-
-__/zlib-1.2.11/deflate.s: __/zlib-1.2.11/deflate.c.s
-
-.PHONY : __/zlib-1.2.11/deflate.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/deflate.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/deflate.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/deflate.c.s
-.PHONY : __/zlib-1.2.11/deflate.c.s
-
-__/zlib-1.2.11/gzclose.o: __/zlib-1.2.11/gzclose.c.o
-
-.PHONY : __/zlib-1.2.11/gzclose.o
-
-# target to build an object file
-__/zlib-1.2.11/gzclose.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzclose.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzclose.c.o
-.PHONY : __/zlib-1.2.11/gzclose.c.o
-
-__/zlib-1.2.11/gzclose.i: __/zlib-1.2.11/gzclose.c.i
-
-.PHONY : __/zlib-1.2.11/gzclose.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/gzclose.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzclose.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzclose.c.i
-.PHONY : __/zlib-1.2.11/gzclose.c.i
-
-__/zlib-1.2.11/gzclose.s: __/zlib-1.2.11/gzclose.c.s
-
-.PHONY : __/zlib-1.2.11/gzclose.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/gzclose.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzclose.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzclose.c.s
-.PHONY : __/zlib-1.2.11/gzclose.c.s
-
-__/zlib-1.2.11/gzlib.o: __/zlib-1.2.11/gzlib.c.o
-
-.PHONY : __/zlib-1.2.11/gzlib.o
-
-# target to build an object file
-__/zlib-1.2.11/gzlib.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzlib.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzlib.c.o
-.PHONY : __/zlib-1.2.11/gzlib.c.o
-
-__/zlib-1.2.11/gzlib.i: __/zlib-1.2.11/gzlib.c.i
-
-.PHONY : __/zlib-1.2.11/gzlib.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/gzlib.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzlib.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzlib.c.i
-.PHONY : __/zlib-1.2.11/gzlib.c.i
-
-__/zlib-1.2.11/gzlib.s: __/zlib-1.2.11/gzlib.c.s
-
-.PHONY : __/zlib-1.2.11/gzlib.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/gzlib.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzlib.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzlib.c.s
-.PHONY : __/zlib-1.2.11/gzlib.c.s
-
-__/zlib-1.2.11/gzread.o: __/zlib-1.2.11/gzread.c.o
-
-.PHONY : __/zlib-1.2.11/gzread.o
-
-# target to build an object file
-__/zlib-1.2.11/gzread.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzread.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzread.c.o
-.PHONY : __/zlib-1.2.11/gzread.c.o
-
-__/zlib-1.2.11/gzread.i: __/zlib-1.2.11/gzread.c.i
-
-.PHONY : __/zlib-1.2.11/gzread.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/gzread.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzread.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzread.c.i
-.PHONY : __/zlib-1.2.11/gzread.c.i
-
-__/zlib-1.2.11/gzread.s: __/zlib-1.2.11/gzread.c.s
-
-.PHONY : __/zlib-1.2.11/gzread.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/gzread.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzread.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzread.c.s
-.PHONY : __/zlib-1.2.11/gzread.c.s
-
-__/zlib-1.2.11/gzwrite.o: __/zlib-1.2.11/gzwrite.c.o
-
-.PHONY : __/zlib-1.2.11/gzwrite.o
-
-# target to build an object file
-__/zlib-1.2.11/gzwrite.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzwrite.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzwrite.c.o
-.PHONY : __/zlib-1.2.11/gzwrite.c.o
-
-__/zlib-1.2.11/gzwrite.i: __/zlib-1.2.11/gzwrite.c.i
-
-.PHONY : __/zlib-1.2.11/gzwrite.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/gzwrite.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzwrite.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzwrite.c.i
-.PHONY : __/zlib-1.2.11/gzwrite.c.i
-
-__/zlib-1.2.11/gzwrite.s: __/zlib-1.2.11/gzwrite.c.s
-
-.PHONY : __/zlib-1.2.11/gzwrite.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/gzwrite.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/gzwrite.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/gzwrite.c.s
-.PHONY : __/zlib-1.2.11/gzwrite.c.s
-
-__/zlib-1.2.11/infback.o: __/zlib-1.2.11/infback.c.o
-
-.PHONY : __/zlib-1.2.11/infback.o
-
-# target to build an object file
-__/zlib-1.2.11/infback.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/infback.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/infback.c.o
-.PHONY : __/zlib-1.2.11/infback.c.o
-
-__/zlib-1.2.11/infback.i: __/zlib-1.2.11/infback.c.i
-
-.PHONY : __/zlib-1.2.11/infback.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/infback.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/infback.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/infback.c.i
-.PHONY : __/zlib-1.2.11/infback.c.i
-
-__/zlib-1.2.11/infback.s: __/zlib-1.2.11/infback.c.s
-
-.PHONY : __/zlib-1.2.11/infback.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/infback.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/infback.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/infback.c.s
-.PHONY : __/zlib-1.2.11/infback.c.s
-
-__/zlib-1.2.11/inffast.o: __/zlib-1.2.11/inffast.c.o
-
-.PHONY : __/zlib-1.2.11/inffast.o
-
-# target to build an object file
-__/zlib-1.2.11/inffast.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inffast.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inffast.c.o
-.PHONY : __/zlib-1.2.11/inffast.c.o
-
-__/zlib-1.2.11/inffast.i: __/zlib-1.2.11/inffast.c.i
-
-.PHONY : __/zlib-1.2.11/inffast.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/inffast.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inffast.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inffast.c.i
-.PHONY : __/zlib-1.2.11/inffast.c.i
-
-__/zlib-1.2.11/inffast.s: __/zlib-1.2.11/inffast.c.s
-
-.PHONY : __/zlib-1.2.11/inffast.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/inffast.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inffast.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inffast.c.s
-.PHONY : __/zlib-1.2.11/inffast.c.s
-
-__/zlib-1.2.11/inflate.o: __/zlib-1.2.11/inflate.c.o
-
-.PHONY : __/zlib-1.2.11/inflate.o
-
-# target to build an object file
-__/zlib-1.2.11/inflate.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inflate.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inflate.c.o
-.PHONY : __/zlib-1.2.11/inflate.c.o
-
-__/zlib-1.2.11/inflate.i: __/zlib-1.2.11/inflate.c.i
-
-.PHONY : __/zlib-1.2.11/inflate.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/inflate.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inflate.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inflate.c.i
-.PHONY : __/zlib-1.2.11/inflate.c.i
-
-__/zlib-1.2.11/inflate.s: __/zlib-1.2.11/inflate.c.s
-
-.PHONY : __/zlib-1.2.11/inflate.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/inflate.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inflate.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inflate.c.s
-.PHONY : __/zlib-1.2.11/inflate.c.s
-
-__/zlib-1.2.11/inftrees.o: __/zlib-1.2.11/inftrees.c.o
-
-.PHONY : __/zlib-1.2.11/inftrees.o
-
-# target to build an object file
-__/zlib-1.2.11/inftrees.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inftrees.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inftrees.c.o
-.PHONY : __/zlib-1.2.11/inftrees.c.o
-
-__/zlib-1.2.11/inftrees.i: __/zlib-1.2.11/inftrees.c.i
-
-.PHONY : __/zlib-1.2.11/inftrees.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/inftrees.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inftrees.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inftrees.c.i
-.PHONY : __/zlib-1.2.11/inftrees.c.i
-
-__/zlib-1.2.11/inftrees.s: __/zlib-1.2.11/inftrees.c.s
-
-.PHONY : __/zlib-1.2.11/inftrees.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/inftrees.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/inftrees.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/inftrees.c.s
-.PHONY : __/zlib-1.2.11/inftrees.c.s
-
-__/zlib-1.2.11/trees.o: __/zlib-1.2.11/trees.c.o
-
-.PHONY : __/zlib-1.2.11/trees.o
-
-# target to build an object file
-__/zlib-1.2.11/trees.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/trees.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/trees.c.o
-.PHONY : __/zlib-1.2.11/trees.c.o
-
-__/zlib-1.2.11/trees.i: __/zlib-1.2.11/trees.c.i
-
-.PHONY : __/zlib-1.2.11/trees.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/trees.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/trees.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/trees.c.i
-.PHONY : __/zlib-1.2.11/trees.c.i
-
-__/zlib-1.2.11/trees.s: __/zlib-1.2.11/trees.c.s
-
-.PHONY : __/zlib-1.2.11/trees.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/trees.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/trees.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/trees.c.s
-.PHONY : __/zlib-1.2.11/trees.c.s
-
-__/zlib-1.2.11/uncompr.o: __/zlib-1.2.11/uncompr.c.o
-
-.PHONY : __/zlib-1.2.11/uncompr.o
-
-# target to build an object file
-__/zlib-1.2.11/uncompr.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/uncompr.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/uncompr.c.o
-.PHONY : __/zlib-1.2.11/uncompr.c.o
-
-__/zlib-1.2.11/uncompr.i: __/zlib-1.2.11/uncompr.c.i
-
-.PHONY : __/zlib-1.2.11/uncompr.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/uncompr.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/uncompr.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/uncompr.c.i
-.PHONY : __/zlib-1.2.11/uncompr.c.i
-
-__/zlib-1.2.11/uncompr.s: __/zlib-1.2.11/uncompr.c.s
-
-.PHONY : __/zlib-1.2.11/uncompr.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/uncompr.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/uncompr.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/uncompr.c.s
-.PHONY : __/zlib-1.2.11/uncompr.c.s
-
-__/zlib-1.2.11/zutil.o: __/zlib-1.2.11/zutil.c.o
-
-.PHONY : __/zlib-1.2.11/zutil.o
-
-# target to build an object file
-__/zlib-1.2.11/zutil.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/zutil.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/zutil.c.o
-.PHONY : __/zlib-1.2.11/zutil.c.o
-
-__/zlib-1.2.11/zutil.i: __/zlib-1.2.11/zutil.c.i
-
-.PHONY : __/zlib-1.2.11/zutil.i
-
-# target to preprocess a source file
-__/zlib-1.2.11/zutil.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/zutil.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/zutil.c.i
-.PHONY : __/zlib-1.2.11/zutil.c.i
-
-__/zlib-1.2.11/zutil.s: __/zlib-1.2.11/zutil.c.s
-
-.PHONY : __/zlib-1.2.11/zutil.s
-
-# target to generate assembly for a file
-__/zlib-1.2.11/zutil.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/__/zlib-1.2.11/zutil.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/__/zlib-1.2.11/zutil.c.s
-.PHONY : __/zlib-1.2.11/zutil.c.s
 
 examples/aggregation/aggregation1.o: examples/aggregation/aggregation1.c.o
 
@@ -1768,7 +1318,7 @@ examples/aggregation/aggregation1.o: examples/aggregation/aggregation1.c.o
 
 # target to build an object file
 examples/aggregation/aggregation1.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/examples/aggregation/aggregation1.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/examples/aggregation/aggregation1.c.o
 .PHONY : examples/aggregation/aggregation1.c.o
 
 examples/aggregation/aggregation1.i: examples/aggregation/aggregation1.c.i
@@ -1777,7 +1327,7 @@ examples/aggregation/aggregation1.i: examples/aggregation/aggregation1.c.i
 
 # target to preprocess a source file
 examples/aggregation/aggregation1.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/examples/aggregation/aggregation1.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/examples/aggregation/aggregation1.c.i
 .PHONY : examples/aggregation/aggregation1.c.i
 
 examples/aggregation/aggregation1.s: examples/aggregation/aggregation1.c.s
@@ -1786,7 +1336,7 @@ examples/aggregation/aggregation1.s: examples/aggregation/aggregation1.c.s
 
 # target to generate assembly for a file
 examples/aggregation/aggregation1.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/examples/aggregation/aggregation1.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/aggregation1.dir/build.make src/libmongoc/CMakeFiles/aggregation1.dir/examples/aggregation/aggregation1.c.s
 .PHONY : examples/aggregation/aggregation1.c.s
 
 examples/basic_aggregation/basic-aggregation.o: examples/basic_aggregation/basic-aggregation.c.o
@@ -1795,7 +1345,7 @@ examples/basic_aggregation/basic-aggregation.o: examples/basic_aggregation/basic
 
 # target to build an object file
 examples/basic_aggregation/basic-aggregation.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/examples/basic_aggregation/basic-aggregation.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/examples/basic_aggregation/basic-aggregation.c.o
 .PHONY : examples/basic_aggregation/basic-aggregation.c.o
 
 examples/basic_aggregation/basic-aggregation.i: examples/basic_aggregation/basic-aggregation.c.i
@@ -1804,7 +1354,7 @@ examples/basic_aggregation/basic-aggregation.i: examples/basic_aggregation/basic
 
 # target to preprocess a source file
 examples/basic_aggregation/basic-aggregation.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/examples/basic_aggregation/basic-aggregation.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/examples/basic_aggregation/basic-aggregation.c.i
 .PHONY : examples/basic_aggregation/basic-aggregation.c.i
 
 examples/basic_aggregation/basic-aggregation.s: examples/basic_aggregation/basic-aggregation.c.s
@@ -1813,7 +1363,7 @@ examples/basic_aggregation/basic-aggregation.s: examples/basic_aggregation/basic
 
 # target to generate assembly for a file
 examples/basic_aggregation/basic-aggregation.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/examples/basic_aggregation/basic-aggregation.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/basic-aggregation.dir/build.make src/libmongoc/CMakeFiles/basic-aggregation.dir/examples/basic_aggregation/basic-aggregation.c.s
 .PHONY : examples/basic_aggregation/basic-aggregation.c.s
 
 examples/bulk/bulk-collation.o: examples/bulk/bulk-collation.c.o
@@ -1822,7 +1372,7 @@ examples/bulk/bulk-collation.o: examples/bulk/bulk-collation.c.o
 
 # target to build an object file
 examples/bulk/bulk-collation.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/examples/bulk/bulk-collation.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/examples/bulk/bulk-collation.c.o
 .PHONY : examples/bulk/bulk-collation.c.o
 
 examples/bulk/bulk-collation.i: examples/bulk/bulk-collation.c.i
@@ -1831,7 +1381,7 @@ examples/bulk/bulk-collation.i: examples/bulk/bulk-collation.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk-collation.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/examples/bulk/bulk-collation.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/examples/bulk/bulk-collation.c.i
 .PHONY : examples/bulk/bulk-collation.c.i
 
 examples/bulk/bulk-collation.s: examples/bulk/bulk-collation.c.s
@@ -1840,7 +1390,7 @@ examples/bulk/bulk-collation.s: examples/bulk/bulk-collation.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk-collation.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/examples/bulk/bulk-collation.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk-collation.dir/build.make src/libmongoc/CMakeFiles/bulk-collation.dir/examples/bulk/bulk-collation.c.s
 .PHONY : examples/bulk/bulk-collation.c.s
 
 examples/bulk/bulk1.o: examples/bulk/bulk1.c.o
@@ -1849,7 +1399,7 @@ examples/bulk/bulk1.o: examples/bulk/bulk1.c.o
 
 # target to build an object file
 examples/bulk/bulk1.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/examples/bulk/bulk1.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/examples/bulk/bulk1.c.o
 .PHONY : examples/bulk/bulk1.c.o
 
 examples/bulk/bulk1.i: examples/bulk/bulk1.c.i
@@ -1858,7 +1408,7 @@ examples/bulk/bulk1.i: examples/bulk/bulk1.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk1.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/examples/bulk/bulk1.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/examples/bulk/bulk1.c.i
 .PHONY : examples/bulk/bulk1.c.i
 
 examples/bulk/bulk1.s: examples/bulk/bulk1.c.s
@@ -1867,7 +1417,7 @@ examples/bulk/bulk1.s: examples/bulk/bulk1.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk1.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/examples/bulk/bulk1.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk1.dir/build.make src/libmongoc/CMakeFiles/bulk1.dir/examples/bulk/bulk1.c.s
 .PHONY : examples/bulk/bulk1.c.s
 
 examples/bulk/bulk2.o: examples/bulk/bulk2.c.o
@@ -1876,7 +1426,7 @@ examples/bulk/bulk2.o: examples/bulk/bulk2.c.o
 
 # target to build an object file
 examples/bulk/bulk2.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/examples/bulk/bulk2.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/examples/bulk/bulk2.c.o
 .PHONY : examples/bulk/bulk2.c.o
 
 examples/bulk/bulk2.i: examples/bulk/bulk2.c.i
@@ -1885,7 +1435,7 @@ examples/bulk/bulk2.i: examples/bulk/bulk2.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk2.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/examples/bulk/bulk2.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/examples/bulk/bulk2.c.i
 .PHONY : examples/bulk/bulk2.c.i
 
 examples/bulk/bulk2.s: examples/bulk/bulk2.c.s
@@ -1894,7 +1444,7 @@ examples/bulk/bulk2.s: examples/bulk/bulk2.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk2.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/examples/bulk/bulk2.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk2.dir/build.make src/libmongoc/CMakeFiles/bulk2.dir/examples/bulk/bulk2.c.s
 .PHONY : examples/bulk/bulk2.c.s
 
 examples/bulk/bulk3.o: examples/bulk/bulk3.c.o
@@ -1903,7 +1453,7 @@ examples/bulk/bulk3.o: examples/bulk/bulk3.c.o
 
 # target to build an object file
 examples/bulk/bulk3.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/examples/bulk/bulk3.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/examples/bulk/bulk3.c.o
 .PHONY : examples/bulk/bulk3.c.o
 
 examples/bulk/bulk3.i: examples/bulk/bulk3.c.i
@@ -1912,7 +1462,7 @@ examples/bulk/bulk3.i: examples/bulk/bulk3.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk3.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/examples/bulk/bulk3.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/examples/bulk/bulk3.c.i
 .PHONY : examples/bulk/bulk3.c.i
 
 examples/bulk/bulk3.s: examples/bulk/bulk3.c.s
@@ -1921,7 +1471,7 @@ examples/bulk/bulk3.s: examples/bulk/bulk3.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk3.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/examples/bulk/bulk3.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk3.dir/build.make src/libmongoc/CMakeFiles/bulk3.dir/examples/bulk/bulk3.c.s
 .PHONY : examples/bulk/bulk3.c.s
 
 examples/bulk/bulk4.o: examples/bulk/bulk4.c.o
@@ -1930,7 +1480,7 @@ examples/bulk/bulk4.o: examples/bulk/bulk4.c.o
 
 # target to build an object file
 examples/bulk/bulk4.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.o
 .PHONY : examples/bulk/bulk4.c.o
 
 examples/bulk/bulk4.i: examples/bulk/bulk4.c.i
@@ -1939,7 +1489,7 @@ examples/bulk/bulk4.i: examples/bulk/bulk4.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk4.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.i
 .PHONY : examples/bulk/bulk4.c.i
 
 examples/bulk/bulk4.s: examples/bulk/bulk4.c.s
@@ -1948,7 +1498,7 @@ examples/bulk/bulk4.s: examples/bulk/bulk4.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk4.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk4.dir/build.make src/libmongoc/CMakeFiles/bulk4.dir/examples/bulk/bulk4.c.s
 .PHONY : examples/bulk/bulk4.c.s
 
 examples/bulk/bulk5.o: examples/bulk/bulk5.c.o
@@ -1957,7 +1507,7 @@ examples/bulk/bulk5.o: examples/bulk/bulk5.c.o
 
 # target to build an object file
 examples/bulk/bulk5.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/examples/bulk/bulk5.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/examples/bulk/bulk5.c.o
 .PHONY : examples/bulk/bulk5.c.o
 
 examples/bulk/bulk5.i: examples/bulk/bulk5.c.i
@@ -1966,7 +1516,7 @@ examples/bulk/bulk5.i: examples/bulk/bulk5.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk5.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/examples/bulk/bulk5.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/examples/bulk/bulk5.c.i
 .PHONY : examples/bulk/bulk5.c.i
 
 examples/bulk/bulk5.s: examples/bulk/bulk5.c.s
@@ -1975,7 +1525,7 @@ examples/bulk/bulk5.s: examples/bulk/bulk5.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk5.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/examples/bulk/bulk5.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk5.dir/build.make src/libmongoc/CMakeFiles/bulk5.dir/examples/bulk/bulk5.c.s
 .PHONY : examples/bulk/bulk5.c.s
 
 examples/bulk/bulk6.o: examples/bulk/bulk6.c.o
@@ -1984,7 +1534,7 @@ examples/bulk/bulk6.o: examples/bulk/bulk6.c.o
 
 # target to build an object file
 examples/bulk/bulk6.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.o
 .PHONY : examples/bulk/bulk6.c.o
 
 examples/bulk/bulk6.i: examples/bulk/bulk6.c.i
@@ -1993,7 +1543,7 @@ examples/bulk/bulk6.i: examples/bulk/bulk6.c.i
 
 # target to preprocess a source file
 examples/bulk/bulk6.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.i
 .PHONY : examples/bulk/bulk6.c.i
 
 examples/bulk/bulk6.s: examples/bulk/bulk6.c.s
@@ -2002,7 +1552,7 @@ examples/bulk/bulk6.s: examples/bulk/bulk6.c.s
 
 # target to generate assembly for a file
 examples/bulk/bulk6.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/bulk6.dir/build.make src/libmongoc/CMakeFiles/bulk6.dir/examples/bulk/bulk6.c.s
 .PHONY : examples/bulk/bulk6.c.s
 
 examples/common_operations/common-operations.o: examples/common_operations/common-operations.c.o
@@ -2011,7 +1561,7 @@ examples/common_operations/common-operations.o: examples/common_operations/commo
 
 # target to build an object file
 examples/common_operations/common-operations.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/examples/common_operations/common-operations.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/examples/common_operations/common-operations.c.o
 .PHONY : examples/common_operations/common-operations.c.o
 
 examples/common_operations/common-operations.i: examples/common_operations/common-operations.c.i
@@ -2020,7 +1570,7 @@ examples/common_operations/common-operations.i: examples/common_operations/commo
 
 # target to preprocess a source file
 examples/common_operations/common-operations.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/examples/common_operations/common-operations.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/examples/common_operations/common-operations.c.i
 .PHONY : examples/common_operations/common-operations.c.i
 
 examples/common_operations/common-operations.s: examples/common_operations/common-operations.c.s
@@ -2029,7 +1579,7 @@ examples/common_operations/common-operations.s: examples/common_operations/commo
 
 # target to generate assembly for a file
 examples/common_operations/common-operations.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/examples/common_operations/common-operations.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/common-operations.dir/build.make src/libmongoc/CMakeFiles/common-operations.dir/examples/common_operations/common-operations.c.s
 .PHONY : examples/common_operations/common-operations.c.s
 
 examples/example-client.o: examples/example-client.c.o
@@ -2038,7 +1588,7 @@ examples/example-client.o: examples/example-client.c.o
 
 # target to build an object file
 examples/example-client.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o
 .PHONY : examples/example-client.c.o
 
 examples/example-client.i: examples/example-client.c.i
@@ -2047,7 +1597,7 @@ examples/example-client.i: examples/example-client.c.i
 
 # target to preprocess a source file
 examples/example-client.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.i
 .PHONY : examples/example-client.c.i
 
 examples/example-client.s: examples/example-client.c.s
@@ -2056,7 +1606,7 @@ examples/example-client.s: examples/example-client.c.s
 
 # target to generate assembly for a file
 examples/example-client.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-client.dir/build.make src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.s
 .PHONY : examples/example-client.c.s
 
 examples/example-collection-watch.o: examples/example-collection-watch.c.o
@@ -2065,7 +1615,7 @@ examples/example-collection-watch.o: examples/example-collection-watch.c.o
 
 # target to build an object file
 examples/example-collection-watch.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/examples/example-collection-watch.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/examples/example-collection-watch.c.o
 .PHONY : examples/example-collection-watch.c.o
 
 examples/example-collection-watch.i: examples/example-collection-watch.c.i
@@ -2074,7 +1624,7 @@ examples/example-collection-watch.i: examples/example-collection-watch.c.i
 
 # target to preprocess a source file
 examples/example-collection-watch.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/examples/example-collection-watch.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/examples/example-collection-watch.c.i
 .PHONY : examples/example-collection-watch.c.i
 
 examples/example-collection-watch.s: examples/example-collection-watch.c.s
@@ -2083,7 +1633,7 @@ examples/example-collection-watch.s: examples/example-collection-watch.c.s
 
 # target to generate assembly for a file
 examples/example-collection-watch.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/examples/example-collection-watch.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-collection-watch.dir/build.make src/libmongoc/CMakeFiles/example-collection-watch.dir/examples/example-collection-watch.c.s
 .PHONY : examples/example-collection-watch.c.s
 
 examples/example-command-monitoring.o: examples/example-command-monitoring.c.o
@@ -2092,7 +1642,7 @@ examples/example-command-monitoring.o: examples/example-command-monitoring.c.o
 
 # target to build an object file
 examples/example-command-monitoring.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o
 .PHONY : examples/example-command-monitoring.c.o
 
 examples/example-command-monitoring.i: examples/example-command-monitoring.c.i
@@ -2101,7 +1651,7 @@ examples/example-command-monitoring.i: examples/example-command-monitoring.c.i
 
 # target to preprocess a source file
 examples/example-command-monitoring.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.i
 .PHONY : examples/example-command-monitoring.c.i
 
 examples/example-command-monitoring.s: examples/example-command-monitoring.c.s
@@ -2110,7 +1660,7 @@ examples/example-command-monitoring.s: examples/example-command-monitoring.c.s
 
 # target to generate assembly for a file
 examples/example-command-monitoring.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.s
 .PHONY : examples/example-command-monitoring.c.s
 
 examples/example-command-with-opts.o: examples/example-command-with-opts.c.o
@@ -2119,7 +1669,7 @@ examples/example-command-with-opts.o: examples/example-command-with-opts.c.o
 
 # target to build an object file
 examples/example-command-with-opts.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o
 .PHONY : examples/example-command-with-opts.c.o
 
 examples/example-command-with-opts.i: examples/example-command-with-opts.c.i
@@ -2128,7 +1678,7 @@ examples/example-command-with-opts.i: examples/example-command-with-opts.c.i
 
 # target to preprocess a source file
 examples/example-command-with-opts.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.i
 .PHONY : examples/example-command-with-opts.c.i
 
 examples/example-command-with-opts.s: examples/example-command-with-opts.c.s
@@ -2137,7 +1687,7 @@ examples/example-command-with-opts.s: examples/example-command-with-opts.c.s
 
 # target to generate assembly for a file
 examples/example-command-with-opts.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.s
 .PHONY : examples/example-command-with-opts.c.s
 
 examples/example-create-indexes.o: examples/example-create-indexes.c.o
@@ -2146,7 +1696,7 @@ examples/example-create-indexes.o: examples/example-create-indexes.c.o
 
 # target to build an object file
 examples/example-create-indexes.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/examples/example-create-indexes.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/examples/example-create-indexes.c.o
 .PHONY : examples/example-create-indexes.c.o
 
 examples/example-create-indexes.i: examples/example-create-indexes.c.i
@@ -2155,7 +1705,7 @@ examples/example-create-indexes.i: examples/example-create-indexes.c.i
 
 # target to preprocess a source file
 examples/example-create-indexes.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/examples/example-create-indexes.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/examples/example-create-indexes.c.i
 .PHONY : examples/example-create-indexes.c.i
 
 examples/example-create-indexes.s: examples/example-create-indexes.c.s
@@ -2164,7 +1714,7 @@ examples/example-create-indexes.s: examples/example-create-indexes.c.s
 
 # target to generate assembly for a file
 examples/example-create-indexes.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/examples/example-create-indexes.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-create-indexes.dir/build.make src/libmongoc/CMakeFiles/example-create-indexes.dir/examples/example-create-indexes.c.s
 .PHONY : examples/example-create-indexes.c.s
 
 examples/example-gridfs.o: examples/example-gridfs.c.o
@@ -2173,7 +1723,7 @@ examples/example-gridfs.o: examples/example-gridfs.c.o
 
 # target to build an object file
 examples/example-gridfs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/examples/example-gridfs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/examples/example-gridfs.c.o
 .PHONY : examples/example-gridfs.c.o
 
 examples/example-gridfs.i: examples/example-gridfs.c.i
@@ -2182,7 +1732,7 @@ examples/example-gridfs.i: examples/example-gridfs.c.i
 
 # target to preprocess a source file
 examples/example-gridfs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/examples/example-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/examples/example-gridfs.c.i
 .PHONY : examples/example-gridfs.c.i
 
 examples/example-gridfs.s: examples/example-gridfs.c.s
@@ -2191,7 +1741,7 @@ examples/example-gridfs.s: examples/example-gridfs.c.s
 
 # target to generate assembly for a file
 examples/example-gridfs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/examples/example-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-gridfs.dir/build.make src/libmongoc/CMakeFiles/example-gridfs.dir/examples/example-gridfs.c.s
 .PHONY : examples/example-gridfs.c.s
 
 examples/example-pool.o: examples/example-pool.c.o
@@ -2200,7 +1750,7 @@ examples/example-pool.o: examples/example-pool.c.o
 
 # target to build an object file
 examples/example-pool.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/examples/example-pool.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/examples/example-pool.c.o
 .PHONY : examples/example-pool.c.o
 
 examples/example-pool.i: examples/example-pool.c.i
@@ -2209,7 +1759,7 @@ examples/example-pool.i: examples/example-pool.c.i
 
 # target to preprocess a source file
 examples/example-pool.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/examples/example-pool.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/examples/example-pool.c.i
 .PHONY : examples/example-pool.c.i
 
 examples/example-pool.s: examples/example-pool.c.s
@@ -2218,7 +1768,7 @@ examples/example-pool.s: examples/example-pool.c.s
 
 # target to generate assembly for a file
 examples/example-pool.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/examples/example-pool.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-pool.dir/build.make src/libmongoc/CMakeFiles/example-pool.dir/examples/example-pool.c.s
 .PHONY : examples/example-pool.c.s
 
 examples/example-scram.o: examples/example-scram.c.o
@@ -2227,7 +1777,7 @@ examples/example-scram.o: examples/example-scram.c.o
 
 # target to build an object file
 examples/example-scram.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/examples/example-scram.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/examples/example-scram.c.o
 .PHONY : examples/example-scram.c.o
 
 examples/example-scram.i: examples/example-scram.c.i
@@ -2236,7 +1786,7 @@ examples/example-scram.i: examples/example-scram.c.i
 
 # target to preprocess a source file
 examples/example-scram.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/examples/example-scram.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/examples/example-scram.c.i
 .PHONY : examples/example-scram.c.i
 
 examples/example-scram.s: examples/example-scram.c.s
@@ -2245,7 +1795,7 @@ examples/example-scram.s: examples/example-scram.c.s
 
 # target to generate assembly for a file
 examples/example-scram.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/examples/example-scram.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-scram.dir/build.make src/libmongoc/CMakeFiles/example-scram.dir/examples/example-scram.c.s
 .PHONY : examples/example-scram.c.s
 
 examples/example-sdam-monitoring.o: examples/example-sdam-monitoring.c.o
@@ -2254,7 +1804,7 @@ examples/example-sdam-monitoring.o: examples/example-sdam-monitoring.c.o
 
 # target to build an object file
 examples/example-sdam-monitoring.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/examples/example-sdam-monitoring.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/examples/example-sdam-monitoring.c.o
 .PHONY : examples/example-sdam-monitoring.c.o
 
 examples/example-sdam-monitoring.i: examples/example-sdam-monitoring.c.i
@@ -2263,7 +1813,7 @@ examples/example-sdam-monitoring.i: examples/example-sdam-monitoring.c.i
 
 # target to preprocess a source file
 examples/example-sdam-monitoring.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/examples/example-sdam-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/examples/example-sdam-monitoring.c.i
 .PHONY : examples/example-sdam-monitoring.c.i
 
 examples/example-sdam-monitoring.s: examples/example-sdam-monitoring.c.s
@@ -2272,7 +1822,7 @@ examples/example-sdam-monitoring.s: examples/example-sdam-monitoring.c.s
 
 # target to generate assembly for a file
 examples/example-sdam-monitoring.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/examples/example-sdam-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/build.make src/libmongoc/CMakeFiles/example-sdam-monitoring.dir/examples/example-sdam-monitoring.c.s
 .PHONY : examples/example-sdam-monitoring.c.s
 
 examples/example-session.o: examples/example-session.c.o
@@ -2281,7 +1831,7 @@ examples/example-session.o: examples/example-session.c.o
 
 # target to build an object file
 examples/example-session.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/examples/example-session.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/examples/example-session.c.o
 .PHONY : examples/example-session.c.o
 
 examples/example-session.i: examples/example-session.c.i
@@ -2290,7 +1840,7 @@ examples/example-session.i: examples/example-session.c.i
 
 # target to preprocess a source file
 examples/example-session.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/examples/example-session.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/examples/example-session.c.i
 .PHONY : examples/example-session.c.i
 
 examples/example-session.s: examples/example-session.c.s
@@ -2299,7 +1849,7 @@ examples/example-session.s: examples/example-session.c.s
 
 # target to generate assembly for a file
 examples/example-session.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/examples/example-session.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-session.dir/build.make src/libmongoc/CMakeFiles/example-session.dir/examples/example-session.c.s
 .PHONY : examples/example-session.c.s
 
 examples/example-transaction.o: examples/example-transaction.c.o
@@ -2308,7 +1858,7 @@ examples/example-transaction.o: examples/example-transaction.c.o
 
 # target to build an object file
 examples/example-transaction.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/examples/example-transaction.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/examples/example-transaction.c.o
 .PHONY : examples/example-transaction.c.o
 
 examples/example-transaction.i: examples/example-transaction.c.i
@@ -2317,7 +1867,7 @@ examples/example-transaction.i: examples/example-transaction.c.i
 
 # target to preprocess a source file
 examples/example-transaction.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/examples/example-transaction.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/examples/example-transaction.c.i
 .PHONY : examples/example-transaction.c.i
 
 examples/example-transaction.s: examples/example-transaction.c.s
@@ -2326,7 +1876,7 @@ examples/example-transaction.s: examples/example-transaction.c.s
 
 # target to generate assembly for a file
 examples/example-transaction.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/examples/example-transaction.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-transaction.dir/build.make src/libmongoc/CMakeFiles/example-transaction.dir/examples/example-transaction.c.s
 .PHONY : examples/example-transaction.c.s
 
 examples/example-update.o: examples/example-update.c.o
@@ -2335,7 +1885,7 @@ examples/example-update.o: examples/example-update.c.o
 
 # target to build an object file
 examples/example-update.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/examples/example-update.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/examples/example-update.c.o
 .PHONY : examples/example-update.c.o
 
 examples/example-update.i: examples/example-update.c.i
@@ -2344,7 +1894,7 @@ examples/example-update.i: examples/example-update.c.i
 
 # target to preprocess a source file
 examples/example-update.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/examples/example-update.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/examples/example-update.c.i
 .PHONY : examples/example-update.c.i
 
 examples/example-update.s: examples/example-update.c.s
@@ -2353,7 +1903,7 @@ examples/example-update.s: examples/example-update.c.s
 
 # target to generate assembly for a file
 examples/example-update.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/examples/example-update.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/example-update.dir/build.make src/libmongoc/CMakeFiles/example-update.dir/examples/example-update.c.s
 .PHONY : examples/example-update.c.s
 
 examples/find-and-modify.o: examples/find-and-modify.c.o
@@ -2362,7 +1912,7 @@ examples/find-and-modify.o: examples/find-and-modify.c.o
 
 # target to build an object file
 examples/find-and-modify.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/examples/find-and-modify.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/examples/find-and-modify.c.o
 .PHONY : examples/find-and-modify.c.o
 
 examples/find-and-modify.i: examples/find-and-modify.c.i
@@ -2371,7 +1921,7 @@ examples/find-and-modify.i: examples/find-and-modify.c.i
 
 # target to preprocess a source file
 examples/find-and-modify.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/examples/find-and-modify.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/examples/find-and-modify.c.i
 .PHONY : examples/find-and-modify.c.i
 
 examples/find-and-modify.s: examples/find-and-modify.c.s
@@ -2380,7 +1930,7 @@ examples/find-and-modify.s: examples/find-and-modify.c.s
 
 # target to generate assembly for a file
 examples/find-and-modify.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/examples/find-and-modify.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/find-and-modify.dir/build.make src/libmongoc/CMakeFiles/find-and-modify.dir/examples/find-and-modify.c.s
 .PHONY : examples/find-and-modify.c.s
 
 examples/find_and_modify_with_opts/fam.o: examples/find_and_modify_with_opts/fam.c.o
@@ -2389,7 +1939,7 @@ examples/find_and_modify_with_opts/fam.o: examples/find_and_modify_with_opts/fam
 
 # target to build an object file
 examples/find_and_modify_with_opts/fam.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/examples/find_and_modify_with_opts/fam.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/examples/find_and_modify_with_opts/fam.c.o
 .PHONY : examples/find_and_modify_with_opts/fam.c.o
 
 examples/find_and_modify_with_opts/fam.i: examples/find_and_modify_with_opts/fam.c.i
@@ -2398,7 +1948,7 @@ examples/find_and_modify_with_opts/fam.i: examples/find_and_modify_with_opts/fam
 
 # target to preprocess a source file
 examples/find_and_modify_with_opts/fam.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/examples/find_and_modify_with_opts/fam.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/examples/find_and_modify_with_opts/fam.c.i
 .PHONY : examples/find_and_modify_with_opts/fam.c.i
 
 examples/find_and_modify_with_opts/fam.s: examples/find_and_modify_with_opts/fam.c.s
@@ -2407,7 +1957,7 @@ examples/find_and_modify_with_opts/fam.s: examples/find_and_modify_with_opts/fam
 
 # target to generate assembly for a file
 examples/find_and_modify_with_opts/fam.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/examples/find_and_modify_with_opts/fam.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/fam.dir/build.make src/libmongoc/CMakeFiles/fam.dir/examples/find_and_modify_with_opts/fam.c.s
 .PHONY : examples/find_and_modify_with_opts/fam.c.s
 
 examples/hello_mongoc.o: examples/hello_mongoc.c.o
@@ -2416,7 +1966,7 @@ examples/hello_mongoc.o: examples/hello_mongoc.c.o
 
 # target to build an object file
 examples/hello_mongoc.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/examples/hello_mongoc.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/examples/hello_mongoc.c.o
 .PHONY : examples/hello_mongoc.c.o
 
 examples/hello_mongoc.i: examples/hello_mongoc.c.i
@@ -2425,7 +1975,7 @@ examples/hello_mongoc.i: examples/hello_mongoc.c.i
 
 # target to preprocess a source file
 examples/hello_mongoc.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/examples/hello_mongoc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/examples/hello_mongoc.c.i
 .PHONY : examples/hello_mongoc.c.i
 
 examples/hello_mongoc.s: examples/hello_mongoc.c.s
@@ -2434,7 +1984,7 @@ examples/hello_mongoc.s: examples/hello_mongoc.c.s
 
 # target to generate assembly for a file
 examples/hello_mongoc.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/examples/hello_mongoc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/hello_mongoc.dir/build.make src/libmongoc/CMakeFiles/hello_mongoc.dir/examples/hello_mongoc.c.s
 .PHONY : examples/hello_mongoc.c.s
 
 examples/mongoc-dump.o: examples/mongoc-dump.c.o
@@ -2443,7 +1993,7 @@ examples/mongoc-dump.o: examples/mongoc-dump.c.o
 
 # target to build an object file
 examples/mongoc-dump.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/examples/mongoc-dump.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/examples/mongoc-dump.c.o
 .PHONY : examples/mongoc-dump.c.o
 
 examples/mongoc-dump.i: examples/mongoc-dump.c.i
@@ -2452,7 +2002,7 @@ examples/mongoc-dump.i: examples/mongoc-dump.c.i
 
 # target to preprocess a source file
 examples/mongoc-dump.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/examples/mongoc-dump.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/examples/mongoc-dump.c.i
 .PHONY : examples/mongoc-dump.c.i
 
 examples/mongoc-dump.s: examples/mongoc-dump.c.s
@@ -2461,7 +2011,7 @@ examples/mongoc-dump.s: examples/mongoc-dump.c.s
 
 # target to generate assembly for a file
 examples/mongoc-dump.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/examples/mongoc-dump.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-dump.dir/build.make src/libmongoc/CMakeFiles/mongoc-dump.dir/examples/mongoc-dump.c.s
 .PHONY : examples/mongoc-dump.c.s
 
 examples/mongoc-ping.o: examples/mongoc-ping.c.o
@@ -2470,7 +2020,7 @@ examples/mongoc-ping.o: examples/mongoc-ping.c.o
 
 # target to build an object file
 examples/mongoc-ping.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/examples/mongoc-ping.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/examples/mongoc-ping.c.o
 .PHONY : examples/mongoc-ping.c.o
 
 examples/mongoc-ping.i: examples/mongoc-ping.c.i
@@ -2479,7 +2029,7 @@ examples/mongoc-ping.i: examples/mongoc-ping.c.i
 
 # target to preprocess a source file
 examples/mongoc-ping.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/examples/mongoc-ping.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/examples/mongoc-ping.c.i
 .PHONY : examples/mongoc-ping.c.i
 
 examples/mongoc-ping.s: examples/mongoc-ping.c.s
@@ -2488,7 +2038,7 @@ examples/mongoc-ping.s: examples/mongoc-ping.c.s
 
 # target to generate assembly for a file
 examples/mongoc-ping.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/examples/mongoc-ping.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-ping.dir/build.make src/libmongoc/CMakeFiles/mongoc-ping.dir/examples/mongoc-ping.c.s
 .PHONY : examples/mongoc-ping.c.s
 
 examples/mongoc-tail.o: examples/mongoc-tail.c.o
@@ -2497,7 +2047,7 @@ examples/mongoc-tail.o: examples/mongoc-tail.c.o
 
 # target to build an object file
 examples/mongoc-tail.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/examples/mongoc-tail.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/examples/mongoc-tail.c.o
 .PHONY : examples/mongoc-tail.c.o
 
 examples/mongoc-tail.i: examples/mongoc-tail.c.i
@@ -2506,7 +2056,7 @@ examples/mongoc-tail.i: examples/mongoc-tail.c.i
 
 # target to preprocess a source file
 examples/mongoc-tail.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/examples/mongoc-tail.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/examples/mongoc-tail.c.i
 .PHONY : examples/mongoc-tail.c.i
 
 examples/mongoc-tail.s: examples/mongoc-tail.c.s
@@ -2515,7 +2065,7 @@ examples/mongoc-tail.s: examples/mongoc-tail.c.s
 
 # target to generate assembly for a file
 examples/mongoc-tail.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/examples/mongoc-tail.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc-tail.dir/build.make src/libmongoc/CMakeFiles/mongoc-tail.dir/examples/mongoc-tail.c.s
 .PHONY : examples/mongoc-tail.c.s
 
 src/mongoc/mongoc-apm.o: src/mongoc/mongoc-apm.c.o
@@ -2524,8 +2074,8 @@ src/mongoc/mongoc-apm.o: src/mongoc/mongoc-apm.c.o
 
 # target to build an object file
 src/mongoc/mongoc-apm.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-apm.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-apm.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-apm.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-apm.c.o
 .PHONY : src/mongoc/mongoc-apm.c.o
 
 src/mongoc/mongoc-apm.i: src/mongoc/mongoc-apm.c.i
@@ -2534,8 +2084,8 @@ src/mongoc/mongoc-apm.i: src/mongoc/mongoc-apm.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-apm.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-apm.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-apm.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-apm.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-apm.c.i
 .PHONY : src/mongoc/mongoc-apm.c.i
 
 src/mongoc/mongoc-apm.s: src/mongoc/mongoc-apm.c.s
@@ -2544,8 +2094,8 @@ src/mongoc/mongoc-apm.s: src/mongoc/mongoc-apm.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-apm.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-apm.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-apm.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-apm.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-apm.c.s
 .PHONY : src/mongoc/mongoc-apm.c.s
 
 src/mongoc/mongoc-array.o: src/mongoc/mongoc-array.c.o
@@ -2554,8 +2104,8 @@ src/mongoc/mongoc-array.o: src/mongoc/mongoc-array.c.o
 
 # target to build an object file
 src/mongoc/mongoc-array.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-array.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-array.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-array.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-array.c.o
 .PHONY : src/mongoc/mongoc-array.c.o
 
 src/mongoc/mongoc-array.i: src/mongoc/mongoc-array.c.i
@@ -2564,8 +2114,8 @@ src/mongoc/mongoc-array.i: src/mongoc/mongoc-array.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-array.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-array.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-array.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-array.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-array.c.i
 .PHONY : src/mongoc/mongoc-array.c.i
 
 src/mongoc/mongoc-array.s: src/mongoc/mongoc-array.c.s
@@ -2574,8 +2124,8 @@ src/mongoc/mongoc-array.s: src/mongoc/mongoc-array.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-array.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-array.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-array.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-array.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-array.c.s
 .PHONY : src/mongoc/mongoc-array.c.s
 
 src/mongoc/mongoc-async-cmd.o: src/mongoc/mongoc-async-cmd.c.o
@@ -2584,8 +2134,8 @@ src/mongoc/mongoc-async-cmd.o: src/mongoc/mongoc-async-cmd.c.o
 
 # target to build an object file
 src/mongoc/mongoc-async-cmd.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async-cmd.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async-cmd.c.o
 .PHONY : src/mongoc/mongoc-async-cmd.c.o
 
 src/mongoc/mongoc-async-cmd.i: src/mongoc/mongoc-async-cmd.c.i
@@ -2594,8 +2144,8 @@ src/mongoc/mongoc-async-cmd.i: src/mongoc/mongoc-async-cmd.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-async-cmd.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async-cmd.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async-cmd.c.i
 .PHONY : src/mongoc/mongoc-async-cmd.c.i
 
 src/mongoc/mongoc-async-cmd.s: src/mongoc/mongoc-async-cmd.c.s
@@ -2604,8 +2154,8 @@ src/mongoc/mongoc-async-cmd.s: src/mongoc/mongoc-async-cmd.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-async-cmd.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async-cmd.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async-cmd.c.s
 .PHONY : src/mongoc/mongoc-async-cmd.c.s
 
 src/mongoc/mongoc-async.o: src/mongoc/mongoc-async.c.o
@@ -2614,8 +2164,8 @@ src/mongoc/mongoc-async.o: src/mongoc/mongoc-async.c.o
 
 # target to build an object file
 src/mongoc/mongoc-async.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async.c.o
 .PHONY : src/mongoc/mongoc-async.c.o
 
 src/mongoc/mongoc-async.i: src/mongoc/mongoc-async.c.i
@@ -2624,8 +2174,8 @@ src/mongoc/mongoc-async.i: src/mongoc/mongoc-async.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-async.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async.c.i
 .PHONY : src/mongoc/mongoc-async.c.i
 
 src/mongoc/mongoc-async.s: src/mongoc/mongoc-async.c.s
@@ -2634,8 +2184,8 @@ src/mongoc/mongoc-async.s: src/mongoc/mongoc-async.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-async.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-async.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-async.c.s
 .PHONY : src/mongoc/mongoc-async.c.s
 
 src/mongoc/mongoc-buffer.o: src/mongoc/mongoc-buffer.c.o
@@ -2644,8 +2194,8 @@ src/mongoc/mongoc-buffer.o: src/mongoc/mongoc-buffer.c.o
 
 # target to build an object file
 src/mongoc/mongoc-buffer.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-buffer.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-buffer.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-buffer.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-buffer.c.o
 .PHONY : src/mongoc/mongoc-buffer.c.o
 
 src/mongoc/mongoc-buffer.i: src/mongoc/mongoc-buffer.c.i
@@ -2654,8 +2204,8 @@ src/mongoc/mongoc-buffer.i: src/mongoc/mongoc-buffer.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-buffer.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-buffer.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-buffer.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-buffer.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-buffer.c.i
 .PHONY : src/mongoc/mongoc-buffer.c.i
 
 src/mongoc/mongoc-buffer.s: src/mongoc/mongoc-buffer.c.s
@@ -2664,8 +2214,8 @@ src/mongoc/mongoc-buffer.s: src/mongoc/mongoc-buffer.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-buffer.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-buffer.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-buffer.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-buffer.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-buffer.c.s
 .PHONY : src/mongoc/mongoc-buffer.c.s
 
 src/mongoc/mongoc-bulk-operation.o: src/mongoc/mongoc-bulk-operation.c.o
@@ -2674,8 +2224,8 @@ src/mongoc/mongoc-bulk-operation.o: src/mongoc/mongoc-bulk-operation.c.o
 
 # target to build an object file
 src/mongoc/mongoc-bulk-operation.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-bulk-operation.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-bulk-operation.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-bulk-operation.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-bulk-operation.c.o
 .PHONY : src/mongoc/mongoc-bulk-operation.c.o
 
 src/mongoc/mongoc-bulk-operation.i: src/mongoc/mongoc-bulk-operation.c.i
@@ -2684,8 +2234,8 @@ src/mongoc/mongoc-bulk-operation.i: src/mongoc/mongoc-bulk-operation.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-bulk-operation.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-bulk-operation.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-bulk-operation.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-bulk-operation.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-bulk-operation.c.i
 .PHONY : src/mongoc/mongoc-bulk-operation.c.i
 
 src/mongoc/mongoc-bulk-operation.s: src/mongoc/mongoc-bulk-operation.c.s
@@ -2694,8 +2244,8 @@ src/mongoc/mongoc-bulk-operation.s: src/mongoc/mongoc-bulk-operation.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-bulk-operation.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-bulk-operation.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-bulk-operation.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-bulk-operation.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-bulk-operation.c.s
 .PHONY : src/mongoc/mongoc-bulk-operation.c.s
 
 src/mongoc/mongoc-change-stream.o: src/mongoc/mongoc-change-stream.c.o
@@ -2704,8 +2254,8 @@ src/mongoc/mongoc-change-stream.o: src/mongoc/mongoc-change-stream.c.o
 
 # target to build an object file
 src/mongoc/mongoc-change-stream.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-change-stream.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-change-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-change-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-change-stream.c.o
 .PHONY : src/mongoc/mongoc-change-stream.c.o
 
 src/mongoc/mongoc-change-stream.i: src/mongoc/mongoc-change-stream.c.i
@@ -2714,8 +2264,8 @@ src/mongoc/mongoc-change-stream.i: src/mongoc/mongoc-change-stream.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-change-stream.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-change-stream.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-change-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-change-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-change-stream.c.i
 .PHONY : src/mongoc/mongoc-change-stream.c.i
 
 src/mongoc/mongoc-change-stream.s: src/mongoc/mongoc-change-stream.c.s
@@ -2724,8 +2274,8 @@ src/mongoc/mongoc-change-stream.s: src/mongoc/mongoc-change-stream.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-change-stream.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-change-stream.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-change-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-change-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-change-stream.c.s
 .PHONY : src/mongoc/mongoc-change-stream.c.s
 
 src/mongoc/mongoc-client-pool.o: src/mongoc/mongoc-client-pool.c.o
@@ -2734,8 +2284,8 @@ src/mongoc/mongoc-client-pool.o: src/mongoc/mongoc-client-pool.c.o
 
 # target to build an object file
 src/mongoc/mongoc-client-pool.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-pool.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-pool.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-pool.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-pool.c.o
 .PHONY : src/mongoc/mongoc-client-pool.c.o
 
 src/mongoc/mongoc-client-pool.i: src/mongoc/mongoc-client-pool.c.i
@@ -2744,8 +2294,8 @@ src/mongoc/mongoc-client-pool.i: src/mongoc/mongoc-client-pool.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-client-pool.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-pool.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-pool.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-pool.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-pool.c.i
 .PHONY : src/mongoc/mongoc-client-pool.c.i
 
 src/mongoc/mongoc-client-pool.s: src/mongoc/mongoc-client-pool.c.s
@@ -2754,8 +2304,8 @@ src/mongoc/mongoc-client-pool.s: src/mongoc/mongoc-client-pool.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-client-pool.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-pool.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-pool.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-pool.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-pool.c.s
 .PHONY : src/mongoc/mongoc-client-pool.c.s
 
 src/mongoc/mongoc-client-session.o: src/mongoc/mongoc-client-session.c.o
@@ -2764,8 +2314,8 @@ src/mongoc/mongoc-client-session.o: src/mongoc/mongoc-client-session.c.o
 
 # target to build an object file
 src/mongoc/mongoc-client-session.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-session.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-session.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-session.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-session.c.o
 .PHONY : src/mongoc/mongoc-client-session.c.o
 
 src/mongoc/mongoc-client-session.i: src/mongoc/mongoc-client-session.c.i
@@ -2774,8 +2324,8 @@ src/mongoc/mongoc-client-session.i: src/mongoc/mongoc-client-session.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-client-session.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-session.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-session.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-session.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-session.c.i
 .PHONY : src/mongoc/mongoc-client-session.c.i
 
 src/mongoc/mongoc-client-session.s: src/mongoc/mongoc-client-session.c.s
@@ -2784,8 +2334,8 @@ src/mongoc/mongoc-client-session.s: src/mongoc/mongoc-client-session.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-client-session.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-session.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-session.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client-session.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client-session.c.s
 .PHONY : src/mongoc/mongoc-client-session.c.s
 
 src/mongoc/mongoc-client.o: src/mongoc/mongoc-client.c.o
@@ -2794,8 +2344,8 @@ src/mongoc/mongoc-client.o: src/mongoc/mongoc-client.c.o
 
 # target to build an object file
 src/mongoc/mongoc-client.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client.c.o
 .PHONY : src/mongoc/mongoc-client.c.o
 
 src/mongoc/mongoc-client.i: src/mongoc/mongoc-client.c.i
@@ -2804,8 +2354,8 @@ src/mongoc/mongoc-client.i: src/mongoc/mongoc-client.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-client.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client.c.i
 .PHONY : src/mongoc/mongoc-client.c.i
 
 src/mongoc/mongoc-client.s: src/mongoc/mongoc-client.c.s
@@ -2814,9 +2364,39 @@ src/mongoc/mongoc-client.s: src/mongoc/mongoc-client.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-client.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-client.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-client.c.s
 .PHONY : src/mongoc/mongoc-client.c.s
+
+src/mongoc/mongoc-cluster-cyrus.o: src/mongoc/mongoc-cluster-cyrus.c.o
+
+.PHONY : src/mongoc/mongoc-cluster-cyrus.o
+
+# target to build an object file
+src/mongoc/mongoc-cluster-cyrus.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-cyrus.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-cyrus.c.o
+.PHONY : src/mongoc/mongoc-cluster-cyrus.c.o
+
+src/mongoc/mongoc-cluster-cyrus.i: src/mongoc/mongoc-cluster-cyrus.c.i
+
+.PHONY : src/mongoc/mongoc-cluster-cyrus.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-cluster-cyrus.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-cyrus.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-cyrus.c.i
+.PHONY : src/mongoc/mongoc-cluster-cyrus.c.i
+
+src/mongoc/mongoc-cluster-cyrus.s: src/mongoc/mongoc-cluster-cyrus.c.s
+
+.PHONY : src/mongoc/mongoc-cluster-cyrus.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-cluster-cyrus.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-cyrus.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-cyrus.c.s
+.PHONY : src/mongoc/mongoc-cluster-cyrus.c.s
 
 src/mongoc/mongoc-cluster-sasl.o: src/mongoc/mongoc-cluster-sasl.c.o
 
@@ -2824,8 +2404,8 @@ src/mongoc/mongoc-cluster-sasl.o: src/mongoc/mongoc-cluster-sasl.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cluster-sasl.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-sasl.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-sasl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-sasl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-sasl.c.o
 .PHONY : src/mongoc/mongoc-cluster-sasl.c.o
 
 src/mongoc/mongoc-cluster-sasl.i: src/mongoc/mongoc-cluster-sasl.c.i
@@ -2834,8 +2414,8 @@ src/mongoc/mongoc-cluster-sasl.i: src/mongoc/mongoc-cluster-sasl.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cluster-sasl.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-sasl.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-sasl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-sasl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-sasl.c.i
 .PHONY : src/mongoc/mongoc-cluster-sasl.c.i
 
 src/mongoc/mongoc-cluster-sasl.s: src/mongoc/mongoc-cluster-sasl.c.s
@@ -2844,8 +2424,8 @@ src/mongoc/mongoc-cluster-sasl.s: src/mongoc/mongoc-cluster-sasl.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cluster-sasl.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-sasl.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-sasl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster-sasl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster-sasl.c.s
 .PHONY : src/mongoc/mongoc-cluster-sasl.c.s
 
 src/mongoc/mongoc-cluster.o: src/mongoc/mongoc-cluster.c.o
@@ -2854,8 +2434,8 @@ src/mongoc/mongoc-cluster.o: src/mongoc/mongoc-cluster.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cluster.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster.c.o
 .PHONY : src/mongoc/mongoc-cluster.c.o
 
 src/mongoc/mongoc-cluster.i: src/mongoc/mongoc-cluster.c.i
@@ -2864,8 +2444,8 @@ src/mongoc/mongoc-cluster.i: src/mongoc/mongoc-cluster.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cluster.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster.c.i
 .PHONY : src/mongoc/mongoc-cluster.c.i
 
 src/mongoc/mongoc-cluster.s: src/mongoc/mongoc-cluster.c.s
@@ -2874,8 +2454,8 @@ src/mongoc/mongoc-cluster.s: src/mongoc/mongoc-cluster.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cluster.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cluster.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cluster.c.s
 .PHONY : src/mongoc/mongoc-cluster.c.s
 
 src/mongoc/mongoc-cmd.o: src/mongoc/mongoc-cmd.c.o
@@ -2884,8 +2464,8 @@ src/mongoc/mongoc-cmd.o: src/mongoc/mongoc-cmd.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cmd.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cmd.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cmd.c.o
 .PHONY : src/mongoc/mongoc-cmd.c.o
 
 src/mongoc/mongoc-cmd.i: src/mongoc/mongoc-cmd.c.i
@@ -2894,8 +2474,8 @@ src/mongoc/mongoc-cmd.i: src/mongoc/mongoc-cmd.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cmd.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cmd.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cmd.c.i
 .PHONY : src/mongoc/mongoc-cmd.c.i
 
 src/mongoc/mongoc-cmd.s: src/mongoc/mongoc-cmd.c.s
@@ -2904,8 +2484,8 @@ src/mongoc/mongoc-cmd.s: src/mongoc/mongoc-cmd.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cmd.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cmd.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cmd.c.s
 .PHONY : src/mongoc/mongoc-cmd.c.s
 
 src/mongoc/mongoc-collection.o: src/mongoc/mongoc-collection.c.o
@@ -2914,8 +2494,8 @@ src/mongoc/mongoc-collection.o: src/mongoc/mongoc-collection.c.o
 
 # target to build an object file
 src/mongoc/mongoc-collection.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-collection.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-collection.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-collection.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-collection.c.o
 .PHONY : src/mongoc/mongoc-collection.c.o
 
 src/mongoc/mongoc-collection.i: src/mongoc/mongoc-collection.c.i
@@ -2924,8 +2504,8 @@ src/mongoc/mongoc-collection.i: src/mongoc/mongoc-collection.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-collection.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-collection.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-collection.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-collection.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-collection.c.i
 .PHONY : src/mongoc/mongoc-collection.c.i
 
 src/mongoc/mongoc-collection.s: src/mongoc/mongoc-collection.c.s
@@ -2934,8 +2514,8 @@ src/mongoc/mongoc-collection.s: src/mongoc/mongoc-collection.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-collection.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-collection.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-collection.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-collection.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-collection.c.s
 .PHONY : src/mongoc/mongoc-collection.c.s
 
 src/mongoc/mongoc-compression.o: src/mongoc/mongoc-compression.c.o
@@ -2944,8 +2524,8 @@ src/mongoc/mongoc-compression.o: src/mongoc/mongoc-compression.c.o
 
 # target to build an object file
 src/mongoc/mongoc-compression.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-compression.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-compression.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-compression.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-compression.c.o
 .PHONY : src/mongoc/mongoc-compression.c.o
 
 src/mongoc/mongoc-compression.i: src/mongoc/mongoc-compression.c.i
@@ -2954,8 +2534,8 @@ src/mongoc/mongoc-compression.i: src/mongoc/mongoc-compression.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-compression.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-compression.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-compression.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-compression.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-compression.c.i
 .PHONY : src/mongoc/mongoc-compression.c.i
 
 src/mongoc/mongoc-compression.s: src/mongoc/mongoc-compression.c.s
@@ -2964,8 +2544,8 @@ src/mongoc/mongoc-compression.s: src/mongoc/mongoc-compression.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-compression.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-compression.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-compression.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-compression.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-compression.c.s
 .PHONY : src/mongoc/mongoc-compression.c.s
 
 src/mongoc/mongoc-counters.o: src/mongoc/mongoc-counters.c.o
@@ -2974,8 +2554,8 @@ src/mongoc/mongoc-counters.o: src/mongoc/mongoc-counters.c.o
 
 # target to build an object file
 src/mongoc/mongoc-counters.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-counters.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-counters.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-counters.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-counters.c.o
 .PHONY : src/mongoc/mongoc-counters.c.o
 
 src/mongoc/mongoc-counters.i: src/mongoc/mongoc-counters.c.i
@@ -2984,8 +2564,8 @@ src/mongoc/mongoc-counters.i: src/mongoc/mongoc-counters.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-counters.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-counters.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-counters.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-counters.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-counters.c.i
 .PHONY : src/mongoc/mongoc-counters.c.i
 
 src/mongoc/mongoc-counters.s: src/mongoc/mongoc-counters.c.s
@@ -2994,9 +2574,69 @@ src/mongoc/mongoc-counters.s: src/mongoc/mongoc-counters.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-counters.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-counters.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-counters.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-counters.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-counters.c.s
 .PHONY : src/mongoc/mongoc-counters.c.s
+
+src/mongoc/mongoc-crypto-openssl.o: src/mongoc/mongoc-crypto-openssl.c.o
+
+.PHONY : src/mongoc/mongoc-crypto-openssl.o
+
+# target to build an object file
+src/mongoc/mongoc-crypto-openssl.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-crypto-openssl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-crypto-openssl.c.o
+.PHONY : src/mongoc/mongoc-crypto-openssl.c.o
+
+src/mongoc/mongoc-crypto-openssl.i: src/mongoc/mongoc-crypto-openssl.c.i
+
+.PHONY : src/mongoc/mongoc-crypto-openssl.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-crypto-openssl.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-crypto-openssl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-crypto-openssl.c.i
+.PHONY : src/mongoc/mongoc-crypto-openssl.c.i
+
+src/mongoc/mongoc-crypto-openssl.s: src/mongoc/mongoc-crypto-openssl.c.s
+
+.PHONY : src/mongoc/mongoc-crypto-openssl.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-crypto-openssl.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-crypto-openssl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-crypto-openssl.c.s
+.PHONY : src/mongoc/mongoc-crypto-openssl.c.s
+
+src/mongoc/mongoc-crypto.o: src/mongoc/mongoc-crypto.c.o
+
+.PHONY : src/mongoc/mongoc-crypto.o
+
+# target to build an object file
+src/mongoc/mongoc-crypto.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-crypto.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-crypto.c.o
+.PHONY : src/mongoc/mongoc-crypto.c.o
+
+src/mongoc/mongoc-crypto.i: src/mongoc/mongoc-crypto.c.i
+
+.PHONY : src/mongoc/mongoc-crypto.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-crypto.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-crypto.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-crypto.c.i
+.PHONY : src/mongoc/mongoc-crypto.c.i
+
+src/mongoc/mongoc-crypto.s: src/mongoc/mongoc-crypto.c.s
+
+.PHONY : src/mongoc/mongoc-crypto.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-crypto.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-crypto.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-crypto.c.s
+.PHONY : src/mongoc/mongoc-crypto.c.s
 
 src/mongoc/mongoc-cursor-array.o: src/mongoc/mongoc-cursor-array.c.o
 
@@ -3004,8 +2644,8 @@ src/mongoc/mongoc-cursor-array.o: src/mongoc/mongoc-cursor-array.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cursor-array.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-array.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-array.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-array.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-array.c.o
 .PHONY : src/mongoc/mongoc-cursor-array.c.o
 
 src/mongoc/mongoc-cursor-array.i: src/mongoc/mongoc-cursor-array.c.i
@@ -3014,8 +2654,8 @@ src/mongoc/mongoc-cursor-array.i: src/mongoc/mongoc-cursor-array.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-array.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-array.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-array.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-array.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-array.c.i
 .PHONY : src/mongoc/mongoc-cursor-array.c.i
 
 src/mongoc/mongoc-cursor-array.s: src/mongoc/mongoc-cursor-array.c.s
@@ -3024,8 +2664,8 @@ src/mongoc/mongoc-cursor-array.s: src/mongoc/mongoc-cursor-array.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-array.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-array.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-array.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-array.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-array.c.s
 .PHONY : src/mongoc/mongoc-cursor-array.c.s
 
 src/mongoc/mongoc-cursor-cmd-deprecated.o: src/mongoc/mongoc-cursor-cmd-deprecated.c.o
@@ -3034,8 +2674,8 @@ src/mongoc/mongoc-cursor-cmd-deprecated.o: src/mongoc/mongoc-cursor-cmd-deprecat
 
 # target to build an object file
 src/mongoc/mongoc-cursor-cmd-deprecated.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.o
 .PHONY : src/mongoc/mongoc-cursor-cmd-deprecated.c.o
 
 src/mongoc/mongoc-cursor-cmd-deprecated.i: src/mongoc/mongoc-cursor-cmd-deprecated.c.i
@@ -3044,8 +2684,8 @@ src/mongoc/mongoc-cursor-cmd-deprecated.i: src/mongoc/mongoc-cursor-cmd-deprecat
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-cmd-deprecated.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.i
 .PHONY : src/mongoc/mongoc-cursor-cmd-deprecated.c.i
 
 src/mongoc/mongoc-cursor-cmd-deprecated.s: src/mongoc/mongoc-cursor-cmd-deprecated.c.s
@@ -3054,8 +2694,8 @@ src/mongoc/mongoc-cursor-cmd-deprecated.s: src/mongoc/mongoc-cursor-cmd-deprecat
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-cmd-deprecated.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd-deprecated.c.s
 .PHONY : src/mongoc/mongoc-cursor-cmd-deprecated.c.s
 
 src/mongoc/mongoc-cursor-cmd.o: src/mongoc/mongoc-cursor-cmd.c.o
@@ -3064,8 +2704,8 @@ src/mongoc/mongoc-cursor-cmd.o: src/mongoc/mongoc-cursor-cmd.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cursor-cmd.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd.c.o
 .PHONY : src/mongoc/mongoc-cursor-cmd.c.o
 
 src/mongoc/mongoc-cursor-cmd.i: src/mongoc/mongoc-cursor-cmd.c.i
@@ -3074,8 +2714,8 @@ src/mongoc/mongoc-cursor-cmd.i: src/mongoc/mongoc-cursor-cmd.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-cmd.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd.c.i
 .PHONY : src/mongoc/mongoc-cursor-cmd.c.i
 
 src/mongoc/mongoc-cursor-cmd.s: src/mongoc/mongoc-cursor-cmd.c.s
@@ -3084,8 +2724,8 @@ src/mongoc/mongoc-cursor-cmd.s: src/mongoc/mongoc-cursor-cmd.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-cmd.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-cmd.c.s
 .PHONY : src/mongoc/mongoc-cursor-cmd.c.s
 
 src/mongoc/mongoc-cursor-find-cmd.o: src/mongoc/mongoc-cursor-find-cmd.c.o
@@ -3094,8 +2734,8 @@ src/mongoc/mongoc-cursor-find-cmd.o: src/mongoc/mongoc-cursor-find-cmd.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cursor-find-cmd.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-cmd.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-cmd.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-cmd.c.o
 .PHONY : src/mongoc/mongoc-cursor-find-cmd.c.o
 
 src/mongoc/mongoc-cursor-find-cmd.i: src/mongoc/mongoc-cursor-find-cmd.c.i
@@ -3104,8 +2744,8 @@ src/mongoc/mongoc-cursor-find-cmd.i: src/mongoc/mongoc-cursor-find-cmd.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-find-cmd.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-cmd.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-cmd.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-cmd.c.i
 .PHONY : src/mongoc/mongoc-cursor-find-cmd.c.i
 
 src/mongoc/mongoc-cursor-find-cmd.s: src/mongoc/mongoc-cursor-find-cmd.c.s
@@ -3114,8 +2754,8 @@ src/mongoc/mongoc-cursor-find-cmd.s: src/mongoc/mongoc-cursor-find-cmd.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-find-cmd.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-cmd.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-cmd.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-cmd.c.s
 .PHONY : src/mongoc/mongoc-cursor-find-cmd.c.s
 
 src/mongoc/mongoc-cursor-find-opquery.o: src/mongoc/mongoc-cursor-find-opquery.c.o
@@ -3124,8 +2764,8 @@ src/mongoc/mongoc-cursor-find-opquery.o: src/mongoc/mongoc-cursor-find-opquery.c
 
 # target to build an object file
 src/mongoc/mongoc-cursor-find-opquery.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-opquery.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-opquery.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-opquery.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-opquery.c.o
 .PHONY : src/mongoc/mongoc-cursor-find-opquery.c.o
 
 src/mongoc/mongoc-cursor-find-opquery.i: src/mongoc/mongoc-cursor-find-opquery.c.i
@@ -3134,8 +2774,8 @@ src/mongoc/mongoc-cursor-find-opquery.i: src/mongoc/mongoc-cursor-find-opquery.c
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-find-opquery.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-opquery.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-opquery.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-opquery.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-opquery.c.i
 .PHONY : src/mongoc/mongoc-cursor-find-opquery.c.i
 
 src/mongoc/mongoc-cursor-find-opquery.s: src/mongoc/mongoc-cursor-find-opquery.c.s
@@ -3144,8 +2784,8 @@ src/mongoc/mongoc-cursor-find-opquery.s: src/mongoc/mongoc-cursor-find-opquery.c
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-find-opquery.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-opquery.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-opquery.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find-opquery.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find-opquery.c.s
 .PHONY : src/mongoc/mongoc-cursor-find-opquery.c.s
 
 src/mongoc/mongoc-cursor-find.o: src/mongoc/mongoc-cursor-find.c.o
@@ -3154,8 +2794,8 @@ src/mongoc/mongoc-cursor-find.o: src/mongoc/mongoc-cursor-find.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cursor-find.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find.c.o
 .PHONY : src/mongoc/mongoc-cursor-find.c.o
 
 src/mongoc/mongoc-cursor-find.i: src/mongoc/mongoc-cursor-find.c.i
@@ -3164,8 +2804,8 @@ src/mongoc/mongoc-cursor-find.i: src/mongoc/mongoc-cursor-find.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-find.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find.c.i
 .PHONY : src/mongoc/mongoc-cursor-find.c.i
 
 src/mongoc/mongoc-cursor-find.s: src/mongoc/mongoc-cursor-find.c.s
@@ -3174,8 +2814,8 @@ src/mongoc/mongoc-cursor-find.s: src/mongoc/mongoc-cursor-find.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-find.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-find.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-find.c.s
 .PHONY : src/mongoc/mongoc-cursor-find.c.s
 
 src/mongoc/mongoc-cursor-legacy.o: src/mongoc/mongoc-cursor-legacy.c.o
@@ -3184,8 +2824,8 @@ src/mongoc/mongoc-cursor-legacy.o: src/mongoc/mongoc-cursor-legacy.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cursor-legacy.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-legacy.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-legacy.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-legacy.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-legacy.c.o
 .PHONY : src/mongoc/mongoc-cursor-legacy.c.o
 
 src/mongoc/mongoc-cursor-legacy.i: src/mongoc/mongoc-cursor-legacy.c.i
@@ -3194,8 +2834,8 @@ src/mongoc/mongoc-cursor-legacy.i: src/mongoc/mongoc-cursor-legacy.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor-legacy.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-legacy.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-legacy.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-legacy.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-legacy.c.i
 .PHONY : src/mongoc/mongoc-cursor-legacy.c.i
 
 src/mongoc/mongoc-cursor-legacy.s: src/mongoc/mongoc-cursor-legacy.c.s
@@ -3204,8 +2844,8 @@ src/mongoc/mongoc-cursor-legacy.s: src/mongoc/mongoc-cursor-legacy.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor-legacy.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-legacy.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-legacy.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor-legacy.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor-legacy.c.s
 .PHONY : src/mongoc/mongoc-cursor-legacy.c.s
 
 src/mongoc/mongoc-cursor.o: src/mongoc/mongoc-cursor.c.o
@@ -3214,8 +2854,8 @@ src/mongoc/mongoc-cursor.o: src/mongoc/mongoc-cursor.c.o
 
 # target to build an object file
 src/mongoc/mongoc-cursor.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor.c.o
 .PHONY : src/mongoc/mongoc-cursor.c.o
 
 src/mongoc/mongoc-cursor.i: src/mongoc/mongoc-cursor.c.i
@@ -3224,8 +2864,8 @@ src/mongoc/mongoc-cursor.i: src/mongoc/mongoc-cursor.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-cursor.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor.c.i
 .PHONY : src/mongoc/mongoc-cursor.c.i
 
 src/mongoc/mongoc-cursor.s: src/mongoc/mongoc-cursor.c.s
@@ -3234,9 +2874,39 @@ src/mongoc/mongoc-cursor.s: src/mongoc/mongoc-cursor.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-cursor.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cursor.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cursor.c.s
 .PHONY : src/mongoc/mongoc-cursor.c.s
+
+src/mongoc/mongoc-cyrus.o: src/mongoc/mongoc-cyrus.c.o
+
+.PHONY : src/mongoc/mongoc-cyrus.o
+
+# target to build an object file
+src/mongoc/mongoc-cyrus.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cyrus.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cyrus.c.o
+.PHONY : src/mongoc/mongoc-cyrus.c.o
+
+src/mongoc/mongoc-cyrus.i: src/mongoc/mongoc-cyrus.c.i
+
+.PHONY : src/mongoc/mongoc-cyrus.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-cyrus.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cyrus.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cyrus.c.i
+.PHONY : src/mongoc/mongoc-cyrus.c.i
+
+src/mongoc/mongoc-cyrus.s: src/mongoc/mongoc-cyrus.c.s
+
+.PHONY : src/mongoc/mongoc-cyrus.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-cyrus.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-cyrus.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-cyrus.c.s
+.PHONY : src/mongoc/mongoc-cyrus.c.s
 
 src/mongoc/mongoc-database.o: src/mongoc/mongoc-database.c.o
 
@@ -3244,8 +2914,8 @@ src/mongoc/mongoc-database.o: src/mongoc/mongoc-database.c.o
 
 # target to build an object file
 src/mongoc/mongoc-database.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-database.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-database.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-database.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-database.c.o
 .PHONY : src/mongoc/mongoc-database.c.o
 
 src/mongoc/mongoc-database.i: src/mongoc/mongoc-database.c.i
@@ -3254,8 +2924,8 @@ src/mongoc/mongoc-database.i: src/mongoc/mongoc-database.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-database.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-database.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-database.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-database.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-database.c.i
 .PHONY : src/mongoc/mongoc-database.c.i
 
 src/mongoc/mongoc-database.s: src/mongoc/mongoc-database.c.s
@@ -3264,8 +2934,8 @@ src/mongoc/mongoc-database.s: src/mongoc/mongoc-database.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-database.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-database.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-database.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-database.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-database.c.s
 .PHONY : src/mongoc/mongoc-database.c.s
 
 src/mongoc/mongoc-error.o: src/mongoc/mongoc-error.c.o
@@ -3274,8 +2944,8 @@ src/mongoc/mongoc-error.o: src/mongoc/mongoc-error.c.o
 
 # target to build an object file
 src/mongoc/mongoc-error.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-error.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-error.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-error.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-error.c.o
 .PHONY : src/mongoc/mongoc-error.c.o
 
 src/mongoc/mongoc-error.i: src/mongoc/mongoc-error.c.i
@@ -3284,8 +2954,8 @@ src/mongoc/mongoc-error.i: src/mongoc/mongoc-error.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-error.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-error.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-error.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-error.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-error.c.i
 .PHONY : src/mongoc/mongoc-error.c.i
 
 src/mongoc/mongoc-error.s: src/mongoc/mongoc-error.c.s
@@ -3294,8 +2964,8 @@ src/mongoc/mongoc-error.s: src/mongoc/mongoc-error.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-error.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-error.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-error.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-error.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-error.c.s
 .PHONY : src/mongoc/mongoc-error.c.s
 
 src/mongoc/mongoc-find-and-modify.o: src/mongoc/mongoc-find-and-modify.c.o
@@ -3304,8 +2974,8 @@ src/mongoc/mongoc-find-and-modify.o: src/mongoc/mongoc-find-and-modify.c.o
 
 # target to build an object file
 src/mongoc/mongoc-find-and-modify.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-find-and-modify.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-find-and-modify.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-find-and-modify.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-find-and-modify.c.o
 .PHONY : src/mongoc/mongoc-find-and-modify.c.o
 
 src/mongoc/mongoc-find-and-modify.i: src/mongoc/mongoc-find-and-modify.c.i
@@ -3314,8 +2984,8 @@ src/mongoc/mongoc-find-and-modify.i: src/mongoc/mongoc-find-and-modify.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-find-and-modify.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-find-and-modify.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-find-and-modify.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-find-and-modify.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-find-and-modify.c.i
 .PHONY : src/mongoc/mongoc-find-and-modify.c.i
 
 src/mongoc/mongoc-find-and-modify.s: src/mongoc/mongoc-find-and-modify.c.s
@@ -3324,8 +2994,8 @@ src/mongoc/mongoc-find-and-modify.s: src/mongoc/mongoc-find-and-modify.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-find-and-modify.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-find-and-modify.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-find-and-modify.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-find-and-modify.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-find-and-modify.c.s
 .PHONY : src/mongoc/mongoc-find-and-modify.c.s
 
 src/mongoc/mongoc-gridfs-file-list.o: src/mongoc/mongoc-gridfs-file-list.c.o
@@ -3334,8 +3004,8 @@ src/mongoc/mongoc-gridfs-file-list.o: src/mongoc/mongoc-gridfs-file-list.c.o
 
 # target to build an object file
 src/mongoc/mongoc-gridfs-file-list.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-list.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-list.c.o
 .PHONY : src/mongoc/mongoc-gridfs-file-list.c.o
 
 src/mongoc/mongoc-gridfs-file-list.i: src/mongoc/mongoc-gridfs-file-list.c.i
@@ -3344,8 +3014,8 @@ src/mongoc/mongoc-gridfs-file-list.i: src/mongoc/mongoc-gridfs-file-list.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-gridfs-file-list.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-list.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-list.c.i
 .PHONY : src/mongoc/mongoc-gridfs-file-list.c.i
 
 src/mongoc/mongoc-gridfs-file-list.s: src/mongoc/mongoc-gridfs-file-list.c.s
@@ -3354,8 +3024,8 @@ src/mongoc/mongoc-gridfs-file-list.s: src/mongoc/mongoc-gridfs-file-list.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-gridfs-file-list.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-list.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-list.c.s
 .PHONY : src/mongoc/mongoc-gridfs-file-list.c.s
 
 src/mongoc/mongoc-gridfs-file-page.o: src/mongoc/mongoc-gridfs-file-page.c.o
@@ -3364,8 +3034,8 @@ src/mongoc/mongoc-gridfs-file-page.o: src/mongoc/mongoc-gridfs-file-page.c.o
 
 # target to build an object file
 src/mongoc/mongoc-gridfs-file-page.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-page.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-page.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-page.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-page.c.o
 .PHONY : src/mongoc/mongoc-gridfs-file-page.c.o
 
 src/mongoc/mongoc-gridfs-file-page.i: src/mongoc/mongoc-gridfs-file-page.c.i
@@ -3374,8 +3044,8 @@ src/mongoc/mongoc-gridfs-file-page.i: src/mongoc/mongoc-gridfs-file-page.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-gridfs-file-page.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-page.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-page.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-page.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-page.c.i
 .PHONY : src/mongoc/mongoc-gridfs-file-page.c.i
 
 src/mongoc/mongoc-gridfs-file-page.s: src/mongoc/mongoc-gridfs-file-page.c.s
@@ -3384,8 +3054,8 @@ src/mongoc/mongoc-gridfs-file-page.s: src/mongoc/mongoc-gridfs-file-page.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-gridfs-file-page.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-page.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-page.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file-page.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file-page.c.s
 .PHONY : src/mongoc/mongoc-gridfs-file-page.c.s
 
 src/mongoc/mongoc-gridfs-file.o: src/mongoc/mongoc-gridfs-file.c.o
@@ -3394,8 +3064,8 @@ src/mongoc/mongoc-gridfs-file.o: src/mongoc/mongoc-gridfs-file.c.o
 
 # target to build an object file
 src/mongoc/mongoc-gridfs-file.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file.c.o
 .PHONY : src/mongoc/mongoc-gridfs-file.c.o
 
 src/mongoc/mongoc-gridfs-file.i: src/mongoc/mongoc-gridfs-file.c.i
@@ -3404,8 +3074,8 @@ src/mongoc/mongoc-gridfs-file.i: src/mongoc/mongoc-gridfs-file.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-gridfs-file.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file.c.i
 .PHONY : src/mongoc/mongoc-gridfs-file.c.i
 
 src/mongoc/mongoc-gridfs-file.s: src/mongoc/mongoc-gridfs-file.c.s
@@ -3414,8 +3084,8 @@ src/mongoc/mongoc-gridfs-file.s: src/mongoc/mongoc-gridfs-file.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-gridfs-file.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs-file.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs-file.c.s
 .PHONY : src/mongoc/mongoc-gridfs-file.c.s
 
 src/mongoc/mongoc-gridfs.o: src/mongoc/mongoc-gridfs.c.o
@@ -3424,8 +3094,8 @@ src/mongoc/mongoc-gridfs.o: src/mongoc/mongoc-gridfs.c.o
 
 # target to build an object file
 src/mongoc/mongoc-gridfs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs.c.o
 .PHONY : src/mongoc/mongoc-gridfs.c.o
 
 src/mongoc/mongoc-gridfs.i: src/mongoc/mongoc-gridfs.c.i
@@ -3434,8 +3104,8 @@ src/mongoc/mongoc-gridfs.i: src/mongoc/mongoc-gridfs.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-gridfs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs.c.i
 .PHONY : src/mongoc/mongoc-gridfs.c.i
 
 src/mongoc/mongoc-gridfs.s: src/mongoc/mongoc-gridfs.c.s
@@ -3444,8 +3114,8 @@ src/mongoc/mongoc-gridfs.s: src/mongoc/mongoc-gridfs.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-gridfs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-gridfs.c.s
 .PHONY : src/mongoc/mongoc-gridfs.c.s
 
 src/mongoc/mongoc-handshake.o: src/mongoc/mongoc-handshake.c.o
@@ -3454,8 +3124,8 @@ src/mongoc/mongoc-handshake.o: src/mongoc/mongoc-handshake.c.o
 
 # target to build an object file
 src/mongoc/mongoc-handshake.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-handshake.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-handshake.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-handshake.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-handshake.c.o
 .PHONY : src/mongoc/mongoc-handshake.c.o
 
 src/mongoc/mongoc-handshake.i: src/mongoc/mongoc-handshake.c.i
@@ -3464,8 +3134,8 @@ src/mongoc/mongoc-handshake.i: src/mongoc/mongoc-handshake.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-handshake.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-handshake.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-handshake.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-handshake.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-handshake.c.i
 .PHONY : src/mongoc/mongoc-handshake.c.i
 
 src/mongoc/mongoc-handshake.s: src/mongoc/mongoc-handshake.c.s
@@ -3474,8 +3144,8 @@ src/mongoc/mongoc-handshake.s: src/mongoc/mongoc-handshake.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-handshake.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-handshake.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-handshake.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-handshake.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-handshake.c.s
 .PHONY : src/mongoc/mongoc-handshake.c.s
 
 src/mongoc/mongoc-host-list.o: src/mongoc/mongoc-host-list.c.o
@@ -3484,8 +3154,8 @@ src/mongoc/mongoc-host-list.o: src/mongoc/mongoc-host-list.c.o
 
 # target to build an object file
 src/mongoc/mongoc-host-list.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-host-list.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-host-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-host-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-host-list.c.o
 .PHONY : src/mongoc/mongoc-host-list.c.o
 
 src/mongoc/mongoc-host-list.i: src/mongoc/mongoc-host-list.c.i
@@ -3494,8 +3164,8 @@ src/mongoc/mongoc-host-list.i: src/mongoc/mongoc-host-list.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-host-list.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-host-list.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-host-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-host-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-host-list.c.i
 .PHONY : src/mongoc/mongoc-host-list.c.i
 
 src/mongoc/mongoc-host-list.s: src/mongoc/mongoc-host-list.c.s
@@ -3504,8 +3174,8 @@ src/mongoc/mongoc-host-list.s: src/mongoc/mongoc-host-list.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-host-list.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-host-list.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-host-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-host-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-host-list.c.s
 .PHONY : src/mongoc/mongoc-host-list.c.s
 
 src/mongoc/mongoc-index.o: src/mongoc/mongoc-index.c.o
@@ -3514,8 +3184,8 @@ src/mongoc/mongoc-index.o: src/mongoc/mongoc-index.c.o
 
 # target to build an object file
 src/mongoc/mongoc-index.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-index.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-index.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-index.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-index.c.o
 .PHONY : src/mongoc/mongoc-index.c.o
 
 src/mongoc/mongoc-index.i: src/mongoc/mongoc-index.c.i
@@ -3524,8 +3194,8 @@ src/mongoc/mongoc-index.i: src/mongoc/mongoc-index.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-index.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-index.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-index.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-index.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-index.c.i
 .PHONY : src/mongoc/mongoc-index.c.i
 
 src/mongoc/mongoc-index.s: src/mongoc/mongoc-index.c.s
@@ -3534,8 +3204,8 @@ src/mongoc/mongoc-index.s: src/mongoc/mongoc-index.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-index.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-index.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-index.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-index.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-index.c.s
 .PHONY : src/mongoc/mongoc-index.c.s
 
 src/mongoc/mongoc-init.o: src/mongoc/mongoc-init.c.o
@@ -3544,8 +3214,8 @@ src/mongoc/mongoc-init.o: src/mongoc/mongoc-init.c.o
 
 # target to build an object file
 src/mongoc/mongoc-init.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-init.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-init.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-init.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-init.c.o
 .PHONY : src/mongoc/mongoc-init.c.o
 
 src/mongoc/mongoc-init.i: src/mongoc/mongoc-init.c.i
@@ -3554,8 +3224,8 @@ src/mongoc/mongoc-init.i: src/mongoc/mongoc-init.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-init.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-init.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-init.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-init.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-init.c.i
 .PHONY : src/mongoc/mongoc-init.c.i
 
 src/mongoc/mongoc-init.s: src/mongoc/mongoc-init.c.s
@@ -3564,8 +3234,8 @@ src/mongoc/mongoc-init.s: src/mongoc/mongoc-init.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-init.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-init.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-init.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-init.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-init.c.s
 .PHONY : src/mongoc/mongoc-init.c.s
 
 src/mongoc/mongoc-linux-distro-scanner.o: src/mongoc/mongoc-linux-distro-scanner.c.o
@@ -3574,8 +3244,8 @@ src/mongoc/mongoc-linux-distro-scanner.o: src/mongoc/mongoc-linux-distro-scanner
 
 # target to build an object file
 src/mongoc/mongoc-linux-distro-scanner.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-linux-distro-scanner.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-linux-distro-scanner.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-linux-distro-scanner.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-linux-distro-scanner.c.o
 .PHONY : src/mongoc/mongoc-linux-distro-scanner.c.o
 
 src/mongoc/mongoc-linux-distro-scanner.i: src/mongoc/mongoc-linux-distro-scanner.c.i
@@ -3584,8 +3254,8 @@ src/mongoc/mongoc-linux-distro-scanner.i: src/mongoc/mongoc-linux-distro-scanner
 
 # target to preprocess a source file
 src/mongoc/mongoc-linux-distro-scanner.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-linux-distro-scanner.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-linux-distro-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-linux-distro-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-linux-distro-scanner.c.i
 .PHONY : src/mongoc/mongoc-linux-distro-scanner.c.i
 
 src/mongoc/mongoc-linux-distro-scanner.s: src/mongoc/mongoc-linux-distro-scanner.c.s
@@ -3594,8 +3264,8 @@ src/mongoc/mongoc-linux-distro-scanner.s: src/mongoc/mongoc-linux-distro-scanner
 
 # target to generate assembly for a file
 src/mongoc/mongoc-linux-distro-scanner.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-linux-distro-scanner.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-linux-distro-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-linux-distro-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-linux-distro-scanner.c.s
 .PHONY : src/mongoc/mongoc-linux-distro-scanner.c.s
 
 src/mongoc/mongoc-list.o: src/mongoc/mongoc-list.c.o
@@ -3604,8 +3274,8 @@ src/mongoc/mongoc-list.o: src/mongoc/mongoc-list.c.o
 
 # target to build an object file
 src/mongoc/mongoc-list.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-list.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-list.c.o
 .PHONY : src/mongoc/mongoc-list.c.o
 
 src/mongoc/mongoc-list.i: src/mongoc/mongoc-list.c.i
@@ -3614,8 +3284,8 @@ src/mongoc/mongoc-list.i: src/mongoc/mongoc-list.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-list.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-list.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-list.c.i
 .PHONY : src/mongoc/mongoc-list.c.i
 
 src/mongoc/mongoc-list.s: src/mongoc/mongoc-list.c.s
@@ -3624,8 +3294,8 @@ src/mongoc/mongoc-list.s: src/mongoc/mongoc-list.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-list.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-list.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-list.c.s
 .PHONY : src/mongoc/mongoc-list.c.s
 
 src/mongoc/mongoc-log.o: src/mongoc/mongoc-log.c.o
@@ -3634,8 +3304,8 @@ src/mongoc/mongoc-log.o: src/mongoc/mongoc-log.c.o
 
 # target to build an object file
 src/mongoc/mongoc-log.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-log.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-log.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-log.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-log.c.o
 .PHONY : src/mongoc/mongoc-log.c.o
 
 src/mongoc/mongoc-log.i: src/mongoc/mongoc-log.c.i
@@ -3644,8 +3314,8 @@ src/mongoc/mongoc-log.i: src/mongoc/mongoc-log.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-log.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-log.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-log.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-log.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-log.c.i
 .PHONY : src/mongoc/mongoc-log.c.i
 
 src/mongoc/mongoc-log.s: src/mongoc/mongoc-log.c.s
@@ -3654,8 +3324,8 @@ src/mongoc/mongoc-log.s: src/mongoc/mongoc-log.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-log.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-log.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-log.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-log.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-log.c.s
 .PHONY : src/mongoc/mongoc-log.c.s
 
 src/mongoc/mongoc-matcher-op.o: src/mongoc/mongoc-matcher-op.c.o
@@ -3664,8 +3334,8 @@ src/mongoc/mongoc-matcher-op.o: src/mongoc/mongoc-matcher-op.c.o
 
 # target to build an object file
 src/mongoc/mongoc-matcher-op.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher-op.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher-op.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher-op.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher-op.c.o
 .PHONY : src/mongoc/mongoc-matcher-op.c.o
 
 src/mongoc/mongoc-matcher-op.i: src/mongoc/mongoc-matcher-op.c.i
@@ -3674,8 +3344,8 @@ src/mongoc/mongoc-matcher-op.i: src/mongoc/mongoc-matcher-op.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-matcher-op.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher-op.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher-op.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher-op.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher-op.c.i
 .PHONY : src/mongoc/mongoc-matcher-op.c.i
 
 src/mongoc/mongoc-matcher-op.s: src/mongoc/mongoc-matcher-op.c.s
@@ -3684,8 +3354,8 @@ src/mongoc/mongoc-matcher-op.s: src/mongoc/mongoc-matcher-op.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-matcher-op.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher-op.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher-op.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher-op.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher-op.c.s
 .PHONY : src/mongoc/mongoc-matcher-op.c.s
 
 src/mongoc/mongoc-matcher.o: src/mongoc/mongoc-matcher.c.o
@@ -3694,8 +3364,8 @@ src/mongoc/mongoc-matcher.o: src/mongoc/mongoc-matcher.c.o
 
 # target to build an object file
 src/mongoc/mongoc-matcher.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher.c.o
 .PHONY : src/mongoc/mongoc-matcher.c.o
 
 src/mongoc/mongoc-matcher.i: src/mongoc/mongoc-matcher.c.i
@@ -3704,8 +3374,8 @@ src/mongoc/mongoc-matcher.i: src/mongoc/mongoc-matcher.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-matcher.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher.c.i
 .PHONY : src/mongoc/mongoc-matcher.c.i
 
 src/mongoc/mongoc-matcher.s: src/mongoc/mongoc-matcher.c.s
@@ -3714,8 +3384,8 @@ src/mongoc/mongoc-matcher.s: src/mongoc/mongoc-matcher.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-matcher.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-matcher.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-matcher.c.s
 .PHONY : src/mongoc/mongoc-matcher.c.s
 
 src/mongoc/mongoc-memcmp.o: src/mongoc/mongoc-memcmp.c.o
@@ -3724,8 +3394,8 @@ src/mongoc/mongoc-memcmp.o: src/mongoc/mongoc-memcmp.c.o
 
 # target to build an object file
 src/mongoc/mongoc-memcmp.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-memcmp.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-memcmp.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-memcmp.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-memcmp.c.o
 .PHONY : src/mongoc/mongoc-memcmp.c.o
 
 src/mongoc/mongoc-memcmp.i: src/mongoc/mongoc-memcmp.c.i
@@ -3734,8 +3404,8 @@ src/mongoc/mongoc-memcmp.i: src/mongoc/mongoc-memcmp.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-memcmp.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-memcmp.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-memcmp.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-memcmp.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-memcmp.c.i
 .PHONY : src/mongoc/mongoc-memcmp.c.i
 
 src/mongoc/mongoc-memcmp.s: src/mongoc/mongoc-memcmp.c.s
@@ -3744,9 +3414,39 @@ src/mongoc/mongoc-memcmp.s: src/mongoc/mongoc-memcmp.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-memcmp.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-memcmp.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-memcmp.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-memcmp.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-memcmp.c.s
 .PHONY : src/mongoc/mongoc-memcmp.c.s
+
+src/mongoc/mongoc-openssl.o: src/mongoc/mongoc-openssl.c.o
+
+.PHONY : src/mongoc/mongoc-openssl.o
+
+# target to build an object file
+src/mongoc/mongoc-openssl.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-openssl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-openssl.c.o
+.PHONY : src/mongoc/mongoc-openssl.c.o
+
+src/mongoc/mongoc-openssl.i: src/mongoc/mongoc-openssl.c.i
+
+.PHONY : src/mongoc/mongoc-openssl.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-openssl.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-openssl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-openssl.c.i
+.PHONY : src/mongoc/mongoc-openssl.c.i
+
+src/mongoc/mongoc-openssl.s: src/mongoc/mongoc-openssl.c.s
+
+.PHONY : src/mongoc/mongoc-openssl.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-openssl.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-openssl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-openssl.c.s
+.PHONY : src/mongoc/mongoc-openssl.c.s
 
 src/mongoc/mongoc-opts-helpers.o: src/mongoc/mongoc-opts-helpers.c.o
 
@@ -3754,8 +3454,8 @@ src/mongoc/mongoc-opts-helpers.o: src/mongoc/mongoc-opts-helpers.c.o
 
 # target to build an object file
 src/mongoc/mongoc-opts-helpers.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts-helpers.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts-helpers.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts-helpers.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts-helpers.c.o
 .PHONY : src/mongoc/mongoc-opts-helpers.c.o
 
 src/mongoc/mongoc-opts-helpers.i: src/mongoc/mongoc-opts-helpers.c.i
@@ -3764,8 +3464,8 @@ src/mongoc/mongoc-opts-helpers.i: src/mongoc/mongoc-opts-helpers.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-opts-helpers.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts-helpers.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts-helpers.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts-helpers.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts-helpers.c.i
 .PHONY : src/mongoc/mongoc-opts-helpers.c.i
 
 src/mongoc/mongoc-opts-helpers.s: src/mongoc/mongoc-opts-helpers.c.s
@@ -3774,8 +3474,8 @@ src/mongoc/mongoc-opts-helpers.s: src/mongoc/mongoc-opts-helpers.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-opts-helpers.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts-helpers.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts-helpers.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts-helpers.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts-helpers.c.s
 .PHONY : src/mongoc/mongoc-opts-helpers.c.s
 
 src/mongoc/mongoc-opts.o: src/mongoc/mongoc-opts.c.o
@@ -3784,8 +3484,8 @@ src/mongoc/mongoc-opts.o: src/mongoc/mongoc-opts.c.o
 
 # target to build an object file
 src/mongoc/mongoc-opts.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts.c.o
 .PHONY : src/mongoc/mongoc-opts.c.o
 
 src/mongoc/mongoc-opts.i: src/mongoc/mongoc-opts.c.i
@@ -3794,8 +3494,8 @@ src/mongoc/mongoc-opts.i: src/mongoc/mongoc-opts.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-opts.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts.c.i
 .PHONY : src/mongoc/mongoc-opts.c.i
 
 src/mongoc/mongoc-opts.s: src/mongoc/mongoc-opts.c.s
@@ -3804,8 +3504,8 @@ src/mongoc/mongoc-opts.s: src/mongoc/mongoc-opts.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-opts.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-opts.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-opts.c.s
 .PHONY : src/mongoc/mongoc-opts.c.s
 
 src/mongoc/mongoc-queue.o: src/mongoc/mongoc-queue.c.o
@@ -3814,8 +3514,8 @@ src/mongoc/mongoc-queue.o: src/mongoc/mongoc-queue.c.o
 
 # target to build an object file
 src/mongoc/mongoc-queue.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-queue.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-queue.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-queue.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-queue.c.o
 .PHONY : src/mongoc/mongoc-queue.c.o
 
 src/mongoc/mongoc-queue.i: src/mongoc/mongoc-queue.c.i
@@ -3824,8 +3524,8 @@ src/mongoc/mongoc-queue.i: src/mongoc/mongoc-queue.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-queue.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-queue.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-queue.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-queue.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-queue.c.i
 .PHONY : src/mongoc/mongoc-queue.c.i
 
 src/mongoc/mongoc-queue.s: src/mongoc/mongoc-queue.c.s
@@ -3834,9 +3534,39 @@ src/mongoc/mongoc-queue.s: src/mongoc/mongoc-queue.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-queue.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-queue.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-queue.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-queue.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-queue.c.s
 .PHONY : src/mongoc/mongoc-queue.c.s
+
+src/mongoc/mongoc-rand-openssl.o: src/mongoc/mongoc-rand-openssl.c.o
+
+.PHONY : src/mongoc/mongoc-rand-openssl.o
+
+# target to build an object file
+src/mongoc/mongoc-rand-openssl.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rand-openssl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rand-openssl.c.o
+.PHONY : src/mongoc/mongoc-rand-openssl.c.o
+
+src/mongoc/mongoc-rand-openssl.i: src/mongoc/mongoc-rand-openssl.c.i
+
+.PHONY : src/mongoc/mongoc-rand-openssl.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-rand-openssl.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rand-openssl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rand-openssl.c.i
+.PHONY : src/mongoc/mongoc-rand-openssl.c.i
+
+src/mongoc/mongoc-rand-openssl.s: src/mongoc/mongoc-rand-openssl.c.s
+
+.PHONY : src/mongoc/mongoc-rand-openssl.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-rand-openssl.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rand-openssl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rand-openssl.c.s
+.PHONY : src/mongoc/mongoc-rand-openssl.c.s
 
 src/mongoc/mongoc-read-concern.o: src/mongoc/mongoc-read-concern.c.o
 
@@ -3844,8 +3574,8 @@ src/mongoc/mongoc-read-concern.o: src/mongoc/mongoc-read-concern.c.o
 
 # target to build an object file
 src/mongoc/mongoc-read-concern.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-concern.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-concern.c.o
 .PHONY : src/mongoc/mongoc-read-concern.c.o
 
 src/mongoc/mongoc-read-concern.i: src/mongoc/mongoc-read-concern.c.i
@@ -3854,8 +3584,8 @@ src/mongoc/mongoc-read-concern.i: src/mongoc/mongoc-read-concern.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-read-concern.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-concern.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-concern.c.i
 .PHONY : src/mongoc/mongoc-read-concern.c.i
 
 src/mongoc/mongoc-read-concern.s: src/mongoc/mongoc-read-concern.c.s
@@ -3864,8 +3594,8 @@ src/mongoc/mongoc-read-concern.s: src/mongoc/mongoc-read-concern.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-read-concern.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-concern.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-concern.c.s
 .PHONY : src/mongoc/mongoc-read-concern.c.s
 
 src/mongoc/mongoc-read-prefs.o: src/mongoc/mongoc-read-prefs.c.o
@@ -3874,8 +3604,8 @@ src/mongoc/mongoc-read-prefs.o: src/mongoc/mongoc-read-prefs.c.o
 
 # target to build an object file
 src/mongoc/mongoc-read-prefs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-prefs.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-prefs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-prefs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-prefs.c.o
 .PHONY : src/mongoc/mongoc-read-prefs.c.o
 
 src/mongoc/mongoc-read-prefs.i: src/mongoc/mongoc-read-prefs.c.i
@@ -3884,8 +3614,8 @@ src/mongoc/mongoc-read-prefs.i: src/mongoc/mongoc-read-prefs.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-read-prefs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-prefs.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-prefs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-prefs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-prefs.c.i
 .PHONY : src/mongoc/mongoc-read-prefs.c.i
 
 src/mongoc/mongoc-read-prefs.s: src/mongoc/mongoc-read-prefs.c.s
@@ -3894,8 +3624,8 @@ src/mongoc/mongoc-read-prefs.s: src/mongoc/mongoc-read-prefs.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-read-prefs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-prefs.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-prefs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-read-prefs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-read-prefs.c.s
 .PHONY : src/mongoc/mongoc-read-prefs.c.s
 
 src/mongoc/mongoc-rpc.o: src/mongoc/mongoc-rpc.c.o
@@ -3904,8 +3634,8 @@ src/mongoc/mongoc-rpc.o: src/mongoc/mongoc-rpc.c.o
 
 # target to build an object file
 src/mongoc/mongoc-rpc.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rpc.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rpc.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rpc.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rpc.c.o
 .PHONY : src/mongoc/mongoc-rpc.c.o
 
 src/mongoc/mongoc-rpc.i: src/mongoc/mongoc-rpc.c.i
@@ -3914,8 +3644,8 @@ src/mongoc/mongoc-rpc.i: src/mongoc/mongoc-rpc.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-rpc.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rpc.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rpc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rpc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rpc.c.i
 .PHONY : src/mongoc/mongoc-rpc.c.i
 
 src/mongoc/mongoc-rpc.s: src/mongoc/mongoc-rpc.c.s
@@ -3924,9 +3654,69 @@ src/mongoc/mongoc-rpc.s: src/mongoc/mongoc-rpc.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-rpc.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rpc.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rpc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-rpc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-rpc.c.s
 .PHONY : src/mongoc/mongoc-rpc.c.s
+
+src/mongoc/mongoc-sasl.o: src/mongoc/mongoc-sasl.c.o
+
+.PHONY : src/mongoc/mongoc-sasl.o
+
+# target to build an object file
+src/mongoc/mongoc-sasl.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-sasl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-sasl.c.o
+.PHONY : src/mongoc/mongoc-sasl.c.o
+
+src/mongoc/mongoc-sasl.i: src/mongoc/mongoc-sasl.c.i
+
+.PHONY : src/mongoc/mongoc-sasl.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-sasl.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-sasl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-sasl.c.i
+.PHONY : src/mongoc/mongoc-sasl.c.i
+
+src/mongoc/mongoc-sasl.s: src/mongoc/mongoc-sasl.c.s
+
+.PHONY : src/mongoc/mongoc-sasl.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-sasl.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-sasl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-sasl.c.s
+.PHONY : src/mongoc/mongoc-sasl.c.s
+
+src/mongoc/mongoc-scram.o: src/mongoc/mongoc-scram.c.o
+
+.PHONY : src/mongoc/mongoc-scram.o
+
+# target to build an object file
+src/mongoc/mongoc-scram.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-scram.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-scram.c.o
+.PHONY : src/mongoc/mongoc-scram.c.o
+
+src/mongoc/mongoc-scram.i: src/mongoc/mongoc-scram.c.i
+
+.PHONY : src/mongoc/mongoc-scram.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-scram.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-scram.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-scram.c.i
+.PHONY : src/mongoc/mongoc-scram.c.i
+
+src/mongoc/mongoc-scram.s: src/mongoc/mongoc-scram.c.s
+
+.PHONY : src/mongoc/mongoc-scram.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-scram.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-scram.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-scram.c.s
+.PHONY : src/mongoc/mongoc-scram.c.s
 
 src/mongoc/mongoc-server-description.o: src/mongoc/mongoc-server-description.c.o
 
@@ -3934,8 +3724,8 @@ src/mongoc/mongoc-server-description.o: src/mongoc/mongoc-server-description.c.o
 
 # target to build an object file
 src/mongoc/mongoc-server-description.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-description.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-description.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-description.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-description.c.o
 .PHONY : src/mongoc/mongoc-server-description.c.o
 
 src/mongoc/mongoc-server-description.i: src/mongoc/mongoc-server-description.c.i
@@ -3944,8 +3734,8 @@ src/mongoc/mongoc-server-description.i: src/mongoc/mongoc-server-description.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-server-description.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-description.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-description.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-description.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-description.c.i
 .PHONY : src/mongoc/mongoc-server-description.c.i
 
 src/mongoc/mongoc-server-description.s: src/mongoc/mongoc-server-description.c.s
@@ -3954,8 +3744,8 @@ src/mongoc/mongoc-server-description.s: src/mongoc/mongoc-server-description.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-server-description.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-description.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-description.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-description.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-description.c.s
 .PHONY : src/mongoc/mongoc-server-description.c.s
 
 src/mongoc/mongoc-server-stream.o: src/mongoc/mongoc-server-stream.c.o
@@ -3964,8 +3754,8 @@ src/mongoc/mongoc-server-stream.o: src/mongoc/mongoc-server-stream.c.o
 
 # target to build an object file
 src/mongoc/mongoc-server-stream.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-stream.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-stream.c.o
 .PHONY : src/mongoc/mongoc-server-stream.c.o
 
 src/mongoc/mongoc-server-stream.i: src/mongoc/mongoc-server-stream.c.i
@@ -3974,8 +3764,8 @@ src/mongoc/mongoc-server-stream.i: src/mongoc/mongoc-server-stream.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-server-stream.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-stream.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-stream.c.i
 .PHONY : src/mongoc/mongoc-server-stream.c.i
 
 src/mongoc/mongoc-server-stream.s: src/mongoc/mongoc-server-stream.c.s
@@ -3984,8 +3774,8 @@ src/mongoc/mongoc-server-stream.s: src/mongoc/mongoc-server-stream.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-server-stream.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-stream.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-server-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-server-stream.c.s
 .PHONY : src/mongoc/mongoc-server-stream.c.s
 
 src/mongoc/mongoc-set.o: src/mongoc/mongoc-set.c.o
@@ -3994,8 +3784,8 @@ src/mongoc/mongoc-set.o: src/mongoc/mongoc-set.c.o
 
 # target to build an object file
 src/mongoc/mongoc-set.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-set.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-set.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-set.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-set.c.o
 .PHONY : src/mongoc/mongoc-set.c.o
 
 src/mongoc/mongoc-set.i: src/mongoc/mongoc-set.c.i
@@ -4004,8 +3794,8 @@ src/mongoc/mongoc-set.i: src/mongoc/mongoc-set.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-set.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-set.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-set.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-set.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-set.c.i
 .PHONY : src/mongoc/mongoc-set.c.i
 
 src/mongoc/mongoc-set.s: src/mongoc/mongoc-set.c.s
@@ -4014,8 +3804,8 @@ src/mongoc/mongoc-set.s: src/mongoc/mongoc-set.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-set.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-set.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-set.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-set.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-set.c.s
 .PHONY : src/mongoc/mongoc-set.c.s
 
 src/mongoc/mongoc-socket.o: src/mongoc/mongoc-socket.c.o
@@ -4024,8 +3814,8 @@ src/mongoc/mongoc-socket.o: src/mongoc/mongoc-socket.c.o
 
 # target to build an object file
 src/mongoc/mongoc-socket.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-socket.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-socket.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-socket.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-socket.c.o
 .PHONY : src/mongoc/mongoc-socket.c.o
 
 src/mongoc/mongoc-socket.i: src/mongoc/mongoc-socket.c.i
@@ -4034,8 +3824,8 @@ src/mongoc/mongoc-socket.i: src/mongoc/mongoc-socket.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-socket.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-socket.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-socket.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-socket.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-socket.c.i
 .PHONY : src/mongoc/mongoc-socket.c.i
 
 src/mongoc/mongoc-socket.s: src/mongoc/mongoc-socket.c.s
@@ -4044,9 +3834,39 @@ src/mongoc/mongoc-socket.s: src/mongoc/mongoc-socket.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-socket.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-socket.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-socket.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-socket.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-socket.c.s
 .PHONY : src/mongoc/mongoc-socket.c.s
+
+src/mongoc/mongoc-ssl.o: src/mongoc/mongoc-ssl.c.o
+
+.PHONY : src/mongoc/mongoc-ssl.o
+
+# target to build an object file
+src/mongoc/mongoc-ssl.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-ssl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-ssl.c.o
+.PHONY : src/mongoc/mongoc-ssl.c.o
+
+src/mongoc/mongoc-ssl.i: src/mongoc/mongoc-ssl.c.i
+
+.PHONY : src/mongoc/mongoc-ssl.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-ssl.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-ssl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-ssl.c.i
+.PHONY : src/mongoc/mongoc-ssl.c.i
+
+src/mongoc/mongoc-ssl.s: src/mongoc/mongoc-ssl.c.s
+
+.PHONY : src/mongoc/mongoc-ssl.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-ssl.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-ssl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-ssl.c.s
+.PHONY : src/mongoc/mongoc-ssl.c.s
 
 src/mongoc/mongoc-stream-buffered.o: src/mongoc/mongoc-stream-buffered.c.o
 
@@ -4054,8 +3874,8 @@ src/mongoc/mongoc-stream-buffered.o: src/mongoc/mongoc-stream-buffered.c.o
 
 # target to build an object file
 src/mongoc/mongoc-stream-buffered.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-buffered.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-buffered.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-buffered.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-buffered.c.o
 .PHONY : src/mongoc/mongoc-stream-buffered.c.o
 
 src/mongoc/mongoc-stream-buffered.i: src/mongoc/mongoc-stream-buffered.c.i
@@ -4064,8 +3884,8 @@ src/mongoc/mongoc-stream-buffered.i: src/mongoc/mongoc-stream-buffered.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-stream-buffered.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-buffered.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-buffered.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-buffered.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-buffered.c.i
 .PHONY : src/mongoc/mongoc-stream-buffered.c.i
 
 src/mongoc/mongoc-stream-buffered.s: src/mongoc/mongoc-stream-buffered.c.s
@@ -4074,8 +3894,8 @@ src/mongoc/mongoc-stream-buffered.s: src/mongoc/mongoc-stream-buffered.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-stream-buffered.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-buffered.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-buffered.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-buffered.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-buffered.c.s
 .PHONY : src/mongoc/mongoc-stream-buffered.c.s
 
 src/mongoc/mongoc-stream-file.o: src/mongoc/mongoc-stream-file.c.o
@@ -4084,8 +3904,8 @@ src/mongoc/mongoc-stream-file.o: src/mongoc/mongoc-stream-file.c.o
 
 # target to build an object file
 src/mongoc/mongoc-stream-file.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-file.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-file.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-file.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-file.c.o
 .PHONY : src/mongoc/mongoc-stream-file.c.o
 
 src/mongoc/mongoc-stream-file.i: src/mongoc/mongoc-stream-file.c.i
@@ -4094,8 +3914,8 @@ src/mongoc/mongoc-stream-file.i: src/mongoc/mongoc-stream-file.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-stream-file.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-file.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-file.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-file.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-file.c.i
 .PHONY : src/mongoc/mongoc-stream-file.c.i
 
 src/mongoc/mongoc-stream-file.s: src/mongoc/mongoc-stream-file.c.s
@@ -4104,8 +3924,8 @@ src/mongoc/mongoc-stream-file.s: src/mongoc/mongoc-stream-file.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-stream-file.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-file.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-file.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-file.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-file.c.s
 .PHONY : src/mongoc/mongoc-stream-file.c.s
 
 src/mongoc/mongoc-stream-gridfs.o: src/mongoc/mongoc-stream-gridfs.c.o
@@ -4114,8 +3934,8 @@ src/mongoc/mongoc-stream-gridfs.o: src/mongoc/mongoc-stream-gridfs.c.o
 
 # target to build an object file
 src/mongoc/mongoc-stream-gridfs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-gridfs.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-gridfs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-gridfs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-gridfs.c.o
 .PHONY : src/mongoc/mongoc-stream-gridfs.c.o
 
 src/mongoc/mongoc-stream-gridfs.i: src/mongoc/mongoc-stream-gridfs.c.i
@@ -4124,8 +3944,8 @@ src/mongoc/mongoc-stream-gridfs.i: src/mongoc/mongoc-stream-gridfs.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-stream-gridfs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-gridfs.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-gridfs.c.i
 .PHONY : src/mongoc/mongoc-stream-gridfs.c.i
 
 src/mongoc/mongoc-stream-gridfs.s: src/mongoc/mongoc-stream-gridfs.c.s
@@ -4134,8 +3954,8 @@ src/mongoc/mongoc-stream-gridfs.s: src/mongoc/mongoc-stream-gridfs.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-stream-gridfs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-gridfs.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-gridfs.c.s
 .PHONY : src/mongoc/mongoc-stream-gridfs.c.s
 
 src/mongoc/mongoc-stream-socket.o: src/mongoc/mongoc-stream-socket.c.o
@@ -4144,8 +3964,8 @@ src/mongoc/mongoc-stream-socket.o: src/mongoc/mongoc-stream-socket.c.o
 
 # target to build an object file
 src/mongoc/mongoc-stream-socket.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-socket.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-socket.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-socket.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-socket.c.o
 .PHONY : src/mongoc/mongoc-stream-socket.c.o
 
 src/mongoc/mongoc-stream-socket.i: src/mongoc/mongoc-stream-socket.c.i
@@ -4154,8 +3974,8 @@ src/mongoc/mongoc-stream-socket.i: src/mongoc/mongoc-stream-socket.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-stream-socket.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-socket.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-socket.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-socket.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-socket.c.i
 .PHONY : src/mongoc/mongoc-stream-socket.c.i
 
 src/mongoc/mongoc-stream-socket.s: src/mongoc/mongoc-stream-socket.c.s
@@ -4164,9 +3984,99 @@ src/mongoc/mongoc-stream-socket.s: src/mongoc/mongoc-stream-socket.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-stream-socket.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-socket.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-socket.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-socket.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-socket.c.s
 .PHONY : src/mongoc/mongoc-stream-socket.c.s
+
+src/mongoc/mongoc-stream-tls-openssl-bio.o: src/mongoc/mongoc-stream-tls-openssl-bio.c.o
+
+.PHONY : src/mongoc/mongoc-stream-tls-openssl-bio.o
+
+# target to build an object file
+src/mongoc/mongoc-stream-tls-openssl-bio.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls-openssl-bio.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls-openssl-bio.c.o
+.PHONY : src/mongoc/mongoc-stream-tls-openssl-bio.c.o
+
+src/mongoc/mongoc-stream-tls-openssl-bio.i: src/mongoc/mongoc-stream-tls-openssl-bio.c.i
+
+.PHONY : src/mongoc/mongoc-stream-tls-openssl-bio.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-stream-tls-openssl-bio.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls-openssl-bio.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls-openssl-bio.c.i
+.PHONY : src/mongoc/mongoc-stream-tls-openssl-bio.c.i
+
+src/mongoc/mongoc-stream-tls-openssl-bio.s: src/mongoc/mongoc-stream-tls-openssl-bio.c.s
+
+.PHONY : src/mongoc/mongoc-stream-tls-openssl-bio.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-stream-tls-openssl-bio.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls-openssl-bio.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls-openssl-bio.c.s
+.PHONY : src/mongoc/mongoc-stream-tls-openssl-bio.c.s
+
+src/mongoc/mongoc-stream-tls-openssl.o: src/mongoc/mongoc-stream-tls-openssl.c.o
+
+.PHONY : src/mongoc/mongoc-stream-tls-openssl.o
+
+# target to build an object file
+src/mongoc/mongoc-stream-tls-openssl.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls-openssl.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls-openssl.c.o
+.PHONY : src/mongoc/mongoc-stream-tls-openssl.c.o
+
+src/mongoc/mongoc-stream-tls-openssl.i: src/mongoc/mongoc-stream-tls-openssl.c.i
+
+.PHONY : src/mongoc/mongoc-stream-tls-openssl.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-stream-tls-openssl.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls-openssl.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls-openssl.c.i
+.PHONY : src/mongoc/mongoc-stream-tls-openssl.c.i
+
+src/mongoc/mongoc-stream-tls-openssl.s: src/mongoc/mongoc-stream-tls-openssl.c.s
+
+.PHONY : src/mongoc/mongoc-stream-tls-openssl.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-stream-tls-openssl.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls-openssl.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls-openssl.c.s
+.PHONY : src/mongoc/mongoc-stream-tls-openssl.c.s
+
+src/mongoc/mongoc-stream-tls.o: src/mongoc/mongoc-stream-tls.c.o
+
+.PHONY : src/mongoc/mongoc-stream-tls.o
+
+# target to build an object file
+src/mongoc/mongoc-stream-tls.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls.c.o
+.PHONY : src/mongoc/mongoc-stream-tls.c.o
+
+src/mongoc/mongoc-stream-tls.i: src/mongoc/mongoc-stream-tls.c.i
+
+.PHONY : src/mongoc/mongoc-stream-tls.i
+
+# target to preprocess a source file
+src/mongoc/mongoc-stream-tls.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls.c.i
+.PHONY : src/mongoc/mongoc-stream-tls.c.i
+
+src/mongoc/mongoc-stream-tls.s: src/mongoc/mongoc-stream-tls.c.s
+
+.PHONY : src/mongoc/mongoc-stream-tls.s
+
+# target to generate assembly for a file
+src/mongoc/mongoc-stream-tls.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream-tls.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream-tls.c.s
+.PHONY : src/mongoc/mongoc-stream-tls.c.s
 
 src/mongoc/mongoc-stream.o: src/mongoc/mongoc-stream.c.o
 
@@ -4174,8 +4084,8 @@ src/mongoc/mongoc-stream.o: src/mongoc/mongoc-stream.c.o
 
 # target to build an object file
 src/mongoc/mongoc-stream.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream.c.o
 .PHONY : src/mongoc/mongoc-stream.c.o
 
 src/mongoc/mongoc-stream.i: src/mongoc/mongoc-stream.c.i
@@ -4184,8 +4094,8 @@ src/mongoc/mongoc-stream.i: src/mongoc/mongoc-stream.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-stream.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream.c.i
 .PHONY : src/mongoc/mongoc-stream.c.i
 
 src/mongoc/mongoc-stream.s: src/mongoc/mongoc-stream.c.s
@@ -4194,8 +4104,8 @@ src/mongoc/mongoc-stream.s: src/mongoc/mongoc-stream.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-stream.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-stream.c.s
 .PHONY : src/mongoc/mongoc-stream.c.s
 
 src/mongoc/mongoc-topology-description-apm.o: src/mongoc/mongoc-topology-description-apm.c.o
@@ -4204,8 +4114,8 @@ src/mongoc/mongoc-topology-description-apm.o: src/mongoc/mongoc-topology-descrip
 
 # target to build an object file
 src/mongoc/mongoc-topology-description-apm.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description-apm.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description-apm.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description-apm.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description-apm.c.o
 .PHONY : src/mongoc/mongoc-topology-description-apm.c.o
 
 src/mongoc/mongoc-topology-description-apm.i: src/mongoc/mongoc-topology-description-apm.c.i
@@ -4214,8 +4124,8 @@ src/mongoc/mongoc-topology-description-apm.i: src/mongoc/mongoc-topology-descrip
 
 # target to preprocess a source file
 src/mongoc/mongoc-topology-description-apm.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description-apm.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description-apm.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description-apm.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description-apm.c.i
 .PHONY : src/mongoc/mongoc-topology-description-apm.c.i
 
 src/mongoc/mongoc-topology-description-apm.s: src/mongoc/mongoc-topology-description-apm.c.s
@@ -4224,8 +4134,8 @@ src/mongoc/mongoc-topology-description-apm.s: src/mongoc/mongoc-topology-descrip
 
 # target to generate assembly for a file
 src/mongoc/mongoc-topology-description-apm.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description-apm.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description-apm.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description-apm.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description-apm.c.s
 .PHONY : src/mongoc/mongoc-topology-description-apm.c.s
 
 src/mongoc/mongoc-topology-description.o: src/mongoc/mongoc-topology-description.c.o
@@ -4234,8 +4144,8 @@ src/mongoc/mongoc-topology-description.o: src/mongoc/mongoc-topology-description
 
 # target to build an object file
 src/mongoc/mongoc-topology-description.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description.c.o
 .PHONY : src/mongoc/mongoc-topology-description.c.o
 
 src/mongoc/mongoc-topology-description.i: src/mongoc/mongoc-topology-description.c.i
@@ -4244,8 +4154,8 @@ src/mongoc/mongoc-topology-description.i: src/mongoc/mongoc-topology-description
 
 # target to preprocess a source file
 src/mongoc/mongoc-topology-description.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description.c.i
 .PHONY : src/mongoc/mongoc-topology-description.c.i
 
 src/mongoc/mongoc-topology-description.s: src/mongoc/mongoc-topology-description.c.s
@@ -4254,8 +4164,8 @@ src/mongoc/mongoc-topology-description.s: src/mongoc/mongoc-topology-description
 
 # target to generate assembly for a file
 src/mongoc/mongoc-topology-description.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-description.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-description.c.s
 .PHONY : src/mongoc/mongoc-topology-description.c.s
 
 src/mongoc/mongoc-topology-scanner.o: src/mongoc/mongoc-topology-scanner.c.o
@@ -4264,8 +4174,8 @@ src/mongoc/mongoc-topology-scanner.o: src/mongoc/mongoc-topology-scanner.c.o
 
 # target to build an object file
 src/mongoc/mongoc-topology-scanner.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-scanner.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-scanner.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-scanner.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-scanner.c.o
 .PHONY : src/mongoc/mongoc-topology-scanner.c.o
 
 src/mongoc/mongoc-topology-scanner.i: src/mongoc/mongoc-topology-scanner.c.i
@@ -4274,8 +4184,8 @@ src/mongoc/mongoc-topology-scanner.i: src/mongoc/mongoc-topology-scanner.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-topology-scanner.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-scanner.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-scanner.c.i
 .PHONY : src/mongoc/mongoc-topology-scanner.c.i
 
 src/mongoc/mongoc-topology-scanner.s: src/mongoc/mongoc-topology-scanner.c.s
@@ -4284,8 +4194,8 @@ src/mongoc/mongoc-topology-scanner.s: src/mongoc/mongoc-topology-scanner.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-topology-scanner.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-scanner.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology-scanner.c.s
 .PHONY : src/mongoc/mongoc-topology-scanner.c.s
 
 src/mongoc/mongoc-topology.o: src/mongoc/mongoc-topology.c.o
@@ -4294,8 +4204,8 @@ src/mongoc/mongoc-topology.o: src/mongoc/mongoc-topology.c.o
 
 # target to build an object file
 src/mongoc/mongoc-topology.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology.c.o
 .PHONY : src/mongoc/mongoc-topology.c.o
 
 src/mongoc/mongoc-topology.i: src/mongoc/mongoc-topology.c.i
@@ -4304,8 +4214,8 @@ src/mongoc/mongoc-topology.i: src/mongoc/mongoc-topology.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-topology.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology.c.i
 .PHONY : src/mongoc/mongoc-topology.c.i
 
 src/mongoc/mongoc-topology.s: src/mongoc/mongoc-topology.c.s
@@ -4314,8 +4224,8 @@ src/mongoc/mongoc-topology.s: src/mongoc/mongoc-topology.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-topology.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-topology.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-topology.c.s
 .PHONY : src/mongoc/mongoc-topology.c.s
 
 src/mongoc/mongoc-uri.o: src/mongoc/mongoc-uri.c.o
@@ -4324,8 +4234,8 @@ src/mongoc/mongoc-uri.o: src/mongoc/mongoc-uri.c.o
 
 # target to build an object file
 src/mongoc/mongoc-uri.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-uri.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-uri.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-uri.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-uri.c.o
 .PHONY : src/mongoc/mongoc-uri.c.o
 
 src/mongoc/mongoc-uri.i: src/mongoc/mongoc-uri.c.i
@@ -4334,8 +4244,8 @@ src/mongoc/mongoc-uri.i: src/mongoc/mongoc-uri.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-uri.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-uri.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-uri.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-uri.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-uri.c.i
 .PHONY : src/mongoc/mongoc-uri.c.i
 
 src/mongoc/mongoc-uri.s: src/mongoc/mongoc-uri.c.s
@@ -4344,8 +4254,8 @@ src/mongoc/mongoc-uri.s: src/mongoc/mongoc-uri.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-uri.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-uri.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-uri.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-uri.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-uri.c.s
 .PHONY : src/mongoc/mongoc-uri.c.s
 
 src/mongoc/mongoc-util.o: src/mongoc/mongoc-util.c.o
@@ -4354,8 +4264,8 @@ src/mongoc/mongoc-util.o: src/mongoc/mongoc-util.c.o
 
 # target to build an object file
 src/mongoc/mongoc-util.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-util.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-util.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-util.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-util.c.o
 .PHONY : src/mongoc/mongoc-util.c.o
 
 src/mongoc/mongoc-util.i: src/mongoc/mongoc-util.c.i
@@ -4364,8 +4274,8 @@ src/mongoc/mongoc-util.i: src/mongoc/mongoc-util.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-util.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-util.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-util.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-util.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-util.c.i
 .PHONY : src/mongoc/mongoc-util.c.i
 
 src/mongoc/mongoc-util.s: src/mongoc/mongoc-util.c.s
@@ -4374,8 +4284,8 @@ src/mongoc/mongoc-util.s: src/mongoc/mongoc-util.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-util.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-util.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-util.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-util.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-util.c.s
 .PHONY : src/mongoc/mongoc-util.c.s
 
 src/mongoc/mongoc-version-functions.o: src/mongoc/mongoc-version-functions.c.o
@@ -4384,8 +4294,8 @@ src/mongoc/mongoc-version-functions.o: src/mongoc/mongoc-version-functions.c.o
 
 # target to build an object file
 src/mongoc/mongoc-version-functions.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-version-functions.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-version-functions.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-version-functions.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-version-functions.c.o
 .PHONY : src/mongoc/mongoc-version-functions.c.o
 
 src/mongoc/mongoc-version-functions.i: src/mongoc/mongoc-version-functions.c.i
@@ -4394,8 +4304,8 @@ src/mongoc/mongoc-version-functions.i: src/mongoc/mongoc-version-functions.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-version-functions.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-version-functions.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-version-functions.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-version-functions.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-version-functions.c.i
 .PHONY : src/mongoc/mongoc-version-functions.c.i
 
 src/mongoc/mongoc-version-functions.s: src/mongoc/mongoc-version-functions.c.s
@@ -4404,8 +4314,8 @@ src/mongoc/mongoc-version-functions.s: src/mongoc/mongoc-version-functions.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-version-functions.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-version-functions.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-version-functions.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-version-functions.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-version-functions.c.s
 .PHONY : src/mongoc/mongoc-version-functions.c.s
 
 src/mongoc/mongoc-write-command-legacy.o: src/mongoc/mongoc-write-command-legacy.c.o
@@ -4414,8 +4324,8 @@ src/mongoc/mongoc-write-command-legacy.o: src/mongoc/mongoc-write-command-legacy
 
 # target to build an object file
 src/mongoc/mongoc-write-command-legacy.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command-legacy.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command-legacy.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command-legacy.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command-legacy.c.o
 .PHONY : src/mongoc/mongoc-write-command-legacy.c.o
 
 src/mongoc/mongoc-write-command-legacy.i: src/mongoc/mongoc-write-command-legacy.c.i
@@ -4424,8 +4334,8 @@ src/mongoc/mongoc-write-command-legacy.i: src/mongoc/mongoc-write-command-legacy
 
 # target to preprocess a source file
 src/mongoc/mongoc-write-command-legacy.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command-legacy.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command-legacy.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command-legacy.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command-legacy.c.i
 .PHONY : src/mongoc/mongoc-write-command-legacy.c.i
 
 src/mongoc/mongoc-write-command-legacy.s: src/mongoc/mongoc-write-command-legacy.c.s
@@ -4434,8 +4344,8 @@ src/mongoc/mongoc-write-command-legacy.s: src/mongoc/mongoc-write-command-legacy
 
 # target to generate assembly for a file
 src/mongoc/mongoc-write-command-legacy.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command-legacy.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command-legacy.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command-legacy.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command-legacy.c.s
 .PHONY : src/mongoc/mongoc-write-command-legacy.c.s
 
 src/mongoc/mongoc-write-command.o: src/mongoc/mongoc-write-command.c.o
@@ -4444,8 +4354,8 @@ src/mongoc/mongoc-write-command.o: src/mongoc/mongoc-write-command.c.o
 
 # target to build an object file
 src/mongoc/mongoc-write-command.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command.c.o
 .PHONY : src/mongoc/mongoc-write-command.c.o
 
 src/mongoc/mongoc-write-command.i: src/mongoc/mongoc-write-command.c.i
@@ -4454,8 +4364,8 @@ src/mongoc/mongoc-write-command.i: src/mongoc/mongoc-write-command.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-write-command.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command.c.i
 .PHONY : src/mongoc/mongoc-write-command.c.i
 
 src/mongoc/mongoc-write-command.s: src/mongoc/mongoc-write-command.c.s
@@ -4464,8 +4374,8 @@ src/mongoc/mongoc-write-command.s: src/mongoc/mongoc-write-command.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-write-command.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-command.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-command.c.s
 .PHONY : src/mongoc/mongoc-write-command.c.s
 
 src/mongoc/mongoc-write-concern.o: src/mongoc/mongoc-write-concern.c.o
@@ -4474,8 +4384,8 @@ src/mongoc/mongoc-write-concern.o: src/mongoc/mongoc-write-concern.c.o
 
 # target to build an object file
 src/mongoc/mongoc-write-concern.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-concern.c.o
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-concern.c.o
 .PHONY : src/mongoc/mongoc-write-concern.c.o
 
 src/mongoc/mongoc-write-concern.i: src/mongoc/mongoc-write-concern.c.i
@@ -4484,8 +4394,8 @@ src/mongoc/mongoc-write-concern.i: src/mongoc/mongoc-write-concern.c.i
 
 # target to preprocess a source file
 src/mongoc/mongoc-write-concern.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-concern.c.i
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-concern.c.i
 .PHONY : src/mongoc/mongoc-write-concern.c.i
 
 src/mongoc/mongoc-write-concern.s: src/mongoc/mongoc-write-concern.c.s
@@ -4494,8 +4404,8 @@ src/mongoc/mongoc-write-concern.s: src/mongoc/mongoc-write-concern.c.s
 
 # target to generate assembly for a file
 src/mongoc/mongoc-write-concern.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-concern.c.s
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_shared.dir/build.make src/libmongoc/CMakeFiles/mongoc_shared.dir/src/mongoc/mongoc-write-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/mongoc_static.dir/build.make src/libmongoc/CMakeFiles/mongoc_static.dir/src/mongoc/mongoc-write-concern.c.s
 .PHONY : src/mongoc/mongoc-write-concern.c.s
 
 tests/TestSuite.o: tests/TestSuite.c.o
@@ -4504,7 +4414,7 @@ tests/TestSuite.o: tests/TestSuite.c.o
 
 # target to build an object file
 tests/TestSuite.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o
 .PHONY : tests/TestSuite.c.o
 
 tests/TestSuite.i: tests/TestSuite.c.i
@@ -4513,7 +4423,7 @@ tests/TestSuite.i: tests/TestSuite.c.i
 
 # target to preprocess a source file
 tests/TestSuite.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.i
 .PHONY : tests/TestSuite.c.i
 
 tests/TestSuite.s: tests/TestSuite.c.s
@@ -4522,7 +4432,7 @@ tests/TestSuite.s: tests/TestSuite.c.s
 
 # target to generate assembly for a file
 tests/TestSuite.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.s
 .PHONY : tests/TestSuite.c.s
 
 tests/debug-stream.o: tests/debug-stream.c.o
@@ -4531,7 +4441,7 @@ tests/debug-stream.o: tests/debug-stream.c.o
 
 # target to build an object file
 tests/debug-stream.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o
 .PHONY : tests/debug-stream.c.o
 
 tests/debug-stream.i: tests/debug-stream.c.i
@@ -4540,7 +4450,7 @@ tests/debug-stream.i: tests/debug-stream.c.i
 
 # target to preprocess a source file
 tests/debug-stream.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.i
 .PHONY : tests/debug-stream.c.i
 
 tests/debug-stream.s: tests/debug-stream.c.s
@@ -4549,7 +4459,7 @@ tests/debug-stream.s: tests/debug-stream.c.s
 
 # target to generate assembly for a file
 tests/debug-stream.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.s
 .PHONY : tests/debug-stream.c.s
 
 tests/json-test-monitoring.o: tests/json-test-monitoring.c.o
@@ -4558,7 +4468,7 @@ tests/json-test-monitoring.o: tests/json-test-monitoring.c.o
 
 # target to build an object file
 tests/json-test-monitoring.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o
 .PHONY : tests/json-test-monitoring.c.o
 
 tests/json-test-monitoring.i: tests/json-test-monitoring.c.i
@@ -4567,7 +4477,7 @@ tests/json-test-monitoring.i: tests/json-test-monitoring.c.i
 
 # target to preprocess a source file
 tests/json-test-monitoring.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.i
 .PHONY : tests/json-test-monitoring.c.i
 
 tests/json-test-monitoring.s: tests/json-test-monitoring.c.s
@@ -4576,7 +4486,7 @@ tests/json-test-monitoring.s: tests/json-test-monitoring.c.s
 
 # target to generate assembly for a file
 tests/json-test-monitoring.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.s
 .PHONY : tests/json-test-monitoring.c.s
 
 tests/json-test-operations.o: tests/json-test-operations.c.o
@@ -4585,7 +4495,7 @@ tests/json-test-operations.o: tests/json-test-operations.c.o
 
 # target to build an object file
 tests/json-test-operations.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o
 .PHONY : tests/json-test-operations.c.o
 
 tests/json-test-operations.i: tests/json-test-operations.c.i
@@ -4594,7 +4504,7 @@ tests/json-test-operations.i: tests/json-test-operations.c.i
 
 # target to preprocess a source file
 tests/json-test-operations.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.i
 .PHONY : tests/json-test-operations.c.i
 
 tests/json-test-operations.s: tests/json-test-operations.c.s
@@ -4603,7 +4513,7 @@ tests/json-test-operations.s: tests/json-test-operations.c.s
 
 # target to generate assembly for a file
 tests/json-test-operations.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.s
 .PHONY : tests/json-test-operations.c.s
 
 tests/json-test.o: tests/json-test.c.o
@@ -4612,7 +4522,7 @@ tests/json-test.o: tests/json-test.c.o
 
 # target to build an object file
 tests/json-test.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.o
 .PHONY : tests/json-test.c.o
 
 tests/json-test.i: tests/json-test.c.i
@@ -4621,7 +4531,7 @@ tests/json-test.i: tests/json-test.c.i
 
 # target to preprocess a source file
 tests/json-test.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.i
 .PHONY : tests/json-test.c.i
 
 tests/json-test.s: tests/json-test.c.s
@@ -4630,7 +4540,7 @@ tests/json-test.s: tests/json-test.c.s
 
 # target to generate assembly for a file
 tests/json-test.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.s
 .PHONY : tests/json-test.c.s
 
 tests/mock_server/future-functions.o: tests/mock_server/future-functions.c.o
@@ -4639,7 +4549,7 @@ tests/mock_server/future-functions.o: tests/mock_server/future-functions.c.o
 
 # target to build an object file
 tests/mock_server/future-functions.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o
 .PHONY : tests/mock_server/future-functions.c.o
 
 tests/mock_server/future-functions.i: tests/mock_server/future-functions.c.i
@@ -4648,7 +4558,7 @@ tests/mock_server/future-functions.i: tests/mock_server/future-functions.c.i
 
 # target to preprocess a source file
 tests/mock_server/future-functions.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.i
 .PHONY : tests/mock_server/future-functions.c.i
 
 tests/mock_server/future-functions.s: tests/mock_server/future-functions.c.s
@@ -4657,7 +4567,7 @@ tests/mock_server/future-functions.s: tests/mock_server/future-functions.c.s
 
 # target to generate assembly for a file
 tests/mock_server/future-functions.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.s
 .PHONY : tests/mock_server/future-functions.c.s
 
 tests/mock_server/future-value.o: tests/mock_server/future-value.c.o
@@ -4666,7 +4576,7 @@ tests/mock_server/future-value.o: tests/mock_server/future-value.c.o
 
 # target to build an object file
 tests/mock_server/future-value.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o
 .PHONY : tests/mock_server/future-value.c.o
 
 tests/mock_server/future-value.i: tests/mock_server/future-value.c.i
@@ -4675,7 +4585,7 @@ tests/mock_server/future-value.i: tests/mock_server/future-value.c.i
 
 # target to preprocess a source file
 tests/mock_server/future-value.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.i
 .PHONY : tests/mock_server/future-value.c.i
 
 tests/mock_server/future-value.s: tests/mock_server/future-value.c.s
@@ -4684,7 +4594,7 @@ tests/mock_server/future-value.s: tests/mock_server/future-value.c.s
 
 # target to generate assembly for a file
 tests/mock_server/future-value.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.s
 .PHONY : tests/mock_server/future-value.c.s
 
 tests/mock_server/future.o: tests/mock_server/future.c.o
@@ -4693,7 +4603,7 @@ tests/mock_server/future.o: tests/mock_server/future.c.o
 
 # target to build an object file
 tests/mock_server/future.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o
 .PHONY : tests/mock_server/future.c.o
 
 tests/mock_server/future.i: tests/mock_server/future.c.i
@@ -4702,7 +4612,7 @@ tests/mock_server/future.i: tests/mock_server/future.c.i
 
 # target to preprocess a source file
 tests/mock_server/future.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.i
 .PHONY : tests/mock_server/future.c.i
 
 tests/mock_server/future.s: tests/mock_server/future.c.s
@@ -4711,7 +4621,7 @@ tests/mock_server/future.s: tests/mock_server/future.c.s
 
 # target to generate assembly for a file
 tests/mock_server/future.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.s
 .PHONY : tests/mock_server/future.c.s
 
 tests/mock_server/mock-rs.o: tests/mock_server/mock-rs.c.o
@@ -4720,7 +4630,7 @@ tests/mock_server/mock-rs.o: tests/mock_server/mock-rs.c.o
 
 # target to build an object file
 tests/mock_server/mock-rs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o
 .PHONY : tests/mock_server/mock-rs.c.o
 
 tests/mock_server/mock-rs.i: tests/mock_server/mock-rs.c.i
@@ -4729,7 +4639,7 @@ tests/mock_server/mock-rs.i: tests/mock_server/mock-rs.c.i
 
 # target to preprocess a source file
 tests/mock_server/mock-rs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.i
 .PHONY : tests/mock_server/mock-rs.c.i
 
 tests/mock_server/mock-rs.s: tests/mock_server/mock-rs.c.s
@@ -4738,7 +4648,7 @@ tests/mock_server/mock-rs.s: tests/mock_server/mock-rs.c.s
 
 # target to generate assembly for a file
 tests/mock_server/mock-rs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.s
 .PHONY : tests/mock_server/mock-rs.c.s
 
 tests/mock_server/mock-server.o: tests/mock_server/mock-server.c.o
@@ -4747,7 +4657,7 @@ tests/mock_server/mock-server.o: tests/mock_server/mock-server.c.o
 
 # target to build an object file
 tests/mock_server/mock-server.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o
 .PHONY : tests/mock_server/mock-server.c.o
 
 tests/mock_server/mock-server.i: tests/mock_server/mock-server.c.i
@@ -4756,7 +4666,7 @@ tests/mock_server/mock-server.i: tests/mock_server/mock-server.c.i
 
 # target to preprocess a source file
 tests/mock_server/mock-server.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.i
 .PHONY : tests/mock_server/mock-server.c.i
 
 tests/mock_server/mock-server.s: tests/mock_server/mock-server.c.s
@@ -4765,7 +4675,7 @@ tests/mock_server/mock-server.s: tests/mock_server/mock-server.c.s
 
 # target to generate assembly for a file
 tests/mock_server/mock-server.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.s
 .PHONY : tests/mock_server/mock-server.c.s
 
 tests/mock_server/request.o: tests/mock_server/request.c.o
@@ -4774,7 +4684,7 @@ tests/mock_server/request.o: tests/mock_server/request.c.o
 
 # target to build an object file
 tests/mock_server/request.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o
 .PHONY : tests/mock_server/request.c.o
 
 tests/mock_server/request.i: tests/mock_server/request.c.i
@@ -4783,7 +4693,7 @@ tests/mock_server/request.i: tests/mock_server/request.c.i
 
 # target to preprocess a source file
 tests/mock_server/request.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.i
 .PHONY : tests/mock_server/request.c.i
 
 tests/mock_server/request.s: tests/mock_server/request.c.s
@@ -4792,7 +4702,7 @@ tests/mock_server/request.s: tests/mock_server/request.c.s
 
 # target to generate assembly for a file
 tests/mock_server/request.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.s
 .PHONY : tests/mock_server/request.c.s
 
 tests/mock_server/sync-queue.o: tests/mock_server/sync-queue.c.o
@@ -4801,7 +4711,7 @@ tests/mock_server/sync-queue.o: tests/mock_server/sync-queue.c.o
 
 # target to build an object file
 tests/mock_server/sync-queue.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o
 .PHONY : tests/mock_server/sync-queue.c.o
 
 tests/mock_server/sync-queue.i: tests/mock_server/sync-queue.c.i
@@ -4810,7 +4720,7 @@ tests/mock_server/sync-queue.i: tests/mock_server/sync-queue.c.i
 
 # target to preprocess a source file
 tests/mock_server/sync-queue.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.i
 .PHONY : tests/mock_server/sync-queue.c.i
 
 tests/mock_server/sync-queue.s: tests/mock_server/sync-queue.c.s
@@ -4819,8 +4729,35 @@ tests/mock_server/sync-queue.s: tests/mock_server/sync-queue.c.s
 
 # target to generate assembly for a file
 tests/mock_server/sync-queue.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.s
 .PHONY : tests/mock_server/sync-queue.c.s
+
+tests/ssl-test.o: tests/ssl-test.c.o
+
+.PHONY : tests/ssl-test.o
+
+# target to build an object file
+tests/ssl-test.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o
+.PHONY : tests/ssl-test.c.o
+
+tests/ssl-test.i: tests/ssl-test.c.i
+
+.PHONY : tests/ssl-test.i
+
+# target to preprocess a source file
+tests/ssl-test.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.i
+.PHONY : tests/ssl-test.c.i
+
+tests/ssl-test.s: tests/ssl-test.c.s
+
+.PHONY : tests/ssl-test.s
+
+# target to generate assembly for a file
+tests/ssl-test.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.s
+.PHONY : tests/ssl-test.c.s
 
 tests/test-conveniences.o: tests/test-conveniences.c.o
 
@@ -4828,7 +4765,7 @@ tests/test-conveniences.o: tests/test-conveniences.c.o
 
 # target to build an object file
 tests/test-conveniences.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o
 .PHONY : tests/test-conveniences.c.o
 
 tests/test-conveniences.i: tests/test-conveniences.c.i
@@ -4837,7 +4774,7 @@ tests/test-conveniences.i: tests/test-conveniences.c.i
 
 # target to preprocess a source file
 tests/test-conveniences.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.i
 .PHONY : tests/test-conveniences.c.i
 
 tests/test-conveniences.s: tests/test-conveniences.c.s
@@ -4846,7 +4783,7 @@ tests/test-conveniences.s: tests/test-conveniences.c.s
 
 # target to generate assembly for a file
 tests/test-conveniences.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.s
 .PHONY : tests/test-conveniences.c.s
 
 tests/test-happy-eyeballs.o: tests/test-happy-eyeballs.c.o
@@ -4855,7 +4792,7 @@ tests/test-happy-eyeballs.o: tests/test-happy-eyeballs.c.o
 
 # target to build an object file
 tests/test-happy-eyeballs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o
 .PHONY : tests/test-happy-eyeballs.c.o
 
 tests/test-happy-eyeballs.i: tests/test-happy-eyeballs.c.i
@@ -4864,7 +4801,7 @@ tests/test-happy-eyeballs.i: tests/test-happy-eyeballs.c.i
 
 # target to preprocess a source file
 tests/test-happy-eyeballs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.i
 .PHONY : tests/test-happy-eyeballs.c.i
 
 tests/test-happy-eyeballs.s: tests/test-happy-eyeballs.c.s
@@ -4873,7 +4810,7 @@ tests/test-happy-eyeballs.s: tests/test-happy-eyeballs.c.s
 
 # target to generate assembly for a file
 tests/test-happy-eyeballs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.s
 .PHONY : tests/test-happy-eyeballs.c.s
 
 tests/test-libmongoc.o: tests/test-libmongoc.c.o
@@ -4882,7 +4819,7 @@ tests/test-libmongoc.o: tests/test-libmongoc.c.o
 
 # target to build an object file
 tests/test-libmongoc.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o
 .PHONY : tests/test-libmongoc.c.o
 
 tests/test-libmongoc.i: tests/test-libmongoc.c.i
@@ -4891,7 +4828,7 @@ tests/test-libmongoc.i: tests/test-libmongoc.c.i
 
 # target to preprocess a source file
 tests/test-libmongoc.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.i
 .PHONY : tests/test-libmongoc.c.i
 
 tests/test-libmongoc.s: tests/test-libmongoc.c.s
@@ -4900,7 +4837,7 @@ tests/test-libmongoc.s: tests/test-libmongoc.c.s
 
 # target to generate assembly for a file
 tests/test-libmongoc.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.s
 .PHONY : tests/test-libmongoc.c.s
 
 tests/test-mongoc-array.o: tests/test-mongoc-array.c.o
@@ -4909,7 +4846,7 @@ tests/test-mongoc-array.o: tests/test-mongoc-array.c.o
 
 # target to build an object file
 tests/test-mongoc-array.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o
 .PHONY : tests/test-mongoc-array.c.o
 
 tests/test-mongoc-array.i: tests/test-mongoc-array.c.i
@@ -4918,7 +4855,7 @@ tests/test-mongoc-array.i: tests/test-mongoc-array.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-array.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.i
 .PHONY : tests/test-mongoc-array.c.i
 
 tests/test-mongoc-array.s: tests/test-mongoc-array.c.s
@@ -4927,7 +4864,7 @@ tests/test-mongoc-array.s: tests/test-mongoc-array.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-array.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.s
 .PHONY : tests/test-mongoc-array.c.s
 
 tests/test-mongoc-async.o: tests/test-mongoc-async.c.o
@@ -4936,7 +4873,7 @@ tests/test-mongoc-async.o: tests/test-mongoc-async.c.o
 
 # target to build an object file
 tests/test-mongoc-async.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o
 .PHONY : tests/test-mongoc-async.c.o
 
 tests/test-mongoc-async.i: tests/test-mongoc-async.c.i
@@ -4945,7 +4882,7 @@ tests/test-mongoc-async.i: tests/test-mongoc-async.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-async.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.i
 .PHONY : tests/test-mongoc-async.c.i
 
 tests/test-mongoc-async.s: tests/test-mongoc-async.c.s
@@ -4954,7 +4891,7 @@ tests/test-mongoc-async.s: tests/test-mongoc-async.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-async.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.s
 .PHONY : tests/test-mongoc-async.c.s
 
 tests/test-mongoc-buffer.o: tests/test-mongoc-buffer.c.o
@@ -4963,7 +4900,7 @@ tests/test-mongoc-buffer.o: tests/test-mongoc-buffer.c.o
 
 # target to build an object file
 tests/test-mongoc-buffer.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o
 .PHONY : tests/test-mongoc-buffer.c.o
 
 tests/test-mongoc-buffer.i: tests/test-mongoc-buffer.c.i
@@ -4972,7 +4909,7 @@ tests/test-mongoc-buffer.i: tests/test-mongoc-buffer.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-buffer.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.i
 .PHONY : tests/test-mongoc-buffer.c.i
 
 tests/test-mongoc-buffer.s: tests/test-mongoc-buffer.c.s
@@ -4981,7 +4918,7 @@ tests/test-mongoc-buffer.s: tests/test-mongoc-buffer.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-buffer.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.s
 .PHONY : tests/test-mongoc-buffer.c.s
 
 tests/test-mongoc-bulk.o: tests/test-mongoc-bulk.c.o
@@ -4990,7 +4927,7 @@ tests/test-mongoc-bulk.o: tests/test-mongoc-bulk.c.o
 
 # target to build an object file
 tests/test-mongoc-bulk.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o
 .PHONY : tests/test-mongoc-bulk.c.o
 
 tests/test-mongoc-bulk.i: tests/test-mongoc-bulk.c.i
@@ -4999,7 +4936,7 @@ tests/test-mongoc-bulk.i: tests/test-mongoc-bulk.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-bulk.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.i
 .PHONY : tests/test-mongoc-bulk.c.i
 
 tests/test-mongoc-bulk.s: tests/test-mongoc-bulk.c.s
@@ -5008,7 +4945,7 @@ tests/test-mongoc-bulk.s: tests/test-mongoc-bulk.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-bulk.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.s
 .PHONY : tests/test-mongoc-bulk.c.s
 
 tests/test-mongoc-change-stream.o: tests/test-mongoc-change-stream.c.o
@@ -5017,7 +4954,7 @@ tests/test-mongoc-change-stream.o: tests/test-mongoc-change-stream.c.o
 
 # target to build an object file
 tests/test-mongoc-change-stream.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o
 .PHONY : tests/test-mongoc-change-stream.c.o
 
 tests/test-mongoc-change-stream.i: tests/test-mongoc-change-stream.c.i
@@ -5026,7 +4963,7 @@ tests/test-mongoc-change-stream.i: tests/test-mongoc-change-stream.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-change-stream.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.i
 .PHONY : tests/test-mongoc-change-stream.c.i
 
 tests/test-mongoc-change-stream.s: tests/test-mongoc-change-stream.c.s
@@ -5035,7 +4972,7 @@ tests/test-mongoc-change-stream.s: tests/test-mongoc-change-stream.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-change-stream.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.s
 .PHONY : tests/test-mongoc-change-stream.c.s
 
 tests/test-mongoc-client-pool.o: tests/test-mongoc-client-pool.c.o
@@ -5044,7 +4981,7 @@ tests/test-mongoc-client-pool.o: tests/test-mongoc-client-pool.c.o
 
 # target to build an object file
 tests/test-mongoc-client-pool.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o
 .PHONY : tests/test-mongoc-client-pool.c.o
 
 tests/test-mongoc-client-pool.i: tests/test-mongoc-client-pool.c.i
@@ -5053,7 +4990,7 @@ tests/test-mongoc-client-pool.i: tests/test-mongoc-client-pool.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-client-pool.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.i
 .PHONY : tests/test-mongoc-client-pool.c.i
 
 tests/test-mongoc-client-pool.s: tests/test-mongoc-client-pool.c.s
@@ -5062,7 +4999,7 @@ tests/test-mongoc-client-pool.s: tests/test-mongoc-client-pool.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-client-pool.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.s
 .PHONY : tests/test-mongoc-client-pool.c.s
 
 tests/test-mongoc-client-session.o: tests/test-mongoc-client-session.c.o
@@ -5071,7 +5008,7 @@ tests/test-mongoc-client-session.o: tests/test-mongoc-client-session.c.o
 
 # target to build an object file
 tests/test-mongoc-client-session.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o
 .PHONY : tests/test-mongoc-client-session.c.o
 
 tests/test-mongoc-client-session.i: tests/test-mongoc-client-session.c.i
@@ -5080,7 +5017,7 @@ tests/test-mongoc-client-session.i: tests/test-mongoc-client-session.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-client-session.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.i
 .PHONY : tests/test-mongoc-client-session.c.i
 
 tests/test-mongoc-client-session.s: tests/test-mongoc-client-session.c.s
@@ -5089,7 +5026,7 @@ tests/test-mongoc-client-session.s: tests/test-mongoc-client-session.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-client-session.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.s
 .PHONY : tests/test-mongoc-client-session.c.s
 
 tests/test-mongoc-client.o: tests/test-mongoc-client.c.o
@@ -5098,7 +5035,7 @@ tests/test-mongoc-client.o: tests/test-mongoc-client.c.o
 
 # target to build an object file
 tests/test-mongoc-client.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o
 .PHONY : tests/test-mongoc-client.c.o
 
 tests/test-mongoc-client.i: tests/test-mongoc-client.c.i
@@ -5107,7 +5044,7 @@ tests/test-mongoc-client.i: tests/test-mongoc-client.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-client.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.i
 .PHONY : tests/test-mongoc-client.c.i
 
 tests/test-mongoc-client.s: tests/test-mongoc-client.c.s
@@ -5116,7 +5053,7 @@ tests/test-mongoc-client.s: tests/test-mongoc-client.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-client.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.s
 .PHONY : tests/test-mongoc-client.c.s
 
 tests/test-mongoc-cluster.o: tests/test-mongoc-cluster.c.o
@@ -5125,7 +5062,7 @@ tests/test-mongoc-cluster.o: tests/test-mongoc-cluster.c.o
 
 # target to build an object file
 tests/test-mongoc-cluster.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o
 .PHONY : tests/test-mongoc-cluster.c.o
 
 tests/test-mongoc-cluster.i: tests/test-mongoc-cluster.c.i
@@ -5134,7 +5071,7 @@ tests/test-mongoc-cluster.i: tests/test-mongoc-cluster.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-cluster.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.i
 .PHONY : tests/test-mongoc-cluster.c.i
 
 tests/test-mongoc-cluster.s: tests/test-mongoc-cluster.c.s
@@ -5143,7 +5080,7 @@ tests/test-mongoc-cluster.s: tests/test-mongoc-cluster.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-cluster.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.s
 .PHONY : tests/test-mongoc-cluster.c.s
 
 tests/test-mongoc-collection-find-with-opts.o: tests/test-mongoc-collection-find-with-opts.c.o
@@ -5152,7 +5089,7 @@ tests/test-mongoc-collection-find-with-opts.o: tests/test-mongoc-collection-find
 
 # target to build an object file
 tests/test-mongoc-collection-find-with-opts.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o
 .PHONY : tests/test-mongoc-collection-find-with-opts.c.o
 
 tests/test-mongoc-collection-find-with-opts.i: tests/test-mongoc-collection-find-with-opts.c.i
@@ -5161,7 +5098,7 @@ tests/test-mongoc-collection-find-with-opts.i: tests/test-mongoc-collection-find
 
 # target to preprocess a source file
 tests/test-mongoc-collection-find-with-opts.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.i
 .PHONY : tests/test-mongoc-collection-find-with-opts.c.i
 
 tests/test-mongoc-collection-find-with-opts.s: tests/test-mongoc-collection-find-with-opts.c.s
@@ -5170,7 +5107,7 @@ tests/test-mongoc-collection-find-with-opts.s: tests/test-mongoc-collection-find
 
 # target to generate assembly for a file
 tests/test-mongoc-collection-find-with-opts.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.s
 .PHONY : tests/test-mongoc-collection-find-with-opts.c.s
 
 tests/test-mongoc-collection-find.o: tests/test-mongoc-collection-find.c.o
@@ -5179,7 +5116,7 @@ tests/test-mongoc-collection-find.o: tests/test-mongoc-collection-find.c.o
 
 # target to build an object file
 tests/test-mongoc-collection-find.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o
 .PHONY : tests/test-mongoc-collection-find.c.o
 
 tests/test-mongoc-collection-find.i: tests/test-mongoc-collection-find.c.i
@@ -5188,7 +5125,7 @@ tests/test-mongoc-collection-find.i: tests/test-mongoc-collection-find.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-collection-find.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.i
 .PHONY : tests/test-mongoc-collection-find.c.i
 
 tests/test-mongoc-collection-find.s: tests/test-mongoc-collection-find.c.s
@@ -5197,7 +5134,7 @@ tests/test-mongoc-collection-find.s: tests/test-mongoc-collection-find.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-collection-find.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.s
 .PHONY : tests/test-mongoc-collection-find.c.s
 
 tests/test-mongoc-collection.o: tests/test-mongoc-collection.c.o
@@ -5206,7 +5143,7 @@ tests/test-mongoc-collection.o: tests/test-mongoc-collection.c.o
 
 # target to build an object file
 tests/test-mongoc-collection.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o
 .PHONY : tests/test-mongoc-collection.c.o
 
 tests/test-mongoc-collection.i: tests/test-mongoc-collection.c.i
@@ -5215,7 +5152,7 @@ tests/test-mongoc-collection.i: tests/test-mongoc-collection.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-collection.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.i
 .PHONY : tests/test-mongoc-collection.c.i
 
 tests/test-mongoc-collection.s: tests/test-mongoc-collection.c.s
@@ -5224,7 +5161,7 @@ tests/test-mongoc-collection.s: tests/test-mongoc-collection.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-collection.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.s
 .PHONY : tests/test-mongoc-collection.c.s
 
 tests/test-mongoc-command-monitoring.o: tests/test-mongoc-command-monitoring.c.o
@@ -5233,7 +5170,7 @@ tests/test-mongoc-command-monitoring.o: tests/test-mongoc-command-monitoring.c.o
 
 # target to build an object file
 tests/test-mongoc-command-monitoring.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o
 .PHONY : tests/test-mongoc-command-monitoring.c.o
 
 tests/test-mongoc-command-monitoring.i: tests/test-mongoc-command-monitoring.c.i
@@ -5242,7 +5179,7 @@ tests/test-mongoc-command-monitoring.i: tests/test-mongoc-command-monitoring.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-command-monitoring.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.i
 .PHONY : tests/test-mongoc-command-monitoring.c.i
 
 tests/test-mongoc-command-monitoring.s: tests/test-mongoc-command-monitoring.c.s
@@ -5251,7 +5188,7 @@ tests/test-mongoc-command-monitoring.s: tests/test-mongoc-command-monitoring.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-command-monitoring.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.s
 .PHONY : tests/test-mongoc-command-monitoring.c.s
 
 tests/test-mongoc-connection-uri.o: tests/test-mongoc-connection-uri.c.o
@@ -5260,7 +5197,7 @@ tests/test-mongoc-connection-uri.o: tests/test-mongoc-connection-uri.c.o
 
 # target to build an object file
 tests/test-mongoc-connection-uri.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o
 .PHONY : tests/test-mongoc-connection-uri.c.o
 
 tests/test-mongoc-connection-uri.i: tests/test-mongoc-connection-uri.c.i
@@ -5269,7 +5206,7 @@ tests/test-mongoc-connection-uri.i: tests/test-mongoc-connection-uri.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-connection-uri.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.i
 .PHONY : tests/test-mongoc-connection-uri.c.i
 
 tests/test-mongoc-connection-uri.s: tests/test-mongoc-connection-uri.c.s
@@ -5278,7 +5215,7 @@ tests/test-mongoc-connection-uri.s: tests/test-mongoc-connection-uri.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-connection-uri.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.s
 .PHONY : tests/test-mongoc-connection-uri.c.s
 
 tests/test-mongoc-counters.o: tests/test-mongoc-counters.c.o
@@ -5287,7 +5224,7 @@ tests/test-mongoc-counters.o: tests/test-mongoc-counters.c.o
 
 # target to build an object file
 tests/test-mongoc-counters.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o
 .PHONY : tests/test-mongoc-counters.c.o
 
 tests/test-mongoc-counters.i: tests/test-mongoc-counters.c.i
@@ -5296,7 +5233,7 @@ tests/test-mongoc-counters.i: tests/test-mongoc-counters.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-counters.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.i
 .PHONY : tests/test-mongoc-counters.c.i
 
 tests/test-mongoc-counters.s: tests/test-mongoc-counters.c.s
@@ -5305,7 +5242,7 @@ tests/test-mongoc-counters.s: tests/test-mongoc-counters.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-counters.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.s
 .PHONY : tests/test-mongoc-counters.c.s
 
 tests/test-mongoc-crud.o: tests/test-mongoc-crud.c.o
@@ -5314,7 +5251,7 @@ tests/test-mongoc-crud.o: tests/test-mongoc-crud.c.o
 
 # target to build an object file
 tests/test-mongoc-crud.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o
 .PHONY : tests/test-mongoc-crud.c.o
 
 tests/test-mongoc-crud.i: tests/test-mongoc-crud.c.i
@@ -5323,7 +5260,7 @@ tests/test-mongoc-crud.i: tests/test-mongoc-crud.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-crud.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.i
 .PHONY : tests/test-mongoc-crud.c.i
 
 tests/test-mongoc-crud.s: tests/test-mongoc-crud.c.s
@@ -5332,7 +5269,7 @@ tests/test-mongoc-crud.s: tests/test-mongoc-crud.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-crud.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.s
 .PHONY : tests/test-mongoc-crud.c.s
 
 tests/test-mongoc-cursor.o: tests/test-mongoc-cursor.c.o
@@ -5341,7 +5278,7 @@ tests/test-mongoc-cursor.o: tests/test-mongoc-cursor.c.o
 
 # target to build an object file
 tests/test-mongoc-cursor.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o
 .PHONY : tests/test-mongoc-cursor.c.o
 
 tests/test-mongoc-cursor.i: tests/test-mongoc-cursor.c.i
@@ -5350,7 +5287,7 @@ tests/test-mongoc-cursor.i: tests/test-mongoc-cursor.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-cursor.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.i
 .PHONY : tests/test-mongoc-cursor.c.i
 
 tests/test-mongoc-cursor.s: tests/test-mongoc-cursor.c.s
@@ -5359,8 +5296,35 @@ tests/test-mongoc-cursor.s: tests/test-mongoc-cursor.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-cursor.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.s
 .PHONY : tests/test-mongoc-cursor.c.s
+
+tests/test-mongoc-cyrus.o: tests/test-mongoc-cyrus.c.o
+
+.PHONY : tests/test-mongoc-cyrus.o
+
+# target to build an object file
+tests/test-mongoc-cyrus.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o
+.PHONY : tests/test-mongoc-cyrus.c.o
+
+tests/test-mongoc-cyrus.i: tests/test-mongoc-cyrus.c.i
+
+.PHONY : tests/test-mongoc-cyrus.i
+
+# target to preprocess a source file
+tests/test-mongoc-cyrus.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.i
+.PHONY : tests/test-mongoc-cyrus.c.i
+
+tests/test-mongoc-cyrus.s: tests/test-mongoc-cyrus.c.s
+
+.PHONY : tests/test-mongoc-cyrus.s
+
+# target to generate assembly for a file
+tests/test-mongoc-cyrus.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.s
+.PHONY : tests/test-mongoc-cyrus.c.s
 
 tests/test-mongoc-database.o: tests/test-mongoc-database.c.o
 
@@ -5368,7 +5332,7 @@ tests/test-mongoc-database.o: tests/test-mongoc-database.c.o
 
 # target to build an object file
 tests/test-mongoc-database.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o
 .PHONY : tests/test-mongoc-database.c.o
 
 tests/test-mongoc-database.i: tests/test-mongoc-database.c.i
@@ -5377,7 +5341,7 @@ tests/test-mongoc-database.i: tests/test-mongoc-database.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-database.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.i
 .PHONY : tests/test-mongoc-database.c.i
 
 tests/test-mongoc-database.s: tests/test-mongoc-database.c.s
@@ -5386,7 +5350,7 @@ tests/test-mongoc-database.s: tests/test-mongoc-database.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-database.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.s
 .PHONY : tests/test-mongoc-database.c.s
 
 tests/test-mongoc-dns.o: tests/test-mongoc-dns.c.o
@@ -5395,7 +5359,7 @@ tests/test-mongoc-dns.o: tests/test-mongoc-dns.c.o
 
 # target to build an object file
 tests/test-mongoc-dns.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o
 .PHONY : tests/test-mongoc-dns.c.o
 
 tests/test-mongoc-dns.i: tests/test-mongoc-dns.c.i
@@ -5404,7 +5368,7 @@ tests/test-mongoc-dns.i: tests/test-mongoc-dns.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-dns.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.i
 .PHONY : tests/test-mongoc-dns.c.i
 
 tests/test-mongoc-dns.s: tests/test-mongoc-dns.c.s
@@ -5413,7 +5377,7 @@ tests/test-mongoc-dns.s: tests/test-mongoc-dns.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-dns.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.s
 .PHONY : tests/test-mongoc-dns.c.s
 
 tests/test-mongoc-error.o: tests/test-mongoc-error.c.o
@@ -5422,7 +5386,7 @@ tests/test-mongoc-error.o: tests/test-mongoc-error.c.o
 
 # target to build an object file
 tests/test-mongoc-error.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o
 .PHONY : tests/test-mongoc-error.c.o
 
 tests/test-mongoc-error.i: tests/test-mongoc-error.c.i
@@ -5431,7 +5395,7 @@ tests/test-mongoc-error.i: tests/test-mongoc-error.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-error.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.i
 .PHONY : tests/test-mongoc-error.c.i
 
 tests/test-mongoc-error.s: tests/test-mongoc-error.c.s
@@ -5440,7 +5404,7 @@ tests/test-mongoc-error.s: tests/test-mongoc-error.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-error.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.s
 .PHONY : tests/test-mongoc-error.c.s
 
 tests/test-mongoc-exhaust.o: tests/test-mongoc-exhaust.c.o
@@ -5449,7 +5413,7 @@ tests/test-mongoc-exhaust.o: tests/test-mongoc-exhaust.c.o
 
 # target to build an object file
 tests/test-mongoc-exhaust.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o
 .PHONY : tests/test-mongoc-exhaust.c.o
 
 tests/test-mongoc-exhaust.i: tests/test-mongoc-exhaust.c.i
@@ -5458,7 +5422,7 @@ tests/test-mongoc-exhaust.i: tests/test-mongoc-exhaust.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-exhaust.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.i
 .PHONY : tests/test-mongoc-exhaust.c.i
 
 tests/test-mongoc-exhaust.s: tests/test-mongoc-exhaust.c.s
@@ -5467,7 +5431,7 @@ tests/test-mongoc-exhaust.s: tests/test-mongoc-exhaust.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-exhaust.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.s
 .PHONY : tests/test-mongoc-exhaust.c.s
 
 tests/test-mongoc-find-and-modify.o: tests/test-mongoc-find-and-modify.c.o
@@ -5476,7 +5440,7 @@ tests/test-mongoc-find-and-modify.o: tests/test-mongoc-find-and-modify.c.o
 
 # target to build an object file
 tests/test-mongoc-find-and-modify.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o
 .PHONY : tests/test-mongoc-find-and-modify.c.o
 
 tests/test-mongoc-find-and-modify.i: tests/test-mongoc-find-and-modify.c.i
@@ -5485,7 +5449,7 @@ tests/test-mongoc-find-and-modify.i: tests/test-mongoc-find-and-modify.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-find-and-modify.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.i
 .PHONY : tests/test-mongoc-find-and-modify.c.i
 
 tests/test-mongoc-find-and-modify.s: tests/test-mongoc-find-and-modify.c.s
@@ -5494,7 +5458,7 @@ tests/test-mongoc-find-and-modify.s: tests/test-mongoc-find-and-modify.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-find-and-modify.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.s
 .PHONY : tests/test-mongoc-find-and-modify.c.s
 
 tests/test-mongoc-gridfs-file-page.o: tests/test-mongoc-gridfs-file-page.c.o
@@ -5503,7 +5467,7 @@ tests/test-mongoc-gridfs-file-page.o: tests/test-mongoc-gridfs-file-page.c.o
 
 # target to build an object file
 tests/test-mongoc-gridfs-file-page.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o
 .PHONY : tests/test-mongoc-gridfs-file-page.c.o
 
 tests/test-mongoc-gridfs-file-page.i: tests/test-mongoc-gridfs-file-page.c.i
@@ -5512,7 +5476,7 @@ tests/test-mongoc-gridfs-file-page.i: tests/test-mongoc-gridfs-file-page.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-gridfs-file-page.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.i
 .PHONY : tests/test-mongoc-gridfs-file-page.c.i
 
 tests/test-mongoc-gridfs-file-page.s: tests/test-mongoc-gridfs-file-page.c.s
@@ -5521,7 +5485,7 @@ tests/test-mongoc-gridfs-file-page.s: tests/test-mongoc-gridfs-file-page.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-gridfs-file-page.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.s
 .PHONY : tests/test-mongoc-gridfs-file-page.c.s
 
 tests/test-mongoc-gridfs.o: tests/test-mongoc-gridfs.c.o
@@ -5530,7 +5494,7 @@ tests/test-mongoc-gridfs.o: tests/test-mongoc-gridfs.c.o
 
 # target to build an object file
 tests/test-mongoc-gridfs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o
 .PHONY : tests/test-mongoc-gridfs.c.o
 
 tests/test-mongoc-gridfs.i: tests/test-mongoc-gridfs.c.i
@@ -5539,7 +5503,7 @@ tests/test-mongoc-gridfs.i: tests/test-mongoc-gridfs.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-gridfs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.i
 .PHONY : tests/test-mongoc-gridfs.c.i
 
 tests/test-mongoc-gridfs.s: tests/test-mongoc-gridfs.c.s
@@ -5548,7 +5512,7 @@ tests/test-mongoc-gridfs.s: tests/test-mongoc-gridfs.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-gridfs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.s
 .PHONY : tests/test-mongoc-gridfs.c.s
 
 tests/test-mongoc-gssapi.o: tests/test-mongoc-gssapi.c.o
@@ -5557,7 +5521,7 @@ tests/test-mongoc-gssapi.o: tests/test-mongoc-gssapi.c.o
 
 # target to build an object file
 tests/test-mongoc-gssapi.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/tests/test-mongoc-gssapi.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/tests/test-mongoc-gssapi.c.o
 .PHONY : tests/test-mongoc-gssapi.c.o
 
 tests/test-mongoc-gssapi.i: tests/test-mongoc-gssapi.c.i
@@ -5566,7 +5530,7 @@ tests/test-mongoc-gssapi.i: tests/test-mongoc-gssapi.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-gssapi.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/tests/test-mongoc-gssapi.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/tests/test-mongoc-gssapi.c.i
 .PHONY : tests/test-mongoc-gssapi.c.i
 
 tests/test-mongoc-gssapi.s: tests/test-mongoc-gssapi.c.s
@@ -5575,7 +5539,7 @@ tests/test-mongoc-gssapi.s: tests/test-mongoc-gssapi.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-gssapi.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/tests/test-mongoc-gssapi.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/build.make src/libmongoc/CMakeFiles/test-mongoc-gssapi.dir/tests/test-mongoc-gssapi.c.s
 .PHONY : tests/test-mongoc-gssapi.c.s
 
 tests/test-mongoc-handshake.o: tests/test-mongoc-handshake.c.o
@@ -5584,7 +5548,7 @@ tests/test-mongoc-handshake.o: tests/test-mongoc-handshake.c.o
 
 # target to build an object file
 tests/test-mongoc-handshake.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o
 .PHONY : tests/test-mongoc-handshake.c.o
 
 tests/test-mongoc-handshake.i: tests/test-mongoc-handshake.c.i
@@ -5593,7 +5557,7 @@ tests/test-mongoc-handshake.i: tests/test-mongoc-handshake.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-handshake.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.i
 .PHONY : tests/test-mongoc-handshake.c.i
 
 tests/test-mongoc-handshake.s: tests/test-mongoc-handshake.c.s
@@ -5602,7 +5566,7 @@ tests/test-mongoc-handshake.s: tests/test-mongoc-handshake.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-handshake.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.s
 .PHONY : tests/test-mongoc-handshake.c.s
 
 tests/test-mongoc-linux-distro-scanner.o: tests/test-mongoc-linux-distro-scanner.c.o
@@ -5611,7 +5575,7 @@ tests/test-mongoc-linux-distro-scanner.o: tests/test-mongoc-linux-distro-scanner
 
 # target to build an object file
 tests/test-mongoc-linux-distro-scanner.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o
 .PHONY : tests/test-mongoc-linux-distro-scanner.c.o
 
 tests/test-mongoc-linux-distro-scanner.i: tests/test-mongoc-linux-distro-scanner.c.i
@@ -5620,7 +5584,7 @@ tests/test-mongoc-linux-distro-scanner.i: tests/test-mongoc-linux-distro-scanner
 
 # target to preprocess a source file
 tests/test-mongoc-linux-distro-scanner.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.i
 .PHONY : tests/test-mongoc-linux-distro-scanner.c.i
 
 tests/test-mongoc-linux-distro-scanner.s: tests/test-mongoc-linux-distro-scanner.c.s
@@ -5629,7 +5593,7 @@ tests/test-mongoc-linux-distro-scanner.s: tests/test-mongoc-linux-distro-scanner
 
 # target to generate assembly for a file
 tests/test-mongoc-linux-distro-scanner.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.s
 .PHONY : tests/test-mongoc-linux-distro-scanner.c.s
 
 tests/test-mongoc-list.o: tests/test-mongoc-list.c.o
@@ -5638,7 +5602,7 @@ tests/test-mongoc-list.o: tests/test-mongoc-list.c.o
 
 # target to build an object file
 tests/test-mongoc-list.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o
 .PHONY : tests/test-mongoc-list.c.o
 
 tests/test-mongoc-list.i: tests/test-mongoc-list.c.i
@@ -5647,7 +5611,7 @@ tests/test-mongoc-list.i: tests/test-mongoc-list.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-list.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.i
 .PHONY : tests/test-mongoc-list.c.i
 
 tests/test-mongoc-list.s: tests/test-mongoc-list.c.s
@@ -5656,7 +5620,7 @@ tests/test-mongoc-list.s: tests/test-mongoc-list.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-list.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.s
 .PHONY : tests/test-mongoc-list.c.s
 
 tests/test-mongoc-log.o: tests/test-mongoc-log.c.o
@@ -5665,7 +5629,7 @@ tests/test-mongoc-log.o: tests/test-mongoc-log.c.o
 
 # target to build an object file
 tests/test-mongoc-log.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o
 .PHONY : tests/test-mongoc-log.c.o
 
 tests/test-mongoc-log.i: tests/test-mongoc-log.c.i
@@ -5674,7 +5638,7 @@ tests/test-mongoc-log.i: tests/test-mongoc-log.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-log.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.i
 .PHONY : tests/test-mongoc-log.c.i
 
 tests/test-mongoc-log.s: tests/test-mongoc-log.c.s
@@ -5683,7 +5647,7 @@ tests/test-mongoc-log.s: tests/test-mongoc-log.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-log.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.s
 .PHONY : tests/test-mongoc-log.c.s
 
 tests/test-mongoc-matcher.o: tests/test-mongoc-matcher.c.o
@@ -5692,7 +5656,7 @@ tests/test-mongoc-matcher.o: tests/test-mongoc-matcher.c.o
 
 # target to build an object file
 tests/test-mongoc-matcher.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o
 .PHONY : tests/test-mongoc-matcher.c.o
 
 tests/test-mongoc-matcher.i: tests/test-mongoc-matcher.c.i
@@ -5701,7 +5665,7 @@ tests/test-mongoc-matcher.i: tests/test-mongoc-matcher.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-matcher.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.i
 .PHONY : tests/test-mongoc-matcher.c.i
 
 tests/test-mongoc-matcher.s: tests/test-mongoc-matcher.c.s
@@ -5710,7 +5674,7 @@ tests/test-mongoc-matcher.s: tests/test-mongoc-matcher.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-matcher.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.s
 .PHONY : tests/test-mongoc-matcher.c.s
 
 tests/test-mongoc-max-staleness.o: tests/test-mongoc-max-staleness.c.o
@@ -5719,7 +5683,7 @@ tests/test-mongoc-max-staleness.o: tests/test-mongoc-max-staleness.c.o
 
 # target to build an object file
 tests/test-mongoc-max-staleness.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o
 .PHONY : tests/test-mongoc-max-staleness.c.o
 
 tests/test-mongoc-max-staleness.i: tests/test-mongoc-max-staleness.c.i
@@ -5728,7 +5692,7 @@ tests/test-mongoc-max-staleness.i: tests/test-mongoc-max-staleness.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-max-staleness.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.i
 .PHONY : tests/test-mongoc-max-staleness.c.i
 
 tests/test-mongoc-max-staleness.s: tests/test-mongoc-max-staleness.c.s
@@ -5737,7 +5701,7 @@ tests/test-mongoc-max-staleness.s: tests/test-mongoc-max-staleness.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-max-staleness.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.s
 .PHONY : tests/test-mongoc-max-staleness.c.s
 
 tests/test-mongoc-queue.o: tests/test-mongoc-queue.c.o
@@ -5746,7 +5710,7 @@ tests/test-mongoc-queue.o: tests/test-mongoc-queue.c.o
 
 # target to build an object file
 tests/test-mongoc-queue.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o
 .PHONY : tests/test-mongoc-queue.c.o
 
 tests/test-mongoc-queue.i: tests/test-mongoc-queue.c.i
@@ -5755,7 +5719,7 @@ tests/test-mongoc-queue.i: tests/test-mongoc-queue.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-queue.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.i
 .PHONY : tests/test-mongoc-queue.c.i
 
 tests/test-mongoc-queue.s: tests/test-mongoc-queue.c.s
@@ -5764,7 +5728,7 @@ tests/test-mongoc-queue.s: tests/test-mongoc-queue.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-queue.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.s
 .PHONY : tests/test-mongoc-queue.c.s
 
 tests/test-mongoc-read-concern.o: tests/test-mongoc-read-concern.c.o
@@ -5773,7 +5737,7 @@ tests/test-mongoc-read-concern.o: tests/test-mongoc-read-concern.c.o
 
 # target to build an object file
 tests/test-mongoc-read-concern.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o
 .PHONY : tests/test-mongoc-read-concern.c.o
 
 tests/test-mongoc-read-concern.i: tests/test-mongoc-read-concern.c.i
@@ -5782,7 +5746,7 @@ tests/test-mongoc-read-concern.i: tests/test-mongoc-read-concern.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-read-concern.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.i
 .PHONY : tests/test-mongoc-read-concern.c.i
 
 tests/test-mongoc-read-concern.s: tests/test-mongoc-read-concern.c.s
@@ -5791,7 +5755,7 @@ tests/test-mongoc-read-concern.s: tests/test-mongoc-read-concern.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-read-concern.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.s
 .PHONY : tests/test-mongoc-read-concern.c.s
 
 tests/test-mongoc-read-prefs.o: tests/test-mongoc-read-prefs.c.o
@@ -5800,7 +5764,7 @@ tests/test-mongoc-read-prefs.o: tests/test-mongoc-read-prefs.c.o
 
 # target to build an object file
 tests/test-mongoc-read-prefs.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o
 .PHONY : tests/test-mongoc-read-prefs.c.o
 
 tests/test-mongoc-read-prefs.i: tests/test-mongoc-read-prefs.c.i
@@ -5809,7 +5773,7 @@ tests/test-mongoc-read-prefs.i: tests/test-mongoc-read-prefs.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-read-prefs.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.i
 .PHONY : tests/test-mongoc-read-prefs.c.i
 
 tests/test-mongoc-read-prefs.s: tests/test-mongoc-read-prefs.c.s
@@ -5818,7 +5782,7 @@ tests/test-mongoc-read-prefs.s: tests/test-mongoc-read-prefs.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-read-prefs.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.s
 .PHONY : tests/test-mongoc-read-prefs.c.s
 
 tests/test-mongoc-read-write-concern.o: tests/test-mongoc-read-write-concern.c.o
@@ -5827,7 +5791,7 @@ tests/test-mongoc-read-write-concern.o: tests/test-mongoc-read-write-concern.c.o
 
 # target to build an object file
 tests/test-mongoc-read-write-concern.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o
 .PHONY : tests/test-mongoc-read-write-concern.c.o
 
 tests/test-mongoc-read-write-concern.i: tests/test-mongoc-read-write-concern.c.i
@@ -5836,7 +5800,7 @@ tests/test-mongoc-read-write-concern.i: tests/test-mongoc-read-write-concern.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-read-write-concern.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.i
 .PHONY : tests/test-mongoc-read-write-concern.c.i
 
 tests/test-mongoc-read-write-concern.s: tests/test-mongoc-read-write-concern.c.s
@@ -5845,7 +5809,7 @@ tests/test-mongoc-read-write-concern.s: tests/test-mongoc-read-write-concern.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-read-write-concern.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.s
 .PHONY : tests/test-mongoc-read-write-concern.c.s
 
 tests/test-mongoc-retryable-writes.o: tests/test-mongoc-retryable-writes.c.o
@@ -5854,7 +5818,7 @@ tests/test-mongoc-retryable-writes.o: tests/test-mongoc-retryable-writes.c.o
 
 # target to build an object file
 tests/test-mongoc-retryable-writes.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o
 .PHONY : tests/test-mongoc-retryable-writes.c.o
 
 tests/test-mongoc-retryable-writes.i: tests/test-mongoc-retryable-writes.c.i
@@ -5863,7 +5827,7 @@ tests/test-mongoc-retryable-writes.i: tests/test-mongoc-retryable-writes.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-retryable-writes.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.i
 .PHONY : tests/test-mongoc-retryable-writes.c.i
 
 tests/test-mongoc-retryable-writes.s: tests/test-mongoc-retryable-writes.c.s
@@ -5872,7 +5836,7 @@ tests/test-mongoc-retryable-writes.s: tests/test-mongoc-retryable-writes.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-retryable-writes.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.s
 .PHONY : tests/test-mongoc-retryable-writes.c.s
 
 tests/test-mongoc-rpc.o: tests/test-mongoc-rpc.c.o
@@ -5881,7 +5845,7 @@ tests/test-mongoc-rpc.o: tests/test-mongoc-rpc.c.o
 
 # target to build an object file
 tests/test-mongoc-rpc.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o
 .PHONY : tests/test-mongoc-rpc.c.o
 
 tests/test-mongoc-rpc.i: tests/test-mongoc-rpc.c.i
@@ -5890,7 +5854,7 @@ tests/test-mongoc-rpc.i: tests/test-mongoc-rpc.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-rpc.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.i
 .PHONY : tests/test-mongoc-rpc.c.i
 
 tests/test-mongoc-rpc.s: tests/test-mongoc-rpc.c.s
@@ -5899,7 +5863,7 @@ tests/test-mongoc-rpc.s: tests/test-mongoc-rpc.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-rpc.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.s
 .PHONY : tests/test-mongoc-rpc.c.s
 
 tests/test-mongoc-sample-commands.o: tests/test-mongoc-sample-commands.c.o
@@ -5908,7 +5872,7 @@ tests/test-mongoc-sample-commands.o: tests/test-mongoc-sample-commands.c.o
 
 # target to build an object file
 tests/test-mongoc-sample-commands.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o
 .PHONY : tests/test-mongoc-sample-commands.c.o
 
 tests/test-mongoc-sample-commands.i: tests/test-mongoc-sample-commands.c.i
@@ -5917,7 +5881,7 @@ tests/test-mongoc-sample-commands.i: tests/test-mongoc-sample-commands.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-sample-commands.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.i
 .PHONY : tests/test-mongoc-sample-commands.c.i
 
 tests/test-mongoc-sample-commands.s: tests/test-mongoc-sample-commands.c.s
@@ -5926,7 +5890,7 @@ tests/test-mongoc-sample-commands.s: tests/test-mongoc-sample-commands.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-sample-commands.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.s
 .PHONY : tests/test-mongoc-sample-commands.c.s
 
 tests/test-mongoc-scram.o: tests/test-mongoc-scram.c.o
@@ -5935,7 +5899,7 @@ tests/test-mongoc-scram.o: tests/test-mongoc-scram.c.o
 
 # target to build an object file
 tests/test-mongoc-scram.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o
 .PHONY : tests/test-mongoc-scram.c.o
 
 tests/test-mongoc-scram.i: tests/test-mongoc-scram.c.i
@@ -5944,7 +5908,7 @@ tests/test-mongoc-scram.i: tests/test-mongoc-scram.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-scram.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.i
 .PHONY : tests/test-mongoc-scram.c.i
 
 tests/test-mongoc-scram.s: tests/test-mongoc-scram.c.s
@@ -5953,7 +5917,7 @@ tests/test-mongoc-scram.s: tests/test-mongoc-scram.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-scram.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.s
 .PHONY : tests/test-mongoc-scram.c.s
 
 tests/test-mongoc-sdam-monitoring.o: tests/test-mongoc-sdam-monitoring.c.o
@@ -5962,7 +5926,7 @@ tests/test-mongoc-sdam-monitoring.o: tests/test-mongoc-sdam-monitoring.c.o
 
 # target to build an object file
 tests/test-mongoc-sdam-monitoring.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o
 .PHONY : tests/test-mongoc-sdam-monitoring.c.o
 
 tests/test-mongoc-sdam-monitoring.i: tests/test-mongoc-sdam-monitoring.c.i
@@ -5971,7 +5935,7 @@ tests/test-mongoc-sdam-monitoring.i: tests/test-mongoc-sdam-monitoring.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-sdam-monitoring.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.i
 .PHONY : tests/test-mongoc-sdam-monitoring.c.i
 
 tests/test-mongoc-sdam-monitoring.s: tests/test-mongoc-sdam-monitoring.c.s
@@ -5980,7 +5944,7 @@ tests/test-mongoc-sdam-monitoring.s: tests/test-mongoc-sdam-monitoring.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-sdam-monitoring.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.s
 .PHONY : tests/test-mongoc-sdam-monitoring.c.s
 
 tests/test-mongoc-sdam.o: tests/test-mongoc-sdam.c.o
@@ -5989,7 +5953,7 @@ tests/test-mongoc-sdam.o: tests/test-mongoc-sdam.c.o
 
 # target to build an object file
 tests/test-mongoc-sdam.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o
 .PHONY : tests/test-mongoc-sdam.c.o
 
 tests/test-mongoc-sdam.i: tests/test-mongoc-sdam.c.i
@@ -5998,7 +5962,7 @@ tests/test-mongoc-sdam.i: tests/test-mongoc-sdam.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-sdam.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.i
 .PHONY : tests/test-mongoc-sdam.c.i
 
 tests/test-mongoc-sdam.s: tests/test-mongoc-sdam.c.s
@@ -6007,7 +5971,7 @@ tests/test-mongoc-sdam.s: tests/test-mongoc-sdam.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-sdam.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.s
 .PHONY : tests/test-mongoc-sdam.c.s
 
 tests/test-mongoc-server-selection-errors.o: tests/test-mongoc-server-selection-errors.c.o
@@ -6016,7 +5980,7 @@ tests/test-mongoc-server-selection-errors.o: tests/test-mongoc-server-selection-
 
 # target to build an object file
 tests/test-mongoc-server-selection-errors.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o
 .PHONY : tests/test-mongoc-server-selection-errors.c.o
 
 tests/test-mongoc-server-selection-errors.i: tests/test-mongoc-server-selection-errors.c.i
@@ -6025,7 +5989,7 @@ tests/test-mongoc-server-selection-errors.i: tests/test-mongoc-server-selection-
 
 # target to preprocess a source file
 tests/test-mongoc-server-selection-errors.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.i
 .PHONY : tests/test-mongoc-server-selection-errors.c.i
 
 tests/test-mongoc-server-selection-errors.s: tests/test-mongoc-server-selection-errors.c.s
@@ -6034,7 +5998,7 @@ tests/test-mongoc-server-selection-errors.s: tests/test-mongoc-server-selection-
 
 # target to generate assembly for a file
 tests/test-mongoc-server-selection-errors.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.s
 .PHONY : tests/test-mongoc-server-selection-errors.c.s
 
 tests/test-mongoc-server-selection.o: tests/test-mongoc-server-selection.c.o
@@ -6043,7 +6007,7 @@ tests/test-mongoc-server-selection.o: tests/test-mongoc-server-selection.c.o
 
 # target to build an object file
 tests/test-mongoc-server-selection.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o
 .PHONY : tests/test-mongoc-server-selection.c.o
 
 tests/test-mongoc-server-selection.i: tests/test-mongoc-server-selection.c.i
@@ -6052,7 +6016,7 @@ tests/test-mongoc-server-selection.i: tests/test-mongoc-server-selection.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-server-selection.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.i
 .PHONY : tests/test-mongoc-server-selection.c.i
 
 tests/test-mongoc-server-selection.s: tests/test-mongoc-server-selection.c.s
@@ -6061,7 +6025,7 @@ tests/test-mongoc-server-selection.s: tests/test-mongoc-server-selection.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-server-selection.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.s
 .PHONY : tests/test-mongoc-server-selection.c.s
 
 tests/test-mongoc-set.o: tests/test-mongoc-set.c.o
@@ -6070,7 +6034,7 @@ tests/test-mongoc-set.o: tests/test-mongoc-set.c.o
 
 # target to build an object file
 tests/test-mongoc-set.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o
 .PHONY : tests/test-mongoc-set.c.o
 
 tests/test-mongoc-set.i: tests/test-mongoc-set.c.i
@@ -6079,7 +6043,7 @@ tests/test-mongoc-set.i: tests/test-mongoc-set.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-set.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.i
 .PHONY : tests/test-mongoc-set.c.i
 
 tests/test-mongoc-set.s: tests/test-mongoc-set.c.s
@@ -6088,7 +6052,7 @@ tests/test-mongoc-set.s: tests/test-mongoc-set.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-set.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.s
 .PHONY : tests/test-mongoc-set.c.s
 
 tests/test-mongoc-socket.o: tests/test-mongoc-socket.c.o
@@ -6097,7 +6061,7 @@ tests/test-mongoc-socket.o: tests/test-mongoc-socket.c.o
 
 # target to build an object file
 tests/test-mongoc-socket.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o
 .PHONY : tests/test-mongoc-socket.c.o
 
 tests/test-mongoc-socket.i: tests/test-mongoc-socket.c.i
@@ -6106,7 +6070,7 @@ tests/test-mongoc-socket.i: tests/test-mongoc-socket.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-socket.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.i
 .PHONY : tests/test-mongoc-socket.c.i
 
 tests/test-mongoc-socket.s: tests/test-mongoc-socket.c.s
@@ -6115,8 +6079,62 @@ tests/test-mongoc-socket.s: tests/test-mongoc-socket.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-socket.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.s
 .PHONY : tests/test-mongoc-socket.c.s
+
+tests/test-mongoc-stream-tls-error.o: tests/test-mongoc-stream-tls-error.c.o
+
+.PHONY : tests/test-mongoc-stream-tls-error.o
+
+# target to build an object file
+tests/test-mongoc-stream-tls-error.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o
+.PHONY : tests/test-mongoc-stream-tls-error.c.o
+
+tests/test-mongoc-stream-tls-error.i: tests/test-mongoc-stream-tls-error.c.i
+
+.PHONY : tests/test-mongoc-stream-tls-error.i
+
+# target to preprocess a source file
+tests/test-mongoc-stream-tls-error.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.i
+.PHONY : tests/test-mongoc-stream-tls-error.c.i
+
+tests/test-mongoc-stream-tls-error.s: tests/test-mongoc-stream-tls-error.c.s
+
+.PHONY : tests/test-mongoc-stream-tls-error.s
+
+# target to generate assembly for a file
+tests/test-mongoc-stream-tls-error.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.s
+.PHONY : tests/test-mongoc-stream-tls-error.c.s
+
+tests/test-mongoc-stream-tls.o: tests/test-mongoc-stream-tls.c.o
+
+.PHONY : tests/test-mongoc-stream-tls.o
+
+# target to build an object file
+tests/test-mongoc-stream-tls.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o
+.PHONY : tests/test-mongoc-stream-tls.c.o
+
+tests/test-mongoc-stream-tls.i: tests/test-mongoc-stream-tls.c.i
+
+.PHONY : tests/test-mongoc-stream-tls.i
+
+# target to preprocess a source file
+tests/test-mongoc-stream-tls.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.i
+.PHONY : tests/test-mongoc-stream-tls.c.i
+
+tests/test-mongoc-stream-tls.s: tests/test-mongoc-stream-tls.c.s
+
+.PHONY : tests/test-mongoc-stream-tls.s
+
+# target to generate assembly for a file
+tests/test-mongoc-stream-tls.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.s
+.PHONY : tests/test-mongoc-stream-tls.c.s
 
 tests/test-mongoc-stream.o: tests/test-mongoc-stream.c.o
 
@@ -6124,7 +6142,7 @@ tests/test-mongoc-stream.o: tests/test-mongoc-stream.c.o
 
 # target to build an object file
 tests/test-mongoc-stream.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o
 .PHONY : tests/test-mongoc-stream.c.o
 
 tests/test-mongoc-stream.i: tests/test-mongoc-stream.c.i
@@ -6133,7 +6151,7 @@ tests/test-mongoc-stream.i: tests/test-mongoc-stream.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-stream.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.i
 .PHONY : tests/test-mongoc-stream.c.i
 
 tests/test-mongoc-stream.s: tests/test-mongoc-stream.c.s
@@ -6142,7 +6160,7 @@ tests/test-mongoc-stream.s: tests/test-mongoc-stream.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-stream.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.s
 .PHONY : tests/test-mongoc-stream.c.s
 
 tests/test-mongoc-thread.o: tests/test-mongoc-thread.c.o
@@ -6151,7 +6169,7 @@ tests/test-mongoc-thread.o: tests/test-mongoc-thread.c.o
 
 # target to build an object file
 tests/test-mongoc-thread.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o
 .PHONY : tests/test-mongoc-thread.c.o
 
 tests/test-mongoc-thread.i: tests/test-mongoc-thread.c.i
@@ -6160,7 +6178,7 @@ tests/test-mongoc-thread.i: tests/test-mongoc-thread.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-thread.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.i
 .PHONY : tests/test-mongoc-thread.c.i
 
 tests/test-mongoc-thread.s: tests/test-mongoc-thread.c.s
@@ -6169,7 +6187,7 @@ tests/test-mongoc-thread.s: tests/test-mongoc-thread.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-thread.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.s
 .PHONY : tests/test-mongoc-thread.c.s
 
 tests/test-mongoc-topology-description.o: tests/test-mongoc-topology-description.c.o
@@ -6178,7 +6196,7 @@ tests/test-mongoc-topology-description.o: tests/test-mongoc-topology-description
 
 # target to build an object file
 tests/test-mongoc-topology-description.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o
 .PHONY : tests/test-mongoc-topology-description.c.o
 
 tests/test-mongoc-topology-description.i: tests/test-mongoc-topology-description.c.i
@@ -6187,7 +6205,7 @@ tests/test-mongoc-topology-description.i: tests/test-mongoc-topology-description
 
 # target to preprocess a source file
 tests/test-mongoc-topology-description.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.i
 .PHONY : tests/test-mongoc-topology-description.c.i
 
 tests/test-mongoc-topology-description.s: tests/test-mongoc-topology-description.c.s
@@ -6196,7 +6214,7 @@ tests/test-mongoc-topology-description.s: tests/test-mongoc-topology-description
 
 # target to generate assembly for a file
 tests/test-mongoc-topology-description.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.s
 .PHONY : tests/test-mongoc-topology-description.c.s
 
 tests/test-mongoc-topology-reconcile.o: tests/test-mongoc-topology-reconcile.c.o
@@ -6205,7 +6223,7 @@ tests/test-mongoc-topology-reconcile.o: tests/test-mongoc-topology-reconcile.c.o
 
 # target to build an object file
 tests/test-mongoc-topology-reconcile.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o
 .PHONY : tests/test-mongoc-topology-reconcile.c.o
 
 tests/test-mongoc-topology-reconcile.i: tests/test-mongoc-topology-reconcile.c.i
@@ -6214,7 +6232,7 @@ tests/test-mongoc-topology-reconcile.i: tests/test-mongoc-topology-reconcile.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-topology-reconcile.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.i
 .PHONY : tests/test-mongoc-topology-reconcile.c.i
 
 tests/test-mongoc-topology-reconcile.s: tests/test-mongoc-topology-reconcile.c.s
@@ -6223,7 +6241,7 @@ tests/test-mongoc-topology-reconcile.s: tests/test-mongoc-topology-reconcile.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-topology-reconcile.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.s
 .PHONY : tests/test-mongoc-topology-reconcile.c.s
 
 tests/test-mongoc-topology-scanner.o: tests/test-mongoc-topology-scanner.c.o
@@ -6232,7 +6250,7 @@ tests/test-mongoc-topology-scanner.o: tests/test-mongoc-topology-scanner.c.o
 
 # target to build an object file
 tests/test-mongoc-topology-scanner.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o
 .PHONY : tests/test-mongoc-topology-scanner.c.o
 
 tests/test-mongoc-topology-scanner.i: tests/test-mongoc-topology-scanner.c.i
@@ -6241,7 +6259,7 @@ tests/test-mongoc-topology-scanner.i: tests/test-mongoc-topology-scanner.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-topology-scanner.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.i
 .PHONY : tests/test-mongoc-topology-scanner.c.i
 
 tests/test-mongoc-topology-scanner.s: tests/test-mongoc-topology-scanner.c.s
@@ -6250,7 +6268,7 @@ tests/test-mongoc-topology-scanner.s: tests/test-mongoc-topology-scanner.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-topology-scanner.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.s
 .PHONY : tests/test-mongoc-topology-scanner.c.s
 
 tests/test-mongoc-topology.o: tests/test-mongoc-topology.c.o
@@ -6259,7 +6277,7 @@ tests/test-mongoc-topology.o: tests/test-mongoc-topology.c.o
 
 # target to build an object file
 tests/test-mongoc-topology.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o
 .PHONY : tests/test-mongoc-topology.c.o
 
 tests/test-mongoc-topology.i: tests/test-mongoc-topology.c.i
@@ -6268,7 +6286,7 @@ tests/test-mongoc-topology.i: tests/test-mongoc-topology.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-topology.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.i
 .PHONY : tests/test-mongoc-topology.c.i
 
 tests/test-mongoc-topology.s: tests/test-mongoc-topology.c.s
@@ -6277,7 +6295,7 @@ tests/test-mongoc-topology.s: tests/test-mongoc-topology.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-topology.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.s
 .PHONY : tests/test-mongoc-topology.c.s
 
 tests/test-mongoc-transactions.o: tests/test-mongoc-transactions.c.o
@@ -6286,7 +6304,7 @@ tests/test-mongoc-transactions.o: tests/test-mongoc-transactions.c.o
 
 # target to build an object file
 tests/test-mongoc-transactions.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o
 .PHONY : tests/test-mongoc-transactions.c.o
 
 tests/test-mongoc-transactions.i: tests/test-mongoc-transactions.c.i
@@ -6295,7 +6313,7 @@ tests/test-mongoc-transactions.i: tests/test-mongoc-transactions.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-transactions.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.i
 .PHONY : tests/test-mongoc-transactions.c.i
 
 tests/test-mongoc-transactions.s: tests/test-mongoc-transactions.c.s
@@ -6304,7 +6322,7 @@ tests/test-mongoc-transactions.s: tests/test-mongoc-transactions.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-transactions.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.s
 .PHONY : tests/test-mongoc-transactions.c.s
 
 tests/test-mongoc-uri.o: tests/test-mongoc-uri.c.o
@@ -6313,7 +6331,7 @@ tests/test-mongoc-uri.o: tests/test-mongoc-uri.c.o
 
 # target to build an object file
 tests/test-mongoc-uri.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o
 .PHONY : tests/test-mongoc-uri.c.o
 
 tests/test-mongoc-uri.i: tests/test-mongoc-uri.c.i
@@ -6322,7 +6340,7 @@ tests/test-mongoc-uri.i: tests/test-mongoc-uri.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-uri.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.i
 .PHONY : tests/test-mongoc-uri.c.i
 
 tests/test-mongoc-uri.s: tests/test-mongoc-uri.c.s
@@ -6331,7 +6349,7 @@ tests/test-mongoc-uri.s: tests/test-mongoc-uri.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-uri.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.s
 .PHONY : tests/test-mongoc-uri.c.s
 
 tests/test-mongoc-usleep.o: tests/test-mongoc-usleep.c.o
@@ -6340,7 +6358,7 @@ tests/test-mongoc-usleep.o: tests/test-mongoc-usleep.c.o
 
 # target to build an object file
 tests/test-mongoc-usleep.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o
 .PHONY : tests/test-mongoc-usleep.c.o
 
 tests/test-mongoc-usleep.i: tests/test-mongoc-usleep.c.i
@@ -6349,7 +6367,7 @@ tests/test-mongoc-usleep.i: tests/test-mongoc-usleep.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-usleep.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.i
 .PHONY : tests/test-mongoc-usleep.c.i
 
 tests/test-mongoc-usleep.s: tests/test-mongoc-usleep.c.s
@@ -6358,7 +6376,7 @@ tests/test-mongoc-usleep.s: tests/test-mongoc-usleep.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-usleep.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.s
 .PHONY : tests/test-mongoc-usleep.c.s
 
 tests/test-mongoc-util.o: tests/test-mongoc-util.c.o
@@ -6367,7 +6385,7 @@ tests/test-mongoc-util.o: tests/test-mongoc-util.c.o
 
 # target to build an object file
 tests/test-mongoc-util.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o
 .PHONY : tests/test-mongoc-util.c.o
 
 tests/test-mongoc-util.i: tests/test-mongoc-util.c.i
@@ -6376,7 +6394,7 @@ tests/test-mongoc-util.i: tests/test-mongoc-util.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-util.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.i
 .PHONY : tests/test-mongoc-util.c.i
 
 tests/test-mongoc-util.s: tests/test-mongoc-util.c.s
@@ -6385,7 +6403,7 @@ tests/test-mongoc-util.s: tests/test-mongoc-util.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-util.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.s
 .PHONY : tests/test-mongoc-util.c.s
 
 tests/test-mongoc-version.o: tests/test-mongoc-version.c.o
@@ -6394,7 +6412,7 @@ tests/test-mongoc-version.o: tests/test-mongoc-version.c.o
 
 # target to build an object file
 tests/test-mongoc-version.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o
 .PHONY : tests/test-mongoc-version.c.o
 
 tests/test-mongoc-version.i: tests/test-mongoc-version.c.i
@@ -6403,7 +6421,7 @@ tests/test-mongoc-version.i: tests/test-mongoc-version.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-version.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.i
 .PHONY : tests/test-mongoc-version.c.i
 
 tests/test-mongoc-version.s: tests/test-mongoc-version.c.s
@@ -6412,7 +6430,7 @@ tests/test-mongoc-version.s: tests/test-mongoc-version.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-version.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.s
 .PHONY : tests/test-mongoc-version.c.s
 
 tests/test-mongoc-write-commands.o: tests/test-mongoc-write-commands.c.o
@@ -6421,7 +6439,7 @@ tests/test-mongoc-write-commands.o: tests/test-mongoc-write-commands.c.o
 
 # target to build an object file
 tests/test-mongoc-write-commands.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o
 .PHONY : tests/test-mongoc-write-commands.c.o
 
 tests/test-mongoc-write-commands.i: tests/test-mongoc-write-commands.c.i
@@ -6430,7 +6448,7 @@ tests/test-mongoc-write-commands.i: tests/test-mongoc-write-commands.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-write-commands.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.i
 .PHONY : tests/test-mongoc-write-commands.c.i
 
 tests/test-mongoc-write-commands.s: tests/test-mongoc-write-commands.c.s
@@ -6439,7 +6457,7 @@ tests/test-mongoc-write-commands.s: tests/test-mongoc-write-commands.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-write-commands.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.s
 .PHONY : tests/test-mongoc-write-commands.c.s
 
 tests/test-mongoc-write-concern.o: tests/test-mongoc-write-concern.c.o
@@ -6448,7 +6466,7 @@ tests/test-mongoc-write-concern.o: tests/test-mongoc-write-concern.c.o
 
 # target to build an object file
 tests/test-mongoc-write-concern.c.o:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o
 .PHONY : tests/test-mongoc-write-concern.c.o
 
 tests/test-mongoc-write-concern.i: tests/test-mongoc-write-concern.c.i
@@ -6457,7 +6475,7 @@ tests/test-mongoc-write-concern.i: tests/test-mongoc-write-concern.c.i
 
 # target to preprocess a source file
 tests/test-mongoc-write-concern.c.i:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.i
 .PHONY : tests/test-mongoc-write-concern.c.i
 
 tests/test-mongoc-write-concern.s: tests/test-mongoc-write-concern.c.s
@@ -6466,8 +6484,35 @@ tests/test-mongoc-write-concern.s: tests/test-mongoc-write-concern.c.s
 
 # target to generate assembly for a file
 tests/test-mongoc-write-concern.c.s:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.s
 .PHONY : tests/test-mongoc-write-concern.c.s
+
+tests/test-mongoc-x509.o: tests/test-mongoc-x509.c.o
+
+.PHONY : tests/test-mongoc-x509.o
+
+# target to build an object file
+tests/test-mongoc-x509.c.o:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o
+.PHONY : tests/test-mongoc-x509.c.o
+
+tests/test-mongoc-x509.i: tests/test-mongoc-x509.c.i
+
+.PHONY : tests/test-mongoc-x509.i
+
+# target to preprocess a source file
+tests/test-mongoc-x509.c.i:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.i
+.PHONY : tests/test-mongoc-x509.c.i
+
+tests/test-mongoc-x509.s: tests/test-mongoc-x509.c.s
+
+.PHONY : tests/test-mongoc-x509.s
+
+# target to generate assembly for a file
+tests/test-mongoc-x509.c.s:
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(MAKE) -f src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.s
+.PHONY : tests/test-mongoc-x509.c.s
 
 # Help Target
 help:
@@ -6586,51 +6631,6 @@ help:
 	@echo "... __/tools/mongoc-stat.o"
 	@echo "... __/tools/mongoc-stat.i"
 	@echo "... __/tools/mongoc-stat.s"
-	@echo "... __/zlib-1.2.11/adler32.o"
-	@echo "... __/zlib-1.2.11/adler32.i"
-	@echo "... __/zlib-1.2.11/adler32.s"
-	@echo "... __/zlib-1.2.11/compress.o"
-	@echo "... __/zlib-1.2.11/compress.i"
-	@echo "... __/zlib-1.2.11/compress.s"
-	@echo "... __/zlib-1.2.11/crc32.o"
-	@echo "... __/zlib-1.2.11/crc32.i"
-	@echo "... __/zlib-1.2.11/crc32.s"
-	@echo "... __/zlib-1.2.11/deflate.o"
-	@echo "... __/zlib-1.2.11/deflate.i"
-	@echo "... __/zlib-1.2.11/deflate.s"
-	@echo "... __/zlib-1.2.11/gzclose.o"
-	@echo "... __/zlib-1.2.11/gzclose.i"
-	@echo "... __/zlib-1.2.11/gzclose.s"
-	@echo "... __/zlib-1.2.11/gzlib.o"
-	@echo "... __/zlib-1.2.11/gzlib.i"
-	@echo "... __/zlib-1.2.11/gzlib.s"
-	@echo "... __/zlib-1.2.11/gzread.o"
-	@echo "... __/zlib-1.2.11/gzread.i"
-	@echo "... __/zlib-1.2.11/gzread.s"
-	@echo "... __/zlib-1.2.11/gzwrite.o"
-	@echo "... __/zlib-1.2.11/gzwrite.i"
-	@echo "... __/zlib-1.2.11/gzwrite.s"
-	@echo "... __/zlib-1.2.11/infback.o"
-	@echo "... __/zlib-1.2.11/infback.i"
-	@echo "... __/zlib-1.2.11/infback.s"
-	@echo "... __/zlib-1.2.11/inffast.o"
-	@echo "... __/zlib-1.2.11/inffast.i"
-	@echo "... __/zlib-1.2.11/inffast.s"
-	@echo "... __/zlib-1.2.11/inflate.o"
-	@echo "... __/zlib-1.2.11/inflate.i"
-	@echo "... __/zlib-1.2.11/inflate.s"
-	@echo "... __/zlib-1.2.11/inftrees.o"
-	@echo "... __/zlib-1.2.11/inftrees.i"
-	@echo "... __/zlib-1.2.11/inftrees.s"
-	@echo "... __/zlib-1.2.11/trees.o"
-	@echo "... __/zlib-1.2.11/trees.i"
-	@echo "... __/zlib-1.2.11/trees.s"
-	@echo "... __/zlib-1.2.11/uncompr.o"
-	@echo "... __/zlib-1.2.11/uncompr.i"
-	@echo "... __/zlib-1.2.11/uncompr.s"
-	@echo "... __/zlib-1.2.11/zutil.o"
-	@echo "... __/zlib-1.2.11/zutil.i"
-	@echo "... __/zlib-1.2.11/zutil.s"
 	@echo "... examples/aggregation/aggregation1.o"
 	@echo "... examples/aggregation/aggregation1.i"
 	@echo "... examples/aggregation/aggregation1.s"
@@ -6745,6 +6745,9 @@ help:
 	@echo "... src/mongoc/mongoc-client.o"
 	@echo "... src/mongoc/mongoc-client.i"
 	@echo "... src/mongoc/mongoc-client.s"
+	@echo "... src/mongoc/mongoc-cluster-cyrus.o"
+	@echo "... src/mongoc/mongoc-cluster-cyrus.i"
+	@echo "... src/mongoc/mongoc-cluster-cyrus.s"
 	@echo "... src/mongoc/mongoc-cluster-sasl.o"
 	@echo "... src/mongoc/mongoc-cluster-sasl.i"
 	@echo "... src/mongoc/mongoc-cluster-sasl.s"
@@ -6763,6 +6766,12 @@ help:
 	@echo "... src/mongoc/mongoc-counters.o"
 	@echo "... src/mongoc/mongoc-counters.i"
 	@echo "... src/mongoc/mongoc-counters.s"
+	@echo "... src/mongoc/mongoc-crypto-openssl.o"
+	@echo "... src/mongoc/mongoc-crypto-openssl.i"
+	@echo "... src/mongoc/mongoc-crypto-openssl.s"
+	@echo "... src/mongoc/mongoc-crypto.o"
+	@echo "... src/mongoc/mongoc-crypto.i"
+	@echo "... src/mongoc/mongoc-crypto.s"
 	@echo "... src/mongoc/mongoc-cursor-array.o"
 	@echo "... src/mongoc/mongoc-cursor-array.i"
 	@echo "... src/mongoc/mongoc-cursor-array.s"
@@ -6787,6 +6796,9 @@ help:
 	@echo "... src/mongoc/mongoc-cursor.o"
 	@echo "... src/mongoc/mongoc-cursor.i"
 	@echo "... src/mongoc/mongoc-cursor.s"
+	@echo "... src/mongoc/mongoc-cyrus.o"
+	@echo "... src/mongoc/mongoc-cyrus.i"
+	@echo "... src/mongoc/mongoc-cyrus.s"
 	@echo "... src/mongoc/mongoc-database.o"
 	@echo "... src/mongoc/mongoc-database.i"
 	@echo "... src/mongoc/mongoc-database.s"
@@ -6838,6 +6850,9 @@ help:
 	@echo "... src/mongoc/mongoc-memcmp.o"
 	@echo "... src/mongoc/mongoc-memcmp.i"
 	@echo "... src/mongoc/mongoc-memcmp.s"
+	@echo "... src/mongoc/mongoc-openssl.o"
+	@echo "... src/mongoc/mongoc-openssl.i"
+	@echo "... src/mongoc/mongoc-openssl.s"
 	@echo "... src/mongoc/mongoc-opts-helpers.o"
 	@echo "... src/mongoc/mongoc-opts-helpers.i"
 	@echo "... src/mongoc/mongoc-opts-helpers.s"
@@ -6847,6 +6862,9 @@ help:
 	@echo "... src/mongoc/mongoc-queue.o"
 	@echo "... src/mongoc/mongoc-queue.i"
 	@echo "... src/mongoc/mongoc-queue.s"
+	@echo "... src/mongoc/mongoc-rand-openssl.o"
+	@echo "... src/mongoc/mongoc-rand-openssl.i"
+	@echo "... src/mongoc/mongoc-rand-openssl.s"
 	@echo "... src/mongoc/mongoc-read-concern.o"
 	@echo "... src/mongoc/mongoc-read-concern.i"
 	@echo "... src/mongoc/mongoc-read-concern.s"
@@ -6856,6 +6874,12 @@ help:
 	@echo "... src/mongoc/mongoc-rpc.o"
 	@echo "... src/mongoc/mongoc-rpc.i"
 	@echo "... src/mongoc/mongoc-rpc.s"
+	@echo "... src/mongoc/mongoc-sasl.o"
+	@echo "... src/mongoc/mongoc-sasl.i"
+	@echo "... src/mongoc/mongoc-sasl.s"
+	@echo "... src/mongoc/mongoc-scram.o"
+	@echo "... src/mongoc/mongoc-scram.i"
+	@echo "... src/mongoc/mongoc-scram.s"
 	@echo "... src/mongoc/mongoc-server-description.o"
 	@echo "... src/mongoc/mongoc-server-description.i"
 	@echo "... src/mongoc/mongoc-server-description.s"
@@ -6868,6 +6892,9 @@ help:
 	@echo "... src/mongoc/mongoc-socket.o"
 	@echo "... src/mongoc/mongoc-socket.i"
 	@echo "... src/mongoc/mongoc-socket.s"
+	@echo "... src/mongoc/mongoc-ssl.o"
+	@echo "... src/mongoc/mongoc-ssl.i"
+	@echo "... src/mongoc/mongoc-ssl.s"
 	@echo "... src/mongoc/mongoc-stream-buffered.o"
 	@echo "... src/mongoc/mongoc-stream-buffered.i"
 	@echo "... src/mongoc/mongoc-stream-buffered.s"
@@ -6880,6 +6907,15 @@ help:
 	@echo "... src/mongoc/mongoc-stream-socket.o"
 	@echo "... src/mongoc/mongoc-stream-socket.i"
 	@echo "... src/mongoc/mongoc-stream-socket.s"
+	@echo "... src/mongoc/mongoc-stream-tls-openssl-bio.o"
+	@echo "... src/mongoc/mongoc-stream-tls-openssl-bio.i"
+	@echo "... src/mongoc/mongoc-stream-tls-openssl-bio.s"
+	@echo "... src/mongoc/mongoc-stream-tls-openssl.o"
+	@echo "... src/mongoc/mongoc-stream-tls-openssl.i"
+	@echo "... src/mongoc/mongoc-stream-tls-openssl.s"
+	@echo "... src/mongoc/mongoc-stream-tls.o"
+	@echo "... src/mongoc/mongoc-stream-tls.i"
+	@echo "... src/mongoc/mongoc-stream-tls.s"
 	@echo "... src/mongoc/mongoc-stream.o"
 	@echo "... src/mongoc/mongoc-stream.i"
 	@echo "... src/mongoc/mongoc-stream.s"
@@ -6949,6 +6985,9 @@ help:
 	@echo "... tests/mock_server/sync-queue.o"
 	@echo "... tests/mock_server/sync-queue.i"
 	@echo "... tests/mock_server/sync-queue.s"
+	@echo "... tests/ssl-test.o"
+	@echo "... tests/ssl-test.i"
+	@echo "... tests/ssl-test.s"
 	@echo "... tests/test-conveniences.o"
 	@echo "... tests/test-conveniences.i"
 	@echo "... tests/test-conveniences.s"
@@ -7009,6 +7048,9 @@ help:
 	@echo "... tests/test-mongoc-cursor.o"
 	@echo "... tests/test-mongoc-cursor.i"
 	@echo "... tests/test-mongoc-cursor.s"
+	@echo "... tests/test-mongoc-cyrus.o"
+	@echo "... tests/test-mongoc-cyrus.i"
+	@echo "... tests/test-mongoc-cyrus.s"
 	@echo "... tests/test-mongoc-database.o"
 	@echo "... tests/test-mongoc-database.i"
 	@echo "... tests/test-mongoc-database.s"
@@ -7093,6 +7135,12 @@ help:
 	@echo "... tests/test-mongoc-socket.o"
 	@echo "... tests/test-mongoc-socket.i"
 	@echo "... tests/test-mongoc-socket.s"
+	@echo "... tests/test-mongoc-stream-tls-error.o"
+	@echo "... tests/test-mongoc-stream-tls-error.i"
+	@echo "... tests/test-mongoc-stream-tls-error.s"
+	@echo "... tests/test-mongoc-stream-tls.o"
+	@echo "... tests/test-mongoc-stream-tls.i"
+	@echo "... tests/test-mongoc-stream-tls.s"
 	@echo "... tests/test-mongoc-stream.o"
 	@echo "... tests/test-mongoc-stream.i"
 	@echo "... tests/test-mongoc-stream.s"
@@ -7132,6 +7180,9 @@ help:
 	@echo "... tests/test-mongoc-write-concern.o"
 	@echo "... tests/test-mongoc-write-concern.i"
 	@echo "... tests/test-mongoc-write-concern.s"
+	@echo "... tests/test-mongoc-x509.o"
+	@echo "... tests/test-mongoc-x509.i"
+	@echo "... tests/test-mongoc-x509.s"
 .PHONY : help
 
 
@@ -7143,6 +7194,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -43,10 +43,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/yyz/mongo-c-driver-1.11.0
+CMAKE_SOURCE_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/yyz/mongo-c-driver-1.11.0/cmake-build
+CMAKE_BINARY_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build
 
 # Include any dependencies generated for this target.
 include src/libmongoc/CMakeFiles/example-client.dir/depend.make
@@ -59,16 +59,16 @@ include src/libmongoc/CMakeFiles/example-client.dir/flags.make
 
 src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o: src/libmongoc/CMakeFiles/example-client.dir/flags.make
 src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o: ../src/libmongoc/examples/example-client.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/example-client.dir/examples/example-client.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-client.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/example-client.dir/examples/example-client.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-client.c
 
 src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/example-client.dir/examples/example-client.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-client.c > CMakeFiles/example-client.dir/examples/example-client.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-client.c > CMakeFiles/example-client.dir/examples/example-client.c.i
 
 src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/example-client.dir/examples/example-client.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-client.c -o CMakeFiles/example-client.dir/examples/example-client.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-client.c -o CMakeFiles/example-client.dir/examples/example-client.c.s
 
 # Object files for target example-client
 example__client_OBJECTS = \
@@ -80,12 +80,17 @@ example__client_EXTERNAL_OBJECTS =
 src/libmongoc/example-client: src/libmongoc/CMakeFiles/example-client.dir/examples/example-client.c.o
 src/libmongoc/example-client: src/libmongoc/CMakeFiles/example-client.dir/build.make
 src/libmongoc/example-client: src/libmongoc/libmongoc-1.0.so.0.0.0
+src/libmongoc/example-client: /usr/lib64/libsasl2.so
+src/libmongoc/example-client: /usr/lib64/libssl.so
+src/libmongoc/example-client: /usr/lib64/libcrypto.so
+src/libmongoc/example-client: /usr/lib64/libz.so
+src/libmongoc/example-client: /usr/lib64/libicuuc.so
 src/libmongoc/example-client: src/libbson/libbson-1.0.so.0.0.0
 src/libmongoc/example-client: /usr/lib64/librt.so
 src/libmongoc/example-client: /usr/lib64/libm.so
 src/libmongoc/example-client: src/libmongoc/CMakeFiles/example-client.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable example-client"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example-client.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable example-client"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example-client.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 src/libmongoc/CMakeFiles/example-client.dir/build: src/libmongoc/example-client
@@ -93,10 +98,10 @@ src/libmongoc/CMakeFiles/example-client.dir/build: src/libmongoc/example-client
 .PHONY : src/libmongoc/CMakeFiles/example-client.dir/build
 
 src/libmongoc/CMakeFiles/example-client.dir/clean:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/example-client.dir/cmake_clean.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/example-client.dir/cmake_clean.cmake
 .PHONY : src/libmongoc/CMakeFiles/example-client.dir/clean
 
 src/libmongoc/CMakeFiles/example-client.dir/depend:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/mongo-c-driver-1.11.0 /root/yyz/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/example-client.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0 /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/example-client.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : src/libmongoc/CMakeFiles/example-client.dir/depend
 

@@ -86,7 +86,7 @@
  * MONGOC_ENABLE_SSL_OPENSSL is set from configure to determine if we are
  * compiled with OpenSSL support.
  */
-#define MONGOC_ENABLE_SSL_OPENSSL 0
+#define MONGOC_ENABLE_SSL_OPENSSL 1
 
 #if MONGOC_ENABLE_SSL_OPENSSL != 1
 #  undef MONGOC_ENABLE_SSL_OPENSSL
@@ -97,7 +97,7 @@
  * MONGOC_ENABLE_CRYPTO_LIBCRYPTO is set from configure to determine if we are
  * compiled with OpenSSL support.
  */
-#define MONGOC_ENABLE_CRYPTO_LIBCRYPTO 0
+#define MONGOC_ENABLE_CRYPTO_LIBCRYPTO 1
 
 #if MONGOC_ENABLE_CRYPTO_LIBCRYPTO != 1
 #  undef MONGOC_ENABLE_CRYPTO_LIBCRYPTO
@@ -108,7 +108,7 @@
  * MONGOC_ENABLE_SSL is set from configure to determine if we are
  * compiled with any SSL support.
  */
-#define MONGOC_ENABLE_SSL 0
+#define MONGOC_ENABLE_SSL 1
 
 #if MONGOC_ENABLE_SSL != 1
 #  undef MONGOC_ENABLE_SSL
@@ -119,7 +119,7 @@
  * MONGOC_ENABLE_CRYPTO is set from configure to determine if we are
  * compiled with any crypto support.
  */
-#define MONGOC_ENABLE_CRYPTO 0
+#define MONGOC_ENABLE_CRYPTO 1
 
 #if MONGOC_ENABLE_CRYPTO != 1
 #  undef MONGOC_ENABLE_CRYPTO
@@ -150,7 +150,7 @@
  * MONGOC_ENABLE_SASL is set from configure to determine if we are
  * compiled with SASL support.
  */
-#define MONGOC_ENABLE_SASL 0
+#define MONGOC_ENABLE_SASL 1
 
 #if MONGOC_ENABLE_SASL != 1
 #  undef MONGOC_ENABLE_SASL
@@ -161,7 +161,7 @@
  * MONGOC_ENABLE_SASL_CYRUS is set from configure to determine if we are
  * compiled with Cyrus SASL support.
  */
-#define MONGOC_ENABLE_SASL_CYRUS 0
+#define MONGOC_ENABLE_SASL_CYRUS 1
 
 #if MONGOC_ENABLE_SASL_CYRUS != 1
 #  undef MONGOC_ENABLE_SASL_CYRUS
@@ -362,7 +362,7 @@
 /*
  * Set if we have ICU support.
  */
-#define MONGOC_ENABLE_ICU 0
+#define MONGOC_ENABLE_ICU 1
 
 #if MONGOC_ENABLE_ICU != 1
 #  undef MONGOC_ENABLE_ICU

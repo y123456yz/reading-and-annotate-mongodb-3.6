@@ -60,8 +60,8 @@ set (MONGOC_LIBRARIES ${MONGOC_LIBRARY} ${BSON_LIBRARIES})
 # like "-framework CoreFoundation;-framework Security".
 set (IS_FRAMEWORK_VAR 0)
 foreach (LIB
-     rt resolv
-    
+   /usr/lib64/libsasl2.so /usr/lib64/libssl.so;/usr/lib64/libcrypto.so rt resolv
+    /usr/lib64/libicuuc.so
 )
    if (LIB STREQUAL "-framework")
       set (IS_FRAMEWORK_VAR 1)

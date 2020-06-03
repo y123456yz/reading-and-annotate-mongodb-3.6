@@ -1167,8 +1167,6 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     NetworkOp op = m.operation(); //获取协议头部中的MSGHEADER::Layout.opCode
     bool isCommand = false;
 	
-	#include <unistd.h> 
-	usleep(50000);
 
 	
 	//str::stream s;

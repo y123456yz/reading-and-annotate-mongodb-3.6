@@ -732,31 +732,31 @@ mongoc-stream-tls.h
 mongoc-ssl.h
 ../src/libmongoc/src/mongoc/mongoc-ssl.h
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/basic-aggregation.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/basic-aggregation.c
 mongoc.h
 -
 stdio.h
 -
 constants.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/constants.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/constants.c
 ../doc-common-insert.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
 distinct.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/distinct.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/distinct.c
 map-reduce-basic.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-basic.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-basic.c
 map-reduce-advanced.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-advanced.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-advanced.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/constants.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/constants.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/distinct.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/distinct.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-advanced.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-advanced.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-basic.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/basic_aggregation/map-reduce-basic.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
 
 src/libbson/src/bson/bson-config.h
 

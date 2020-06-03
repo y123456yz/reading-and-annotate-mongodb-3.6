@@ -732,9 +732,9 @@ mongoc-stream-tls.h
 mongoc-ssl.h
 ../src/libmongoc/src/mongoc/mongoc-ssl.h
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-update.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-update.c
 mongoc.h
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/mongoc.h
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/mongoc.h
 
 src/libbson/src/bson/bson-config.h
 
