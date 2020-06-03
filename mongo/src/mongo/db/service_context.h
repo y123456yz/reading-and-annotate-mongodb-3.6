@@ -480,6 +480,7 @@ private:
     /**
      * Returns a new OperationContext. Private, for use by makeOperationContext.
      */
+    //ServiceContext::makeOperationContext调用
     virtual std::unique_ptr<OperationContext> _newOpCtx(Client* client, unsigned opId) = 0;
 
     /**
@@ -516,7 +517,7 @@ private:
     //ServiceContext::registerClientObserver把一个ClientObserver存入到_clientObservers成员
     //ServiceContext::makeClient中遍历该vector
     std::vector<std::unique_ptr<ClientObserver>> _clientObservers;
-    //ServiceContext::makeClient中插入
+    //ServiceContext::makeClient中插入  client都加入到了该set中
     ClientSet _clients;
 
     /**

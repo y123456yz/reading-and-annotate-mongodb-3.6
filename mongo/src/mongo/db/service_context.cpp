@@ -146,6 +146,7 @@ ServiceContext::~ServiceContext() {
     invariant(_clients.empty());
 }
 
+//根据desc线程名和session信息构造一个唯一UniqueClient
 ServiceContext::UniqueClient ServiceContext::makeClient(std::string desc,
                                                         transport::SessionHandle session) {
     std::unique_ptr<Client> client(new Client(std::move(desc), this, std::move(session)));
@@ -167,8 +168,11 @@ ServiceContext::UniqueClient ServiceContext::makeClient(std::string desc,
     }
     {
         stdx::lock_guard<stdx::mutex> lk(_mutex);
+		//client加入到_clients集合中
         invariant(_clients.insert(client.get()).second);
     }
+
+	//根据client生成一个唯一UniqueClient
     return UniqueClient(client.release());
 }
 

@@ -43,10 +43,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/yyz/mongo-c-driver-1.11.0
+CMAKE_SOURCE_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/yyz/mongo-c-driver-1.11.0/cmake-build
+CMAKE_BINARY_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build
 
 # Include any dependencies generated for this target.
 include src/libmongoc/CMakeFiles/example-command-monitoring.dir/depend.make
@@ -59,16 +59,16 @@ include src/libmongoc/CMakeFiles/example-command-monitoring.dir/flags.make
 
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o: src/libmongoc/CMakeFiles/example-command-monitoring.dir/flags.make
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o: ../src/libmongoc/examples/example-command-monitoring.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-monitoring.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-monitoring.c
 
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-monitoring.c > CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-monitoring.c > CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.i
 
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-monitoring.c -o CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-monitoring.c -o CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.s
 
 # Object files for target example-command-monitoring
 example__command__monitoring_OBJECTS = \
@@ -80,12 +80,17 @@ example__command__monitoring_EXTERNAL_OBJECTS =
 src/libmongoc/example-command-monitoring: src/libmongoc/CMakeFiles/example-command-monitoring.dir/examples/example-command-monitoring.c.o
 src/libmongoc/example-command-monitoring: src/libmongoc/CMakeFiles/example-command-monitoring.dir/build.make
 src/libmongoc/example-command-monitoring: src/libmongoc/libmongoc-1.0.so.0.0.0
+src/libmongoc/example-command-monitoring: /usr/lib64/libsasl2.so
+src/libmongoc/example-command-monitoring: /usr/lib64/libssl.so
+src/libmongoc/example-command-monitoring: /usr/lib64/libcrypto.so
+src/libmongoc/example-command-monitoring: /usr/lib64/libz.so
+src/libmongoc/example-command-monitoring: /usr/lib64/libicuuc.so
 src/libmongoc/example-command-monitoring: src/libbson/libbson-1.0.so.0.0.0
 src/libmongoc/example-command-monitoring: /usr/lib64/librt.so
 src/libmongoc/example-command-monitoring: /usr/lib64/libm.so
 src/libmongoc/example-command-monitoring: src/libmongoc/CMakeFiles/example-command-monitoring.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable example-command-monitoring"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example-command-monitoring.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable example-command-monitoring"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example-command-monitoring.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/build: src/libmongoc/example-command-monitoring
@@ -93,10 +98,10 @@ src/libmongoc/CMakeFiles/example-command-monitoring.dir/build: src/libmongoc/exa
 .PHONY : src/libmongoc/CMakeFiles/example-command-monitoring.dir/build
 
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/clean:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/example-command-monitoring.dir/cmake_clean.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/example-command-monitoring.dir/cmake_clean.cmake
 .PHONY : src/libmongoc/CMakeFiles/example-command-monitoring.dir/clean
 
 src/libmongoc/CMakeFiles/example-command-monitoring.dir/depend:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/mongo-c-driver-1.11.0 /root/yyz/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/example-command-monitoring.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0 /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/example-command-monitoring.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : src/libmongoc/CMakeFiles/example-command-monitoring.dir/depend
 

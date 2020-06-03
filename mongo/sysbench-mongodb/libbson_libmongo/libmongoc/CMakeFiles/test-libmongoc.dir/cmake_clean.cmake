@@ -92,6 +92,11 @@ file(REMOVE_RECURSE
   "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o"
   "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o"
   "CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o"
+  "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o"
+  "CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o"
+  "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o"
+  "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o"
+  "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o"
   "test-libmongoc.pdb"
   "test-libmongoc"
 )

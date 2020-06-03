@@ -90,6 +90,8 @@ class UnreplicatedWritesBlock;
 //ServiceContext包含OperationContext成员，见UniqueOperationContext
 //ServiceContextMongoD::_newOpCtx  ServiceContext::makeOperationContext Client::makeOperationContext 
 //ServiceStateMachine::_processMessage中会构造该类  WriteUnitOfWork._opCtx为该类类型
+
+//ServiceContext::makeOperationContext中构造使用
 class OperationContext : public Decorable<OperationContext> {
     MONGO_DISALLOW_COPYING(OperationContext);
 
@@ -297,6 +299,7 @@ public:
     /**
      * Returns the client under which this context runs.
      */
+    //获取op对应的client
     Client* getClient() const {
         return _client;
     }

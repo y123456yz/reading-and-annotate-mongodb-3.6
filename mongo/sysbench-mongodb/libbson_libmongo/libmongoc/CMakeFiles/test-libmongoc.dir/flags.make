@@ -6,7 +6,7 @@ C_FLAGS =   -pthread
 
 C_DEFINES = -DBSON_STATIC -DMONGOC_COMPILATION -DMONGOC_STATIC -D_BSD_SOURCE -D_DEFAULT_SOURCE -D_GNU_SOURCE
 
-C_INCLUDES = -I/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/src/mongoc -I/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/src/mongoc -I/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/../../src/common -I/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests -I/root/yyz/mongo-c-driver-1.11.0/src/libbson/src/bson -I/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libbson/src/bson -I/root/yyz/mongo-c-driver-1.11.0/src/zlib-1.2.11 -I/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/zlib-1.2.11 
+C_INCLUDES = -I/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/src/mongoc -I/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/src/mongoc -I/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/../../src/common -I/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests -I/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/src/bson -I/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libbson/src/bson 
 
 # Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o_FLAGS = -Wno-deprecated-declarations
 
@@ -193,4 +193,14 @@ C_INCLUDES = -I/root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/src/mon
 # Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o_FLAGS = -Wno-deprecated-declarations
 
 # Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o_FLAGS = -Wno-deprecated-declarations
+
+# Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o_FLAGS = -Wno-deprecated-declarations
+
+# Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o_FLAGS = -Wno-deprecated-declarations
+
+# Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o_FLAGS = -Wno-deprecated-declarations
+
+# Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o_FLAGS = -Wno-deprecated-declarations
+
+# Custom flags: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o_FLAGS = -Wno-deprecated-declarations
 

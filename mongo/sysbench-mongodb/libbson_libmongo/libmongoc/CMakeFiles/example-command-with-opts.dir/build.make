@@ -43,10 +43,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/yyz/mongo-c-driver-1.11.0
+CMAKE_SOURCE_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/yyz/mongo-c-driver-1.11.0/cmake-build
+CMAKE_BINARY_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build
 
 # Include any dependencies generated for this target.
 include src/libmongoc/CMakeFiles/example-command-with-opts.dir/depend.make
@@ -59,16 +59,16 @@ include src/libmongoc/CMakeFiles/example-command-with-opts.dir/flags.make
 
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o: src/libmongoc/CMakeFiles/example-command-with-opts.dir/flags.make
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o: ../src/libmongoc/examples/example-command-with-opts.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-with-opts.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-with-opts.c
 
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-with-opts.c > CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-with-opts.c > CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.i
 
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-with-opts.c -o CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/example-command-with-opts.c -o CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.s
 
 # Object files for target example-command-with-opts
 example__command__with__opts_OBJECTS = \
@@ -80,12 +80,17 @@ example__command__with__opts_EXTERNAL_OBJECTS =
 src/libmongoc/example-command-with-opts: src/libmongoc/CMakeFiles/example-command-with-opts.dir/examples/example-command-with-opts.c.o
 src/libmongoc/example-command-with-opts: src/libmongoc/CMakeFiles/example-command-with-opts.dir/build.make
 src/libmongoc/example-command-with-opts: src/libmongoc/libmongoc-1.0.so.0.0.0
+src/libmongoc/example-command-with-opts: /usr/lib64/libsasl2.so
+src/libmongoc/example-command-with-opts: /usr/lib64/libssl.so
+src/libmongoc/example-command-with-opts: /usr/lib64/libcrypto.so
+src/libmongoc/example-command-with-opts: /usr/lib64/libz.so
+src/libmongoc/example-command-with-opts: /usr/lib64/libicuuc.so
 src/libmongoc/example-command-with-opts: src/libbson/libbson-1.0.so.0.0.0
 src/libmongoc/example-command-with-opts: /usr/lib64/librt.so
 src/libmongoc/example-command-with-opts: /usr/lib64/libm.so
 src/libmongoc/example-command-with-opts: src/libmongoc/CMakeFiles/example-command-with-opts.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable example-command-with-opts"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example-command-with-opts.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable example-command-with-opts"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example-command-with-opts.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/build: src/libmongoc/example-command-with-opts
@@ -93,10 +98,10 @@ src/libmongoc/CMakeFiles/example-command-with-opts.dir/build: src/libmongoc/exam
 .PHONY : src/libmongoc/CMakeFiles/example-command-with-opts.dir/build
 
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/clean:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/example-command-with-opts.dir/cmake_clean.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/example-command-with-opts.dir/cmake_clean.cmake
 .PHONY : src/libmongoc/CMakeFiles/example-command-with-opts.dir/clean
 
 src/libmongoc/CMakeFiles/example-command-with-opts.dir/depend:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/mongo-c-driver-1.11.0 /root/yyz/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/example-command-with-opts.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0 /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/example-command-with-opts.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : src/libmongoc/CMakeFiles/example-command-with-opts.dir/depend
 

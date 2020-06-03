@@ -732,27 +732,27 @@ mongoc-stream-tls.h
 mongoc-ssl.h
 ../src/libmongoc/src/mongoc/mongoc-ssl.h
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/clone-collection.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/clone-collection.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/common-operations.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/common-operations.c
 mongoc.h
 -
 stdio.h
 -
 ../doc-common-insert.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
 explain.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/explain.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/explain.c
 copydb.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/copydb.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/copydb.c
 clone-collection.c
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/clone-collection.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/clone-collection.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/copydb.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/copydb.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/explain.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/common_operations/explain.c
 
-/root/yyz/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
+/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/examples/doc-common-insert.c
 
 src/libbson/src/bson/bson-config.h
 

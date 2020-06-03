@@ -43,10 +43,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/yyz/mongo-c-driver-1.11.0
+CMAKE_SOURCE_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/yyz/mongo-c-driver-1.11.0/cmake-build
+CMAKE_BINARY_DIR = /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build
 
 # Include any dependencies generated for this target.
 include src/libmongoc/CMakeFiles/test-libmongoc.dir/depend.make
@@ -59,1212 +59,1277 @@ include src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o: ../src/libbson/tests/corpus-test.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/corpus-test.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/corpus-test.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/corpus-test.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/corpus-test.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/corpus-test.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/corpus-test.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/corpus-test.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o: ../src/libbson/tests/test-atomic.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-atomic.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-atomic.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-atomic.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-atomic.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-atomic.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-atomic.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-atomic.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o: ../src/libbson/tests/test-bson.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o: ../src/libbson/tests/test-bson-corpus.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-corpus.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-corpus.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-corpus.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-corpus.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-corpus.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-corpus.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-corpus.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o: ../src/libbson/tests/test-bson-error.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-error.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-error.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-error.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-error.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-error.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-error.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-error.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o: ../src/libbson/tests/test-bson-version.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-version.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-version.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-version.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-version.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-version.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bson-version.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bson-version.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o: ../src/libbson/tests/test-endian.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-endian.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-endian.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-endian.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-endian.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-endian.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-endian.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-endian.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o: ../src/libbson/tests/test-clock.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-clock.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-clock.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-clock.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-clock.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-clock.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-clock.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-clock.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o: ../src/libbson/tests/test-decimal128.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-decimal128.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-decimal128.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-decimal128.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-decimal128.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-decimal128.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-decimal128.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-decimal128.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o: ../src/libbson/tests/test-fnv.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-fnv.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-fnv.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-fnv.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-fnv.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-fnv.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-fnv.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-fnv.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o: ../src/libbson/tests/test-iso8601.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-iso8601.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-iso8601.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-iso8601.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-iso8601.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-iso8601.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-iso8601.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iso8601.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o: ../src/libbson/tests/test-iter.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-iter.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-iter.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-iter.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-iter.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-iter.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-iter.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-iter.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o: ../src/libbson/tests/test-json.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-json.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-json.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-json.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-json.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-json.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-json.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-json.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o: ../src/libbson/tests/test-oid.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-oid.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-oid.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-oid.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-oid.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-oid.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-oid.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-oid.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o: ../src/libbson/tests/test-reader.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-reader.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-reader.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-reader.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-reader.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-reader.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-reader.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-reader.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o: ../src/libbson/tests/test-string.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-string.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-string.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-string.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-string.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-string.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-string.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-string.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o: ../src/libbson/tests/test-utf8.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-utf8.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-utf8.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-utf8.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-utf8.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-utf8.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-utf8.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-utf8.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o: ../src/libbson/tests/test-value.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-value.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-value.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-value.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-value.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-value.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-value.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-value.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o: ../src/libbson/tests/test-writer.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-writer.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-writer.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-writer.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-writer.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-writer.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-writer.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-writer.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o: ../src/libbson/tests/test-bcon-basic.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-basic.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-basic.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-basic.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-basic.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-basic.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-basic.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-basic.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o: ../src/libbson/tests/test-bcon-extract.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-extract.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-extract.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-extract.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-extract.c > CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-extract.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libbson/tests/test-bcon-extract.c -o CMakeFiles/test-libmongoc.dir/__/libbson/tests/test-bcon-extract.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o: ../src/libmongoc/tests/debug-stream.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/debug-stream.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/debug-stream.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/debug-stream.c > CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/debug-stream.c > CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/debug-stream.c -o CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/debug-stream.c -o CMakeFiles/test-libmongoc.dir/tests/debug-stream.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.o: ../src/libmongoc/tests/json-test.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/json-test.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/json-test.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/json-test.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test.c > CMakeFiles/test-libmongoc.dir/tests/json-test.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test.c > CMakeFiles/test-libmongoc.dir/tests/json-test.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/json-test.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test.c -o CMakeFiles/test-libmongoc.dir/tests/json-test.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test.c -o CMakeFiles/test-libmongoc.dir/tests/json-test.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o: ../src/libmongoc/tests/json-test-monitoring.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-monitoring.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-monitoring.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-monitoring.c > CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-monitoring.c > CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-monitoring.c -o CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-monitoring.c -o CMakeFiles/test-libmongoc.dir/tests/json-test-monitoring.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o: ../src/libmongoc/tests/json-test-operations.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-operations.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-operations.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-operations.c > CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-operations.c > CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-operations.c -o CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/json-test-operations.c -o CMakeFiles/test-libmongoc.dir/tests/json-test-operations.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o: ../src/libmongoc/tests/mock_server/future.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o: ../src/libmongoc/tests/mock_server/future-functions.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-functions.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-functions.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-functions.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-functions.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-functions.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-functions.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-functions.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o: ../src/libmongoc/tests/mock_server/future-value.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-value.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-value.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-value.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-value.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-value.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/future-value.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/future-value.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o: ../src/libmongoc/tests/mock_server/sync-queue.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/sync-queue.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/sync-queue.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/sync-queue.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/sync-queue.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/sync-queue.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/sync-queue.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/sync-queue.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o: ../src/libmongoc/tests/mock_server/mock-rs.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-rs.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-rs.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-rs.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-rs.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-rs.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-rs.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-rs.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o: ../src/libmongoc/tests/mock_server/mock-server.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-server.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-server.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-server.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-server.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-server.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/mock-server.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/mock-server.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o: ../src/libmongoc/tests/mock_server/request.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/request.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/request.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/request.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/request.c > CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/request.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/mock_server/request.c -o CMakeFiles/test-libmongoc.dir/tests/mock_server/request.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o: ../src/libmongoc/tests/test-conveniences.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-conveniences.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-conveniences.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-conveniences.c > CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-conveniences.c > CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-conveniences.c -o CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-conveniences.c -o CMakeFiles/test-libmongoc.dir/tests/test-conveniences.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o: ../src/libmongoc/tests/test-libmongoc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-libmongoc.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-libmongoc.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-libmongoc.c > CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-libmongoc.c > CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-libmongoc.c -o CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-libmongoc.c -o CMakeFiles/test-libmongoc.dir/tests/test-libmongoc.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o: ../src/libmongoc/tests/test-happy-eyeballs.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-happy-eyeballs.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-happy-eyeballs.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-happy-eyeballs.c > CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-happy-eyeballs.c > CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-happy-eyeballs.c -o CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-happy-eyeballs.c -o CMakeFiles/test-libmongoc.dir/tests/test-happy-eyeballs.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o: ../src/libmongoc/tests/test-mongoc-array.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-array.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-array.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-array.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-array.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-array.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-array.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-array.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o: ../src/libmongoc/tests/test-mongoc-async.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-async.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-async.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-async.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-async.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-async.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-async.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-async.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o: ../src/libmongoc/tests/test-mongoc-buffer.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-buffer.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-buffer.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-buffer.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-buffer.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-buffer.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-buffer.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-buffer.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o: ../src/libmongoc/tests/test-mongoc-bulk.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-bulk.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-bulk.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-bulk.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-bulk.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-bulk.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-bulk.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-bulk.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o: ../src/libmongoc/tests/test-mongoc-change-stream.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-change-stream.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-change-stream.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-change-stream.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-change-stream.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-change-stream.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-change-stream.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-change-stream.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o: ../src/libmongoc/tests/test-mongoc-client.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o: ../src/libmongoc/tests/test-mongoc-client-pool.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-pool.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-pool.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-pool.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-pool.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-pool.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-pool.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-pool.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o: ../src/libmongoc/tests/test-mongoc-cluster.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cluster.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cluster.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cluster.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cluster.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cluster.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cluster.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cluster.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o: ../src/libmongoc/tests/test-mongoc-collection.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o: ../src/libmongoc/tests/test-mongoc-collection-find.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o: ../src/libmongoc/tests/test-mongoc-collection-find-with-opts.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find-with-opts.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find-with-opts.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find-with-opts.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find-with-opts.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find-with-opts.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-collection-find-with-opts.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-collection-find-with-opts.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o: ../src/libmongoc/tests/test-mongoc-connection-uri.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-connection-uri.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-connection-uri.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-connection-uri.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-connection-uri.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-connection-uri.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-connection-uri.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-connection-uri.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o: ../src/libmongoc/tests/test-mongoc-command-monitoring.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-command-monitoring.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-command-monitoring.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-command-monitoring.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-command-monitoring.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-command-monitoring.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-command-monitoring.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-command-monitoring.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o: ../src/libmongoc/tests/test-mongoc-counters.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-counters.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-counters.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-counters.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-counters.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-counters.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-counters.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-counters.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o: ../src/libmongoc/tests/test-mongoc-crud.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-crud.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-crud.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-crud.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-crud.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-crud.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-crud.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-crud.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o: ../src/libmongoc/tests/test-mongoc-cursor.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_51) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cursor.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_51) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cursor.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cursor.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cursor.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cursor.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cursor.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cursor.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o: ../src/libmongoc/tests/test-mongoc-database.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_52) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-database.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_52) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-database.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-database.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-database.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-database.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-database.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-database.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o: ../src/libmongoc/tests/test-mongoc-error.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_53) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-error.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_53) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-error.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-error.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-error.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-error.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-error.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-error.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o: ../src/libmongoc/tests/test-mongoc-exhaust.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_54) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-exhaust.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_54) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-exhaust.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-exhaust.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-exhaust.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-exhaust.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-exhaust.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-exhaust.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o: ../src/libmongoc/tests/test-mongoc-find-and-modify.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_55) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-find-and-modify.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_55) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-find-and-modify.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-find-and-modify.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-find-and-modify.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-find-and-modify.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-find-and-modify.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-find-and-modify.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o: ../src/libmongoc/tests/test-mongoc-gridfs.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_56) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_56) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o: ../src/libmongoc/tests/test-mongoc-gridfs-file-page.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_57) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs-file-page.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_57) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs-file-page.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs-file-page.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs-file-page.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs-file-page.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-gridfs-file-page.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-gridfs-file-page.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o: ../src/libmongoc/tests/test-mongoc-handshake.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_58) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-handshake.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_58) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-handshake.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-handshake.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-handshake.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-handshake.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-handshake.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-handshake.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o: ../src/libmongoc/tests/test-mongoc-linux-distro-scanner.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_59) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-linux-distro-scanner.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_59) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-linux-distro-scanner.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-linux-distro-scanner.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-linux-distro-scanner.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-linux-distro-scanner.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-linux-distro-scanner.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-linux-distro-scanner.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o: ../src/libmongoc/tests/test-mongoc-list.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_60) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-list.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_60) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-list.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-list.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-list.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-list.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-list.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-list.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o: ../src/libmongoc/tests/test-mongoc-log.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_61) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-log.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_61) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-log.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-log.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-log.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-log.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-log.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-log.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o: ../src/libmongoc/tests/test-mongoc-matcher.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_62) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-matcher.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_62) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-matcher.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-matcher.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-matcher.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-matcher.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-matcher.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-matcher.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o: ../src/libmongoc/tests/test-mongoc-max-staleness.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_63) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-max-staleness.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_63) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-max-staleness.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-max-staleness.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-max-staleness.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-max-staleness.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-max-staleness.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-max-staleness.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o: ../src/libmongoc/tests/test-mongoc-queue.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_64) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-queue.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_64) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-queue.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-queue.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-queue.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-queue.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-queue.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-queue.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o: ../src/libmongoc/tests/test-mongoc-read-concern.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_65) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-concern.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_65) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-concern.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-concern.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-concern.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-concern.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-concern.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-concern.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o: ../src/libmongoc/tests/test-mongoc-read-write-concern.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_66) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-write-concern.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_66) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-write-concern.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-write-concern.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-write-concern.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-write-concern.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-write-concern.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-write-concern.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o: ../src/libmongoc/tests/test-mongoc-read-prefs.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_67) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-prefs.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_67) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-prefs.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-prefs.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-prefs.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-prefs.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-read-prefs.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-read-prefs.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o: ../src/libmongoc/tests/test-mongoc-retryable-writes.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_68) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-retryable-writes.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_68) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-retryable-writes.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-retryable-writes.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-retryable-writes.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-retryable-writes.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-retryable-writes.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-retryable-writes.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o: ../src/libmongoc/tests/test-mongoc-rpc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_69) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-rpc.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_69) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-rpc.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-rpc.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-rpc.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-rpc.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-rpc.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-rpc.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o: ../src/libmongoc/tests/test-mongoc-sample-commands.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sample-commands.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sample-commands.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sample-commands.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sample-commands.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sample-commands.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sample-commands.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sample-commands.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o: ../src/libmongoc/tests/test-mongoc-scram.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_71) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-scram.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_71) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-scram.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-scram.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-scram.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-scram.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-scram.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-scram.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o: ../src/libmongoc/tests/test-mongoc-sdam.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_72) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_72) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o: ../src/libmongoc/tests/test-mongoc-sdam-monitoring.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_73) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam-monitoring.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_73) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam-monitoring.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam-monitoring.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam-monitoring.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam-monitoring.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-sdam-monitoring.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-sdam-monitoring.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o: ../src/libmongoc/tests/test-mongoc-server-selection.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_74) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_74) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o: ../src/libmongoc/tests/test-mongoc-server-selection-errors.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_75) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection-errors.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_75) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection-errors.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection-errors.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection-errors.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection-errors.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-server-selection-errors.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-server-selection-errors.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o: ../src/libmongoc/tests/test-mongoc-transactions.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_76) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-transactions.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_76) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-transactions.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-transactions.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-transactions.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-transactions.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-transactions.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-transactions.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o: ../src/libmongoc/tests/test-mongoc-client-session.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_77) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-session.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_77) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-session.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-session.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-session.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-session.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-client-session.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-client-session.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o: ../src/libmongoc/tests/test-mongoc-set.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_78) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-set.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_78) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-set.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-set.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-set.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-set.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-set.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-set.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o: ../src/libmongoc/tests/test-mongoc-socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-socket.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-socket.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-socket.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-socket.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-socket.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-socket.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-socket.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o: ../src/libmongoc/tests/test-mongoc-dns.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-dns.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-dns.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-dns.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-dns.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-dns.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-dns.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-dns.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o: ../src/libmongoc/tests/test-mongoc-stream.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_81) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_81) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o: ../src/libmongoc/tests/test-mongoc-thread.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_82) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-thread.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_82) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-thread.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-thread.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-thread.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-thread.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-thread.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-thread.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o: ../src/libmongoc/tests/test-mongoc-topology.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_83) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_83) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o: ../src/libmongoc/tests/test-mongoc-topology-description.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_84) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-description.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_84) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-description.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-description.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-description.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-description.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-description.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-description.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o: ../src/libmongoc/tests/test-mongoc-topology-reconcile.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_85) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-reconcile.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_85) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-reconcile.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-reconcile.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-reconcile.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-reconcile.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-reconcile.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-reconcile.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o: ../src/libmongoc/tests/test-mongoc-topology-scanner.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_86) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-scanner.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_86) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-scanner.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-scanner.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-scanner.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-scanner.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-topology-scanner.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-topology-scanner.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o: ../src/libmongoc/tests/test-mongoc-uri.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_87) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-uri.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_87) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-uri.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-uri.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-uri.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-uri.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-uri.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-uri.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o: ../src/libmongoc/tests/test-mongoc-version.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_88) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-version.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_88) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-version.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-version.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-version.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-version.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-version.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-version.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o: ../src/libmongoc/tests/test-mongoc-usleep.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_89) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-usleep.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_89) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-usleep.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-usleep.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-usleep.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-usleep.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-usleep.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-usleep.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o: ../src/libmongoc/tests/test-mongoc-util.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_90) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-util.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_90) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-util.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-util.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-util.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-util.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-util.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o: ../src/libmongoc/tests/test-mongoc-write-commands.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_91) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-commands.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_91) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-commands.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-commands.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-commands.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-commands.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-commands.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o: ../src/libmongoc/tests/test-mongoc-write-concern.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_92) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-concern.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_92) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-concern.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-concern.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-concern.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-concern.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-write-concern.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.s
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o: ../src/libmongoc/tests/TestSuite.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_93) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o   -c /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/TestSuite.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_93) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/TestSuite.c
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.i"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/TestSuite.c > CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.i
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/TestSuite.c > CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.i
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.s"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/mongo-c-driver-1.11.0/src/libmongoc/tests/TestSuite.c -o CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.s
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/TestSuite.c -o CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.s
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o: ../src/libmongoc/tests/test-mongoc-x509.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_94) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-x509.c
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.i"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-x509.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.i
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.s"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-x509.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.s
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o: ../src/libmongoc/tests/ssl-test.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_95) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/ssl-test.c
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.i"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/ssl-test.c > CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.i
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.s"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/ssl-test.c -o CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.s
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o: ../src/libmongoc/tests/test-mongoc-stream-tls.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_96) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream-tls.c
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.i"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream-tls.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.i
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.s"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream-tls.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.s
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o: ../src/libmongoc/tests/test-mongoc-stream-tls-error.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_97) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream-tls-error.c
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.i"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream-tls-error.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.i
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.s"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-stream-tls-error.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.s
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o: src/libmongoc/CMakeFiles/test-libmongoc.dir/flags.make
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o: ../src/libmongoc/tests/test-mongoc-cyrus.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_98) "Building C object src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o   -c /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cyrus.c
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.i"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -E /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cyrus.c > CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.i
+
+src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.s"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -Wno-deprecated-declarations -S /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc/tests/test-mongoc-cyrus.c -o CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.s
 
 # Object files for target test-libmongoc
 test__libmongoc_OBJECTS = \
@@ -1360,7 +1425,12 @@ test__libmongoc_OBJECTS = \
 "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-util.c.o" \
 "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o" \
 "CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o" \
-"CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o"
+"CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o" \
+"CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o" \
+"CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o" \
+"CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o" \
+"CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o" \
+"CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o"
 
 # External object files for target test-libmongoc
 test__libmongoc_EXTERNAL_OBJECTS =
@@ -1458,14 +1528,24 @@ src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/
 src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-commands.c.o
 src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-write-concern.c.o
 src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/TestSuite.c.o
+src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-x509.c.o
+src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/ssl-test.c.o
+src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls.c.o
+src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-stream-tls-error.c.o
+src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/tests/test-mongoc-cyrus.c.o
 src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/build.make
 src/libmongoc/test-libmongoc: src/libmongoc/libmongoc-static-1.0.a
+src/libmongoc/test-libmongoc: /usr/lib64/libsasl2.so
+src/libmongoc/test-libmongoc: /usr/lib64/libssl.so
+src/libmongoc/test-libmongoc: /usr/lib64/libcrypto.so
+src/libmongoc/test-libmongoc: /usr/lib64/libz.so
+src/libmongoc/test-libmongoc: /usr/lib64/libicuuc.so
 src/libmongoc/test-libmongoc: src/libbson/libbson-static-1.0.a
 src/libmongoc/test-libmongoc: /usr/lib64/librt.so
 src/libmongoc/test-libmongoc: /usr/lib64/libm.so
 src/libmongoc/test-libmongoc: src/libmongoc/CMakeFiles/test-libmongoc.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_94) "Linking C executable test-libmongoc"
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test-libmongoc.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_99) "Linking C executable test-libmongoc"
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test-libmongoc.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 src/libmongoc/CMakeFiles/test-libmongoc.dir/build: src/libmongoc/test-libmongoc
@@ -1473,10 +1553,10 @@ src/libmongoc/CMakeFiles/test-libmongoc.dir/build: src/libmongoc/test-libmongoc
 .PHONY : src/libmongoc/CMakeFiles/test-libmongoc.dir/build
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/clean:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/test-libmongoc.dir/cmake_clean.cmake
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc && $(CMAKE_COMMAND) -P CMakeFiles/test-libmongoc.dir/cmake_clean.cmake
 .PHONY : src/libmongoc/CMakeFiles/test-libmongoc.dir/clean
 
 src/libmongoc/CMakeFiles/test-libmongoc.dir/depend:
-	cd /root/yyz/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/mongo-c-driver-1.11.0 /root/yyz/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/test-libmongoc.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0 /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc /root/yyz/reading-and-annotate-mongodb-3.6.1/mongo/sysbench-mongodb/mongo-c-driver-1.11.0/cmake-build/src/libmongoc/CMakeFiles/test-libmongoc.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : src/libmongoc/CMakeFiles/test-libmongoc.dir/depend
 

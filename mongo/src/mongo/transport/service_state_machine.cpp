@@ -504,6 +504,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
 	//log() << "	yang test ...........	_processMessage ";
 
 	//获取类MessageCompressorManager
+	//压缩相关得，跳过
     auto& compressorMgr = MessageCompressorManager::forSession(_session());
 
     _compressorId = boost::none;
@@ -515,6 +516,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
         _compressorId = compressorId;
     }
 
+	//入口流量计数
     networkCounter.hitLogicalIn(_inMessage.size());
 
     // Pass sourced Message to handler to generate response.

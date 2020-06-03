@@ -1,0 +1,5 @@
+sysbench运行报错: cluster: Authentication failed: The SCRAM_SHA_1 authentication mechanism requires libmongoc built with ENABLE_SSL
+
+解决办法如下: 编译mongo-c-driver-1.11.0加上如下参数
+ cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -MONGOC_ENABLE_CRYPTO=ON -MONGOC_ENABLE_SSL=ON ..
+
