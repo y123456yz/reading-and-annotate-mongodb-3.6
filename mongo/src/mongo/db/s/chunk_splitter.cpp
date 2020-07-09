@@ -267,6 +267,10 @@ void ChunkSplitter::trySplitting(const NamespaceString& nss,
     }));
 }
 
+//split chunks 一般是在插入、更新、删除数据时，由 mongos 发出到分片的 splitVector 命令，此时分片才会判断是否需要 split。
+/*系统会调度一个自动split的任务，而任务会调用下述接口。该接口会确定是否应该分割指定的块，然后执行
+任何必要的分割。它还可以执行“top chunk”优化，其中包含MaxKey或MinKey的结果块将被移到另一个碎片上，
+以减轻原始所有者的负载*/
 void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
                                   const BSONObj& min,
                                   const BSONObj& max,
@@ -314,6 +318,7 @@ void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
                << " dataWritten since last check: " << dataWritten
                << " maxChunkSizeBytes: " << maxChunkSizeBytes;
 
+		////调用splitVector来判断是否需要split
         auto splitPoints = uassertStatusOK(splitVector(opCtx.get(),
                                                        nss,
                                                        cm->getShardKeyPattern().toBSON(),
@@ -325,6 +330,7 @@ void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
                                                        boost::none,
                                                        maxChunkSizeBytes));
 
+		/*没有分割点意味着没有足够的数据可供分割;一个分割点意味着我们有一半的块大小到完整的块大小，所以还没有必要分割*/
         if (splitPoints.size() <= 1) {
             // No split points means there isn't enough data to split on; 1 split point means we
             // have between half the chunk size to full chunk size so there is no need to split yet
@@ -364,6 +370,7 @@ void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
             }
         }
 
+		//进行实际的split操作
         uassertStatusOK(splitChunkAtMultiplePoints(opCtx.get(),
                                                    chunk->getShardId(),
                                                    nss,
@@ -382,7 +389,8 @@ void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
 
         // Balance the resulting chunks if the autobalance option is enabled and if we split at the
         // first or last chunk on the collection as part of top chunk optimization.
-
+		//判断是否需要进行balance；包括判断支持的balance设定为kAutoSplitOnly，即只支持在自动split
+		//后balance；以及发生split的nss支持balance；
         if (!shouldBalance || topChunkMinKey.isEmpty()) {
             return;
         }
@@ -390,6 +398,8 @@ void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
         // Tries to move the top chunk out of the shard to prevent the hot spot from staying on a
         // single shard. This is based on the assumption that succeeding inserts will fall on the
         // top chunk.
+        //尝试将顶部块移出shard，以防止热点停留在单个shard上。这是基于以下假设:后续插入将落在顶部块上。
+        //这是因为split触发的一次move。
         moveChunk(opCtx.get(), nss, topChunkMinKey);
     } catch (const DBException& ex) {
         log() << "Unable to auto-split chunk " << redact(ChunkRange(min, max).toString())

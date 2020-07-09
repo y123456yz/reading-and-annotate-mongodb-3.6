@@ -94,8 +94,9 @@ private:
     virtual void _run(OperationContext* opCtx, BSONObjBuilder* result) = 0;
 };
 
+//和BalancerStartCommand相关命令对应
 class ConfigSvrBalancerStartCommand : public ConfigSvrBalancerControlCommand {
-public:
+public: //db.adminCommand( { balancerStart: 1 } )
     ConfigSvrBalancerStartCommand() : ConfigSvrBalancerControlCommand("_configsvrBalancerStart") {}
 
 private:
@@ -106,7 +107,7 @@ private:
 };
 
 class ConfigSvrBalancerStopCommand : public ConfigSvrBalancerControlCommand {
-public:
+public: //db.adminCommand( { balancerStop: 1 } )
     ConfigSvrBalancerStopCommand() : ConfigSvrBalancerControlCommand("_configsvrBalancerStop") {}
 
 private:

@@ -72,8 +72,8 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
 
         ShardEndpoint* endpoint = NULL;
         // TODO: Remove the index targeting stuff once there is a command for it
-        if (!isIndexInsert) {
-			//ChunkManagerTargeter::targetInsert
+        if (!isIndexInsert) {   
+			//ChunkManagerTargeter::targetInsert   
             targetStatus = targeter.targetInsert(opCtx, _itemRef.getDocument(), &endpoint);
         } else {
             // TODO: Retry index writes with stale version?

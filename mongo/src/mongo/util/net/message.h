@@ -44,7 +44,9 @@ namespace mongo {
  */
 const size_t MaxMessageSizeBytes = 48 * 1000 * 1000;
 //ServiceEntryPointMongod::handleRequest
-enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
+//enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
+enum NetworkOp { 
+
     opInvalid = 0,
     opReply = 1,     /* reply. responseTo is set. */
     dbUpdate = 2001, /* update object */

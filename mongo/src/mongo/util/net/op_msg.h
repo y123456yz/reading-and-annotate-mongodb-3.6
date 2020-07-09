@@ -113,6 +113,7 @@ struct OpMsg { //OpMsgRequest继承该类
  * An OpMsg that represents a request. This is a separate type from OpMsg only to provide better
  * type-safety along with a place to hang request-specific methods.
  */
+//协议解析得时候会用到，见runCommands
 struct OpMsgRequest : public OpMsg {
     // TODO in C++17 remove constructors so we can use aggregate initialization.
     OpMsgRequest() = default;
@@ -143,6 +144,7 @@ struct OpMsgRequest : public OpMsg {
         uasserted(40571, "OP_MSG requests require a $db argument");
     }
 
+    //find  insert 等
     StringData getCommandName() const {
         return body.firstElementFieldName();
     }

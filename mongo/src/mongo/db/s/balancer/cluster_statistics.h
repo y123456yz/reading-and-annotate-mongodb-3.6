@@ -47,7 +47,7 @@ class StatusWith;
  * This interface serves as means for obtaining data distribution and shard utilization statistics
  * for the entire sharded cluster. Implementations may choose whatever means necessary to perform
  * the statistics collection. There should be one instance of this object per service context.
- */
+ */ //ClusterStatisticsImpl继承该类
 class ClusterStatistics {
     MONGO_DISALLOW_COPYING(ClusterStatistics);
 
@@ -55,6 +55,7 @@ public:
     /**
      * Structure, which describes the statistics of a single shard host.
      */
+    //一个shard的统计信息
     struct ShardStatistics {
     public:
         ShardStatistics(ShardId shardId,
@@ -76,6 +77,7 @@ public:
         BSONObj toBSON() const;
 
         // The id of the shard for which this statistic applies
+        //分片名
         ShardId shardId;
 
         // The maximum storage size allowed for the shard. Zero means no maximum specified.

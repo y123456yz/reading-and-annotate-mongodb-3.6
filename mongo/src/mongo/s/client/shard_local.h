@@ -33,7 +33,7 @@
 #include "mongo/s/client/shard.h"
 
 namespace mongo {
-
+//ShardRemote对应mongod分片或者cfg集群,ShardLocal对应mongos
 class ShardLocal : public Shard {
     MONGO_DISALLOW_COPYING(ShardLocal);
 

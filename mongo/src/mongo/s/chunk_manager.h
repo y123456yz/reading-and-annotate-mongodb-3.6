@@ -55,8 +55,8 @@ using ShardVersionMap = std::map<ShardId, ChunkVersion>;
 
 /**
  * In-memory representation of the routing table for a single sharded collection.
- */
-//分片chunk块相关
+ */ //ChunkManager chunk管理     balance负载均衡管理
+//分片chunk块相关 mongoDB 的chunk分裂只会发生在 mongos 写入数据时， 当写入的数据超过一定量时， 就会触发 chunk 的分裂
 class ChunkManager : public std::enable_shared_from_this<ChunkManager> {
     MONGO_DISALLOW_COPYING(ChunkManager);
 

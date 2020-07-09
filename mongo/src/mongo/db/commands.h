@@ -503,6 +503,7 @@ src/mongo/s/commands/cluster_profile_cmd.cpp:        actions.addAction(ActionTyp
 //mongos  ClusterWriteCmd(ClusterCmdInsert  ClusterCmdUpdate  ClusterCmdDelete类继承该类，对应mongos转发)
 
 //mongos和mongod支持的命令统计都不一样，通过 db.serverStatus().metrics.commands查看命令统计信息
+//Command::findCommand中通过c = Command::findCommand(request.getCommandName())获取对应的command
 class Command : public CommandInterface {
 public:
     // The type of the first field in 'cmdObj' must be mongo::String. The first field is

@@ -40,6 +40,7 @@ namespace mongo {
  * Maintains the targeting and command execution logic for a single shard. Performs polling of
  * the shard (if replica set).
  */
+//ShardRemote对应mongod分片或者cfg集群,ShardLocal对应mongos
 class ShardRemote : public Shard {
     MONGO_DISALLOW_COPYING(ShardRemote);
 

@@ -569,6 +569,7 @@ void execCommandDatabase(OperationContext* opCtx,
                          const OpMsgRequest& request,
                          rpc::ReplyBuilderInterface* replyBuilder) {
 
+	//初始optime
     auto startOperationTime = getClientOperationTime(opCtx);
     try {
         {
@@ -604,6 +605,7 @@ void execCommandDatabase(OperationContext* opCtx,
         BSONElement queryOptionMaxTimeMSField;
 
         StringMap<int> topLevelFields;
+		//body elem解析
         for (auto&& element : request.body) {
             StringData fieldName = element.fieldNameStringData();
             if (fieldName == QueryRequest::cmdOptionMaxTimeMS) {
@@ -618,6 +620,7 @@ void execCommandDatabase(OperationContext* opCtx,
                 queryOptionMaxTimeMSField = element;
             }
 
+			//eleme解析异常
             uassert(ErrorCodes::FailedToParse,
                     str::stream() << "Parsed command object contains duplicate top level key: "
                                   << fieldName,
@@ -646,6 +649,7 @@ void execCommandDatabase(OperationContext* opCtx,
 
         const bool iAmPrimary = replCoord->canAcceptWritesForDatabase_UNSAFE(opCtx, dbname);
 
+		//客户端直接链接mongod实例，进行节点状态检查
         if (!opCtx->getClient()->isInDirectClient() &&
             !MONGO_FAIL_POINT(skipCheckingForNotMasterInCommandDispatch)) {
 
@@ -687,6 +691,7 @@ void execCommandDatabase(OperationContext* opCtx,
             }
         }
 
+		//只能主节点操作
         if (command->adminOnly()) {
             LOG(2) << "command: " << request.getCommandName();
         }
@@ -695,9 +700,11 @@ void execCommandDatabase(OperationContext* opCtx,
             mmSetter.reset(new MaintenanceModeSetter(opCtx));
         }
 
+		//是否进行command统计  find  getmore不会统计到command统计中，其他命令都会统计到command中
         if (command->shouldAffectCommandCounter()) {
             OpCounters* opCounters = &globalOpCounters;
             opCounters->gotCommand();
+			LOG(2) << "yang test .......... command counters:" << request.getCommandName();
         }
 
         // Handle command option maxTimeMS.
@@ -746,7 +753,7 @@ void execCommandDatabase(OperationContext* opCtx,
         bool retval = false;
 
         CurOp::get(opCtx)->ensureStarted(); //记录开始时间，结束时间见ServiceEntryPointMongod::handleRequest->currentOp.done()
-
+		//该命令执行次数统计
         command->incrementCommandsExecuted();
 
         if (logger::globalLogDomain()->shouldLog(logger::LogComponent::kTracking,
@@ -835,6 +842,7 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
     [&] {
         OpMsgRequest request;
         try {  // Parse.
+        	//协议解析
             request = rpc::opMsgRequestFromAnyProtocol(message);
         } catch (const DBException& ex) {
             // If this error needs to fail the connection, propagate it out.
@@ -854,6 +862,7 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
         }
 
         try {  // Execute.
+        	//命令初始化
             curOpCommandSetup(opCtx, request);
 
             Command* c = nullptr;
@@ -870,8 +879,10 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
                           str::stream() << msg << ", bad cmd: '" << redact(request.body) << "'");
             }
 
+			//打印命令内容
             LOG(2) << "run command " << request.getDatabase() << ".$cmd" << ' '
-                   << c->getRedactedCopyForLogging(request.body) << ' ' << request.getCommandName();
+                   << c->getRedactedCopyForLogging(request.body) << ' ' << 
+                   request.getCommandName(); //如 find  insert等
 
             {
                 // Try to set this as early as possible, as soon as we have figured out the command.
@@ -1171,7 +1182,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 	
 	//str::stream s;
 	//s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
-	//log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
+	log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
 	//log() << "yang test ........ServiceEntryPointMongod::handleRequest 11";
 
     DbMessage dbmsg(m);
@@ -1187,10 +1198,12 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         invariant(!opCtx->lockState()->isLocked());
     }
 
+	//获取库.表
     const char* ns = dbmsg.messageShouldHaveNs() ? dbmsg.getns() : NULL;
     const NamespaceString nsString = ns ? NamespaceString(ns) : NamespaceString();
 
     if (op == dbQuery) {
+		//例如admin.$cmd
         if (nsString.isCommand()) {
             isCommand = true;
         }
@@ -1198,6 +1211,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         isCommand = true;
     }
 
+	//获取对应得currentOp
     CurOp& currentOp = *CurOp::get(opCtx);
     {
         stdx::lock_guard<Client> lk(*opCtx->getClient());

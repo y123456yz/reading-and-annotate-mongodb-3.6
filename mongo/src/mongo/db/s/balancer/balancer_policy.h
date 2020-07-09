@@ -156,6 +156,7 @@ private:
     std::set<std::string> _allTags;
 };
 
+//balance策略，如chunk管理迁移等
 class BalancerPolicy {
 public:
     /**

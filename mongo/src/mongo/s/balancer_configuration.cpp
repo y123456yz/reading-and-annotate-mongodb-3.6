@@ -58,6 +58,8 @@ const NamespaceString kSettingsNamespace("config", "settings");
 }  // namespace
 
 const char BalancerSettingsType::kKey[] = "balancer";
+//sh.enableAutoSplit()  sh.disableAutoSplit()   use config; db.settings.find()查看
+//即使关闭balance，mongos也会发送splite chunks命令给mongod
 const char* BalancerSettingsType::kBalancerModes[] = {"full", "autoSplitOnly", "off"};
 
 const char ChunkSizeSettingsType::kKey[] = "chunksize";
@@ -102,6 +104,7 @@ Status BalancerConfiguration::setBalancerMode(OperationContext* opCtx,
     return Status::OK();
 }
 
+//sh.enableAutoSplit()  sh.disableAutoSplit()   use config; db.settings.find()查看
 bool BalancerConfiguration::shouldBalance() const {
     stdx::lock_guard<stdx::mutex> lk(_balancerSettingsMutex);
     if (_balancerSettings.getMode() == BalancerSettingsType::kOff ||
@@ -112,25 +115,30 @@ bool BalancerConfiguration::shouldBalance() const {
     return _balancerSettings.isTimeInBalancingWindow(boost::posix_time::second_clock::local_time());
 }
 
+//判断是否启用自动分裂，如果balance打开并且当前时间在balance窗口内，则返回true
 bool BalancerConfiguration::shouldBalanceForAutoSplit() const {
     stdx::lock_guard<stdx::mutex> lk(_balancerSettingsMutex);
     if (_balancerSettings.getMode() == BalancerSettingsType::kOff) {
         return false;
     }
 
+	//判断是否在窗口期内
     return _balancerSettings.isTimeInBalancingWindow(boost::posix_time::second_clock::local_time());
 }
 
+//迁移的时候应该写目的分片的几个节点成功才开始下一批迁移
 MigrationSecondaryThrottleOptions BalancerConfiguration::getSecondaryThrottle() const {
     stdx::lock_guard<stdx::mutex> lk(_balancerSettingsMutex);
     return _balancerSettings.getSecondaryThrottle();
 }
 
+//获取balance movechunk的时候是否同步等待源分片数据删除
 bool BalancerConfiguration::waitForDelete() const {
     stdx::lock_guard<stdx::mutex> lk(_balancerSettingsMutex);
     return _balancerSettings.waitForDelete();
 }
 
+//刷新配置信息
 Status BalancerConfiguration::refreshAndCheck(OperationContext* opCtx) {
     // Balancer configuration
     Status balancerSettingsStatus = _refreshBalancerSettings(opCtx);
@@ -181,6 +189,7 @@ Status BalancerConfiguration::_refreshBalancerSettings(OperationContext* opCtx) 
     return Status::OK();
 }
 
+//chunk大小配置检查
 Status BalancerConfiguration::_refreshChunkSizeSettings(OperationContext* opCtx) {
     ChunkSizeSettingsType settings = ChunkSizeSettingsType::createDefault();
 
@@ -330,6 +339,7 @@ StatusWith<BalancerSettingsType> BalancerSettingsType::fromBSON(const BSONObj& o
     return settings;
 }
 
+//now时间是否在balance窗口期内
 bool BalancerSettingsType::isTimeInBalancingWindow(const boost::posix_time::ptime& now) const {
     invariant(!_activeWindowStart == !_activeWindowStop);
 
