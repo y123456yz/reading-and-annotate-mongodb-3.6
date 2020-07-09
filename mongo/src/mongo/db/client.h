@@ -243,6 +243,7 @@ private:
     SpinLock _lock;
 
     // Whether this client is running as DBDirectClient
+    //客户端是否直接链接mongod实例
     bool _inDirectClient = false;
 
     // If != NULL, then contains the currently active OperationContext

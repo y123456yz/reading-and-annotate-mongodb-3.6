@@ -520,6 +520,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     networkCounter.hitLogicalIn(_inMessage.size());
 
     // Pass sourced Message to handler to generate response.
+    //获取一个唯一的UniqueOperationContext，一个客户端对应一个UniqueOperationContext
     auto opCtx = Client::getCurrent()->makeOperationContext();
 
     // The handleRequest is implemented in a subclass for mongod/mongos and actually all the

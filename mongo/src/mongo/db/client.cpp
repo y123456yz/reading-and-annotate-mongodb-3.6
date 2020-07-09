@@ -132,7 +132,7 @@ void Client::reportState(BSONObjBuilder& builder) {
 }
 
 //ServiceStateMachine::_processMessage
-//获取一个唯一得UniqueOperationContext
+//获取一个唯一得UniqueOperationContext   一个客户端对应一个唯一的UniqueOperationContext
 ServiceContext::UniqueOperationContext Client::makeOperationContext() {
 	//获取一个UniqueOperationContext类
     return getServiceContext()->makeOperationContext(this); //ServiceContext::makeOperationContext

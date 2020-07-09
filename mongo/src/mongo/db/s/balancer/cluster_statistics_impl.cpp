@@ -100,6 +100,7 @@ ClusterStatisticsImpl::ClusterStatisticsImpl() = default;
 
 ClusterStatisticsImpl::~ClusterStatisticsImpl() = default;
 
+//获取分片信息
 StatusWith<vector<ShardStatistics>> ClusterStatisticsImpl::getStats(OperationContext* opCtx) {
     // Get a list of all the shards that are participating in this balance round along with any
     // maximum allowed quotas and current utilization. We get the latter by issuing

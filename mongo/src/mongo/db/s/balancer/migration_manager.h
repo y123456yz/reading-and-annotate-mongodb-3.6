@@ -61,7 +61,7 @@ typedef std::map<MigrationIdentifier, Status> MigrationStatuses;
 
 /**
  * Manages and executes parallel migrations for the balancer.
- */
+ */ ////Balancer._migrationManager成员为该类型
 class MigrationManager {
     MONGO_DISALLOW_COPYING(MigrationManager);
 

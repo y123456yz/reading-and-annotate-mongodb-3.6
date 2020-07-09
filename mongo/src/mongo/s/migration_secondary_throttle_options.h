@@ -43,6 +43,15 @@ struct WriteConcernOptions;
  * Returns the default write concern for migration cleanup on the donor shard and for cloning
  * documents on the destination shard.
  */
+ /*
+ db.adminCommand( { moveChunk : <namespace> ,
+                  find : <query> ,
+                  to : <string>,
+                  _secondaryThrottle : <boolean>,
+                  writeConcern: <document>,
+                  _waitForDelete : <boolean> } )
+
+ */
 class MigrationSecondaryThrottleOptions {
 public:
     enum SecondaryThrottleOption {

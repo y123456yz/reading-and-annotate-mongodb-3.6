@@ -48,7 +48,7 @@ class StatusWith;
  * Interface used by the balancer for selecting chunks, which need to be moved around in order for
  * the sharded cluster to be balanced. It is up to the implementation to decide what exactly
  * 'balanced' means.
- */
+ */ //BalancerChunkSelectionPolicyImpl->BalancerChunkSelectionPolicy
 class BalancerChunkSelectionPolicy {
     MONGO_DISALLOW_COPYING(BalancerChunkSelectionPolicy);
 
@@ -75,9 +75,11 @@ public:
         BSONObj maxKey;
         std::vector<BSONObj> splitKeys;
     };
-
+/*
+using MigrateInfoVector = BalancerChunkSelectionPolicy::MigrateInfoVector;
+using SplitInfoVector = BalancerChunkSelectionPolicy::SplitInfoVector
+*/
     typedef std::vector<SplitInfo> SplitInfoVector;
-
     typedef std::vector<MigrateInfo> MigrateInfoVector;
 
     virtual ~BalancerChunkSelectionPolicy();

@@ -55,12 +55,17 @@ class StatusWith;
  *  activeWindow: { start: "<HH:MM>", stop: "<HH:MM>" }
  * }
  */
+//balance配置信息
 class BalancerSettingsType {
 public:
     // Supported balancer modes
+    //赋值给BalancerSettingsType._mode  默认值kFull
     enum BalancerMode {
+        //db.adminCommand( { balancerStart: 1 } )命令
         kFull,           // Balancer will always try to keep the cluster even
+        //没看有地方用
         kAutoSplitOnly,  // Only balance on auto splits
+        //db.adminCommand( { balancerStop: 1 } )命令
         kOff,            // Balancer is completely off
     };
 
@@ -102,7 +107,7 @@ public:
 
     /**
      * Returns whether the balancer should wait for deletions after each completed move.
-     */
+     */ //db.settings.update({ "_id" : "balancer" },{ $set : { "_waitForDelete" : true } },{ upsert : true })
     bool waitForDelete() const {
         return _waitForDelete;
     }
@@ -112,11 +117,15 @@ private:
 
     BalancerMode _mode{kFull};
 
+    //balance的窗口配置信息，也就是在那个时间段启用balance功能
     boost::optional<boost::posix_time::ptime> _activeWindowStart;
     boost::optional<boost::posix_time::ptime> _activeWindowStop;
 
+    //moveChunk的时候会根据改配置决定写到目的分片的节点数
     MigrationSecondaryThrottleOptions _secondaryThrottle;
 
+    //db.settings.update({ "_id" : "balancer" },{ $set : { "_waitForDelete" : true } },{ upsert : true })
+    //moveChunk的时候会根据改配置决定是否需要同步删除
     bool _waitForDelete{false};
 };
 
@@ -194,6 +203,7 @@ private:
 /**
  * Contains settings, which control the behaviour of the balancer.
  */
+//balance相关得配置信息
 class BalancerConfiguration {
     MONGO_DISALLOW_COPYING(BalancerConfiguration);
 
@@ -282,6 +292,7 @@ private:
 
     // Max chunk size after which a chunk would be considered jumbo and won't be moved. This value
     // is read on the critical path after each write operation, that's why it is cached.
+    //chunk size大小
     AtomicUInt64 _maxChunkSizeBytes;
     AtomicBool _shouldAutoSplit;
 };

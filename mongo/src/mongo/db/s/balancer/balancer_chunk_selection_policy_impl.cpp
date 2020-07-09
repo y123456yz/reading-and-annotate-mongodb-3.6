@@ -49,6 +49,7 @@
 
 namespace mongo {
 
+//BalancerChunkSelectionPolicyImpl::selectChunksToMove使用
 using MigrateInfoVector = BalancerChunkSelectionPolicy::MigrateInfoVector;
 using SplitInfoVector = BalancerChunkSelectionPolicy::SplitInfoVector;
 using std::shared_ptr;
@@ -230,27 +231,33 @@ StatusWith<SplitInfoVector> BalancerChunkSelectionPolicyImpl::selectChunksToSpli
     return splitCandidates;
 }
 
+//选择需要迁移的chunk,注意MigrateInfoVector是一个chunk数组  
+//Balancer::_mainThread() balancer主循环中调用
 StatusWith<MigrateInfoVector> BalancerChunkSelectionPolicyImpl::selectChunksToMove(
     OperationContext* opCtx, bool aggressiveBalanceHint) {
+    //ClusterStatisticsImpl::getStats 获取分片信息，shardStatsStatus是一个数组，数组成员对应一个分片信息
     auto shardStatsStatus = _clusterStats->getStats(opCtx);
     if (!shardStatsStatus.isOK()) {
         return shardStatsStatus.getStatus();
     }
-
+	
     const auto shardStats = std::move(shardStatsStatus.getValue());
 
+	//分片个数为1，也就没有迁移功能存在了，迁移至少的2个分片
     if (shardStats.size() < 2) {
         return MigrateInfoVector{};
     }
 
     vector<CollectionType> collections;
 
+	//获取所有的表信息
     Status collsStatus =
         Grid::get(opCtx)->catalogClient()->getCollections(opCtx, nullptr, &collections, nullptr);
     if (!collsStatus.isOK()) {
         return collsStatus;
     }
 
+	//没有表存在，直接返回
     if (collections.empty()) {
         return MigrateInfoVector{};
     }
@@ -264,11 +271,13 @@ StatusWith<MigrateInfoVector> BalancerChunkSelectionPolicyImpl::selectChunksToMo
 
         const NamespaceString nss(coll.getNs());
 
+		//sh.disableBalancing(“db.collection”) 关闭了表balance功能
         if (!coll.getAllowBalance()) {
             LOG(1) << "Not balancing collection " << nss << "; explicitly disabled.";
             continue;
         }
 
+		//选出需要迁移的chunk
         auto candidatesStatus =
             _getMigrateCandidatesForCollection(opCtx, nss, shardStats, aggressiveBalanceHint);
         if (candidatesStatus == ErrorCodes::NamespaceNotFound) {
@@ -285,6 +294,7 @@ StatusWith<MigrateInfoVector> BalancerChunkSelectionPolicyImpl::selectChunksToMo
                                std::make_move_iterator(candidatesStatus.getValue().end()));
     }
 
+	//返回需要迁移的chunk
     return candidateChunks;
 }
 
@@ -410,6 +420,7 @@ StatusWith<SplitInfoVector> BalancerChunkSelectionPolicyImpl::_getSplitCandidate
     return splitCandidates.done();
 }
 
+//BalancerChunkSelectionPolicyImpl::selectChunksToMove调用
 StatusWith<MigrateInfoVector> BalancerChunkSelectionPolicyImpl::_getMigrateCandidatesForCollection(
     OperationContext* opCtx,
     const NamespaceString& nss,

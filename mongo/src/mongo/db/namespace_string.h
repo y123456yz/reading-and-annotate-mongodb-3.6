@@ -203,6 +203,7 @@ public:
     bool isConfigDB() const {
         return db() == "config";
     }
+    //ÀýÈçadmin.$cmd
     bool isCommand() const {
         return coll() == "$cmd";
     }

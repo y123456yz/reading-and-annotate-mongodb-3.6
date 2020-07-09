@@ -160,6 +160,7 @@ BSONObj ShardRemote::_appendMetadataForCommand(OperationContext* opCtx,
     return builder.obj();
 }
 
+//分片或者cfg收到mongos命令后的处理
 StatusWith<Shard::CommandResponse> ShardRemote::_runCommand(OperationContext* opCtx,
                                                             const ReadPreferenceSetting& readPref,
                                                             const string& dbName,

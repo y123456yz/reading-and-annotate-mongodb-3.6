@@ -217,7 +217,7 @@ private:
 const OperationContext::Decoration<CurOp::CurOpStack> CurOp::_curopStack =
     OperationContext::declareDecoration<CurOp::CurOpStack>();
 
-//curOpCommandSetup中调用执行
+//curOpCommandSetup  ServiceEntryPointMongod::handleRequest中调用执行
 CurOp* CurOp::get(const OperationContext* opCtx) {
     return get(*opCtx);
 }

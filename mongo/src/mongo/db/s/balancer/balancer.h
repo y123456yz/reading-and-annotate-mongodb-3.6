@@ -51,7 +51,8 @@ class Status;
  * The balancer does act continuously but in "rounds". At a given round, it would decide if
  * there is an imbalance by checking the difference in chunks between the most and least
  * loaded shards. It would issue a request for a chunk migration per round, if it found so.
- */
+ */ //ChunkManager chunk管理     balance负载均衡管理
+//balance可以过程可以参考https://zhuanlan.zhihu.com/p/25938776   https://cloud.tencent.com/developer/article/1609526
 class Balancer {
     MONGO_DISALLOW_COPYING(Balancer);
 
@@ -204,9 +205,11 @@ private:
     stdx::mutex _mutex;
 
     // Indicates the current state of the balancer
+    //balance运行状态
     State _state{kStopped};
 
     // The main balancer thread
+    //balancer线程
     stdx::thread _thread;
 
     // The operation context of the main balancer thread. This value may only be available in the
@@ -235,16 +238,20 @@ private:
     stdx::condition_variable _condVar;
 
     // Number of moved chunks in last round
+    //上次balancer线程循环中是否有迁移chunk
     int _balancedLastTime;
 
     // Source for cluster statistics
+    //统计信息
     std::unique_ptr<ClusterStatistics> _clusterStats;
 
     // Balancer policy. Depends on the cluster statistics instance above so it should be created
     // after it and destroyed before it.
+    //chunks选择策略
     std::unique_ptr<BalancerChunkSelectionPolicy> _chunkSelectionPolicy;
 
     // Migration manager used to schedule and manage migrations
+    //迁移管理模块
     MigrationManager _migrationManager;
 };
 

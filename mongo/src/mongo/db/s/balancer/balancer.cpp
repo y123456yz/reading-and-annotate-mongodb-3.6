@@ -78,7 +78,7 @@ const auto getBalancer = ServiceContext::declareDecoration<std::unique_ptr<Balan
 
 /**
  * Utility class to generate timing and statistics for a single balancer round.
- */
+ */ //balancer统计信息   
 class BalanceRoundDetails {
 public:
     BalanceRoundDetails() : _executionTimer() {}
@@ -123,6 +123,7 @@ private:
  * Occasionally prints a log message with shard versions if the versions are not the same
  * in the cluster.
  */
+//检查每个分片的主节点版本是否一致，不一致则打印提示
 void warnOnMultiVersion(const vector<ClusterStatistics::ShardStatistics>& clusterStats) {
     auto&& vii = VersionInfoInterface::instance();
 
@@ -154,9 +155,11 @@ void warnOnMultiVersion(const vector<ClusterStatistics::ShardStatistics>& cluste
 Balancer::Balancer(ServiceContext* serviceContext)
     : _balancedLastTime(0),
       _clusterStats(stdx::make_unique<ClusterStatisticsImpl>()),
+      //chunk选择策略
       _chunkSelectionPolicy(
           stdx::make_unique<BalancerChunkSelectionPolicyImpl>(_clusterStats.get())),
-      _migrationManager(serviceContext) {}
+	 //迁移管理
+	 _migrationManager(serviceContext) {} //Balancer._migrationManager
 
 Balancer::~Balancer() {
     // The balancer thread must have been stopped
@@ -169,6 +172,7 @@ void Balancer::create(ServiceContext* serviceContext) {
     getBalancer(serviceContext) = stdx::make_unique<Balancer>(serviceContext);
 
     // Register a shutdown task to terminate the balancer thread so that it doesn't leak memory.
+    //balancer thread退出适合的资源销毁操作
     registerShutdownTask([serviceContext] {
         auto balancer = Balancer::get(serviceContext);
         // Make sure that the balancer thread has been interrupted.
@@ -178,14 +182,17 @@ void Balancer::create(ServiceContext* serviceContext) {
     });
 }
 
+//根据ServiceContext获取对应balancer
 Balancer* Balancer::get(ServiceContext* serviceContext) {
     return getBalancer(serviceContext).get();
 }
 
+//根据operationContext获取对应balancer
 Balancer* Balancer::get(OperationContext* operationContext) {
     return get(operationContext->getServiceContext());
 }
 
+//Balancer初始化
 void Balancer::initiateBalancer(OperationContext* opCtx) {
     stdx::lock_guard<stdx::mutex> scopedLock(_mutex);
     invariant(_state == kStopped);
@@ -300,8 +307,11 @@ void Balancer::report(OperationContext* opCtx, BSONObjBuilder* builder) {
     builder->append("numBalancerRounds", _numBalancerRounds);
 }
 
+//balancer线程
 void Balancer::_mainThread() {
     Client::initThread("Balancer");
+
+	//初始化opctx
     auto opCtx = cc().makeOperationContext();
     auto shardingContext = Grid::get(opCtx.get());
 
@@ -314,8 +324,10 @@ void Balancer::_mainThread() {
 
     const Seconds kInitBackoffInterval(10);
 
+	//获取balancer配置信息
     auto balancerConfig = shardingContext->getBalancerConfiguration();
     while (!_stopRequested()) {
+		//配置检查
         Status refreshStatus = balancerConfig->refreshAndCheck(opCtx.get());
         if (!refreshStatus.isOK()) {
             warning() << "Balancer settings could not be loaded and will be retried in "
@@ -348,6 +360,7 @@ void Balancer::_mainThread() {
 
             uassert(13258, "oids broken after resetting!", _checkOIDs(opCtx.get()));
 
+			//配置检查
             Status refreshStatus = balancerConfig->refreshAndCheck(opCtx.get());
             if (!refreshStatus.isOK()) {
                 warning() << "Skipping balancing round" << causedBy(refreshStatus);
@@ -355,6 +368,7 @@ void Balancer::_mainThread() {
                 continue;
             }
 
+			//balance没启用
             if (!balancerConfig->shouldBalance()) {
                 LOG(1) << "Skipping balancing round because balancing is disabled";
                 _endRound(opCtx.get(), kBalanceRoundDefaultInterval);
@@ -370,6 +384,7 @@ void Balancer::_mainThread() {
                 OCCASIONALLY warnOnMultiVersion(
                     uassertStatusOK(_clusterStats->getStats(opCtx.get())));
 
+				//标签处理
                 Status status = _enforceTagRanges(opCtx.get());
                 if (!status.isOK()) {
                     warning() << "Failed to enforce tag ranges" << causedBy(status);
@@ -377,13 +392,17 @@ void Balancer::_mainThread() {
                     LOG(1) << "Done enforcing tag range boundaries.";
                 }
 
+				//选出需要迁移的chunks    candidateChunks为数组类型MigrateInfoVector
                 const auto candidateChunks = uassertStatusOK(
+                //BalancerChunkSelectionPolicyImpl::selectChunksToMove
                     _chunkSelectionPolicy->selectChunksToMove(opCtx.get(), _balancedLastTime));
 
+				//没有需要迁移的块
                 if (candidateChunks.empty()) {
                     LOG(1) << "no need to move any chunk";
+					//说明本次循环没有迁移chunk
                     _balancedLastTime = false;
-                } else {
+                } else { //迁移chunk在这里
                     _balancedLastTime = _moveChunks(opCtx.get(), candidateChunks);
 
                     roundDetails.setSucceeded(static_cast<int>(candidateChunks.size()),

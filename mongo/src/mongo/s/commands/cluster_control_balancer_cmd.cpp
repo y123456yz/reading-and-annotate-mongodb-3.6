@@ -103,7 +103,7 @@ private:
 
 class BalancerStartCommand : public BalancerControlCommand {
 public:
-    BalancerStartCommand()
+    BalancerStartCommand() //¶ÔÓ¦configµÄConfigSvrBalancerStartCommand
         : BalancerControlCommand("balancerStart", "_configsvrBalancerStart", ActionType::update) {}
 };
 

@@ -56,7 +56,24 @@ BSONObj prettyKey(const BSONObj& keyPattern, const BSONObj& key) {
 
 }  // namespace
 
-StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
+/*
+给定一个块，确定它是否可以分割，如果可以，则返回分割点。这个函数的功能相当于splitVector命令。
+如果指定了maxSplitPoints，并且有多个“maxSplitPoints”拆分点，则只返回第一个“maxSplitPoints”拆分点。
+如果指定了maxChunkObjects，那么它指示拆分每个“maxChunkObjects”的th键。
+默认情况下，我们将数据块分割，这样每个新数据块大约有maxChunkSize数据块一半的键。我们只分割“maxChunkObjects”的
+第一个键，如果它将分割的键数低于默认值。maxChunkSize是块的最大大小(以兆字节为单位)。如果数据块超过这个大小，
+我们应该分块。虽然maxChunkSize和maxChunkSizeBytes是boost::optional，但至少必须指定一个。如果设置了force，
+则在块的中点处进行分割。这也有效地使maxChunkSize等于块的大小。
+*/
+/*
+splitVector执行过程：
+
+1) 计算出collection的文档的 avgRecSize= coll.size/ coll.count
+2) 计算出分裂后的chunk中，每个chunk应该有的count数， split_count = maxChunkSize / (2 * avgRecSize)
+3) 线性遍历collection 的shardkey 对应的index的 [chunk_min_index, chunk_max_index] 范围，在遍历过程中利用split_count 分割出若干spli
+*/
+StatusWith<std::vector<BSONObj>> 
+	splitVector(OperationContext* opCtx,
                                              const NamespaceString& nss,
                                              const BSONObj& keyPattern,
                                              const BSONObj& min,
@@ -69,6 +86,7 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
     std::vector<BSONObj> splitKeys;
 
     // Always have a default value for maxChunkObjects
+    // maxChunkObjects一直有默认值。kMaxObjectPerChunk=25000
     if (!maxChunkObjects) {
         maxChunkObjects = kMaxObjectPerChunk;
     }
@@ -104,6 +122,7 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
         }
 
         // Get the size estimate for this namespace
+        //获取集合相关信息
         const long long recCount = collection->numRecords(opCtx);
         const long long dataSize = collection->dataSize(opCtx);
 
@@ -113,6 +132,9 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
         // Forcing a split is equivalent to having maxChunkSize be the size of the current
         // chunk, i.e., the logic below will split that chunk in half
 
+		
+		/*现在我们已经有了大小估计，检查一下其余的参数，并应用这里指定的最大大小限制。强制分割
+		相当于让maxChunkSize等于当前块的大小，下面的逻辑将把这一大块分成两半*/
         if (force) {
             maxChunkSize = dataSize;
         } else if (!maxChunkSize) {
@@ -125,11 +147,13 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
 
         // We need a maximum size for the chunk, unless we're not actually capable of finding any
         // split points.
+        //我们需要一个最大的块大小，除非我们实际上不能找到任何分裂点。
         if ((!maxChunkSize || maxChunkSize.get() <= 0) && recCount != 0) {
             return {ErrorCodes::InvalidOptions, "need to specify the desired max chunk size"};
         }
 
         // If there's not enough data for more than one chunk, no point continuing.
+        //如果没有足够的数据来处理多个块，就没有必要继续了。
         if (dataSize < maxChunkSize.get() || recCount == 0) {
             std::vector<BSONObj> emptyVector;
             return emptyVector;
@@ -141,6 +165,8 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
         // We'll use the average object size and number of object to find approximately how many
         // keys each chunk should have. We'll split at half the maxChunkSize or maxChunkObjects,
         // if provided.
+        //我们将使用平均对象大小和对象数量来找到每个块应该拥有的键数。
+        //如果提供了maxChunkSize或maxChunkObjects，我们将按其一半进行拆分。
         const long long avgRecSize = dataSize / recCount;
 
         long long keyCount = maxChunkSize.get() / (2 * avgRecSize);
@@ -160,7 +186,8 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
         Timer timer;
         long long currCount = 0;
         long long numChunks = 0;
-
+		/*遍历索引并将第keyCount个键添加到结果中。如果这个键之前出现在结果中，我们就忽略它。
+		这里的不变式是，给定键值的所有实例都位于同一块中。*/
         auto exec = InternalPlanner::indexScan(opCtx,
                                                collection,
                                                idx,
@@ -180,6 +207,8 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
         // Use every 'keyCount'-th key as a split point. We add the initial key as a sentinel,
         // to be removed at the end. If a key appears more times than entries allowed on a
         // chunk, we issue a warning and split on the following key.
+        /*使用每个第keyCount个键作为一个分裂点。我们添加初始键作为标记，在结束时移除。如果一个
+        键出现的次数超过块上允许的条目数，我们将发出警告并对下面的键进行拆分。*/
         auto tooFrequentKeys = SimpleBSONObjComparator::kInstance.makeBSONObjSet();
         splitKeys.push_back(dotted_path_support::extractElementsBasedOnTemplate(
             prettyKey(idx->keyPattern(), currKey.getOwned()), keyPattern));
@@ -274,6 +303,7 @@ StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
     std::sort(
         splitKeys.begin(), splitKeys.end(), SimpleBSONObjComparator::kInstance.makeLessThan());
 
+	//返回所有分裂点
     return splitKeys;
 }
 

@@ -42,6 +42,7 @@ public:
     ClusterStatisticsImpl();
     ~ClusterStatisticsImpl();
 
+    //vector的大小就是分片数，每个ShardStatistics成员对应一个分片
     StatusWith<std::vector<ShardStatistics>> getStats(OperationContext* opCtx) override;
 };
 
