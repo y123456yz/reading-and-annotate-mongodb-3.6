@@ -67,6 +67,8 @@ std::string DistLockManagerMock::getProcessID() {
     return "Mock dist lock manager process id";
 }
 
+//MigrationManager::_schedule调用
+//获取name这个锁
 StatusWith<DistLockHandle> DistLockManagerMock::lockWithSessionID(OperationContext* opCtx,
                                                                   StringData name,
                                                                   StringData whyMessage,
@@ -79,6 +81,7 @@ StatusWith<DistLockHandle> DistLockManagerMock::lockWithSessionID(OperationConte
         return _lockReturnStatus;
     }
 
+	//遍历查找
     if (_locks.end() != std::find_if(_locks.begin(), _locks.end(), [name](LockInfo info) -> bool {
             return info.name == name;
         })) {
@@ -86,6 +89,7 @@ StatusWith<DistLockHandle> DistLockManagerMock::lockWithSessionID(OperationConte
                       str::stream() << "Lock \"" << name << "\" is already taken");
     }
 
+	//locks中没有，则添加进去，同时获取这个锁
     LockInfo info;
     info.name = name.toString();
     info.lockID = lockSessionID;

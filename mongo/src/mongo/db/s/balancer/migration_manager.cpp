@@ -111,32 +111,38 @@ MigrationManager::~MigrationManager() {
     invariant(_activeMigrations.empty());
 }
 
+//Balancer::_moveChunks调用
 MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
     OperationContext* opCtx,
+    //需要迁移的块 
     const vector<MigrateInfo>& migrateInfos,
     uint64_t maxChunkSizeBytes,
     const MigrationSecondaryThrottleOptions& secondaryThrottle,
     bool waitForDelete) {
 
+	//balance的chunk迁移状态信息记录到这里面
     MigrationStatuses migrationStatuses;
 
-    {
+    {	//
         std::map<MigrationIdentifier, ScopedMigrationRequest> scopedMigrationRequests;
         vector<std::pair<shared_ptr<Notification<RemoteCommandResponse>>, MigrateInfo>> responses;
 
+		//遍历需要迁移的chunk信息
         for (const auto& migrateInfo : migrateInfos) {
             // Write a document to the config.migrations collection, in case this migration must be
             // recovered by the Balancer. Fail if the chunk is already moving.
-            auto statusWithScopedMigrationRequest =
+           // 写需要迁移的chunk信息到config.migrations表，如果有冲突返回失败
+            auto statusWithScopedMigrationRequest = //ScopedMigrationRequest类型
                 ScopedMigrationRequest::writeMigration(opCtx, migrateInfo, waitForDelete);
             if (!statusWithScopedMigrationRequest.isOK()) {
+				//该chunk写表config.migrations异常，记录下来，说明该chunk迁移信息异常
                 migrationStatuses.emplace(migrateInfo.getName(),
                                           std::move(statusWithScopedMigrationRequest.getStatus()));
                 continue;
             }
             scopedMigrationRequests.emplace(migrateInfo.getName(),
                                             std::move(statusWithScopedMigrationRequest.getValue()));
-
+			
             responses.emplace_back(
                 _schedule(opCtx, migrateInfo, maxChunkSizeBytes, secondaryThrottle, waitForDelete),
                 migrateInfo);
@@ -380,6 +386,8 @@ void MigrationManager::finishRecovery(OperationContext* opCtx,
     }
 }
 
+//Balancer::interruptBalancer调用，
+//_migrationManagerInterruptThread线程专门负责迁移异常处理
 void MigrationManager::interruptAndDisableMigrations() {
     executor::TaskExecutor* const executor =
         Grid::get(_serviceContext)->getExecutorPool()->getFixedExecutor();
@@ -389,6 +397,7 @@ void MigrationManager::interruptAndDisableMigrations() {
     _state = State::kStopping;
 
     // Interrupt any active migrations with dist lock
+    //对异常balance的表进行异常处理
     for (auto& cmsEntry : _activeMigrations) {
         auto& migrations = cmsEntry.second;
 
@@ -402,6 +411,7 @@ void MigrationManager::interruptAndDisableMigrations() {
     _checkDrained(lock);
 }
 
+//Balancer::_mainThread中调用，说明balancer关闭了
 void MigrationManager::drainActiveMigrations() {
     stdx::unique_lock<stdx::mutex> lock(_mutex);
 
@@ -412,7 +422,9 @@ void MigrationManager::drainActiveMigrations() {
     _state = State::kStopped;
 }
 
-shared_ptr<Notification<RemoteCommandResponse>> MigrationManager::_schedule(
+//MigrationManager::executeMigrationsForAutoBalance调用
+shared_ptr<Notification<RemoteCommandResponse>> 
+  MigrationManager::_schedule(
     OperationContext* opCtx,
     const MigrateInfo& migrateInfo,
     uint64_t maxChunkSizeBytes,
@@ -430,6 +442,7 @@ shared_ptr<Notification<RemoteCommandResponse>> MigrationManager::_schedule(
         }
     }
 
+	//获取迁移的源分片
     const auto fromShardStatus =
         Grid::get(opCtx)->shardRegistry()->getShard(opCtx, migrateInfo.from);
     if (!fromShardStatus.isOK()) {
@@ -438,6 +451,7 @@ shared_ptr<Notification<RemoteCommandResponse>> MigrationManager::_schedule(
     }
 
     const auto fromShard = fromShardStatus.getValue();
+	//获取源分片主节点
     auto fromHostStatus = fromShard->getTargeter()->findHost(
         opCtx, ReadPreferenceSetting{ReadPreference::PrimaryOnly});
     if (!fromHostStatus.isOK()) {
@@ -446,6 +460,7 @@ shared_ptr<Notification<RemoteCommandResponse>> MigrationManager::_schedule(
     }
 
     BSONObjBuilder builder;
+	//生成moveChunk命令内容   moveChunk实际上是发送给源分片的，注意不是发送个cfg的
     MoveChunkRequest::appendAsCommand(
         &builder,
         nss,
@@ -460,12 +475,14 @@ shared_ptr<Notification<RemoteCommandResponse>> MigrationManager::_schedule(
 
     stdx::lock_guard<stdx::mutex> lock(_mutex);
 
+	//balance disable了
     if (_state != State::kEnabled && _state != State::kRecovering) {
         return std::make_shared<Notification<RemoteCommandResponse>>(
             Status(ErrorCodes::BalancerInterrupted,
                    "Migration cannot be executed because the balancer is not running"));
     }
 
+	//构造Migration
     Migration migration(nss, builder.obj());
 
     auto retVal = migration.completionNotification;
@@ -475,6 +492,9 @@ shared_ptr<Notification<RemoteCommandResponse>> MigrationManager::_schedule(
     return retVal;
 }
 
+
+//上面的MigrationManager::_schedule调用
+//向源分片主节点发送moveChunk命令
 void MigrationManager::_schedule(WithLock lock,
                                  OperationContext* opCtx,
                                  const HostAndPort& targetHost,
@@ -482,23 +502,33 @@ void MigrationManager::_schedule(WithLock lock,
     executor::TaskExecutor* const executor =
         Grid::get(opCtx)->getExecutorPool()->getFixedExecutor();
 
+	//获取balance需要迁移的表
     const NamespaceString nss(migration.nss);
 
+	//在map表中差值nss
     auto it = _activeMigrations.find(nss);
+	//没找到
     if (it == _activeMigrations.end()) {
         const std::string whyMessage(stream() << "Migrating chunk(s) in collection " << nss.ns());
 
         // Acquire the collection distributed lock (blocking call)
+        //获取锁
         auto statusWithDistLockHandle =
+        	//DistLockManagerMock::lockWithSessionID
             Grid::get(opCtx)->catalogClient()->getDistLockManager()->lockWithSessionID(
                 opCtx,
-                nss.ns(),
+                nss.ns(), //需要做balance的表
                 whyMessage,
                 _lockSessionID,
                 DistLockManager::kSingleLockAttemptTimeout);
 
         if (!statusWithDistLockHandle.isOK()) {
             migration.completionNotification->set(
+			/*
+			类似打印如下:
+			Failed with error ‘could not acquire collection lock for mongodbtest.usertable to migrate chunk [{ : MinKey },{ : MaxKey }) 
+			:: caused by :: Lock for migrating chunk [{ : MinKey }, { : MaxKey }) in mongodbtest.usertable is taken.’, from shard0002 to shard0000
+			*/
                 Status(statusWithDistLockHandle.getStatus().code(),
                        stream() << "Could not acquire collection lock for " << nss.ns()
                                 << " to migrate chunks, due to "
@@ -506,16 +536,22 @@ void MigrationManager::_schedule(WithLock lock,
             return;
         }
 
+		//_activeMigrations为CollectionMigrationsStateMap结构
+		//记录一下，获取nss表对应锁成功，记录表信息和同时生成一个MigrationsList一起记录MigrationsList
+		//MigrationsList在后面的migrations->push_front(std::move(migration))填充
         it = _activeMigrations.insert(std::make_pair(nss, MigrationsList())).first;
     }
 
+	//也就是MigrationsList
     auto migrations = &it->second;
 
     // Add ourselves to the list of migrations on this collection
+    //migration记录到_activeMigrations
     migrations->push_front(std::move(migration));
     auto itMigration = migrations->begin();
 
-    const RemoteCommandRequest remoteRequest(
+	//根据migration构造moveChunk信息发送到targetHost节点 
+    const RemoteCommandRequest remoteRequest( 
         targetHost, NamespaceString::kAdminDb.toString(), itMigration->moveChunkCmdObj, opCtx);
 
     StatusWith<executor::TaskExecutor::CallbackHandle> callbackHandleWithStatus =

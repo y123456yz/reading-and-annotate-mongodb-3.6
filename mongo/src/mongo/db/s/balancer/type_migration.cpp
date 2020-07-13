@@ -40,6 +40,10 @@ const StringData kChunkVersion = "chunkVersion"_sd;
 
 }  // namespace
 
+/*
+mongos> db.migrations.find()
+{ "_id" : "XX.ocloud_file_item_t-userId_\"151682744\"md5_\"00000000000000000000000000017941\"", "ns" : "XX.ocloud_file_item_t", "min" : { "userId" : "151682744", "md5" : "00000000000000000000000000017941" }, "max" : { "userId" : "151682744", "md5" : "00000000000000000000000000093440" }, "fromShard" : "ocloud_ZadatpEn_shard_2", "toShard" : "ocloud_ZadatpEn_shard_13", "chunkVersion" : [ Timestamp(65501, 1), ObjectId("5ecc92da71409a49993a60d1") ], "waitForDelete" : false }
+*/
 const std::string MigrationType::ConfigNS = "config.migrations";
 
 const BSONField<std::string> MigrationType::name("_id");

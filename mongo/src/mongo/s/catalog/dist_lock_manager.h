@@ -60,6 +60,7 @@ class StatusWith;
  *   // practically be a no-op since it doesn't own the lock anymore.
  * }
  */
+//DistLockManagerMock  ReplSetDistLockManagerºÃ≥–∏√¿‡
 class DistLockManager {
 public:
     // Default timeout which will be used if one is not passed to the lock method.

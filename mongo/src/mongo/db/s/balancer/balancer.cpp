@@ -205,6 +205,7 @@ void Balancer::initiateBalancer(OperationContext* opCtx) {
     _thread = stdx::thread([this] { _mainThread(); });
 }
 
+//balancer异常处理
 void Balancer::interruptBalancer() {
     stdx::lock_guard<stdx::mutex> scopedLock(_mutex);
     if (_state != kRunning)
@@ -222,6 +223,7 @@ void Balancer::interruptBalancer() {
     // Schedule a separate thread to shutdown the migration manager in order to avoid deadlock with
     // replication step down
     invariant(!_migrationManagerInterruptThread.joinable());
+	//_migrationManagerInterruptThread线程专门负责迁移异常处理
     _migrationManagerInterruptThread =
         stdx::thread([this] { _migrationManager.interruptAndDisableMigrations(); });
 
@@ -443,6 +445,7 @@ void Balancer::_mainThread() {
         invariant(_migrationManagerInterruptThread.joinable());
     }
 
+	//balancer关闭后的异常迁移处理
     _migrationManagerInterruptThread.join();
     _migrationManager.drainActiveMigrations();
 
@@ -585,9 +588,11 @@ Status Balancer::_enforceTagRanges(OperationContext* opCtx) {
 
 int Balancer::_moveChunks(OperationContext* opCtx,
                           const BalancerChunkSelectionPolicy::MigrateInfoVector& candidateChunks) {
-    auto balancerConfig = Grid::get(opCtx)->getBalancerConfiguration();
+	//获取balancer配置信息
+	auto balancerConfig = Grid::get(opCtx)->getBalancerConfiguration();
 
     // If the balancer was disabled since we started this round, don't start new chunk moves
+    //balance关闭了
     if (_stopRequested() || !balancerConfig->shouldBalance()) {
         LOG(1) << "Skipping balancing round because balancer was stopped";
         return 0;
@@ -596,8 +601,11 @@ int Balancer::_moveChunks(OperationContext* opCtx,
     auto migrationStatuses =
         _migrationManager.executeMigrationsForAutoBalance(opCtx,
                                                           candidateChunks,
+                                                          //chunk最大大小
                                                           balancerConfig->getMaxChunkSizeBytes(),
+                                                          //迁移到目的分片的时候，需要写入几个从节点
                                                           balancerConfig->getSecondaryThrottle(),
+                                                          //源节点迁移走的chunk是同步删除还是异步删除
                                                           balancerConfig->waitForDelete());
 
     int numChunksProcessed = 0;

@@ -45,6 +45,14 @@ class StatusWith;
  * command, which controls the cluster balancer. If any changes are made to this class, they need to
  * be backwards compatible with older versions of the server.
  */
+/*
+db.adminCommand( { moveChunk : <namespace> ,
+                 find : <query> ,
+                 to : <string>,
+                 _secondaryThrottle : <boolean>,
+                 writeConcern: <document>,
+                 _waitForDelete : <boolean> } )
+*/
 class BalanceChunkRequest {
 public:
     /**
