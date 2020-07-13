@@ -43,7 +43,7 @@ namespace mongo {
  * removed once the migration has finished.
  *
  * This class should only be used by the Balancer!
- */
+ */ //²Î¿¼ScopedMigrationRequest::writeMigration
 class ScopedMigrationRequest {
     MONGO_DISALLOW_COPYING(ScopedMigrationRequest);
 

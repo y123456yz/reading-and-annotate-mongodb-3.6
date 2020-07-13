@@ -141,6 +141,7 @@ public:
 private:
     // The current state of the migration manager
     enum class State {  // Allowed transitions:
+        //赋值见drainActiveMigrations，说明balance已disable
         kStopped,       // kRecovering
         kRecovering,    // kEnabled, kStopping
         kEnabled,       // kStopping
@@ -149,7 +150,7 @@ private:
 
     /**
      * Tracks the execution state of a single migration.
-     */
+     */ //构造见MigrationManager::_schedule
     struct Migration {
         Migration(NamespaceString nss, BSONObj moveChunkCmdObj);
         ~Migration();
@@ -158,6 +159,7 @@ private:
         NamespaceString nss;
 
         // Command object representing the migration
+        //使用参考MigrationManager::_schedule
         BSONObj moveChunkCmdObj;
 
         // Callback handle for the migration network request. If the migration has not yet been sent
@@ -269,6 +271,7 @@ private:
     stdx::condition_variable _condVar;
 
     // Maps collection namespaces to that collection's active migrations.
+    //map表
     CollectionMigrationsStateMap _activeMigrations;
 };
 

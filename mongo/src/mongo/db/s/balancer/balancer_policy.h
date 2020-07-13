@@ -47,6 +47,12 @@ struct ZoneRange {
     std::string zone;
 };
 
+/*
+mongos> db.migrations.find()
+{ "_id" : "test.sbtest2-userId_-3312397525930996866", "ns" : "test.sbtest2", "min" : { "userId" : NumberLong("-3312397525930996866") }, 
+"max" : { "userId" : NumberLong("-3310145726117311620") }, "fromShard" : "ocloud_ZadatpEn_shard_14", "toShard" : "ocloud_ZadatpEn_shard_4", 
+"chunkVersion" : [ Timestamp(2123, 1), ObjectId("5f0838143f40536e90126bd1") ], "waitForDelete" : false }
+*/ //²Î¿¼MigrationManager::executeMigrationsForAutoBalance
 struct MigrateInfo {
     MigrateInfo(const ShardId& a_to, const ChunkType& a_chunk);
 

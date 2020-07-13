@@ -139,6 +139,7 @@ StatusWith<MoveChunkRequest> MoveChunkRequest::createFromCommand(NamespaceString
     return request;
 }
 
+//构造moveChunk报文内容  MigrationManager::_schedule调用
 void MoveChunkRequest::appendAsCommand(BSONObjBuilder* builder,
                                        const NamespaceString& nss,
                                        ChunkVersion chunkVersion,

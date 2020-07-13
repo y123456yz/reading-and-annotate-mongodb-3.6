@@ -91,6 +91,8 @@ ScopedMigrationRequest& ScopedMigrationRequest::operator=(ScopedMigrationRequest
     return *this;
 }
 
+//MigrationManager::executeMigrationsForAutoBalance调用
+//写需要迁移得chunk信息到config.migrations表
 StatusWith<ScopedMigrationRequest> ScopedMigrationRequest::writeMigration(
     OperationContext* opCtx, const MigrateInfo& migrateInfo, bool waitForDelete) {
 
@@ -98,9 +100,11 @@ StatusWith<ScopedMigrationRequest> ScopedMigrationRequest::writeMigration(
     const MigrationType migrationType(migrateInfo, waitForDelete);
 
     for (int retry = 0; retry < kDuplicateKeyErrorMaxRetries; ++retry) {
+		//migrationType对应需要迁移得chunk信息写入config.migrations表
         Status result = grid.catalogClient()->insertConfigDocument(
             opCtx, MigrationType::ConfigNS, migrationType.toBSON(), kMajorityWriteConcern);
 
+		//config.migrations表已经有这条重复得数据，该表有ns_1_min_1唯一索引
         if (result == ErrorCodes::DuplicateKey) {
             // If the exact migration described by "migrateInfo" is active, return a scoped object
             // for the request because this migration request will join the active one once
@@ -126,7 +130,7 @@ StatusWith<ScopedMigrationRequest> ScopedMigrationRequest::writeMigration(
             if (statusWithMigrationQueryResult.getValue().docs.empty()) {
                 // The document that caused the DuplicateKey error is no longer in the collection,
                 // so retrying the insert might succeed.
-                continue;
+                continue; //返回重试
             }
             invariant(statusWithMigrationQueryResult.getValue().docs.size() == 1);
 
