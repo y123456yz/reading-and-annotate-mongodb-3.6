@@ -56,6 +56,7 @@ class Timestamp;
  * Synchronization rules: In order to look-up this object in the instance's sharding map, one must
  * have some lock on the respective collection.
  */
+//ShardingState::getNS中会构造使用，同时在该接口把ShardingState和CollectionShardingState联系起来
 class CollectionShardingState {
     MONGO_DISALLOW_COPYING(CollectionShardingState);
 
@@ -98,7 +99,7 @@ public:
      * the object itself, and the collection, exist. After dropping the collection lock, the
      * collection may no longer exist, but it is still safe to destroy the object.
      */
-    ScopedCollectionMetadata getMetadata();
+    ScopedCollectionMetadata getMetadata(); 
 
     /**
      * BSON output of the pending metadata into a BSONArray
@@ -320,6 +321,7 @@ private:
     const NamespaceString _nss;
 
     // Contains all the metadata associated with this collection.
+    
     std::shared_ptr<MetadataManager> _metadataManager;
 
     // If this collection is serving as a source shard for chunk migration, this value will be

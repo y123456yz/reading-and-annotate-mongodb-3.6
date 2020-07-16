@@ -79,6 +79,7 @@ MONGO_FP_DECLARE(moveChunkHangAtStep5);
 MONGO_FP_DECLARE(moveChunkHangAtStep6);
 MONGO_FP_DECLARE(moveChunkHangAtStep7);
 
+//源分片收到mongos发送过来的moveChunk命令
 class MoveChunkCommand : public BasicCommand {
 public:
     MoveChunkCommand() : BasicCommand("moveChunk") {}
@@ -113,6 +114,7 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
+	
     bool run(OperationContext* opCtx,
              const string& dbname,
              const BSONObj& cmdObj,
@@ -120,6 +122,7 @@ public:
         auto shardingState = ShardingState::get(opCtx);
         uassertStatusOK(shardingState->canAcceptShardedCommands());
 
+		//获取moveChunk命令内容
         const MoveChunkRequest moveChunkRequest = uassertStatusOK(
             MoveChunkRequest::createFromCommand(NamespaceString(parseNs(dbname, cmdObj)), cmdObj));
 
@@ -128,6 +131,7 @@ public:
         Grid::get(opCtx)->shardRegistry()->reload(opCtx);
 
         auto scopedRegisterMigration =
+			//ShardingState::registerDonateChunk  
             uassertStatusOK(shardingState->registerDonateChunk(moveChunkRequest));
 
         Status status = {ErrorCodes::InternalError, "Uninitialized value"};
@@ -135,6 +139,7 @@ public:
         // Check if there is an existing migration running and if so, join it
         if (scopedRegisterMigration.mustExecute()) {
             try {
+				//真正的迁移操作再这里
                 _runImpl(opCtx, moveChunkRequest);
                 status = Status::OK();
             } catch (const DBException& e) {
@@ -152,6 +157,7 @@ public:
             status = scopedRegisterMigration.waitForCompletion(opCtx);
         }
 
+		//jumbo chunk错误
         if (status == ErrorCodes::ChunkTooBig) {
             // This code is for compatibility with pre-3.2 balancer, which does not recognize the
             // ChunkTooBig error code and instead uses the "chunkTooBig" field in the response,
@@ -177,8 +183,10 @@ public:
     }
 
 private:
+	//MoveChunkCommand::run中调用
     static void _runImpl(OperationContext* opCtx, const MoveChunkRequest& moveChunkRequest) {
         const auto writeConcernForRangeDeleter =
+			//获取moveChunk命令的参数信息
             uassertStatusOK(ChunkMoveWriteConcernOptions::getEffectiveWriteConcern(
                 opCtx, moveChunkRequest.getSecondaryThrottle()));
 
@@ -186,9 +194,11 @@ private:
         auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
 
         const auto donorConnStr =
+			//获取迁移的源分片地址信息字符串
             uassertStatusOK(shardRegistry->getShard(opCtx, moveChunkRequest.getFromShardId()))
                 ->getConnString();
         const auto recipientHost = uassertStatusOK([&] {
+			//目的shard信息
             auto recipientShard =
                 uassertStatusOK(shardRegistry->getShard(opCtx, moveChunkRequest.getToShardId()));
 
@@ -197,6 +207,7 @@ private:
         }());
 
         string unusedErrMsg;
+		//构造MoveTimingHelper  迁移过程记录在该类结构中
         MoveTimingHelper moveTimingHelper(opCtx,
                                           "from",
                                           moveChunkRequest.getNss().ns(),
@@ -207,30 +218,35 @@ private:
                                           moveChunkRequest.getToShardId(),
                                           moveChunkRequest.getFromShardId());
 
+		//原集群kCreated阶段
+		//MoveTimingHelper::done
         moveTimingHelper.done(1);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep1);
-
         MigrationSourceManager migrationSourceManager(
             opCtx, moveChunkRequest, donorConnStr, recipientHost);
 
+		//原集群kCloning阶段
         moveTimingHelper.done(2);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep2);
-
         uassertStatusOKWithWarning(migrationSourceManager.startClone(opCtx));
+
+		//原集群kCloneCaughtUp阶段
         moveTimingHelper.done(3);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep3);
-
         uassertStatusOKWithWarning(migrationSourceManager.awaitToCatchUp(opCtx));
-        moveTimingHelper.done(4);
-        MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep4);
 
+		//原集群kCriticalSection阶段
+		moveTimingHelper.done(4);
+        MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep4);
         uassertStatusOKWithWarning(migrationSourceManager.enterCriticalSection(opCtx));
         uassertStatusOKWithWarning(migrationSourceManager.commitChunkOnRecipient(opCtx));
-        moveTimingHelper.done(5);
-        MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep5);
 
+		//原集群kCloneCompleted阶段
+		moveTimingHelper.done(5);
+        MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep5);
         uassertStatusOKWithWarning(migrationSourceManager.commitChunkMetadataOnConfig(opCtx));
-        moveTimingHelper.done(6);
+
+		moveTimingHelper.done(6);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep6);
     }
 

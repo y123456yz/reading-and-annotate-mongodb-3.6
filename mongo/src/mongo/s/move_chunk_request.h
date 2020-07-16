@@ -45,6 +45,7 @@ class StatusWith;
 /**
  * Parses the arguments for a move chunk operation.
  */
+//moveChunk命令内容选项
 class MoveChunkRequest {
 public:
     /**
@@ -131,15 +132,18 @@ private:
     NamespaceString _nss;
 
     // The source shard id
+    //迁移的源分片信息
     ShardId _fromShardId;
 
     // The recipient shard id
+     //迁移的目的分片信息
     ShardId _toShardId;
 
     // Range of the chunk being moved
     ChunkRange _range;
 
     // Assures the collection has not been dropped and recreated since the moveChunk was sent.
+    //object ID
     OID _versionEpoch;
 
     // This value is used by the migration source to determine the data size threshold above which a

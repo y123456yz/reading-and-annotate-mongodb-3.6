@@ -59,7 +59,9 @@ class OpTime;
 
 /**
  * Drives the receiving side of the MongoD migration process. One instance exists per shard.
- */ //数据块迁移相关
+ */ 
+//MigrationSourceManager和MigrationDestinationManager对应
+ //数据块迁移相关
 class MigrationDestinationManager {
     MONGO_DISALLOW_COPYING(MigrationDestinationManager);
 

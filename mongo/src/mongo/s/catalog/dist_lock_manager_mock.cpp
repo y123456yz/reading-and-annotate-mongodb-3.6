@@ -81,7 +81,7 @@ StatusWith<DistLockHandle> DistLockManagerMock::lockWithSessionID(OperationConte
         return _lockReturnStatus;
     }
 
-	//遍历查找
+	//遍历查找  _locks记录了本mongos上面缓存的分布式锁，一个锁对应一个name，实际上就是一个表信息
     if (_locks.end() != std::find_if(_locks.begin(), _locks.end(), [name](LockInfo info) -> bool {
             return info.name == name;
         })) {
@@ -89,7 +89,7 @@ StatusWith<DistLockHandle> DistLockManagerMock::lockWithSessionID(OperationConte
                       str::stream() << "Lock \"" << name << "\" is already taken");
     }
 
-	//locks中没有，则添加进去，同时获取这个锁
+	//locks中没有，则添加进去，同时获取这个锁ID
     LockInfo info;
     info.name = name.toString();
     info.lockID = lockSessionID;
@@ -109,6 +109,7 @@ void DistLockManagerMock::unlockAll(OperationContext* opCtx, const std::string& 
     MONGO_UNREACHABLE;
 }
 
+//从队列中去除缓存的锁
 void DistLockManagerMock::unlock(OperationContext* opCtx, const DistLockHandle& lockHandle) {
     std::vector<LockInfo>::iterator it =
         std::find_if(_locks.begin(), _locks.end(), [&lockHandle](LockInfo info) -> bool {

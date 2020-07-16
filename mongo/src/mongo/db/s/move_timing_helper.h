@@ -39,6 +39,7 @@ namespace mongo {
 class BSONObj;
 class OperationContext;
 
+//记录迁移过程的步骤信息
 class MoveTimingHelper {
 public:
     MoveTimingHelper(OperationContext* opCtx,

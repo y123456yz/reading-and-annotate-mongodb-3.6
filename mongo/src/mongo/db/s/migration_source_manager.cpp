@@ -141,6 +141,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
     invariant(!opCtx->lockState()->isLocked());
 
     // Disallow moving a chunk to ourselves
+    //源和目的不能是同一个分片
     uassert(ErrorCodes::InvalidOptions,
             "Destination shard cannot be the same as source",
             _args.getFromShardId() != _args.getToShardId());
@@ -150,6 +151,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
 
     // Force refresh of the metadata to ensure we have the latest
     {
+    	//获取shardstat状态信息，也就是db.runCommand("shardingState")
         auto const shardingState = ShardingState::get(opCtx);
 
         ChunkVersion unusedShardVersion;
