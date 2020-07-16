@@ -47,6 +47,7 @@ namespace mongo {
 
 class ScopedCollectionMetadata;
 
+//CollectionShardingState._metadataManager  ScopedCollectionMetadata._metadataManager成员为该类型
 class MetadataManager {
     MONGO_DISALLOW_COPYING(MetadataManager);
 
@@ -325,7 +326,7 @@ private:
      * Disconnect from the CollectionMetadata, possibly triggering GC of unused CollectionMetadata.
      */
     void _clear();
-
+    
     std::shared_ptr<MetadataManager> _metadataManager;
 
     std::shared_ptr<MetadataManager::CollectionMetadataTracker> _metadataTracker;

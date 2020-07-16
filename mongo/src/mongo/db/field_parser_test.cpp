@@ -45,6 +45,7 @@ using mongo::BSONObj;
 using mongo::BSONObjBuilder; //通过b.obj()输出
 using mongo::Date_t;
 using mongo::FieldParser;
+//OID也就是ObjectId，bson中实现
 using mongo::OID;
 using std::map;
 using std::string;

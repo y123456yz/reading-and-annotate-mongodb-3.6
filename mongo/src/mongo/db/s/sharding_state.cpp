@@ -272,6 +272,7 @@ Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
     }
 }
 
+//MigrationSourceManager::MigrationSourceManager
 Status ShardingState::refreshMetadataNow(OperationContext* opCtx,
                                          const NamespaceString& nss,
                                          ChunkVersion* latestShardVersion) {
@@ -491,17 +492,23 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     invariant(!opCtx->lockState()->isLocked());
     invariant(enabled());
 
+	//获取分片ID信息
     const ShardId shardId = getShardName();
 
+	//shardId合法性检查
     uassert(ErrorCodes::NotYetInitialized,
             str::stream() << "Cannot refresh metadata for " << nss.ns()
                           << " before shard name has been set",
             shardId.isValid());
 
+	//获取路由信息  routingInfo为CachedCollectionRoutingInfo类型
     const auto routingInfo = uassertStatusOK(
         Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfoWithRefresh(opCtx, nss));
-    const auto cm = routingInfo.cm();
 
+	//获取ChunkManager
+	const auto cm = routingInfo.cm();//CachedCollectionRoutingInfo::cm
+
+	//没有ChunkManager，说明没有启用分片功能
     if (!cm) {
         // No chunk manager, so unsharded.
 
@@ -516,9 +523,11 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 
     {
         AutoGetCollection autoColl(opCtx, nss, MODE_IS);
+		//获取表ShardingState信息 ShardingState命令获取到的信息
         auto css = CollectionShardingState::get(opCtx, nss);
 
         // We already have newer version
+        //CollectionShardingState::getMetadata
         if (css->getMetadata() &&
             css->getMetadata()->getCollVersion().epoch() == cm->getVersion().epoch() &&
             css->getMetadata()->getCollVersion() >= cm->getVersion()) {
@@ -550,8 +559,10 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     return css->getMetadata()->getShardVersion();
 }
 
+//MoveChunkCommand::run调用
 StatusWith<ScopedRegisterDonateChunk> ShardingState::registerDonateChunk(
     const MoveChunkRequest& args) {
+    //ActiveMigrationsRegistry::registerDonateChunk
     return _activeMigrationsRegistry.registerDonateChunk(args);
 }
 

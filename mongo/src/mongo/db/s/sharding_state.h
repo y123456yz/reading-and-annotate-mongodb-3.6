@@ -67,6 +67,75 @@ class OpTime;
  * Contains the global sharding state for a running mongod. There is one instance of this object per
  * service context and it is never destroyed for the lifetime of the context.
  */
+
+/*
+ocloud_HTZjQeZL_shard_1:PRIMARY> db.runCommand("shardingState")
+{
+        "enabled" : true,
+        "configServer" : "ocloud_HTZjQeZL_configdb/10.15.66.132:20003,10.15.66.68:20002,10.64.70.170:20003",
+        "shardName" : "ocloud_HTZjQeZL_shard_1",
+        "clusterId" : ObjectId("5eb28a0b25bc270d535a26f4"),
+        "versions" : {
+                "ocloud_cold_data_db.system.profile" : Timestamp(0, 0),
+                "sbtest11.system.drop.1589957367i7t5.sbtest1" : Timestamp(0, 0),
+                "local.system.profile" : Timestamp(0, 0),
+                "config.version" : Timestamp(0, 0),
+                "config.system.profile" : Timestamp(0, 0),
+                "config.cache.chunks.sbtest11.sbtest1" : Timestamp(0, 0),
+                "sbtest11.system.profile" : Timestamp(0, 0),
+                "sbtest11.sbtest1" : Timestamp(0, 0),
+                "ocloud_cold_data_db.system.drop.1589941793i12t5.item_commit_info" : Timestamp(0, 0),
+                "config.system.drop.1589941793i10t5.cache.chunks.ocloud_cold_data_db.ocloud_cold_data_t" : Timestamp(0, 0),
+                "ocloud_cold_data_db.system.drop.1589941793i6t5.ocloud_cold_data_t" : Timestamp(0, 0),
+                "local.temp_oplog_buffer" : Timestamp(0, 0),
+                "admin.system.profile" : Timestamp(0, 0),
+                "local.oplog.rs" : Timestamp(0, 0),
+                "local.system.replset" : Timestamp(0, 0),
+                "config.system.sessions" : Timestamp(1, 0),
+                "local.system.rollback.id" : Timestamp(0, 0),
+                "admin.system.roles" : Timestamp(0, 0),
+                "local.me" : Timestamp(0, 0),
+                "admin.system.version" : Timestamp(0, 0),
+                "local.replset.minvalid" : Timestamp(0, 0),
+                "test.test" : Timestamp(0, 0),
+                "ocloud_cold_data_db.item_commit_info" : Timestamp(0, 0),
+                "local.startup_log" : Timestamp(0, 0),
+                "config.system.drop.1589957368i2t5.cache.chunks.sbtest11.sbtest1" : Timestamp(0, 0),
+                "admin.system.users" : Timestamp(0, 0),
+                "local.replset.election" : Timestamp(0, 0),
+                "config.cache.chunks.config.system.sessions" : Timestamp(0, 0),
+                "config.cache.collections" : Timestamp(0, 0),
+                "ocloud_cold_data_db.system.indexes" : Timestamp(0, 0),
+                "ocloud_cold_data_db.ocloud_cold_data_t" : Timestamp(14116, 1),
+                "config.transactions" : Timestamp(0, 0),
+                "config.system.indexes" : Timestamp(0, 0),
+                "local.replset.oplogTruncateAfterPoint" : Timestamp(0, 0),
+                "config.cache.chunks.ocloud_cold_data_db.ocloud_cold_data_t" : Timestamp(0, 0)
+        },
+        "ok" : 1,
+        "operationTime" : Timestamp(1594870004, 839),
+        "$gleStats" : {
+                "lastOpTime" : Timestamp(0, 0),
+                "electionId" : ObjectId("7fffffff0000000000000005")
+        },
+        "$configServerState" : {
+                "opTime" : {
+                        "ts" : Timestamp(1594870004, 333),
+                        "t" : NumberLong(3)
+                }
+        },
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1594870004, 839),
+                "signature" : {
+                        "hash" : BinData(0,"DbM6g9T6IGlKVL13reIWghyjvm0="),
+                        "keyId" : NumberLong("6823668165268996122")
+                }
+        }
+}
+参考官方说明: https://docs.mongodb.com/manual/reference/command/shardingState/#dbcmd.shardingState
+
+ShardingState::getNS中把ShardingState和CollectionShardingState联系起来
+*/
 class ShardingState {
     MONGO_DISALLOW_COPYING(ShardingState);
 

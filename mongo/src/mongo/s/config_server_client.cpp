@@ -43,6 +43,9 @@ const ReadPreferenceSetting kPrimaryOnlyReadPreference{ReadPreference::PrimaryOn
 
 }  // namespace
 
+//MoveChunkCmd::errmsgRun调用 mongos执行moveChunk命令手动迁移块的时候走到这里
+
+//该接口通过configsvr_client::moveChunk方式调用
 Status moveChunk(OperationContext* opCtx,
                  const ChunkType& chunk,
                  const ShardId& newShardId,
@@ -65,6 +68,9 @@ Status moveChunk(OperationContext* opCtx,
     return cmdResponseStatus.getValue().commandStatus;
 }
 
+//updateChunkWriteStatsAndSplitIfNeeded
+
+//该接口通过configsvr_client::rebalanceChunk方式调用
 Status rebalanceChunk(OperationContext* opCtx, const ChunkType& chunk) {
     auto shardRegistry = Grid::get(opCtx)->shardRegistry();
     auto shard = shardRegistry->getConfigShard();

@@ -47,6 +47,9 @@ namespace {
 using std::string;
 using str::stream;
 
+//mongos对应的接口如下:
+//BalanceChunkRequest::serializeToMoveCommandForConfig      
+//BalanceChunkRequest::serializeToRebalanceCommandForConfig
 class ConfigSvrMoveChunkCommand : public BasicCommand {
 public:
     ConfigSvrMoveChunkCommand() : BasicCommand("_configsvrMoveChunk") {}

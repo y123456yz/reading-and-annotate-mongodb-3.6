@@ -142,13 +142,15 @@ MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
             }
             scopedMigrationRequests.emplace(migrateInfo.getName(),
                                             std::move(statusWithScopedMigrationRequest.getValue()));
-			
+
+			//向源分片发送moveChunk命令，同时获取返回结果存入responses
             responses.emplace_back(
                 _schedule(opCtx, migrateInfo, maxChunkSizeBytes, secondaryThrottle, waitForDelete),
                 migrateInfo);
         }
 
         // Wait for all the scheduled migrations to complete.
+        //获取对应responese
         for (auto& response : responses) {
             auto notification = std::move(response.first);
             auto migrateInfo = std::move(response.second);
@@ -157,6 +159,7 @@ MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
 
             auto it = scopedMigrationRequests.find(migrateInfo.getName());
             invariant(it != scopedMigrationRequests.end());
+			//获取moveChunk的结果
             Status commandStatus =
                 _processRemoteCommandResponse(remoteCommandResponse, &it->second);
             migrationStatuses.emplace(migrateInfo.getName(), std::move(commandStatus));
@@ -423,6 +426,7 @@ void MigrationManager::drainActiveMigrations() {
 }
 
 //MigrationManager::executeMigrationsForAutoBalance调用
+//向需要迁移的源分片发送moveChunk命令
 shared_ptr<Notification<RemoteCommandResponse>> 
   MigrationManager::_schedule(
     OperationContext* opCtx,
@@ -521,8 +525,9 @@ void MigrationManager::_schedule(WithLock lock,
                 whyMessage,
                 _lockSessionID,
                 DistLockManager::kSingleLockAttemptTimeout);
-
-        if (!statusWithDistLockHandle.isOK()) {
+		
+		//本mongos已经有该nss表的分布式锁，说明当前正在迁移该表数据
+        if (!statusWithDistLockHandle.isOK()) { 
             migration.completionNotification->set(
 			/*
 			类似打印如下:
@@ -585,13 +590,18 @@ void MigrationManager::_complete(WithLock lock,
     // still acquired.
     auto notificationToSignal = itMigration->completionNotification;
 
+	//map中查找nss
     auto it = _activeMigrations.find(nss);
     invariant(it != _activeMigrations.end());
 
+	//获取该表nss对应的迁移块信息
     auto migrations = &it->second;
+	//移除对应itMigration
     migrations->erase(itMigration);
 
+	//如果该nss下面已经没有itMigration，则释放缓存的分布式锁信息
     if (migrations->empty()) {
+		//DistLockManagerMock::unlock
         Grid::get(opCtx)->catalogClient()->getDistLockManager()->unlock(
             opCtx, _lockSessionID, nss.ns());
         _activeMigrations.erase(it);
@@ -641,6 +651,7 @@ void MigrationManager::_abandonActiveMigrationsAndEnableManager(OperationContext
     _condVar.notify_all();
 }
 
+//获取moveChunk的结果，MigrationManager::executeMigrationsForAutoBalance调用
 Status MigrationManager::_processRemoteCommandResponse(
     const RemoteCommandResponse& remoteCommandResponse,
     ScopedMigrationRequest* scopedMigrationRequest) {

@@ -95,6 +95,7 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
+	//MoveChunkCmd::errmsgRun
     bool errmsgRun(OperationContext* opCtx,
                    const std::string& dbname,
                    const BSONObj& cmdObj,

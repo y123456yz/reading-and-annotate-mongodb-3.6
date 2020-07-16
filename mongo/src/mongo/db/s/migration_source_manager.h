@@ -63,7 +63,7 @@ class OperationContext;
  * At any point in time it is safe to let the MigrationSourceManager object go out of scope in which
  * case the desctructor will take care of clean up based on how far we have advanced. One exception
  * is the commitDonateChunk and its comments explain the reasoning.
- */
+ */ //MigrationSourceManager和MigrationDestinationManager对应
 class MigrationSourceManager {
     MONGO_DISALLOW_COPYING(MigrationSourceManager);
 
@@ -184,6 +184,7 @@ public:
 private:
     // Used to track the current state of the source manager. See the methods above, which have
     // comments explaining the various state transitions.
+    //源分片迁移过程中的状态,参考MoveChunkCommand::_runImpl
     enum State { kCreated, kCloning, kCloneCaughtUp, kCriticalSection, kCloneCompleted, kDone };
 
     /**

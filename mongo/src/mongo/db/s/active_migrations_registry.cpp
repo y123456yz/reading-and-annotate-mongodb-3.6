@@ -45,6 +45,7 @@ ActiveMigrationsRegistry::~ActiveMigrationsRegistry() {
     invariant(!_activeMoveChunkState);
 }
 
+//ShardingState::registerDonateChunk
 StatusWith<ScopedRegisterDonateChunk> ActiveMigrationsRegistry::registerDonateChunk(
     const MoveChunkRequest& args) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);

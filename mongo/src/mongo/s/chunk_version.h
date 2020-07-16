@@ -49,6 +49,7 @@ class StatusWith;
  * TODO: This is a "manual type" but, even so, still needs to comform to what's
  * expected from types.
  */
+ //chunk版本信息，可以参考https://developer.aliyun.com/article/58689
 struct ChunkVersion {
 public:
     /**
@@ -59,6 +60,7 @@ public:
 
     ChunkVersion() : _combined(0), _epoch(OID()) {}
 
+    //一个ChunkVersion主要由这三个成员组成
     ChunkVersion(int major, int minor, const OID& epoch)
         : _combined(static_cast<uint64_t>(minor) | (static_cast<uint64_t>(major) << 32)),
           _epoch(epoch) {}
@@ -412,6 +414,7 @@ public:
     BSONObj toBSON() const;
 
 private:
+    //版本 majority | minorVersion
     uint64_t _combined;
 
     OID _epoch;

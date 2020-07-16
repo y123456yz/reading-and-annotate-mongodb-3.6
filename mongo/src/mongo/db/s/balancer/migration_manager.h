@@ -254,6 +254,7 @@ private:
     // Used as a constant session ID for all distributed locks that this MigrationManager holds.
     // Currently required so that locks can be reacquired for the balancer in startRecovery and then
     // overtaken in later operations.
+    //分布式锁ID
     const OID _lockSessionID{OID::gen()};
 
     // Carries migration information over from startRecovery to finishRecovery. Should only be set
@@ -264,6 +265,7 @@ private:
     stdx::mutex _mutex;
 
     // Always start the migration manager in a stopped state.
+    //balancer stop的时候这里会进入stop状态
     State _state{State::kStopped};
 
     // Condition variable, which is waited on when the migration manager's state is changing and
@@ -271,7 +273,7 @@ private:
     stdx::condition_variable _condVar;
 
     // Maps collection namespaces to that collection's active migrations.
-    //map表
+    //map表  记录了表和对应块迁移信息，参考MigrationManager::_schedule
     CollectionMigrationsStateMap _activeMigrations;
 };
 
