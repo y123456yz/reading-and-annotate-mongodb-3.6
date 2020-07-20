@@ -63,6 +63,7 @@ class OperationContext;
  * At any point in time it is safe to let the MigrationSourceManager object go out of scope in which
  * case the desctructor will take care of clean up based on how far we have advanced. One exception
  * is the commitDonateChunk and its comments explain the reasoning.
+ //MoveChunkCommand::_runImpl中调用
  */ //MigrationSourceManager和MigrationDestinationManager对应
 class MigrationSourceManager {
     MONGO_DISALLOW_COPYING(MigrationSourceManager);
@@ -202,12 +203,15 @@ private:
     void _cleanup(OperationContext* opCtx);
 
     // The parameters to the moveChunk command
+    //moveChunk命令的参数
     const MoveChunkRequest _args;
 
     // The resolved connection string of the donor shard
+    //源分片地址信息字符串
     const ConnectionString _donorConnStr;
 
     // The resolved primary of the recipient shard
+    //目的分片主节点地址信息
     const HostAndPort _recipientHost;
 
     // Gets initialized at creation time and will time the entire move chunk operation
@@ -226,7 +230,7 @@ private:
     // The chunk cloner source. Only available if there is an active migration going on. To set and
     // remove it, global S lock needs to be acquired first in order to block all logOp calls and
     // then the mutex. To access it, only the mutex is necessary. Available after cloning stage has
-    // completed.
+    // completed.  
     std::unique_ptr<MigrationChunkClonerSource> _cloneDriver;
 
     // Whether the source manager is in a critical section. Tracked as a shared pointer so that

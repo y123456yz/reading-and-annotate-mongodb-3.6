@@ -48,8 +48,9 @@ class StatusWith;
  *
  * TODO: This is a "manual type" but, even so, still needs to comform to what's
  * expected from types.
+ //ShardingState::_refreshMetadata中返回获取
  */
- //chunk版本信息，可以参考https://developer.aliyun.com/article/58689
+ //chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
 struct ChunkVersion {
 public:
     /**
@@ -120,6 +121,7 @@ public:
     /**
      * Indicates that the collection is not sharded. Same as DROPPED.
      */
+    //没有使能分片功能
     static ChunkVersion UNSHARDED() {
         return ChunkVersion(0, 0, OID());
     }

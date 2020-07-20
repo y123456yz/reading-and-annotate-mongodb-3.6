@@ -200,6 +200,7 @@ size_t MetadataManager::numberOfMetadataSnapshots() const {
     return _metadata.size() - 1;
 }
 
+//跟新元数据
 void MetadataManager::refreshActiveMetadata(std::unique_ptr<CollectionMetadata> remoteMetadata) {
     stdx::lock_guard<stdx::mutex> lg(_managerLock);
 
@@ -257,6 +258,7 @@ void MetadataManager::refreshActiveMetadata(std::unique_ptr<CollectionMetadata> 
         return;
     }
 
+	//Updating collection metadata for ocloud_cold_data_db.ocloud_cold_data_t from collection version: 46827|1||5e95683f43bceba7af99c3aa, shard version: 40938|1||5e95683f43bceba7af99c3aa to collection version: 46828|1||5e95683f43bceba7af99c3aa, shard version: 46828|1||5e95683f43bceba7af99c3aa
     log() << "Updating collection metadata for " << _nss.ns() << " from "
           << activeMetadata->toStringBasic() << " to " << remoteMetadata->toStringBasic();
 

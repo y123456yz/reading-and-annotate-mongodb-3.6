@@ -329,6 +329,7 @@ private:
     // synchronize with other callers, which read it.
     //
     // NOTE: The value is not owned by this class.
+    //CollectionShardingState::setMigrationSourceManager÷–∏≥÷µ
     MigrationSourceManager* _sourceMgr{nullptr};
 
     // for access to _metadataManager

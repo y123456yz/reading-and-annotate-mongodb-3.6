@@ -173,6 +173,7 @@ private:
     boost::optional<bool> _dropped;
 
     // Sharding key. Required, if collection is not dropped.
+    //Æ¬½¨
     boost::optional<KeyPattern> _keyPattern;
 
     // Optional collection default collation. If empty, implies simple collation.

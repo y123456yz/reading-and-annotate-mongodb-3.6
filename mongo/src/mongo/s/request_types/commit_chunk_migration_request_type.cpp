@@ -35,6 +35,7 @@
 namespace mongo {
 namespace {
 
+//chunk迁移完成后，提交元数据到config
 const char kConfigSvrCommitChunkMigration[] = "_configsvrCommitChunkMigration";
 const char kFromShard[] = "fromShard";
 const char kToShard[] = "toShard";

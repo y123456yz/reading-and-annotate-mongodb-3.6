@@ -272,7 +272,8 @@ Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
     }
 }
 
-//MigrationSourceManager::MigrationSourceManager
+//MigrationSourceManager::MigrationSourceManager调用
+//获取nss对应shardversion
 Status ShardingState::refreshMetadataNow(OperationContext* opCtx,
                                          const NamespaceString& nss,
                                          ChunkVersion* latestShardVersion) {
@@ -488,6 +489,7 @@ StatusWith<bool> ShardingState::initializeShardingAwarenessIfNeeded(OperationCon
     }
 }
 
+//ShardingState::refreshMetadataNow调用
 ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const NamespaceString& nss) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(enabled());
@@ -523,7 +525,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 
     {
         AutoGetCollection autoColl(opCtx, nss, MODE_IS);
-		//获取表ShardingState信息 ShardingState命令获取到的信息
+		//获取CollectionShardingState
         auto css = CollectionShardingState::get(opCtx, nss);
 
         // We already have newer version
@@ -554,8 +556,10 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     std::unique_ptr<CollectionMetadata> newCollectionMetadata =
         stdx::make_unique<CollectionMetadata>(cm, shardId);
 
+	//跟新元数据版本信息
     css->refreshMetadata(opCtx, std::move(newCollectionMetadata));
 
+	//返回
     return css->getMetadata()->getShardVersion();
 }
 

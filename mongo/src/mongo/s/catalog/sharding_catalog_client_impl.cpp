@@ -209,7 +209,13 @@ Status ShardingCatalogClientImpl::logAction(OperationContext* opCtx,
                 detail,
                 ShardingCatalogClient::kMajorityWriteConcern);
 }
-
+/*
+2020-07-20T12:24:46.778+0800 I SHARDING [conn84350] about to log metadata event into changelog: 
+{ _id: "bjcp4983-2020-07-20T12:24:46.778+0800-5f151c8e31b53b31fd10c0d1", server: "bjcp4983", 
+clientAddr: "10.64.54.5:44022", time: new Date(1595219086778), what: "moveChunk.start", ns: "ocloud_cold_data_db.ocloud_cold_data_t", details: { min: { user_id: "472908302", module: "album", md5: "1816ADAEB60E49DA9A4EF633FD5BE84C" }, max: { user_id: "472909051", module: "album", md5: "859526FAF8E58683284FE04F5484AC7A" }, 
+from: "ocloud_WbUiXohI_shard_4", to: "ocloud_WbUiXohI_shard_9" } }
+*/
+//MigrationSourceManager::startClone
 Status ShardingCatalogClientImpl::logChange(OperationContext* opCtx,
                                             const std::string& what,
                                             const std::string& ns,

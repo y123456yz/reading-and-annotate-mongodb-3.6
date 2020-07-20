@@ -183,18 +183,23 @@ private:
                bool explode);
 
     // The original move chunk request
+    //moveChunk参数信息
     const MoveChunkRequest _args;
 
     // The shard key associated with the namespace
+    //片建
     const ShardKeyPattern _shardKeyPattern;
 
     // The migration session id
+    //记录迁移的源和目的shard id信息
     const MigrationSessionId _sessionId;
 
     // The resolved connection string of the donor shard
+    //源分片地址信息
     const ConnectionString _donorConnStr;
 
     // The resolved primary of the recipient shard
+    //目的分片主节点
     const HostAndPort _recipientHost;
 
     // Registered deletion notifications plan executor, which will listen for document deletions

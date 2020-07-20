@@ -183,7 +183,7 @@ public:
     }
 
 private:
-	//MoveChunkCommand::run中调用
+	//MoveChunkCommand::run中调用   //MoveChunkCommand::_runImpl
     static void _runImpl(OperationContext* opCtx, const MoveChunkRequest& moveChunkRequest) {
         const auto writeConcernForRangeDeleter =
 			//获取moveChunk命令的参数信息
@@ -202,6 +202,7 @@ private:
             auto recipientShard =
                 uassertStatusOK(shardRegistry->getShard(opCtx, moveChunkRequest.getToShardId()));
 
+			//目的分片主节点地址
             return recipientShard->getTargeter()->findHostNoWait(
                 ReadPreferenceSetting{ReadPreference::PrimaryOnly});
         }());
@@ -222,28 +223,34 @@ private:
 		//MoveTimingHelper::done
         moveTimingHelper.done(1);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep1);
+		//构造MigrationSourceManager
         MigrationSourceManager migrationSourceManager(
             opCtx, moveChunkRequest, donorConnStr, recipientHost);
 
 		//原集群kCloning阶段
         moveTimingHelper.done(2);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep2);
+		//发送_recvChunkStart后进入kCloning状态，目的分片收到后会进行全量chunk迁移
         uassertStatusOKWithWarning(migrationSourceManager.startClone(opCtx));
 
 		//原集群kCloneCaughtUp阶段
         moveTimingHelper.done(3);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep3);
+		//循环检查目的分片全量迁移过程是否完成，完成返回，超时返回异常
         uassertStatusOKWithWarning(migrationSourceManager.awaitToCatchUp(opCtx));
 
 		//原集群kCriticalSection阶段
 		moveTimingHelper.done(4);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep4);
+		//加互斥锁保证表不会有新数据写入
         uassertStatusOKWithWarning(migrationSourceManager.enterCriticalSection(opCtx));
-        uassertStatusOKWithWarning(migrationSourceManager.commitChunkOnRecipient(opCtx));
+		//发送_recvChunkCommit到目的分片，通知目的分片原分片已经停止写入，可以拉取增量数据了
+		uassertStatusOKWithWarning(migrationSourceManager.commitChunkOnRecipient(opCtx));
 
 		//原集群kCloneCompleted阶段
 		moveTimingHelper.done(5);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep5);
+		////构造"_configsvrCommitChunkMigration"命令，提交相关数据给config服务器
         uassertStatusOKWithWarning(migrationSourceManager.commitChunkMetadataOnConfig(opCtx));
 
 		moveTimingHelper.done(6);

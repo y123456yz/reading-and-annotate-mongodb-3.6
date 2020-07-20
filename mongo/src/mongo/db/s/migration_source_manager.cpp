@@ -67,7 +67,7 @@ using namespace shardmetadatautil;
 namespace {
 
 // Wait at most this much time for the recipient to catch up sufficiently so critical section can be
-// entered
+// entered moveChunk全量迁移阶段最长时间
 const Hours kMaxWaitToEnterCriticalSectionTimeout(6);
 const char kMigratedChunkVersionField[] = "migratedChunkVersion";
 const char kControlChunkVersionField[] = "controlChunkVersion";
@@ -155,7 +155,8 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
         auto const shardingState = ShardingState::get(opCtx);
 
         ChunkVersion unusedShardVersion;
-        Status refreshStatus =
+        Status refreshStatus = 
+			//获取nss对应shardversion
             shardingState->refreshMetadataNow(opCtx, getNss(), &unusedShardVersion);
         uassert(refreshStatus.code(),
                 str::stream() << "cannot start migrate of chunk " << _args.toString() << " due to "
@@ -189,6 +190,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
     const auto shardVersion = collectionMetadata->getShardVersion();
 
     // If the shard major version is zero, this means we do not have any chunks locally to migrate
+    //没有需要迁移的块
     uassert(ErrorCodes::IncompatibleShardingMetadata,
             str::stream() << "cannot move chunk " << _args.toString()
                           << " because the shard doesn't contain any chunks",
@@ -214,6 +216,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
                           << redact(chunkValidateStatus.reason()),
             chunkValidateStatus.isOK());
 
+	//ChunkVersion::epoch,获取_epoch
     _collectionEpoch = collectionVersion.epoch();
     _collectionUuid = std::get<1>(collectionMetadataAndUUID);
 }
@@ -226,11 +229,22 @@ NamespaceString MigrationSourceManager::getNss() const {
     return _args.getNss();
 }
 
+//MoveChunkCommand::_runImpl调用 
+//发送_recvChunkStart后进入kCloning状态，目的收到命令后进行真正的数据迁移，数据迁移由目的触发从源拉取
 Status MigrationSourceManager::startClone(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(_state == kCreated);
     auto scopedGuard = MakeGuard([&] { cleanupOnError(opCtx); });
 
+	/*
+	2020-07-20T12:24:46.778+0800 I SHARDING [conn84350] about to log metadata event into changelog: 
+	{ _id: "bjcp4983-2020-07-20T12:24:46.778+0800-5f151c8e31b53b31fd10c0d1", server: "bjcp4983", 
+	clientAddr: "10.64.54.5:44022", time: new Date(1595219086778), what: "moveChunk.start", 
+	ns: "ocloud_cold_data_db.ocloud_cold_data_t", details: { min: { user_id: "472908302", module: "album", 
+	md5: "1816ADAEB60E49DA9A4EF633FD5BE84C" }, max: { user_id: "472909051", module: "album", md5: "859526FAF8E58683284FE04F5484AC7A" }, 
+	from: "ocloud_WbUiXohI_shard_4", to: "ocloud_WbUiXohI_shard_9" } }
+	*/
+	//记录logChange到cfg的config.changelog
     Grid::get(opCtx)
         ->catalogClient()
         ->logChange(opCtx,
@@ -249,6 +263,7 @@ Status MigrationSourceManager::startClone(OperationContext* opCtx) {
         auto css = CollectionShardingState::get(opCtx, getNss().ns());
 
         const auto metadata = css->getMetadata();
+		//epoch检查
         Status status = checkCollectionEpochMatches(metadata, _collectionEpoch);
         if (!status.isOK())
             return status;
@@ -257,12 +272,14 @@ Status MigrationSourceManager::startClone(OperationContext* opCtx) {
         // that a chunk on that collection is being migrated. With an active migration, write
         // operations require the cloner to be present in order to track changes to the chunk which
         // needs to be transmitted to the recipient.
+        //构造_cloneDriver
         _cloneDriver = stdx::make_unique<MigrationChunkClonerSourceLegacy>(
             _args, metadata->getKeyPattern(), _donorConnStr, _recipientHost);
 
         css->setMigrationSourceManager(opCtx, this);
     }
 
+	//MigrationChunkClonerSourceLegacy::startClone //发送_recvChunkStart后进入kCloning状态
     Status startCloneStatus = _cloneDriver->startClone(opCtx);
     if (!startCloneStatus.isOK()) {
         return startCloneStatus;
@@ -273,23 +290,27 @@ Status MigrationSourceManager::startClone(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//MoveChunkCommand::_runImpl 循环检查目的分片全量迁移过程是否完成
 Status MigrationSourceManager::awaitToCatchUp(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(_state == kCloning);
     auto scopedGuard = MakeGuard([&] { cleanupOnError(opCtx); });
 
     // Block until the cloner deems it appropriate to enter the critical section.
+    //循环查询目的分片从原分片拉取全量数据是否完成，默认最多等待6小时
     Status catchUpStatus = _cloneDriver->awaitUntilCriticalSectionIsAppropriate(
         opCtx, kMaxWaitToEnterCriticalSectionTimeout);
     if (!catchUpStatus.isOK()) {
         return catchUpStatus;
     }
 
+	//进入_recvChunkStatus状态
     _state = kCloneCaughtUp;
     scopedGuard.Dismiss();
     return Status::OK();
 }
 
+//加互斥锁保证表不会有新数据写入  //MoveChunkCommand::_runImpl
 Status MigrationSourceManager::enterCriticalSection(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(_state == kCloneCaughtUp);
@@ -322,6 +343,7 @@ Status MigrationSourceManager::enterCriticalSection(OperationContext* opCtx) {
         // The critical section must be entered with collection X lock in order to ensure there are
         // no writes which could have entered and passed the version check just before we entered
         // the crticial section, but managed to complete after we left it.
+        //保证表不会有新的写入
         AutoGetCollection autoColl(opCtx, getNss(), MODE_IX, MODE_X);
 
         // IMPORTANT: After this line, the critical section is in place and needs to be signaled
@@ -355,12 +377,15 @@ Status MigrationSourceManager::enterCriticalSection(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//发送_recvChunkCommit到目的分片，通知目的分片原分片已经停止写入，可以拉取增量数据了
 Status MigrationSourceManager::commitChunkOnRecipient(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(_state == kCriticalSection);
     auto scopedGuard = MakeGuard([&] { cleanupOnError(opCtx); });
 
     // Tell the recipient shard to fetch the latest changes.
+    //MigrationChunkClonerSourceLegacy::commitClone
+    //发送_recvChunkCommit到目的分片，通知目的分片原分片已经停止写入，可以拉取增量数据了
     Status commitCloneStatus = _cloneDriver->commitClone(opCtx);
 
     if (MONGO_FAIL_POINT(failMigrationCommit) && commitCloneStatus.isOK()) {
@@ -378,6 +403,8 @@ Status MigrationSourceManager::commitChunkOnRecipient(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//chunk迁移完成，修改config集群元数据信息
+////构造"_configsvrCommitChunkMigration"命令，提交相关数据给config服务器
 Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(_state == kCloneCompleted);
@@ -412,6 +439,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
         migratedChunkType.setMin(_args.getMinKey());
         migratedChunkType.setMax(_args.getMaxKey());
 
+		//构造_configsvrCommitChunkMigration命令
         CommitChunkMigrationRequest::appendAsCommand(&builder,
                                                      getNss(),
                                                      _args.getFromShardId(),
@@ -430,6 +458,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
         _readsShouldWaitOnCritSec = true;
     }
 
+	//发送命令到config
     auto commitChunkMigrationResponse =
         Grid::get(opCtx)->shardRegistry()->getConfigShard()->runCommandWithFixedRetryAttempts(
             opCtx,
@@ -446,7 +475,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
     const Status migrationCommitStatus =
         (commitChunkMigrationResponse.isOK() ? commitChunkMigrationResponse.getValue().commandStatus
                                              : commitChunkMigrationResponse.getStatus());
-
+	//跟新config元数据失败
     if (!migrationCommitStatus.isOK()) {
         // Need to get the latest optime in case the refresh request goes to a secondary --
         // otherwise the read won't wait for the write that _configsvrCommitChunkMigration may have
@@ -485,6 +514,9 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
                            << redact(status)});
     }
 
+	//跟新config元数据成功
+
+	
     // Do a best effort attempt to incrementally refresh the metadata before leaving the critical
     // section. It is okay if the refresh fails because that will cause the metadata to be cleared
     // and subsequent callers will try to do a full refresh.
@@ -562,6 +594,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
 
     const ChunkRange range(_args.getMinKey(), _args.getMaxKey());
 
+	//源分片删除已经迁移得chunk数据
     auto notification = [&] {
         auto const whenToClean = _args.getWaitForDelete() ? CollectionShardingState::kNow
                                                           : CollectionShardingState::kDelayed;
