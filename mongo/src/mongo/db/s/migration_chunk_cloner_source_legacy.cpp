@@ -189,18 +189,21 @@ MigrationChunkClonerSourceLegacy::MigrationChunkClonerSourceLegacy(MoveChunkRequ
                                                                    const BSONObj& shardKeyPattern,
                                                                    ConnectionString donorConnStr,
                                                                    HostAndPort recipientHost)
-    : _args(std::move(request)),
-      _shardKeyPattern(shardKeyPattern),
+    : _args(std::move(request)), //moveChunk命令中携代的参数
+      _shardKeyPattern(shardKeyPattern),//片建
+      //记录迁移的源和目的shard id
       _sessionId(MigrationSessionId::generate(_args.getFromShardId().toString(),
                                               _args.getToShardId().toString())),
-      _donorConnStr(std::move(donorConnStr)),
-      _recipientHost(std::move(recipientHost)) {}
+      _donorConnStr(std::move(donorConnStr)), //源分片信息
+      _recipientHost(std::move(recipientHost)) {} //目的分片主节点
 
 MigrationChunkClonerSourceLegacy::~MigrationChunkClonerSourceLegacy() {
     invariant(_state == kDone);
     invariant(!_deleteNotifyExec);
 }
 
+//发送_recvChunkStart后进入kCloning状态 
+//MigrationSourceManager::startClone调用
 Status MigrationChunkClonerSourceLegacy::startClone(OperationContext* opCtx) {
     invariant(_state == kNew);
     invariant(!opCtx->lockState()->isLocked());
@@ -211,10 +214,12 @@ Status MigrationChunkClonerSourceLegacy::startClone(OperationContext* opCtx) {
             stdx::make_unique<SessionCatalogMigrationSource>(opCtx, _args.getNss());
 
         // Prime up the session migration source if there are oplog entries to migrate.
+        //
         _sessionCatalogSource->fetchNextOplog(opCtx);
     }
 
     // Load the ids of the currently available documents
+    //根据moveChunk对应的min max检查需要迁移的块是否为largeChunk，如果为largeChunk直接报错
     auto storeCurrentLocsStatus = _storeCurrentLocs(opCtx);
     if (!storeCurrentLocsStatus.isOK()) {
         return storeCurrentLocsStatus;
@@ -222,6 +227,7 @@ Status MigrationChunkClonerSourceLegacy::startClone(OperationContext* opCtx) {
 
     // Tell the recipient shard to start cloning
     BSONObjBuilder cmdBuilder;
+	//构造_recvChunkStart命令发送给目的分片
     StartChunkCloneRequest::appendAsCommand(&cmdBuilder,
                                             _args.getNss(),
                                             _sessionId,
@@ -233,6 +239,7 @@ Status MigrationChunkClonerSourceLegacy::startClone(OperationContext* opCtx) {
                                             _shardKeyPattern.toBSON(),
                                             _args.getSecondaryThrottle());
 
+	//发送_recvChunkStart命令到目的分片
     auto startChunkCloneResponseStatus = _callRecipient(cmdBuilder.obj());
     if (!startChunkCloneResponseStatus.isOK()) {
         return startChunkCloneResponseStatus.getStatus();
@@ -245,11 +252,16 @@ Status MigrationChunkClonerSourceLegacy::startClone(OperationContext* opCtx) {
     // migration from different donor, but the same recipient would certainly abort an already
     // running migration.
     stdx::lock_guard<stdx::mutex> sl(_mutex);
+	//发送_recvChunkStart后进入kCloning状态
     _state = kCloning;
 
     return Status::OK();
 }
 
+//MigrationSourceManager::awaitToCatchUp调用 
+
+//源 shard 会不断调用_recvChunkStatus来查询目的全量迁移是否完成，也就是看是否为 STEADY 状态， 
+//如果已经是 STEADY 状态，也就是全量迁移完成， 就会停源 shard 上的写操作（通过对集合加互斥写锁实现） 。
 Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
     OperationContext* opCtx, Milliseconds maxTimeToWait) {
     invariant(_state == kCloning);
@@ -258,12 +270,14 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
     const auto startTime = Date_t::now();
 
     int iteration = 0;
+	//循环，最多在循环体运行6小时
     while ((Date_t::now() - startTime) < maxTimeToWait) {
         // Exponential sleep backoff, up to 1024ms. Don't sleep much on the first few iterations,
         // since we want empty chunk migrations to be fast.
         sleepmillis(1LL << std::min(iteration, 10));
         iteration++;
 
+		//向目的发送_recvChunkStatus命令来判断全量同步阶段是否完成
         auto responseStatus = _callRecipient(
             createRequestWithSessionId(kRecvChunkStatus, _args.getNss(), _sessionId));
         if (!responseStatus.isOK()) {
@@ -272,7 +286,7 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
                         << "Failed to contact recipient shard to monitor data transfer due to "
                         << responseStatus.getStatus().toString()};
         }
-
+		
         const BSONObj& res = responseStatus.getValue();
 
         stdx::lock_guard<stdx::mutex> sl(_mutex);
@@ -282,6 +296,7 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
         log() << "moveChunk data transfer progress: " << redact(res) << " mem used: " << _memoryUsed
               << " documents remaining to clone: " << cloneLocsRemaining;
 
+		//chunk全量数据迁移完成
         if (res["state"].String() == "steady") {
             if (cloneLocsRemaining != 0) {
                 return {ErrorCodes::OperationIncomplete,
@@ -294,6 +309,7 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
             return Status::OK();
         }
 
+		//chunk数据全量迁移过程异常了
         if (res["state"].String() == "fail") {
             return {ErrorCodes::OperationFailed,
                     str::stream() << "Data transfer error: " << res["errmsg"].str()};
@@ -306,6 +322,7 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
                                   << migrationSessionIdStatus.getStatus().toString()};
         }
 
+		//检查目的返回的信息是否满足要求
         if (res["ns"].str() != _args.getNss().ns() ||
             res["from"].str() != _donorConnStr.toString() || !res["min"].isABSONObj() ||
             res["min"].Obj().woCompare(_args.getMinKey()) != 0 || !res["max"].isABSONObj() ||
@@ -320,6 +337,7 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
                     "Destination shard aborted migration because a new one is running"};
         }
 
+		//迁移过程消耗太多内存
         if (_memoryUsed > 500 * 1024 * 1024) {
             // This is too much memory for us to use so we're going to abort the migration
             return {ErrorCodes::ExceededMemoryLimit,
@@ -332,9 +350,11 @@ Status MigrationChunkClonerSourceLegacy::awaitUntilCriticalSectionIsAppropriate(
         }
     }
 
+	//等待全量迁移完成超时了
     return {ErrorCodes::ExceededTimeLimit, "Timed out waiting for the cloner to catch up"};
 }
 
+//发送_recvChunkCommit到目的分片，通知目的分片原分片已经停止写入，可以拉取增量数据了
 Status MigrationChunkClonerSourceLegacy::commitClone(OperationContext* opCtx) {
     invariant(_state == kCloning);
     invariant(!opCtx->lockState()->isLocked());
@@ -542,6 +562,7 @@ void MigrationChunkClonerSourceLegacy::_cleanup(OperationContext* opCtx) {
     }
 }
 
+//远超调用，发送cmdObj内容到目的分片
 StatusWith<BSONObj> MigrationChunkClonerSourceLegacy::_callRecipient(const BSONObj& cmdObj) {
     executor::RemoteCommandResponse responseStatus(
         Status{ErrorCodes::InternalError, "Uninitialized value"});
@@ -572,6 +593,8 @@ StatusWith<BSONObj> MigrationChunkClonerSourceLegacy::_callRecipient(const BSONO
     return responseStatus.data.getOwned();
 }
 
+//MigrationChunkClonerSourceLegacy::startClone调用
+//根据moveChunk对应的min max检查需要迁移的块是否为largeChunk，如果为largeChunk直接报错
 Status MigrationChunkClonerSourceLegacy::_storeCurrentLocs(OperationContext* opCtx) {
     AutoGetCollection autoColl(opCtx, _args.getNss(), MODE_IS);
 
@@ -583,6 +606,8 @@ Status MigrationChunkClonerSourceLegacy::_storeCurrentLocs(OperationContext* opC
 
     // Allow multiKey based on the invariant that shard keys must be single-valued. Therefore, any
     // multi-key index prefixed by shard key cannot be multikey over the shard key fields.
+    //分片启用必须有对应的shard key做为最左边的所有，例如片建为A，则必须要有A或者A_X等索引，也就是片建必须有对应的
+    //前缀索引
     IndexDescriptor* const idx =
         collection->getIndexCatalog()->findShardKeyPrefixedIndex(opCtx,
                                                                  _shardKeyPattern.toBSON(),

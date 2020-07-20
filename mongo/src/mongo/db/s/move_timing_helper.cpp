@@ -96,6 +96,7 @@ MoveTimingHelper::~MoveTimingHelper() {
     }
 }
 
+//记录当前处于迁移过程的第几个步骤，例如"msg" : "step 2 of 6",
 void MoveTimingHelper::done(int step) {
     invariant(step == ++_nextStep);
     invariant(step <= _totalNumSteps);

@@ -203,6 +203,7 @@ void CollectionMetadata::toBSONChunks(BSONArrayBuilder& bb) const {
     }
 }
 
+//¿‡À∆collection version: 46827|1||5e95683f43bceba7af99c3aa, shard version: 40938|1||5e95683f43bceba7af99c3aa
 std::string CollectionMetadata::toStringBasic() const {
     return str::stream() << "collection version: " << _cm->getVersion().toString()
                          << ", shard version: " << _shardVersion.toString();

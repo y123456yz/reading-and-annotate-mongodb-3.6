@@ -55,7 +55,7 @@ class OpTime;
  * on[insert/update/delete]Op methods. It is up to the creator to decide how these methods end up
  * being called, but currently this is done through the CollectionShardingState. The creator then
  * kicks off the cloning as soon as possible by calling startClone.
- */
+ */ //MigrationSourceManager._cloneDriver为该类型  MigrationChunkClonerSourceLegacy继承该类
 class MigrationChunkClonerSource {
     MONGO_DISALLOW_COPYING(MigrationChunkClonerSource);
 
