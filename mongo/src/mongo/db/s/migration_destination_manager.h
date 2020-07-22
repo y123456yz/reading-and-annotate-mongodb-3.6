@@ -66,6 +66,7 @@ class MigrationDestinationManager {
     MONGO_DISALLOW_COPYING(MigrationDestinationManager);
 
 public:
+    //目的分片迁移过程中的几个状态
     enum State { READY, CLONE, CATCHUP, 
         STEADY,  //迁移完后更新状态为 STEADY（可以理解为全量迁移完成的状态） 。
         COMMIT_START, DONE, FAIL, ABORT };
@@ -190,12 +191,14 @@ private:
 
     // Migration session ID uniquely identifies the migration and indicates whether the prepare
     // method has been called.
+    //类似ocloud_WbUiXohI_shard_1_ocloud_WbUiXohI_shard_9_5ef1b996f5dee0bd14574259
     boost::optional<MigrationSessionId> _sessionId;
     boost::optional<ScopedRegisterReceiveChunk> _scopedRegisterReceiveChunk;
 
     // A condition variable on which to wait for the prepare method to be called.
     stdx::condition_variable _isActiveCV;
 
+    //目的分片从原分片拉取chunk全量数据是由专门的线程完成，也就是_migrateThreadHandle
     stdx::thread _migrateThreadHandle;
 
     NamespaceString _nss;
@@ -216,6 +219,7 @@ private:
     long long _numCatchup{0};
     long long _numSteady{0};
 
+    //迁移过程中所处的状态
     State _state{READY};
     std::string _errmsg;
 

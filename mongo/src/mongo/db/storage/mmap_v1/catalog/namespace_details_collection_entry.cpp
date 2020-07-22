@@ -462,6 +462,8 @@ void NamespaceDetailsCollectionCatalogEntry::removeUUID(OperationContext* opCtx)
     }
 }
 
+//MigrationDestinationManager::_migrateDriver调用
+//UUID对比
 bool NamespaceDetailsCollectionCatalogEntry::isEqualToMetadataUUID(OperationContext* opCtx,
                                                                    OptionalCollectionUUID uuid) {
     if (ns().coll() != "system.namespaces") {

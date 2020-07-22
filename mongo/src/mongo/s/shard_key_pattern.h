@@ -236,6 +236,7 @@ private:
     // Ordered, parsed paths
     std::vector<std::unique_ptr<FieldRef>> _keyPatternPaths;
 
+    //shard key∆¨Ω®–≈œ¢
     KeyPattern _keyPattern;
 
     bool _hasId;

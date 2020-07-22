@@ -224,6 +224,7 @@ static BSONElement extractKeyElementFromMatchable(const MatchableDocument& match
     return matchEl;
 }
 
+//从matchable中解析匹配shardkey对应的信息  ShardKeyPattern::extractShardKeyFromDoc中调用
 BSONObj ShardKeyPattern::extractShardKeyFromMatchable(const MatchableDocument& matchable) const {
     if (!isValid())
         return BSONObj();
@@ -254,6 +255,7 @@ BSONObj ShardKeyPattern::extractShardKeyFromMatchable(const MatchableDocument& m
     return keyBuilder.obj();
 }
 
+//从doc中解析shardkey对应的值  isInRange
 BSONObj ShardKeyPattern::extractShardKeyFromDoc(const BSONObj& doc) const {
     BSONMatchableDocument matchable(doc);
     return extractShardKeyFromMatchable(matchable);

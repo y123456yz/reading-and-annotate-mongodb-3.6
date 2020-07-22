@@ -108,6 +108,7 @@ private:
 
     void _errorOccurred(StringData errMsg);
 
+    //ԭshard
     const ShardId _fromShard;
     const MigrationSessionId _migrationSessionId;
 

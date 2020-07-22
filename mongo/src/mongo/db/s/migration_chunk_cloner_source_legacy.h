@@ -191,7 +191,7 @@ private:
     const ShardKeyPattern _shardKeyPattern;
 
     // The migration session id
-    //记录迁移的源和目的shard id信息
+    //记录迁移的源和目的shard id信息   
     const MigrationSessionId _sessionId;
 
     // The resolved connection string of the donor shard

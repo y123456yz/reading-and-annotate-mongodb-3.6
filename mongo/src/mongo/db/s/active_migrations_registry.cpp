@@ -66,17 +66,21 @@ StatusWith<ScopedRegisterDonateChunk> ActiveMigrationsRegistry::registerDonateCh
     return {ScopedRegisterDonateChunk(this, true, _activeMoveChunkState->notification)};
 }
 
+//ShardingState::registerReceiveChunk调用，
+//记录当前迁移的chunk信息到_activeReceiveChunkState，收到新的_recvChunkStart开始迁移chunk的时候，需要检查是否已经再迁移其他chunk
 StatusWith<ScopedRegisterReceiveChunk> ActiveMigrationsRegistry::registerReceiveChunk(
     const NamespaceString& nss, const ChunkRange& chunkRange, const ShardId& fromShardId) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
-    if (_activeReceiveChunkState) {
+    if (_activeReceiveChunkState) { //收到新的_recvChunkStart开始迁移chunk的时候，需要检查是否已经再迁移其他chunk
         return _activeReceiveChunkState->constructErrorStatus();
     }
 
+	//说明当前正在迁移其他块，打印提示
     if (_activeMoveChunkState) {
         return _activeMoveChunkState->constructErrorStatus();
     }
 
+	//记录当前迁移的chunk信息到_activeReceiveChunkState，收到新的_recvChunkStart开始迁移chunk的时候，需要检查是否已经再迁移其他chunk
     _activeReceiveChunkState.emplace(nss, chunkRange, fromShardId);
 
     return {ScopedRegisterReceiveChunk(this)};
@@ -130,6 +134,7 @@ void ActiveMigrationsRegistry::_clearReceiveChunk() {
     _activeReceiveChunkState.reset();
 }
 
+//提示当前正在迁移某个块
 Status ActiveMigrationsRegistry::ActiveMoveChunkState::constructErrorStatus() const {
     return {ErrorCodes::ConflictingOperationInProgress,
             str::stream() << "Unable to start new migration because this shard is currently "

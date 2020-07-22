@@ -114,7 +114,7 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
-	
+	//MoveChunkCommand::run
     bool run(OperationContext* opCtx,
              const string& dbname,
              const BSONObj& cmdObj,
@@ -251,6 +251,7 @@ private:
 		moveTimingHelper.done(5);
         MONGO_FAIL_POINT_PAUSE_WHILE_SET(moveChunkHangAtStep5);
 		////构造"_configsvrCommitChunkMigration"命令，提交相关数据给config服务器
+		//chunk迁移完成，修改config集群元数据信息，同时删除源分片已经迁移走得chunk数据
         uassertStatusOKWithWarning(migrationSourceManager.commitChunkMetadataOnConfig(opCtx));
 
 		moveTimingHelper.done(6);

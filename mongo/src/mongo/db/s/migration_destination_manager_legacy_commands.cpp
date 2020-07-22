@@ -55,6 +55,7 @@ using std::string;
 
 namespace {
 
+//源分片收到mongos得moveChunk后，会发送该命令，通知目的分片从原分片拉取chunk数据，见MoveChunkCommand::_runImpl
 class RecvChunkStartCommand : public ErrmsgCommandDeprecated {
 public:
     RecvChunkStartCommand() : ErrmsgCommandDeprecated("_recvChunkStart") {}
@@ -84,6 +85,7 @@ public:
         out->push_back(Privilege(ResourcePattern::forClusterResource(), actions));
     }
 
+	//RecvChunkStartCommand::errmsgRun
     bool errmsgRun(OperationContext* opCtx,
                    const string&,
                    const BSONObj& cmdObj,
@@ -117,8 +119,10 @@ public:
         const auto writeConcern = uassertStatusOK(
             ChunkMoveWriteConcernOptions::getEffectiveWriteConcern(opCtx, secondaryThrottle));
 
-        BSONObj shardKeyPattern = cmdObj["shardKeyPattern"].Obj().getOwned();
 
+		//获取片建
+        BSONObj shardKeyPattern = cmdObj["shardKeyPattern"].Obj().getOwned();
+		//源分片地址信息
         auto statusWithFromShardConnectionString = ConnectionString::parse(cmdObj["from"].String());
         if (!statusWithFromShardConnectionString.isOK()) {
             errmsg = str::stream()
@@ -129,13 +133,16 @@ public:
             return false;
         }
 
+		//获取sessionId信息,该id记录迁移的源和目的shard id信息，和源集群的MigrationChunkClonerSourceLegacy._sessionId对应
         const MigrationSessionId migrationSessionId(
             uassertStatusOK(MigrationSessionId::extractFromBSON(cmdObj)));
 
         // Ensure this shard is not currently receiving or donating any chunks.
+        //注册一下，保证目的分片同一个表不会同时接受几个块迁移
         auto scopedRegisterReceiveChunk(
             uassertStatusOK(shardingState->registerReceiveChunk(nss, chunkRange, fromShard)));
 
+		//MigrationDestinationManager::start
         uassertStatusOK(shardingState->migrationDestinationManager()->start(
             nss,
             std::move(scopedRegisterReceiveChunk),
