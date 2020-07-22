@@ -403,7 +403,7 @@ Status MigrationSourceManager::commitChunkOnRecipient(OperationContext* opCtx) {
     return Status::OK();
 }
 
-//chunk迁移完成，修改config集群元数据信息
+//chunk迁移完成，修改config集群元数据信息，同时删除源分片已经迁移走得chunk数据
 ////构造"_configsvrCommitChunkMigration"命令，提交相关数据给config服务器
 Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
@@ -576,6 +576,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
     // Exit critical section, clear old scoped collection metadata.
     _cleanup(opCtx);
 
+	//记录changelog
     Grid::get(opCtx)
         ->catalogClient()
         ->logChange(opCtx,
@@ -617,6 +618,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
         return notification.waitStatus(opCtx);
     }
 
+	//等待源分片删除已经迁移走得chunk数据完毕
     if (notification.ready() && !notification.waitStatus(opCtx).isOK()) {
         warning() << "Failed to initiate cleanup of " << getNss().ns() << " range "
                   << redact(range.toString())

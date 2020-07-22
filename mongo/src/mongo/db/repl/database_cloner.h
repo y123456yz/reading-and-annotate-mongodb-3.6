@@ -233,7 +233,7 @@ private:
     // {
     //     name: <collection name>,
     //     options: <collection options>
-    // }
+    // }  √¸¡Ódb.runCommand( { listCollections: 1.0} )
     // Holds all collection infos from listCollections.
     std::vector<BSONObj> _collectionInfos;                               // (M)
     std::vector<NamespaceString> _collectionNamespaces;                  // (M)

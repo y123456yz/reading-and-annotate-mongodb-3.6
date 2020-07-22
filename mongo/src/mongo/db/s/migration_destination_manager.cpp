@@ -86,6 +86,7 @@ const WriteConcernOptions kMajorityWriteConcern(WriteConcernOptions::kMajority,
 /**
  * Returns a human-readabale name of the migration manager's state.
  */
+//状态字符串
 string stateToString(MigrationDestinationManager::State state) {
     switch (state) {
         case MigrationDestinationManager::READY:
@@ -109,11 +110,13 @@ string stateToString(MigrationDestinationManager::State state) {
     }
 }
 
+//根据shardKey匹配对应的值，判断是否在min max范围
 bool isInRange(const BSONObj& obj,
                const BSONObj& min,
                const BSONObj& max,
                const BSONObj& shardKeyPattern) {
     ShardKeyPattern shardKey(shardKeyPattern);
+	//从obj内容中解析除shardkey对应的值
     BSONObj k = shardKey.extractShardKeyFromDoc(obj);
     return k.woCompare(min) >= 0 && k.woCompare(max) < 0;
 }
@@ -124,6 +127,7 @@ bool isInRange(const BSONObj& obj,
  *
  * TODO: Could optimize this check out if sharding on _id.
  */
+//判断本地是否已经有包含_id主建的文档
 bool willOverrideLocalId(OperationContext* opCtx,
                          const NamespaceString& nss,
                          BSONObj min,
@@ -181,6 +185,7 @@ bool opReplicatedEnough(OperationContext* opCtx,
  *
  * 'sessionId' unique identifier for this migration.
  */
+//构造_migrateClone报文发送给源分片，该报文用于从原分片拉取全量数据
 BSONObj createMigrateCloneRequest(const NamespaceString& nss, const MigrationSessionId& sessionId) {
     BSONObjBuilder builder;
     builder.append("_migrateClone", nss.ns());
@@ -193,6 +198,7 @@ BSONObj createMigrateCloneRequest(const NamespaceString& nss, const MigrationSes
  *
  * 'sessionId' unique identifier for this migration.
  */
+//构造_transferMods来从原分片拉取增量数据
 BSONObj createTransferModsRequest(const NamespaceString& nss, const MigrationSessionId& sessionId) {
     BSONObjBuilder builder;
     builder.append("_transferMods", nss.ns());
@@ -218,16 +224,19 @@ MigrationDestinationManager::MigrationDestinationManager() = default;
 
 MigrationDestinationManager::~MigrationDestinationManager() = default;
 
+//获取迁移状态
 MigrationDestinationManager::State MigrationDestinationManager::getState() const {
     stdx::lock_guard<stdx::mutex> sl(_mutex);
     return _state;
 }
 
+//设置迁移状态
 void MigrationDestinationManager::setState(State newState) {
     stdx::lock_guard<stdx::mutex> sl(_mutex);
     _state = newState;
 }
 
+//标记迁移失败
 void MigrationDestinationManager::setStateFail(std::string msg) {
     log() << msg;
     {
@@ -259,9 +268,11 @@ bool MigrationDestinationManager::_isActive(WithLock) const {
     return _sessionId.is_initialized();
 }
 
+//I SHARDING [conn3236631] moveChunk data transfer progress: { waited: true, active: true, sessionId: "ocloud_WbUiXohI_shard_1_ocloud_WbUiXohI_shard_9_5ef1b996f5dee0bd14574259", ns: "ocloud_cold_data_db.ocloud_cold_data_t", from: "ocloud_WbUiXohI_shard_1/10.64.54.4:20001,10.64.54.5:20001,10.64.54.6:20001", min: { user_id: "287141771", module: "album", md5: "C7CB3C95FAEF5B4BC28CF8BDF390CDAF" }, max: { user_id: "287145627", module: "album", md5: "F24CCFC32D07001F742FFE0245F5064A" }, shardKeyPattern: { user_id: 1.0, module: 1.0, md5: 1.0 }, state: "clone", counts: { cloned: 0, clonedBytes: 0, catchup: 0, steady: 0 }, ok: 1.0, operationTime: Timestamp(1592899984, 55), $gleStats: { lastOpTime: Timestamp(0, 0), electionId: ObjectId('7fffffff0000000000000004') }, $configServerState: { opTime: { ts: Timestamp(1592899992, 1), t: 13 } }, $clusterTime: { clusterTime: Timestamp(1592899992, 2), signature: { hash: BinData(0, 0000000000000000000000000000000000000000), keyId: 0 } } } mem used: 0 documents remaining to clone: 51880
+//每迁移一部分数据就打印一次
 void MigrationDestinationManager::report(BSONObjBuilder& b) {
     stdx::lock_guard<stdx::mutex> sl(_mutex);
-
+	
     b.appendBool("active", _sessionId.is_initialized());
 
     if (_sessionId) {
@@ -299,6 +310,8 @@ BSONObj MigrationDestinationManager::getMigrationStatusReport() {
     }
 }
 
+//RecvChunkStartCommand::errmsgRun中调用
+//启用_migrateThread线程开始迁移
 Status MigrationDestinationManager::start(const NamespaceString& nss,
                                           ScopedRegisterReceiveChunk scopedRegisterReceiveChunk,
                                           const MigrationSessionId& sessionId,
@@ -345,6 +358,7 @@ Status MigrationDestinationManager::start(const NamespaceString& nss,
     _sessionMigration =
         stdx::make_unique<SessionCatalogMigrationDestination>(fromShard, *_sessionId);
 
+	//启用migrateThread线程
     _migrateThreadHandle =
         stdx::thread([this, min, max, shardKeyPattern, fromShardConnString, epoch, writeConcern]() {
             _migrateThread(min, max, shardKeyPattern, fromShardConnString, epoch, writeConcern);
@@ -427,6 +441,7 @@ Status MigrationDestinationManager::startCommit(const MigrationSessionId& sessio
     return Status::OK();
 }
 
+//目的分片迁移chunk数据的线程回调，见MigrationDestinationManager::start
 void MigrationDestinationManager::_migrateThread(BSONObj min,
                                                  BSONObj max,
                                                  BSONObj shardKeyPattern,
@@ -472,6 +487,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
     invariant(!min.isEmpty());
     invariant(!max.isEmpty());
 
+	//I SHARDING [migrateThread] Starting receiving end of migration of chunk { user_id: "287141771", module: "album", md5: "C7CB3C95FAEF5B4BC28CF8BDF390CDAF" } -> { user_id: "287145627", module: "album", md5: "F24CCFC32D07001F742FFE0245F5064A" } for collection ocloud_cold_data_db.ocloud_cold_data_t from ocloud_WbUiXohI_shard_1/10.64.54.4:20001,10.64.54.5:20001,10.64.54.6:20001 at epoch 5e95683f43bceba7af99c3aa with session id ocloud_WbUiXohI_shard_1_ocloud_WbUiXohI_shard_9_5ef1b996f5dee0bd14574259
     log() << "Starting receiving end of migration of chunk " << redact(min) << " -> " << redact(max)
           << " for collection " << _nss.ns() << " from " << fromShardConnString << " at epoch "
           << epoch.toString() << " with session id " << *_sessionId;
@@ -488,6 +504,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
 
     invariant(initialState == READY);
 
+	//注意这里是原分片
     ScopedDbConnection conn(fromShardConnString);
 
     // Just tests the connection
@@ -497,6 +514,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
 
     std::vector<BSONObj> donorIndexSpecs;
     BSONObj donorIdIndexSpec;
+	//存储db.runCommand( { listCollections: 1.0,  filter:{name: "data_set"}} )获取到的option和uuid
     BSONObj donorOptions;
     {
         // 0. Get the collection indexes and options from the donor shard.
@@ -505,22 +523,26 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
         invariant(!opCtx->lockState()->isLocked());
 
         // Get indexes by calling listIndexes against the donor.
+        //获取原分片nss表的索引信息
         auto indexes = conn->getIndexSpecs(_nss.ns());
         for (auto&& spec : indexes) {
+			//索引存入donorIndexSpecs
             donorIndexSpecs.push_back(spec);
             if (auto indexNameElem = spec[IndexDescriptor::kIndexNameFieldName]) {
                 if (indexNameElem.type() == BSONType::String &&
                     indexNameElem.valueStringData() == "_id_"_sd) {
+                    //id索引
                     donorIdIndexSpec = spec;
                 }
             }
         }
 
         // Get collection options by calling listCollections against the donor.
-        std::list<BSONObj> infos =
+        //获取原分片listCollections获取集合信息  db.runCommand( { listCollections: 1.0,  filter:{name: "data_set"}} )
+        std::list<BSONObj> infos = //获取nss集合信息
             conn->getCollectionInfos(_nss.db().toString(), BSON("name" << _nss.coll()));
 
-        if (infos.size() != 1) {
+        if (infos.size() != 1) { //只能是1个
             setStateFailWarn(str::stream()
                              << "expected listCollections against the donor shard for "
                              << _nss.ns()
@@ -530,6 +552,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
             return;
         }
 
+		//
         BSONObj entry = infos.front();
 
         // The entire options include both the settable options under the 'options' field in the
@@ -540,11 +563,13 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
             donorOptionsBob.appendElements(entry["options"].Obj());
         }
 
+		//
         if (serverGlobalParams.featureCompatibility.isSchemaVersion36()) {
             BSONObj info;
             if (entry["info"].isABSONObj()) {
                 info = entry["info"].Obj();
             }
+			//3.6版本需要有uuid
             if (info["uuid"].eoo()) {
                 setStateFailWarn(str::stream()
                                  << "The donor shard did not return a UUID for collection "
@@ -583,8 +608,9 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
         }
 
         Database* const db = ctx.db();
+		//获取nss表
         Collection* collection = db->getCollection(opCtx, _nss);
-        if (collection) {
+        if (collection) { //目的分片上面该表已经存在
             // We have an entry for a collection by this name. Check that our collection's UUID
             // matches the donor's.
             boost::optional<UUID> donorUUID;
@@ -592,6 +618,8 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
                 donorUUID.emplace(UUID::parse(donorOptions));
             }
 
+			//目的分片上nss表存在，则检查UUID
+			//NamespaceDetailsCollectionCatalogEntry::isEqualToMetadataUUID  uuid检查
             if (!collection->getCatalogEntry()->isEqualToMetadataUUID(opCtx, donorUUID)) {
                 setStateFailWarn(
                     str::stream()
@@ -609,8 +637,11 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
                 return;
             }
         } else {
+        	//目的分片表不存在，则创建和源分片同名的集合，同时创建对应id索引信息
             // We do not have a collection by this name. Create the collection with the donor's
             // options.
+
+			//注意这里在一个事务中实现
             WriteUnitOfWork wuow(opCtx);
             const bool createDefaultIndexes = true;
             Status status = userCreateNS(opCtx,
@@ -628,6 +659,8 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
             collection = db->getCollection(opCtx, _nss);
         }
 
+		//donorIndexSpecs索引数组中去除源和目的都有的索引，剩下的索引就是源集群有
+		//，但是目的集群没有的索引  MultiIndexBlockImpl
         MultiIndexBlock indexer(opCtx, collection);
         indexer.removeExistingIndexes(&donorIndexSpecs);
 

@@ -563,16 +563,19 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     return css->getMetadata()->getShardVersion();
 }
 
-//MoveChunkCommand::run调用
+//MoveChunkCommand::run调用  
+//源分片收到mongos发送过来的moveChunk命令后，设置源分片处于迁移状态，保证源分片同一时刻每个表只会迁移一个chunk
 StatusWith<ScopedRegisterDonateChunk> ShardingState::registerDonateChunk(
     const MoveChunkRequest& args) {
     //ActiveMigrationsRegistry::registerDonateChunk
     return _activeMigrationsRegistry.registerDonateChunk(args);
 }
 
+
 StatusWith<ScopedRegisterReceiveChunk> ShardingState::registerReceiveChunk(
     const NamespaceString& nss, const ChunkRange& chunkRange, const ShardId& fromShardId) {
-    return _activeMigrationsRegistry.registerReceiveChunk(nss, chunkRange, fromShardId);
+	//ActiveMigrationsRegistry::registerReceiveChunk
+	return _activeMigrationsRegistry.registerReceiveChunk(nss, chunkRange, fromShardId);
 }
 
 boost::optional<NamespaceString> ShardingState::getActiveDonateChunkNss() {

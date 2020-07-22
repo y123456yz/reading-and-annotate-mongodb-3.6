@@ -604,6 +604,7 @@ bool DBClientBase::eval(const string& dbname, const string& jscode) {
     return eval(dbname, jscode, info, retValue);
 }
 
+//listCollections 获取集合信息 db.runCommand( { listCollections: 1.0,  filter:{name: "data_set"}} )
 list<BSONObj> DBClientBase::getCollectionInfos(const string& db, const BSONObj& filter) {
     list<BSONObj> infos;
 

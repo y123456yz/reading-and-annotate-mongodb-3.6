@@ -45,7 +45,8 @@ class StatusWith;
  * Encapsulates the logic for generating, parsing and comparing migration sessions. The migration
  * session id is a unique identifier for a particular moveChunk command and is exchanged as part of
  * all communication between the source and donor shards.
- */
+ //类似ocloud_WbUiXohI_shard_1_ocloud_WbUiXohI_shard_9_5ef1b996f5dee0bd14574259
+ */ ////获取sessionId信息,该id记录迁移的源和目的shard id信息，和源集群的MigrationChunkClonerSourceLegacy._sessionId对应
 class MigrationSessionId {
 public:
     /**

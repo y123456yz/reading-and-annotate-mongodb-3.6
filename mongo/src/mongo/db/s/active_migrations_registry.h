@@ -48,7 +48,7 @@ class StatusWith;
 /**
  * Thread-safe object, which keeps track of the active migrations running on a node and limits them
  * to only one per-shard. There is only one instance of this object per shard.
- */
+ */ //ScopedRegisterReceiveChunk._registry  ScopedRegisterDonateChunk._registry为该类型
 class ActiveMigrationsRegistry {
     MONGO_DISALLOW_COPYING(ActiveMigrationsRegistry);
 
@@ -152,10 +152,15 @@ private:
 
     // If there is an active moveChunk operation going on, this field contains the request, which
     // initiated it
+    //
+    //源分片收到mongos发送过来的moveChunk命令后，设置源分片处于迁移状态，保证源分片同一时刻每个表最多只会迁移一个chunk
+    //参考ShardingState::registerDonateChunk
     boost::optional<ActiveMoveChunkState> _activeMoveChunkState;
 
     // If there is an active receive of a chunk going on, this field contains the session id, which
     // initiated it
+    //记录当前迁移的chunk信息到_activeReceiveChunkState，收到新的_recvChunkStart开始迁移chunk的
+    //时候，需要检查是否已经再迁移其他chunk，保证同一时刻同一个表最多只会迁移一个chunk块，见ActiveMigrationsRegistry::registerReceiveChunk
     boost::optional<ActiveReceiveChunkState> _activeReceiveChunkState;
 };
 
@@ -163,7 +168,7 @@ private:
  * Object of this class is returned from the registerDonateChunk call of the active migrations
  * registry. It can exist in two modes - 'unregister' and 'join'. See the comments for
  * registerDonateChunk method for more details.
- */
+ */ //ActiveMigrationsRegistry::registerDonateChunk中构造，对应源
 class ScopedRegisterDonateChunk {
     MONGO_DISALLOW_COPYING(ScopedRegisterDonateChunk);
 
@@ -198,6 +203,7 @@ public:
 
 private:
     // Registry from which to unregister the migration. Not owned.
+    
     ActiveMigrationsRegistry* _registry;
 
     // Whether this is a newly started migration (in which case the destructor must unregister) or
@@ -211,7 +217,7 @@ private:
 /**
  * Object of this class is returned from the registerReceiveChunk call of the active migrations
  * registry.
- */
+ */ //对应目的
 class ScopedRegisterReceiveChunk {
     MONGO_DISALLOW_COPYING(ScopedRegisterReceiveChunk);
 
@@ -224,6 +230,7 @@ public:
 
 private:
     // Registry from which to unregister the migration. Not owned.
+    
     ActiveMigrationsRegistry* _registry;
 };
 
