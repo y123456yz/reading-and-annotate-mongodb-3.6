@@ -67,7 +67,7 @@ func (s *S) TestNewSession(c *C) {
 
 	// With New(), each session has its own socket now.
 	stats := mgo.GetStats()
-	c.Assert(stats.MasterConns, Equals, 2)
+	c.Assert(stats.MainConns, Equals, 2)
 	c.Assert(stats.SocketsInUse, Equals, 2)
 
 	// Ensure query parameters were cloned.
@@ -170,9 +170,9 @@ func (s *S) TestModeStrong(c *C) {
 
 	result := M{}
 	cmd := session.DB("admin").C("$cmd")
-	err = cmd.Find(M{"ismaster": 1}).One(&result)
+	err = cmd.Find(M{"ismain": 1}).One(&result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, true)
+	c.Assert(result["ismain"], Equals, true)
 
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
@@ -185,8 +185,8 @@ func (s *S) TestModeStrong(c *C) {
 	}
 
 	stats := mgo.GetStats()
-	c.Assert(stats.MasterConns, Equals, 1)
-	c.Assert(stats.SlaveConns, Equals, 2)
+	c.Assert(stats.MainConns, Equals, 1)
+	c.Assert(stats.SubordinateConns, Equals, 2)
 	c.Assert(stats.SocketsInUse, Equals, 1)
 
 	session.SetMode(mgo.Strong, true)
@@ -196,8 +196,8 @@ func (s *S) TestModeStrong(c *C) {
 }
 
 func (s *S) TestModeMonotonic(c *C) {
-	// Must necessarily connect to a slave, otherwise the
-	// master connection will be available first.
+	// Must necessarily connect to a subordinate, otherwise the
+	// main connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
 	defer session.Close()
@@ -206,19 +206,19 @@ func (s *S) TestModeMonotonic(c *C) {
 
 	c.Assert(session.Mode(), Equals, mgo.Monotonic)
 
-	var result struct{ IsMaster bool }
+	var result struct{ IsMain bool }
 	cmd := session.DB("admin").C("$cmd")
-	err = cmd.Find(M{"ismaster": 1}).One(&result)
+	err = cmd.Find(M{"ismain": 1}).One(&result)
 	c.Assert(err, IsNil)
-	c.Assert(result.IsMaster, Equals, false)
+	c.Assert(result.IsMain, Equals, false)
 
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
-	err = cmd.Find(M{"ismaster": 1}).One(&result)
+	err = cmd.Find(M{"ismain": 1}).One(&result)
 	c.Assert(err, IsNil)
-	c.Assert(result.IsMaster, Equals, true)
+	c.Assert(result.IsMain, Equals, true)
 
 	// Wait since the sync also uses sockets.
 	for len(session.LiveServers()) != 3 {
@@ -227,8 +227,8 @@ func (s *S) TestModeMonotonic(c *C) {
 	}
 
 	stats := mgo.GetStats()
-	c.Assert(stats.MasterConns, Equals, 1)
-	c.Assert(stats.SlaveConns, Equals, 2)
+	c.Assert(stats.MainConns, Equals, 1)
+	c.Assert(stats.SubordinateConns, Equals, 2)
 	c.Assert(stats.SocketsInUse, Equals, 2)
 
 	session.SetMode(mgo.Monotonic, true)
@@ -245,7 +245,7 @@ func (s *S) TestModeMonotonicAfterStrong(c *C) {
 	c.Assert(err, IsNil)
 	defer session.Close()
 
-	// Insert something to force a connection to the master.
+	// Insert something to force a connection to the main.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
@@ -258,37 +258,37 @@ func (s *S) TestModeMonotonicAfterStrong(c *C) {
 		time.Sleep(5e8)
 	}
 
-	// Master socket should still be reserved.
+	// Main socket should still be reserved.
 	stats := mgo.GetStats()
 	c.Assert(stats.SocketsInUse, Equals, 1)
 
-	// Confirm it's the master even though it's Monotonic by now.
+	// Confirm it's the main even though it's Monotonic by now.
 	result := M{}
 	cmd := session.DB("admin").C("$cmd")
-	err = cmd.Find(M{"ismaster": 1}).One(&result)
+	err = cmd.Find(M{"ismain": 1}).One(&result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, true)
+	c.Assert(result["ismain"], Equals, true)
 }
 
 func (s *S) TestModeStrongAfterMonotonic(c *C) {
 	// Test that shifting from Monotonic to Strong while
-	// using a slave socket will keep the socket reserved
-	// until the master socket is necessary, so that no
+	// using a subordinate socket will keep the socket reserved
+	// until the main socket is necessary, so that no
 	// switch over occurs unless it's actually necessary.
 
-	// Must necessarily connect to a slave, otherwise the
-	// master connection will be available first.
+	// Must necessarily connect to a subordinate, otherwise the
+	// main connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
 	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, false)
 
-	// Ensure we're talking to a slave, and reserve the socket.
+	// Ensure we're talking to a subordinate, and reserve the socket.
 	result := M{}
-	err = session.Run("ismaster", &result)
+	err = session.Run("ismain", &result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, false)
+	c.Assert(result["ismain"], Equals, false)
 
 	// Switch to a Strong session.
 	session.SetMode(mgo.Strong, false)
@@ -299,20 +299,20 @@ func (s *S) TestModeStrongAfterMonotonic(c *C) {
 		time.Sleep(5e8)
 	}
 
-	// Slave socket should still be reserved.
+	// Subordinate socket should still be reserved.
 	stats := mgo.GetStats()
 	c.Assert(stats.SocketsInUse, Equals, 1)
 
-	// But any operation will switch it to the master.
+	// But any operation will switch it to the main.
 	result = M{}
-	err = session.Run("ismaster", &result)
+	err = session.Run("ismain", &result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, true)
+	c.Assert(result["ismain"], Equals, true)
 }
 
 func (s *S) TestModeMonotonicWriteOnIteration(c *C) {
-	// Must necessarily connect to a slave, otherwise the
-	// master connection will be available first.
+	// Must necessarily connect to a subordinate, otherwise the
+	// main connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
 	defer session.Close()
@@ -330,7 +330,7 @@ func (s *S) TestModeMonotonicWriteOnIteration(c *C) {
 		c.Assert(err, IsNil)
 	}
 
-	// Release master so we can grab a slave again.
+	// Release main so we can grab a subordinate again.
 	session.Refresh()
 
 	// Wait until synchronization is done.
@@ -356,8 +356,8 @@ func (s *S) TestModeMonotonicWriteOnIteration(c *C) {
 }
 
 func (s *S) TestModeEventual(c *C) {
-	// Must necessarily connect to a slave, otherwise the
-	// master connection will be available first.
+	// Must necessarily connect to a subordinate, otherwise the
+	// main connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
 	defer session.Close()
@@ -367,18 +367,18 @@ func (s *S) TestModeEventual(c *C) {
 	c.Assert(session.Mode(), Equals, mgo.Eventual)
 
 	result := M{}
-	err = session.Run("ismaster", &result)
+	err = session.Run("ismain", &result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, false)
+	c.Assert(result["ismain"], Equals, false)
 
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
 	result = M{}
-	err = session.Run("ismaster", &result)
+	err = session.Run("ismain", &result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, false)
+	c.Assert(result["ismain"], Equals, false)
 
 	// Wait since the sync also uses sockets.
 	for len(session.LiveServers()) != 3 {
@@ -387,8 +387,8 @@ func (s *S) TestModeEventual(c *C) {
 	}
 
 	stats := mgo.GetStats()
-	c.Assert(stats.MasterConns, Equals, 1)
-	c.Assert(stats.SlaveConns, Equals, 2)
+	c.Assert(stats.MainConns, Equals, 1)
+	c.Assert(stats.SubordinateConns, Equals, 2)
 	c.Assert(stats.SocketsInUse, Equals, 0)
 }
 
@@ -400,7 +400,7 @@ func (s *S) TestModeEventualAfterStrong(c *C) {
 	c.Assert(err, IsNil)
 	defer session.Close()
 
-	// Insert something to force a connection to the master.
+	// Insert something to force a connection to the main.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
@@ -413,16 +413,16 @@ func (s *S) TestModeEventualAfterStrong(c *C) {
 		time.Sleep(5e8)
 	}
 
-	// Master socket should still be reserved.
+	// Main socket should still be reserved.
 	stats := mgo.GetStats()
 	c.Assert(stats.SocketsInUse, Equals, 1)
 
-	// Confirm it's the master even though it's Eventual by now.
+	// Confirm it's the main even though it's Eventual by now.
 	result := M{}
 	cmd := session.DB("admin").C("$cmd")
-	err = cmd.Find(M{"ismaster": 1}).One(&result)
+	err = cmd.Find(M{"ismain": 1}).One(&result)
 	c.Assert(err, IsNil)
-	c.Assert(result["ismaster"], Equals, true)
+	c.Assert(result["ismain"], Equals, true)
 
 	session.SetMode(mgo.Eventual, true)
 
@@ -439,12 +439,12 @@ func (s *S) TestModeStrongFallover(c *C) {
 	c.Assert(err, IsNil)
 	defer session.Close()
 
-	// With strong consistency, this will open a socket to the master.
+	// With strong consistency, this will open a socket to the main.
 	result := &struct{ Host string }{}
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
 
-	// Kill the master.
+	// Kill the main.
 	host := result.Host
 	s.Stop(host)
 
@@ -458,7 +458,7 @@ func (s *S) TestModeStrongFallover(c *C) {
 
 	session.Refresh()
 
-	// Now we should be able to talk to the new master.
+	// Now we should be able to talk to the new main.
 	// Increase the timeout since this may take quite a while.
 	session.SetSyncTimeout(3 * time.Minute)
 
@@ -466,7 +466,7 @@ func (s *S) TestModeStrongFallover(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(result.Host, Not(Equals), host)
 
-	// Insert some data to confirm it's indeed a master.
+	// Insert some data to confirm it's indeed a main.
 	err = session.DB("mydb").C("mycoll").Insert(M{"n": 42})
 	c.Assert(err, IsNil)
 }
@@ -480,13 +480,13 @@ func (s *S) TestModePrimaryHiccup(c *C) {
 	c.Assert(err, IsNil)
 	defer session.Close()
 
-	// With strong consistency, this will open a socket to the master.
+	// With strong consistency, this will open a socket to the main.
 	result := &struct{ Host string }{}
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
 
 	// Establish a few extra sessions to create spare sockets to
-	// the master. This increases a bit the chances of getting an
+	// the main. This increases a bit the chances of getting an
 	// incorrect cached socket.
 	var sessions []*mgo.Session
 	for i := 0; i < 20; i++ {
@@ -498,7 +498,7 @@ func (s *S) TestModePrimaryHiccup(c *C) {
 		sessions[i].Close()
 	}
 
-	// Kill the master, but bring it back immediatelly.
+	// Kill the main, but bring it back immediatelly.
 	host := result.Host
 	s.Stop(host)
 	s.StartAll()
@@ -513,11 +513,11 @@ func (s *S) TestModePrimaryHiccup(c *C) {
 
 	session.Refresh()
 
-	// Now we should be able to talk to the new master.
+	// Now we should be able to talk to the new main.
 	// Increase the timeout since this may take quite a while.
 	session.SetSyncTimeout(3 * time.Minute)
 
-	// Insert some data to confirm it's indeed a master.
+	// Insert some data to confirm it's indeed a main.
 	err = session.DB("mydb").C("mycoll").Insert(M{"n": 42})
 	c.Assert(err, IsNil)
 }
@@ -533,19 +533,19 @@ func (s *S) TestModeMonotonicFallover(c *C) {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	// Insert something to force a switch to the master.
+	// Insert something to force a switch to the main.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
-	// Wait a bit for this to be synchronized to slaves.
+	// Wait a bit for this to be synchronized to subordinates.
 	time.Sleep(3 * time.Second)
 
 	result := &struct{ Host string }{}
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
 
-	// Kill the master.
+	// Kill the main.
 	host := result.Host
 	s.Stop(host)
 
@@ -559,13 +559,13 @@ func (s *S) TestModeMonotonicFallover(c *C) {
 
 	session.Refresh()
 
-	// Now we should be able to talk to the new master.
+	// Now we should be able to talk to the new main.
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
 	c.Assert(result.Host, Not(Equals), host)
 }
 
-func (s *S) TestModeMonotonicWithSlaveFallover(c *C) {
+func (s *S) TestModeMonotonicWithSubordinateFallover(c *C) {
 	if *fast {
 		c.Skip("-fast")
 	}
@@ -575,19 +575,19 @@ func (s *S) TestModeMonotonicWithSlaveFallover(c *C) {
 	defer session.Close()
 
 	ssresult := &struct{ Host string }{}
-	imresult := &struct{ IsMaster bool }{}
+	imresult := &struct{ IsMain bool }{}
 
-	// Figure the master while still using the strong session.
+	// Figure the main while still using the strong session.
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
-	err = session.Run("isMaster", imresult)
+	err = session.Run("isMain", imresult)
 	c.Assert(err, IsNil)
-	master := ssresult.Host
-	c.Assert(imresult.IsMaster, Equals, true, Commentf("%s is not the master", master))
+	main := ssresult.Host
+	c.Assert(imresult.IsMain, Equals, true, Commentf("%s is not the main", main))
 
 	// Create new monotonic session with an explicit address to ensure
-	// a slave is synchronized before the master, otherwise a connection
-	// with the master may be used below for lack of other options.
+	// a subordinate is synchronized before the main, otherwise a connection
+	// with the main may be used below for lack of other options.
 	var addr string
 	switch {
 	case strings.HasSuffix(ssresult.Host, ":40021"):
@@ -607,41 +607,41 @@ func (s *S) TestModeMonotonicWithSlaveFallover(c *C) {
 	session.SetMode(mgo.Monotonic, true)
 
 	// Check the address of the socket associated with the monotonic session.
-	c.Log("Running serverStatus and isMaster with monotonic session")
+	c.Log("Running serverStatus and isMain with monotonic session")
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
-	err = session.Run("isMaster", imresult)
+	err = session.Run("isMain", imresult)
 	c.Assert(err, IsNil)
-	slave := ssresult.Host
-	c.Assert(imresult.IsMaster, Equals, false, Commentf("%s is not a slave", slave))
+	subordinate := ssresult.Host
+	c.Assert(imresult.IsMain, Equals, false, Commentf("%s is not a subordinate", subordinate))
 
-	c.Assert(master, Not(Equals), slave)
+	c.Assert(main, Not(Equals), subordinate)
 
-	// Kill the master.
-	s.Stop(master)
+	// Kill the main.
+	s.Stop(main)
 
-	// Session must still be good, since we were talking to a slave.
+	// Session must still be good, since we were talking to a subordinate.
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
 
-	c.Assert(ssresult.Host, Equals, slave,
-		Commentf("Monotonic session moved from %s to %s", slave, ssresult.Host))
+	c.Assert(ssresult.Host, Equals, subordinate,
+		Commentf("Monotonic session moved from %s to %s", subordinate, ssresult.Host))
 
 	// If we try to insert something, it'll have to hold until the new
-	// master is available to move the connection, and work correctly.
+	// main is available to move the connection, and work correctly.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
-	// Must now be talking to the new master.
+	// Must now be talking to the new main.
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
-	err = session.Run("isMaster", imresult)
+	err = session.Run("isMain", imresult)
 	c.Assert(err, IsNil)
-	c.Assert(imresult.IsMaster, Equals, true, Commentf("%s is not the master", master))
+	c.Assert(imresult.IsMain, Equals, true, Commentf("%s is not the main", main))
 
 	// ... which is not the old one, since it's still dead.
-	c.Assert(ssresult.Host, Not(Equals), master)
+	c.Assert(ssresult.Host, Not(Equals), main)
 }
 
 func (s *S) TestModeEventualFallover(c *C) {
@@ -656,29 +656,29 @@ func (s *S) TestModeEventualFallover(c *C) {
 	result := &struct{ Host string }{}
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
-	master := result.Host
+	main := result.Host
 
 	session.SetMode(mgo.Eventual, true)
 
-	// Should connect to the master when needed.
+	// Should connect to the main when needed.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
-	// Wait a bit for this to be synchronized to slaves.
+	// Wait a bit for this to be synchronized to subordinates.
 	time.Sleep(3 * time.Second)
 
-	// Kill the master.
-	s.Stop(master)
+	// Kill the main.
+	s.Stop(main)
 
-	// Should still work, with the new master now.
+	// Should still work, with the new main now.
 	coll = session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
-	c.Assert(result.Host, Not(Equals), master)
+	c.Assert(result.Host, Not(Equals), main)
 }
 
 func (s *S) TestModeSecondaryJustPrimary(c *C) {
@@ -740,7 +740,7 @@ func (s *S) TestModeSecondaryPreferredFallover(c *C) {
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
 
-	// Wait a bit for this to be synchronized to slaves.
+	// Wait a bit for this to be synchronized to subordinates.
 	time.Sleep(3 * time.Second)
 
 	// Kill the primary.
@@ -885,7 +885,7 @@ func (s *S) TestPreserveSocketCountOnSync(c *C) {
 
 	c.Assert(stats.SocketsAlive, Equals, 3)
 
-	// Kill the master (with rs1, 'a' is always the master).
+	// Kill the main (with rs1, 'a' is always the main).
 	s.Stop("localhost:40011")
 
 	// Wait for the logic to run for a bit and bring it back.
@@ -924,10 +924,10 @@ func (s *S) TestPreserveSocketCountOnSync(c *C) {
 	c.Assert(stats.SocketRefs, Equals, 1)
 }
 
-// Connect to the master of a deployment with a single server,
+// Connect to the main of a deployment with a single server,
 // run an insert, and then ensure the insert worked and that a
 // single connection was established.
-func (s *S) TestTopologySyncWithSingleMaster(c *C) {
+func (s *S) TestTopologySyncWithSingleMain(c *C) {
 	// Use hostname here rather than IP, to make things trickier.
 	session, err := mgo.Dial("localhost:40001")
 	c.Assert(err, IsNil)
@@ -937,11 +937,11 @@ func (s *S) TestTopologySyncWithSingleMaster(c *C) {
 	err = coll.Insert(M{"a": 1, "b": 2})
 	c.Assert(err, IsNil)
 
-	// One connection used for discovery. Master socket recycled for
+	// One connection used for discovery. Main socket recycled for
 	// insert. Socket is reserved after insert.
 	stats := mgo.GetStats()
-	c.Assert(stats.MasterConns, Equals, 1)
-	c.Assert(stats.SlaveConns, Equals, 0)
+	c.Assert(stats.MainConns, Equals, 1)
+	c.Assert(stats.SubordinateConns, Equals, 0)
 	c.Assert(stats.SocketsInUse, Equals, 1)
 
 	// Refresh session and socket must be released.
@@ -950,9 +950,9 @@ func (s *S) TestTopologySyncWithSingleMaster(c *C) {
 	c.Assert(stats.SocketsInUse, Equals, 0)
 }
 
-func (s *S) TestTopologySyncWithSlaveSeed(c *C) {
-	// That's supposed to be a slave. Must run discovery
-	// and find out master to insert successfully.
+func (s *S) TestTopologySyncWithSubordinateSeed(c *C) {
+	// That's supposed to be a subordinate. Must run discovery
+	// and find out main to insert successfully.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
 	defer session.Close()
@@ -965,13 +965,13 @@ func (s *S) TestTopologySyncWithSlaveSeed(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(result.Ok, Equals, true)
 
-	// One connection to each during discovery. Master
+	// One connection to each during discovery. Main
 	// socket recycled for insert.
 	stats := mgo.GetStats()
-	c.Assert(stats.MasterConns, Equals, 1)
-	c.Assert(stats.SlaveConns, Equals, 2)
+	c.Assert(stats.MainConns, Equals, 1)
+	c.Assert(stats.SubordinateConns, Equals, 2)
 
-	// Only one socket reference alive, in the master socket owned
+	// Only one socket reference alive, in the main socket owned
 	// by the above session.
 	c.Assert(stats.SocketsInUse, Equals, 1)
 
@@ -1160,7 +1160,7 @@ func (s *S) TestDirect(c *C) {
 	c.Assert(err, IsNil)
 	defer session.Close()
 
-	// We know that server is a slave.
+	// We know that server is a subordinate.
 	session.SetMode(mgo.Monotonic, true)
 
 	result := &struct{ Host string }{}
@@ -1173,7 +1173,7 @@ func (s *S) TestDirect(c *C) {
 	c.Assert(stats.SocketsInUse, Equals, 1)
 	c.Assert(stats.SocketRefs, Equals, 1)
 
-	// We've got no master, so it'll timeout.
+	// We've got no main, so it'll timeout.
 	session.SetSyncTimeout(5e8 * time.Nanosecond)
 
 	coll := session.DB("mydb").C("mycoll")
@@ -1211,14 +1211,14 @@ func (s *S) TestDirectToUnknownStateMember(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(strings.HasSuffix(result.Host, ":40041"), Equals, true)
 
-	// We've got no master, so it'll timeout.
+	// We've got no main, so it'll timeout.
 	session.SetSyncTimeout(5e8 * time.Nanosecond)
 
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"test": 1})
 	c.Assert(err, ErrorMatches, "no reachable servers")
 
-	// Slave is still reachable.
+	// Subordinate is still reachable.
 	result.Host = ""
 	err = session.Run("serverStatus", result)
 	c.Assert(err, IsNil)
@@ -1278,21 +1278,21 @@ func (s *S) countCommands(c *C, server, commandName string) (n int) {
 	return result.Metrics.Commands[commandName].Total
 }
 
-func (s *S) TestMonotonicSlaveOkFlagWithMongos(c *C) {
+func (s *S) TestMonotonicSubordinateOkFlagWithMongos(c *C) {
 	session, err := mgo.Dial("localhost:40021")
 	c.Assert(err, IsNil)
 	defer session.Close()
 
 	ssresult := &struct{ Host string }{}
-	imresult := &struct{ IsMaster bool }{}
+	imresult := &struct{ IsMain bool }{}
 
-	// Figure the master while still using the strong session.
+	// Figure the main while still using the strong session.
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
-	err = session.Run("isMaster", imresult)
+	err = session.Run("isMain", imresult)
 	c.Assert(err, IsNil)
-	master := ssresult.Host
-	c.Assert(imresult.IsMaster, Equals, true, Commentf("%s is not the master", master))
+	main := ssresult.Host
+	c.Assert(imresult.IsMain, Equals, true, Commentf("%s is not the main", main))
 
 	// Ensure mongos is aware about the current topology.
 	s.Stop(":40201")
@@ -1330,7 +1330,7 @@ func (s *S) TestMonotonicSlaveOkFlagWithMongos(c *C) {
 	q22a := s.countQueries(c, "localhost:40022")
 	q23a := s.countQueries(c, "localhost:40023")
 
-	// Do a SlaveOk query through MongoS
+	// Do a SubordinateOk query through MongoS
 
 	mongos.SetMode(mgo.Monotonic, true)
 
@@ -1347,23 +1347,23 @@ func (s *S) TestMonotonicSlaveOkFlagWithMongos(c *C) {
 	q22b := s.countQueries(c, "localhost:40022")
 	q23b := s.countQueries(c, "localhost:40023")
 
-	var masterDelta, slaveDelta int
-	switch hostPort(master) {
+	var mainDelta, subordinateDelta int
+	switch hostPort(main) {
 	case "40021":
-		masterDelta = q21b - q21a
-		slaveDelta = (q22b - q22a) + (q23b - q23a)
+		mainDelta = q21b - q21a
+		subordinateDelta = (q22b - q22a) + (q23b - q23a)
 	case "40022":
-		masterDelta = q22b - q22a
-		slaveDelta = (q21b - q21a) + (q23b - q23a)
+		mainDelta = q22b - q22a
+		subordinateDelta = (q21b - q21a) + (q23b - q23a)
 	case "40023":
-		masterDelta = q23b - q23a
-		slaveDelta = (q21b - q21a) + (q22b - q22a)
+		mainDelta = q23b - q23a
+		subordinateDelta = (q21b - q21a) + (q22b - q22a)
 	default:
 		c.Fatal("Uh?")
 	}
 
-	c.Check(masterDelta, Equals, 0) // Just the counting itself.
-	c.Check(slaveDelta, Equals, 5)  // The counting for both, plus 5 queries above.
+	c.Check(mainDelta, Equals, 0) // Just the counting itself.
+	c.Check(subordinateDelta, Equals, 5)  // The counting for both, plus 5 queries above.
 }
 
 func (s *S) TestSecondaryModeWithMongos(c *C) {
@@ -1372,15 +1372,15 @@ func (s *S) TestSecondaryModeWithMongos(c *C) {
 	defer session.Close()
 
 	ssresult := &struct{ Host string }{}
-	imresult := &struct{ IsMaster bool }{}
+	imresult := &struct{ IsMain bool }{}
 
-	// Figure the master while still using the strong session.
+	// Figure the main while still using the strong session.
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
-	err = session.Run("isMaster", imresult)
+	err = session.Run("isMain", imresult)
 	c.Assert(err, IsNil)
-	master := ssresult.Host
-	c.Assert(imresult.IsMaster, Equals, true, Commentf("%s is not the master", master))
+	main := ssresult.Host
+	c.Assert(imresult.IsMain, Equals, true, Commentf("%s is not the main", main))
 
 	// Ensure mongos is aware about the current topology.
 	s.Stop(":40201")
@@ -1437,23 +1437,23 @@ func (s *S) TestSecondaryModeWithMongos(c *C) {
 	q22b := s.countQueries(c, "localhost:40022")
 	q23b := s.countQueries(c, "localhost:40023")
 
-	var masterDelta, slaveDelta int
-	switch hostPort(master) {
+	var mainDelta, subordinateDelta int
+	switch hostPort(main) {
 	case "40021":
-		masterDelta = q21b - q21a
-		slaveDelta = (q22b - q22a) + (q23b - q23a)
+		mainDelta = q21b - q21a
+		subordinateDelta = (q22b - q22a) + (q23b - q23a)
 	case "40022":
-		masterDelta = q22b - q22a
-		slaveDelta = (q21b - q21a) + (q23b - q23a)
+		mainDelta = q22b - q22a
+		subordinateDelta = (q21b - q21a) + (q23b - q23a)
 	case "40023":
-		masterDelta = q23b - q23a
-		slaveDelta = (q21b - q21a) + (q22b - q22a)
+		mainDelta = q23b - q23a
+		subordinateDelta = (q21b - q21a) + (q22b - q22a)
 	default:
 		c.Fatal("Uh?")
 	}
 
-	c.Check(masterDelta, Equals, 0) // Just the counting itself.
-	c.Check(slaveDelta, Equals, 5)  // The counting for both, plus 5 queries above.
+	c.Check(mainDelta, Equals, 0) // Just the counting itself.
+	c.Check(subordinateDelta, Equals, 5)  // The counting for both, plus 5 queries above.
 }
 
 func (s *S) TestSecondaryModeWithMongosInsert(c *C) {
@@ -1483,31 +1483,31 @@ func (s *S) TestRemovalOfClusterMember(c *C) {
 		c.Skip("-fast")
 	}
 
-	master, err := mgo.Dial("localhost:40021")
+	main, err := mgo.Dial("localhost:40021")
 	c.Assert(err, IsNil)
-	defer master.Close()
+	defer main.Close()
 
 	// Wait for cluster to fully sync up.
 	for i := 0; i < 10; i++ {
-		if len(master.LiveServers()) == 3 {
+		if len(main.LiveServers()) == 3 {
 			break
 		}
 		time.Sleep(5e8)
 	}
-	if len(master.LiveServers()) != 3 {
-		c.Fatalf("Test started with bad cluster state: %v", master.LiveServers())
+	if len(main.LiveServers()) != 3 {
+		c.Fatalf("Test started with bad cluster state: %v", main.LiveServers())
 	}
 
 	result := &struct {
-		IsMaster bool
+		IsMain bool
 		Me       string
 	}{}
-	slave := master.Copy()
-	slave.SetMode(mgo.Monotonic, true) // Monotonic can hold a non-master socket persistently.
-	err = slave.Run("isMaster", result)
+	subordinate := main.Copy()
+	subordinate.SetMode(mgo.Monotonic, true) // Monotonic can hold a non-main socket persistently.
+	err = subordinate.Run("isMain", result)
 	c.Assert(err, IsNil)
-	c.Assert(result.IsMaster, Equals, false)
-	slaveAddr := result.Me
+	c.Assert(result.IsMain, Equals, false)
+	subordinateAddr := result.Me
 
 	defer func() {
 		config := map[string]string{
@@ -1515,10 +1515,10 @@ func (s *S) TestRemovalOfClusterMember(c *C) {
 			"40022": `{_id: 2, host: "127.0.0.1:40022", priority: 0, tags: {rs2: "b"}}`,
 			"40023": `{_id: 3, host: "127.0.0.1:40023", priority: 0, tags: {rs2: "c"}}`,
 		}
-		master.Refresh()
-		master.Run(bson.D{{"$eval", `rs.add(` + config[hostPort(slaveAddr)] + `)`}}, nil)
-		master.Close()
-		slave.Close()
+		main.Refresh()
+		main.Run(bson.D{{"$eval", `rs.add(` + config[hostPort(subordinateAddr)] + `)`}}, nil)
+		main.Close()
+		subordinate.Close()
 
 		// Ensure suite syncs up with the changes before next test.
 		s.Stop(":40201")
@@ -1529,29 +1529,29 @@ func (s *S) TestRemovalOfClusterMember(c *C) {
 		// break due to their expectation of things being in a working state.
 	}()
 
-	c.Logf("========== Removing slave: %s ==========", slaveAddr)
+	c.Logf("========== Removing subordinate: %s ==========", subordinateAddr)
 
-	master.Run(bson.D{{"$eval", `rs.remove("` + slaveAddr + `")`}}, nil)
+	main.Run(bson.D{{"$eval", `rs.remove("` + subordinateAddr + `")`}}, nil)
 
-	master.Refresh()
+	main.Refresh()
 
-	// Give the cluster a moment to catch up by doing a roundtrip to the master.
-	err = master.Ping()
+	// Give the cluster a moment to catch up by doing a roundtrip to the main.
+	err = main.Ping()
 	c.Assert(err, IsNil)
 
 	time.Sleep(3e9)
 
-	// This must fail since the slave has been taken off the cluster.
-	err = slave.Ping()
+	// This must fail since the subordinate has been taken off the cluster.
+	err = subordinate.Ping()
 	c.Assert(err, NotNil)
 
 	for i := 0; i < 15; i++ {
-		if len(master.LiveServers()) == 2 {
+		if len(main.LiveServers()) == 2 {
 			break
 		}
 		time.Sleep(time.Second)
 	}
-	live := master.LiveServers()
+	live := main.LiveServers()
 	if len(live) != 2 {
 		c.Errorf("Removed server still considered live: %#s", live)
 	}
@@ -1615,23 +1615,23 @@ func (s *S) TestPoolLimitMany(c *C) {
 	const poolLimit = 64
 	session.SetPoolLimit(poolLimit)
 
-	// Consume the whole limit for the master.
-	var master []*mgo.Session
+	// Consume the whole limit for the main.
+	var main []*mgo.Session
 	for i := 0; i < poolLimit; i++ {
 		s := session.Copy()
 		defer s.Close()
 		c.Assert(s.Ping(), IsNil)
-		master = append(master, s)
+		main = append(main, s)
 	}
 
 	before := time.Now()
 	go func() {
 		time.Sleep(3e9)
-		master[0].Refresh()
+		main[0].Refresh()
 	}()
 
 	// Then, a single ping must block, since it would need another
-	// connection to the master, over the limit. Once the goroutine
+	// connection to the main, over the limit. Once the goroutine
 	// above releases its socket, it should move on.
 	session.Ping()
 	delay := time.Now().Sub(before)
@@ -1767,17 +1767,17 @@ func (s *S) TestPrimaryShutdownOnAuthShard(c *C) {
 	err = coll.Insert(bson.M{"n": 1})
 	c.Assert(err, IsNil)
 
-	// Dial the replica set to figure the master out.
+	// Dial the replica set to figure the main out.
 	rs, err := mgo.Dial("root:rapadura@localhost:40031")
 	c.Assert(err, IsNil)
 	defer rs.Close()
 
-	// With strong consistency, this will open a socket to the master.
+	// With strong consistency, this will open a socket to the main.
 	result := &struct{ Host string }{}
 	err = rs.Run("serverStatus", result)
 	c.Assert(err, IsNil)
 
-	// Kill the master.
+	// Kill the main.
 	host := result.Host
 	s.Stop(host)
 
@@ -1785,7 +1785,7 @@ func (s *S) TestPrimaryShutdownOnAuthShard(c *C) {
 	err = rs.Run("serverStatus", result)
 	c.Assert(err, Equals, io.EOF)
 
-	// This won't work because the master just died.
+	// This won't work because the main just died.
 	err = coll.Insert(bson.M{"n": 2})
 	c.Assert(err, NotNil)
 
@@ -1796,7 +1796,7 @@ func (s *S) TestPrimaryShutdownOnAuthShard(c *C) {
 		if err == nil {
 			break
 		}
-		c.Logf("Waiting for replica set to elect a new master. Last error: %v", err)
+		c.Logf("Waiting for replica set to elect a new main. Last error: %v", err)
 		time.Sleep(500 * time.Millisecond)
 	}
 	c.Assert(err, IsNil)
@@ -1838,7 +1838,7 @@ func (s *S) TestNearestSecondary(c *C) {
 	session.SetMode(mgo.Monotonic, true)
 	var result struct{ Host string }
 
-	// See which slave picks the line, several times to avoid chance.
+	// See which subordinate picks the line, several times to avoid chance.
 	for i := 0; i < 10; i++ {
 		session.Refresh()
 		err = session.Run("serverStatus", &result)
@@ -1986,24 +1986,24 @@ func (s *S) TestSelectServersWithMongos(c *C) {
 	defer session.Close()
 
 	ssresult := &struct{ Host string }{}
-	imresult := &struct{ IsMaster bool }{}
+	imresult := &struct{ IsMain bool }{}
 
-	// Figure the master while still using the strong session.
+	// Figure the main while still using the strong session.
 	err = session.Run("serverStatus", ssresult)
 	c.Assert(err, IsNil)
-	err = session.Run("isMaster", imresult)
+	err = session.Run("isMain", imresult)
 	c.Assert(err, IsNil)
-	master := ssresult.Host
-	c.Assert(imresult.IsMaster, Equals, true, Commentf("%s is not the master", master))
+	main := ssresult.Host
+	c.Assert(imresult.IsMain, Equals, true, Commentf("%s is not the main", main))
 
-	var slave1, slave2 string
-	switch hostPort(master) {
+	var subordinate1, subordinate2 string
+	switch hostPort(main) {
 	case "40021":
-		slave1, slave2 = "b", "c"
+		subordinate1, subordinate2 = "b", "c"
 	case "40022":
-		slave1, slave2 = "a", "c"
+		subordinate1, subordinate2 = "a", "c"
 	case "40023":
-		slave1, slave2 = "a", "b"
+		subordinate1, subordinate2 = "a", "b"
 	}
 
 	// Collect op counters for everyone.
@@ -2011,7 +2011,7 @@ func (s *S) TestSelectServersWithMongos(c *C) {
 	q22a := s.countQueries(c, "localhost:40022")
 	q23a := s.countQueries(c, "localhost:40023")
 
-	// Do a SlaveOk query through MongoS
+	// Do a SubordinateOk query through MongoS
 	mongos, err := mgo.Dial("localhost:40202")
 	c.Assert(err, IsNil)
 	defer mongos.Close()
@@ -2019,7 +2019,7 @@ func (s *S) TestSelectServersWithMongos(c *C) {
 	mongos.SetMode(mgo.Monotonic, true)
 
 	mongos.Refresh()
-	mongos.SelectServers(bson.D{{"rs2", slave1}})
+	mongos.SelectServers(bson.D{{"rs2", subordinate1}})
 	coll := mongos.DB("mydb").C("mycoll")
 	result := &struct{}{}
 	for i := 0; i != 5; i++ {
@@ -2028,7 +2028,7 @@ func (s *S) TestSelectServersWithMongos(c *C) {
 	}
 
 	mongos.Refresh()
-	mongos.SelectServers(bson.D{{"rs2", slave2}})
+	mongos.SelectServers(bson.D{{"rs2", subordinate2}})
 	coll = mongos.DB("mydb").C("mycoll")
 	for i := 0; i != 7; i++ {
 		err := coll.Find(nil).One(result)
@@ -2040,7 +2040,7 @@ func (s *S) TestSelectServersWithMongos(c *C) {
 	q22b := s.countQueries(c, "localhost:40022")
 	q23b := s.countQueries(c, "localhost:40023")
 
-	switch hostPort(master) {
+	switch hostPort(main) {
 	case "40021":
 		c.Check(q21b-q21a, Equals, 0)
 		c.Check(q22b-q22a, Equals, 5)

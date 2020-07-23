@@ -25,7 +25,7 @@
 #   queue up all filenames ending in ".js" and run them in one mongo
 #   shell at the "end" of testing?
 
-# 5 Right now small-oplog implies master/slave replication.  Maybe
+# 5 Right now small-oplog implies main/subordinate replication.  Maybe
 #   running with replication should be an orthogonal concern.  (And
 #   maybe test replica set replication, too.)
 
@@ -104,9 +104,9 @@ fails = [] # like losers but in format of tests
 
 # For replication hash checking
 replicated_collections = []
-lost_in_slave = []
-lost_in_master = []
-screwy_in_slave = {}
+lost_in_subordinate = []
+lost_in_main = []
+screwy_in_subordinate = {}
 
 smoke_db_prefix = ''
 small_oplog = False
@@ -219,14 +219,14 @@ class mongod(NullMongod):
         self.ensure_test_dirs()
         dir_name = smoke_db_prefix + "/data/db/sconsTests/"
         self.port = int(mongod_port)
-        self.slave = False
-        if 'slave' in self.kwargs:
-            dir_name = smoke_db_prefix + '/data/db/sconsTestsSlave/'
+        self.subordinate = False
+        if 'subordinate' in self.kwargs:
+            dir_name = smoke_db_prefix + '/data/db/sconsTestsSubordinate/'
             srcport = mongod_port
             self.port += 1
-            self.slave = True
+            self.subordinate = True
 
-        clean_dbroot(dbroot=dir_name, nokill=self.slave)
+        clean_dbroot(dbroot=dir_name, nokill=self.subordinate)
         utils.ensureDir(dir_name)
 
         argv = [mongod_executable, "--port", str(self.port), "--dbpath", dir_name]
@@ -234,10 +234,10 @@ class mongod(NullMongod):
         # SERVER-9137 Added httpinterface parameter to keep previous behavior
         argv += ['--setParameter', 'enableTestCommands=1', '--httpinterface']
         if self.kwargs.get('small_oplog'):
-            if self.slave:
-                argv += ['--slave', '--source', 'localhost:' + str(srcport)]
+            if self.subordinate:
+                argv += ['--subordinate', '--source', 'localhost:' + str(srcport)]
             else:
-                argv += ["--master", "--oplogSize", "511"]
+                argv += ["--main", "--oplogSize", "511"]
         if self.kwargs.get('storage_engine'):
             argv += ["--storageEngine", self.kwargs.get('storage_engine')]
         if self.kwargs.get('wiredtiger_engine_config_string'):
@@ -298,7 +298,7 @@ class mongod(NullMongod):
         if not self.did_mongod_start(self.port):
             raise Exception("Failed to start mongod")
 
-        if self.slave:
+        if self.subordinate:
             local = MongoClient(port=self.port,
                 read_preference=ReadPreference.SECONDARY_PREFERRED).local
             synced = False
@@ -454,36 +454,36 @@ class TestServerFailure(TestFailure):
     def __str__(self):
         return 'mongod not running after executing test %s' % self.path
 
-def check_db_hashes(master, slave):
-    # Need to pause a bit so a slave might catch up...
-    if not slave.slave:
-        raise(Bug("slave instance doesn't have slave attribute set"))
+def check_db_hashes(main, subordinate):
+    # Need to pause a bit so a subordinate might catch up...
+    if not subordinate.subordinate:
+        raise(Bug("subordinate instance doesn't have subordinate attribute set"))
 
-    master.wait_for_repl()
+    main.wait_for_repl()
 
     # FIXME: maybe make this run dbhash on all databases?
-    for mongod in [master, slave]:
+    for mongod in [main, subordinate]:
         client = MongoClient(port=mongod.port, read_preference=ReadPreference.SECONDARY_PREFERRED)
         mongod.dbhash = client.test.command("dbhash")
         mongod.dict = mongod.dbhash["collections"]
 
-    global lost_in_slave, lost_in_master, screwy_in_slave, replicated_collections
+    global lost_in_subordinate, lost_in_main, screwy_in_subordinate, replicated_collections
 
-    replicated_collections += master.dict.keys()
+    replicated_collections += main.dict.keys()
 
     for coll in replicated_collections:
-        if coll not in slave.dict and coll not in lost_in_slave:
-            lost_in_slave.append(coll)
-        mhash = master.dict[coll]
-        shash = slave.dict[coll]
+        if coll not in subordinate.dict and coll not in lost_in_subordinate:
+            lost_in_subordinate.append(coll)
+        mhash = main.dict[coll]
+        shash = subordinate.dict[coll]
         if mhash != shash:
-            mTestDB = MongoClient(port=master.port).test
-            sTestDB = MongoClient(port=slave.port,
+            mTestDB = MongoClient(port=main.port).test
+            sTestDB = MongoClient(port=subordinate.port,
                 read_preference=ReadPreference.SECONDARY_PREFERRED).test
             mCount = mTestDB[coll].count()
             sCount = sTestDB[coll].count()
-            stats = {'hashes': {'master': mhash, 'slave': shash},
-                     'counts':{'master': mCount, 'slave': sCount}}
+            stats = {'hashes': {'main': mhash, 'subordinate': shash},
+                     'counts':{'main': mCount, 'subordinate': sCount}}
             try:
                 mDocs = list(mTestDB[coll].find().sort("_id", 1))
                 sDocs = list(sTestDB[coll].find().sort("_id", 1))
@@ -494,11 +494,11 @@ def check_db_hashes(master, slave):
                         mDiffDocs.append(left)
                         sDiffDocs.append(right)
 
-                stats["docs"] = {'master': mDiffDocs, 'slave': sDiffDocs }
+                stats["docs"] = {'main': mDiffDocs, 'subordinate': sDiffDocs }
             except Exception, e:
                 stats["error-docs"] = e;
 
-            screwy_in_slave[coll] = stats
+            screwy_in_subordinate[coll] = stats
             if mhash == "no _id_ index":
                 oplog = "oplog.$main"
                 if small_oplog_rs:
@@ -511,9 +511,9 @@ def check_db_hashes(master, slave):
                     pprint.pprint(doc, width=200)
 
 
-    for db in slave.dict.keys():
-        if db not in master.dict and db not in lost_in_master:
-            lost_in_master.append(db)
+    for db in subordinate.dict.keys():
+        if db not in main.dict and db not in lost_in_main:
+            lost_in_main.append(db)
 
 
 def ternary( b , l="true", r="false" ):
@@ -765,12 +765,12 @@ def run_tests(tests):
     # The reason we want to use "with" is so that we get __exit__ semantics
     # but "with" is only supported on Python 2.5+
 
-    master = NullMongod()
-    slave = NullMongod()
+    main = NullMongod()
+    subordinate = NullMongod()
 
     try:
         if start_mongod:
-            master = mongod(small_oplog_rs=small_oplog_rs,
+            main = mongod(small_oplog_rs=small_oplog_rs,
                             small_oplog=small_oplog,
                             no_journal=no_journal,
                             storage_engine=storage_engine,
@@ -784,10 +784,10 @@ def run_tests(tests):
                             keyFile=keyFile,
                             rlp_path=rlp_path,
                             use_ssl=use_ssl)
-            master.start()
+            main.start()
 
         if small_oplog:
-            slave = mongod(slave=True,
+            subordinate = mongod(subordinate=True,
                            small_oplog=True,
                            small_oplog_rs=False,
                            storage_engine=storage_engine,
@@ -795,9 +795,9 @@ def run_tests(tests):
                            wiredtiger_collection_config_string=wiredtiger_collection_config_string,
                            wiredtiger_index_config_string=wiredtiger_index_config_string,
                            set_parameters=set_parameters)
-            slave.start()
+            subordinate.start()
         elif small_oplog_rs:
-            slave = mongod(slave=True,
+            subordinate = mongod(subordinate=True,
                            small_oplog_rs=True,
                            small_oplog=False,
                            no_journal=no_journal,
@@ -812,34 +812,34 @@ def run_tests(tests):
                            keyFile=keyFile,
                            rlp_path=rlp_path,
                            use_ssl=use_ssl)
-            slave.start()
-            primary = MongoClient(port=master.port);
+            subordinate.start()
+            primary = MongoClient(port=main.port);
 
             primary.admin.command({'replSetInitiate' : {'_id' : 'foo', 'members' : [
-                            {'_id': 0, 'host':'localhost:%s' % master.port},
-                            {'_id': 1, 'host':'localhost:%s' % slave.port,'priority':0}]}})
+                            {'_id': 0, 'host':'localhost:%s' % main.port},
+                            {'_id': 1, 'host':'localhost:%s' % subordinate.port,'priority':0}]}})
 
             # Wait for primary and secondary to finish initial sync and election
-            ismaster = False
-            while not ismaster:
-                result = primary.admin.command("ismaster");
-                ismaster = result["ismaster"]
-                if not ismaster:
+            ismain = False
+            while not ismain:
+                result = primary.admin.command("ismain");
+                ismain = result["ismain"]
+                if not ismain:
                     print "waiting for primary to be available ..."
                     time.sleep(.2)
             
             secondaryUp = False
-            sConn = MongoClient(port=slave.port,
+            sConn = MongoClient(port=subordinate.port,
                 read_preference=ReadPreference.SECONDARY_PREFERRED);
             while not secondaryUp:
-                result = sConn.admin.command("ismaster");
+                result = sConn.admin.command("ismain");
                 secondaryUp = result["secondary"]
                 if not secondaryUp:
                     print "waiting for secondary to be available ..."
                     time.sleep(.2)
 
         if small_oplog or small_oplog_rs:
-            master.wait_for_repl()
+            main.wait_for_repl()
 
         for tests_run, test in enumerate(tests):
             tests_run += 1    # enumerate from 1, python 2.5 compatible
@@ -870,18 +870,18 @@ def run_tests(tests):
                 test_result["elapsed"] = test_result["end"] - test_result["start"]
                 test_report["results"].append( test_result )
                 if small_oplog or small_oplog_rs:
-                    master.wait_for_repl()
+                    main.wait_for_repl()
                     # check the db_hashes
-                    if isinstance(slave, mongod):
-                        check_db_hashes(master, slave)
+                    if isinstance(subordinate, mongod):
+                        check_db_hashes(main, subordinate)
                         check_and_report_replication_dbhashes()
 
                 elif use_db: # reach inside test and see if "usedb" is true
                     if clean_every_n_tests and (tests_run % clean_every_n_tests) == 0:
                         # Restart mongod periodically to clean accumulated test data
                         # clean_dbroot() is invoked by mongod.start()
-                        master.stop()
-                        master = mongod(small_oplog_rs=small_oplog_rs,
+                        main.stop()
+                        main = mongod(small_oplog_rs=small_oplog_rs,
                                         small_oplog=small_oplog,
                                         no_journal=no_journal,
                                         storage_engine=storage_engine,
@@ -895,7 +895,7 @@ def run_tests(tests):
                                         keyFile=keyFile,
                                         rlp_path=rlp_path,
                                         use_ssl=use_ssl)
-                        master.start()
+                        main.start()
 
             except TestFailure, f:
                 test_result["end"] = time.time()
@@ -913,12 +913,12 @@ def run_tests(tests):
                 except TestFailure, f:
                     if not continue_on_failure:
                         return 1
-        if isinstance(slave, mongod):
-            check_db_hashes(master, slave)
+        if isinstance(subordinate, mongod):
+            check_db_hashes(main, subordinate)
 
     finally:
-        slave.stop()
-        master.stop()
+        subordinate.stop()
+        main.stop()
     return 0
 
 
@@ -930,32 +930,32 @@ at the end of testing:""" % (src, dst)
             for db in lst:
                 print db
 
-    missing(lost_in_slave, "master", "slave")
-    missing(lost_in_master, "slave", "master")
-    if screwy_in_slave:
-        print """The following collections have different hashes in the master and slave:"""
-        for coll in screwy_in_slave.keys():
-            stats = screwy_in_slave[coll]
+    missing(lost_in_subordinate, "main", "subordinate")
+    missing(lost_in_main, "subordinate", "main")
+    if screwy_in_subordinate:
+        print """The following collections have different hashes in the main and subordinate:"""
+        for coll in screwy_in_subordinate.keys():
+            stats = screwy_in_subordinate[coll]
             # Counts are "approx" because they are collected after the dbhash runs and may not
             # reflect the states of the collections that were hashed. If the hashes differ, one
             # possibility is that a test exited with writes still in-flight.
-            print "collection: %s\t (master/slave) hashes: %s/%s counts (approx): %i/%i" % (coll, stats['hashes']['master'], stats['hashes']['slave'], stats['counts']['master'], stats['counts']['slave'])
+            print "collection: %s\t (main/subordinate) hashes: %s/%s counts (approx): %i/%i" % (coll, stats['hashes']['main'], stats['hashes']['subordinate'], stats['counts']['main'], stats['counts']['subordinate'])
             if "docs" in stats:
-                if (("master" in stats["docs"] and len(stats["docs"]["master"]) == 0) and
-                    ("slave" in stats["docs"] and len(stats["docs"]["slave"]) == 0)):
+                if (("main" in stats["docs"] and len(stats["docs"]["main"]) == 0) and
+                    ("subordinate" in stats["docs"] and len(stats["docs"]["subordinate"]) == 0)):
                     print "All docs matched!"
                 else:
                     print "Different Docs"
-                    print "Master docs:"
-                    pprint.pprint(stats["docs"]["master"], indent=2)
-                    print "Slave docs:"
-                    pprint.pprint(stats["docs"]["slave"], indent=2)
+                    print "Main docs:"
+                    pprint.pprint(stats["docs"]["main"], indent=2)
+                    print "Subordinate docs:"
+                    pprint.pprint(stats["docs"]["subordinate"], indent=2)
             if "error-docs" in stats:
                 print "Error getting docs to diff:"
                 pprint.pprint(stats["error-docs"])
         return True
 
-    if (small_oplog or small_oplog_rs) and not (lost_in_master or lost_in_slave or screwy_in_slave):
+    if (small_oplog or small_oplog_rs) and not (lost_in_main or lost_in_subordinate or screwy_in_subordinate):
         print "replication ok for %d collections" % (len(replicated_collections))
 
     return False
@@ -985,7 +985,7 @@ def report():
         f.write( json.dumps( test_report ) )
         f.close()
 
-    if losers or lost_in_slave or lost_in_master or screwy_in_slave:
+    if losers or lost_in_subordinate or lost_in_main or screwy_in_subordinate:
         raise Exception("Test failures")
 
 # Keys are the suite names (passed on the command line to smoke.py)
@@ -1334,7 +1334,7 @@ def main():
                       help="Prefix to use for the mongods' dbpaths ('%default')")
     parser.add_option('--small-oplog', dest='small_oplog', default=False,
                       action="store_true",
-                      help='Run tests with master/slave replication & use a small oplog')
+                      help='Run tests with main/subordinate replication & use a small oplog')
     parser.add_option('--small-oplog-rs', dest='small_oplog_rs', default=False,
                       action="store_true",
                       help='Run tests with replica set replication & use a small oplog')

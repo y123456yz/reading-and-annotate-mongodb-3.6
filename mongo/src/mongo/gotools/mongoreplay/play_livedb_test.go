@@ -87,7 +87,7 @@ func getPrimaryPort(session *mgo.Session) (string, error) {
 	res := &struct {
 		Msg string
 	}{}
-	session.Run("ismaster", res)
+	session.Run("ismain", res)
 	isMongosTestServer = (res.Msg == "isdbgrid")
 	if isMongosTestServer {
 		return "", nil

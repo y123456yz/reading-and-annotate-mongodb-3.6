@@ -18,23 +18,23 @@ import (
 // determineOplogCollectionName uses a command to infer
 // the name of the oplog collection in the connected db
 func (dump *MongoDump) determineOplogCollectionName() error {
-	masterDoc := bson.M{}
-	err := dump.SessionProvider.Run("isMaster", &masterDoc, "admin")
+	mainDoc := bson.M{}
+	err := dump.SessionProvider.Run("isMain", &mainDoc, "admin")
 	if err != nil {
 		return fmt.Errorf("error running command: %v", err)
 	}
-	if _, ok := masterDoc["hosts"]; ok {
+	if _, ok := mainDoc["hosts"]; ok {
 		log.Logvf(log.DebugLow, "determined cluster to be a replica set")
 		log.Logvf(log.DebugHigh, "oplog located in local.oplog.rs")
 		dump.oplogCollection = "oplog.rs"
 		return nil
 	}
-	if isMaster := masterDoc["ismaster"]; util.IsFalsy(isMaster) {
-		log.Logvf(log.Info, "mongodump is not connected to a master")
-		return fmt.Errorf("not connected to master")
+	if isMain := mainDoc["ismain"]; util.IsFalsy(isMain) {
+		log.Logvf(log.Info, "mongodump is not connected to a main")
+		return fmt.Errorf("not connected to main")
 	}
 
-	log.Logvf(log.DebugLow, "not connected to a replica set, assuming master/slave")
+	log.Logvf(log.DebugLow, "not connected to a replica set, assuming main/subordinate")
 	log.Logvf(log.DebugHigh, "oplog located in local.oplog.$main")
 	dump.oplogCollection = "oplog.$main"
 	return nil

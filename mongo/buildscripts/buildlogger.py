@@ -83,7 +83,7 @@ for path in possible_paths:
         credentials = {}
         try:
             execfile(credentials_path, credentials, credentials)
-            username = credentials.get('slavename', credentials.get('username'))
+            username = credentials.get('subordinatename', credentials.get('username'))
             password = credentials.get('passwd', credentials.get('password'))
             break
         except:

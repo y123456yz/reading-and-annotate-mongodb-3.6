@@ -13,14 +13,14 @@ import (
 	"io"
 )
 
-// Usage example that expands one master key into three other cryptographically
+// Usage example that expands one main key into three other cryptographically
 // secure keys.
 func Example_usage() {
 	// Underlying hash function to use
 	hash := sha256.New
 
-	// Cryptographically secure master key.
-	master := []byte{0x00, 0x01, 0x02, 0x03} // i.e. NOT this.
+	// Cryptographically secure main key.
+	main := []byte{0x00, 0x01, 0x02, 0x03} // i.e. NOT this.
 
 	// Non secret salt, optional (can be nil)
 	// Recommended: hash-length sized random
@@ -32,11 +32,11 @@ func Example_usage() {
 	}
 
 	// Non secret context specific info, optional (can be nil).
-	// Note, independent from the master key.
+	// Note, independent from the main key.
 	info := []byte{0x03, 0x14, 0x15, 0x92, 0x65}
 
 	// Create the key derivation function
-	hkdf := hkdf.New(hash, master, salt, info)
+	hkdf := hkdf.New(hash, main, salt, info)
 
 	// Generate the required keys
 	keys := make([][]byte, 3)

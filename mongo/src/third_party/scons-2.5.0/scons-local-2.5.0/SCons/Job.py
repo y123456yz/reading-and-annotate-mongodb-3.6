@@ -68,9 +68,9 @@ class Jobs(object):
     methods for starting, stopping, and waiting on all N jobs.
     """
 
-    def __init__(self, num, taskmaster):
+    def __init__(self, num, taskmain):
         """
-        Create 'num' jobs using the given taskmaster.
+        Create 'num' jobs using the given taskmain.
 
         If 'num' is 1 or less, then a serial job will be used,
         otherwise a parallel job with 'num' worker threads will
@@ -89,12 +89,12 @@ class Jobs(object):
                 stack_size = default_stack_size
                 
             try:
-                self.job = Parallel(taskmaster, num, stack_size)
+                self.job = Parallel(taskmain, num, stack_size)
                 self.num_jobs = num
             except NameError:
                 pass
         if self.job is None:
-            self.job = Serial(taskmaster)
+            self.job = Serial(taskmain)
             self.num_jobs = 1
 
     def run(self, postfunc=lambda: None):
@@ -125,7 +125,7 @@ class Jobs(object):
           b) SIGTERM: kill or system shutdown
           c) SIGHUP: Controlling shell exiting
 
-        We handle all of these cases by stopping the taskmaster. It
+        We handle all of these cases by stopping the taskmain. It
         turns out that it's very difficult to stop the build process
         by throwing asynchronously an exception such as
         KeyboardInterrupt. For example, the python Condition
@@ -140,7 +140,7 @@ class Jobs(object):
         """
         def handler(signum, stack, self=self, parentpid=os.getpid()):
             if os.getpid() == parentpid:
-                self.job.taskmaster.stop()
+                self.job.taskmain.stop()
                 self.job.interrupted.set()
             else:
                 os._exit(2)
@@ -171,26 +171,26 @@ class Serial(object):
     This class is not thread safe.
     """
 
-    def __init__(self, taskmaster):
-        """Create a new serial job given a taskmaster. 
+    def __init__(self, taskmain):
+        """Create a new serial job given a taskmain. 
 
-        The taskmaster's next_task() method should return the next task
+        The taskmain's next_task() method should return the next task
         that needs to be executed, or None if there are no more tasks. The
-        taskmaster's executed() method will be called for each task when it
+        taskmain's executed() method will be called for each task when it
         is successfully executed, or failed() will be called if it failed to
         execute (e.g. execute() raised an exception)."""
         
-        self.taskmaster = taskmaster
+        self.taskmain = taskmain
         self.interrupted = InterruptState()
 
     def start(self):
-        """Start the job. This will begin pulling tasks from the taskmaster
+        """Start the job. This will begin pulling tasks from the taskmain
         and executing them, and return when there are no more tasks. If a task
         fails to execute (i.e. execute() raises an exception), then the job will
         stop."""
         
         while True:
-            task = self.taskmaster.next_task()
+            task = self.taskmain.next_task()
 
             if task is None:
                 break
@@ -216,7 +216,7 @@ class Serial(object):
                 task.executed()
 
             task.postprocess()
-        self.taskmaster.cleanup()
+        self.taskmain.cleanup()
 
 
 # Trap import failure so that everything in the Job module but the
@@ -345,22 +345,22 @@ else:
         This class is thread safe.
         """
 
-        def __init__(self, taskmaster, num, stack_size):
-            """Create a new parallel job given a taskmaster.
+        def __init__(self, taskmain, num, stack_size):
+            """Create a new parallel job given a taskmain.
 
-            The taskmaster's next_task() method should return the next
+            The taskmain's next_task() method should return the next
             task that needs to be executed, or None if there are no more
-            tasks. The taskmaster's executed() method will be called
+            tasks. The taskmain's executed() method will be called
             for each task when it is successfully executed, or failed()
             will be called if the task failed to execute (i.e. execute()
             raised an exception).
 
-            Note: calls to taskmaster are serialized, but calls to
+            Note: calls to taskmain are serialized, but calls to
             execute() on distinct tasks are not serialized, because
             that is the whole point of parallel jobs: they can execute
             multiple tasks simultaneously. """
 
-            self.taskmaster = taskmaster
+            self.taskmain = taskmain
             self.interrupted = InterruptState()
             self.tp = ThreadPool(num, stack_size, self.interrupted)
 
@@ -368,7 +368,7 @@ else:
 
         def start(self):
             """Start the job. This will begin pulling tasks from the
-            taskmaster and executing them, and return when there are no
+            taskmain and executing them, and return when there are no
             more tasks. If a task fails to execute (i.e. execute() raises
             an exception), then the job will stop."""
 
@@ -378,7 +378,7 @@ else:
                 # Start up as many available tasks as we're
                 # allowed to.
                 while jobs < self.maxjobs:
-                    task = self.taskmaster.next_task()
+                    task = self.taskmain.next_task()
                     if task is None:
                         break
 
@@ -426,7 +426,7 @@ else:
                         break
 
             self.tp.cleanup()
-            self.taskmaster.cleanup()
+            self.taskmain.cleanup()
 
 # Local Variables:
 # tab-width:4

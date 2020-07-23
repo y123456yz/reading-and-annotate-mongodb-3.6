@@ -310,12 +310,12 @@ class Executor(object):
         """Returns all unique children (dependencies) for all batches
         of this Executor.
 
-        The Taskmaster can recognize when it's already evaluated a
+        The Taskmain can recognize when it's already evaluated a
         Node, so we don't have to make this list unique for its intended
         canonical use case, but we expect there to be a lot of redundancy
         (long lists of batched .cc files #including the same .h files
         over and over), so removing the duplicates once up front should
-        save the Taskmaster a lot of work.
+        save the Taskmain a lot of work.
         """
         result = SCons.Util.UniqueList([])
         for target in self.get_all_targets():

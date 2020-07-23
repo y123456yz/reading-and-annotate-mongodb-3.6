@@ -84,7 +84,7 @@ func (sp *SessionProvider) CollectionNames(dbName string) ([]string, error) {
 }
 
 // GetNodeType checks if the connected SessionProvider is a mongos, standalone, or replset,
-// by looking at the result of calling isMaster.
+// by looking at the result of calling isMain.
 func (sp *SessionProvider) GetNodeType() (NodeType, error) {
 	session, err := sp.GetSession()
 	if err != nil {
@@ -92,20 +92,20 @@ func (sp *SessionProvider) GetNodeType() (NodeType, error) {
 	}
 	session.SetSocketTimeout(0)
 	defer session.Close()
-	masterDoc := struct {
+	mainDoc := struct {
 		SetName interface{} `bson:"setName"`
 		Hosts   interface{} `bson:"hosts"`
 		Msg     string      `bson:"msg"`
 	}{}
-	err = session.Run("isMaster", &masterDoc)
+	err = session.Run("isMain", &mainDoc)
 	if err != nil {
 		return Unknown, err
 	}
 
-	if masterDoc.SetName != nil || masterDoc.Hosts != nil {
+	if mainDoc.SetName != nil || mainDoc.Hosts != nil {
 		return ReplSet, nil
-	} else if masterDoc.Msg == "isdbgrid" {
-		// isdbgrid is always the msg value when calling isMaster on a mongos
+	} else if mainDoc.Msg == "isdbgrid" {
+		// isdbgrid is always the msg value when calling isMain on a mongos
 		// see http://docs.mongodb.org/manual/core/sharded-cluster-query-router/
 		return Mongos, nil
 	}
@@ -174,17 +174,17 @@ func (sp *SessionProvider) SupportsWriteCommands() (bool, error) {
 	}
 	session.SetSocketTimeout(0)
 	defer session.Close()
-	masterDoc := struct {
+	mainDoc := struct {
 		Ok      int `bson:"ok"`
 		MaxWire int `bson:"maxWireVersion"`
 	}{}
-	err = session.Run("isMaster", &masterDoc)
+	err = session.Run("isMain", &mainDoc)
 	if err != nil {
 		return false, err
 	}
 	// the connected server supports write commands if
 	// the maxWriteVersion field is present
-	return (masterDoc.Ok == 1 && masterDoc.MaxWire >= 2), nil
+	return (mainDoc.Ok == 1 && mainDoc.MaxWire >= 2), nil
 }
 
 // FindOne retuns the first document in the collection and database that matches

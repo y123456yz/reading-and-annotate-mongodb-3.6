@@ -89,7 +89,7 @@ func newTwoSidedConn() (conn1 ConnStub, conn2 ConnStub) {
 // AcquireSocketPrivate is an implementation of MongoSession's function that
 // allows for the a stubbed connection to the passed to the other operations of
 // llmgo for testing
-func (session *SessionStub) AcquireSocketPrivate(slaveOk bool) (*mgo.MongoSocket, error) {
+func (session *SessionStub) AcquireSocketPrivate(subordinateOk bool) (*mgo.MongoSocket, error) {
 	session.startup.Do(func() {
 		session.socket = mgo.NewDumbSocket(&session.connection)
 	})

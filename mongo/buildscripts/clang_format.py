@@ -390,8 +390,8 @@ def reformat_branch(clang_format, commit_prior_to_reformat, commit_after_reforma
     if not merge_base == commit_prior_to_reformat:
         raise ValueError("Please rebase to '%s' and resolve all conflicts before running this script" % (commit_prior_to_reformat))
 
-    # We assume the target branch is master, it could be a different branch if needed for testing
-    merge_base = repo.get_merge_base("master")
+    # We assume the target branch is main, it could be a different branch if needed for testing
+    merge_base = repo.get_merge_base("main")
 
     if not merge_base == commit_prior_to_reformat:
         raise ValueError("This branch appears to already have advanced too far through the merge process")
@@ -480,7 +480,7 @@ def reformat_branch(clang_format, commit_prior_to_reformat, commit_after_reforma
     print("reformat-branch is done running.\n")
     print("A copy of your branch has been made named '%s', and formatted with clang-format.\n" % new_branch)
     print("The original branch has been left unchanged.")
-    print("The next step is to rebase the new branch on 'master'.")
+    print("The next step is to rebase the new branch on 'main'.")
 
 
 def usage():

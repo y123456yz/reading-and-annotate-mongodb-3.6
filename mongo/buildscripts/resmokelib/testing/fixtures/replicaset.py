@@ -192,8 +192,8 @@ class ReplicaSetFixture(interface.ReplFixture):
         client = primary.mongo_client()
         while True:
             self.logger.info("Waiting for primary on port %d to be elected.", primary.port)
-            is_master = client.admin.command("isMaster")["ismaster"]
-            if is_master:
+            is_main = client.admin.command("isMain")["ismain"]
+            if is_main:
                 break
             time.sleep(0.1)  # Wait a little bit before trying again.
         self.logger.info("Primary on port %d successfully elected.", primary.port)
@@ -211,7 +211,7 @@ class ReplicaSetFixture(interface.ReplFixture):
             while True:
                 self.logger.info("Waiting for secondary on port %d to become available.",
                                  secondary.port)
-                is_secondary = client.admin.command("isMaster")["secondary"]
+                is_secondary = client.admin.command("isMain")["secondary"]
                 if is_secondary:
                     break
                 time.sleep(0.1)  # Wait a little bit before trying again.
@@ -262,8 +262,8 @@ class ReplicaSetFixture(interface.ReplFixture):
                 if not client:
                     client = node.mongo_client()
                     clients[node.port] = client
-                is_master = client.admin.command("isMaster")["ismaster"]
-                if is_master:
+                is_main = client.admin.command("isMain")["ismain"]
+                if is_main:
                     self.logger.info("The node on port %d is primary of replica set '%s'",
                                      node.port, self.replset_name)
                     return node

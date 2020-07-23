@@ -101,7 +101,7 @@ class Repository(object):
         """
         Get the current branch name, short form.
 
-        This returns "master", not "refs/head/master".
+        This returns "main", not "refs/head/main".
         Raises a GitException if the current branch is detached.
         """
         branch = self.git_rev_parse(["--abbrev-ref", "HEAD"])

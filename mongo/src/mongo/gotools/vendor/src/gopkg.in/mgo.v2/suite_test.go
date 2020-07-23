@@ -140,7 +140,7 @@ func (s *S) TearDownTest(c *C) {
 }
 
 func (s *S) Stop(host string) {
-	// Give a moment for slaves to sync and avoid getting rollback issues.
+	// Give a moment for subordinates to sync and avoid getting rollback issues.
 	panicOnWindows()
 	time.Sleep(2 * time.Second)
 	err := run("svc -d _harness/daemons/" + supvName(host))

@@ -69,7 +69,7 @@ class MetadataRepository(object):
 
          Args:
              metadata_revision: a revision (git hash) of this repository.
-             project: an Evergreen project name (e.g. mongodb-mongo-master).
+             project: an Evergreen project name (e.g. mongodb-mongo-main).
          """
         references_content = self._get_references_content(metadata_revision)
         references = yaml.safe_load(references_content)

@@ -21,12 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __doc__ = """
-Generic Taskmaster module for the SCons build engine.
+Generic Taskmain module for the SCons build engine.
 
 This module contains the primary interface(s) between a wrapping user
 interface and the SCons build engine.  There are two key classes here:
 
-    Taskmaster
+    Taskmain
         This is the main engine for walking the dependency graph and
         calling things to decide what does or doesn't need to be built.
 
@@ -43,11 +43,11 @@ interface and the SCons build engine.  There are two key classes here:
         targets as its "build" action.  There is also a separate subclass
         for suppressing this output when the -q option is used.
 
-        The Taskmaster instantiates a Task object for each (set of)
+        The Taskmain instantiates a Task object for each (set of)
         target(s) that it decides need to be evaluated and/or built.
 """
 
-__revision__ = "src/engine/SCons/Taskmaster.py rel_2.5.0:3543:937e55cd78f7 2016/04/09 11:29:54 bdbaddog"
+__revision__ = "src/engine/SCons/Taskmain.py rel_2.5.0:3543:937e55cd78f7 2016/04/09 11:29:54 bdbaddog"
 
 from itertools import chain
 import operator
@@ -69,7 +69,7 @@ NODE_FAILED = SCons.Node.failed
 print_prepare = 0               # set by option --debug=prepare
 
 # A subsystem for recording stats about how different Nodes are handled by
-# the main Taskmaster loop.  There's no external control here (no need for
+# the main Taskmain loop.  There's no external control here (no need for
 # a --debug= option); enable it by changing the value of CollectStats.
 
 CollectStats = None
@@ -77,14 +77,14 @@ CollectStats = None
 class Stats(object):
     """
     A simple class for holding statistics about the disposition of a
-    Node by the Taskmaster.  If we're collecting statistics, each Node
-    processed by the Taskmaster gets one of these attached, in which case
-    the Taskmaster records its decision each time it processes the Node.
+    Node by the Taskmain.  If we're collecting statistics, each Node
+    processed by the Taskmain gets one of these attached, in which case
+    the Taskmain records its decision each time it processes the Node.
     (Ideally, that's just once per Node.)
     """
     def __init__(self):
         """
-        Instantiates a Taskmaster.Stats object, initializing all
+        Instantiates a Taskmain.Stats object, initializing all
         appropriate counters to zero.
         """
         self.considered  = 0
@@ -122,13 +122,13 @@ class Task(object):
     aspects of controlling a build, so any given application
     *should* be able to do what it wants by sub-classing this
     class and overriding methods as appropriate.  If an application
-    needs to customize something by sub-classing Taskmaster (or
+    needs to customize something by sub-classing Taskmain (or
     some other build engine class), we should first try to migrate
     that functionality into this class.
 
     Note that it's generally a good idea for sub-classes to call
     these methods explicitly to update state, etc., rather than
-    roll their own interaction with Taskmaster from scratch.
+    roll their own interaction with Taskmain from scratch.
     """
     def __init__(self, tm, targets, top, node):
         self.tm = tm
@@ -166,7 +166,7 @@ class Task(object):
         T = self.tm.trace
         if T: T.write(self.trace_message(u'Task.prepare()', self.node))
 
-        # Now that it's the appropriate time, give the TaskMaster a
+        # Now that it's the appropriate time, give the TaskMain a
         # chance to raise any exceptions it encountered while preparing
         # this task.
         self.exception_raise()
@@ -211,10 +211,10 @@ class Task(object):
         # Deprecation Cycle) so the desired behavior is explicitly
         # determined by which concrete subclass is used.
         #raise NotImplementedError
-        msg = ('Taskmaster.Task is an abstract base class; instead of\n'
+        msg = ('Taskmain.Task is an abstract base class; instead of\n'
               '\tusing it directly, '
               'derive from it and override the abstract methods.')
-        SCons.Warnings.warn(SCons.Warnings.TaskmasterNeedsExecuteWarning, msg)
+        SCons.Warnings.warn(SCons.Warnings.TaskmainNeedsExecuteWarning, msg)
         return True
 
     def execute(self):
@@ -265,7 +265,7 @@ class Task(object):
     def executed_without_callbacks(self):
         """
         Called when the task has been successfully executed
-        and the Taskmaster instance doesn't want to call
+        and the Taskmain instance doesn't want to call
         the Node's callback methods.
         """
         T = self.tm.trace
@@ -281,7 +281,7 @@ class Task(object):
     def executed_with_callbacks(self):
         """
         Called when the task has been successfully executed and
-        the Taskmaster instance wants to call the Node's callback
+        the Taskmain instance wants to call the Node's callback
         methods.
 
         This may have been a do-nothing operation (to preserve build
@@ -341,7 +341,7 @@ class Task(object):
         # list.
         self.tm.will_not_build(self.targets, lambda n: n.set_state(NODE_FAILED))
 
-        # Tell the taskmaster to not start any new tasks
+        # Tell the taskmain to not start any new tasks
         self.tm.stop()
 
         # We're stopping because of a build failure, but give the
@@ -492,7 +492,7 @@ class Task(object):
     # must be raised, but must be raised at an appropriate time and in
     # a controlled manner so we can, if necessary, recover gracefully,
     # possibly write out signature information for Nodes we've updated,
-    # etc.  This is done by having the Taskmaster tell us about the
+    # etc.  This is done by having the Taskmain tell us about the
     # exception, and letting
 
     def exc_info(self):
@@ -549,8 +549,8 @@ class AlwaysTask(Task):
         of only executing Nodes that are out of date w.r.t. their
         dependencies) can use this as follows:
 
-            class MyTaskSubclass(SCons.Taskmaster.Task):
-                needs_execute = SCons.Taskmaster.Task.execute_always
+            class MyTaskSubclass(SCons.Taskmain.Task):
+                needs_execute = SCons.Taskmain.Task.execute_always
         """
         return True
 
@@ -578,9 +578,9 @@ def find_cycle(stack, visited):
     return None
 
 
-class Taskmaster(object):
+class Taskmain(object):
     """
-    The Taskmaster for walking the dependency DAG.
+    The Taskmain for walking the dependency DAG.
     """
 
     def __init__(self, targets=[], tasker=None, order=None, trace=None):
@@ -604,7 +604,7 @@ class Taskmaster(object):
         Returns the next candidate Node for (potential) evaluation.
 
         The candidate list (really a stack) initially consists of all of
-        the top-level (command line) targets provided when the Taskmaster
+        the top-level (command line) targets provided when the Taskmain
         was initialized.  While we walk the DAG, visiting Nodes, all the
         children that haven't finished processing get pushed on to the
         candidate list.  Each child can then be popped and examined in
@@ -637,9 +637,9 @@ class Taskmaster(object):
 
     def no_next_candidate(self):
         """
-        Stops Taskmaster processing by not returning a next candidate.
+        Stops Taskmain processing by not returning a next candidate.
 
-        Note that we have to clean-up the Taskmaster candidate list
+        Note that we have to clean-up the Taskmain candidate list
         because the cycle detection depends on the fact all nodes have
         been processed somehow.
         """
@@ -654,7 +654,7 @@ class Taskmaster(object):
         Validate the content of the pending_children set. Assert if an
         internal error is found.
 
-        This function is used strictly for debugging the taskmaster by
+        This function is used strictly for debugging the taskmain by
         checking that no invariants are violated. It is not used in
         normal operation.
 
@@ -663,10 +663,10 @@ class Taskmaster(object):
         found in the "pending" state when checking the dependencies of
         its parent node.
 
-        A pending child can occur when the Taskmaster completes a loop
+        A pending child can occur when the Taskmain completes a loop
         through a cycle. For example, let's imagine a graph made of
         three nodes (A, B and C) making a cycle. The evaluation starts
-        at node A. The Taskmaster first considers whether node A's
+        at node A. The Taskmain first considers whether node A's
         child B is up-to-date. Then, recursively, node B needs to
         check whether node C is up-to-date. This leaves us with a
         dependency graph looking like:
@@ -678,11 +678,11 @@ class Taskmaster(object):
                 |                                     |
                 +-------------------------------------+
 
-        Now, when the Taskmaster examines the Node C's child Node A,
+        Now, when the Taskmain examines the Node C's child Node A,
         it finds that Node A is in the "pending" state. Therefore,
         Node A is a pending child of node C.
 
-        Pending children indicate that the Taskmaster has potentially
+        Pending children indicate that the Taskmain has potentially
         loop back through a cycle. We say potentially because it could
         also occur when a DAG is evaluated in parallel. For example,
         consider the following graph:
@@ -695,9 +695,9 @@ class Taskmaster(object):
                                   /
                   Next candidate /
 
-        The Taskmaster first evaluates the nodes A, B, and C and
+        The Taskmain first evaluates the nodes A, B, and C and
         starts building some children of node C. Assuming, that the
-        maximum parallel level has not been reached, the Taskmaster
+        maximum parallel level has not been reached, the Taskmain
         will examine Node D. It will find that Node C is a pending
         child of Node D.
 
@@ -715,7 +715,7 @@ class Taskmaster(object):
         children involved in a cycle will still be in the pending
         state.
 
-        The taskmaster removes nodes from the pending_children set as
+        The taskmain removes nodes from the pending_children set as
         soon as a pending_children node moves out of the pending
         state. This also helps to keep the pending_children set small.
         """
@@ -729,7 +729,7 @@ class Taskmaster(object):
 
 
     def trace_message(self, message):
-        return 'Taskmaster: %s\n' % message
+        return 'Taskmain: %s\n' % message
 
     def trace_node(self, node):
         return '<%-10s %-3s %s>' % (StateString[node.get_state()],
@@ -1003,7 +1003,7 @@ class Taskmaster(object):
             pass
 
         # We have the stick back the pending_children list into the
-        # taskmaster because the python 1.5.2 compatibility does not
+        # taskmain because the python 1.5.2 compatibility does not
         # allow us to use in-place updates
         self.pending_children = pending_children
 

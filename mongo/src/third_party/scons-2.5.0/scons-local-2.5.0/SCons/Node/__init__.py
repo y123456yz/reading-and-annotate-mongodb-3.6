@@ -677,13 +677,13 @@ class Node(object):
         return 0
 
     #
-    # Taskmaster interface subsystem
+    # Taskmain interface subsystem
     #
 
     def make_ready(self):
         """Get a Node ready for evaluation.
 
-        This is called before the Taskmaster decides if the Node is
+        This is called before the Taskmain decides if the Node is
         up-to-date or not.  Overriding this method allows for a Node
         subclass to be disambiguated if necessary, or for an implicit
         source builder to be attached.
@@ -693,7 +693,7 @@ class Node(object):
     def prepare(self):
         """Prepare for this Node to be built.
 
-        This is called after the Taskmaster has decided that the Node
+        This is called after the Taskmain has decided that the Node
         is out-of-date and must be rebuilt, but before actually calling
         the method to build the Node.
 
@@ -726,7 +726,7 @@ class Node(object):
     def build(self, **kw):
         """Actually build the node.
 
-        This is called by the Taskmaster after it's decided that the
+        This is called by the Taskmain after it's decided that the
         Node is out-of-date and must be rebuilt, and after the prepare()
         method has gotten everything, uh, prepared.
 

@@ -129,7 +129,7 @@ class DeprecatedSourceCodeWarning(FutureDeprecatedWarning):
 class DeprecatedBuildDirWarning(DeprecatedWarning):
     pass
 
-class TaskmasterNeedsExecuteWarning(DeprecatedWarning):
+class TaskmainNeedsExecuteWarning(DeprecatedWarning):
     pass
 
 class DeprecatedCopyWarning(MandatoryDeprecatedWarning):

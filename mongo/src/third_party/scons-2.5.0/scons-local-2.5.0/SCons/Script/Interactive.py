@@ -257,7 +257,7 @@ class SConsInteractiveCmd(cmd.Cmd):
             node.set_state(SCons.Node.no_state)
             node.implicit = None
 
-            # Debug:  Uncomment to verify that all Taskmaster reference
+            # Debug:  Uncomment to verify that all Taskmain reference
             # counts have been reset to zero.
             #if node.ref_count != 0:
             #    from SCons.Debug import Trace

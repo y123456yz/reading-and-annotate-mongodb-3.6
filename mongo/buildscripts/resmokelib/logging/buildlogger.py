@@ -207,10 +207,10 @@ class BuildloggerServer(object):
         self.config = {}
         execfile(_BUILDLOGGER_CONFIG, tmp_globals, self.config)
 
-        # Rename "slavename" to "username" if present.
-        if "slavename" in self.config and "username" not in self.config:
-            self.config["username"] = self.config["slavename"]
-            del self.config["slavename"]
+        # Rename "subordinatename" to "username" if present.
+        if "subordinatename" in self.config and "username" not in self.config:
+            self.config["username"] = self.config["subordinatename"]
+            del self.config["subordinatename"]
 
         # Rename "passwd" to "password" if present.
         if "passwd" in self.config and "password" not in self.config:

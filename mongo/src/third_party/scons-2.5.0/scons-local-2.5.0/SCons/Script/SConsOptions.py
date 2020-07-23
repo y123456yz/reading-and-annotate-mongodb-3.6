@@ -820,9 +820,9 @@ def Parser(version):
                   help="Set the stack size of the threads used to run jobs to N kilobytes.",
                   metavar="N")
 
-    op.add_option('--taskmastertrace',
+    op.add_option('--taskmaintrace',
                   nargs=1,
-                  dest="taskmastertrace_file", default=None,
+                  dest="taskmaintrace_file", default=None,
                   action="store",
                   help="Trace Node evaluation to FILE.",
                   metavar="FILE")

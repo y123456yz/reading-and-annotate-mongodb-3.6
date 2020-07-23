@@ -41,7 +41,7 @@ extlinks = {'release': (release_download+'%s', '')}
 
 language = 'en'
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-master_doc = 'index'
+main_doc = 'index'
 
 # -- Options for HTML output ----------------------------------------------
 

@@ -82,12 +82,12 @@ func main() {
 
 	provider.SetFlags(db.DisableSocketTimeout)
 
-	if inputOpts.SlaveOk {
+	if inputOpts.SubordinateOk {
 		if inputOpts.ReadPreference != "" {
-			log.Logvf(log.Always, "--slaveOk can't be specified when --readPreference is specified")
+			log.Logvf(log.Always, "--subordinateOk can't be specified when --readPreference is specified")
 			os.Exit(util.ExitBadOptions)
 		}
-		log.Logvf(log.Always, "--slaveOk is deprecated and being internally rewritten as --readPreference=nearest")
+		log.Logvf(log.Always, "--subordinateOk is deprecated and being internally rewritten as --readPreference=nearest")
 		inputOpts.ReadPreference = "nearest"
 	}
 

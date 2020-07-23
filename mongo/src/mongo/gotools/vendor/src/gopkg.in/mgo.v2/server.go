@@ -67,7 +67,7 @@ func (dial dialer) isSet() bool {
 }
 
 type mongoServerInfo struct {
-	Master         bool
+	Main         bool
 	Mongos         bool
 	Tags           bson.D
 	MaxWireVersion int
@@ -150,7 +150,7 @@ func (server *mongoServer) AcquireSocket(poolLimit int, timeout time.Duration) (
 // generally be done through server.AcquireSocket().
 func (server *mongoServer) Connect(timeout time.Duration) (*mongoSocket, error) {
 	server.RLock()
-	master := server.info.Master
+	main := server.info.Main
 	dial := server.dial
 	server.RUnlock()
 
@@ -180,7 +180,7 @@ func (server *mongoServer) Connect(timeout time.Duration) (*mongoSocket, error) 
 	}
 	logf("Connection to %s established.", server.Addr)
 
-	stats.conn(+1, master)
+	stats.conn(+1, main)
 	return newSocket(server, conn, timeout), nil
 }
 
@@ -293,7 +293,7 @@ func (server *mongoServer) pinger(loop bool) {
 	op := queryOp{
 		collection: "admin.$cmd",
 		query:      bson.D{{"ping", 1}},
-		flags:      flagSlaveOk,
+		flags:      flagSubordinateOk,
 		limit:      -1,
 	}
 	for {
@@ -430,11 +430,11 @@ func (servers *mongoServers) BestFit(mode Mode, serverTags []bson.D) *mongoServe
 		switch {
 		case serverTags != nil && !next.info.Mongos && !next.hasTags(serverTags):
 			// Must have requested tags.
-		case mode == Secondary && next.info.Master && !next.info.Mongos:
+		case mode == Secondary && next.info.Main && !next.info.Mongos:
 			// Must be a secondary or mongos.
-		case next.info.Master != best.info.Master && mode != Nearest:
-			// Prefer slaves, unless the mode is PrimaryPreferred.
-			swap = (mode == PrimaryPreferred) != best.info.Master
+		case next.info.Main != best.info.Main && mode != Nearest:
+			// Prefer subordinates, unless the mode is PrimaryPreferred.
+			swap = (mode == PrimaryPreferred) != best.info.Main
 		case absDuration(next.pingValue-best.pingValue) > 15*time.Millisecond:
 			// Prefer nearest server.
 			swap = next.pingValue < best.pingValue

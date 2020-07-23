@@ -51,8 +51,8 @@ func ResetStats() {
 
 type Stats struct {
 	Clusters     int
-	MasterConns  int
-	SlaveConns   int
+	MainConns  int
+	SubordinateConns   int
 	SentOps      int
 	ReceivedOps  int
 	ReceivedDocs int
@@ -69,13 +69,13 @@ func (stats *Stats) cluster(delta int) {
 	}
 }
 
-func (stats *Stats) conn(delta int, master bool) {
+func (stats *Stats) conn(delta int, main bool) {
 	if stats != nil {
 		statsMutex.Lock()
-		if master {
-			stats.MasterConns += delta
+		if main {
+			stats.MainConns += delta
 		} else {
-			stats.SlaveConns += delta
+			stats.SubordinateConns += delta
 		}
 		statsMutex.Unlock()
 	}

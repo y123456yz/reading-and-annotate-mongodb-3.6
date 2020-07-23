@@ -83,7 +83,7 @@ def getGitBranchString( prefix="" , postfix="" ):
 
 
     b = getGitBranch()
-    if b == None or b == "master":
+    if b == None or b == "main":
         return ""
     return prefix + b + postfix
 
@@ -235,7 +235,7 @@ def smoke_command(*args):
     smoke_py = os.path.abspath(os.path.join(here, 'smoke.py'))
     # the --with-cleanbb argument causes smoke.py to run
     # buildscripts/cleanbb.py before each test phase; this
-    # prevents us from running out of disk space on slaves
+    # prevents us from running out of disk space on subordinates
     return [find_python(), smoke_py, '--with-cleanbb'] + list(args)
 
 def run_smoke_command(*args):

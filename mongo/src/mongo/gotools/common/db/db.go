@@ -54,7 +54,7 @@ const (
 	ErrWriteResultsUnavailable      = "write results unavailable from"
 	ErrCouldNotFindPrimaryPrefix    = `could not find host matching read preference { mode: "primary"`
 	ErrUnableToTargetPrefix         = "unable to target"
-	ErrNotMaster                    = "not master"
+	ErrNotMain                    = "not main"
 	ErrConnectionRefusedSuffix      = "Connection refused"
 )
 
@@ -68,13 +68,13 @@ type SessionProvider struct {
 	// For connecting to the database
 	connector DBConnector
 
-	// used to avoid a race condition around creating the master session
-	masterSessionLock sync.Mutex
+	// used to avoid a race condition around creating the main session
+	mainSessionLock sync.Mutex
 
-	// the master session to use for connection pooling
-	masterSession *mgo.Session
+	// the main session to use for connection pooling
+	mainSession *mgo.Session
 
-	// flags for generating the master session
+	// flags for generating the main session
 	bypassDocumentValidation bool
 	flags                    sessionFlag
 	readPreference           mgo.Mode
@@ -102,34 +102,34 @@ type Oplog struct {
 // Returns a session connected to the database server for which the
 // session provider is configured.
 func (self *SessionProvider) GetSession() (*mgo.Session, error) {
-	self.masterSessionLock.Lock()
-	defer self.masterSessionLock.Unlock()
+	self.mainSessionLock.Lock()
+	defer self.mainSessionLock.Unlock()
 
-	// The master session is initialized
-	if self.masterSession != nil {
-		return self.masterSession.Copy(), nil
+	// The main session is initialized
+	if self.mainSession != nil {
+		return self.mainSession.Copy(), nil
 	}
 
-	// initialize the provider's master session
+	// initialize the provider's main session
 	var err error
-	self.masterSession, err = self.connector.GetNewSession()
+	self.mainSession, err = self.connector.GetNewSession()
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to db server: %v", err)
 	}
 
-	// update masterSession based on flags
+	// update mainSession based on flags
 	self.refresh()
 
-	// copy the provider's master session, for connection pooling
-	return self.masterSession.Copy(), nil
+	// copy the provider's main session, for connection pooling
+	return self.mainSession.Copy(), nil
 }
 
-// Close closes the master session in the connection pool
+// Close closes the main session in the connection pool
 func (self *SessionProvider) Close() {
-	self.masterSessionLock.Lock()
-	defer self.masterSessionLock.Unlock()
-	if self.masterSession != nil {
-		self.masterSession.Close()
+	self.mainSessionLock.Lock()
+	defer self.mainSessionLock.Unlock()
+	if self.mainSession != nil {
+		self.mainSession.Close()
 	}
 }
 
@@ -138,68 +138,68 @@ func (self *SessionProvider) Close() {
 // This helper assumes a lock is already taken.
 func (self *SessionProvider) refresh() {
 	// handle bypassDocumentValidation
-	self.masterSession.SetBypassValidation(self.bypassDocumentValidation)
+	self.mainSession.SetBypassValidation(self.bypassDocumentValidation)
 
 	// handle readPreference
-	self.masterSession.SetMode(self.readPreference, true)
+	self.mainSession.SetMode(self.readPreference, true)
 
 	// disable timeouts
 	if (self.flags & DisableSocketTimeout) > 0 {
-		self.masterSession.SetSocketTimeout(0)
+		self.mainSession.SetSocketTimeout(0)
 	}
 	if self.tags != nil {
-		self.masterSession.SelectServers(self.tags)
+		self.mainSession.SelectServers(self.tags)
 	}
 }
 
-// SetFlags allows certain modifications to the masterSession after initial creation.
+// SetFlags allows certain modifications to the mainSession after initial creation.
 func (self *SessionProvider) SetFlags(flagBits sessionFlag) {
-	self.masterSessionLock.Lock()
-	defer self.masterSessionLock.Unlock()
+	self.mainSessionLock.Lock()
+	defer self.mainSessionLock.Unlock()
 
 	self.flags = flagBits
 
-	// make sure we update the master session if one already exists
-	if self.masterSession != nil {
+	// make sure we update the main session if one already exists
+	if self.mainSession != nil {
 		self.refresh()
 	}
 }
 
 // SetReadPreference sets the read preference mode in the SessionProvider
-// and eventually in the masterSession
+// and eventually in the mainSession
 func (self *SessionProvider) SetReadPreference(pref mgo.Mode) {
-	self.masterSessionLock.Lock()
-	defer self.masterSessionLock.Unlock()
+	self.mainSessionLock.Lock()
+	defer self.mainSessionLock.Unlock()
 
 	self.readPreference = pref
 
-	if self.masterSession != nil {
+	if self.mainSession != nil {
 		self.refresh()
 	}
 }
 
 // SetBypassDocumentValidation sets whether to bypass document validation in the SessionProvider
-// and eventually in the masterSession
+// and eventually in the mainSession
 func (self *SessionProvider) SetBypassDocumentValidation(bypassDocumentValidation bool) {
-	self.masterSessionLock.Lock()
-	defer self.masterSessionLock.Unlock()
+	self.mainSessionLock.Lock()
+	defer self.mainSessionLock.Unlock()
 
 	self.bypassDocumentValidation = bypassDocumentValidation
 
-	if self.masterSession != nil {
+	if self.mainSession != nil {
 		self.refresh()
 	}
 }
 
 // SetTags sets the server selection tags in the SessionProvider
-// and eventually in the masterSession
+// and eventually in the mainSession
 func (self *SessionProvider) SetTags(tags bson.D) {
-	self.masterSessionLock.Lock()
-	defer self.masterSessionLock.Unlock()
+	self.mainSessionLock.Lock()
+	defer self.mainSessionLock.Unlock()
 
 	self.tags = tags
 
-	if self.masterSession != nil {
+	if self.mainSession != nil {
 		self.refresh()
 	}
 }
@@ -244,7 +244,7 @@ func IsConnectionError(err error) bool {
 		strings.HasPrefix(lowerCaseError, ErrWriteResultsUnavailable) ||
 		strings.HasPrefix(lowerCaseError, ErrCouldNotFindPrimaryPrefix) ||
 		strings.HasPrefix(lowerCaseError, ErrUnableToTargetPrefix) ||
-		lowerCaseError == ErrNotMaster ||
+		lowerCaseError == ErrNotMain ||
 		strings.HasSuffix(lowerCaseError, ErrConnectionRefusedSuffix) {
 		return true
 	}

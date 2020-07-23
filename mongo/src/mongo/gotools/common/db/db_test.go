@@ -41,7 +41,7 @@ func TestNewSessionProvider(t *testing.T) {
 
 		})
 
-		Convey("the master session should be successfully "+
+		Convey("the main session should be successfully "+
 			" initialized", func() {
 			opts := options.ToolOptions{
 				Connection: &options.Connection{
@@ -52,17 +52,17 @@ func TestNewSessionProvider(t *testing.T) {
 			}
 			provider, err := NewSessionProvider(opts)
 			So(err, ShouldBeNil)
-			So(provider.masterSession, ShouldBeNil)
+			So(provider.mainSession, ShouldBeNil)
 			session, err := provider.GetSession()
 			So(err, ShouldBeNil)
 			So(session, ShouldNotBeNil)
 			session.Close()
-			So(provider.masterSession, ShouldNotBeNil)
-			err = provider.masterSession.Ping()
+			So(provider.mainSession, ShouldNotBeNil)
+			err = provider.mainSession.Ping()
 			So(err, ShouldBeNil)
 			provider.Close()
 			So(func() {
-				provider.masterSession.Ping()
+				provider.mainSession.Ping()
 			}, ShouldPanic)
 
 		})

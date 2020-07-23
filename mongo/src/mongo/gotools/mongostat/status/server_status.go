@@ -68,7 +68,7 @@ type TransactionStats struct {
 // ReplStatus stores data related to replica sets.
 type ReplStatus struct {
 	SetName      string      `bson:"setName"`
-	IsMaster     interface{} `bson:"ismaster"`
+	IsMain     interface{} `bson:"ismain"`
 	Secondary    interface{} `bson:"secondary"`
 	IsReplicaSet interface{} `bson:"isreplicaset"`
 	ArbiterOnly  interface{} `bson:"arbiterOnly"`

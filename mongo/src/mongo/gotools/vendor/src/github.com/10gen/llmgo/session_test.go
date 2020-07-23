@@ -2530,7 +2530,7 @@ func (s *S) TestSafeParameters(c *C) {
 	// Tweak the safety parameters to something unachievable.
 	session.SetSafe(&mgo.Safe{W: 4, WTimeout: 100})
 	err = coll.Insert(M{"_id": 1})
-	c.Assert(err, ErrorMatches, "timeout|timed out waiting for slaves|Not enough data-bearing nodes|waiting for replication timed out") // :-(
+	c.Assert(err, ErrorMatches, "timeout|timed out waiting for subordinates|Not enough data-bearing nodes|waiting for replication timed out") // :-(
 	if !s.versionAtLeast(2, 6) {
 		// 2.6 turned it into a query error.
 		c.Assert(err.(*mgo.LastError).WTimeout, Equals, true)

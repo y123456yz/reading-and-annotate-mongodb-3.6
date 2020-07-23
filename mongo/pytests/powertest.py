@@ -1239,7 +1239,7 @@ def mongod_wait_for_primary(mongo, timeout=60, sleep_interval=3):
         within the specified timeout."""
 
     start = time.time()
-    while not mongo.admin.command("isMaster")["ismaster"]:
+    while not mongo.admin.command("isMain")["ismain"]:
         time.sleep(sleep_interval)
         if time.time() - start >= timeout:
             return False
@@ -1285,7 +1285,7 @@ def mongo_reconfig_replication(mongo, host_port, repl_set):
             rs_config["members"][0]["host"] = host_port
             ret = mongo.admin.command("replSetReconfig", rs_config, force=True)
     primary_available = mongod_wait_for_primary(mongo)
-    LOGGER.debug("isMaster: %s", mongo.admin.command("isMaster"))
+    LOGGER.debug("isMain: %s", mongo.admin.command("isMain"))
     LOGGER.debug("replSetGetStatus: %s", mongo.admin.command("replSetGetStatus"))
     return 0 if ret["ok"] == 1 and primary_available else 1
 

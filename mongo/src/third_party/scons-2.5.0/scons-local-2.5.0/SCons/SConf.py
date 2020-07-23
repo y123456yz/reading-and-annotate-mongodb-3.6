@@ -49,7 +49,7 @@ import SCons.Builder
 import SCons.Errors
 import SCons.Job
 import SCons.Node.FS
-import SCons.Taskmaster
+import SCons.Taskmain
 import SCons.Util
 import SCons.Warnings
 import SCons.Conftest
@@ -219,7 +219,7 @@ class Streamer(object):
         self.s.flush()
         
 
-class SConfBuildTask(SCons.Taskmaster.AlwaysTask):
+class SConfBuildTask(SCons.Taskmain.AlwaysTask):
     """
     This is almost the same as SCons.Script.BuildTask. Handles SConfErrors
     correctly and knows about the current cache_mode.
@@ -255,7 +255,7 @@ class SConfBuildTask(SCons.Taskmaster.AlwaysTask):
             self.display('Caught exception while building "%s":\n' %
                          self.targets[0])
             sys.excepthook(*self.exc_info())
-        return SCons.Taskmaster.Task.failed(self)
+        return SCons.Taskmain.Task.failed(self)
 
     def collect_node_states(self):
         # returns (is_up_to_date, cached_error, cachable)
@@ -508,7 +508,7 @@ class SConfBase(object):
             # ToDo: use user options for calc
             save_max_drift = SConfFS.get_max_drift()
             SConfFS.set_max_drift(0)
-            tm = SCons.Taskmaster.Taskmaster(nodes, SConfBuildTask)
+            tm = SCons.Taskmain.Taskmain(nodes, SConfBuildTask)
             # we don't want to build tests in parallel
             jobs = SCons.Job.Jobs(1, tm )
             jobs.run()

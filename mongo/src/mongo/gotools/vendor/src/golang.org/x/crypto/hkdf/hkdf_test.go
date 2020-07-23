@@ -16,7 +16,7 @@ import (
 
 type hkdfTest struct {
 	hash   func() hash.Hash
-	master []byte
+	main []byte
 	salt   []byte
 	info   []byte
 	out    []byte
@@ -233,7 +233,7 @@ var hkdfTests = []hkdfTest{
 
 func TestHKDF(t *testing.T) {
 	for i, tt := range hkdfTests {
-		hkdf := New(tt.hash, tt.master, tt.salt, tt.info)
+		hkdf := New(tt.hash, tt.main, tt.salt, tt.info)
 		out := make([]byte, len(tt.out))
 
 		n, err := io.ReadFull(hkdf, out)
@@ -249,7 +249,7 @@ func TestHKDF(t *testing.T) {
 
 func TestHKDFMultiRead(t *testing.T) {
 	for i, tt := range hkdfTests {
-		hkdf := New(tt.hash, tt.master, tt.salt, tt.info)
+		hkdf := New(tt.hash, tt.main, tt.salt, tt.info)
 		out := make([]byte, len(tt.out))
 
 		for b := 0; b < len(tt.out); b++ {
@@ -267,10 +267,10 @@ func TestHKDFMultiRead(t *testing.T) {
 
 func TestHKDFLimit(t *testing.T) {
 	hash := sha1.New
-	master := []byte{0x00, 0x01, 0x02, 0x03}
+	main := []byte{0x00, 0x01, 0x02, 0x03}
 	info := []byte{}
 
-	hkdf := New(hash, master, nil, info)
+	hkdf := New(hash, main, nil, info)
 	limit := hash().Size() * 255
 	out := make([]byte, limit)
 
@@ -336,7 +336,7 @@ func Benchmark64ByteSHA512Stream(b *testing.B) {
 }
 
 func benchmarkHKDFSingle(hasher func() hash.Hash, block int, b *testing.B) {
-	master := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}
+	main := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}
 	salt := []byte{0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17}
 	info := []byte{0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27}
 	out := make([]byte, block)
@@ -345,13 +345,13 @@ func benchmarkHKDFSingle(hasher func() hash.Hash, block int, b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		hkdf := New(hasher, master, salt, info)
+		hkdf := New(hasher, main, salt, info)
 		io.ReadFull(hkdf, out)
 	}
 }
 
 func benchmarkHKDFStream(hasher func() hash.Hash, block int, b *testing.B) {
-	master := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}
+	main := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}
 	salt := []byte{0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17}
 	info := []byte{0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27}
 	out := make([]byte, block)
@@ -359,11 +359,11 @@ func benchmarkHKDFStream(hasher func() hash.Hash, block int, b *testing.B) {
 	b.SetBytes(int64(block))
 	b.ResetTimer()
 
-	hkdf := New(hasher, master, salt, info)
+	hkdf := New(hasher, main, salt, info)
 	for i := 0; i < b.N; i++ {
 		_, err := io.ReadFull(hkdf, out)
 		if err != nil {
-			hkdf = New(hasher, master, salt, info)
+			hkdf = New(hasher, main, salt, info)
 			i--
 		}
 	}

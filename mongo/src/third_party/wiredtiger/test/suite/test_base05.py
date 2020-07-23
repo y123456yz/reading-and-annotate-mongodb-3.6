@@ -118,8 +118,8 @@ class test_base05(wttest.WiredTigerTestCase):
         'True, they rather order me about some, and make me jump from spar to spar, like a grasshopper in a May meadow.',
         'And at first, this sort of thing is unpleasant enough.',
         'It touches one\'s sense of honor, particularly if you come of an old established family in the land, the Van Rensselaers, or Randolphs, or Hardicanutes.',
-        'And more than all, if just previous to putting your hand into the tar-pot, you have been lording it as a country schoolmaster, making the tallest boys stand in awe of you.',
-        'The transition is a keen one, I assure you, from a schoolmaster to a sailor, and requires a strong decoction of Seneca and the Stoics to enable you to grin and bear it.',
+        'And more than all, if just previous to putting your hand into the tar-pot, you have been lording it as a country schoolmain, making the tallest boys stand in awe of you.',
+        'The transition is a keen one, I assure you, from a schoolmain to a sailor, and requires a strong decoction of Seneca and the Stoics to enable you to grin and bear it.',
         'But even this wears off in time.'
         ]
 
