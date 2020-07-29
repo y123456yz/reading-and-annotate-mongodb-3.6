@@ -613,6 +613,7 @@ Status MigrationChunkClonerSourceLegacy::_storeCurrentLocs(OperationContext* opC
                                                                  _shardKeyPattern.toBSON(),
                                                                  false);  // requireSingleKey
     if (!idx) {
+		//¿‡À∆»’÷æ: W SHARDING [conn348058] Chunk move failed :: caused by :: IndexNotFound: can't find index with prefix { feature: "hashed" } in storeCurrentLocs for music.data_set
         return {ErrorCodes::IndexNotFound,
                 str::stream() << "can't find index with prefix " << _shardKeyPattern.toBSON()
                               << " in storeCurrentLocs for "
