@@ -55,6 +55,7 @@ BSONObj lsidQuery(const LogicalSessionId& lsid) {
 
 }  // namespace
 
+//SessionsCollectionSharded::setupSessionsCollectionµ÷ÓÃ
 Status SessionsCollectionSharded::_checkCacheForSessionsCollection(OperationContext* opCtx) {
     // If the collection doesn't exist, fail. Only the config servers generate it.
     auto res = Grid::get(opCtx)->catalogCache()->getShardedCollectionRoutingInfoWithRefresh(

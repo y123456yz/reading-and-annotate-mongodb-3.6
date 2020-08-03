@@ -142,7 +142,7 @@ BSONObj findExtremeKeyForShard(OperationContext* opCtx,
 
 /**
  * Splits the chunks touched based from the targeter stats if needed.
- */ //ClusterWriter::write
+ */ //ClusterWriter::write->splitIfNeeded
 void splitIfNeeded(OperationContext* opCtx,
                    const NamespaceString& nss,
                    const TargeterStats& stats) {
@@ -245,6 +245,9 @@ void ClusterWriter::write(OperationContext* opCtx,
     }
 }
 
+//以下接口调用
+//FindAndModifyCmd::run                 
+//ClusterWriter::write->splitIfNeeded    
 void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
                                            ChunkManager* manager,
                                            Chunk* chunk,

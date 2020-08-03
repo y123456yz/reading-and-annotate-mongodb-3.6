@@ -643,6 +643,7 @@ int Balancer::_moveChunks(OperationContext* opCtx,
     return numChunksProcessed;
 }
 
+//Balancer::_moveChunks->Balancer::_splitOrMarkJumbo
 void Balancer::_splitOrMarkJumbo(OperationContext* opCtx,
                                  const NamespaceString& nss,
                                  const BSONObj& minKey) {
