@@ -81,6 +81,7 @@ const WriteConcernOptions kNoWaitWriteConcern(1, WriteConcernOptions::SyncMode::
  * Creates and writes to the config server the first chunks for a newly sharded collection. Returns
  * the version generated for the collection.
  */
+//ShardingCatalogManager::shardCollection中调用
 ChunkVersion createFirstChunks(OperationContext* opCtx,
                                const NamespaceString& nss,
                                const ShardKeyPattern& shardKeyPattern,
@@ -114,6 +115,7 @@ ChunkVersion createFirstChunks(OperationContext* opCtx,
         uassertStatusOK(Grid::get(opCtx)->getBalancerConfiguration()->refreshAndCheck(opCtx));
 
         if (numObjects > 0) {
+			//获取chunk分裂点
             splitPoints = uassertStatusOK(shardutil::selectChunkSplitPoints(
                 opCtx,
                 primaryShardId,

@@ -87,7 +87,16 @@ StatusWith<long long> retrieveTotalShardSize(OperationContext* opCtx, const Shar
     return totalSizeElem.numberLong();
 }
 
-StatusWith<std::vector<BSONObj>> selectChunkSplitPoints(OperationContext* opCtx,
+/*
+https://blog.csdn.net/weixin_33827731/article/details/90534750
+db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
+*/
+//通过splitVector获取分裂点
+//ShardingCatalogManager::shardCollection->createFirstChunks中调用
+//Balancer::_moveChunks->Balancer::_splitOrMarkJumbo中调用
+//updateChunkWriteStatsAndSplitIfNeeded中调用(FindAndModifyCmd::run和ClusterWriter::write->splitIfNeede调用)  
+StatusWith<std::vector<BSONObj>> 
+selectChunkSplitPoints(OperationContext* opCtx,
                                                         const ShardId& shardId,
                                                         const NamespaceString& nss,
                                                         const ShardKeyPattern& shardKeyPattern,

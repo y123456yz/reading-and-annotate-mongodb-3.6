@@ -130,6 +130,7 @@ Status LogicalSessionCacheImpl::refreshSessions(OperationContext* opCtx,
     return Status::OK();
 }
 
+//initializeOperationSessionInfoµ÷ÓÃ
 void LogicalSessionCacheImpl::vivify(OperationContext* opCtx, const LogicalSessionId& lsid) {
     if (!promote(lsid).isOK()) {
         startSession(opCtx, makeLogicalSessionRecord(opCtx, lsid, now()));

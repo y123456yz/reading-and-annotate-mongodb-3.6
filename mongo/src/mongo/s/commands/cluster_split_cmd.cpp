@@ -53,6 +53,12 @@ namespace {
  * Asks the mongod holding this chunk to find a key that approximately divides the specified chunk
  * in two. Throws on error or if the chunk is empty.
  */
+/*
+https://blog.csdn.net/weixin_33827731/article/details/90534750
+db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
+*/
+//通过splitVector获取中间分裂点,ChunkRange中min和max最中间得分裂点，这里强制force获取中间分裂点    
+//SplitCollectionCmd::errmsgRun调用
 BSONObj selectMedianKey(OperationContext* opCtx,
                         const ShardId& shardId,
                         const NamespaceString& nss,
@@ -84,6 +90,20 @@ BSONObj selectMedianKey(OperationContext* opCtx,
               "Unable to find median in chunk, possibly because chunk is empty.");
 }
 
+/*
+db.adminCommand( { split: <database>.<collection>,
+                   <find|middle|bounds> } )
+https://docs.mongodb.com/v3.4/reference/command/split/
+
+db.adminCommand( { split: <database>.<collection>,
+                   find: <document> } )
+
+db.adminCommand( { split: <database>.<collection>,
+                   middle: <document> } )
+
+分裂方法
+
+*/
 class SplitCollectionCmd : public ErrmsgCommandDeprecated {
 public:
     SplitCollectionCmd() : ErrmsgCommandDeprecated("split", "split") {}
@@ -123,6 +143,7 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
+	//SplitCollectionCmd::errmsgRun
     bool errmsgRun(OperationContext* opCtx,
                    const std::string& dbname,
                    const BSONObj& cmdObj,

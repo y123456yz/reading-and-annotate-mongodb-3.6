@@ -70,6 +70,7 @@ SHA256Block getLogicalSessionUserDigestFor(StringData user, StringData db) {
     return SHA256Block::computeHash({ConstDataRange(fn.c_str(), fn.size())});
 }
 
+//initializeOperationSessionInfo
 LogicalSessionId makeLogicalSessionId(const LogicalSessionFromClient& fromClient,
                                       OperationContext* opCtx,
                                       std::initializer_list<Privilege> allowSpoof) {

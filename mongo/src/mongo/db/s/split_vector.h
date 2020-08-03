@@ -55,6 +55,11 @@ class StatusWith;
  * If force is set, split at the halfway point of the chunk. This also effectively
  * makes maxChunkSize equal the size of the chunk.
  */
+/*
+https://blog.csdn.net/weixin_33827731/article/details/90534750
+db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
+*/
+
 StatusWith<std::vector<BSONObj>> splitVector(OperationContext* opCtx,
                                              const NamespaceString& nss,
                                              const BSONObj& keyPattern,
