@@ -56,6 +56,7 @@ inline bool NamespaceString::virtualized(StringData ns) {
     return ns.find('$') != std::string::npos && ns != "local.oplog.$main";
 }
 
+//DB名合规性检查，例如不能有空格等
 inline bool NamespaceString::validDBName(StringData db, DollarInDbNameBehavior behavior) {
     if (db.size() == 0 || db.size() >= 64)
         return false;

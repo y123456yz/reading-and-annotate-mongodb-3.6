@@ -48,6 +48,7 @@
 namespace mongo {
 namespace {
 
+//sh.enableSharding("db")  
 class EnableShardingCmd : public ErrmsgCommandDeprecated {
 public:
     EnableShardingCmd() : ErrmsgCommandDeprecated("enableSharding", "enablesharding") {}
@@ -86,6 +87,7 @@ public:
         return cmdObj.firstElement().str();
     }
 
+	//向cfg发送_configsvrEnableSharding命令，cfg对应cmd为ConfigSvrEnableShardingCommand
     virtual bool errmsgRun(OperationContext* opCtx,
                            const std::string& dbname_unused,
                            const BSONObj& cmdObj,
@@ -97,6 +99,7 @@ public:
         // collection the next time it's accessed, even if we receive a failure, e.g. NetworkError.
         ON_BLOCK_EXIT([opCtx, db] { Grid::get(opCtx)->catalogCache()->purgeDatabase(db); });
 
+		//获取configShard信息
         auto configShard = Grid::get(opCtx)->shardRegistry()->getConfigShard();
         auto cmdResponse = uassertStatusOK(configShard->runCommandWithFixedRetryAttempts(
             opCtx,

@@ -58,7 +58,7 @@ https://blog.csdn.net/weixin_33827731/article/details/90534750
 db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
 */
 //通过splitVector获取中间分裂点,ChunkRange中min和max最中间得分裂点，这里强制force获取中间分裂点    
-//SplitCollectionCmd::errmsgRun调用
+//SplitCollectionCmd::errmsgRun调用，注意和selectChunkSplitPoints得区别(splitVector获取分裂点)
 BSONObj selectMedianKey(OperationContext* opCtx,
                         const ShardId& shardId,
                         const NamespaceString& nss,

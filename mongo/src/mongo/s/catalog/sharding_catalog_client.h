@@ -80,7 +80,7 @@ struct ConnectionPoolStats;
  * TODO: For now this also includes some methods that write the sharding catalog metadata.  Those
  * should eventually all be moved to ShardingCatalogManager as catalog manipulation operations
  * move to be run on the config server primary.
- */
+ */ //Grid._catalogClient为该类型，ShardingCatalogClientImpl继承该类
 class ShardingCatalogClient {
     MONGO_DISALLOW_COPYING(ShardingCatalogClient);
 

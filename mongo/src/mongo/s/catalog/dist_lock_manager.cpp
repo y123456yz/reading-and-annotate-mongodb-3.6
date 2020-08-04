@@ -74,7 +74,8 @@ StatusWith<DistLockManager::ScopedDistLock> DistLockManager::lock(OperationConte
                                                                   StringData name,
                                                                   StringData whyMessage,
                                                                   Milliseconds waitFor) {
-    auto distLockHandleStatus = lockWithSessionID(opCtx, name, whyMessage, OID::gen(), waitFor);
+	//ReplSetDistLockManager::lockWithSessionID 
+	auto distLockHandleStatus = lockWithSessionID(opCtx, name, whyMessage, OID::gen(), waitFor);
     if (!distLockHandleStatus.isOK()) {
         return distLockHandleStatus.getStatus();
     }

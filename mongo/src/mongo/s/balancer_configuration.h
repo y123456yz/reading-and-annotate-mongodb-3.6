@@ -203,7 +203,7 @@ private:
 /**
  * Contains settings, which control the behaviour of the balancer.
  */
-//balance相关得配置信息
+//balance相关得配置信息  initializeGlobalShardingState中构造使用
 class BalancerConfiguration {
     MONGO_DISALLOW_COPYING(BalancerConfiguration);
 
