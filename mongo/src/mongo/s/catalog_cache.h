@@ -181,7 +181,7 @@ private:
     stdx::mutex _mutex;
 
     // Map from DB name to the info for that database
-    DatabaseInfoMap _databases;
+    DatabaseInfoMap _databases; 
 };
 
 /**

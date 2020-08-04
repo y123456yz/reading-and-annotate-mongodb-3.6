@@ -71,7 +71,7 @@ class StatusWith;
  * TODO: Add maxTimeMS support.  SERVER-19410.
  * TODO: Add method "size_t killCursorsOnNamespace(const NamespaceString& nss)" for
  *       dropCollection()?
- */
+ */ //initializeGlobalShardingState÷–ππ‘Ï
 class ClusterCursorManager {
     MONGO_DISALLOW_COPYING(ClusterCursorManager);
 

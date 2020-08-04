@@ -728,6 +728,7 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
+	//ConfigSvrShardCollectionCommand::run
     bool run(OperationContext* opCtx,
              const std::string& dbname,
              const BSONObj& cmdObj,

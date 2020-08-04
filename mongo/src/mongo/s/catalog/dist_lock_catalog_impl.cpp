@@ -69,6 +69,7 @@ const ReadPreferenceSetting kReadPref(ReadPreference::PrimaryOnly, TagSet());
  * the findAndModify command did not modify any document.
  * This also checks for errors in the response object.
  */
+//提取findAndModify结果
 StatusWith<BSONObj> extractFindAndModifyNewObj(StatusWith<Shard::CommandResponse> response) {
     if (!response.isOK()) {
         return response.getStatus();
@@ -228,6 +229,7 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                                          << LocksType::why()
                                          << why));
 
+	//构造FindAndModifyRequest
     auto request = FindAndModifyRequest::makeUpdate(
         _locksNS,
         BSON(LocksType::name() << lockID << LocksType::state(LocksType::UNLOCKED)),
@@ -237,6 +239,7 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
     request.setWriteConcern(writeConcern);
 
     auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
+	//执行findAndModify命令并获取对应结果
     auto resultStatus = shardRegistry->getConfigShard()->runCommandWithFixedRetryAttempts(
         opCtx,
         ReadPreferenceSetting{ReadPreference::PrimaryOnly},
@@ -245,8 +248,10 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
         Shard::kDefaultConfigCommandTimeout,
         Shard::RetryPolicy::kNoRetry);  // Dist lock manager is handling own retries
 
+	//提取findAndModify这个原子操作的结果
     auto findAndModifyStatus = extractFindAndModifyNewObj(std::move(resultStatus));
     if (!findAndModifyStatus.isOK()) {
+		//重复key，说明其他操作获取到了锁
         if (findAndModifyStatus == ErrorCodes::DuplicateKey) {
             // Another thread won the upsert race. Also see SERVER-14322.
             return {ErrorCodes::LockStateChangeFailed,
@@ -264,6 +269,7 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                               << locksTypeResult.getStatus().toString()};
     }
 
+	//获取锁成功
     return locksTypeResult.getValue();
 }
 

@@ -52,7 +52,7 @@ class TaskExecutorPool;
 /**
  * Holds the global sharding context. Single instance exists for a running server. Exists on
  * both MongoD and MongoS.
- */
+ */ //保存全局上下文信息
 class Grid {
 public:
     Grid();
@@ -157,6 +157,9 @@ public:
     void clearForUnitTests();
 
 private:
+    //以下成员初始化见Grid::init
+
+    
     std::unique_ptr<ShardingCatalogClient> _catalogClient;
     std::unique_ptr<CatalogCache> _catalogCache;
     std::unique_ptr<ShardRegistry> _shardRegistry;

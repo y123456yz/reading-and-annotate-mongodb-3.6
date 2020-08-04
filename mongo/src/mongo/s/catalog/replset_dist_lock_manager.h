@@ -48,8 +48,11 @@ class ServiceContext;
 
 class ReplSetDistLockManager final : public DistLockManager {
 public:
+    //const Seconds ReplSetDistLockManager::kDistLockPingInterval{30};
+    //const Minutes ReplSetDistLockManager::kDistLockExpirationTime{15};
+
     // How frequently should the dist lock pinger thread run and write liveness information about
-    // this instance of the dist lock manager
+    // this instance of the dist lock manager   默认值如上
     static const Seconds kDistLockPingInterval;
 
     // How long should the lease on a distributed lock last
@@ -127,7 +130,11 @@ private:
     ServiceContext* const _serviceContext;  // (F)
 
     const std::string _processID;                     // (I)
+    //对应DistLockCatalogImpl
     const std::unique_ptr<DistLockCatalog> _catalog;  // (I)
+        
+    //ReplSetDistLockManager::kDistLockPingInterval   pinginterval默认值  
+    // ReplSetDistLockManager::kDistLockExpirationTime  超时实践默认值
     const Milliseconds _pingInterval;                 // (I)
     const Milliseconds _lockExpiration;               // (I)
 

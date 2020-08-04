@@ -95,7 +95,9 @@ private:
                                                    boost::optional<long long> limit);
 
     // These are not static to avoid initialization order fiasco.
+    //"config.lockpings"
     const NamespaceString _lockPingNS;
+    //"lockpings"
     const NamespaceString _locksNS;
 };
 

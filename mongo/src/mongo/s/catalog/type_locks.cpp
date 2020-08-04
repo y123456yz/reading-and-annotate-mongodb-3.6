@@ -38,6 +38,7 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
+//分布式锁对应的表
 const std::string LocksType::ConfigNS = "config.locks";
 
 const BSONField<std::string> LocksType::name("_id");

@@ -56,7 +56,7 @@ namespace {
 
 /**
  * Internal sharding command run on config servers to enable sharding on a database.
- */
+ */ //sh.enableSharding("db")  
 class ConfigSvrEnableShardingCommand : public BasicCommand {
 public:
     ConfigSvrEnableShardingCommand() : BasicCommand("_configsvrEnableSharding") {}
@@ -98,6 +98,7 @@ public:
              const BSONObj& cmdObj,
              BSONObjBuilder& result) {
 
+		//改命令只能cfg处理
         if (serverGlobalParams.clusterRole != ClusterRole::ConfigServer) {
             return appendCommandStatus(
                 result,
@@ -105,29 +106,35 @@ public:
                        "_configsvrEnableSharding can only be run on config servers"));
         }
 
+		//获取db名
         const std::string dbname = parseNs("", cmdObj);
 
+		//DB名合规性检查，例如不能有空格等
         uassert(
             ErrorCodes::InvalidNamespace,
             str::stream() << "invalid db name specified: " << dbname,
             NamespaceString::validDBName(dbname, NamespaceString::DollarInDbNameBehavior::Allow));
-
+		//不能enable admin local库
         if (dbname == NamespaceString::kAdminDb || dbname == NamespaceString::kLocalDb) {
             return appendCommandStatus(result,
                                        {ErrorCodes::InvalidOptions,
                                         str::stream() << "can't shard " + dbname + " database"});
         }
 
+		//必须写代write Majority
         uassert(ErrorCodes::InvalidOptions,
                 str::stream() << "enableSharding must be called with majority writeConcern, got "
                               << cmdObj,
                 opCtx->getWriteConcern().wMode == WriteConcernOptions::kMajority);
 
         // Make sure to force update of any stale metadata
+        //保存DB到//Grid._catalogCache._databases这个map表中
         ON_BLOCK_EXIT([opCtx, dbname] { Grid::get(opCtx)->catalogCache()->purgeDatabase(dbname); });
 
         // Remove the backwards compatible lock after 3.6 ships.
+        //获取该op对应得ShardingCatalogClient
         auto const catalogClient = Grid::get(opCtx)->catalogClient();
+		//DistLockManager::lock，
         auto backwardsCompatibleDbDistLock = uassertStatusOK(
             catalogClient->getDistLockManager()->lock(opCtx,
                                                       dbname + "-movePrimary",

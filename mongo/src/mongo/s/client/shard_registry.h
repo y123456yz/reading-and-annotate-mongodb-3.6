@@ -135,7 +135,7 @@ private:
  * functionality to run commands against shards. All commands which this registry executes are
  * retried on NotMaster class of errors and in addition all read commands are retried on network
  * errors automatically as well.
- */
+ */ //initializeGlobalShardingState÷–ππ‘Ï
 class ShardRegistry {
     MONGO_DISALLOW_COPYING(ShardRegistry);
 

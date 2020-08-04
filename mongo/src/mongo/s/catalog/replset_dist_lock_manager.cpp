@@ -61,9 +61,11 @@ using std::unique_ptr;
 namespace {
 
 // How many times to retry acquiring the lock after the first attempt fails
+//获取lock重试次数
 const int kMaxNumLockAcquireRetries = 2;
 
 // How frequently to poll the distributed lock when it is found to be locked
+//重试获取lock的频率
 const Milliseconds kLockRetryInterval(500);
 
 }  // namespace
@@ -71,6 +73,7 @@ const Milliseconds kLockRetryInterval(500);
 const Seconds ReplSetDistLockManager::kDistLockPingInterval{30};
 const Minutes ReplSetDistLockManager::kDistLockExpirationTime{15};
 
+//makeCatalogClient中构造使用
 ReplSetDistLockManager::ReplSetDistLockManager(ServiceContext* globalContext,
                                                StringData processID,
                                                unique_ptr<DistLockCatalog> catalog,
@@ -78,8 +81,11 @@ ReplSetDistLockManager::ReplSetDistLockManager(ServiceContext* globalContext,
                                                Milliseconds lockExpiration)
     : _serviceContext(globalContext),
       _processID(processID.toString()),
+      //对应DistLockCatalogImpl
       _catalog(std::move(catalog)),
+      //ReplSetDistLockManager::kDistLockPingInterval
       _pingInterval(pingInterval),
+      // ReplSetDistLockManager::kDistLockExpirationTime
       _lockExpiration(lockExpiration) {}
 
 ReplSetDistLockManager::~ReplSetDistLockManager() = default;
@@ -279,6 +285,7 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
     return false;
 }
 
+//获取n
 StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationContext* opCtx,
                                                                      StringData name,
                                                                      StringData whyMessage,
@@ -290,8 +297,10 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
     // Counts how many attempts have been made to grab the lock, which have failed with network
     // error. This value is reset for each lock acquisition attempt because these are
     // independent write operations.
+    //重试次数
     int networkErrorRetries = 0;
 
+	//获取configShard信息
     auto configShard = Grid::get(opCtx)->shardRegistry()->getConfigShard();
 
     // Distributed lock acquisition works by tring to update the state of the lock to 'taken'. If
@@ -301,11 +310,18 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
     while (waitFor <= Milliseconds::zero() || Milliseconds(timer.millis()) < waitFor) {
         const string who = str::stream() << _processID << ":" << getThreadName();
 
+		//lock过期时间
         auto lockExpiration = _lockExpiration;
         MONGO_FAIL_POINT_BLOCK(setDistLockTimeout, customTimeout) {
             const BSONObj& data = customTimeout.getData();
             lockExpiration = Milliseconds(data["timeoutMs"].numberInt());
         }
+		/*  sh.enableSharding("test") 对应打印如下:
+		 D SHARDING [conn13] trying to acquire new distributed lock for test-movePrimary ( lock timeout : 900000 ms, ping interval : 30000 ms, 
+		     process : ConfigServer ) with lockSessionID: 5f29454be701d489a5999c54, why: enableSharding
+		 D SHARDING [conn13] trying to acquire new distributed lock for test ( lock timeout : 900000 ms, ping interval : 30000 ms, 
+		     process : ConfigServer ) with lockSessionID: 5f29454be701d489a5999c58, why: enableShardin
+		*/
 
         LOG(1) << "trying to acquire new distributed lock for " << name
                << " ( lock timeout : " << durationCount<Milliseconds>(lockExpiration)
@@ -313,6 +329,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
                << " ms, process : " << _processID << " )"
                << " with lockSessionID: " << lockSessionID << ", why: " << whyMessage.toString();
 
+		//DistLockCatalogImpl::grabLock
         auto lockResult = _catalog->grabLock(
             opCtx, name, lockSessionID, who, _processID, Date_t::now(), whyMessage.toString());
 
@@ -321,6 +338,12 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
         if (status.isOK()) {
             // Lock is acquired since findAndModify was able to successfully modify
             // the lock document.
+
+			/*
+		     例如enableShard (test)打印信息如下:
+		     distributed lock 'test-movePrimary' acquired for 'enableSharding', ts : 5f29344b032e473f1999e552
+		     distributed lock 'test' acquired for 'enableSharding', ts : 5f29344b032e473f1999e556
+			*/
             log() << "distributed lock '" << name << "' acquired for '" << whyMessage.toString()
                   << "', ts : " << lockSessionID;
             return lockSessionID;

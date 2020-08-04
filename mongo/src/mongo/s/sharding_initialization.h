@@ -56,12 +56,12 @@ using ShardingEgressMetadataHookBuilder = stdx::function<std::unique_ptr<EgressM
 
 /**
  * Fixed process identifier for the dist lock manager running on a config server.
- */
+ */ //cfgserver对应得lockid
 constexpr auto kDistLockProcessIdForConfigServer = "ConfigServer"_sd;
 
 /**
  * Generates a uniform string to be used as a process id for the distributed lock manager.
- */
+ */ //根据opctx获取一个lockid
 std::string generateDistLockProcessId(OperationContext* opCtx);
 
 /**

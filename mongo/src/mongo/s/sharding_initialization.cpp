@@ -108,6 +108,7 @@ using executor::ThreadPoolTaskExecutor;
 
 static constexpr auto kRetryInterval = Seconds{2};
 
+//initializeGlobalShardingStateµ÷ÓÃ
 std::unique_ptr<ShardingCatalogClient> makeCatalogClient(ServiceContext* service,
                                                          StringData distLockProcessId) {
     auto distLockCatalog = stdx::make_unique<DistLockCatalogImpl>();
