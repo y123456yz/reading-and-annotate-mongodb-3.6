@@ -212,6 +212,46 @@ Status DistLockCatalogImpl::ping(OperationContext* opCtx, StringData processID, 
     return findAndModifyStatus.getStatus();
 }
 
+/*
+mongos> use test3
+switched to db test3
+mongos>  db.test3.insert({ "_id" : "test2-movePrimary", "state" : 0, "process" : "ConfigServer", "ts" : ObjectId("5f2a8d3abd120dda8009f247"), "when" : ISODate("2020-08-05T10:43:06.205Z"), "who" : "ConfigServer:conn731", "why" : "enableSharding" })
+WriteResult({ "nInserted" : 1 })
+mongos> 
+mongos> 
+mongos>  db.test3.findAndModify ( {query: { _id: "test2-movePrimary", state: 0 },update: { $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, new: true})
+{
+        "_id" : "test2-movePrimary",
+        "state" : 2,
+        "process" : "ConfigServer",
+        "ts" : ObjectId("5f2a8d3abd120dda8009f247"),
+        "when" : ISODate("2020-08-05T10:43:06.205Z"),
+        "who" : "ConfigServer:conn731",
+        "why" : "enableSharding"
+}
+mongos> 
+mongos> 
+mongos> db.test3.findAndModify ( {query: { _id: "test2-movePrimary", state: 0 },update: { $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, new: true})
+2020-08-05T18:58:00.251+0800 E QUERY    [thread1] Error: findAndModifyFailed failed: {
+        "ok" : 0,
+        "errmsg" : "E11000 duplicate key error collection: test3.test3 index: _id_ dup key: { : \"test2-movePrimary\" }",
+        "code" : 11000,
+        "codeName" : "DuplicateKey",
+        "operationTime" : Timestamp(1596625067, 2),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1596625074, 1),
+                "signature" : {
+                        "hash" : BinData(0,"rv/1oEHfIuhjI2QFhzv6/Gnx2FQ="),
+                        "keyId" : NumberLong("6854353039424225306")
+                }
+        }
+} :
+_getErrorWithCode@src/mongo/shell/utils.js:25:13
+DBCollection.prototype.findAndModify@src/mongo/shell/collection.js:724:1
+@(shell):1:1
+mongos> 
+*/
+//通过findAndModify来获取对应锁
 StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                                                     StringData lockID,
                                                     const OID& lockSessionID,
@@ -229,6 +269,12 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                                          << LocksType::why()
                                          << why));
 
+	/*
+	findAndModify { findAndModify: "locks", query: { _id: "test2-movePrimary", state: 0 }, update: 
+	{ $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", 
+	process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, 
+	new: true, writeConcern: { w: "majority", wtimeout: 15000 }, $db: "config" }
+	*/
 	//构造FindAndModifyRequest
     auto request = FindAndModifyRequest::makeUpdate(
         _locksNS,

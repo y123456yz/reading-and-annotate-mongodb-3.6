@@ -285,7 +285,7 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
     return false;
 }
 
-//获取n
+//获取分布式锁
 StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationContext* opCtx,
                                                                      StringData name,
                                                                      StringData whyMessage,
