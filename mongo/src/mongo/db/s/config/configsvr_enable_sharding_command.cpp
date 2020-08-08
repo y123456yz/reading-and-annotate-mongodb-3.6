@@ -93,6 +93,7 @@ public:
         return cmdObj.firstElement().str();
     }
 
+	//ConfigSvrEnableShardingCommand::run
     bool run(OperationContext* opCtx,
              const std::string& dbname_unused,
              const BSONObj& cmdObj,
@@ -134,13 +135,25 @@ public:
         // Remove the backwards compatible lock after 3.6 ships.
         //获取该op对应得ShardingCatalogClient
         auto const catalogClient = Grid::get(opCtx)->catalogClient();
-		//DistLockManager::lock，
+
+
+		/*
+	     例如enableShard (test)打印信息如下:
+	     distributed lock 'test-movePrimary' acquired for 'enableSharding', ts : 5f29344b032e473f1999e552
+	     distributed lock 'test' acquired for 'enableSharding', ts : 5f29344b032e473f1999e556
+		*/
+		
+		
+		//DistLockManager::lock，  获取分布式锁 dbname"-movePrimary"
+		//函数退出的时候backwardsCompatibleDbDistLock自动析构释放锁
         auto backwardsCompatibleDbDistLock = uassertStatusOK(
             catalogClient->getDistLockManager()->lock(opCtx,
                                                       dbname + "-movePrimary",
                                                       "enableSharding",
                                                       DistLockManager::kDefaultLockTimeout));
-        auto dbDistLock = uassertStatusOK(catalogClient->getDistLockManager()->lock(
+		//DistLockManager::lock，  获取分布式锁 dbname
+		//函数退出的时候dbDistLock自动析构释放锁
+		auto dbDistLock = uassertStatusOK(catalogClient->getDistLockManager()->lock(
             opCtx, dbname, "enableSharding", DistLockManager::kDefaultLockTimeout));
 
         ShardingCatalogManager::get(opCtx)->enableSharding(opCtx, dbname);

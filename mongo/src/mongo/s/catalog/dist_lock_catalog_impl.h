@@ -43,6 +43,7 @@ namespace mongo {
 class FindAndModifyRequest;
 struct ReadPreferenceSetting;
 
+//分布式锁相关实现，和config.locks config.lockping相关
 class DistLockCatalogImpl final : public DistLockCatalog {
 public:
     DistLockCatalogImpl();
@@ -95,7 +96,7 @@ private:
                                                    boost::optional<long long> limit);
 
     // These are not static to avoid initialization order fiasco.
-    //"config.lockpings"
+    //"config.lockpings" DistLockCatalogImpl._lockPingNS
     const NamespaceString _lockPingNS;
     //"lockpings"
     const NamespaceString _locksNS;

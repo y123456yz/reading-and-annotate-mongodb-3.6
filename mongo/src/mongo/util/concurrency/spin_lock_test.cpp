@@ -37,6 +37,7 @@
 namespace {
 
 using mongo::SpinLock;
+//¿˝»ÁReplSetDistLockManager::lockWithSessionID π”√
 using mongo::Timer;
 
 namespace stdx = mongo::stdx;

@@ -107,7 +107,35 @@ StatusWith<BSONObj> extractFindAndModifyNewObj(StatusWith<Shard::CommandResponse
 
 /**
  * Extract the electionId from a serverStatus command response.
- */
+ xx:PRIMARY> db.serverStatus().repl
+{
+        "hosts" : [
+                "xxx:20002",
+                "xxxx:20001",
+                "xxxx:20000"
+        ],
+        "setName" : "xxx",
+        "setVersion" : 4,
+        "ismaster" : true,
+        "secondary" : false,
+        "primary" : "xxxx:20001",
+        "me" : "xxx:20001",
+        "electionId" : ObjectId("7fffffff0000000000000004"),
+        "lastWrite" : {
+                "opTime" : {
+                        "ts" : Timestamp(1596901072, 267),
+                        "t" : NumberLong(4)
+                },
+                "lastWriteDate" : ISODate("2020-08-08T15:37:52Z"),
+                "majorityOpTime" : {
+                        "ts" : Timestamp(1596901072, 259),
+                        "t" : NumberLong(4)
+                },
+                "majorityWriteDate" : ISODate("2020-08-08T15:37:52Z")
+        },
+        "rbid" : 1
+}
+ */ //解析serverstatus
 StatusWith<OID> extractElectionId(const BSONObj& responseObj) {
     BSONElement replElem;
     auto replElemStatus = bsonExtractTypedField(responseObj, "repl", Object, &replElem);
@@ -118,9 +146,10 @@ StatusWith<OID> extractElectionId(const BSONObj& responseObj) {
 
     const auto replSubObj = replElem.Obj();
     OID electionId;
+	//db.serverStatus().repl.electionId字段
     auto electionIdStatus = bsonExtractOIDField(replSubObj, "electionId", &electionId);
 
-    if (!electionIdStatus.isOK()) {
+    if (!electionIdStatus.isOK()) { //解析异常
         // Secondaries don't have electionId.
         if (electionIdStatus.code() == ErrorCodes::NoSuchKey) {
             // Verify that the from replSubObj that this is indeed not a primary.
@@ -131,6 +160,7 @@ StatusWith<OID> extractElectionId(const BSONObj& responseObj) {
                 return {ErrorCodes::UnsupportedFormat, isPrimaryStatus.reason()};
             }
 
+			//解析到如果是master节点，则继续获取me，也就是本master地址
             if (isPrimary) {
                 string hostContacted;
                 auto hostContactedStatus = bsonExtractStringField(replSubObj, "me", &hostContacted);
@@ -154,19 +184,39 @@ StatusWith<OID> extractElectionId(const BSONObj& responseObj) {
         return {ErrorCodes::UnsupportedFormat, electionIdStatus.reason()};
     }
 
+	//返回electionId
     return electionId;
 }
 
 }  // unnamed namespace
 
+//"config.lockpings"   "config.locks";
 DistLockCatalogImpl::DistLockCatalogImpl()
     : _lockPingNS(LockpingsType::ConfigNS), _locksNS(LocksType::ConfigNS) {}
 
 DistLockCatalogImpl::~DistLockCatalogImpl() = default;
 
+
+/*
+mongos> db.lockpings.find()
+{ "_id" : "ConfigServer", "ping" : ISODate("2020-08-08T15:46:43.471Z") }
+{ "_id" : "xxx:20003:1581573543:3630770638362238126", "ping" : ISODate("2020-08-08T15:46:36.839Z") }
+{ "_id" : "xxx:20003:1581573552:3015220040157753333", "ping" : ISODate("2020-02-13T14:31:15.194Z") }
+{ "_id" : "xxx:20003:1581573564:-3080866622298223419", "ping" : ISODate("2020-08-08T15:46:40.320Z") }
+{ "_id" : "xxx:20001:1581573577:-6950517477465643150", "ping" : ISODate("2020-08-08T15:46:33.676Z") }
+{ "_id" : "xxx:20001:1581573577:-4720166468454920588", "ping" : ISODate("2020-02-13T08:18:07.712Z") }
+{ "_id" : "xxx:20001:1581573577:6146141285149556418", "ping" : ISODate("2020-08-08T15:46:36.501Z") }
+{ "_id" : "xxx:20001:1581602007:2653463530376788741", "ping" : ISODate("2020-08-08T15:46:27.902Z") }
+{ "_id" : "xxx:20003:1581604307:-5313333738365382099", "ping" : ISODate("2020-08-08T15:46:33.679Z") }
+mongos> 
+
+*/
+//根据processID从config.pings表查找对应数据  
+//ReplSetDistLockManager::isLockExpired调用
 StatusWith<LockpingsType> DistLockCatalogImpl::getPing(OperationContext* opCtx,
                                                        StringData processID) {
-    auto findResult = _findOnConfig(
+	//本文件的DistLockCatalogImpl::_findOnConfig
+	auto findResult = _findOnConfig(
         opCtx, kReadPref, _lockPingNS, BSON(LockpingsType::process() << processID), BSONObj(), 1);
 
     if (!findResult.isOK()) {
@@ -191,6 +241,11 @@ StatusWith<LockpingsType> DistLockCatalogImpl::getPing(OperationContext* opCtx,
     return pingDocResult.getValue();
 }
 
+/*
+const BSONField<std::string> LockpingsType::process("_id");
+const BSONField<Date_t> LockpingsType::ping("ping");
+*/
+//根据processID从config.lockpings中查找_id:processID对应数据的ping字段内容为ping
 Status DistLockCatalogImpl::ping(OperationContext* opCtx, StringData processID, Date_t ping) {
     auto request =
         FindAndModifyRequest::makeUpdate(_lockPingNS,
@@ -251,7 +306,8 @@ DBCollection.prototype.findAndModify@src/mongo/shell/collection.js:724:1
 @(shell):1:1
 mongos> 
 */
-//通过findAndModify来获取对应锁
+//通过findAndModify来获取对应锁，也就是更新Locks表中id:lockID这个文档为新的内容，内容如下newLockDetails
+//ReplSetDistLockManager::lockWithSessionID调用
 StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                                                     StringData lockID,
                                                     const OID& lockSessionID,
@@ -260,7 +316,8 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                                                     Date_t time,
                                                     StringData why,
                                                     const WriteConcernOptions& writeConcern) {
-    BSONObj newLockDetails(BSON(
+	//更新Locks表中id:lockID这个文档为新的内容，内容如下newLockDetails
+	BSONObj newLockDetails(BSON(
         LocksType::lockID(lockSessionID) << LocksType::state(LocksType::LOCKED) << LocksType::who()
                                          << who
                                          << LocksType::process()
@@ -278,7 +335,9 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
 	//构造FindAndModifyRequest
     auto request = FindAndModifyRequest::makeUpdate(
         _locksNS,
+        //查询条件{ts:lockSessionID, _id:name}
         BSON(LocksType::name() << lockID << LocksType::state(LocksType::UNLOCKED)),
+        //更新字段 stats:newLockDetails
         BSON("$set" << newLockDetails));
     request.setUpsert(true);
     request.setShouldReturnNew(true);
@@ -308,17 +367,20 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
     }
 
     BSONObj doc = findAndModifyStatus.getValue();
+	//LocksType::fromBSON解析返回结果
     auto locksTypeResult = LocksType::fromBSON(doc);
-    if (!locksTypeResult.isOK()) {
+    if (!locksTypeResult.isOK()) { 
+		//findAndModify返回结果不符合协议格式 
         return {ErrorCodes::FailedToParse,
                 str::stream() << "failed to parse: " << doc << " : "
                               << locksTypeResult.getStatus().toString()};
     }
 
-	//获取锁成功
+	//返回对应结果   
     return locksTypeResult.getValue();
 }
 
+//ReplSetDistLockManager::lockWithSessionID中调用
 StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
                                                         StringData lockID,
                                                         const OID& lockSessionID,
@@ -371,6 +433,7 @@ StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
     return locksTypeResult.getValue();
 }
 
+//config.locks表中的{ts:lockSessionID}这条数据对应的stat字段设置为0，也就是解锁
 Status DistLockCatalogImpl::unlock(OperationContext* opCtx, const OID& lockSessionID) {
     FindAndModifyRequest request = FindAndModifyRequest::makeUpdate(
         _locksNS,
@@ -380,17 +443,22 @@ Status DistLockCatalogImpl::unlock(OperationContext* opCtx, const OID& lockSessi
     return _unlock(opCtx, request);
 }
 
+//ReplSetDistLockManager::lockWithSessionID中调用
+//config.locks表中的{ts:lockSessionID, _id:name}这条数据对应的stat字段设置为0，也就是解锁
 Status DistLockCatalogImpl::unlock(OperationContext* opCtx,
                                    const OID& lockSessionID,
                                    StringData name) {
     FindAndModifyRequest request = FindAndModifyRequest::makeUpdate(
         _locksNS,
+        //查询条件{ts:lockSessionID, _id:name}
         BSON(LocksType::lockID(lockSessionID) << LocksType::name(name.toString())),
+        //更新字段state
         BSON("$set" << BSON(LocksType::state(LocksType::UNLOCKED))));
     request.setWriteConcern(kMajorityWriteConcern);
     return _unlock(opCtx, request);
 }
 
+//上面的DistLockCatalogImpl::unlock调用
 Status DistLockCatalogImpl::_unlock(OperationContext* opCtx, const FindAndModifyRequest& request) {
     auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
     auto resultStatus = shardRegistry->getConfigShard()->runCommandWithFixedRetryAttempts(
@@ -412,6 +480,7 @@ Status DistLockCatalogImpl::_unlock(OperationContext* opCtx, const FindAndModify
     return findAndModifyStatus.getStatus();
 }
 
+//把config.locks表的所有数据的state值为0
 Status DistLockCatalogImpl::unlockAll(OperationContext* opCtx, const std::string& processID) {
     BatchedCommandRequest request([&] {
         write_ops::Update updateOp(_locksNS);
@@ -460,6 +529,15 @@ Status DistLockCatalogImpl::unlockAll(OperationContext* opCtx, const std::string
     return batchResponse.toStatus();
 }
 
+/*
+XXX:PRIMARY> db.serverStatus().repl.electionId
+ObjectId("7fffffff0000000000000004")
+XXX:PRIMARY> db.serverStatus().localTime
+ISODate("2020-08-08T16:11:15.019Z")
+XXX:PRIMARY> 
+*/
+//从serverstatus中解析出localTime和repl.electionId字段
+//ReplSetDistLockManager::isLockExpired调用
 StatusWith<DistLockCatalog::ServerInfo> DistLockCatalogImpl::getServerInfo(
     OperationContext* opCtx) {
     auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
@@ -482,12 +560,14 @@ StatusWith<DistLockCatalog::ServerInfo> DistLockCatalogImpl::getServerInfo(
 
     BSONElement localTimeElem;
     auto localTimeStatus =
+		//const char kLocalTimeField[] = "localTime"; 解析出localTime
         bsonExtractTypedField(responseObj, kLocalTimeField, Date, &localTimeElem);
 
     if (!localTimeStatus.isOK()) {
         return {ErrorCodes::UnsupportedFormat, localTimeStatus.reason()};
     }
 
+	//解析出db.serverStatus().repl.electionId信息
     auto electionIdStatus = extractElectionId(responseObj);
 
     if (!electionIdStatus.isOK()) {
@@ -497,8 +577,10 @@ StatusWith<DistLockCatalog::ServerInfo> DistLockCatalogImpl::getServerInfo(
     return DistLockCatalog::ServerInfo(localTimeElem.date(), electionIdStatus.getValue());
 }
 
+//根据ts:lockSessionID在config.locks中查找
 StatusWith<LocksType> DistLockCatalogImpl::getLockByTS(OperationContext* opCtx,
                                                        const OID& lockSessionID) {
+	//本文件的DistLockCatalogImpl::_findOnConfig
     auto findResult = _findOnConfig(
         opCtx, kReadPref, _locksNS, BSON(LocksType::lockID(lockSessionID)), BSONObj(), 1);
 
@@ -524,8 +606,11 @@ StatusWith<LocksType> DistLockCatalogImpl::getLockByTS(OperationContext* opCtx,
     return locksTypeResult.getValue();
 }
 
+//ReplSetDistLockManager::lockWithSessionID调用
+//根据name在config.locks表中查找
 StatusWith<LocksType> DistLockCatalogImpl::getLockByName(OperationContext* opCtx, StringData name) {
     auto findResult =
+		//本文件的DistLockCatalogImpl::_findOnConfig
         _findOnConfig(opCtx, kReadPref, _locksNS, BSON(LocksType::name() << name), BSONObj(), 1);
 
     if (!findResult.isOK()) {
@@ -568,6 +653,8 @@ Status DistLockCatalogImpl::stopPing(OperationContext* opCtx, StringData process
     return findAndModifyStatus.getStatus();
 }
 
+//从nss中根据query查询，然后sort排序，取limit条数据  
+//本文件中的DistLockCatalogImpl::getPing  DistLockCatalogImpl::getLockByTS  DistLockCatalogImpl::getLockByName调用
 StatusWith<vector<BSONObj>> DistLockCatalogImpl::_findOnConfig(
     OperationContext* opCtx,
     const ReadPreferenceSetting& readPref,

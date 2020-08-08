@@ -41,6 +41,7 @@ namespace mongo {
 //分布式锁对应的表
 const std::string LocksType::ConfigNS = "config.locks";
 
+//"config.locks"表中数据的key name
 const BSONField<std::string> LocksType::name("_id");
 const BSONField<LocksType::State> LocksType::state("state");
 const BSONField<std::string> LocksType::process("process");
@@ -49,6 +50,48 @@ const BSONField<std::string> LocksType::who("who");
 const BSONField<std::string> LocksType::why("why");
 const BSONField<Date_t> LocksType::when("when");
 
+/*
+mongos> use test3
+switched to db test3
+mongos>  db.test3.insert({ "_id" : "test2-movePrimary", "state" : 0, "process" : "ConfigServer", "ts" : ObjectId("5f2a8d3abd120dda8009f247"), "when" : ISODate("2020-08-05T10:43:06.205Z"), "who" : "ConfigServer:conn731", "why" : "enableSharding" })
+WriteResult({ "nInserted" : 1 })
+mongos> 
+mongos> 
+mongos>  db.test3.findAndModify ( {query: { _id: "test2-movePrimary", state: 0 },update: { $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, new: true})
+{
+        "_id" : "test2-movePrimary",
+        "state" : 2,
+        "process" : "ConfigServer",
+        "ts" : ObjectId("5f2a8d3abd120dda8009f247"),
+        "when" : ISODate("2020-08-05T10:43:06.205Z"),
+        "who" : "ConfigServer:conn731",
+        "why" : "enableSharding"
+}
+mongos> 
+mongos> 
+mongos> db.test3.findAndModify ( {query: { _id: "test2-movePrimary", state: 0 },update: { $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, new: true})
+2020-08-05T18:58:00.251+0800 E QUERY    [thread1] Error: findAndModifyFailed failed: {
+        "ok" : 0,
+        "errmsg" : "E11000 duplicate key error collection: test3.test3 index: _id_ dup key: { : \"test2-movePrimary\" }",
+        "code" : 11000,
+        "codeName" : "DuplicateKey",
+        "operationTime" : Timestamp(1596625067, 2),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1596625074, 1),
+                "signature" : {
+                        "hash" : BinData(0,"rv/1oEHfIuhjI2QFhzv6/Gnx2FQ="),
+                        "keyId" : NumberLong("6854353039424225306")
+                }
+        }
+} :
+_getErrorWithCode@src/mongo/shell/utils.js:25:13
+DBCollection.prototype.findAndModify@src/mongo/shell/collection.js:724:1
+@(shell):1:1
+mongos> 
+*/
+
+//DistLockCatalogImpl::grabLock调用
+//解析findAndModify命令的执行结果，获取findAndModify执行结果存入相应变量
 StatusWith<LocksType> LocksType::fromBSON(const BSONObj& source) {
     LocksType lock;
 
@@ -103,6 +146,7 @@ StatusWith<LocksType> LocksType::fromBSON(const BSONObj& source) {
     return lock;
 }
 
+//locks数据有效性检查
 Status LocksType::validate() const {
     if (!_name.is_initialized() || _name->empty()) {
         return {ErrorCodes::NoSuchKey, str::stream() << "missing " << name.name() << " field"};

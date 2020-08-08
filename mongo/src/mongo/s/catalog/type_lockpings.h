@@ -40,7 +40,7 @@ namespace mongo {
  * This class represents the layout and contents of documents contained in the
  * config.lockpings collection. All manipulation of documents coming from that
  * collection should be done with this class.
- */
+ */ //DistLockCatalogImpl._lockPingNS≥…‘±
 class LockpingsType {
 public:
     // Name of the lockpings collection in the config server.

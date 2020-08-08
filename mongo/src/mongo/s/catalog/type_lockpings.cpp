@@ -35,11 +35,30 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
+
+/*
+mongos> db.lockpings.find()
+{ "_id" : "ConfigServer", "ping" : ISODate("2020-08-08T15:46:43.471Z") }
+{ "_id" : "xxx:20003:1581573543:3630770638362238126", "ping" : ISODate("2020-08-08T15:46:36.839Z") }
+{ "_id" : "xxx:20003:1581573552:3015220040157753333", "ping" : ISODate("2020-02-13T14:31:15.194Z") }
+{ "_id" : "xxx:20003:1581573564:-3080866622298223419", "ping" : ISODate("2020-08-08T15:46:40.320Z") }
+{ "_id" : "xxx:20001:1581573577:-6950517477465643150", "ping" : ISODate("2020-08-08T15:46:33.676Z") }
+{ "_id" : "xxx:20001:1581573577:-4720166468454920588", "ping" : ISODate("2020-02-13T08:18:07.712Z") }
+{ "_id" : "xxx:20001:1581573577:6146141285149556418", "ping" : ISODate("2020-08-08T15:46:36.501Z") }
+{ "_id" : "xxx:20001:1581602007:2653463530376788741", "ping" : ISODate("2020-08-08T15:46:27.902Z") }
+{ "_id" : "xxx:20003:1581604307:-5313333738365382099", "ping" : ISODate("2020-08-08T15:46:33.679Z") }
+mongos> 
+
+*/
+
+
+//相关实现见DistLockCatalogImpl
 const std::string LockpingsType::ConfigNS = "config.lockpings";
 
 const BSONField<std::string> LockpingsType::process("_id");
 const BSONField<Date_t> LockpingsType::ping("ping");
 
+//解析config.lockpings中的数据
 StatusWith<LockpingsType> LockpingsType::fromBSON(const BSONObj& source) {
     LockpingsType lpt;
 
@@ -62,6 +81,7 @@ StatusWith<LockpingsType> LockpingsType::fromBSON(const BSONObj& source) {
     return lpt;
 }
 
+//lockpings表中的数据有效性检查
 Status LockpingsType::validate() const {
     if (!_process.is_initialized() || _process->empty()) {
         return {ErrorCodes::NoSuchKey, str::stream() << "missing " << process.name() << " field"};
@@ -74,6 +94,7 @@ Status LockpingsType::validate() const {
     return Status::OK();
 }
 
+//构造config.lockpings数据
 BSONObj LockpingsType::toBSON() const {
     BSONObjBuilder builder;
 

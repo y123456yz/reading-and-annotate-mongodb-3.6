@@ -41,19 +41,73 @@ namespace mongo {
  * config.locks collection. All manipulation of documents coming from that
  * collection should be done with this class.
  */
+/*
+mongos> use test3
+switched to db test3
+mongos>  db.test3.insert({ "_id" : "test2-movePrimary", "state" : 0, "process" : "ConfigServer", "ts" : ObjectId("5f2a8d3abd120dda8009f247"), "when" : ISODate("2020-08-05T10:43:06.205Z"), "who" : "ConfigServer:conn731", "why" : "enableSharding" })
+WriteResult({ "nInserted" : 1 })
+mongos> 
+mongos> 
+mongos>  db.test3.findAndModify ( {query: { _id: "test2-movePrimary", state: 0 },update: { $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, new: true})
+{
+        "_id" : "test2-movePrimary",
+        "state" : 2,
+        "process" : "ConfigServer",
+        "ts" : ObjectId("5f2a8d3abd120dda8009f247"),
+        "when" : ISODate("2020-08-05T10:43:06.205Z"),
+        "who" : "ConfigServer:conn731",
+        "why" : "enableSharding"
+}
+mongos> 
+mongos> 
+mongos> db.test3.findAndModify ( {query: { _id: "test2-movePrimary", state: 0 },update: { $set: { ts: ObjectId('5f2a8d3abd120dda8009f247'), state: 2, who: "ConfigServer:conn731", process: "ConfigServer", when: new Date(1596624186205), why: "enableSharding" } }, upsert: true, new: true})
+2020-08-05T18:58:00.251+0800 E QUERY    [thread1] Error: findAndModifyFailed failed: {
+        "ok" : 0,
+        "errmsg" : "E11000 duplicate key error collection: test3.test3 index: _id_ dup key: { : \"test2-movePrimary\" }",
+        "code" : 11000,
+        "codeName" : "DuplicateKey",
+        "operationTime" : Timestamp(1596625067, 2),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1596625074, 1),
+                "signature" : {
+                        "hash" : BinData(0,"rv/1oEHfIuhjI2QFhzv6/Gnx2FQ="),
+                        "keyId" : NumberLong("6854353039424225306")
+                }
+        }
+} :
+_getErrorWithCode@src/mongo/shell/utils.js:25:13
+DBCollection.prototype.findAndModify@src/mongo/shell/collection.js:724:1
+@(shell):1:1
+mongos> 
+*/
+
+//findAndModify获取分布式锁返回结果 DistLockCatalogImpl::grabLock
 class LocksType {
 public:
+    //{ "_id" : "push_stat", "state" : 0, "process" : "ConfigServer", "ts" : ObjectId("5e4501a8de959d2ee8e062c2"), "when" : ISODate("2020-02-13T07:58:32.796Z"), "who" : "ConfigServer:conn57", "why" : "createDatabase" }
     enum State {
+        //locks表中state字段值为0，表示可以获取到锁
         UNLOCKED = 0,
         LOCK_PREP,  // Only for legacy 3 config servers.
+        //
         LOCKED,
         numStates
     };
 
     // Name of the locks collection in the config server.
     static const std::string ConfigNS;
-
+    
     // Field names and types in the locks collection type.
+    /*
+    config.locks集合中的数据成员名，也就是KEY
+    const BSONField<std::string> LocksType::name("_id");
+    const BSONField<LocksType::State> LocksType::state("state");
+    const BSONField<std::string> LocksType::process("process");
+    const BSONField<OID> LocksType::lockID("ts");
+    const BSONField<std::string> LocksType::who("who");
+    const BSONField<std::string> LocksType::why("why");
+    const BSONField<Date_t> LocksType::when("when");
+    */
     static const BSONField<std::string> name;
     static const BSONField<State> state;
     static const BSONField<std::string> process;
@@ -120,6 +174,7 @@ public:
 private:
     // Convention: (M)andatory, (O)ptional, (S)pecial rule.
 
+    //findAndModify的执行结果存入下列变量
     // (M) name of the lock
     boost::optional<std::string> _name;
     // (M) State of the lock (see LocksType::State)

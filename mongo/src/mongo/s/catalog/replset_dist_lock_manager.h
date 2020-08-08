@@ -147,6 +147,8 @@ private:
     // 2. Attempting to grab or overtake a lock resulted in an error where we are uncertain
     //    whether the modification was actually applied or not, and call unlock to make
     //    sure that it was cleaned up.
+    //ReplSetDistLockManager::lockWithSessionID调用，把异常{ts:lockSessionID, _id:name}记录到_unlockList
+    //在ReplSetDistLockManager::doTask()中集中处理
     std::deque<std::pair<DistLockHandle, boost::optional<std::string>>> _unlockList;  // (M)
 
     bool _isShutDown = false;              // (M)

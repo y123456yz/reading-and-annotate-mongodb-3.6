@@ -272,7 +272,7 @@ public:
         // splitPoint. Otherwise use the splitVector command with 'force' to ask the shard for the
         // middle of the chunk.
         const BSONObj splitPoint = !middle.isEmpty()
-            ? middle
+            ? middle  
             : selectMedianKey(opCtx,
                               chunk->getShardId(),
                               nss,
