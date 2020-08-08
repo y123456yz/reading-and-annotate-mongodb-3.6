@@ -99,11 +99,16 @@ ShardRemote::ShardRemote(const ShardId& id,
 
 ShardRemote::~ShardRemote() = default;
 
+/*
+通过code从RemoteCommandRetryScheduler匹配是否有对应错误码
+*/
+//ReplSetDistLockManager::lockWithSessionID会调用
 bool ShardRemote::isRetriableError(ErrorCodes::Error code, RetryPolicy options) {
     if (options == RetryPolicy::kNoRetry) {
         return false;
     }
 
+	//根据code，从RemoteCommandRetryScheduler中匹配错误码，如果匹配到返回ture
     const auto& retriableErrors = options == RetryPolicy::kIdempotent
         ? RemoteCommandRetryScheduler::kAllRetriableErrors
         : RemoteCommandRetryScheduler::kNotMasterErrors;

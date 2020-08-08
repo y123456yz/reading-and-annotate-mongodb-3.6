@@ -75,7 +75,9 @@ splitVector执行过程：
 1) 计算出collection的文档的 avgRecSize= coll.size/ coll.count
 2) 计算出分裂后的chunk中，每个chunk应该有的count数， split_count = maxChunkSize / (2 * avgRecSize)
 3) 线性遍历collection 的shardkey 对应的index的 [chunk_min_index, chunk_max_index] 范围，在遍历过程中利用split_count 分割出若干spli
-*/
+*/ 
+//mongod收到splitVecotr后对某个范围得chunk进行拆分
+//SplitVector::errmsgRun  ChunkSplitter::_runAutosplit调用执行
 StatusWith<std::vector<BSONObj>> 
 	splitVector(OperationContext* opCtx,
                                              const NamespaceString& nss,
@@ -163,6 +165,7 @@ StatusWith<std::vector<BSONObj>>
             return emptyVector;
         }
 
+		//I SHARDING [conn929757] request split points lookup for chunk push_open.app_device { : "402164", : "5a484536c8c26915d71ca877" } -->> { : "402164", : "5a4e06d9c8c2695e7b2958ce" }
         log() << "request split points lookup for chunk " << nss.toString() << " " << redact(minKey)
               << " -->> " << redact(maxKey);
 

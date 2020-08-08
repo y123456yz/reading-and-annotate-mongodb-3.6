@@ -155,6 +155,7 @@ void ReplSetDistLockManager::doTask() {
                 toUnlockBatch.swap(_unlockList);
             }
 
+			////ReplSetDistLockManager::lockWithSessionID获取锁的时候出现的极端异常情况需要这里统一处理
             for (const auto& toUnlock : toUnlockBatch) {
                 std::string nameMessage = "";
                 Status unlockStatus(ErrorCodes::NotYetInitialized,
@@ -188,15 +189,18 @@ void ReplSetDistLockManager::doTask() {
     }
 }
 
+//ReplSetDistLockManager::lockWithSessionID调用
 StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
                                                        LocksType lockDoc,
                                                        const Milliseconds& lockExpiration) {
     const auto& processID = lockDoc.getProcess();
+	//获取locks表中通过processID查找对应lockDoc数据 
     auto pingStatus = _catalog->getPing(opCtx, processID);
 
     Date_t pingValue;
     if (pingStatus.isOK()) {
         const auto& pingDoc = pingStatus.getValue();
+		//返回数据的有效性检查
         Status pingDocValidationStatus = pingDoc.validate();
         if (!pingDocValidationStatus.isOK()) {
             return {ErrorCodes::UnsupportedFormat,
@@ -204,12 +208,15 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
                                   << pingDocValidationStatus.toString()};
         }
 
+		//获取对应数据的ping信息
         pingValue = pingDoc.getPing();
     } else if (pingStatus.getStatus() != ErrorCodes::NoMatchingDocument) {
         return pingStatus.getStatus();
     }  // else use default pingValue if ping document does not exist.
 
+	//初始化一个计时器
     Timer timer(_serviceContext->getTickSource());
+	//获取serverstatus信息
     auto serverInfoStatus = _catalog->getServerInfo(opCtx);
     if (!serverInfoStatus.isOK()) {
         if (serverInfoStatus.getStatus() == ErrorCodes::NotMaster) {
@@ -285,19 +292,21 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
     return false;
 }
 
-//获取分布式锁
+//获取分布式锁 
+//DistLockManager::lock调用
 StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationContext* opCtx,
                                                                      StringData name,
                                                                      StringData whyMessage,
                                                                      const OID& lockSessionID,
-                                                                     Milliseconds waitFor) {
-    Timer timer(_serviceContext->getTickSource());
+    	                                                                Milliseconds waitFor) {
+	//计时器  
+	Timer timer(_serviceContext->getTickSource());
     Timer msgTimer(_serviceContext->getTickSource());
 
     // Counts how many attempts have been made to grab the lock, which have failed with network
     // error. This value is reset for each lock acquisition attempt because these are
     // independent write operations.
-    //重试次数
+    //网络异常重试次数
     int networkErrorRetries = 0;
 
 	//获取configShard信息
@@ -307,6 +316,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
     // the lock is currently taken, we will back off and try the acquisition again, repeating this
     // until the lockTryInterval has been reached. If a network error occurs at each lock
     // acquisition attempt, the lock acquisition will be retried immediately.
+    //获取分布式锁，获取失败则重试
     while (waitFor <= Milliseconds::zero() || Milliseconds(timer.millis()) < waitFor) {
         const string who = str::stream() << _processID << ":" << getThreadName();
 
@@ -335,6 +345,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
 
         auto status = lockResult.getStatus();
 
+		//获取锁成功，返回新的lockSessionID
         if (status.isOK()) {
             // Lock is acquired since findAndModify was able to successfully modify
             // the lock document.
@@ -350,39 +361,51 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
         }
 
         // If a network error occurred, unlock the lock synchronously and try again
-        if (configShard->isRetriableError(status.code(), Shard::RetryPolicy::kIdempotent) &&
+		//ShardRemote::isRetriableError 通过RemoteCommandRetryScheduler::kAllRetriableErrors获取错误码
+		//说明网络错误或者没有主节点，如果本函数在cfg执行说明没有主节点，cfg不存在远程调用
+		if (configShard->isRetriableError(status.code(), Shard::RetryPolicy::kIdempotent) &&
             networkErrorRetries < kMaxNumLockAcquireRetries) {
             LOG(1) << "Failed to acquire distributed lock because of retriable error. Retrying "
                       "acquisition by first unlocking the stale entry, which possibly exists now"
                    << causedBy(redact(status));
 
+			//异常次数
             networkErrorRetries++;
 
+			//DistLockCatalogImpl::unlock
+			//config.locks表中的{ts:lockSessionID, _id:name}这条数据对应的stat字段设置为0，也就是解锁
             status = _catalog->unlock(opCtx, lockSessionID, name);
             if (status.isOK()) {
                 // We certainly do not own the lock, so we can retry
+                //继续重试获取lock, 可能是因为cfg没有主节点 
                 continue;
             }
 
             // Fall-through to the error checking logic below
             invariant(status != ErrorCodes::LockStateChangeFailed);
 
+			//多次重试都没有成功获取到锁，异常打印
             LOG(1)
                 << "Failed to retry acquisition of distributed lock. No more attempts will be made"
                 << causedBy(redact(status));
         }
 
         if (status != ErrorCodes::LockStateChangeFailed) {
+			//该错误码见extractFindAndModifyNewObj，说明没有在config.locks表中找到name对应的文档
             // An error occurred but the write might have actually been applied on the
             // other side. Schedule an unlock to clean it up just in case.
+
+			//把本次{ts:lockSessionID, _id:name}记录到队列，在ReplSetDistLockManager::doTask()中集中处理集中处理
             queueUnlock(lockSessionID, name.toString());
             return status;
         }
 
         // Get info from current lock and check if we can overtake it.
+        //从config.locks中查找id:name的数据
         auto getLockStatusResult = _catalog->getLockByName(opCtx, name);
         const auto& getLockStatus = getLockStatusResult.getStatus();
 
+		//没找到或者异常
         if (!getLockStatusResult.isOK() && getLockStatus != ErrorCodes::LockNotFound) {
             return getLockStatus;
         }
@@ -390,6 +413,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
         // Note: Only attempt to overtake locks that actually exists. If lock was not
         // found, use the normal grab lock path to acquire it.
         if (getLockStatusResult.isOK()) {
+			//获取查找到的数据
             auto currentLock = getLockStatusResult.getValue();
             auto isLockExpiredResult = isLockExpired(opCtx, currentLock, lockExpiration);
 
@@ -524,6 +548,8 @@ Status ReplSetDistLockManager::checkStatus(OperationContext* opCtx,
     return _catalog->getLockByTS(opCtx, lockHandle).getStatus();
 }
 
+//ReplSetDistLockManager::lockWithSessionID调用，把异常{ts:lockSessionID, _id:name}记录到_unlockList
+//在ReplSetDistLockManager::doTask()中集中处理
 void ReplSetDistLockManager::queueUnlock(const DistLockHandle& lockSessionID,
                                          const boost::optional<std::string>& name) {
     stdx::unique_lock<stdx::mutex> lk(_mutex);

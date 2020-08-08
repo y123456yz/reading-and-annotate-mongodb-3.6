@@ -45,7 +45,7 @@ class StatusWith;
 
 /**
  * Interface for the distributed lock operations.
- */
+ */ //DistLockCatalogImpl  DistLockCatalogMockºÃ≥–∏√¿‡
 class DistLockCatalog {
     MONGO_DISALLOW_COPYING(DistLockCatalog);
 

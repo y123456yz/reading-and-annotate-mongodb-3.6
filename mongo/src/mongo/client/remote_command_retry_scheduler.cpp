@@ -97,9 +97,11 @@ bool RetryPolicyImpl::shouldRetryOnError(ErrorCodes::Error error) const {
 
 }  // namespace
 
+//没有主节点的错误码
 const std::initializer_list<ErrorCodes::Error> RemoteCommandRetryScheduler::kNotMasterErrors{
     ErrorCodes::NotMaster, ErrorCodes::NotMasterNoSlaveOk, ErrorCodes::NotMasterOrSecondary};
 
+//远程调用错误码，包括网络错误和没有主节点
 const std::initializer_list<ErrorCodes::Error> RemoteCommandRetryScheduler::kAllRetriableErrors{
     ErrorCodes::NotMaster,
     ErrorCodes::NotMasterNoSlaveOk,
