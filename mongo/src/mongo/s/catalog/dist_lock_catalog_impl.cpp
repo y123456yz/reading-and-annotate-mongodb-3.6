@@ -381,6 +381,7 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
 }
 
 //ReplSetDistLockManager::lockWithSessionID中调用
+//把{id:lockID,state:0} or {id:lockID,ts:currentHolderTS}这条数据更新为新的{ts:lockSessionID, state:2,who:who,...}
 StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
                                                         StringData lockID,
                                                         const OID& lockSessionID,
@@ -390,10 +391,11 @@ StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
                                                         Date_t time,
                                                         StringData why) {
     BSONArrayBuilder orQueryBuilder;
-    orQueryBuilder.append(
-        BSON(LocksType::name() << lockID << LocksType::state(LocksType::UNLOCKED)));
+	//这两个查询or关系，见后面，也就是只要满足一个，{id:lockID,state:0} or {id:lockID,ts:currentHolderTS}
+    orQueryBuilder.append(BSON(LocksType::name() << lockID << LocksType::state(LocksType::UNLOCKED)));
     orQueryBuilder.append(BSON(LocksType::name() << lockID << LocksType::lockID(currentHolderTS)));
 
+	//更新后的值{ts:lockSessionID, state:2,who:who,...}
     BSONObj newLockDetails(BSON(
         LocksType::lockID(lockSessionID) << LocksType::state(LocksType::LOCKED) << LocksType::who()
                                          << who
@@ -403,12 +405,14 @@ StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
                                          << LocksType::why()
                                          << why));
 
+	//构造完整的findAndModify更新语句
     auto request = FindAndModifyRequest::makeUpdate(
         _locksNS, BSON("$or" << orQueryBuilder.arr()), BSON("$set" << newLockDetails));
     request.setShouldReturnNew(true);
     request.setWriteConcern(kMajorityWriteConcern);
 
     auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
+	//真正的执行
     auto resultStatus = shardRegistry->getConfigShard()->runCommandWithFixedRetryAttempts(
         opCtx,
         ReadPreferenceSetting{ReadPreference::PrimaryOnly},
@@ -423,6 +427,7 @@ StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
     }
 
     BSONObj doc = findAndModifyStatus.getValue();
+	//解析findAndModify执行结果
     auto locksTypeResult = LocksType::fromBSON(doc);
     if (!locksTypeResult.isOK()) {
         return {ErrorCodes::FailedToParse,
@@ -536,8 +541,8 @@ XXX:PRIMARY> db.serverStatus().localTime
 ISODate("2020-08-08T16:11:15.019Z")
 XXX:PRIMARY> 
 */
-//从serverstatus中解析出localTime和repl.electionId字段
-//ReplSetDistLockManager::isLockExpired调用
+//从serverstatus中解析出localTime和repl.electionId字段，填充到DistLockCatalog::ServerInfo结构
+//ReplSetDistLockManager::isLockExpired调用，返回DistLockCatalog::ServerInfo结构
 StatusWith<DistLockCatalog::ServerInfo> DistLockCatalogImpl::getServerInfo(
     OperationContext* opCtx) {
     auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
@@ -574,6 +579,7 @@ StatusWith<DistLockCatalog::ServerInfo> DistLockCatalogImpl::getServerInfo(
         return electionIdStatus.getStatus();
     }
 
+	//从serverstatus中解析出localTime和repl.electionId字段存储到ServerInfo结构
     return DistLockCatalog::ServerInfo(localTimeElem.date(), electionIdStatus.getValue());
 }
 
@@ -632,6 +638,7 @@ StatusWith<LocksType> DistLockCatalogImpl::getLockByName(OperationContext* opCtx
                               << locksTypeResult.getStatus().toString()};
     }
 
+	//返回解析出的LocksType
     return locksTypeResult.getValue();
 }
 

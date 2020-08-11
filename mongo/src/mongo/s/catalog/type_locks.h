@@ -175,17 +175,22 @@ private:
     // Convention: (M)andatory, (O)ptional, (S)pecial rule.
 
     //findAndModify的执行结果存入下列变量
-    // (M) name of the lock
+    // (M) name of the lock  也就是locks表中的_id
     boost::optional<std::string> _name;
     // (M) State of the lock (see LocksType::State)
+    //也就是config.locks表中的"state"字段
     boost::optional<State> _state;
     // (O) optional if unlocked. Contains the (unique) identifier.
+    //也就是config.locks表中的"process"字段
     boost::optional<std::string> _process;
     // (O) optional if unlocked. A unique identifier for the instance.
+    //也就是config.locks表中的"ts"字段
     boost::optional<OID> _lockID;
     // (O) optional if unlocked. A note about why the lock is held.
+    //也就是config.locks表中的"who"字段
     boost::optional<std::string> _who;
     // (O) optional if unlocked. A human readable description of why the lock is held.
+    //也就是config.locks表中的"why"字段
     boost::optional<std::string> _why;
 };
 

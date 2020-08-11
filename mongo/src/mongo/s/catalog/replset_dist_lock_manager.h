@@ -53,9 +53,11 @@ public:
 
     // How frequently should the dist lock pinger thread run and write liveness information about
     // this instance of the dist lock manager   默认值如上
+    //30S
     static const Seconds kDistLockPingInterval;
 
     // How long should the lease on a distributed lock last
+    //15分钟
     static const Minutes kDistLockExpirationTime;
 
     ReplSetDistLockManager(ServiceContext* globalContext,
@@ -154,7 +156,8 @@ private:
     bool _isShutDown = false;              // (M)
     stdx::condition_variable _shutDownCV;  // (M)
 
-    // Map of lockName to last ping information.
+    // Map of lockName to last ping information.    ReplSetDistLockManager._pingHistory
+    //lockname和ping的引射表，参考ReplSetDistLockManager::isLockExpired
     stdx::unordered_map<std::string, DistLockPingInfo> _pingHistory;  // (M)
 };
 
