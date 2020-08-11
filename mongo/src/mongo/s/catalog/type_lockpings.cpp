@@ -36,7 +36,7 @@
 
 namespace mongo {
 
-/*
+/* 记录了和所有节点的ping信息
 mongos> db.lockpings.find()
 { "_id" : "ConfigServer", "ping" : ISODate("2020-08-08T15:46:43.471Z") }
 { "_id" : "xxx:20003:1581573543:3630770638362238126", "ping" : ISODate("2020-08-08T15:46:36.839Z") }

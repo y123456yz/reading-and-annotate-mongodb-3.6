@@ -38,7 +38,9 @@ namespace mongo {
 
 /**
  * Data structure for storing information about distributed lock pings.
- */
+ */ 
+ //ReplSetDistLockManager._pingHistory字段，
+ //类成员赋值见ReplSetDistLockManager::isLockExpired
 struct DistLockPingInfo {
     DistLockPingInfo();
     DistLockPingInfo(StringData processId,
@@ -47,20 +49,26 @@ struct DistLockPingInfo {
                      OID lockSessionId,
                      OID electionId);
 
+
     // the process processId of the last known owner of the lock.
+    //也就是config.locks中的process字段，即config.lockpings中的_id字段
     std::string processId;
 
     // the ping value from the last owner of the lock.
+    //config.lockpings中的ping字段内容
     Date_t lastPing;
 
     // the config server local time when this object was updated.
+    //也就是db.serverStatus().localTime
     Date_t configLocalTime;
 
     // last known owner of the lock.
+    //config.locks表中的ts字段
     OID lockSessionId;
 
     // the election id of the config server when this object was updated.
     // Note: unused by legacy dist lock.
+    //db.serverStatus().repl.electionId获取的值
     OID electionId;
 };
 }

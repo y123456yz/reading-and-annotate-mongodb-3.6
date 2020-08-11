@@ -48,7 +48,7 @@
 namespace mongo {
 namespace {
 
-//sh.enableSharding("db")  
+//sh.enableSharding("db")    //向cfg发送_configsvrEnableSharding命令，cfg对应cmd为ConfigSvrEnableShardingCommand
 class EnableShardingCmd : public ErrmsgCommandDeprecated {
 public:
     EnableShardingCmd() : ErrmsgCommandDeprecated("enableSharding", "enablesharding") {}

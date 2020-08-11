@@ -56,13 +56,17 @@ public:
     /**
      * Simple data structure for storing server local time and election id.
      */
-    struct ServerInfo {
+    //DistLockCatalogImpl::getServerInfo生成
+    //从serverstatus中解析出localTime和repl.electionId字段存储到ServerInfo结构
+    struct ServerInfo { //注意是mongod和cfg上面获取的，不是mongos上获取
     public:
         ServerInfo(Date_t time, OID electionId);
 
         // The local time of the server at the time this was created.
+        //db.serverStatus().localTime获取的值
         Date_t serverTime;
 
+        //db.serverStatus().repl.electionId获取的值
         // The election id of the replica set member at the time this was created.
         OID electionId;
     };
