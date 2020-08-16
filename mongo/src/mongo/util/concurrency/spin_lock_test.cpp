@@ -38,6 +38,7 @@ namespace {
 
 using mongo::SpinLock;
 //例如ReplSetDistLockManager::lockWithSessionID使用
+//计时器可以参考ShardingUptimeReporter::startPeriodicThread，也可以参考ReplSetDistLockManager::doTask
 using mongo::Timer;
 
 namespace stdx = mongo::stdx;

@@ -48,6 +48,7 @@ const BSONField<std::string> LocksType::process("process");
 const BSONField<OID> LocksType::lockID("ts");
 const BSONField<std::string> LocksType::who("who");
 const BSONField<std::string> LocksType::why("why");
+// The when field specifies the time when the config server member became the primary.
 const BSONField<Date_t> LocksType::when("when");
 
 /*

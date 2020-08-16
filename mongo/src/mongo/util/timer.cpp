@@ -44,10 +44,11 @@ const int64_t kMicrosPerSecond = 1000 * 1000;
 
 Timer::Timer() : Timer(SystemTickSource::get()) {}
 
+//
 Timer::Timer(TickSource* tickSource)
     : _tickSource(tickSource),
       _microsPerCount(static_cast<double>(kMicrosPerSecond) / _tickSource->getTicksPerSecond()) {
-    reset();
+    reset(); //计时初始化，也就是开始计时的时间点
 }
 
 long long Timer::now() const {

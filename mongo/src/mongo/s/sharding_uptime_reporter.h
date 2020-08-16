@@ -43,7 +43,7 @@ class OperationContext;
  * instances, which are connected to the given config server and their uptime.
  *
  * NOTE: Not thread-safe, so it should not be used from more than one thread at a time.
- */
+ */ //所有代理定期跟新config.mongos表，每隔十秒钟上报
 class ShardingUptimeReporter {
     MONGO_DISALLOW_COPYING(ShardingUptimeReporter);
 
@@ -58,6 +58,7 @@ public:
 
 private:
     // The background uptime reporter thread (if started)
+    //Uptime reporter 线程
     stdx::thread _thread;
 };
 

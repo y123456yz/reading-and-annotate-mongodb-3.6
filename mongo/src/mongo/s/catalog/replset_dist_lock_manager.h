@@ -131,6 +131,7 @@ private:
 
     ServiceContext* const _serviceContext;  // (F)
 
+    //generateDistLockProcessId生成
     const std::string _processID;                     // (I)
     //对应DistLockCatalogImpl
     const std::unique_ptr<DistLockCatalog> _catalog;  // (I)
@@ -140,6 +141,7 @@ private:
     const Milliseconds _pingInterval;                 // (I)
     const Milliseconds _lockExpiration;               // (I)
 
+    //锁
     stdx::mutex _mutex;
     std::unique_ptr<stdx::thread> _execThread;  // (S)
 

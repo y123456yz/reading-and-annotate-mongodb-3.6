@@ -48,8 +48,10 @@
 namespace mongo {
 namespace {
 
+//10S
 const Seconds kUptimeReportInterval(10);
 
+//hostname:port 组合
 std::string constructInstanceIdString() {
     return str::stream() << getHostNameCached() << ":" << serverGlobalParams.port;
 }
@@ -57,19 +59,36 @@ std::string constructInstanceIdString() {
 /**
  * Reports the uptime status of the current instance to the config.pings collection. This method
  * is best-effort and never throws.
+
+ mongos> db.mongos.find()
+{ "_id" : "bjhtxxx1:20003", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T09:19:30.154Z"), "up" : NumberLong(15653743), "waiting" : true }
+{ "_id" : "bjhtxxx2:20003", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.13", "ping" : ISODate("2020-08-13T09:19:31.911Z"), "up" : NumberLong(18239828), "waiting" : true }
+{ "_id" : "bjhtxxx3:20002", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.13", "ping" : ISODate("2020-08-13T09:19:24.496Z"), "up" : NumberLong(18320414), "waiting" : true }
+mongos> 
+
+
+ bjhtxxx2:20022被kill掉后，则ping时间和up时间不会增加，ping和up都是10s增加
+ { "_id" : "bjhtxxx1:20009", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T11:10:21.458Z"), "up" : NumberLong(14227), "waiting" : true }
+ { "_id" : "bjhtxxx2:20022", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T11:08:37.637Z"), "up" : NumberLong(14256), "waiting" : true }
+ { "_id" : "bjhtxxx3:20009", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T11:10:21.323Z"), "up" : NumberLong(14307), "waiting" : true }
+
  */
+//ShardingUptimeReporter::startPeriodicThread线程循环调用  10s执行一次
 void reportStatus(OperationContext* opCtx,
                   const std::string& instanceId,
                   const Timer& upTimeTimer) {
     MongosType mType;
     mType.setName(instanceId);
+	//时间搓设置
     mType.setPing(jsTime());
     mType.setUptime(upTimeTimer.seconds());
     // balancer is never active in mongos. Here for backwards compatibility only.
     mType.setWaiting(true);
+	//version信息
     mType.setMongoVersion(VersionInfoInterface::instance().version().toString());
 
-    try {
+	//db.pings.update({ _id : "bjhtxxx1:20003" }, { $set : {mType } })
+    try { //远程跟新cfg的config.pings表
         Grid::get(opCtx)
             ->catalogClient()
             ->updateConfigDocument(opCtx,
@@ -99,9 +118,12 @@ void ShardingUptimeReporter::startPeriodicThread() {
     _thread = stdx::thread([this] {
         Client::initThread("Uptime reporter");
 
+		//hostname:port 组合
         const std::string instanceId(constructInstanceIdString());
         const Timer upTimeTimer;
 
+		//每隔10s向CFG的config.pings表做跟新，从config.pings表，如果mongos挂了则不会更新
+		//"ping"和"up"以10s增加
         while (!globalInShutdownDeprecated()) {
             {
                 auto opCtx = cc().makeOperationContext();
@@ -116,6 +138,7 @@ void ShardingUptimeReporter::startPeriodicThread() {
             }
 
             MONGO_IDLE_THREAD_BLOCK;
+			//延时10s，也就是每10s对config.pings做更新
             sleepFor(kUptimeReportInterval);
         }
     });

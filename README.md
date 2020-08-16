@@ -89,8 +89,13 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [type_lockpings.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_lockpings.h) 
  *   [type_locks.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_locks.cpp) 
  *   [type_locks.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_locks.h) 
-*   [configsvr_enable_sharding_command.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/s/config/configsvr_enable_sharding_command.cpp) 
- 
+ *   [configsvr_enable_sharding_command.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/s/config/configsvr_enable_sharding_command.cpp) 
+
+###### 代理定期更新config.mongos实现源码注释分析(100%注释): 
+ *   [sharding_uptime_reporter.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/sharding_uptime_reporter.cpp)
+ *   [sharding_uptime_reporter.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/sharding_uptime_reporter.h)
+ *   [type_mongos.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_mongos.cpp)
+ *   [type_mongos.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_mongos.h)
 
 
 mongodb存储引擎wiredtiger源码分析  

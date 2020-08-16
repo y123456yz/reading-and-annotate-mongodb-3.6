@@ -786,6 +786,7 @@ long long getJSTimeVirtualThreadSkew() {
 }
 
 /** Date_t is milliseconds since epoch */
+//获取当前时间搓
 Date_t jsTime() {
     return Date_t::now() + Milliseconds(getJSTimeVirtualThreadSkew()) +
         Milliseconds(getJSTimeVirtualSkew());

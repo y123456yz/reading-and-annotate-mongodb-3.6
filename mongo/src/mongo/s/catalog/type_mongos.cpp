@@ -35,6 +35,32 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
+/*
+The mongos collection stores a document for each mongos instance affiliated with the cluster. 
+mongos instances send pings to all members of the cluster every 30 seconds so the cluster can 
+verify that the mongos is active. The ping field shows the time of the last ping, while the up 
+field reports the uptime of the mongos as of the last ping. The cluster maintains this collection 
+for reporting purposes.
+*/
+/**
+ * Reports the uptime status of the current instance to the config.pings collection. This method
+ * is best-effort and never throws.
+
+ mongos> db.mongos.find()
+{ "_id" : "bjhtxxx1:20003", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T09:19:30.154Z"), "up" : NumberLong(15653743), "waiting" : true }
+{ "_id" : "bjhtxxx2:20003", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.13", "ping" : ISODate("2020-08-13T09:19:31.911Z"), "up" : NumberLong(18239828), "waiting" : true }
+{ "_id" : "bjhtxxx3:20002", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.13", "ping" : ISODate("2020-08-13T09:19:24.496Z"), "up" : NumberLong(18320414), "waiting" : true }
+mongos> 
+
+
+ bjhtxxx2:20022被kill掉后，则ping时间和up时间不会增加，ping和up都是10s增加
+ { "_id" : "bjhtxxx1:20009", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T11:10:21.458Z"), "up" : NumberLong(14227), "waiting" : true }
+ { "_id" : "bjhtxxx2:20022", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T11:08:37.637Z"), "up" : NumberLong(14256), "waiting" : true }
+ { "_id" : "bjhtxxx3:20009", "advisoryHostFQDNs" : [ ], "mongoVersion" : "3.6.10", "ping" : ISODate("2020-08-13T11:10:21.323Z"), "up" : NumberLong(14307), "waiting" : true }
+ */
+
+//ShardingUptimeReporter::startPeriodicThread线程循环调用  10s执行一次
+//mongos每隔10s和所有cfg和mongod实例ping，类似于保活，这里面记录的
 const std::string MongosType::ConfigNS = "config.mongos";
 
 const BSONField<std::string> MongosType::name("_id");
