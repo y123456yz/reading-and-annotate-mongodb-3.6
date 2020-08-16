@@ -242,9 +242,20 @@ StatusWith<LockpingsType> DistLockCatalogImpl::getPing(OperationContext* opCtx,
 }
 
 /*
+
+2020-07-09T11:21:00.163+0800 I COMMAND  [replSetDistLockPinger] command config.lockpings 
+command: findAndModify { findAndModify: "lockpings", query: { _id: "ConfigServer" }, update: 
+{ $set: { ping: new Date(1594264859964) } }, upsert: true, writeConcern: { w: "majority", wtimeout: 
+15000 }, $db: "config" } planSummary: IDHACK keysExamined:1 docsExamined:1 nMatched:1 nModified:1 
+keysInserted:1 keysDeleted:1 numYields:0 reslen:322 locks:{ Global: { acquireCount: { r: 2, w: 2 } }, 
+Database: { acquireCount: { w: 2 } }, Collection: { acquireCount: { w: 1 } }, oplog: { acquireCount: 
+{ w: 1 } } } protocol:op_msg 199ms
+
+
 const BSONField<std::string> LockpingsType::process("_id");
 const BSONField<Date_t> LockpingsType::ping("ping");
 */
+//ReplSetDistLockManager::doTask调用
 //根据processID从config.lockpings中查找_id:processID对应数据的ping字段内容为ping
 Status DistLockCatalogImpl::ping(OperationContext* opCtx, StringData processID, Date_t ping) {
     auto request =
@@ -305,9 +316,12 @@ _getErrorWithCode@src/mongo/shell/utils.js:25:13
 DBCollection.prototype.findAndModify@src/mongo/shell/collection.js:724:1
 @(shell):1:1
 mongos> 
+
+findAndModify默认有id唯一所有，同时如果查找的数据不存在会默认添加，如上面查找{ _id: "test2-movePrimary", state: 0 }
+没有数据满足，默认会加一行数据，但是由于ID重复了，所以报
 */
 //通过findAndModify来获取对应锁，也就是更新Locks表中id:lockID这个文档为新的内容，内容如下newLockDetails
-//ReplSetDistLockManager::lockWithSessionID调用
+//ReplSetDistLockManager::lockWithSessionID调用DuplicateKey。分布式锁就是利用这以特性来确定是否可以获取锁
 StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
                                                     StringData lockID,
                                                     const OID& lockSessionID,
@@ -468,6 +482,7 @@ Status DistLockCatalogImpl::_unlock(OperationContext* opCtx, const FindAndModify
     auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
     auto resultStatus = shardRegistry->getConfigShard()->runCommandWithFixedRetryAttempts(
         opCtx,
+        //注意这里是ReadPreference::PrimaryOnly，所以cfg必须启用read primary
         ReadPreferenceSetting{ReadPreference::PrimaryOnly},
         _locksNS.db().toString(),
         request.toBSON(),
@@ -642,6 +657,8 @@ StatusWith<LocksType> DistLockCatalogImpl::getLockByName(OperationContext* opCtx
     return locksTypeResult.getValue();
 }
 
+//从config.pings中移除id:processId这条记录
+//ReplSetDistLockManager::shutDown调用
 Status DistLockCatalogImpl::stopPing(OperationContext* opCtx, StringData processId) {
     auto request =
         FindAndModifyRequest::makeRemove(_lockPingNS, BSON(LockpingsType::process() << processId));

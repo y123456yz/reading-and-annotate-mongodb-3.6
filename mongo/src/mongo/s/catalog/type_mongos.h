@@ -44,6 +44,8 @@ namespace mongo {
 class MongosType {
 public:
     // Name of the mongos collection in the config server.
+    ////ShardingUptimeReporter::startPeriodicThread线程循环调用  10s执行一次
+    //const std::string MongosType::ConfigNS = "config.mongos";
     static const std::string ConfigNS;
 
     // Field names and types in the mongos collection type.
@@ -115,6 +117,7 @@ public:
 private:
     // Convention: (M)andatory, (O)ptional, (S)pecial rule.
 
+    //config.locks表内容
     // (M) "host:port" for this mongos
     boost::optional<std::string> _name;
     // (M) last time it was seen alive

@@ -80,6 +80,7 @@ ReplSetDistLockManager::ReplSetDistLockManager(ServiceContext* globalContext,
                                                Milliseconds pingInterval,
                                                Milliseconds lockExpiration)
     : _serviceContext(globalContext),
+    //generateDistLockProcessId生成
       _processID(processID.toString()),
       //对应DistLockCatalogImpl
       _catalog(std::move(catalog)),
@@ -110,6 +111,8 @@ void ReplSetDistLockManager::shutDown(OperationContext* opCtx) {
         _execThread.reset();
     }
 
+	//DistLockCatalogImpl::stopPing
+	//从config.pings中移除id:processId这条记录
     auto status = _catalog->stopPing(opCtx, _processID);
     if (!status.isOK()) {
         warning() << "error encountered while cleaning up distributed ping entry for " << _processID
@@ -125,9 +128,37 @@ bool ReplSetDistLockManager::isShutDown() {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     return _isShutDown;
 }
+/* 
+线程栈打印如下:
+[root@XX ~]# pstack  438787
+Thread 1 (process 438787):
+#0  0x00007f92b9e2b965 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libpthread.so.0
+#1  0x0000555ca0f46bdc in std::condition_variable::wait(std::unique_lock<std::mutex>&) ()
+#2  0x0000555ca084936b in mongo::executor::ThreadPoolTaskExecutor::wait(mongo::executor::TaskExecutor::CallbackHandle const&) ()
+#3  0x0000555ca057e422 in mongo::ShardRemote::_runCommand(mongo::OperationContext*, mongo::ReadPreferenceSetting const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, mongo::Duration<std::ratio<1l, 1000l> >, mongo::BSONObj const&) ()
+#4  0x0000555ca05bce24 in mongo::Shard::runCommandWithFixedRetryAttempts(mongo::OperationContext*, mongo::ReadPreferenceSetting const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, mongo::BSONObj const&, mongo::Duration<std::ratio<1l, 1000l> >, mongo::Shard::RetryPolicy) ()
+#5  0x0000555ca027b985 in mongo::DistLockCatalogImpl::ping(mongo::OperationContext*, mongo::StringData, mongo::Date_t) ()
+#6  0x0000555ca0273aba in mongo::ReplSetDistLockManager::doTask() ()
+#7  0x0000555ca0f439f0 in ?? ()
+#8  0x00007f92b9e27dd5 in start_thread () from /lib64/libpthread.so.0
+#9  0x00007f92b9b50ead in clone () from /lib64/libc.so.6
+[root@XX ~]# 
+[root@XX ~]# 
+[root@XX ~]# 
+[root@XX ~]# pstack  438787
+Thread 1 (process 438787):
+#0  0x00007f92b9e2bd12 in pthread_cond_timedwait@@GLIBC_2.3.2 () from /lib64/libpthread.so.0
+#1  0x0000555ca0274184 in mongo::ReplSetDistLockManager::doTask() ()
+#2  0x0000555ca0f439f0 in ?? ()
+#3  0x00007f92b9e27dd5 in start_thread () from /lib64/libpthread.so.0
+#4  0x00007f92b9b50ead in clone () from /lib64/libc.so.6
 
+*/
+//mongos mongod cfg都启用了该线程
 void ReplSetDistLockManager::doTask() {
-    LOG(0) << "creating distributed lock ping thread for process " << _processID
+	//mongod打印 I SHARDING [thread1] I SHARDING [thread1] creating distributed lock ping thread for process bjcp4287:20001:1581573577:-6950517477465643150 (sleeping for 30000ms)
+	//config打印 I SHARDING [thread1] creating distributed lock ping thread for process ConfigServer (sleeping for 30000ms)
+	LOG(0) << "creating distributed lock ping thread for process " << _processID
            << " (sleeping for " << _pingInterval << ")";
 
     Timer elapsedSincelastPing(_serviceContext->getTickSource());
@@ -136,6 +167,15 @@ void ReplSetDistLockManager::doTask() {
     while (!isShutDown()) {
         {
             auto opCtx = cc().makeOperationContext();
+/*
+2020-07-09T11:21:00.163+0800 I COMMAND  [replSetDistLockPinger] command config.lockpings 
+command: findAndModify { findAndModify: "lockpings", query: { _id: "ConfigServer" }, update: 
+{ $set: { ping: new Date(1594264859964) } }, upsert: true, writeConcern: { w: "majority", wtimeout: 
+15000 }, $db: "config" } planSummary: IDHACK keysExamined:1 docsExamined:1 nMatched:1 nModified:1 
+keysInserted:1 keysDeleted:1 numYields:0 reslen:322 locks:{ Global: { acquireCount: { r: 2, w: 2 } }, 
+Database: { acquireCount: { w: 2 } }, Collection: { acquireCount: { w: 1 } }, oplog: { acquireCount: 
+{ w: 1 } } } protocol:op_msg 199ms
+*/
 			//DistLockCatalogImpl::ping
             auto pingStatus = _catalog->ping(opCtx.get(), _processID, Date_t::now());
 
@@ -149,10 +189,12 @@ void ReplSetDistLockManager::doTask() {
                 warning() << "Lock pinger for proc: " << _processID << " was inactive for "
                           << elapsed << " ms";
             }
+			//elapsedSincelastPing时间重置
             elapsedSincelastPing.reset();
 
             std::deque<std::pair<DistLockHandle, boost::optional<std::string>>> toUnlockBatch;
             {
+				//等锁
                 stdx::unique_lock<stdx::mutex> lk(_mutex);
                 toUnlockBatch.swap(_unlockList);
             }
@@ -164,16 +206,19 @@ void ReplSetDistLockManager::doTask() {
                                     "status unlock not initialized!");
                 if (toUnlock.second) {
                     // A non-empty _id (name) field was provided, unlock by ts (sessionId) and _id.
+                    //DistLockCatalogImpl::unlock
                     unlockStatus = _catalog->unlock(opCtx.get(), toUnlock.first, *toUnlock.second);
                     nameMessage = " and " + LocksType::name() + ": " + *toUnlock.second;
                 } else {
+                	//DistLockCatalogImpl::unlock
                     unlockStatus = _catalog->unlock(opCtx.get(), toUnlock.first);
                 }
 
                 if (!unlockStatus.isOK()) {
                     warning() << "Failed to unlock lock with " << LocksType::lockID() << ": "
                               << toUnlock.first << nameMessage << causedBy(unlockStatus);
-                    queueUnlock(toUnlock.first, toUnlock.second);
+					//重新入队，等待下次循环unlock
+					queueUnlock(toUnlock.first, toUnlock.second);
                 } else {
                     LOG(0) << "distributed lock with " << LocksType::lockID() << ": "
                            << toUnlock.first << nameMessage << " unlocked.";
@@ -185,8 +230,10 @@ void ReplSetDistLockManager::doTask() {
             }
         }
 
+		//等锁
         stdx::unique_lock<stdx::mutex> lk(_mutex);
         MONGO_IDLE_THREAD_BLOCK;
+		//等待最多_pingIntervals,默认30s,也就是30秒向cfg进行config.lockpings操作，也就是30s检查一次
         _shutDownCV.wait_for(lk, _pingInterval.toSystemDuration(), [this] { return _isShutDown; });
     }
 }

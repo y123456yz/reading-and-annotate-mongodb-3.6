@@ -51,7 +51,7 @@ mongos>
 
 */
 
-
+////ReplSetDistLockManager::doTask调用,replSetDistLockPinger线程周期性调用更新该表
 //相关实现见DistLockCatalogImpl
 const std::string LockpingsType::ConfigNS = "config.lockpings";
 
