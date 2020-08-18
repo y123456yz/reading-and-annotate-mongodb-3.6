@@ -464,7 +464,7 @@ shared_ptr<Notification<RemoteCommandResponse>>
     }
 
     BSONObjBuilder builder;
-	//生成moveChunk命令内容   moveChunk实际上是发送给源分片的，注意不是发送个cfg的
+	//生成moveChunk命令内容   moveChunk实际上是发送给源分片的，注意不是发送给cfg的
     MoveChunkRequest::appendAsCommand(
         &builder,
         nss,

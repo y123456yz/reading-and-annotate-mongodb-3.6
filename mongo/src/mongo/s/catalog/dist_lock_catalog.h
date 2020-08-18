@@ -66,8 +66,9 @@ public:
         //db.serverStatus().localTime获取的值
         Date_t serverTime;
 
-        //db.serverStatus().repl.electionId获取的值
+        //db.serverStatus().repl.electionId获取的值，只有cfg和mongod复制集主节点才有该成员
         // The election id of the replica set member at the time this was created.
+        //每个mongo实例有一个唯一的electionId，发生主从切换则会自增，例如从"electionId" : ObjectId("7fffffff0000000000000006"),到"electionId" : ObjectId("7fffffff0000000000000007"),
         OID electionId;
     };
 

@@ -151,14 +151,17 @@ CollectionShardingState* CollectionShardingState::get(OperationContext* opCtx,
     return shardingState->getNS(ns, opCtx);
 }
 
+//获取元数据信息  ShardingState::_refreshMetadata调用
 ScopedCollectionMetadata CollectionShardingState::getMetadata() {
+	//MetadataManager::getActiveMetadata
     return _metadataManager->getActiveMetadata(_metadataManager);
 }
 
+//ShardingState::_refreshMetadatad调用
 void CollectionShardingState::refreshMetadata(OperationContext* opCtx,
                                               std::unique_ptr<CollectionMetadata> newMetadata) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_nss.ns(), MODE_X));
-
+	//MetadataManager::refreshActiveMetadata
     _metadataManager->refreshActiveMetadata(std::move(newMetadata));
 }
 

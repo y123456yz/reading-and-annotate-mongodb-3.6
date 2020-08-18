@@ -131,7 +131,8 @@ private:
 
     /**
      * Cache entry describing a collection.
-     */
+     * CollectionRoutingInfoEntry存储表的chunk信息，CachedCollectionRoutingInfo存储表的主分片信息
+     */ //CachedDatabaseInfo._db.collections成员为该类型,CatalogCache::_scheduleCollectionRefresh刷新集合路由信息
     struct CollectionRoutingInfoEntry {
         // Specifies whether this cache entry needs a refresh (in which case routingInfo should not
         // be relied on) or it doesn't, in which case there should be a non-null routingInfo.
@@ -147,13 +148,15 @@ private:
 
     /**
      * Cache entry describing a database.
-     */
+     */ //CachedDatabaseInfo._db为该类型
     struct DatabaseInfoEntry {
+        //该DB的主分片ID
         ShardId primaryShardId;
 
         bool shardingEnabled;
 
-        StringMap<CollectionRoutingInfoEntry> collections;
+        //该DB下面的collections表信息
+        StringMap<CollectionRoutingInfoEntry> collections; 
     };
 
     using DatabaseInfoMap = StringMap<std::shared_ptr<DatabaseInfoEntry>>;
@@ -175,6 +178,7 @@ private:
                                     int refreshAttempt);
 
     // Interface from which chunks will be retrieved
+    
     CatalogCacheLoader& _cacheLoader;
 
     // Mutex to serialize access to the structures below
@@ -188,6 +192,7 @@ private:
  * Constructed exclusively by the CatalogCache, contains a reference to the cached information for
  * the specified database.
  */
+//库信息缓存在这里，该库拥有对应的表信息
 class CachedDatabaseInfo {
 public:
     const ShardId& primaryId() const;
@@ -199,6 +204,7 @@ private:
 
     CachedDatabaseInfo(std::shared_ptr<CatalogCache::DatabaseInfoEntry> db);
 
+    
     std::shared_ptr<CatalogCache::DatabaseInfoEntry> _db;
 };
 
@@ -206,6 +212,9 @@ private:
  * Constructed exclusively by the CatalogCache contains a reference to the routing information for
  * the specified collection.
  */
+//CatalogCache::getCollectionRoutingInfo中构造使用 CatalogCache::getCollectionRoutingInfo
+//ChunkManagerTargeter._routingInfo成员为该类型，
+//CollectionRoutingInfoEntry存储表的chunk信息，CachedCollectionRoutingInfo存储表的主分片信息
 class CachedCollectionRoutingInfo {
 public:
     /**
@@ -240,13 +249,17 @@ private:
                                 std::shared_ptr<Shard> primary);
 
     // The id of the primary shard containing the database
+    //下面的_nss集合对应主分片ID
     ShardId _primaryId;
 
     // Reference to the corresponding chunk manager (if sharded) or null
+    //该集合的chunk分布信息，和CollectionRoutingInfoEntry.routingInfo一致
     std::shared_ptr<ChunkManager> _cm;
 
     // Reference to the primary of the database (if not sharded) or null
+    //db.collection集合
     NamespaceString _nss;
+    //db.collection对应主分片
     std::shared_ptr<Shard> _primary;
 };
 

@@ -55,7 +55,8 @@ class Timestamp;
  *
  * Synchronization rules: In order to look-up this object in the instance's sharding map, one must
  * have some lock on the respective collection.
- */
+ */ 
+//CollectionShardingState::get(opCtx, nss)获取
 //ShardingState::getNS中会构造使用，同时在该接口把ShardingState和CollectionShardingState联系起来
 class CollectionShardingState {
     MONGO_DISALLOW_COPYING(CollectionShardingState);

@@ -76,6 +76,7 @@ public:
     /**
      * RAII type for distributed lock. Not meant to be shared across multiple threads.
      */
+    //²Î¿¼DistLockManager::lock
     class ScopedDistLock {
         MONGO_DISALLOW_COPYING(ScopedDistLock);
 

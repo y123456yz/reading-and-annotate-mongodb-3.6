@@ -273,11 +273,12 @@ Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
 }
 
 //MigrationSourceManager::MigrationSourceManager调用
-//获取nss对应shardversion
+//获取nss对应的最新ChunkVersion
 Status ShardingState::refreshMetadataNow(OperationContext* opCtx,
                                          const NamespaceString& nss,
                                          ChunkVersion* latestShardVersion) {
     try {
+		//更新元数据信息，返回chunk版本信息
         *latestShardVersion = _refreshMetadata(opCtx, nss);
         return Status::OK();
     } catch (const DBException& ex) {
@@ -489,7 +490,7 @@ StatusWith<bool> ShardingState::initializeShardingAwarenessIfNeeded(OperationCon
     }
 }
 
-//ShardingState::refreshMetadataNow调用
+//ShardingState::refreshMetadataNow调用  更新元数据信息，返回chunk版本信息
 ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const NamespaceString& nss) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(enabled());
@@ -503,7 +504,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
                           << " before shard name has been set",
             shardId.isValid());
 
-	//获取路由信息  routingInfo为CachedCollectionRoutingInfo类型
+	//获取集合chunks路由信息  routingInfo为CachedCollectionRoutingInfo类型
     const auto routingInfo = uassertStatusOK(
         Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfoWithRefresh(opCtx, nss));
 
@@ -518,6 +519,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
         AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
 
         auto css = CollectionShardingState::get(opCtx, nss);
+		//CollectionShardingState::refreshMetadata
         css->refreshMetadata(opCtx, nullptr);
 
         return ChunkVersion::UNSHARDED();
@@ -528,14 +530,18 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 		//获取CollectionShardingState
         auto css = CollectionShardingState::get(opCtx, nss);
 
-        // We already have newer version
+        // We already have newer version    
+
+		//ChunkVersion如果没有发生变化，则不用更新元数据，直接返回
         //CollectionShardingState::getMetadata
         if (css->getMetadata() &&
+			//ScopedCollectionMetadata::getMetadata  CollectionMetadata::getCollVersion
             css->getMetadata()->getCollVersion().epoch() == cm->getVersion().epoch() &&
             css->getMetadata()->getCollVersion() >= cm->getVersion()) {
             LOG(1) << "Skipping refresh of metadata for " << nss << " "
                    << css->getMetadata()->getCollVersion() << " with an older " << cm->getVersion();
-            return css->getMetadata()->getShardVersion();
+			//直接返回ChunkVersion
+			return css->getMetadata()->getShardVersion();
         }
     }
 
@@ -545,7 +551,8 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     auto css = CollectionShardingState::get(opCtx, nss);
 
     // We already have newer version
-    if (css->getMetadata() &&
+    if (css->getMetadata() && //CollectionShardingState::getMetadata
+    	//ScopedCollectionMetadata::getMetadata  CollectionMetadata::getCollVersion
         css->getMetadata()->getCollVersion().epoch() == cm->getVersion().epoch() &&
         css->getMetadata()->getCollVersion() >= cm->getVersion()) {
         LOG(1) << "Skipping refresh of metadata for " << nss << " "
@@ -556,10 +563,10 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     std::unique_ptr<CollectionMetadata> newCollectionMetadata =
         stdx::make_unique<CollectionMetadata>(cm, shardId);
 
-	//跟新元数据版本信息
+	//跟新元数据版本信息  CollectionShardingState::refreshMetadata
     css->refreshMetadata(opCtx, std::move(newCollectionMetadata));
 
-	//返回
+	//返回新的版本信息
     return css->getMetadata()->getShardVersion();
 }
 

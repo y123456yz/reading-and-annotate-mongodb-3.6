@@ -394,7 +394,7 @@ StatusWith<LocksType> DistLockCatalogImpl::grabLock(OperationContext* opCtx,
     return locksTypeResult.getValue();
 }
 
-//ReplSetDistLockManager::lockWithSessionID中调用
+//ReplSetDistLockManager::lockWithSessionID中调用,强制获取id:lockID这个锁
 //把{id:lockID,state:0} or {id:lockID,ts:currentHolderTS}这条数据更新为新的{ts:lockSessionID, state:2,who:who,...}
 StatusWith<LocksType> DistLockCatalogImpl::overtakeLock(OperationContext* opCtx,
                                                         StringData lockID,

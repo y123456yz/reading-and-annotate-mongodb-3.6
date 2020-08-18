@@ -126,12 +126,14 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
     }
 }
 
-//ChunkManagerTargeter::init调用，获取路由信息
-StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
+//ChunkManagerTargeter::init调用，获取集合路由信息
+StatusWith<CachedCollectionRoutingInfo> 
+  CatalogCache::getCollectionRoutingInfo(
     OperationContext* opCtx, const NamespaceString& nss) {
     while (true) {
         std::shared_ptr<DatabaseInfoEntry> dbEntry;
         try {
+			//获取nss集合对应的DB信息
             dbEntry = _getDatabase(opCtx, nss.db());
         } catch (const DBException& ex) {
             return ex.toStatus();
@@ -141,9 +143,12 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
 
         auto& collections = dbEntry->collections;
 
+		//查找db下面所有的表，获取nss表
         auto it = collections.find(nss.ns());
-        if (it == collections.end()) {
+		//该nss锁在DB下面没找到该nss
+        if (it == collections.end()) { 
             auto shardStatus =
+				//获取primaryShardId这个分片对应的shard信息   ShardRegistry::getShard返回Shard类型
                 Grid::get(opCtx)->shardRegistry()->getShard(opCtx, dbEntry->primaryShardId);
             if (!shardStatus.isOK()) {
                 return {ErrorCodes::Error(40371),
@@ -156,13 +161,15 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
                 dbEntry->primaryShardId, nss, std::move(shardStatus.getValue()))};
         }
 
+		//获取nss对应的CollectionRoutingInfoEntry，也就是该集合对应的chunk分布
         auto& collEntry = it->second;
 
-        if (collEntry.needsRefresh) {
+        if (collEntry.needsRefresh) { //该集合的路由信息需要重新刷新
             auto refreshNotification = collEntry.refreshCompletionNotification;
             if (!refreshNotification) {
                 refreshNotification = (collEntry.refreshCompletionNotification =
                                            std::make_shared<Notification<Status>>());
+				//获取dbEntry库下对应的nss集合的chunks路由信息
                 _scheduleCollectionRefresh(ul, dbEntry, std::move(collEntry.routingInfo), nss, 1);
             }
 
@@ -185,6 +192,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
             continue;
         }
 
+		//记录该集合的主分片和chunk路由信息
         return {CachedCollectionRoutingInfo(dbEntry->primaryShardId, collEntry.routingInfo)};
     }
 }
@@ -285,6 +293,7 @@ void CatalogCache::purgeAllDatabases() {
     _databases.clear();
 }
 
+//CatalogCache::getCollectionRoutingInfo调用
 std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(OperationContext* opCtx,
                                                                             StringData dbName) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
@@ -322,6 +331,7 @@ std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(Oper
                dbDesc.getPrimary(), dbDesc.getSharded(), std::move(collectionEntries)});
 }
 
+//获取dbEntry库下对应的nss集合的chunks路由信息
 void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
                                               std::shared_ptr<DatabaseInfoEntry> dbEntry,
                                               std::shared_ptr<ChunkManager> existingRoutingInfo,
@@ -333,7 +343,8 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         (existingRoutingInfo ? existingRoutingInfo->getVersion() : ChunkVersion::UNSHARDED());
 
     const auto refreshFailed =
-        [ this, t, dbEntry, nss, refreshAttempt ](WithLock lk, const Status& status) noexcept {
+        [ this, t, dbEntry, nss, refreshAttempt ](WithLock lk, const Status& status) noexcept 
+    {
         log() << "Refresh for collection " << nss << " took " << t.millis() << " ms and failed"
               << causedBy(redact(status));
 
@@ -344,6 +355,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
 
         // It is possible that the metadata is being changed concurrently, so retry the
         // refresh again
+        //cfg中元数据发生了变化，递归调用最多kMaxInconsistentRoutingInfoRefreshAttempts次
         if (status == ErrorCodes::ConflictingOperationInProgress &&
             refreshAttempt < kMaxInconsistentRoutingInfoRefreshAttempts) {
             _scheduleCollectionRefresh(lk, dbEntry, nullptr, nss, refreshAttempt + 1);
@@ -360,6 +372,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollAndChunks) noexcept {
         std::shared_ptr<ChunkManager> newRoutingInfo;
         try {
+			//
             newRoutingInfo = refreshCollectionRoutingInfo(
                 opCtx, nss, std::move(existingRoutingInfo), std::move(swCollAndChunks));
         } catch (const DBException& ex) {
@@ -387,6 +400,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
             log() << "Refresh for collection " << nss << " took " << t.millis()
                   << " ms and found version " << newRoutingInfo->getVersion();
 
+			//刷新该集合得路由信息
             collEntry.routingInfo = std::move(newRoutingInfo);
         }
     };
@@ -395,6 +409,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
           << startingCollectionVersion;
 
     try {
+		//ShardServerCatalogCacheLoader::getChunksSince
         _cacheLoader.getChunksSince(nss, startingCollectionVersion, refreshCallback);
     } catch (const DBException& ex) {
         const auto status = ex.toStatus();
@@ -424,6 +439,7 @@ CachedCollectionRoutingInfo::CachedCollectionRoutingInfo(ShardId primaryId,
                                                          std::shared_ptr<ChunkManager> cm)
     : _primaryId(std::move(primaryId)), _cm(std::move(cm)) {}
 
+//CatalogCache::getCollectionRoutingInfo中构造使用
 CachedCollectionRoutingInfo::CachedCollectionRoutingInfo(ShardId primaryId,
                                                          NamespaceString nss,
                                                          std::shared_ptr<Shard> primary)

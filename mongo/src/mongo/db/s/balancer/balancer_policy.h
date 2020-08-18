@@ -65,7 +65,7 @@ struct MigrateInfo {
     ShardId from;
     BSONObj minKey;
     BSONObj maxKey;
-    ChunkVersion version;
+    ChunkVersion version; 
 };
 
 typedef std::vector<ClusterStatistics::ShardStatistics> ShardStatisticsVector;

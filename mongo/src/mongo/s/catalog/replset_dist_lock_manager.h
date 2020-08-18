@@ -57,7 +57,7 @@ public:
     static const Seconds kDistLockPingInterval;
 
     // How long should the lease on a distributed lock last
-    //15分钟
+    //15分钟，如果多次获取锁失败，整个过程持续时间超过15分钟，则强制获取锁
     static const Minutes kDistLockExpirationTime;
 
     ReplSetDistLockManager(ServiceContext* globalContext,

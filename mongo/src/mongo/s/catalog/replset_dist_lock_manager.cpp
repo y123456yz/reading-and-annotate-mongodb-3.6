@@ -199,7 +199,7 @@ Database: { acquireCount: { w: 2 } }, Collection: { acquireCount: { w: 1 } }, op
                 toUnlockBatch.swap(_unlockList);
             }
 
-			////ReplSetDistLockManager::lockWithSessionID获取锁的时候出现的极端异常情况需要这里统一处理
+			//ReplSetDistLockManager::lockWithSessionID获取锁的时候出现的极端异常情况需要这里统一处理
             for (const auto& toUnlock : toUnlockBatch) {
                 std::string nameMessage = "";
                 Status unlockStatus(ErrorCodes::NotYetInitialized,
@@ -294,7 +294,8 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
 	//根据config.locks表中的_id字段在_pingHistory map表中查找
     auto pingIter = _pingHistory.find(lockDoc.getName());//LocksType::getName
 
-	//从_pingHistory表中查找没找到, 说明不应该过期，直接返回false
+	//从_pingHistory表中查找没找到, 说明又有一个需要获取该分布式锁的任务，把本次获取锁的任务信息记录到_pingHistory表中
+	//如果下次又有新任务获取这个锁，同时发现该锁还是获取失败，则需要检查判断该锁是否过期，如果过期，则在外层需要强制过期了。
     if (pingIter == _pingHistory.end()) {
         // We haven't seen this lock before so we don't have any point of reference
         // to compare and determine the elapsed time. Save the current ping info
@@ -324,7 +325,10 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
     LOG(1) << "checking last ping for lock '" << lockDoc.getName() << "' against last seen process "
            << pingInfo->processId << " and ping " << pingInfo->lastPing;
 
-    if (pingInfo->lastPing != pingValue ||  // ping is active
+	// ping is active 
+	//集群中的这个节点和cfg通信正常，所以会每隔30s更新一次，就不会相等, 也就是对应节点一直在线，
+	//锁需要对应节点自己解锁，更新在ReplSetDistLockManager::doTask
+    if (pingInfo->lastPing != pingValue ||  
 
         // Owner of this lock is now different from last time so we can't
         // use the ping data.
@@ -332,6 +336,7 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
 
         // Primary changed, we can't trust that clocks are synchronized so
         // treat as if this is a new entry.
+        //说明发生了主从切换
         pingInfo->electionId != serverInfo.electionId) {
         pingInfo->lastPing = pingValue;
         pingInfo->electionId = serverInfo.electionId;
@@ -340,14 +345,15 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
         return false;
     }
 
-	//过期时间点比历史记录表中的configLocalTime还小，直接返回false
+	//过期时间点比历史记录表中的configLocalTime还小，直接返回false，一般不会出现这种情况
     if (configServerLocalTime < pingInfo->configLocalTime) {
         warning() << "config server local time went backwards, from last seen: "
                   << pingInfo->configLocalTime << " to " << configServerLocalTime;
         return false;
     }
 
-	//也就是lockDoc对应的锁持有时间超过了lockExpiration，说明持有锁时间超时了
+	//也就是lockDoc对应的锁持有时间超过了lockExpiration(一般是持有该锁的实例和cfg失联过久)，说明持有锁时间超时了
+	//多次获取锁失败，并且从第一次获取锁失败到本次获取锁还是失败的时间间隔超过lockExpiration时间，则该任务强制获取该锁(外层实现)
     Milliseconds elapsedSinceLastPing(configServerLocalTime - pingInfo->configLocalTime);
     if (elapsedSinceLastPing >= lockExpiration) {
         LOG(0) << "forcing lock '" << lockDoc.getName() << "' because elapsed time "
@@ -390,7 +396,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
     while (waitFor <= Milliseconds::zero() || Milliseconds(timer.millis()) < waitFor) {
         const string who = str::stream() << _processID << ":" << getThreadName();
 
-		//lock过期时间
+		//如果获取锁的实例已经很久没有和cfg通过lockpings保活了，这该实例可能失联，所以需要过期检查，避免一直持有锁，lock过期时间
         auto lockExpiration = _lockExpiration;
         MONGO_FAIL_POINT_BLOCK(setDistLockTimeout, customTimeout) {
             const BSONObj& data = customTimeout.getData();
@@ -409,7 +415,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
                << " ms, process : " << _processID << " )"
                << " with lockSessionID: " << lockSessionID << ", why: " << whyMessage.toString();
 
-		//DistLockCatalogImpl::grabLock
+		//DistLockCatalogImpl::grabLock 尝试获取锁
         auto lockResult = _catalog->grabLock(
             opCtx, name, lockSessionID, who, _processID, Date_t::now(), whyMessage.toString());
 
@@ -436,6 +442,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
         // If a network error occurred, unlock the lock synchronously and try again
 		//ShardRemote::isRetriableError 通过RemoteCommandRetryScheduler::kAllRetriableErrors获取错误码
 		//说明网络错误或者没有主节点，如果本函数在cfg执行说明没有主节点，cfg不存在远程调用
+		//可能一会儿就有主节点了，例如当前正在主从切换过程中，则需要重试
 		if (configShard->isRetriableError(status.code(), Shard::RetryPolicy::kIdempotent) &&
             networkErrorRetries < kMaxNumLockAcquireRetries) {
             LOG(1) << "Failed to acquire distributed lock because of retriable error. Retrying "
@@ -489,6 +496,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
 			//获取查找到的数据，也就是locks中的一条LocksType
             auto currentLock = getLockStatusResult.getValue();
 			//本次获取锁失败，说明锁当前正被其他操作占用，我们可以检查下这个锁是否过期了
+			//如果获取该锁的实例已经很久没有和cfg通信了，则可能该锁已经
             auto isLockExpiredResult = isLockExpired(opCtx, currentLock, lockExpiration);
 
 			//说明该锁还没有过期，或者有异常(如cfg没有master等)
@@ -498,7 +506,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
 
 			//
             if (isLockExpiredResult.getValue() || (lockSessionID == currentLock.getLockID())) {
-				//DistLockCatalogImpl::overtakeLock
+				//DistLockCatalogImpl::overtakeLock 强制获取锁
 				//把{id:lockID,state:0} or {id:lockID,ts:currentHolderTS}这条数据更新为新的{ts:lockSessionID, state:2,who:who,...}
 				auto overtakeResult = _catalog->overtakeLock(opCtx,
                                                              name,

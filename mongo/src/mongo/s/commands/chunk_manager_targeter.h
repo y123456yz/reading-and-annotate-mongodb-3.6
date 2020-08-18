@@ -164,7 +164,7 @@ private:
     TargeterStats* _stats;
 
     // The latest loaded routing cache entry
-    // CatalogCache::getCollectionRoutingInfo 获取路由信息
+    // CatalogCache::getCollectionRoutingInfo 获取路由信息  
     boost::optional<CachedCollectionRoutingInfo> _routingInfo;
 
     // Map of shard->remote shard version reported from stale errors

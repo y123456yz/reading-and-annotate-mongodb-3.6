@@ -39,7 +39,8 @@ void ReadOnlyCatalogCacheLoader::waitForCollectionFlush(OperationContext* opCtx,
     MONGO_UNREACHABLE;
 }
 
-std::shared_ptr<Notification<void>> ReadOnlyCatalogCacheLoader::getChunksSince(
+std::shared_ptr<Notification<void>> 
+	ReadOnlyCatalogCacheLoader::getChunksSince(
     const NamespaceString& nss,
     ChunkVersion version,
     stdx::function<void(OperationContext*, StatusWith<CollectionAndChangedChunks>)> callbackFn) {
