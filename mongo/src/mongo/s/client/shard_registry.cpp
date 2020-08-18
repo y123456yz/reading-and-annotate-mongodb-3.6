@@ -107,7 +107,9 @@ ConnectionString ShardRegistry::getConfigServerConnectionString() const {
     return getConfigShard()->getConnString();
 }
 
-StatusWith<shared_ptr<Shard>> ShardRegistry::getShard(OperationContext* opCtx,
+//根据shardId获取对应Shard信息
+StatusWith<shared_ptr<Shard>>
+	ShardRegistry::getShard(OperationContext* opCtx,
                                                       const ShardId& shardId) {
     // If we know about the shard, return it.
     auto shard = _data.findByShardId(shardId);

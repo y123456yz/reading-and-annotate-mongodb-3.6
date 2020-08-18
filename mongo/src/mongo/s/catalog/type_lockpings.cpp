@@ -40,7 +40,8 @@ namespace mongo {
 mongos> db.lockpings.find()
 { "_id" : "ConfigServer", "ping" : ISODate("2020-08-08T15:46:43.471Z") }
 { "_id" : "xxx:20003:1581573543:3630770638362238126", "ping" : ISODate("2020-08-08T15:46:36.839Z") }
-{ "_id" : "xxx:20003:1581573552:3015220040157753333", "ping" : ISODate("2020-02-13T14:31:15.194Z") }
+//这种说明实例重启了，之前的实例失联了,重启实例后会用新的_id替代该实例，但是之前的实例还是记录在里面的
+{ "_id" : "xxx:20003:1581573552:3015220040157753333", "ping" : ISODate("2020-02-13T14:31:15.194Z") } 
 { "_id" : "xxx:20003:1581573564:-3080866622298223419", "ping" : ISODate("2020-08-08T15:46:40.320Z") }
 { "_id" : "xxx:20001:1581573577:-6950517477465643150", "ping" : ISODate("2020-08-08T15:46:33.676Z") }
 { "_id" : "xxx:20001:1581573577:-4720166468454920588", "ping" : ISODate("2020-02-13T08:18:07.712Z") }
@@ -51,7 +52,7 @@ mongos>
 
 */
 
-////ReplSetDistLockManager::doTask调用,replSetDistLockPinger线程周期性调用更新该表
+////ReplSetDistLockManager::doTask调用,replSetDistLockPinger线程周期性调用更新该表,30S更新一次
 //相关实现见DistLockCatalogImpl
 const std::string LockpingsType::ConfigNS = "config.lockpings";
 

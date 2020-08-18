@@ -52,6 +52,7 @@ struct DistLockPingInfo {
 
     // the process processId of the last known owner of the lock.
     //也就是config.locks中的process字段，即config.lockpings中的_id字段
+    //每个mongo实例有一个唯一的electionId，发生主从切换则会自增，例如从"electionId" : ObjectId("7fffffff0000000000000006"),到"electionId" : ObjectId("7fffffff0000000000000007"),
     std::string processId;
 
     // the ping value from the last owner of the lock.
@@ -69,6 +70,6 @@ struct DistLockPingInfo {
     // the election id of the config server when this object was updated.
     // Note: unused by legacy dist lock.
     //db.serverStatus().repl.electionId获取的值
-    OID electionId;
+    OID electionId; //每隔mongo实例对应一个唯一的electionId
 };
 }

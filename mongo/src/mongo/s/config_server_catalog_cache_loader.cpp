@@ -163,7 +163,8 @@ void ConfigServerCatalogCacheLoader::waitForCollectionFlush(OperationContext* op
     MONGO_UNREACHABLE;
 }
 
-std::shared_ptr<Notification<void>> ConfigServerCatalogCacheLoader::getChunksSince(
+std::shared_ptr<Notification<void>> 
+	ConfigServerCatalogCacheLoader::getChunksSince(
     const NamespaceString& nss,
     ChunkVersion version,
     stdx::function<void(OperationContext*, StatusWith<CollectionAndChangedChunks>)> callbackFn) {

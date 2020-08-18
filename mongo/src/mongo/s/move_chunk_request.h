@@ -144,6 +144,7 @@ private:
 
     // Assures the collection has not been dropped and recreated since the moveChunk was sent.
     //object ID
+    //真正来源为MigrateInfo.version
     OID _versionEpoch;
 
     // This value is used by the migration source to determine the data size threshold above which a

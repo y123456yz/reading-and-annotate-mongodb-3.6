@@ -135,8 +135,11 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
                                                MoveChunkRequest request,
                                                ConnectionString donorConnStr,
                                                HostAndPort recipientHost)
-    : _args(std::move(request)),
+	//moveChunk命令参数
+    : _args(std::move(request)), 
+    //源分片地址信息
       _donorConnStr(std::move(donorConnStr)),
+    //目的分片信息
       _recipientHost(std::move(recipientHost)) {
     invariant(!opCtx->lockState()->isLocked());
 
@@ -156,7 +159,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
 
         ChunkVersion unusedShardVersion;
         Status refreshStatus = 
-			//获取nss对应shardversion
+			//获取nss对应shardversion //获取nss对应的最新ChunkVersion
             shardingState->refreshMetadataNow(opCtx, getNss(), &unusedShardVersion);
         uassert(refreshStatus.code(),
                 str::stream() << "cannot start migrate of chunk " << _args.toString() << " due to "

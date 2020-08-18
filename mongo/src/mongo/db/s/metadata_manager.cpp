@@ -183,6 +183,7 @@ void MetadataManager::_clearAllCleanups(WithLock, Status status) {
     _rangesToClean.clear(status);
 }
 
+//获取元数据信息 CollectionShardingState::getMetadata调用
 ScopedCollectionMetadata MetadataManager::getActiveMetadata(std::shared_ptr<MetadataManager> self) {
     stdx::lock_guard<stdx::mutex> lg(_managerLock);
     if (!_metadata.empty()) {
@@ -568,7 +569,8 @@ ScopedCollectionMetadata& ScopedCollectionMetadata::operator=(ScopedCollectionMe
     return *this;
 }
 
-CollectionMetadata* ScopedCollectionMetadata::getMetadata() const {
+CollectionMetadata* 
+  ScopedCollectionMetadata::getMetadata() const {
     return _metadataTracker ? &_metadataTracker->metadata : nullptr;
 }
 

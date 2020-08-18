@@ -49,6 +49,8 @@ class OperationContext;
  * Interface through which the sharding catalog cache requests the set of changed chunks to be
  * retrieved from the persisted metadata store.
  */
+//CatalogCache._cacheLoader为该类型
+//ShardServerCatalogCacheLoader  ReadOnlyCatalogCacheLoader  ConfigServerCatalogCacheLoader继承该类
 class CatalogCacheLoader {
 public:
     virtual ~CatalogCacheLoader() = default;

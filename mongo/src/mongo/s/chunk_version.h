@@ -50,7 +50,8 @@ class StatusWith;
  * expected from types.
  //ShardingState::_refreshMetadata中返回获取
  */
- //chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
+//chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
+//MigrateInfo.version成员为该类型
 struct ChunkVersion {
 public:
     /**

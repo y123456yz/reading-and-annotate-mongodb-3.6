@@ -38,6 +38,7 @@ namespace mongo {
 namespace {
 
 const char kMoveChunk[] = "moveChunk";
+//来源参考MoveChunkRequest::appendAsCommand
 const char kEpoch[] = "epoch";
 const char kChunkVersion[] = "chunkVersion";
 const char kConfigServerConnectionString[] = "configdb";
@@ -57,6 +58,7 @@ MoveChunkRequest::MoveChunkRequest(NamespaceString nss,
       _range(std::move(range)),
       _secondaryThrottle(std::move(secondaryThrottle)) {}
 
+//MoveChunkRequest::appendAsCommand和MoveChunkRequest::createFromCommand分别对应构造和解析
 StatusWith<MoveChunkRequest> MoveChunkRequest::createFromCommand(NamespaceString nss,
                                                                  const BSONObj& obj) {
     auto secondaryThrottleStatus = MigrationSecondaryThrottleOptions::createFromCommand(obj);
@@ -93,6 +95,7 @@ StatusWith<MoveChunkRequest> MoveChunkRequest::createFromCommand(NamespaceString
 
     {
         BSONElement epochElem;
+		//epoch来源参考MoveChunkRequest::appendAsCommand
         Status status = bsonExtractTypedField(obj, kEpoch, BSONType::jstOID, &epochElem);
         if (!status.isOK())
             return status;
@@ -140,6 +143,7 @@ StatusWith<MoveChunkRequest> MoveChunkRequest::createFromCommand(NamespaceString
 }
 
 //构造moveChunk报文内容  MigrationManager::_schedule调用
+//MoveChunkRequest::appendAsCommand和MoveChunkRequest::createFromCommand分别对应构造和解析
 void MoveChunkRequest::appendAsCommand(BSONObjBuilder* builder,
                                        const NamespaceString& nss,
                                        ChunkVersion chunkVersion,
@@ -155,6 +159,7 @@ void MoveChunkRequest::appendAsCommand(BSONObjBuilder* builder,
 
     builder->append(kMoveChunk, nss.ns());
     chunkVersion.appendForCommands(builder);  // 3.4 shard compatibility
+    //真正来源为MigrateInfo.version
     builder->append(kEpoch, chunkVersion.epoch());
     // config connection string is included for 3.4 shard compatibility
     builder->append(kConfigServerConnectionString, configServerConnectionString.toString());
