@@ -186,6 +186,7 @@ bool opReplicatedEnough(OperationContext* opCtx,
  * 'sessionId' unique identifier for this migration.
  */
 //构造_migrateClone报文发送给源分片，该报文用于从原分片拉取全量数据
+//MigrationDestinationManager::_migrateDriver调用
 BSONObj createMigrateCloneRequest(const NamespaceString& nss, const MigrationSessionId& sessionId) {
     BSONObjBuilder builder;
     builder.append("_migrateClone", nss.ns());
@@ -474,6 +475,7 @@ void MigrationDestinationManager::_migrateThread(BSONObj min,
     _isActiveCV.notify_all();
 }
 
+//目的分片从源分片进行全量chunk和增量数据迁移
 void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
                                                  const BSONObj& min,
                                                  const BSONObj& max,
@@ -723,7 +725,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
     }
 
     {
-        // 3. Initial bulk clone
+        // 3. Initial bulk clone   全量迁移过程
         setState(CLONE);
 
         _sessionMigration->start(opCtx->getServiceContext());
@@ -824,7 +826,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
     const BSONObj xferModsRequest = createTransferModsRequest(_nss, *_sessionId);
 
     {
-        // 4. Do bulk of mods
+        // 4. Do bulk of mods   增量迁移过程
         setState(CATCHUP);
 
         while (true) {
@@ -835,6 +837,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
                 return;
             }
 
+			//没有增量数据
             if (res["size"].number() == 0) {
                 break;
             }
@@ -876,6 +879,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
     {
         // Pause to wait for replication. This will prevent us from going into critical section
         // until we're ready.
+        //等待迁移的数据同步到大部分从节点
         Timer t;
         while (t.minutes() < 600) {
             opCtx->checkForInterrupt();
@@ -971,6 +975,7 @@ void MigrationDestinationManager::_migrateDriver(OperationContext* opCtx,
     conn.done();
 }
 
+//MigrationDestinationManager::_migrateDriver调用
 bool MigrationDestinationManager::_applyMigrateOp(OperationContext* opCtx,
                                                   const NamespaceString& nss,
                                                   const BSONObj& min,

@@ -49,6 +49,7 @@ namespace {
 // Used to generate sequence numbers to assign to each newly created ChunkManager
 AtomicUInt32 nextCMSequenceNumber(0);
 
+//obj中是否有type类型
 void checkAllElementsAreOfType(BSONType type, const BSONObj& o) {
     for (const auto&& element : o) {
         uassert(ErrorCodes::ConflictingOperationInProgress,
@@ -72,6 +73,7 @@ ChunkManager::ChunkManager(NamespaceString nss,
       _shardKeyPattern(shardKeyPattern),
       _defaultCollator(std::move(defaultCollator)),
       _unique(unique),
+      ////路由表缓存在这里  ChunkManager::toString可以打印mongos缓存得路由表
       _chunkMap(std::move(chunkMap)),
       _chunkMapViews(_constructChunkMapViews(collectionVersion.epoch(), _chunkMap)),
       _collectionVersion(collectionVersion) {}
@@ -145,7 +147,7 @@ void ChunkManager::getShardIdsForQuery(OperationContext* opCtx,
     //   Key { a: 1, b: 1 },
     //   Query { a : { $gte : 1, $lt : 2 },
     //            b : { $gte : 3, $lt : 4 } }
-    //   => Bounds { a : [1, 2), b : [3, 4) }
+    //   => Bounds { a : [1, 2), b : [3, 4) }  
     IndexBounds bounds = getIndexBoundsForQuery(_shardKeyPattern.toBSON(), *cq);
 
     // Transforms bounds for each shard key field into full shard key ranges
@@ -153,6 +155,7 @@ void ChunkManager::getShardIdsForQuery(OperationContext* opCtx,
     //   Key { a : 1, b : 1 }
     //   Bounds { a : [1, 2), b : [3, 4) }
     //   => Ranges { a : 1, b : 3 } => { a : 2, b : 4 }
+    //typedef std::vector<std::pair< BSONObj, BSONObj >> BoundList;
     BoundList ranges = _shardKeyPattern.flattenBounds(bounds);
 
     for (BoundList::const_iterator it = ranges.begin(); it != ranges.end(); ++it) {
@@ -204,6 +207,14 @@ void ChunkManager::getAllShardIds(std::set<ShardId>* all) const {
                    [](const ShardVersionMap::value_type& pair) { return pair.first; });
 }
 
+/*
+// Transforms query into bounds for each field in the shard key
+// for example :
+//	 Key { a: 1, b: 1 },  索引
+//	 Query { a : { $gte : 1, $lt : 2 },
+//			  b : { $gte : 3, $lt : 4 } }   查询条件
+//	 => Bounds { a : [1, 2), b : [3, 4) }     转换为bounds类型
+*/
 IndexBounds ChunkManager::getIndexBoundsForQuery(const BSONObj& key,
                                                  const CanonicalQuery& canonicalQuery) {
     // $text is not allowed in planning since we don't have text index on mongos.

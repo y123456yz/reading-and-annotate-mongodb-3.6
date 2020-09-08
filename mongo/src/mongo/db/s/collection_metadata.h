@@ -118,11 +118,12 @@ public:
      */
     boost::optional<ChunkRange> getNextOrphanRange(RangeMap const& receiveMap,
                                                    BSONObj const& lookupKey) const;
-
+    //MigrationSourceManager::MigrationSourceManager会调用
     ChunkVersion getCollVersion() const {
         return _cm->getVersion();
     }
 
+    //MigrationSourceManager::MigrationSourceManager会调用
     ChunkVersion getShardVersion() const {
         return _shardVersion;
     }

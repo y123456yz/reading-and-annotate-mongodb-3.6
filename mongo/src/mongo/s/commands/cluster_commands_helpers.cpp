@@ -442,10 +442,10 @@ CachedCollectionRoutingInfo getShardedCollection(OperationContext* opCtx,
     return routingInfo;
 }
 
-//在mongod-config中创建dbName库
+//在mongod-config中记录
 StatusWith<CachedDatabaseInfo> createShardDatabase(OperationContext* opCtx, StringData dbName) {
 	//CatalogCache::getDatabase
-	//先从mongos本地缓存中查找，没找到，则向后端mongo-cfg集群获取查找
+	//先从mongos本地缓存中查找，没找到说明没有这个库，则需要记录到cfg中
     auto dbStatus = Grid::get(opCtx)->catalogCache()->getDatabase(opCtx, dbName);
     if (dbStatus == ErrorCodes::NamespaceNotFound) {
         ConfigsvrCreateDatabase configCreateDatabaseRequest;

@@ -65,18 +65,44 @@ class StatusWith;
  *      "noBalance" : false
  *   }
  *
- */
+ */  
+/*
+const std::string CollectionType::ConfigNS = "config.collections";
+
+const BSONField<std::string> CollectionType::fullNs("_id");
+const BSONField<OID> CollectionType::epoch("lastmodEpoch");
+const BSONField<Date_t> CollectionType::updatedAt("lastmod");
+const BSONField<BSONObj> CollectionType::keyPattern("key");
+const BSONField<BSONObj> CollectionType::defaultCollation("defaultCollation");
+const BSONField<bool> CollectionType::unique("unique");
+const BSONField<UUID> CollectionType::uuid("uuid");
+
+mongos> db.collections.find()
+{ "_id" : "config.system.sessions", "lastmodEpoch" : ObjectId("5e1c7c1ae7eea8361b9f29ba"), "lastmod" : ISODate("1970-02-19T17:02:47.296Z"), "dropped" : false, "key" : { "_id" : 1 }, "unique" : false, "uuid" : UUID("6d5d29ff-d979-4c5e-ba10-d5560497c964") }
+{ "_id" : "push_open.app_device", "lastmodEpoch" : ObjectId("5f2a6342b2eabbc990d95f12"), "lastmod" : ISODate("1970-02-19T17:02:47.296Z"), "dropped" : false, "key" : { "appId" : 1, "deviceId" : 1 }, "unique" : false, "uuid" : UUID("3dd3b8a4-ab97-44dd-b8b5-bd31980638ac") }
+{ "_id" : "push_open.device", "lastmodEpoch" : ObjectId("5efe9809b2eabbc990fa0bfb"), "lastmod" : ISODate("1970-02-19T17:02:47.430Z"), "dropped" : false, "key" : { "_id" : "hashed" }, "unique" : false, "uuid" : UUID("059b876c-74d0-4beb-998a-b2356bad3416"), "noBalance" : false }
+*/
+//CollectionType和DatabaseType，一个对应表，一个对应库
+//CatalogCache::_getDatabase中从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
 class CollectionType {
 public:
     // Name of the collections collection in the config server.
+    //"config.collections";表明
     static const std::string ConfigNS;
 
+    //"config.collections"表中的_id字段
     static const BSONField<std::string> fullNs;
+    //"config.collections"表中的lastmodEpoch字段
     static const BSONField<OID> epoch;
+    //"config.collections"表中的lastmod字段
     static const BSONField<Date_t> updatedAt;
+    //"config.collections"表中的key字段
     static const BSONField<BSONObj> keyPattern;
+    //"config.collections"表中的defaultCollation字段
     static const BSONField<BSONObj> defaultCollation;
+    //"config.collections"表中的unique字段
     static const BSONField<bool> unique;
+    //"config.collections"表中的uuid字段
     static const BSONField<UUID> uuid;
 
     /**
@@ -161,15 +187,19 @@ public:
 
 private:
     // Required full namespace (with the database prefix).
+    //表名
     boost::optional<NamespaceString> _fullNs;
 
     // Required to disambiguate collection namespace incarnations.
+    //版本纪元
     boost::optional<OID> _epoch;
 
     // Required last updated time.
+    //最后一次更新时间
     boost::optional<Date_t> _updatedAt;
 
     // Optional, whether the collection has been dropped. If missing, implies false.
+    //表是否已经删除了
     boost::optional<bool> _dropped;
 
     // Sharding key. Required, if collection is not dropped.
@@ -177,15 +207,19 @@ private:
     boost::optional<KeyPattern> _keyPattern;
 
     // Optional collection default collation. If empty, implies simple collation.
+    //排序方式
     BSONObj _defaultCollation;
 
     // Optional uniqueness of the sharding key. If missing, implies false.
+    //
     boost::optional<bool> _unique;
 
     // Optional in 3.6 binaries, because UUID does not exist in featureCompatibilityVersion=3.4.
+    //该表对应唯一UUID
     boost::optional<UUID> _uuid;
 
     // Optional whether balancing is allowed for this collection. If missing, implies true.
+    //该表是否启用了balance 
     boost::optional<bool> _allowBalance;
 };
 

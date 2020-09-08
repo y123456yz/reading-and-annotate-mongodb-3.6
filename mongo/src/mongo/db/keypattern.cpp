@@ -36,6 +36,7 @@ namespace mongo {
 
 KeyPattern::KeyPattern(const BSONObj& pattern) : _pattern(pattern) {}
 
+//判断是否id范围索引
 bool KeyPattern::isIdKeyPattern(const BSONObj& pattern) {
     BSONObjIterator i(pattern);
     BSONElement e = i.next();
@@ -46,14 +47,17 @@ bool KeyPattern::isIdKeyPattern(const BSONObj& pattern) {
         i.next().eoo();
 }
 
+//是否为普通索引，如"xx":1
 bool KeyPattern::isOrderedKeyPattern(const BSONObj& pattern) {
     return IndexNames::BTREE == IndexNames::findPluginName(pattern);
 }
 
+//是否为hash索引
 bool KeyPattern::isHashedKeyPattern(const BSONObj& pattern) {
     return IndexNames::HASHED == IndexNames::findPluginName(pattern);
 }
 
+//获取所有字符串 例如： {"AA":1, "BB":-1}   {"AA":"hashed"}
 StringBuilder& operator<<(StringBuilder& sb, const KeyPattern& keyPattern) {
     // Rather than return BSONObj::toString() we construct a keyPattern string manually. This allows
     // us to avoid the cost of writing numeric direction to the str::stream which will then undergo
@@ -68,7 +72,7 @@ StringBuilder& operator<<(StringBuilder& sb, const KeyPattern& keyPattern) {
             sb << ", ";
         }
 
-        if (mongo::String == elem.type()) {
+        if (mongo::String == elem.type()) { //说明是字符串，例如hash  2d text索引都是字符串
             sb << elem;
         } else if (elem.number() >= 0) {
             // The canonical check as to whether a key pattern element is "ascending" or
@@ -83,6 +87,30 @@ StringBuilder& operator<<(StringBuilder& sb, const KeyPattern& keyPattern) {
     return sb;
 }
 
+/* Takes a BSONObj whose field names are a prefix of the fields in this keyPattern, and
+ * outputs a new bound with MinKey values appended to match the fields in this keyPattern
+ * (or MaxKey values for descending -1 fields). This is useful in sharding for
+ * calculating chunk boundaries when tag ranges are specified on a prefix of the actual
+ * shard key, or for calculating index bounds when the shard key is a prefix of the actual
+ * index used.
+ *
+ * @param makeUpperInclusive If true, then MaxKeys instead of MinKeys will be appended, so
+ * that the output bound will compare *greater* than the bound being extended (note that
+ * -1's in the keyPattern will swap MinKey/MaxKey vals. See examples).
+ *
+ * Examples:
+ * If this keyPattern is {a : 1}
+ *	 extendRangeBound( {a : 55}, false) --> {a : 55}
+ *
+ * If this keyPattern is {a : 1, b : 1}
+ *	 extendRangeBound( {a : 55}, false) --> {a : 55, b : MinKey}
+ *	 extendRangeBound( {a : 55}, true ) --> {a : 55, b : MaxKey}
+ *
+ * If this keyPattern is {a : 1, b : -1}
+ *	 extendRangeBound( {a : 55}, false) --> {a : 55, b : MaxKey}
+ *	 extendRangeBound( {a : 55}, true ) --> {a : 55, b : MinKey}
+ */
+//bound做转换，如上备注
 BSONObj KeyPattern::extendRangeBound(const BSONObj& bound, bool makeUpperInclusive) const {
     BSONObjBuilder newBound(bound.objsize());
 

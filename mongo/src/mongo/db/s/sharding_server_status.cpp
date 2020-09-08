@@ -46,6 +46,7 @@ public:
         return true;
     }
 
+	//ShardingServerStatus::generateSection
     BSONObj generateSection(OperationContext* opCtx, const BSONElement& configElement) const final {
         BSONObjBuilder result;
 

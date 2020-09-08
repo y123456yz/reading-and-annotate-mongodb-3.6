@@ -58,7 +58,7 @@ namespace {
 /**
  * Internal sharding command run on config servers to create a database.
  * Call with { _configsvrCreateDatabase: <string dbName> }
- */
+ */ //mongos构造_configsvrCreateDatabase命令发送给cfg，对应cfg中的ConfigSvrCreateDatabaseCommand
 class ConfigSvrCreateDatabaseCommand : public BasicCommand {
 public:
     ConfigSvrCreateDatabaseCommand() : BasicCommand("_configsvrCreateDatabase") {}
@@ -130,6 +130,7 @@ public:
         auto dbDistLock = uassertStatusOK(catalogClient->getDistLockManager()->lock(
             opCtx, dbname, "createDatabase", DistLockManager::kDefaultLockTimeout));
 
+		//ShardingCatalogManager::createDatabase
         ShardingCatalogManager::get(opCtx)->createDatabase(opCtx, dbname);
 
         return true;

@@ -151,7 +151,7 @@ CollectionShardingState* CollectionShardingState::get(OperationContext* opCtx,
     return shardingState->getNS(ns, opCtx);
 }
 
-//获取元数据信息  ShardingState::_refreshMetadata调用
+//获取元数据信息  ShardingState::_refreshMetadata  MigrationSourceManager::MigrationSourceManager调用
 ScopedCollectionMetadata CollectionShardingState::getMetadata() {
 	//MetadataManager::getActiveMetadata
     return _metadataManager->getActiveMetadata(_metadataManager);

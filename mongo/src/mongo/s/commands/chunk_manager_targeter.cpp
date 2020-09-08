@@ -290,7 +290,7 @@ Status ChunkManagerTargeter::targetInsert(OperationContext* opCtx,
         //
         // Inserts must contain the exact shard key.
         //
-
+		//从doc中获取shard key
         shardKey = _routingInfo->cm()->getShardKeyPattern().extractShardKeyFromDoc(doc);
 
         // Check shard key exists

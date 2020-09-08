@@ -47,6 +47,15 @@ class StatusWith;
  * collection. All manipulation of documents coming from that collection should be done with
  * this class.
  */
+/*
+mongos> db.databases.find()
+{ "_id" : "push_open", "primary" : "opush_gQmJGvRW_shard_2", "partitioned" : true }
+{ "_id" : "iot_db", "primary" : "opush_gQmJGvRW_shard_2", "partitioned" : true }
+{ "_id" : "test", "primary" : "opush_gQmJGvRW_shard_2", "partitioned" : false }
+
+*/
+//config.databases表相关操作     CollectionType和DatabaseType，一个对应表，一个对应库
+//CatalogCache::_getDatabase中从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
 class DatabaseType {
 public:
     // Name of the databases collection in the config server.
@@ -97,14 +106,17 @@ public:
 
 private:
     // Requred database name
+    //库名
     boost::optional<std::string> _name;
 
     // Required primary shard (must be set even if the database is sharded, because there
     // might be collections, which are unsharded).
+    //主分片
     boost::optional<ShardId> _primary;
 
     // Required whether sharding is enabled for this database. Even though this field is of
     // type optional, it is only used as an indicator that the value was explicitly set.
+    //sh.enableSharding('test')  则为true
     boost::optional<bool> _sharded;
 };
 

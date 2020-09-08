@@ -47,7 +47,7 @@ namespace mongo {
  *    { a : 1 }
  *    { a : 1 , b  : -1 }
  *    { a : "hashed" }
- */
+ */ //ShardKeyPattern._keyPattern为该类型
 class KeyPattern {
 public:
     /**

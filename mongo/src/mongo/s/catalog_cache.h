@@ -132,14 +132,18 @@ private:
     /**
      * Cache entry describing a collection.
      * CollectionRoutingInfoEntry存储表的chunk信息，CachedCollectionRoutingInfo存储表的主分片信息
-     */ //CachedDatabaseInfo._db.collections成员为该类型,CatalogCache::_scheduleCollectionRefresh刷新集合路由信息
+     */ 
+     //CachedDatabaseInfo._db.collections成员为该类型,
+     //CatalogCache::_scheduleCollectionRefresh  CatalogCache::_getDatabase刷新集合路由信息
     struct CollectionRoutingInfoEntry {
         // Specifies whether this cache entry needs a refresh (in which case routingInfo should not
         // be relied on) or it doesn't, in which case there should be a non-null routingInfo.
+        //是否需要刷新集合路由信息
         bool needsRefresh{true};
 
         // Contains a notification to be waited on for the refresh to complete (only available if
         // needsRefresh is true)
+        //如果needsRefresh=ture，则刷新后回调处理
         std::shared_ptr<Notification<Status>> refreshCompletionNotification;
 
         // Contains the cached routing information (only available if needsRefresh is false)
@@ -264,3 +268,4 @@ private:
 };
 
 }  // namespace mongo
+

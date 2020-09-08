@@ -270,13 +270,18 @@ Status ShardingCatalogClientImpl::_log(OperationContext* opCtx,
     return result;
 }
 
-StatusWith<repl::OpTimeWith<DatabaseType>> ShardingCatalogClientImpl::getDatabase(
+
+//CatalogCache::_getDatabase中调用
+//从cfg复制集config.database表中获取dbName库对应的DatabaseType数据信息
+StatusWith<repl::OpTimeWith<DatabaseType>> 
+ ShardingCatalogClientImpl::getDatabase(
     OperationContext* opCtx, const std::string& dbName, repl::ReadConcernLevel readConcernLevel) {
     if (!NamespaceString::validDBName(dbName, NamespaceString::DollarInDbNameBehavior::Allow)) {
         return {ErrorCodes::InvalidNamespace, stream() << dbName << " is not a valid db name"};
     }
 
     // The admin database is always hosted on the config server.
+    //admin库始终在config中，返回admin库对应DatabaseType信息
     if (dbName == "admin") {
         DatabaseType dbt;
         dbt.setName(dbName);
@@ -287,6 +292,7 @@ StatusWith<repl::OpTimeWith<DatabaseType>> ShardingCatalogClientImpl::getDatabas
     }
 
     // The config database's primary shard is always config, and it is always sharded.
+    //获取config库对应DatabaseType信息
     if (dbName == "config") {
         DatabaseType dbt;
         dbt.setName(dbName);
@@ -296,13 +302,16 @@ StatusWith<repl::OpTimeWith<DatabaseType>> ShardingCatalogClientImpl::getDatabas
         return repl::OpTimeWith<DatabaseType>(dbt);
     }
 
+	//先从config.databases就近节点中获取dbName库对应的DatabaseType数据信息
     auto result = _fetchDatabaseMetadata(opCtx, dbName, kConfigReadSelector, readConcernLevel);
     if (result == ErrorCodes::NamespaceNotFound) {
         // If we failed to find the database metadata on the 'nearest' config server, try again
         // against the primary, in case the database was recently created.
+        //试着从cfg的从节点获取数据
         result = _fetchDatabaseMetadata(
             opCtx, dbName, ReadPreferenceSetting{ReadPreference::PrimaryOnly}, readConcernLevel);
-        if (!result.isOK() && (result != ErrorCodes::NamespaceNotFound)) {
+		//两次都没找到，则直接报错
+		if (!result.isOK() && (result != ErrorCodes::NamespaceNotFound)) {
             return {result.getStatus().code(),
                     str::stream() << "Could not confirm non-existence of database " << dbName
                                   << " due to "
@@ -313,13 +322,18 @@ StatusWith<repl::OpTimeWith<DatabaseType>> ShardingCatalogClientImpl::getDatabas
     return result;
 }
 
-StatusWith<repl::OpTimeWith<DatabaseType>> ShardingCatalogClientImpl::_fetchDatabaseMetadata(
+//ShardingCatalogClientImpl::getDatabase调用
+//从config.databases中获取dbName库对应的DatabaseType数据信息
+StatusWith<repl::OpTimeWith<DatabaseType>> 
+ ShardingCatalogClientImpl::_fetchDatabaseMetadata(
     OperationContext* opCtx,
     const std::string& dbName,
     const ReadPreferenceSetting& readPref,
     repl::ReadConcernLevel readConcernLevel) {
+    //用户库不能是这两个特殊的库
     dassert(dbName != "admin" && dbName != "config");
 
+	//从config.databases中获取dbName库的数据信息
     auto findStatus = _exhaustiveFindOnConfig(opCtx,
                                               readPref,
                                               readConcernLevel,
@@ -331,18 +345,22 @@ StatusWith<repl::OpTimeWith<DatabaseType>> ShardingCatalogClientImpl::_fetchData
         return findStatus.getStatus();
     }
 
+	//没有该库信息直接报错
     const auto& docsWithOpTime = findStatus.getValue();
     if (docsWithOpTime.value.empty()) {
         return {ErrorCodes::NamespaceNotFound, stream() << "database " << dbName << " not found"};
     }
 
+	//库信息必须唯一
     invariant(docsWithOpTime.value.size() == 1);
 
+	//解析出DatabaseType信息
     auto parseStatus = DatabaseType::fromBSON(docsWithOpTime.value.front());
     if (!parseStatus.isOK()) {
         return parseStatus.getStatus();
     }
 
+	//返回
     return repl::OpTimeWith<DatabaseType>(parseStatus.getValue(), docsWithOpTime.opTime);
 }
 
@@ -382,6 +400,14 @@ StatusWith<repl::OpTimeWith<CollectionType>> ShardingCatalogClientImpl::getColle
     return repl::OpTimeWith<CollectionType>(collType, retOpTimePair.opTime);
 }
 
+/*
+mongos> db.collections.find()
+{ "_id" : "config.system.sessions", "lastmodEpoch" : ObjectId("5e1c7c1ae7eea8361b9f29ba"), "lastmod" : ISODate("1970-02-19T17:02:47.296Z"), "dropped" : false, "key" : { "_id" : 1 }, "unique" : false, "uuid" : UUID("6d5d29ff-d979-4c5e-ba10-d5560497c964") }
+{ "_id" : "push_aa.app_device", "lastmodEpoch" : ObjectId("5f2a6342b2eabbc990d95f12"), "lastmod" : ISODate("1970-02-19T17:02:47.296Z"), "dropped" : false, "key" : { "appId" : 1, "deviceId" : 1 }, "unique" : false, "uuid" : UUID("3dd3b8a4-ab97-44dd-b8b5-bd31980638ac") }
+{ "_id" : "push_aa.device", "lastmodEpoch" : ObjectId("5efe9809b2eabbc990fa0bfb"), "lastmod" : ISODate("1970-02-19T17:02:47.430Z"), "dropped" : false, "key" : { "_id" : "hashed" }, "unique" : false, "uuid" : UUID("059b876c-74d0-4beb-998a-b2356bad3416"), "noBalance" : false }
+*/
+//CatalogCache::_getDatabase调用
+//获取config.collections表_id中存储的表信息,也就是上面的config.system.sessions push_aa.app_device push_aa.device
 Status ShardingCatalogClientImpl::getCollections(OperationContext* opCtx,
                                                  const std::string* dbName,
                                                  std::vector<CollectionType>* collections,
@@ -389,7 +415,7 @@ Status ShardingCatalogClientImpl::getCollections(OperationContext* opCtx,
     BSONObjBuilder b;
     if (dbName) {
         invariant(!dbName->empty());
-        b.appendRegex(CollectionType::fullNs(),
+        b.appendRegex(CollectionType::fullNs(), //_id
                       string(str::stream() << "^" << pcrecpp::RE::QuoteMeta(*dbName) << "\\."));
     }
 
@@ -677,6 +703,13 @@ StatusWith<VersionType> ShardingCatalogClientImpl::getConfigVersion(
     return versionTypeResult.getValue();
 }
 
+/*
+mongos> db.databases.find()
+{ "_id" : "test", "primary" : "user-credit_oGeaZiDk_shard_1", "partitioned" : false }
+{ "_id" : "credits", "primary" : "user-credit_oGeaZiDk_shard_1", "partitioned" : true }
+mongos>    shardId也就是primary字段值
+*/
+//从cfg.database表中根据shardId获取DB名，存入dbs数组，例如上面就是test credits
 Status ShardingCatalogClientImpl::getDatabasesForShard(OperationContext* opCtx,
                                                        const ShardId& shardId,
                                                        vector<string>* dbs) {
@@ -1220,6 +1253,7 @@ Status ShardingCatalogClientImpl::_createCappedConfigCollection(
     return result.getValue().writeConcernStatus;
 }
 
+//从cfg复制集中获取query相关信息
 StatusWith<repl::OpTimeWith<vector<BSONObj>>> ShardingCatalogClientImpl::_exhaustiveFindOnConfig(
     OperationContext* opCtx,
     const ReadPreferenceSetting& readPref,

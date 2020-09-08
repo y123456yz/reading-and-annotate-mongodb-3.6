@@ -562,7 +562,7 @@ void MigrationChunkClonerSourceLegacy::_cleanup(OperationContext* opCtx) {
     }
 }
 
-//远超调用，发送cmdObj内容到目的分片
+//远程调用，发送cmdObj内容到目的分片
 StatusWith<BSONObj> MigrationChunkClonerSourceLegacy::_callRecipient(const BSONObj& cmdObj) {
     executor::RemoteCommandResponse responseStatus(
         Status{ErrorCodes::InternalError, "Uninitialized value"});

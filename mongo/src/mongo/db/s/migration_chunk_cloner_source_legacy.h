@@ -53,6 +53,7 @@ class Collection;
 class Database;
 class RecordId;
 
+//MigrationSourceManager::startClone中构造使用
 class MigrationChunkClonerSourceLegacy final : public MigrationChunkClonerSource {
     MONGO_DISALLOW_COPYING(MigrationChunkClonerSourceLegacy);
 

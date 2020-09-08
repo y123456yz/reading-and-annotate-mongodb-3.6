@@ -40,6 +40,7 @@ namespace mongo {
 
 using std::string;
 
+//"config.databases"表相关的操作都在该文件完成
 const std::string DatabaseType::ConfigNS = "config.databases";
 
 const BSONField<std::string> DatabaseType::name("_id");
@@ -47,6 +48,7 @@ const BSONField<std::string> DatabaseType::primary("primary");
 const BSONField<bool> DatabaseType::sharded("partitioned");
 
 
+//从source中解析出DatabaseType
 StatusWith<DatabaseType> DatabaseType::fromBSON(const BSONObj& source) {
     DatabaseType dbt;
 
@@ -81,6 +83,7 @@ StatusWith<DatabaseType> DatabaseType::fromBSON(const BSONObj& source) {
     return StatusWith<DatabaseType>(dbt);
 }
 
+//有效性检查
 Status DatabaseType::validate() const {
     if (!_name.is_initialized() || _name->empty()) {
         return Status(ErrorCodes::NoSuchKey, "missing name");
@@ -97,6 +100,7 @@ Status DatabaseType::validate() const {
     return Status::OK();
 }
 
+//DatabaseType转换为BSONObj
 BSONObj DatabaseType::toBSON() const {
     BSONObjBuilder builder;
     builder.append(name.name(), _name.get_value_or(""));
@@ -106,15 +110,18 @@ BSONObj DatabaseType::toBSON() const {
     return builder.obj();
 }
 
+//转换为toString
 std::string DatabaseType::toString() const {
     return toBSON().toString();
 }
 
+//set操作
 void DatabaseType::setName(const std::string& name) {
     invariant(!name.empty());
     _name = name;
 }
 
+//set操作
 void DatabaseType::setPrimary(const ShardId& primary) {
     invariant(primary.isValid());
     _primary = primary;
