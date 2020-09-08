@@ -45,6 +45,17 @@ const BSONField<bool> kDropped("dropped");
 
 }  // namespace
 
+/*
+mongos> db.collections.find()
+{ "_id" : "config.system.sessions", "lastmodEpoch" : ObjectId("5e1c7c1ae7eea8361b9f29ba"), "lastmod" : ISODate("1970-02-19T17:02:47.296Z"), "dropped" : false, "key" : { "_id" : 1 }, "unique" : false, "uuid" : UUID("6d5d29ff-d979-4c5e-ba10-d5560497c964") }
+{ "_id" : "push_open.app_device", "lastmodEpoch" : ObjectId("5f2a6342b2eabbc990d95f12"), "lastmod" : ISODate("1970-02-19T17:02:47.296Z"), "dropped" : false, "key" : { "appId" : 1, "deviceId" : 1 }, "unique" : false, "uuid" : UUID("3dd3b8a4-ab97-44dd-b8b5-bd31980638ac") }
+{ "_id" : "push_open.device", "lastmodEpoch" : ObjectId("5efe9809b2eabbc990fa0bfb"), "lastmod" : ISODate("1970-02-19T17:02:47.430Z"), "dropped" : false, "key" : { "_id" : "hashed" }, "unique" : false, "uuid" : UUID("059b876c-74d0-4beb-998a-b2356bad3416"), "noBalance" : false }
+*/
+
+
+//config.collections表管理相关操作全在本文件中实现
+
+
 const std::string CollectionType::ConfigNS = "config.collections";
 
 const BSONField<std::string> CollectionType::fullNs("_id");
@@ -55,6 +66,7 @@ const BSONField<BSONObj> CollectionType::defaultCollation("defaultCollation");
 const BSONField<bool> CollectionType::unique("unique");
 const BSONField<UUID> CollectionType::uuid("uuid");
 
+//从source中解析出CollectionType信息
 StatusWith<CollectionType> CollectionType::fromBSON(const BSONObj& source) {
     CollectionType coll;
 
@@ -181,6 +193,7 @@ StatusWith<CollectionType> CollectionType::fromBSON(const BSONObj& source) {
     return StatusWith<CollectionType>(coll);
 }
 
+//有效性检查
 Status CollectionType::validate() const {
     // These fields must always be set
     if (!_fullNs.is_initialized()) {
@@ -218,6 +231,7 @@ Status CollectionType::validate() const {
     return Status::OK();
 }
 
+//转换为BSONObj
 BSONObj CollectionType::toBSON() const {
     BSONObjBuilder builder;
 
@@ -254,10 +268,12 @@ BSONObj CollectionType::toBSON() const {
     return builder.obj();
 }
 
+//转换为toString
 std::string CollectionType::toString() const {
     return toBSON().toString();
 }
 
+//以下为各种set操作
 void CollectionType::setNs(const NamespaceString& fullNs) {
     invariant(fullNs.isValid());
     _fullNs = fullNs;
@@ -276,6 +292,7 @@ void CollectionType::setKeyPattern(const KeyPattern& keyPattern) {
     _keyPattern = keyPattern;
 }
 
+//判断本CollectionType是否和other相同
 bool CollectionType::hasSameOptions(CollectionType& other) {
     // The relevant options must have been set on this CollectionType.
     invariant(_fullNs && _keyPattern && _unique);

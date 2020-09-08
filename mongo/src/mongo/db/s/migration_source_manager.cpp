@@ -131,6 +131,7 @@ MONGO_FP_DECLARE(failMigrationCommit);
 MONGO_FP_DECLARE(hangBeforeLeavingCriticalSection);
 MONGO_FP_DECLARE(migrationCommitNetworkError);
 
+//源分片迁移管理模块初始化
 MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
                                                MoveChunkRequest request,
                                                ConnectionString donorConnStr,
@@ -176,9 +177,11 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
 
         UUID collectionUUID;
         if (autoColl.getCollection()->uuid()) {
+			//AutoGetCollection::getCollection
             collectionUUID = autoColl.getCollection()->uuid().value();
         }
 
+		//CollectionShardingState::getMetadata 获取元数据信息ScopedCollectionMetadata
         auto metadata = CollectionShardingState::get(opCtx, getNss())->getMetadata();
         uassert(ErrorCodes::IncompatibleShardingMetadata,
                 str::stream() << "cannot move chunks for an unsharded collection",
@@ -189,7 +192,9 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
 
     const auto& collectionMetadata = std::get<0>(collectionMetadataAndUUID);
 
+	//CollectionMetadata::getCollVersion
     const auto collectionVersion = collectionMetadata->getCollVersion();
+	//CollectionMetadata::getShardVersion
     const auto shardVersion = collectionMetadata->getShardVersion();
 
     // If the shard major version is zero, this means we do not have any chunks locally to migrate
@@ -198,7 +203,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
             str::stream() << "cannot move chunk " << _args.toString()
                           << " because the shard doesn't contain any chunks",
             shardVersion.majorVersion() > 0);
-
+	//集合已经删除
     uassert(ErrorCodes::StaleEpoch,
             str::stream() << "cannot move chunk " << _args.toString()
                           << " because collection may have been dropped. "
@@ -212,6 +217,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
     chunkToMove.setMin(_args.getMinKey());
     chunkToMove.setMax(_args.getMaxKey());
 
+	//collectionMetadata::checkChunkIsValid  chunk检查
     Status chunkValidateStatus = collectionMetadata->checkChunkIsValid(chunkToMove);
     uassert(chunkValidateStatus.code(),
             str::stream() << "Unable to move chunk with arguments '" << redact(_args.toString())
@@ -221,6 +227,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
 
 	//ChunkVersion::epoch,获取_epoch
     _collectionEpoch = collectionVersion.epoch();
+	//获取collectionUUID信息
     _collectionUuid = std::get<1>(collectionMetadataAndUUID);
 }
 
@@ -313,7 +320,8 @@ Status MigrationSourceManager::awaitToCatchUp(OperationContext* opCtx) {
     return Status::OK();
 }
 
-//加互斥锁保证表不会有新数据写入  //MoveChunkCommand::_runImpl
+//加互斥锁保证表不会有新数据写入  
+//MoveChunkCommand::_runImpl
 Status MigrationSourceManager::enterCriticalSection(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(_state == kCloneCaughtUp);
@@ -737,6 +745,7 @@ std::shared_ptr<Notification<void>> MigrationSourceManager::getMigrationCritical
     return nullptr;
 }
 
+//ActiveMigrationsRegistry::getActiveMigrationStatusReport
 BSONObj MigrationSourceManager::getMigrationStatusReport() const {
     return migrationutil::makeMigrationStatusDocument(getNss(),
                                                       _args.getFromShardId(),

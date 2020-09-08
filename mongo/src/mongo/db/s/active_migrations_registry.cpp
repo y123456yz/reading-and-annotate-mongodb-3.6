@@ -95,6 +95,7 @@ boost::optional<NamespaceString> ActiveMigrationsRegistry::getActiveDonateChunkN
     return boost::none;
 }
 
+////ShardingServerStatus::generateSection
 BSONObj ActiveMigrationsRegistry::getActiveMigrationStatusReport(OperationContext* opCtx) {
     boost::optional<NamespaceString> nss;
     {

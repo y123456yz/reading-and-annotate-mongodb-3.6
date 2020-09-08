@@ -52,8 +52,17 @@ class OperationContext;
  * the specified direction of traversal.  For example, given a simple index {i:1}
  * and direction +1, one valid BoundList is: (1, 2); (4, 6).  The same BoundList
  * would be valid for index {i:-1} with direction -1.
+ 
+ // Transforms bounds for each shard key field into full shard key ranges
+ // for example :
+ //   Key { a : 1, b : 1 }  索引
+ //   Query { a : { $gte : 1, $lt : 2 },
+ //            b : { $gte : 3, $lt : 4 } }  查询条件
+ //   Bounds { a : [1, 2), b : [3, 4) }       转换为Bounds类型,也就是对应这里的IndexBounds类
+ //   => Ranges { a : 1, b : 3 } => { a : 2, b : 4 } 转换为BoundList类型
  */
-typedef std::vector<std::pair<BSONObj, BSONObj>> BoundList;
+
+typedef std::vector<std::pair< BSONObj, BSONObj >> BoundList;
 
 /**
  * A ShardKeyPattern represents the key pattern used to partition data in a collection between
@@ -62,7 +71,7 @@ typedef std::vector<std::pair<BSONObj, BSONObj>> BoundList;
  *
  * Shard key pattern paths may be nested, but are not traversable through arrays - this means
  * a shard key pattern path always yields a single value.
- */
+ */ //片建信息相关
 class ShardKeyPattern {
 public:
     // Maximum size of shard key
@@ -234,11 +243,12 @@ public:
 
 private:
     // Ordered, parsed paths
+    //也就是BSONOBJ中解析出索引信息，如{ a : "hashed" }  { a : 1 , b.c : 1 }等
     std::vector<std::unique_ptr<FieldRef>> _keyPatternPaths;
 
-    //shard key片建信息
+    //shard key片建信息，BSONObj结构    
     KeyPattern _keyPattern;
-
+    //是否有_id索引
     bool _hasId;
 };
 

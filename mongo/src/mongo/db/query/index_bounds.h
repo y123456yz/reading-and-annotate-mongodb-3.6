@@ -80,7 +80,16 @@ struct OrderedIntervalList {
  * Tied to an index.  Permissible values for all fields in the index.  Requires the index to
  * interpret.  Previously known as FieldRangeVector.
  * 索引兼职范围相关
- */
+
+// Transforms bounds for each shard key field into full shard key ranges
+// for example :
+//	 Key { a : 1, b : 1 }  索引
+//	 Query { a : { $gte : 1, $lt : 2 },
+//			  b : { $gte : 3, $lt : 4 } }  查询条件
+//	 Bounds { a : [1, 2), b : [3, 4) }       转换为IndexBounds类型
+//	 => Ranges { a : 1, b : 3 } => { a : 2, b : 4 } 转换为BoundList类型
+
+*/
 struct IndexBounds {
     IndexBounds() : isSimpleRange(false), boundInclusion(BoundInclusion::kIncludeStartKeyOnly) {}
 

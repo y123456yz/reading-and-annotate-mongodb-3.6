@@ -262,6 +262,7 @@ private:
     CollectionRangeDeleter _rangesToClean;
 };
 
+//集合元数据信息存在该结构中，参考CollectionShardingState::getMetadata()
 class ScopedCollectionMetadata {
     MONGO_DISALLOW_COPYING(ScopedCollectionMetadata);
 
@@ -280,7 +281,7 @@ public:
      * Dereferencing the ScopedCollectionMetadata dereferences the private CollectionMetadata.
      */
     CollectionMetadata* getMetadata() const;
-
+    
     CollectionMetadata* operator->() const {
         return getMetadata();
     }

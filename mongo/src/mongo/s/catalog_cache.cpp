@@ -117,6 +117,7 @@ CatalogCache::CatalogCache(CatalogCacheLoader& cacheLoader) : _cacheLoader(cache
 
 CatalogCache::~CatalogCache() = default;
 
+//从cfg获取dbName库的路由信息
 StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx,
                                                          StringData dbName) {
     try {
@@ -126,14 +127,14 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
     }
 }
 
-//ChunkManagerTargeter::init调用，获取集合路由信息
+//ChunkManagerTargeter::init调用，获取集合路由缓存信息
 StatusWith<CachedCollectionRoutingInfo> 
   CatalogCache::getCollectionRoutingInfo(
     OperationContext* opCtx, const NamespaceString& nss) {
     while (true) {
         std::shared_ptr<DatabaseInfoEntry> dbEntry;
         try {
-			//获取nss集合对应的DB信息
+			//从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
             dbEntry = _getDatabase(opCtx, nss.db());
         } catch (const DBException& ex) {
             return ex.toStatus();
@@ -157,6 +158,7 @@ StatusWith<CachedCollectionRoutingInfo>
                                       << shardStatus.getStatus().toString()};
             }
 
+			//构造CachedCollectionRoutingInfo返回
             return {CachedCollectionRoutingInfo(
                 dbEntry->primaryShardId, nss, std::move(shardStatus.getValue()))};
         }
@@ -293,40 +295,53 @@ void CatalogCache::purgeAllDatabases() {
     _databases.clear();
 }
 
-//CatalogCache::getCollectionRoutingInfo调用
+//CatalogCache::getCollectionRoutingInfo  CatalogCache::getDatabase调用
+//从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
 std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(OperationContext* opCtx,
                                                                             StringData dbName) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
 
+	//如果该db的路由表已经存在，则直接返回
     auto it = _databases.find(dbName);
     if (it != _databases.end()) {
         return it->second;
     }
 
+	//如果没有缓存，则从cfg中获取
+
+
+	//Grid::catalogClient获取ShardingCatalogClient   
     const auto catalogClient = Grid::get(opCtx)->catalogClient();
 
     const auto dbNameCopy = dbName.toString();
 
     // Load the database entry
+    //sharding_catalog_client_impl::getDatabase从cfg复制集config.database表中获取dbName库对应的DatabaseType数据信息
     const auto opTimeWithDb = uassertStatusOK(catalogClient->getDatabase(
         opCtx, dbNameCopy, repl::ReadConcernLevel::kMajorityReadConcern));
+	//DatabaseType类型
     const auto& dbDesc = opTimeWithDb.value;
 
     // Load the sharded collections entries
     std::vector<CollectionType> collections;
     repl::OpTime collLoadConfigOptime;
     uassertStatusOK(
+		//sharding_catalog_client_impl::getCollections 
+		//获取config.collections表_id中存储的表信息
         catalogClient->getCollections(opCtx, &dbNameCopy, &collections, &collLoadConfigOptime));
 
     StringMap<CollectionRoutingInfoEntry> collectionEntries;
     for (const auto& coll : collections) {
+		//表已经删除了
         if (coll.getDropped()) {
             continue;
         }
 
+		//需要刷新集合路由信息
         collectionEntries[coll.getNs().ns()].needsRefresh = true;
     }
 
+	//db库及其对应的collections(config.collections)表信息全部存放在该_databases中
     return _databases[dbName] = std::shared_ptr<DatabaseInfoEntry>(new DatabaseInfoEntry{
                dbDesc.getPrimary(), dbDesc.getSharded(), std::move(collectionEntries)});
 }

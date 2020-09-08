@@ -64,8 +64,9 @@ bool isHashedPatternEl(const BSONElement& el) {
  * Currently the allowable shard keys are either:
  * i) a hashed single field, e.g. { a : "hashed" }, or
  * ii) a compound list of ascending, potentially-nested field paths, e.g. { a : 1 , b.c : 1 }
- */
-std::vector<std::unique_ptr<FieldRef>> parseShardKeyPattern(const BSONObj& keyPattern) {
+ */ //解析出索引信息，如{ a : "hashed" }  { a : 1 , b.c : 1 }等
+std::vector<std::unique_ptr<FieldRef>> 
+parseShardKeyPattern(const BSONObj& keyPattern) {
     std::vector<std::unique_ptr<FieldRef>> parsedPaths;
 
     for (const auto& patternEl : keyPattern) {
@@ -115,6 +116,7 @@ bool isShardKeyElement(const BSONElement& element, bool allowRegex) {
 
 }  // namespace
 
+//分片片建最大长度限制检查
 Status ShardKeyPattern::checkShardKeySize(const BSONObj& shardKey) {
     if (shardKey.objsize() <= kMaxShardKeySizeBytes)
         return Status::OK();
@@ -129,8 +131,11 @@ Status ShardKeyPattern::checkShardKeySize(const BSONObj& shardKey) {
 }
 
 ShardKeyPattern::ShardKeyPattern(const BSONObj& keyPattern)
+	//解析出索引信息，如{ a : "hashed" }  { a : 1 , b.c : 1 }等
     : _keyPatternPaths(parseShardKeyPattern(keyPattern)),
+    //原始BSONObj
       _keyPattern(_keyPatternPaths.empty() ? BSONObj() : keyPattern),
+      //是否有_id索引
       _hasId(keyPattern.hasField("_id"_sd)) {}
 
 ShardKeyPattern::ShardKeyPattern(const KeyPattern& keyPattern)
@@ -140,26 +145,32 @@ bool ShardKeyPattern::isValid() const {
     return !_keyPattern.toBSON().isEmpty();
 }
 
+//是否hash索引
 bool ShardKeyPattern::isHashedPattern() const {
     return isHashedPatternEl(_keyPattern.toBSON().firstElement());
 }
 
+//从ShardKeyPattern中获取_keyPattern成员
 const KeyPattern& ShardKeyPattern::getKeyPattern() const {
     return _keyPattern;
 }
 
+//获取_keyPatternPaths信息
 const std::vector<std::unique_ptr<FieldRef>>& ShardKeyPattern::getKeyPatternFields() const {
     return _keyPatternPaths;
 }
 
+//获取_keyPattern对应toBSON信息
 const BSONObj& ShardKeyPattern::toBSON() const {
     return _keyPattern.toBSON();
 }
 
+//ShardKeyPattern对应的string信息
 string ShardKeyPattern::toString() const {
     return toBSON().toString();
 }
 
+//shardKey是否和_keyPattern内容一致，如果一致可以判断为是分片片建
 bool ShardKeyPattern::isShardKey(const BSONObj& shardKey) const {
     // Shard keys are always of the form: { 'nested.path' : value, 'nested.path2' : value }
 
@@ -186,6 +197,7 @@ BSONObj ShardKeyPattern::normalizeShardKey(const BSONObj& shardKey) const {
         return BSONObj();
 
     // We want to return an empty key if users pass us something that's not a shard key
+    //shardKey不正确，直接返回空的BSONObj
     if (shardKey.nFields() > _keyPattern.toBSON().nFields())
         return BSONObj();
 
@@ -224,6 +236,29 @@ static BSONElement extractKeyElementFromMatchable(const MatchableDocument& match
     return matchEl;
 }
 
+/**
+ * Given a MatchableDocument, extracts the shard key corresponding to the key pattern.
+ * For each path in the shard key pattern, extracts a value from the matchable document.
+ *
+ * Paths to shard key fields must not contain arrays at any level, and shard keys may not
+ * be array fields, undefined, or non-storable sub-documents.  If the shard key pattern is
+ * a hashed key pattern, this method performs the hashing.
+ *
+ * If a shard key cannot be extracted, returns an empty BSONObj().
+ *
+ * Examples:
+ *	If 'this' KeyPattern is { a  : 1 }
+ *	 { a: "hi" , b : 4} --> returns { a : "hi" }， 到a="hi"这个分片
+ *	 { c : 4 , a : 2 } -->	returns { a : 2 }， 到a=2这个分片
+ *	 { b : 2 }	-> returns {}，到所有分片
+ *	 { a : [1,2] } -> returns {}，到所有分片，因为这里是一个范围
+ *	If 'this' KeyPattern is { a  : "hashed" }
+ *	 { a: 1 } --> returns { a : NumberLong("5902408780260971510")  } 
+ *	If 'this' KeyPattern is { 'a.b' : 1 }
+ *	 { a : { b : "hi" } } --> returns { 'a.b' : "hi" }
+ *	 { a : [{ b : "hi" }] } --> returns {}
+ */
+
 //从matchable中解析匹配shardkey对应的信息  ShardKeyPattern::extractShardKeyFromDoc中调用
 BSONObj ShardKeyPattern::extractShardKeyFromMatchable(const MatchableDocument& matchable) const {
     if (!isValid())
@@ -255,12 +290,14 @@ BSONObj ShardKeyPattern::extractShardKeyFromMatchable(const MatchableDocument& m
     return keyBuilder.obj();
 }
 
-//从doc中解析shardkey对应的值  isInRange
+//从doc中解析shardkey对应的值  
 BSONObj ShardKeyPattern::extractShardKeyFromDoc(const BSONObj& doc) const {
     BSONMatchableDocument matchable(doc);
     return extractShardKeyFromMatchable(matchable);
 }
 
+
+//ShardKeyPattern::extractShardKeyFromQuery调用
 static BSONElement findEqualityElement(const EqualityMatches& equalities, const FieldRef& path) {
     int parentPathPart;
     const BSONElement parentEl =
@@ -277,6 +314,34 @@ static BSONElement findEqualityElement(const EqualityMatches& equalities, const 
     return extractKeyElementFromMatchable(matchable, suffixStr);
 }
 
+
+/**
+ * Given a simple BSON query, extracts the shard key corresponding to the key pattern
+ * from equality matches in the query.	The query expression *must not* be a complex query
+ * with sorts or other attributes.
+ *
+ * Logically, the equalities in the BSON query can be serialized into a BSON document and
+ * then a shard key is extracted from this equality document.
+ *
+ * NOTE: BSON queries and BSON documents look similar but are different languages.	Use the
+ * correct shard key extraction function.
+ *
+ * Returns !OK status if the query cannot be parsed.  Returns an empty BSONObj() if there is
+ * no shard key found in the query equalities.
+ *
+ * Examples:
+ *	If the key pattern is { a : 1 }
+ *	 { a : "hi", b : 4 } --> returns { a : "hi" }
+ *	 { a : { $eq : "hi" }, b : 4 } --> returns { a : "hi" }
+ *	 { $and : [{a : { $eq : "hi" }}, { b : 4 }] } --> returns { a : "hi" }
+ *	If the key pattern is { 'a.b' : 1 }
+ *	 { a : { b : "hi" } } --> returns { 'a.b' : "hi" }
+ *	 { 'a.b' : "hi" } --> returns { 'a.b' : "hi" }
+ *	 { a : { b : { $eq : "hi" } } } --> returns {} because the query language treats this as
+ *												   a : { $eq : { b : ... } }
+ */
+
+////从basicQuery中提取shard key信息
 StatusWith<BSONObj> ShardKeyPattern::extractShardKeyFromQuery(OperationContext* opCtx,
                                                               const BSONObj& basicQuery) const {
     if (!isValid())
@@ -300,6 +365,7 @@ StatusWith<BSONObj> ShardKeyPattern::extractShardKeyFromQuery(OperationContext* 
     return extractShardKeyFromQuery(*query);
 }
 
+//从CanonicalQuery中提取shard key信息  ShardKeyPattern::extractShardKeyFromQuery调用
 BSONObj ShardKeyPattern::extractShardKeyFromQuery(const CanonicalQuery& query) const {
     if (!isValid())
         return BSONObj();
@@ -345,6 +411,38 @@ BSONObj ShardKeyPattern::extractShardKeyFromQuery(const CanonicalQuery& query) c
     return keyBuilder.obj();
 }
 
+/**
+ * Returns true if the shard key pattern can ensure that the unique index pattern is
+ * respected across all shards.
+ *
+ * Primarily this just checks whether the shard key pattern field names are equal to or a
+ * prefix of the unique index pattern field names.	Since documents with the same fields in
+ * the shard key pattern are guaranteed to go to the same shard, and all documents must
+ * contain the full shard key, a unique index with a shard key pattern prefix can be sure
+ * when resolving duplicates that documents on other shards will have different shard keys,
+ * and so are not duplicates.
+ *
+ * Hashed shard key patterns are similar to ordinary patterns in that they guarantee similar
+ * shard keys go to the same shard.
+ *
+ * Examples:
+ *	   shard key {a : 1} is compatible with a unique index on {_id : 1}
+ *	   shard key {a : 1} is compatible with a unique index on {a : 1 , b : 1}
+ *	   shard key {a : 1} is compatible with a unique index on {a : -1 , b : 1 }
+ *	   shard key {a : "hashed"} is compatible with a unique index on {a : 1}
+ *	   shard key {a : 1} is not compatible with a unique index on {b : 1}
+ *	   shard key {a : "hashed" , b : 1 } is not compatible with unique index on { b : 1 }
+ *
+ * All unique index patterns starting with _id are assumed to be enforceable by the fact
+ * that _ids must be unique, and so all unique _id prefixed indexes are compatible with
+ * any shard key pattern.
+ *
+ * NOTE: We assume 'uniqueIndexPattern' is a valid unique index pattern - a pattern like
+ * { k : "hashed" } is not capable of being a unique index and is an invalid argument to
+ * this method.
+ */
+
+//分片模式创建唯一索引的时候，唯一索引最左字段必须包含片建  参考checkUniqueIndexConstraints
 bool ShardKeyPattern::isUniqueIndexCompatible(const BSONObj& uniqueIndexPattern) const {
     dassert(!KeyPattern::isHashedKeyPattern(uniqueIndexPattern));
 
@@ -356,6 +454,37 @@ bool ShardKeyPattern::isUniqueIndexCompatible(const BSONObj& uniqueIndexPattern)
     return _keyPattern.toBSON().isFieldNamePrefixOf(uniqueIndexPattern);
 }
 
+/**
+ * Return an ordered list of bounds generated using this KeyPattern and the
+ * bounds from the IndexBounds.  This function is used in sharding to
+ * determine where to route queries according to the shard key pattern.
+ *
+ * Examples:
+ *
+ * Key { a: 1 }, Bounds a: [0] => { a: 0 } -> { a: 0 }
+ * Key { a: 1 }, Bounds a: [2, 3) => { a: 2 } -> { a: 3 }  // bound inclusion ignored.
+ *
+ * The bounds returned by this function may be a superset of those defined
+ * by the constraints.	For instance, if this KeyPattern is {a : 1, b: 1}
+ * Bounds: { a : {$in : [1,2]} , b : {$in : [3,4,5]} }
+ *		   => {a : 1 , b : 3} -> {a : 1 , b : 5}, {a : 2 , b : 3} -> {a : 2 , b : 5}
+ *
+ * If the IndexBounds are not defined for all the fields in this keypattern, which
+ * means some fields are unsatisfied, an empty BoundList could return.
+ *
+ */
+/*
+// Transforms bounds for each shard key field into full shard key ranges
+// for example :
+//	 Key { a : 1, b : 1 }  索引
+//	 Query { a : { $gte : 1, $lt : 2 },
+//			  b : { $gte : 3, $lt : 4 } }  查询条件
+//	 Bounds { a : [1, 2), b : [3, 4) }       转换为IndexBounds类型
+//	 => Ranges { a : 1, b : 3 } => { a : 2, b : 4 } 转换为BoundList类型
+
+typedef std::vector<std::pair< BSONObj, BSONObj >> BoundList;
+*/ 
+//ChunkManager::getShardIdsForQuery调用,把indexBounds转换为
 BoundList ShardKeyPattern::flattenBounds(const IndexBounds& indexBounds) const {
     invariant(indexBounds.fields.size() == (size_t)_keyPattern.toBSON().nFields());
 

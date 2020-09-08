@@ -51,7 +51,7 @@ class StatusWith;
  //ShardingState::_refreshMetadata中返回获取
  */
 //chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
-//MigrateInfo.version成员为该类型
+//MigrateInfo.version成员为该类型        getCollVersion和getShardVersion都是该类型，参考MigrationSourceManager::MigrationSourceManager
 struct ChunkVersion {
 public:
     /**

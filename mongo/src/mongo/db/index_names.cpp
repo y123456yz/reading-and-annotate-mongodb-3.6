@@ -47,12 +47,15 @@ string IndexNames::findPluginName(const BSONObj& keyPattern) {
 
     while (i.more()) {
         BSONElement e = i.next();
+		//String为IndexNames类型
         if (String != e.type()) {
             continue;
         }
+		//text  hashed  2d等索引
         return e.String();
     }
 
+	//普通索引
     return IndexNames::BTREE;
 }
 

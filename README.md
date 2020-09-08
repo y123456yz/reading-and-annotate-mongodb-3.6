@@ -97,7 +97,18 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [type_mongos.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_mongos.cpp)
  *   [type_mongos.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_mongos.h)
 
+###### cfg复制集库表结构管理(config.databases、config.collections)(100%注释): 
+ *   [type_collection.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_collection.cpp)
+ *   [type_collection.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_collection.h)
+ *   [type_database.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_database.cpp)
+ *   [type_database.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/type_database.h)
 
+###### 分片片建shard key(100%注释): 
+ *   [shard_key_pattern.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/shard_key_pattern.cpp)
+ *   [shard_key_pattern.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/shard_key_pattern.h)
+ *   [keypattern.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/keypattern.cpp)
+ *   [keypattern.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/keypattern.h)
+ 
 mongodb存储引擎wiredtiger源码分析  
 ===================================  
 https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0   

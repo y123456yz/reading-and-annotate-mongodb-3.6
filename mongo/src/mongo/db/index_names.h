@@ -60,12 +60,16 @@ enum IndexType {
  */
 class IndexNames {
 public:
+    //地理位置索引
     static const std::string GEO_2D;
     static const std::string GEO_HAYSTACK;
     static const std::string GEO_2DSPHERE;
+    //全文索引
     static const std::string TEXT;
+    //hash索引
     static const std::string HASHED;
-    static const std::string BTREE;
+    //普通索引
+    static const std::string BTREE; 
 
     /**
      * True if is a regular (non-plugin) index or uses a plugin that existed before 2.4.

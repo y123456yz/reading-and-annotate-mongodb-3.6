@@ -55,17 +55,21 @@ using ShardVersionMap = std::map<ShardId, ChunkVersion>;
 
 /**
  * In-memory representation of the routing table for a single sharded collection.
- */ //ChunkManager chunk管理     balance负载均衡管理
+ */ 
+//ChunkManager chunk管理     balance负载均衡管理    
+//CachedCollectionRoutingInfo._cm成员为该类型，通过CatalogCache::getCollectionRoutingInfo获取CachedCollectionRoutingInfo，然后得到_cm
 //分片chunk块相关 mongoDB 的chunk分裂只会发生在 mongos 写入数据时， 当写入的数据超过一定量时， 就会触发 chunk 的分裂
 class ChunkManager : public std::enable_shared_from_this<ChunkManager> {
     MONGO_DISALLOW_COPYING(ChunkManager);
 
 public:
+    //迭代器
     class ConstChunkIterator {
     public:
         ConstChunkIterator() = default;
         explicit ConstChunkIterator(ChunkMap::const_iterator iter) : _iter{iter} {}
 
+        //迭代器自增
         ConstChunkIterator& operator++() {
             ++_iter;
             return *this;
@@ -309,6 +313,7 @@ private:
 
     // Map from the max for each chunk to an entry describing the chunk. The union of all chunks'
     // ranges must cover the complete space from [MinKey, MaxKey).
+    //路由表缓存在这里  ChunkManager::toString可以打印mongos缓存得路由表
     const ChunkMap _chunkMap;
 
     // Different transformations of the chunk map for efficient querying
