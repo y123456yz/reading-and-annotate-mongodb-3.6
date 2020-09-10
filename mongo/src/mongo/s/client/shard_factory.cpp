@@ -53,6 +53,7 @@ std::unique_ptr<Shard> ShardFactory::createUniqueShard(const ShardId& shardId,
     return builderIt->second(shardId, connStr);
 }
 
+//ShardRegistryData::ShardRegistryDataÖÐµ÷ÓÃ
 std::shared_ptr<Shard> ShardFactory::createShard(const ShardId& shardId,
                                                  const ConnectionString& connStr) {
     auto builderIt = _builders.find(connStr.type());

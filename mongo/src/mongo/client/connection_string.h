@@ -60,7 +60,15 @@ class MongoURI;
  */
 class ConnectionString {
 public:
-    enum ConnectionType { INVALID, MASTER, SET, CUSTOM, LOCAL };
+    enum ConnectionType { INVALID, 
+        //说明分片是单节点，非复制集模式
+        MASTER, 
+        //分片是复制集模式
+        SET, 
+        //这个没见过
+        CUSTOM, 
+        //
+        LOCAL };
 
     ConnectionString() = default;
 

@@ -272,7 +272,7 @@ Status ShardingCatalogClientImpl::_log(OperationContext* opCtx,
 
 
 //CatalogCache::_getDatabase中调用
-//从cfg复制集config.database表中获取dbName库对应的DatabaseType数据信息
+//从cfg复制集config.database表中获取dbName库信息存入DatabaseType
 StatusWith<repl::OpTimeWith<DatabaseType>> 
  ShardingCatalogClientImpl::getDatabase(
     OperationContext* opCtx, const std::string& dbName, repl::ReadConcernLevel readConcernLevel) {
@@ -819,9 +819,14 @@ Status ShardingCatalogClientImpl::getTagsForCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
-StatusWith<repl::OpTimeWith<std::vector<ShardType>>> ShardingCatalogClientImpl::getAllShards(
+//ShardRegistryData::ShardRegistryData调用
+//从config.shards表中获取shard信息
+StatusWith<repl::OpTimeWith<std::vector<ShardType>>> 
+ ShardingCatalogClientImpl::getAllShards(
     OperationContext* opCtx, repl::ReadConcernLevel readConcern) {
     std::vector<ShardType> shards;
+
+	//从cfg复制集的config.shards表中获取shard信息
     auto findStatus = _exhaustiveFindOnConfig(opCtx,
                                               kConfigReadSelector,
                                               readConcern,
@@ -833,6 +838,7 @@ StatusWith<repl::OpTimeWith<std::vector<ShardType>>> ShardingCatalogClientImpl::
         return findStatus.getStatus();
     }
 
+	//有效性检查
     for (const BSONObj& doc : findStatus.getValue().value) {
         auto shardRes = ShardType::fromBSON(doc);
         if (!shardRes.isOK()) {

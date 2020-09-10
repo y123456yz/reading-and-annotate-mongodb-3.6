@@ -63,6 +63,8 @@ const WriteConcernOptions kMajorityWriteConcern(WriteConcernOptions::kMajority,
 /**
  * Internal sharding command run on config servers to change a database's primary shard.
  */
+//mongos收到movePrimary命令后，发送_configsvrMovePrimary给cfg，cfg收到后处理
+//MoveDatabasePrimaryCommand::run中构造使用，cfg收到后在ConfigSvrMovePrimaryCommand::run中处理
 class ConfigSvrMovePrimaryCommand : public BasicCommand {
 public:
     ConfigSvrMovePrimaryCommand() : BasicCommand("_configsvrMovePrimary") {}
@@ -103,11 +105,14 @@ public:
         return nsElt.str();
     }
 
+	//cfg收到movePrimary得处理
+	//ConfigSvrMovePrimaryCommand::run
     bool run(OperationContext* opCtx,
              const std::string& dbname_unused,
              const BSONObj& cmdObj,
              BSONObjBuilder& result) override {
 
+		//复制集角色检查，该命令只能cfg接收处理
         if (serverGlobalParams.clusterRole != ClusterRole::ConfigServer) {
             return appendCommandStatus(
                 result,
@@ -115,8 +120,10 @@ public:
                        "_configsvrMovePrimary can only be run on config servers"));
         }
 
+		//从obj中解析出MovePrimary，并对对应成员赋值
         auto movePrimaryRequest =
             MovePrimary::parse(IDLParserErrorContext("ConfigSvrMovePrimary"), cmdObj);
+		//获取库名
         const string dbname = parseNs("", cmdObj);
 
         uassert(
@@ -124,6 +131,7 @@ public:
             str::stream() << "invalid db name specified: " << dbname,
             NamespaceString::validDBName(dbname, NamespaceString::DollarInDbNameBehavior::Allow));
 
+		//不能movePrimary这几个库
         if (dbname == NamespaceString::kAdminDb || dbname == NamespaceString::kConfigDb ||
             dbname == NamespaceString::kLocalDb) {
             return appendCommandStatus(
@@ -132,13 +140,17 @@ public:
                  str::stream() << "Can't move primary for " << dbname << " database"});
         }
 
+		//cfg必须写大部分节点成功
         uassert(ErrorCodes::InvalidOptions,
                 str::stream() << "movePrimary must be called with majority writeConcern, got "
                               << cmdObj,
                 opCtx->getWriteConcern().wMode == WriteConcernOptions::kMajority);
 
+		//Grid::catalogClient,获取该opctx对应ShardingCatalogClientImpl
         auto const catalogClient = Grid::get(opCtx)->catalogClient();
+		//Grid::catalogCache获取opctx对应得CatalogCache
         auto const catalogCache = Grid::get(opCtx)->catalogCache();
+		//Grid::shardRegistry获取opctx对应得ShardRegistry
         auto const shardRegistry = Grid::get(opCtx)->shardRegistry();
 
         // Remove the backwards compatible lock after 3.6 ships.
@@ -150,12 +162,16 @@ public:
         auto dbDistLock = uassertStatusOK(catalogClient->getDistLockManager()->lock(
             opCtx, dbname, "movePrimary", DistLockManager::kDefaultLockTimeout));
 
+		//ShardingCatalogClientImpl::getDatabase
+		//从cfg复制集config.database表中获取dbName库信息存入DatabaseType
         auto dbType = uassertStatusOK(catalogClient->getDatabase(
                                           opCtx, dbname, repl::ReadConcernLevel::kLocalReadConcern))
                           .value;
 
+		//获取目的分片字符串信息
         const std::string to = movePrimaryRequest.getTo().toString();
 
+		//没指定则直接报错
         if (to.empty()) {
             return appendCommandStatus(
                 result,
@@ -163,6 +179,7 @@ public:
                  str::stream() << "you have to specify where you want to move it"});
         }
 
+		//shardRegistry::getShard获取原Shard信息
         const auto fromShard = uassertStatusOK(shardRegistry->getShard(opCtx, dbType.getPrimary()));
 
         const auto toShard = [&]() {
@@ -179,6 +196,7 @@ public:
             return toShardStatus.getValue();
         }();
 
+		//原和目的相同了，直接报错
         if (fromShard->getId() == toShard->getId()) {
             // We did a local read of the database entry above and found that this movePrimary
             // request was already satisfied. However, the data may not be majority committed (a
@@ -193,9 +211,11 @@ public:
         log() << "Moving " << dbname << " primary from: " << fromShard->toString()
               << " to: " << toShard->toString();
 
+		//获取DB下得所有collection表信息
         const auto shardedColls = getAllShardedCollectionsForDb(opCtx, dbname);
 
         // Record start in changelog
+        //记录到config.changelog 表
         uassertStatusOK(catalogClient->logChange(
             opCtx,
             "movePrimary.start",
@@ -203,6 +223,7 @@ public:
             _buildMoveLogEntry(dbname, fromShard->toString(), toShard->toString(), shardedColls),
             ShardingCatalogClient::kMajorityWriteConcern));
 
+		//目的分片字符串
         ScopedDbConnection toconn(toShard->getConnString());
         ON_BLOCK_EXIT([&toconn] { toconn.done(); });
 
@@ -213,11 +234,14 @@ public:
 
         {
             BSONArrayBuilder barr;
+			//遍历DB下面得所有表
             for (const auto& shardedColl : shardedColls) {
                 barr.append(shardedColl.ns());
             }
 
-            const bool worked = toconn->runCommand(
+			//向目的集群发送clone命令，同时指定需要clone得原分片得表信息, 目的分片通过CmdClone::run接收到该命令并处理
+			//目的分片收到后开始从原分片获取数据信息
+			const bool worked = toconn->runCommand(
                 dbname,
                 BSON("clone" << fromShard->getConnString().toString() << "collsToIgnore"
                              << barr.arr()
@@ -240,18 +264,24 @@ public:
         }
 
         // Update the new primary in the config server metadata.
+        //该DB得主分片已经变为新得toShard
         dbType.setPrimary(toShard->getId());
         uassertStatusOK(catalogClient->updateDatabase(opCtx, dbname, dbType));
 
         // Ensure the next attempt to retrieve the database or any of its collections will do a full
         // reload
+        //清除所有缓存信息
         catalogCache->purgeDatabase(dbname);
 
+		//DB所属得原分片
         const string oldPrimary = fromShard->getConnString().toString();
 
+		//
         ScopedDbConnection fromconn(fromShard->getConnString());
+		//ScopedDbConnection::done
         ON_BLOCK_EXIT([&fromconn] { fromconn.done(); });
 
+		//如果需要迁移得DB下还没有创建表，则是个空DB，则删除该DB
         if (shardedColls.empty()) {
             // TODO: Collections can be created in the meantime, and we should handle in the future.
             log() << "movePrimary dropping database on " << oldPrimary
@@ -284,6 +314,7 @@ public:
             // We moved some unsharded collections, but not all
             BSONObjIterator it(cloneRes["clonedColls"].Obj());
 
+			//通知原分片删除已经迁移到目的分片的表，原分片收到后，开始删除对应的表
             while (it.more()) {
                 BSONElement el = it.next();
                 if (el.type() == String) {
@@ -316,6 +347,7 @@ public:
         result << "primary" << toShard->toString();
 
         // Record finish in changelog
+        //记录日志
         uassertStatusOK(catalogClient->logChange(
             opCtx,
             "movePrimary",

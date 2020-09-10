@@ -53,6 +53,7 @@ class ShardFactory;
 class Shard;
 class ShardType;
 
+//从cfg复制集中获取config.mongos分片信息相关过程
 class ShardRegistryData {
 public:
     /**
@@ -119,14 +120,18 @@ private:
     using ShardMap = stdx::unordered_map<ShardId, std::shared_ptr<Shard>, ShardId::Hasher>;
 
     // Map of both shardName -> Shard and hostName -> Shard
+    //从cfg复制集config.mongos中获取到的shard信息存入这里缓存, 见ShardRegistryData::_addShard
     ShardMap _lookup;
 
     // Map from replica set name to shard corresponding to this replica set
+    //复制集模式的分片信息还会记录到这里面，见ShardRegistryData::_addShard
     ShardMap _rsLookup;
 
+    //从cfg复制集config.mongos中获取到的shard信息存入这里缓存, 见ShardRegistryData::_addShard
     stdx::unordered_map<HostAndPort, std::shared_ptr<Shard>> _hostLookup;
 
     // store configShard separately to always have a reference
+    //cfg复制集信息
     std::shared_ptr<Shard> _configShard;
 };
 
@@ -135,7 +140,10 @@ private:
  * functionality to run commands against shards. All commands which this registry executes are
  * retried on NotMaster class of errors and in addition all read commands are retried on network
  * errors automatically as well.
- */ //initializeGlobalShardingState中构造
+ */ 
+//initializeSharding->initializeGlobalShardingState
+//initializeGlobalShardingState中构造   
+//Grid._shardRegistry成员为该类型
 class ShardRegistry {
     MONGO_DISALLOW_COPYING(ShardRegistry);
 
@@ -280,6 +288,8 @@ private:
      */
     ConnectionString _initConfigServerCS;
     void _internalReload(const executor::TaskExecutor::CallbackArgs& cbArgs);
+
+    //从cfg复制集的config.shards获取到的分片信息存入该结构中
     ShardRegistryData _data;
 
     // Protects the _reloadState and _initConfigServerCS during startup.

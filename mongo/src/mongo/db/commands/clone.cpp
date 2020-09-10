@@ -52,6 +52,7 @@ using std::stringstream;
    Note: doesn't work with authentication enabled, except as internal operation or for
    old-style users for backwards compatibility.
 */
+////ConfigSvrMovePrimaryCommand::run中通知目的分片clone表数据
 class CmdClone : public BasicCommand {
 public:
     CmdClone() : BasicCommand("clone") {}

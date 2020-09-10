@@ -48,6 +48,15 @@ class StatusWith;
  * config.shards collection. All manipulation of documents coming from that
  * collection should be done with this class.
  */
+
+/*
+mongos> db.shards.find()
+{ "_id" : "XX_gQmJGvRW_shard_1", "host" : "XX_gQmJGvRW_shard_1/10.XX.XX.42:XX,10.XX.XX.102:20001,10.XX.XX.22:20001", "state" : 1 }
+{ "_id" : "XX_gQmJGvRW_shard_2", "host" : "XX_gQmJGvRW_shard_2/10.XX.XX.24:XX,10.XX.XX.40:20001,10.XX.XX.135:20001", "state" : 1 }
+{ "_id" : "XX_gQmJGvRW_shard_kQgABBdd", "host" : "XX_gQmJGvRW_shard_kQgABBdd/10.XX.XX.39:XX,10.XX.XX.165:20000,10.XX.XX.166:20000", "state" : 1 }
+{ "_id" : "XX_gQmJGvRW_shard_itAkNrUI", "host" : "XX_gQmJGvRW_shard_itAkNrUI/10.XX.XX.40:XX,10.XX.XX.41:20000,10.XX.XX.42:20000", "state" : 1 }
+
+*/
 class ShardType {
 public:
     enum class ShardState : int {

@@ -394,6 +394,7 @@ shared_ptr<ReplicaSetMonitor> ReplicaSetMonitor::get(const std::string& name) {
     return globalRSMonitorManager.getMonitor(name);
 }
 
+//ShardRegistry::reload调用，某些分片removeShard呢，不需要再监控
 void ReplicaSetMonitor::remove(const string& name) {
     globalRSMonitorManager.removeMonitor(name);
 

@@ -162,7 +162,7 @@ private:
     
     std::unique_ptr<ShardingCatalogClient> _catalogClient;
     std::unique_ptr<CatalogCache> _catalogCache;
-    std::unique_ptr<ShardRegistry> _shardRegistry;
+    std::unique_ptr<ShardRegistry> _shardRegistry; 
     std::unique_ptr<ClusterCursorManager> _cursorManager;
     //balancer相关配置存入这里，例如是否启用balance  balance时间窗口设置等
     std::unique_ptr<BalancerConfiguration> _balancerConfig;

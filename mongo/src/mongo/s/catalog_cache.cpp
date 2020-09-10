@@ -67,7 +67,9 @@ const int kMaxInconsistentRoutingInfoRefreshAttempts = 3;
  * dropped or recreated concurrently, the caller must retry the reload up to some configurable
  * number of attempts.
  */
-std::shared_ptr<ChunkManager> refreshCollectionRoutingInfo(
+//CatalogCache::_scheduleCollectionRefresh调用
+std::shared_ptr<ChunkManager> 
+ refreshCollectionRoutingInfo(
     OperationContext* opCtx,
     const NamespaceString& nss,
     std::shared_ptr<ChunkManager> existingRoutingInfo,
@@ -78,14 +80,18 @@ std::shared_ptr<ChunkManager> refreshCollectionRoutingInfo(
 
     const auto collectionAndChunks = uassertStatusOK(std::move(swCollectionAndChangedChunks));
 
+	//函数指针
     auto chunkManager = [&] {
         // If we have routing info already and it's for the same collection epoch, we're updating.
         // Otherwise, we're making a whole new routing table.
+        //如果existingRoutingInfo为ture，也就是路由信息已经存在，并且集合的epoch相同，则直接使用collectionAndChunks.changedChunks
         if (existingRoutingInfo &&
             existingRoutingInfo->getVersion().epoch() == collectionAndChunks.epoch) {
 
             return existingRoutingInfo->makeUpdated(collectionAndChunks.changedChunks);
         }
+
+		//函数指针
         auto defaultCollator = [&]() -> std::unique_ptr<CollatorInterface> {
             if (!collectionAndChunks.defaultCollation.isEmpty()) {
                 // The collation should have been validated upon collection creation
@@ -94,6 +100,8 @@ std::shared_ptr<ChunkManager> refreshCollectionRoutingInfo(
             }
             return nullptr;
         }();
+
+		//构造一个ChunkManager类
         return ChunkManager::makeNew(nss,
                                      collectionAndChunks.uuid,
                                      KeyPattern(collectionAndChunks.shardKeyPattern),
@@ -104,8 +112,10 @@ std::shared_ptr<ChunkManager> refreshCollectionRoutingInfo(
     }();
 
     std::set<ShardId> shardIds;
+	//ChunkManager::getAllShardIds  //返回所有包含chunk块的分片id列表存入shardIds
     chunkManager->getAllShardIds(&shardIds);
     for (const auto& shardId : shardIds) {
+		//根据shardId获取对应的Shard信息  Grid::shardRegistry->ShardRegistry::getShard
         uassertStatusOK(Grid::get(opCtx)->shardRegistry()->getShard(opCtx, shardId));
     }
     return chunkManager;
@@ -347,6 +357,7 @@ std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(Oper
 }
 
 //获取dbEntry库下对应的nss集合的chunks路由信息
+//CatalogCache::getCollectionRoutingInfo中调用
 void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
                                               std::shared_ptr<DatabaseInfoEntry> dbEntry,
                                               std::shared_ptr<ChunkManager> existingRoutingInfo,
@@ -357,6 +368,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
     const ChunkVersion startingCollectionVersion =
         (existingRoutingInfo ? existingRoutingInfo->getVersion() : ChunkVersion::UNSHARDED());
 
+	//刷新失败，则走该{}
     const auto refreshFailed =
         [ this, t, dbEntry, nss, refreshAttempt ](WithLock lk, const Status& status) noexcept 
     {
@@ -382,6 +394,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         }
     };
 
+	//下面的_cacheLoader.getChunksSince接口对应的回调处理
     const auto refreshCallback = [ this, t, dbEntry, nss, existingRoutingInfo, refreshFailed ](
         OperationContext * opCtx,
         StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollAndChunks) noexcept {
@@ -424,7 +437,8 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
           << startingCollectionVersion;
 
     try {
-		//ShardServerCatalogCacheLoader::getChunksSince
+		//ShardServerCatalogCacheLoader::getChunksSince  
+		//异步获取集合chunk信息，也就是把refreshCallback丢到线程池中执行
         _cacheLoader.getChunksSince(nss, startingCollectionVersion, refreshCallback);
     } catch (const DBException& ex) {
         const auto status = ex.toStatus();

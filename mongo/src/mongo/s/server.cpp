@@ -297,6 +297,7 @@ static Status initializeSharding(OperationContext* opCtx) {
     CatalogCacheLoader::set(opCtx->getServiceContext(),
                             stdx::make_unique<ConfigServerCatalogCacheLoader>());
 
+	
     Status status = initializeGlobalShardingState(
         opCtx,
         mongosGlobalParams.configdbs,

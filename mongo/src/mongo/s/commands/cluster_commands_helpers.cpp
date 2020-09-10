@@ -412,6 +412,7 @@ bool appendEmptyResultSet(BSONObjBuilder& result, Status status, const std::stri
     return Command::appendCommandStatus(result, status);
 }
 
+//获取DB下得所有collection表信息
 std::vector<NamespaceString> getAllShardedCollectionsForDb(OperationContext* opCtx,
                                                            StringData dbName) {
     const auto dbNameStr = dbName.toString();

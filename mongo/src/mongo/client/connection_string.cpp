@@ -84,6 +84,7 @@ ConnectionString ConnectionString::forLocal() {
 }
 
 // TODO: rewrite parsing  make it more reliable
+//s是CFG复制集db.shards.find()获取到的信息
 void ConnectionString::_fillServers(std::string s) {
     //
     // Custom-handled servers/replica sets start with '$'
@@ -91,15 +92,19 @@ void ConnectionString::_fillServers(std::string s) {
     // (also disallows $replicaSetName hosts)
     //
 
+	//这个啥东东，从来没见过
     if (s.find('$') == 0) {
         _type = CUSTOM;
     }
 
+	//"opush_gQmJGvRW_shard_1/A.B.C.D:20001,A.B.C.D:20001,A.B.C.D:20001"这种类型，说明分片是复制集
     std::string::size_type idx = s.find('/');
     if (idx != std::string::npos) {
+		//复制集名称，也就是上面的opush_gQmJGvRW_shard_1
         _setName = s.substr(0, idx);
         s = s.substr(idx + 1);
         if (_type != CUSTOM)
+			//说明分片是复制集模式
             _type = SET;
     }
 
@@ -110,7 +115,9 @@ void ConnectionString::_fillServers(std::string s) {
 
     _servers.push_back(HostAndPort(s));
 
+	//只有一个地址，说明该分片就一个主节点，不是分片模式
     if (_servers.size() == 1 && _type == INVALID) {
+		//说明分片是单实例模式，非复制集
         _type = MASTER;
     }
 }
