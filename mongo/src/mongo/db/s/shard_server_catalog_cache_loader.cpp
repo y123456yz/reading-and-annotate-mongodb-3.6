@@ -328,7 +328,7 @@ void ShardServerCatalogCacheLoader::onStepUp() {
     _role = ReplicaSetRole::Primary;
 }
 
-//CatalogCache::_scheduleCollectionRefresh调用
+//CatalogCache::_scheduleCollectionRefresh调用 
 std::shared_ptr<Notification<void>> 
   ShardServerCatalogCacheLoader::getChunksSince(
     const NamespaceString& nss,

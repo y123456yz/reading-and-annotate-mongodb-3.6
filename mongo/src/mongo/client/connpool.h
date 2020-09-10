@@ -379,6 +379,7 @@ private:
    clean up nicely (i.e. the socket gets closed automatically when the
    scopeddbconnection goes out of scope).
 */
+//ConfigSvrMovePrimaryCommand::run中会用到
 class ScopedDbConnection : public AScopedConnection {
 public:
     /** the main constructor you want to use

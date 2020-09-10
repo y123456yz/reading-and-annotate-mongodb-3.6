@@ -49,7 +49,7 @@ class RemoteCommandTargeter;
 /**
  * Presents an interface for talking to shards, regardless of whether that shard is remote or is
  * the current (local) shard.
- */
+ */ //ShardFactory::createShard÷–ππ‘Ï
 class Shard {
 public:
     struct CommandResponse {

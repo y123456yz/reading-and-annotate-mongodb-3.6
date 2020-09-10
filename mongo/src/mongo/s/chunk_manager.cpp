@@ -200,6 +200,8 @@ void ChunkManager::getShardIdsForRange(const BSONObj& min,
     }
 }
 
+//Returns the ids of all shards on which the collection has any chunks.
+//返回所有包含chunk块的分片id列表
 void ChunkManager::getAllShardIds(std::set<ShardId>* all) const {
     std::transform(_chunkMapViews.shardVersions.begin(),
                    _chunkMapViews.shardVersions.end(),
@@ -437,6 +439,8 @@ ChunkManager::ChunkMapViews ChunkManager::_constructChunkMapViews(const OID& epo
     return {std::move(chunkRangeMap), std::move(shardVersions)};
 }
 
+//获取一个ChunkManager
+//refreshCollectionRoutingInfo中调用
 std::shared_ptr<ChunkManager> ChunkManager::makeNew(
     NamespaceString nss,
     boost::optional<UUID> uuid,
