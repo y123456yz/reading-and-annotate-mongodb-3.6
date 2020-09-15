@@ -37,6 +37,9 @@ namespace mongo {
  * return, rather than invariant, so this class can be plugged into the shard server for read-only
  * mode, where persistence should not be attempted.
  */
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+
 class ReadOnlyCatalogCacheLoader final : public CatalogCacheLoader {
 public:
     void initializeReplicaSetRole(bool isPrimary) override {}

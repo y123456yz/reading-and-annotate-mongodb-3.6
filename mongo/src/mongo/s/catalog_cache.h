@@ -52,7 +52,11 @@ static constexpr int kMaxNumStaleVersionRetries = 10;
  * This is the root of the "read-only" hierarchy of cached catalog metadata. It is read only
  * in the sense that it only reads from the persistent store, but never writes to it. Instead
  * writes happen through the ShardingCatalogManager and the cache hierarchy needs to be invalidated.
- */ //Grid._catalogCache成员为该类
+ */ 
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+
+//Grid._catalogCache成员为该类
 class CatalogCache {
     MONGO_DISALLOW_COPYING(CatalogCache);
 
@@ -138,7 +142,10 @@ private:
     struct CollectionRoutingInfoEntry {
         // Specifies whether this cache entry needs a refresh (in which case routingInfo should not
         // be relied on) or it doesn't, in which case there should be a non-null routingInfo.
-        //是否需要刷新集合路由信息
+        //是否需要刷新集合路由信息，
+        //CatalogCache::onStaleConfigError， invalidateShardedCollection CatalogCache::_getDatabase中设置为true
+        // CatalogCache::_scheduleCollectionRefresh设置为false
+        //如果为Ture则通过CatalogCache::getCollectionRoutingInfo获取最新路由信息
         bool needsRefresh{true};
 
         // Contains a notification to be waited on for the refresh to complete (only available if
@@ -182,7 +189,7 @@ private:
                                     int refreshAttempt);
 
     // Interface from which chunks will be retrieved
-    
+    //CatalogCache::_scheduleCollectionRefresh调用，获取chunk信息
     CatalogCacheLoader& _cacheLoader;
 
     // Mutex to serialize access to the structures below
@@ -196,7 +203,7 @@ private:
  * Constructed exclusively by the CatalogCache, contains a reference to the cached information for
  * the specified database.
  */
-//库信息缓存在这里，该库拥有对应的表信息
+//库信息缓存在这里，该库拥有对应的表信息，表对应得chunk信息在CachedCollectionRoutingInfo
 class CachedDatabaseInfo {
 public:
     const ShardId& primaryId() const;
@@ -208,7 +215,8 @@ private:
 
     CachedDatabaseInfo(std::shared_ptr<CatalogCache::DatabaseInfoEntry> db);
 
-    
+
+    //
     std::shared_ptr<CatalogCache::DatabaseInfoEntry> _db;
 };
 

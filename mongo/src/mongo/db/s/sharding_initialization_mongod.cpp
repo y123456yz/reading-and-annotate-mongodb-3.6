@@ -90,6 +90,7 @@ Status initializeGlobalShardingStateForMongod(OperationContext* opCtx,
         stdx::make_unique<ShardFactory>(std::move(buildersMap), std::move(targeterFactory));
 
     auto service = opCtx->getServiceContext();
+
     if (serverGlobalParams.clusterRole == ClusterRole::ShardServer) {
         if (storageGlobalParams.readOnly) {
             CatalogCacheLoader::set(service, stdx::make_unique<ReadOnlyCatalogCacheLoader>());

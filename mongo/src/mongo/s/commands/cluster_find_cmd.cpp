@@ -173,7 +173,6 @@ public:
 		BSONObj findCmd=query->asFindCommand();
 		log() << "yang test .... find cmd:" << cmdObj.toString(false);
 		log() << "yang test ...222. find cmd:" << findCmd.toString(false);
-		
         const boost::intrusive_ptr<ExpressionContext> expCtx;
 
         auto cq = CanonicalQuery::canonicalize(opCtx,

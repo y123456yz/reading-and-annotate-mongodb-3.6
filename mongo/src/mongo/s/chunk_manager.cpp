@@ -461,6 +461,7 @@ std::shared_ptr<ChunkManager> ChunkManager::makeNew(
         .makeUpdated(chunks);
 }
 
+//refreshCollectionRoutingInfoµ÷ÓÃ
 std::shared_ptr<ChunkManager> ChunkManager::makeUpdated(
     const std::vector<ChunkType>& changedChunks) {
     const auto startingCollectionVersion = getVersion();

@@ -68,10 +68,13 @@ const int kMaxInconsistentRoutingInfoRefreshAttempts = 3;
  * number of attempts.
  */
 //CatalogCache::_scheduleCollectionRefresh调用
+//跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
+//返回nss对应的ChunkManager
 std::shared_ptr<ChunkManager> 
  refreshCollectionRoutingInfo(
     OperationContext* opCtx,
     const NamespaceString& nss,
+    //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
     std::shared_ptr<ChunkManager> existingRoutingInfo,
     StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollectionAndChangedChunks) {
     if (swCollectionAndChangedChunks == ErrorCodes::NamespaceNotFound) {
@@ -87,7 +90,8 @@ std::shared_ptr<ChunkManager>
         //如果existingRoutingInfo为ture，也就是路由信息已经存在，并且集合的epoch相同，则直接使用collectionAndChunks.changedChunks
         if (existingRoutingInfo &&
             existingRoutingInfo->getVersion().epoch() == collectionAndChunks.epoch) {
-
+			 //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
+			 //ChunkManager::makeUpdated
             return existingRoutingInfo->makeUpdated(collectionAndChunks.changedChunks);
         }
 
@@ -244,6 +248,7 @@ void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvali
     // input argument so it can't be used anymore
     auto ccri(ccriToInvalidate);
 
+	//该CachedCollectionRoutingInfo没有cm，说明异常，每个routeinfo都是collections路由信息，其chunk通过cm管理
     if (!ccri._cm) {
         // Here we received a stale config error for a collection which we previously thought was
         // unsharded.
@@ -254,6 +259,7 @@ void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvali
     // Here we received a stale config error for a collection which we previously though was sharded
     stdx::lock_guard<stdx::mutex> lg(_mutex);
 
+	//获取ccri对应得DB，DB没找到说明该collection可能删除了
     auto it = _databases.find(NamespaceString(ccri._cm->getns()).db());
     if (it == _databases.end()) {
         // If the database does not exist, the collection must have been dropped so there is
@@ -262,8 +268,10 @@ void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvali
         return;
     }
 
+	//获取DB下面所有得collection
     auto& collections = it->second->collections;
 
+	//ccri._cm chunk manager中查找是否有该表
     auto itColl = collections.find(ccri._cm->getns());
     if (itColl == collections.end()) {
         // If the collection does not exist, this means it must have been dropped since the last
@@ -274,12 +282,15 @@ void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvali
         // Refresh has been scheduled for the collection already
         return;
     } else if (itColl->second.routingInfo->getVersion() == ccri._cm->getVersion()) {
+    	//我们需要获取最新得路由信息
         // If the versions match, the last version of the routing information that we used is no
         // longer valid, so trigger a refresh.
         itColl->second.needsRefresh = true;
     }
 }
 
+//CatalogCache::invalidateShardedCollection调用
+//检查缓存中是否有该collection对应得库，如果没有，则说明没有该collection路由信息，需要从新从cfg获取
 void CatalogCache::invalidateShardedCollection(const NamespaceString& nss) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
 
@@ -295,11 +306,20 @@ void CatalogCache::invalidateShardedCollection(StringData ns) {
     invalidateShardedCollection(NamespaceString(ns));
 }
 
+/**
+ * Non-blocking method, which removes the entire specified database (including its collections)
+ * from the cache.
+ */
 void CatalogCache::purgeDatabase(StringData dbName) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
     _databases.erase(dbName);
 }
 
+
+/**
+ * Non-blocking method, which removes all databases (including their collections) from the
+ * cache.
+ */
 void CatalogCache::purgeAllDatabases() {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
     _databases.clear();
@@ -347,7 +367,7 @@ std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(Oper
             continue;
         }
 
-		//需要刷新集合路由信息
+		//需要刷新集合路由信息，重新获取DB信息得适合需要刷新该DB下得所有collection路由信息
         collectionEntries[coll.getNs().ns()].needsRefresh = true;
     }
 
@@ -453,6 +473,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
     }
 }
 
+//CachedDatabaseInfo相关成员赋值
 CachedDatabaseInfo::CachedDatabaseInfo(std::shared_ptr<CatalogCache::DatabaseInfoEntry> db)
     : _db(std::move(db)) {}
 
@@ -464,11 +485,12 @@ bool CachedDatabaseInfo::shardingEnabled() const {
     return _db->shardingEnabled;
 }
 
+//CachedCollectionRoutingInfo初始化
 CachedCollectionRoutingInfo::CachedCollectionRoutingInfo(ShardId primaryId,
                                                          std::shared_ptr<ChunkManager> cm)
     : _primaryId(std::move(primaryId)), _cm(std::move(cm)) {}
 
-//CatalogCache::getCollectionRoutingInfo中构造使用
+//CatalogCache::getCollectionRoutingInfo中构造使用 //CachedCollectionRoutingInfo初始化
 CachedCollectionRoutingInfo::CachedCollectionRoutingInfo(ShardId primaryId,
                                                          NamespaceString nss,
                                                          std::shared_ptr<Shard> primary)

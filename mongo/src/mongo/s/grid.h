@@ -161,6 +161,7 @@ private:
 
     
     std::unique_ptr<ShardingCatalogClient> _catalogClient;
+    //
     std::unique_ptr<CatalogCache> _catalogCache;
     std::unique_ptr<ShardRegistry> _shardRegistry; 
     std::unique_ptr<ClusterCursorManager> _cursorManager;

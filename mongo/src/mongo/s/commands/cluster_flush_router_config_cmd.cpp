@@ -68,6 +68,7 @@ public:
                      const std::string& dbname,
                      const BSONObj& cmdObj,
                      BSONObjBuilder& result) {
+        //Grid::catalogCache  catalogCache::purgeAllDatabases
         Grid::get(opCtx)->catalogCache()->purgeAllDatabases();
 
         result.appendBool("flushed", true);
