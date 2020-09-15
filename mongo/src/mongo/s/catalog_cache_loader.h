@@ -49,7 +49,12 @@ class OperationContext;
  * Interface through which the sharding catalog cache requests the set of changed chunks to be
  * retrieved from the persisted metadata store.
  */
-//CatalogCache._cacheLoader为该类型
+
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+
+
+//CatalogCache._cacheLoader为该类型   CatalogCacheLoader::set种赋值
 //ShardServerCatalogCacheLoader  ReadOnlyCatalogCacheLoader  ConfigServerCatalogCacheLoader继承该类
 class CatalogCacheLoader {
 public:

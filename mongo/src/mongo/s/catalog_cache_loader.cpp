@@ -54,6 +54,18 @@ CatalogCacheLoader::CollectionAndChangedChunks::CollectionAndChangedChunks(
       shardKeyIsUnique(collShardKeyIsUnique),
       changedChunks(chunks) {}
 
+/*
+Catalog_cache_loader.cpp (src\mongo\s):void CatalogCacheLoader::set(ServiceContext* serviceContext,
+Config_server_test_fixture.cpp (src\mongo\s):    CatalogCacheLoader::set(getServiceContext(),
+Server.cpp (src\mongo\s):    CatalogCacheLoader::set(opCtx->getServiceContext(),
+Sharding_initialization_mongod.cpp (src\mongo\db\s):            CatalogCacheLoader::set(service, stdx::make_unique<ReadOnlyCatalogCacheLoader>());
+Sharding_initialization_mongod.cpp (src\mongo\db\s):            CatalogCacheLoader::set(service,
+Sharding_initialization_mongod.cpp (src\mongo\db\s):        CatalogCacheLoader::set(service, stdx::make_unique<ConfigServerCatalogCacheLoader>());
+
+*/
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+
 void CatalogCacheLoader::set(ServiceContext* serviceContext,
                              std::unique_ptr<CatalogCacheLoader> loader) {
     auto& catalogCacheLoader = catalogCacheLoaderDecoration(serviceContext);

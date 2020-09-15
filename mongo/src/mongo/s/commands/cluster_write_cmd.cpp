@@ -237,7 +237,6 @@ public:
 		long long end = curTimeMicros64();
 		auto consumeTime = end - start;
 
-
 		//LOG(2) << "yang test 1 ClusterWriteCmd::enhancedRun:" << redact(batchedRequest.toBSON()) << " time(ms):" << (int)consumeTime;
 
         // Populate the lastError object based on the write response

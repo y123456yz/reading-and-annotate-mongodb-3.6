@@ -349,22 +349,27 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
                               << query.getQueryRequest().getProj()};
     }
 
+	//Grid::catalogCache 获取代理缓存得得catalogCache信息
     auto const catalogCache = Grid::get(opCtx)->catalogCache();
 
     // Re-target and re-send the initial find command to the shards until we have established the
     // shard version.
+    //循环重试直到获取数据或者超过重试次数
     for (size_t retries = 1; retries <= kMaxStaleConfigRetries; ++retries) {
+		//获取collection路由信息
         auto routingInfoStatus = catalogCache->getCollectionRoutingInfo(opCtx, query.nss());
+		//没找到对应db.collection得路由信息
         if (routingInfoStatus == ErrorCodes::NamespaceNotFound) {
             // If the database doesn't exist, we successfully return an empty result set without
             // creating a cursor.
             return CursorId(0);
-        } else if (!routingInfoStatus.isOK()) {
+        } else if (!routingInfoStatus.isOK()) { //异常
             return routingInfoStatus.getStatus();
         }
 
         auto& routingInfo = routingInfoStatus.getValue();
 
+		//从routingInfo对应得分片获取数据
         auto cursorId = runQueryWithoutRetrying(opCtx,
                                                 query,
                                                 readPref,
@@ -372,10 +377,12 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
                                                 routingInfo.primary(),
                                                 results,
                                                 viewDefinition);
+		//获取成功直接返回cursorId
         if (cursorId.isOK()) {
             return cursorId;
         }
 
+		//从直到分片获取数据失败，说明可能路由信息不是最新得了
         const auto& status = cursorId.getStatus();
 
         if (!ErrorCodes::isStaleShardingError(status.code()) &&
@@ -390,6 +397,7 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
                << " on attempt " << retries << " of " << kMaxStaleConfigRetries << ": "
                << redact(status);
 
+		//从直到分片获取数据失败，说明可能路由信息不是最新得了，或者表已经被删除
         catalogCache->onStaleConfigError(std::move(routingInfo));
     }
 
