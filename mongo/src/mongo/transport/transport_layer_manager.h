@@ -98,7 +98,7 @@ private:
     void _foreach(Callable&& cb) const;
 
     mutable stdx::mutex _tlsMutex;
-    //createWithConfig中赋值,对应TransportLayerASIO
+    //createWithConfig中赋值,对应TransportLayerASIO,实际上容器中就一个成员
     std::vector<std::unique_ptr<TransportLayer>> _tls;
 };
 

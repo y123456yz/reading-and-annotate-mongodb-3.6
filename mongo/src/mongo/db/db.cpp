@@ -749,8 +749,9 @@ ExitCode _initAndListen(int listenPort) {
 		//根据serverGlobalParams全局配置信息构造tl为TransportLayerManager类
         auto tl =
             transport::TransportLayerManager::createWithConfig(&serverGlobalParams, serviceContext);
-		//创建套接字并bind
-		auto res = tl->setup(); //TransportLayerManager::setup->TransportLayerASIO::setup
+		//创建套接字并bind tl->setup(), accept相关注册初始化见该函数后面的serviceContext->getTransportLayer()->start()
+		//TransportLayerASIO::setup
+		auto res = tl->setup(); 
         if (!res.isOK()) {
             error() << "Failed to set up listener: " << res;
             return EXIT_NET_ERROR;
@@ -1040,6 +1041,7 @@ ExitCode _initAndListen(int listenPort) {
 	ServiceExecutorAdaptive::start  同步
 	ServiceExecutorSynchronous::start 异步
 	*/
+	//创建套接字并bind tl->setup(), accept相关注册初始化见该函数后面的serviceContext->getTransportLayer()->start()
     auto start = serviceContext->getServiceExecutor()->start();
     if (!start.isOK()) {
         error() << "Failed to start the service executor: " << start;

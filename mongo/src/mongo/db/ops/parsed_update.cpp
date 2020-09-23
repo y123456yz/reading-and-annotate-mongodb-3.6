@@ -46,6 +46,7 @@ ParsedUpdate::ParsedUpdate(OperationContext* opCtx, const UpdateRequest* request
       _driver(UpdateDriver::Options(new ExpressionContext(opCtx, nullptr))),
       _canonicalQuery() {}
 
+//performSingleUpdateOp中调用，解析出ParsedUpdate
 Status ParsedUpdate::parseRequest() {
     // It is invalid to request that the UpdateStage return the prior or newly-updated version
     // of a document during a multi-update.

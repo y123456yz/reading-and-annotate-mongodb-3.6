@@ -62,7 +62,7 @@ namespace mongo {
      update $push (append) operation
      various db.eval() type operations
 */ //文档长度检查wouldMakeBatchesTooBig
-const int BSONObjMaxUserSize = 16 * 1024 * 1024; //一个文档最多16M，见fixDocumentForInsert
+const int BSONObjMaxUserSize = 160 * 1024 * 1024; //一个文档最多16M，见fixDocumentForInsert
 
 /*
    Sometimes we need objects slightly larger - an object in the replication local.oplog

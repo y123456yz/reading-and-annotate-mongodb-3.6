@@ -53,6 +53,7 @@ Ticket Session::sourceMessage(Message* message, Date_t expiration) {
     return getTransportLayer()->sourceMessage(shared_from_this(), message, expiration);
 }
 
+//构造对应SinkTicket
 Ticket Session::sinkMessage(const Message& message, Date_t expiration) {
 	////TransportLayerASIO::sourceMessage
     return getTransportLayer()->sinkMessage(shared_from_this(), message, expiration);

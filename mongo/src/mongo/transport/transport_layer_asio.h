@@ -211,11 +211,14 @@ private:
     //listener线程，专门负责accept处理
     stdx::thread _listenerThread;
 	///服务入口，mongod和mongos有不同的入口点
+	//赋值见TransportLayerManager::createWithConfig中构造使用,
+	//新的链接处理ServiceEntryPointImpl::startSession也是通过该成员关联
     ServiceEntryPoint* const _sep = nullptr;
 	//运行状态标识
     AtomicWord<bool> _running{false};
 
     //生效使用见TransportLayerASIO::setup，配置来验ServerGlobalParams
+    //赋值见TransportLayerManager::createWithConfig中构造使用
     Options _listenerOptions;
 
 };

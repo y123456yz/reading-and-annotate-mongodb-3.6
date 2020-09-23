@@ -925,13 +925,12 @@ getExecutorDelete(
                               policy);
 }
 
-//
-// Update
-//
 
-StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutorUpdate(
-    OperationContext* opCtx, OpDebug* opDebug, Collection* collection, ParsedUpdate* parsedUpdate) {
-    const UpdateRequest* request = parsedUpdate->getRequest();
+
+StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
+   getExecutorUpdate(OperationContext* opCtx, OpDebug* opDebug, Collection* collection, ParsedUpdate* parsedUpdate) {
+
+	const UpdateRequest* request = parsedUpdate->getRequest();
     UpdateDriver* driver = parsedUpdate->getDriver();
 
     const NamespaceString& nss = request->getNamespaceString();

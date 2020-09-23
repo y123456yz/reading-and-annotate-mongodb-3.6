@@ -44,6 +44,10 @@ namespace mongo {
  * copy of that chunk metadata so shard secondaries can access the metadata. If a shard secondary,
  * retrieves chunk metadata from the shard persisted chunk metadata.
  */
+ 
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+
 class ShardServerCatalogCacheLoader : public CatalogCacheLoader {
     MONGO_DISALLOW_COPYING(ShardServerCatalogCacheLoader);
 
@@ -357,6 +361,7 @@ private:
 
     // Indicates whether this server is the primary or not, so that the appropriate loading action
     // can be taken.
+    //例如mongos就是ReplicaSetRole::None，cfg和mongod要么为master，要么为secondary
     ReplicaSetRole _role{ReplicaSetRole::None};
 
     // The collection of operation contexts in use by all threads.

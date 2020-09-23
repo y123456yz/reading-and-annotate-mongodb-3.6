@@ -342,6 +342,7 @@ public:
     void runImpl(OperationContext* opCtx,
                  const OpMsgRequest& request,
                  BSONObjBuilder& result) final {
+        //½âÎö³öwrite_ops::Update
         const auto batch = UpdateOp::parse(request);
         const auto reply = performUpdates(opCtx, batch);
         serializeReply(opCtx,

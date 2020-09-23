@@ -177,6 +177,7 @@ repl::OplogEntry getInnerNestedOplogEntry(const repl::OplogEntry& entry) {
 
 }  // namespace
 
+//performUpdatesÖÐµ÷ÓÃ
 SingleWriteResult parseOplogEntryForUpdate(const repl::OplogEntry& entry) {
     SingleWriteResult res;
     // Upserts are stored as inserts.

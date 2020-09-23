@@ -54,7 +54,7 @@ class UpdateRequest;
  *
  * The query part of the update is parsed to a CanonicalQuery, and the update part is parsed
  * using the UpdateDriver.
- */
+ */ //参考performSingleUpdateOp使用
 class ParsedUpdate {
     MONGO_DISALLOW_COPYING(ParsedUpdate);
 
@@ -147,6 +147,7 @@ private:
     OperationContext* _opCtx;
 
     // Unowned pointer to the request object to process.
+    //ParsedUpdate._request为该类型
     const UpdateRequest* const _request;
 
     // The collator for the parsed update.  Owned here.
