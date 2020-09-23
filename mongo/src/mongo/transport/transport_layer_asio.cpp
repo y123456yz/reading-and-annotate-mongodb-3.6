@@ -63,6 +63,8 @@
 namespace mongo {
 namespace transport {
 
+//该类接口最终和ServiceEntryPointImpl、Ticket*相关类联系起来
+
 //网络模块相关参数
 TransportLayerASIO::Options::Options(const ServerGlobalParams* params)
     : port(params->port),
@@ -158,10 +160,10 @@ void TransportLayerASIO::anetSetReuseAddr(int fd) {
 //TransportLayerASIO::setup() listen监听
 //新链接到来后，在TransportLayerASIO::start中执行
 
-//创建套接字并bind, TransportLayerManager::setup中执行
+//创建套接字并bind, _initAndListen中调用执行 
 Status TransportLayerASIO::setup() {
     std::vector<std::string> listenAddrs;
-	//如果不配置bindIp，则默认监听127这个地址
+	//如果不配置bindIp，则默认监听127这个地址,默认端口ServerGlobalParams::DefaultDBPort
     if (_listenerOptions.ipList.empty()) {
         listenAddrs = {"127.0.0.1"};
         if (_listenerOptions.enableIPv6) {
@@ -282,8 +284,7 @@ Status TransportLayerASIO::setup() {
 //TransportLayerASIO::setup() listen监听
 //新链接到来后，在TransportLayerASIO::start中执行
 
-
-//TransportLayerManager::start中执行   参考boost::ASIO
+//_initAndListen中调用执行 
 Status TransportLayerASIO::start() { //listen线程处理
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     _running.store(true);
@@ -394,7 +395,7 @@ void TransportLayerASIO::_acceptConnection(GenericAcceptor& acceptor) {
 		//每个新的链接都会new一个新的ASIOSession
         std::shared_ptr<ASIOSession> session(new ASIOSession(this, std::move(peerSocket)));
 
-		//新的链接处理ServiceEntryPointImpl::startSession
+		//新的链接处理ServiceEntryPointImpl::startSession，和ServiceEntryPointImpl类联系起来
         _sep->startSession(std::move(session));
         _acceptConnection(acceptor); //递归，知道处理完所有的网络accept事件
     };

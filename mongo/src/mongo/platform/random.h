@@ -37,6 +37,7 @@ namespace mongo {
 /**
  * Uses http://en.wikipedia.org/wiki/Xorshift
  */
+//用户态随机数
 class PseudoRandom {
 public:
     PseudoRandom(int32_t seed);

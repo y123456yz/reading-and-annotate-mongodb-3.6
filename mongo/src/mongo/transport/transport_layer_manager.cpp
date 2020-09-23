@@ -91,7 +91,7 @@ void TransportLayerManager::end(const SessionHandle& session) {
 // exits with an error and this isn't an issue, but we should make this more robust.
 //TransportLayerASIO::start  accept处理
 //TransportLayerASIO::setup() listen监听
-//_initAndListen中调用
+//实际上accept处理走_initAndListen->TransportLayerASIO::start流程，该接口已经没有使用
 Status TransportLayerManager::start() {
     for (auto&& tl : _tls) {
 		//TransportLayerASIO::start，开始accept初始化处理
@@ -113,6 +113,8 @@ void TransportLayerManager::shutdown() {
 //TransportLayerASIO::start  accept处理
 //TransportLayerASIO::setup() listen监听
 // TODO Same comment as start() 
+
+//实际上accept处理走_initAndListen->TransportLayerASIO::start流程，该接口已经没有使用
 //runMongosServer _initAndListen中运行
 Status TransportLayerManager::setup() {
     //_tls来源见TransportLayerManager::createWithConfig返回的retVector
@@ -143,32 +145,35 @@ Status TransportLayerManager::addAndStartTransportLayer(std::unique_ptr<Transpor
 std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
     const ServerGlobalParams* config, ServiceContext* ctx) {
     std::unique_ptr<TransportLayer> transportLayer;
-	//ServiceEntryPointMongod或者ServiceEntryPointMongos
+	//服务类型，也就是本实例是mongos还是mongod
+	//mongos对应ServiceEntryPointMongod,mongod对应ServiceEntryPointMongos
     auto sep = ctx->getServiceEntryPoint();
-	//如果配置是asio模式
+	//net.transportLayer配置模式，默认asio, legacy模式已淘汰
     if (config->transportLayer == "asio") {
 		//获取asio模式对应子配置信息
         transport::TransportLayerASIO::Options opts(config);
 
 		//同步方式还是异步方式，默认synchronous
         if (config->serviceExecutor == "adaptive") {
-			//动态线程池模型
+			//动态线程池模型,也就是异步模式
             opts.transportMode = transport::Mode::kAsynchronous;
         } else if (config->serviceExecutor == "synchronous") {
-            //一个链接一个线程模型
+            //一个链接一个线程模型，也就是同步模式
             opts.transportMode = transport::Mode::kSynchronous;
         } else {
             MONGO_UNREACHABLE;
         }
 
-		//构造TransportLayerASIO类
+		//如果配置是asio,构造TransportLayerASIO类
         auto transportLayerASIO = stdx::make_unique<transport::TransportLayerASIO>(opts, sep);
 
 		//ServiceExecutorSynchronous对应线程池同步模式，ServiceExecutorAdaptive对应线程池异步自适应模式
-        if (config->serviceExecutor == "adaptive") { //异步方式
+		if (config->serviceExecutor == "adaptive") { //异步方式
+			//构造动态线程模型对应的执行器ServiceExecutorAdaptive
             ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorAdaptive>(
                 ctx, transportLayerASIO->getIOContext()));
         } else if (config->serviceExecutor == "synchronous") { //同步方式
+        	//构造一个链接一个线程模型对应的执行器ServiceExecutorSynchronous
             ctx->setServiceExecutor(stdx::make_unique<ServiceExecutorSynchronous>(ctx));
         }
 		//transportLayerASIO转换为transportLayer类
@@ -183,6 +188,7 @@ std::unique_ptr<TransportLayer> TransportLayerManager::createWithConfig(
 	//transportLayer转存到对应retVector数组中并返回
     std::vector<std::unique_ptr<TransportLayer>> retVector;
     retVector.emplace_back(std::move(transportLayer));
+	//构造TransportLayerManager类赋值的时候，会把retVector赋值给_tls成员，见TransportLayerManager构造函数
     return stdx::make_unique<TransportLayerManager>(std::move(retVector));
 }
 

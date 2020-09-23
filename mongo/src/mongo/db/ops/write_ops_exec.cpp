@@ -560,6 +560,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     return out;
 }
 
+//performUpdates中调用
 static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
                                                const NamespaceString& ns,
                                                StmtId stmtId,
@@ -576,10 +577,13 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
         curOp.setNetworkOp_inlock(dbUpdate);
         curOp.setLogicalOp_inlock(LogicalOp::opUpdate);
         curOp.setOpDescription_inlock(op.toBSON());
+		//记录开始时间
         curOp.ensureStarted();
     }
 
     UpdateLifecycleImpl updateLifecycle(ns);
+
+	//生成UpdateRequest
     UpdateRequest request(ns);
     request.setLifecycle(&updateLifecycle);
     request.setQuery(op.getQ());
@@ -669,7 +673,8 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
     size_t stmtIdIndex = 0;
     WriteResult out;
     out.results.reserve(wholeOp.getUpdates().size());
-	
+
+	//write_ops::Update::getUpdates
     for (auto&& singleOp : wholeOp.getUpdates()) {
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
         if (opCtx->getTxnNumber()) {
@@ -692,6 +697,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
         }
         ON_BLOCK_EXIT([&] { finishCurOp(opCtx, &curOp); }); //计算整个操作消耗的时间
         try {
+			//LastOpFixer::startingOp
             lastOpFixer.startingOp();
             out.results.emplace_back(
                 performSingleUpdateOp(opCtx, wholeOp.getNamespace(), stmtId, singleOp));

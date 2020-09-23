@@ -52,9 +52,10 @@
 #include "mongo/util/log.h"
 
 namespace mongo {
+//用户态随机数算法参考 http://en.wikipedia.org/wiki/Xorshift
 
 // ---- PseudoRandom  -----
-
+//根据x y z w通过如下算法得到一个随机数
 uint32_t PseudoRandom::nextUInt32() {
     uint32_t t = _x ^ (_x << 11);
     _x = _y;
@@ -63,12 +64,14 @@ uint32_t PseudoRandom::nextUInt32() {
     return _w = _w ^ (_w >> 19) ^ (t ^ (t >> 8));
 }
 
+//默认随机因子
 namespace {
 const uint32_t default_y = 362436069;
 const uint32_t default_z = 521288629;
 const uint32_t default_w = 88675123;
 }  // namespace
 
+//用户态随机数类初始化
 PseudoRandom::PseudoRandom(uint32_t seed) {
     _x = seed;
     _y = default_y;
@@ -80,11 +83,11 @@ PseudoRandom::PseudoRandom(int32_t seed) : PseudoRandom(static_cast<uint32_t>(se
 
 PseudoRandom::PseudoRandom(int64_t seed)
     : PseudoRandom(static_cast<uint32_t>(seed >> 32) ^ static_cast<uint32_t>(seed)) {}
-
+//生成32位随机数
 int32_t PseudoRandom::nextInt32() {
     return nextUInt32();
 }
-
+//生成64位随机数
 int64_t PseudoRandom::nextInt64() {
     uint64_t a = nextUInt32();
     uint64_t b = nextUInt32();
@@ -104,6 +107,7 @@ double PseudoRandom::nextCanonicalDouble() {
 
 SecureRandom::~SecureRandom() {}
 
+//windows平台，直接跳过，不分析
 #ifdef _WIN32
 class WinSecureRandom : public SecureRandom {
 public:
@@ -148,7 +152,7 @@ std::unique_ptr<SecureRandom> SecureRandom::create() {
 }
 
 #elif defined(__linux__) || defined(__sun) || defined(__APPLE__) || defined(__FreeBSD__)
-
+//用户态随机数实现类
 class InputStreamSecureRandom : public SecureRandom {
 public:
     InputStreamSecureRandom(const char* fn) {
@@ -173,6 +177,7 @@ private:
     std::unique_ptr<std::ifstream> _in;
 };
 
+//出问题原因在SaslSCRAMSHA1ServerConversation::_firstStep SaslSCRAMSHA1ClientConversation::_firstStep
 std::unique_ptr<SecureRandom> SecureRandom::create() {
     return stdx::make_unique<InputStreamSecureRandom>("/dev/urandom");
 }

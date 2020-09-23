@@ -42,6 +42,7 @@ namespace str = mongoutils::str;
 class FieldRef;
 class UpdateLifecycle;
 
+//performSingleUpdateOp中构造使用
 class UpdateRequest {
 public:
     enum ReturnDocOption {

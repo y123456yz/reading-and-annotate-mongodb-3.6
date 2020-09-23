@@ -210,6 +210,7 @@ StatusWith<bool> SaslSCRAMSHA1ServerConversation::_firstStep(std::vector<string>
     const int nonceLenQWords = 3;
     uint64_t binaryNonce[nonceLenQWords];
 
+	//这里会有问题，CPU  sy%可能100%
     unique_ptr<SecureRandom> sr(SecureRandom::create());
 
     binaryNonce[0] = sr->nextInt64();
