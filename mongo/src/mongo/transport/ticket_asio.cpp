@@ -90,7 +90,7 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
     networkCounter.hitPhysicalIn(_target->size());
 	//TransportLayerASIO::ASIOTicket::finishFill  
     finishFill(Status::OK()); //°üÌåÄÚÈÝ¶ÁÍêºó£¬¿ªÊ¼ÏÂÒ»½×¶ÎµÄ´¦Àí  
-    //±¨ÎÄ¶ÁÈ¡ÍêºóµÄÏÂÒ»½×¶Î¾ÍÊÇ±¨ÎÄÄÚÈÝ´¦Àí£¬¿ªÊ¼×ßServiceStateMachine::_processMessage
+    //±¨ÎÄ¶ÁÈ¡ÍêºóµÄÏÂÒ»½×¶Î¾ÍÊÇ±¨ÎÄÄÚÈÝ´¦Àí£¬¿ªÊ¼×ßServiceStateMachine::_sourceCallback
 }
 
 //TransportLayerASIO::ASIOSourceTicket::fillImpl
@@ -185,6 +185,7 @@ void TransportLayerASIO::ASIOSourceTicket::fillImpl() {  //½ÓÊÕµÄfillImpl
 
 void TransportLayerASIO::ASIOSinkTicket::_sinkCallback(const std::error_code& ec, size_t size) {
     networkCounter.hitPhysicalOut(_msgToSend.size()); //·¢ËÍµÄÍøÂç×Ö½ÚÊýÍ³¼Æ
+    //sink·¢ËÍµÄ»Øµ÷ÊÇServiceStateMachine::_sinkCallback
     finishFill(ec ? errorCodeToStatus(ec) : Status::OK());
 }
 
@@ -203,6 +204,7 @@ void TransportLayerASIO::ASIOSinkTicket::fillImpl() {
 }
 
 //ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->TransportLayerASIO::ASIOTicket::fill->TransportLayerASIO::ASIOTicket::finishFill
+//ASIOTicket::fill¸ø_fillCallback»Øµ÷¸³Öµ£¬ASIOTicket::finishFillÖ´ÐÐ_fillCallback»Øµ÷
 void TransportLayerASIO::ASIOTicket::finishFill(Status status) { //Ã¿Ò»¸ö½×¶Î´¦ÀíÍêºó¶¼Í¨¹ýÕâÀïÖ´ÐÐÏàÓ¦µÄ»Øµ÷
     // We want to make sure that a Ticket can only be filled once; filling a ticket invalidates it.
     // So we check that the _fillCallback is set, then move it out of the ticket and into a local
@@ -217,6 +219,7 @@ void TransportLayerASIO::ASIOTicket::finishFill(Status status) { //Ã¿Ò»¸ö½×¶Î´¦À
 }
 
 //ServiceStateMachine::_sourceMessage->TransportLayerASIO::asyncWait->TransportLayerASIO::ASIOTicket::fill->TransportLayerASIO::ASIOTicket::finishFill
+//ASIOTicket::fill¸ø_fillCallback»Øµ÷¸³Öµ£¬ASIOTicket::finishFillÖ´ÐÐ_fillCallback»Øµ÷
 void TransportLayerASIO::ASIOTicket::fill(bool sync, TicketCallback&& cb) {
 	//Í¬²½»¹ÊÇÒì²½£¬ASIO¶ÔÓ¦Òì²½
     _fillSync = sync;

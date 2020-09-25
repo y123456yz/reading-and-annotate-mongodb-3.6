@@ -143,6 +143,7 @@ void TransportLayerASIO::asyncWait(Ticket&& ticket, TicketCallback callback) {
 // Must not be called while holding the TransportLayerASIO mutex.
 void TransportLayerASIO::end(const SessionHandle& session) {
     auto asioSession = checked_pointer_cast<ASIOSession>(session);
+	//ASIOSession::shutdown
     asioSession->shutdown();
 }
 

@@ -167,6 +167,7 @@ private:
     //sessionIdCounter.addAndFetch(1) session自增
     const Id _id;
 
+    //对应上面的kEmptyTagMask等
     AtomicWord<TagMask> _tags;
 };
 

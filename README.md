@@ -73,8 +73,17 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [service_entry_point_utils.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_entry_point_utils.cpp) 
  *   [service_entry_point_utils.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/transport/service_entry_point_utils.h) 
 
+#### message协议处理(100%注释): 
+ *   [message.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/net/message.h) 
+ *   [message.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/net/message.cpp) 
 
-
+#### mongod/mongos服务入口处理(100%注释): 
+ *   [service_entry_point_mongod.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/service_entry_point_mongod.h) 
+ *   [service_entry_point_mongod.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/service_entry_point_mongod.cpp) 
+ *   [service_entry_point_mongos.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/service_entry_point_mongos.h) 
+ *   [service_entry_point_mongos.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/service_entry_point_mongos.cpp)
+ 
+ 
 #### shard分片源码实现(注释进行中):   
 ###### 分布式锁实现源码注释分析(100%注释): 
  *   [dist_lock_catalog_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/catalog/dist_lock_catalog_impl.cpp) 

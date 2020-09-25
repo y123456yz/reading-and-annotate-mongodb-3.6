@@ -159,6 +159,7 @@ inline const char* networkOpToString(NetworkOp networkOp) {
     }
 }
 
+//不同op
 inline const char* logicalOpToString(LogicalOp logicalOp) {
     switch (logicalOp) {
         case LogicalOp::opInvalid:
@@ -250,6 +251,7 @@ public:
         return data().view();
     }
 
+    //以下四个接口进行header赋值
     void setMessageLength(int32_t value) {
         data().write(tagLittleEndian(value), offsetof(Layout, messageLength));
     }
@@ -267,6 +269,7 @@ public:
     }
 
 private:
+    //指向header起始地址
     view_type data() const {
         return const_cast<char*>(ConstView::view2ptr());
     }
@@ -300,6 +303,7 @@ public:
         return storage().view();
     }
 
+    //获取msg header的值
     int32_t getLen() const {
         return header().getMessageLength();
     }
@@ -342,6 +346,7 @@ protected:
         return _storage;
     }
 
+    //指向header起始地址
     MSGHEADER::ConstView header() const {
         return storage().view(offsetof(Layout, header));
     }
@@ -359,6 +364,7 @@ public:
         return storage().view();
     }
 
+    //以下四个接口完成msg header赋值
     void setLen(int value) {
         return header().setMessageLength(value);
     }
@@ -448,13 +454,16 @@ public:
     }
 
     // use to set first buffer if empty
+    //_buf直接使用buf空间
     void setData(SharedBuffer buf) {
         verify(empty());
         _buf = std::move(buf);
     }
+     //把msgtxt拷贝到_buf中
     void setData(int operation, const char* msgtxt) {
         setData(operation, msgtxt, strlen(msgtxt) + 1);
     }
+    //把msgdata拷贝到_buf中
     void setData(int operation, const char* msgdata, size_t len) {
         verify(empty());
         size_t dataLen = len + sizeof(MsgData::Value) - 4;
@@ -483,6 +492,7 @@ public:
     }
 
 private:
+    //存放接收数据的buf
     SharedBuffer _buf;
 };
 

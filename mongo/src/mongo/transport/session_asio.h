@@ -197,19 +197,20 @@ public:
 private:
     //从stream对应fd读取数据   read和write指定长度的数据后，执行对应的回调handler
     template <typename Stream, typename MutableBufferSequence, typename CompleteHandler>
-    //一次性读size字节如果成功，则直接执行handler，否则没写完的数据通过异步方式继续读，写完后执行对应handler
+    //读取指定长度数据，然后执行handler回调
     void opportunisticRead(bool sync,
                            Stream& stream,
                            const MutableBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                            CompleteHandler&& handler) {
         std::error_code ec;
-        //先直接同步方式从协议栈读取数据，直到读取到数据并且把协议栈数据读完
+        //如果是异步线程模型，在ASIOSession构造初始化的时候会设置non_blocking非阻塞模式
+        //异步线程模型这里实际上是非阻塞读取，如果是同步线程模型，则没有non_blocking设置，也就是阻塞读取
         auto size = asio::read(stream, buffers, ec); //detail::read_buffer_sequence
         /* 下面两行用来模拟异步读操作
            auto size = 0;//asio::read(stream, buffers, ec); //detail::read_buffer_sequence
         ec = asio::error::try_again;
         */
-        //协议栈内容已经读完了，但是还不够size字节，则继续异步读取
+        //如果是异步读，并且read返回would_block或者try_again说明指定长度的数据还没有读取完毕
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
             // asio::read is a loop internally, so some of buffers may have been read into already.
             // So we need to adjust the buffers passed into async_read to be offset by size, if
@@ -220,9 +221,10 @@ private:
                 asyncBuffers += size; //buffer offset向后移动
             }
             //LOG(0) << "yang test ......... opportunisticRead";
-            //数据得读取及handler回调执行见asio库得read_op::operator
+            //继续异步方式读取数据，读取到指定长度数据后执行handler回调处理
             asio::async_read(stream, asyncBuffers, std::forward<CompleteHandler>(handler));
         } else { 
+            //阻塞方式读取read返回后可以保证读取到了size字节长度的数据
             //直接read获取到size字节数据，则直接执行handler 
             handler(ec, size);
         }
@@ -235,14 +237,14 @@ private:
                             const ConstBufferSequence& buffers, //buffers有大小size，实际读最多读size字节
                             CompleteHandler&& handler) {
         std::error_code ec;
-        //先直接写
+        //如果是同步模式，则阻塞写，直到全部写成功。异步模式则非阻塞写
         auto size = asio::write(stream, buffers, ec); 
 
         /*
         auto size = 0; 加这两个用来模拟异步写
         ec = asio::error::try_again;
         */
-        //一次性写size字节如果成功，则直接执行handler，否则没写完的数据通过异步方式继续写，写完后执行对应handler
+        //异步写如果返回try_again说明数据还没有发送完，则继续异步写发送
         if ((ec == asio::error::would_block || ec == asio::error::try_again) && !sync) {
         //一般当内核协议栈buffer写满后，会返回try_again
             // asio::write is a loop internally, so some of buffers may have been read into already.

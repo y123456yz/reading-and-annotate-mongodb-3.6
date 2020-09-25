@@ -148,6 +148,7 @@ public:
 #ifdef MONGO_CONFIG_DEBUG_BUILD
         invariant(owned == Ownership::kUnowned);
 //In debug builds this also ensures that only one thread is working on the SSM at once.
+        
         _ssm->_owningThread.store(stdx::this_thread::get_id());
 #endif
 
@@ -179,6 +180,7 @@ public:
         other._haveTakenOwnership = false;
     }
 
+	//重新赋值
     ThreadGuard& operator=(ThreadGuard&& other) {
         if (this != &other) {
             _ssm = other._ssm;
@@ -340,8 +342,8 @@ const transport::SessionHandle& ServiceStateMachine::_session() const {
 #16 mongo::(anonymous namespace)::runFunc (ctx=0x7f228cedd0a0) at src/mongo/transport/service_entry_point_utils.cpp:55
 #17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
 #18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
-*/  
-//网络状态机开始接收数据处理
+*/   
+//网络状态机开始接收数据处理   
 void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     invariant(_inMessage.empty());
 	//TransportLayerASIO::sourceMessage  TransportLayerASIO::ASIOSession  后面的wait asio会读取数据放入_inMessage
@@ -361,12 +363,13 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
     if (_transportMode == transport::Mode::kSynchronous) {
         _sourceCallback([this](auto ticket) {
             MONGO_IDLE_THREAD_BLOCK;
-			//TransportLayerASIO::wait  
+			//TransportLayerASIO::wait....最终TransportLayerASIO::ASIOSourceTicket::_bodyCallback读取完整数据后才执行_sourceCallback回调 
             return _session()->getTransportLayer()->wait(std::move(ticket));
         }(std::move(ticket))); 
     } else if (_transportMode == transport::Mode::kAsynchronous) {
-    	//TransportLayerASIO::asyncWait  这里有可能接收数据立马返回，也可能需要多次epoll调度才可以，参考opportunisticRead
+    	//TransportLayerASIO::asyncWait   
         _session()->getTransportLayer()->asyncWait( 
+            ////TransportLayerASIO::ASIOSourceTicket::_bodyCallback读取到一个完整报文后执行该回调
             std::move(ticket), [this](Status status) { _sourceCallback(status); });
     }
 }  
@@ -384,16 +387,17 @@ void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
 
 	//调用boost-asio进行数据发送及其回调处理
     if (_transportMode == transport::Mode::kSynchronous) {
+		//最终在ASIOSinkTicket发送数据成功后执行_sinkCallback
         _sinkCallback(_session()->getTransportLayer()->wait(std::move(ticket)));
     } else if (_transportMode == transport::Mode::kAsynchronous) {
-		//TransportLayerASIO::asyncWait 这里有可能发送数据立马返回，也可能需要多次epoll调度才可以，参考opportunisticWrite
+		//最终在ASIOSinkTicket发送数据成功后执行_sinkCallback
 		_session()->getTransportLayer()->asyncWait(
             std::move(ticket), [this](Status status) { _sinkCallback(status); });
     }
 }
 
 //mongos  TransportLayerASIO::asyncWait
-//接收到一个mongodb报文后的回调处理
+//TransportLayerASIO::ASIOSourceTicket::_bodyCallback接收到一个mongodb报文后的回调处理
 void ServiceStateMachine::_sourceCallback(Status status) {
     // The first thing to do is create a ThreadGuard which will take ownership of the SSM in this
     // thread.
@@ -440,6 +444,7 @@ void ServiceStateMachine::_sourceCallback(Status status) {
     _runNextInGuard(std::move(guard));
 }
 
+//TransportLayerASIO::ASIOSinkTicket::_sinkCallback中发送报文成功后的回调处理
 void ServiceStateMachine::_sinkCallback(Status status) {
     // The first thing to do is create a ThreadGuard which will take ownership of the SSM in this
     // thread.
@@ -460,7 +465,7 @@ void ServiceStateMachine::_sinkCallback(Status status) {
 		//异常情况调用
         return _runNextInGuard(std::move(guard));
     } else if (_inExhaust) { //3.6.1版本都不会满足，因为exhaust功能没用起来
-    	//注意这里的状态是process   _processMessage 
+    	//注意这里的状态是process   _processMessage   还需要继续进行Process处理
         _state.store(State::Process); 
     } else { //正常流程始终进入该分支 _sourceMessage    这里继续进行递归接收数据处理
         _state.store(State::Source); //注意这里的状态是Source,继续接收客户端请求
@@ -687,6 +692,7 @@ void ServiceStateMachine::terminate() {
     _session()->getTransportLayer()->end(_session());
 }
 
+//ServiceEntryPointImpl::endAllSessions中调用
 void ServiceStateMachine::terminateIfTagsDontMatch(transport::Session::TagMask tags) {
     if (state() == State::Ended)
         return;
