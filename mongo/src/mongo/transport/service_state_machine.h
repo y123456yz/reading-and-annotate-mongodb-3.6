@@ -252,7 +252,7 @@ private:
     ServiceContext* const _serviceContext;
     
     //TransportLayerASIO::_acceptConnection->ServiceEntryPointImpl::startSession->ServiceStateMachine::create 
-    //记录对端信息、同时负责数据相关得读写
+    //ASIOSession读取mongodb报文或者发送mongodb报文会执行对应handler回调
     transport::SessionHandle _sessionHandle; //默认对应ASIOSession 
     //根据session构造对应client信息,ServiceStateMachine::ServiceStateMachine赋值
     ServiceContext::UniqueClient _dbClient;

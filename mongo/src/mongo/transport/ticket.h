@@ -147,7 +147,7 @@ public:
 private:
     TransportLayer* _tl = nullptr;
     Status _status = Status::OK();
-    std::unique_ptr<TicketImpl> _ticket;
+    std::unique_ptr<TicketImpl> _ticket;//Ticket._ticket
 };
 
 }  // namespace transport

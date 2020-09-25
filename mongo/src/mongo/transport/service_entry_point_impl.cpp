@@ -105,7 +105,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
     invariant(remoteAddr && localAddr);
     auto restrictionEnvironment =
         stdx::make_unique<RestrictionEnvironment>(*remoteAddr, *localAddr);
-	//RestrictionEnvironment::set
+	//RestrictionEnvironment::set remoteAddr和localAddr记录到session中
     RestrictionEnvironment::set(session, std::move(restrictionEnvironment));
 
     SSMListIterator ssmIt;
@@ -149,6 +149,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
               << connectionCount << word << " now open)";
     }
 
+	//链接关闭的回收处理
     ssm->setCleanupHook([ this, ssmIt, session = std::move(session) ] {
         size_t connectionCount;
         auto remote = session->remote();
@@ -176,6 +177,7 @@ void ServiceEntryPointImpl::startSession(transport::SessionHandle session) { //s
     ssm->start(ownership);
 }
 
+//FeatureCompatibilityVersion::onInsertOrUpdate和ReplicationCoordinatorExternalStateImpl::closeConnections调用
 void ServiceEntryPointImpl::endAllSessions(transport::Session::TagMask tags) {
     // While holding the _sesionsMutex, loop over all the current connections, and if their tags
     // do not match the requested tags to skip, terminate the session.

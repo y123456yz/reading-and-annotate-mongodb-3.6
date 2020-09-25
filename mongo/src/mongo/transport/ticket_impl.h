@@ -45,7 +45,8 @@ namespace transport {
 Mock_ticket.h (src\mongo\transport):class MockTicket : public TicketImpl {
 Ticket_asio.h (src\mongo\transport):class TransportLayerASIO::ASIOTicket : public TicketImpl {
 Transport_layer_legacy.h (src\mongo\transport):    class LegacyTicket : public TicketImpl {
-*/
+*/ //
+//Ticket._ticket成员为该类型
 class TicketImpl {
     MONGO_DISALLOW_COPYING(TicketImpl);
 

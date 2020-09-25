@@ -78,6 +78,7 @@ void Session::mutateTags(const stdx::function<TagMask(TagMask)>& mutateFunc) {
     } while (_tags.compareAndSwap(oldValue, newValue) != oldValue);
 }
 
+//ServiceStateMachine::terminateIfTagsDontMatchÖÐµ÷ÓÃ
 Session::TagMask Session::getTags() const {
     return _tags.load();
 }
