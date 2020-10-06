@@ -69,6 +69,7 @@ static ServerStatusMetricField<Counter64> displayUnknownCommands("commands.<UNKN
 
 namespace {
 
+//mongod --setParameter=enableTestCommands
 ExportedServerParameter<bool, ServerParameterType::kStartupOnly> testCommandsParameter(
     ServerParameterSet::getGlobal(), "enableTestCommands", &Command::testCommandsEnabled);
 
@@ -99,15 +100,21 @@ BSONObj Command::appendPassthroughFields(const BSONObj& cmdObjWithPassthroughFie
 }
 
 BSONObj Command::appendMajorityWriteConcern(const BSONObj& cmdObj) {
+	//如果obj中已经有"writeConcern" field，直接返回
     if (cmdObj.hasField(kWriteConcernField)) {
         return cmdObj;
     }
+
+	//如果没有"writeConcern" filed信息，则append追加
     BSONObjBuilder cmdObjWithWriteConcern;
     cmdObjWithWriteConcern.appendElementsUnique(cmdObj);
     cmdObjWithWriteConcern.append(kWriteConcernField, kMajorityWriteConcern.toBSON());
     return cmdObjWithWriteConcern.obj();
 }
 
+// The type of the first field in 'cmdObj' must be mongo::String. The first field is
+// interpreted as a collection name.
+//获取cmdobj第一个elem，也就是表名
 string Command::parseNsFullyQualified(const string& dbname, const BSONObj& cmdObj) {
     BSONElement first = cmdObj.firstElement();
     uassert(ErrorCodes::BadValue,
@@ -120,6 +127,9 @@ string Command::parseNsFullyQualified(const string& dbname, const BSONObj& cmdOb
     return nss.ns();
 }
 
+// The type of the first field in 'cmdObj' must be mongo::String or Symbol.
+// The first field is interpreted as a collection name.
+//获取cmdobj第一个elem，构造库.表
 NamespaceString Command::parseNsCollectionRequired(const string& dbname, const BSONObj& cmdObj) {
     // Accepts both BSON String and Symbol for collection name per SERVER-16260
     // TODO(kangas) remove Symbol support in MongoDB 3.0 after Ruby driver audit
@@ -172,9 +182,11 @@ string Command::parseNs(const string& dbname, const BSONObj& cmdObj) const {
 }
 
 //可以参考//CreateIndexesCmd::addRequiredPrivileges
+//检查ns是否精准匹配
 ResourcePattern Command::parseResourcePattern(const std::string& dbname,
                                               const BSONObj& cmdObj) const {
     const std::string ns = parseNs(dbname, cmdObj);
+	//检查ns有效性
     if (!NamespaceString::validCollectionComponent(ns)) { //只有db名
         return ResourcePattern::forDatabaseName(ns);
     }
@@ -187,7 +199,8 @@ ResourcePattern Command::parseResourcePattern(const std::string& dbname,
 
 //command统计在db.serverStatus().metrics.commands命令查看
 //例如: AddShardCmd() : BasicCommand("addShard", "addshard") {}
-Command::Command(StringData name, StringData oldName)
+//命令注册，所有注册的命令最终全部保存到_commands全局map变量
+Command::Command(StringData name, StringData oldName) //name和oldName实际上是同一个command，只是可能改名了
     : _name(name.toString()),
       _commandsExecutedMetric("commands." + _name + ".total", &_commandsExecuted),
       _commandsFailedMetric("commands." + _name + ".failed", &_commandsFailed) {
@@ -202,6 +215,7 @@ Command::Command(StringData name, StringData oldName)
     c = this;
     (*_commandsByBestName)[name] = this;
 
+	//大部分命令name和oldName是一样的，所以在数组中只会记录一个
     if (!oldName.empty()) //也就是name和oldName两个命令对应的是同一个this类
         (*_commands)[oldName.toString()] = this;
 }
@@ -219,11 +233,13 @@ Status Command::explain(OperationContext* opCtx,
 }
 
 BSONObj Command::runCommandDirectly(OperationContext* opCtx, const OpMsgRequest& request) {
-    auto command = Command::findCommand(request.getCommandName());
+	//找到请求对应的command
+	auto command = Command::findCommand(request.getCommandName());
     invariant(command);
 
     BSONObjBuilder out;
     try {
+		//command::publicRun
         bool ok = command->publicRun(opCtx, request, out);
         appendCommandStatus(out, ok);
     } catch (const StaleConfigException&) {
@@ -238,7 +254,7 @@ BSONObj Command::runCommandDirectly(OperationContext* opCtx, const OpMsgRequest&
 }
 
 //根据name获取对应的Command信息   //添加地方见Command::Command
-//strategy.cpp中的runCommand中调用  
+//strategy.cpp中的runCommand中调用  查找name命令是否支持，所有的command都在_commands中保存
 Command* Command::findCommand(StringData name) {
     CommandMap::const_iterator i = _commands->find(name);
     if (i == _commands->end())
@@ -246,6 +262,7 @@ Command* Command::findCommand(StringData name) {
     return i->second;
 }
 
+//向result中append status信息
 bool Command::appendCommandStatus(BSONObjBuilder& result, const Status& status) {
     appendCommandStatus(result, status.isOK(), status.reason());
     BSONObj tmp = result.asTempObj();
@@ -256,6 +273,7 @@ bool Command::appendCommandStatus(BSONObjBuilder& result, const Status& status) 
     return status.isOK();
 }
 
+//Command::appendCommandStatus调用  //向result中append ok或者errmsg信息
 void Command::appendCommandStatus(BSONObjBuilder& result, bool ok, const std::string& errmsg) {
     BSONObj tmp = result.asTempObj();
     bool have_ok = tmp.hasField("ok");
@@ -269,6 +287,7 @@ void Command::appendCommandStatus(BSONObjBuilder& result, bool ok, const std::st
     }
 }
 
+//向result中append awaitReplicationStatus和wtimeout信息
 void Command::appendCommandWCStatus(BSONObjBuilder& result,
                                     const Status& awaitReplicationStatus,
                                     const WriteConcernResult& wcResult) {
@@ -283,19 +302,20 @@ void Command::appendCommandWCStatus(BSONObjBuilder& result,
     }
 }
 
+//检查是否有该命令的权限，下面的_checkAuthorizationImpl调用
 Status BasicCommand::checkAuthForRequest(OperationContext* opCtx, const OpMsgRequest& request) {
     uassertNoDocumentSequences(request);
     return checkAuthForOperation(opCtx, request.getDatabase().toString(), request.body);
 }
 
-//BasicCommand::checkAuthForRequest
+//上面的BasicCommand::checkAuthForRequest调用
 Status BasicCommand::checkAuthForOperation(OperationContext* opCtx,
                                            const std::string& dbname,
                                            const BSONObj& cmdObj) {
     return checkAuthForCommand(opCtx->getClient(), dbname, cmdObj);
 }
 
-//BasicCommand::checkAuthForOperation
+//上面的BasicCommand::checkAuthForOperation调用
 Status BasicCommand::checkAuthForCommand(Client* client,
                                          const std::string& dbname,
                                          const BSONObj& cmdObj) {
@@ -323,13 +343,14 @@ BSONObj Command::getRedactedCopyForLogging(const BSONObj& cmdObj) {
     return bob.obj();
 }
 
-//Command::checkAuthorization中用
+//Command::checkAuthorization中用  command认证检测
 static Status _checkAuthorizationImpl(Command* c,
                                       OperationContext* opCtx,
                                       const OpMsgRequest& request) {
     namespace mmb = mutablebson;
     auto client = opCtx->getClient();
     auto dbname = request.getDatabase();
+	//命令只能在admin库执行，如果当前不是在admin库，则直接报错
     if (c->adminOnly() && dbname != "admin") {
         return Status(ErrorCodes::Unauthorized,
                       str::stream() << c->getName()
@@ -360,7 +381,8 @@ static Status _checkAuthorizationImpl(Command* c,
     return Status::OK();
 }
 
-//客户端认证检测
+//command认证检测  execCommandDatabase调用
+//command认证检测,检查客户端链接使用的账号密码是否有操作该command的权限
 Status Command::checkAuthorization(Command* c,
                                    OperationContext* opCtx,
                                    const OpMsgRequest& request) {
@@ -368,12 +390,14 @@ Status Command::checkAuthorization(Command* c,
     if (!status.isOK()) {
         log(LogComponent::kAccessControl) << status;
     }
+	//审计相关，忽略
     audit::logCommandAuthzCheck(opCtx->getClient(), request, c, status.code());
     return status;
 }
 //execCommandClient->Command::publicRun
 //runCommands->execCommandDatabase->runCommandImpl->Command::publicRun调用
 //execCommandClient中调用
+//Command::runCommandDirectly 调用
 bool Command::publicRun(OperationContext* opCtx,
                         const OpMsgRequest& request,
                         BSONObjBuilder& result) {
@@ -453,7 +477,7 @@ bool BasicCommand::enhancedRun(OperationContext* opCtx,
     return run(opCtx, request.getDatabase().toString(), request.body, result);
 }
 
-//BasicCommand::enhancedRun中调用
+//详见ErrmsgCommandDeprecated
 bool ErrmsgCommandDeprecated::run(OperationContext* opCtx,
                                   const std::string& db,
                                   const BSONObj& cmdObj,
@@ -466,11 +490,14 @@ bool ErrmsgCommandDeprecated::run(OperationContext* opCtx,
     return ok;
 }
 
+//Command::appendPassthroughFields调用
+//cmdObj对应的请求中的部分elem做特殊处理
 BSONObj Command::filterCommandRequestForPassthrough(const BSONObj& cmdObj) {
     BSONObjBuilder bob;
     for (auto elem : cmdObj) {
         const auto name = elem.fieldNameStringData();
         if (name == "$readPreference") {
+			//如果是$readPreference则转换为$queryOptions
             BSONObjBuilder(bob.subobjStart("$queryOptions")).append(elem);
         } else if (!Command::isGenericArgument(name) ||  //
                    name == "$queryOptions" ||            //
@@ -479,6 +506,7 @@ BSONObj Command::filterCommandRequestForPassthrough(const BSONObj& cmdObj) {
                    name == "writeConcern" ||             //
                    name == "lsid" ||                     //
                    name == "txnNumber") {
+            //如果elem是这些name，则直接忽略
             // This is the whitelist of generic arguments that commands can be trusted to blindly
             // forward to the shards.
             bob.append(elem);
@@ -487,6 +515,8 @@ BSONObj Command::filterCommandRequestForPassthrough(const BSONObj& cmdObj) {
     return bob.obj();
 }
 
+//Command::filterCommandReplyForPassthrough调用  去除cmdobj中的如下字段
+//cmdObj对应应答中的部分elem做特殊处理
 void Command::filterCommandReplyForPassthrough(const BSONObj& cmdObj, BSONObjBuilder* output) {
     for (auto elem : cmdObj) {
         const auto name = elem.fieldNameStringData();

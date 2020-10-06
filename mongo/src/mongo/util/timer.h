@@ -39,6 +39,7 @@ class TickSource;
 /**
  * Time tracking object.
  */
+//定时器实现，基于TickSource时间嘀嗒实现
 class Timer /*copyable*/ {
 public:
     /**
@@ -87,6 +88,7 @@ public:
     }
 
 private:
+    
     TickSource* const _tickSource;
 
     // Derived value from _countsPerSecond. This represents the conversion ratio

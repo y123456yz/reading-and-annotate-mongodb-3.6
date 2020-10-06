@@ -91,17 +91,18 @@ public:
         //ServiceStateMachine::ServiceStateMachine构造函数初始状态
         Created,     // The session has been created, but no operations have been performed yet
         //ServiceStateMachine::_runNextInGuard开始进入接收网络数据状态
-        //_sourceMessage
+        //新连接到来开始调度或者本次客户端请求已完成(已经发送DB获取的数据给客户端)，等待调度进行该链接的
+        //下一轮请求，该状态对应处理流程为_sourceMessage
         Source,      // Request a new Message from the network to handle
-        //等待获取数据
+        //等待获取客户端的数据
         SourceWait,  // Wait for the new Message to arrive from the network
-        //处理接收到的数据  _processMessage  
+        //接收到一个完整mongodb报文后进入该状态
         Process,     // Run the Message through the database
         //等待数据发送成功
         SinkWait,    // Wait for the database result to be sent by the network
-        //接收或者发送数据异常，则进入该状态  _cleanupSession
+        //接收或者发送数据异常、链接关闭，则进入该状态  _cleanupSession
         EndSession,  // End the session - the ServiceStateMachine will be invalid after this
-        //session回收处理进入该状态
+        //session回收处理进入该状态 进入EndSession后立马通过_cleanupSession进入该状态
         Ended        // The session has ended. It is illegal to call any method besides
                      // state() if this is the current state.
     };
@@ -121,7 +122,7 @@ public:
      * kUnowned is used internally to mark that the SSM is inactive.
      * kUnowned在内部用于标记SSM处于非活动状态。
      */
-    //所有权
+    //所有权状态，主要用来判断是否需要在状态转换中跟新线程名，只对动态线程模型生效
     enum class Ownership { 
     //该状态表示本状态机SSM处于非活跃状态
     kUnowned,  
@@ -241,7 +242,7 @@ private:
      * Releases all the resources associated with the session and call the cleanupHook.
      */
     void _cleanupSession(ThreadGuard guard);
-
+    //一次客户端请求，当前mongodb服务端所处的状态
     AtomicWord<State> _state{State::Created};
 
     //ServiceEntryPointMongod ServiceEntryPointMongos mongod及mongos入口点
@@ -261,8 +262,10 @@ private:
     //由于worker线程会从ASIO的任务队列获取operation执行，存在一会儿做网络IO处理，一会儿做
     //业务逻辑处理，所以由两种线程名:conn-xx、worker-x,同一个线程需要做2种处理，因此需要记录旧的线程名
     //状态机线程名:conn-x
+    
+    //当前状态拥有的线程名，参考ThreadGuard类是实现，初始化为conn-n线程
     const std::string _threadName;
-    //之前的线程名，
+    //之前的线程名，上一个状态调度拥有的线程名
     std::string _oldThreadName;
 
     //ServiceEntryPointImpl::startSession->ServiceStateMachine::setCleanupHook中设置赋值
@@ -275,10 +278,10 @@ private:
     bool _inExhaust = false;
     //如果启用了网络压缩，对应有一个compressorId
     boost::optional<MessageCompressorId> _compressorId;
-    //接收处理的message信息  一个完整的报文就记录在该msg中
+    //接收处理的message信息  一个完整的报文就记录在该msg中, 也就是ASIOSourceTicket._target成员
     Message _inMessage; //赋值见ServiceStateMachine::_sourceMessage
 
-    //默认初始化kUnowned,标识本SSM状态机处于非活跃状态
+    //默认初始化kUnowned,标识本SSM状态机处于非活跃状态，主要用来判断是否需要在状态转换中跟新线程名，只对动态线程模型生效
     AtomicWord<Ownership> _owned{Ownership::kUnowned};
 #if MONGO_CONFIG_DEBUG_BUILD
     //该SSM所属的线程的线程号

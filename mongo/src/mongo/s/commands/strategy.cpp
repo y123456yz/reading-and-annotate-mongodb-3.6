@@ -428,8 +428,9 @@ DbResponse Strategy::clientCommand(OperationContext* opCtx, const Message& m) {
     [&] {
         OpMsgRequest request;
         std::string db;
-        try {  // Parse.
+        try {  // Parse.  从message中解析出OpMsgRequest
             request = rpc::opMsgRequestFromAnyProtocol(m);
+			//获取请求的db信息
             db = request.getDatabase().toString(); //OpMsgRequest::getDatabase
         } catch (const DBException& ex) {
             // If this error needs to fail the connection, propagate it out.

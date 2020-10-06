@@ -38,6 +38,7 @@ namespace mongo {
 //ServiceContext:_tickSource 类中包含该类成员
 //SystemTickSource继承该类  //时间搓相关
 //每个tick代表一个时间单位，1个tick可以代表一个us，也可以代表一个ns，参考SystemTickSource
+//Timer._tickSource为该类型，Timer定时器也计与时间嘀嗒实现
 class TickSource {
 public:
     using Tick = int64_t;

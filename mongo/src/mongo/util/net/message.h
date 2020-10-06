@@ -413,7 +413,7 @@ inline int ConstView::dataLen() const { //除去头部后的数据部分
 
 }  // namespace MsgData
 
-//DbMessage._msg包含该类成员
+//DbMessage._msg包含该类成员  message和OpMsgRequest ReplyInterface  ReplyBuilderInterface等的关系可以参考factory.cpp实现
 class Message {
 public:
     Message() = default;
@@ -424,7 +424,7 @@ public:
         return _buf.get();
     }
 
-    //获取网络数据报文中的op字段
+    //获取网络数据报文中的op字段 opMsgRequestFromAnyProtocol调用
     NetworkOp operation() const {
         return header().getNetworkOp();
     }

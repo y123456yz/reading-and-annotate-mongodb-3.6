@@ -245,15 +245,18 @@ private:
     //也就是TransportLayerASIO._workerIOContext  adaptive模式，所有线程共用所有accept新链接对应的网络IO上下文
     std::shared_ptr<asio::io_context> _ioContext; //早期ASIO中叫io_service 
     //TransportLayerManager::createWithConfig赋值调用
+    //对应ServerParameterOptions
     std::unique_ptr<Options> _config;
-
+    //线程队列及其锁
     mutable stdx::mutex _threadsMutex;
     ThreadList _threads;
     //worker-controller thread   ServiceExecutorAdaptive::start中创建
     stdx::thread _controllerThread;
 
     //TransportLayerManager::createWithConfig赋值调用
+    //时间嘀嗒处理
     TickSource* const _tickSource;
+    //运行状态，shutdown处理进入false，停止调度
     AtomicWord<bool> _isRunning{false};
 
     // These counters are used to detect stuck threads and high task queuing.
@@ -269,29 +272,48 @@ private:
 	//kTotalTimeRunningUs:记录这个退出的线程生命期内执行任务的总时间
 	//kTotalTimeExecutingUs：记录这个退出的线程生命期内运行的总时间(包括等待IO及运行IO任务的时间)
 	//kTotalTimeQueuedUs: 从任务被调度入队，到真正被执行这段过程的时间，也就是等待被调度的时间
+
+
+    //代表创建的worker线程数总数
     AtomicWord<int> _threadsRunning{0};
+    //代表还没有执行过task的worker线程数，该值越大说明负载低
     AtomicWord<int> _threadsPending{0};
+    //当前正在执行task的线程
     AtomicWord<int> _threadsInUse{0};
+    //当前入队还没执行的普通task数，也就是等待调度的普通task数(实际上就是dealTask)
     AtomicWord<int> _tasksQueued{0};
+    //当前入队还没执行的deferredTask数,也就是等待调度的普通deffered task数(实际上就是readTask)
     AtomicWord<int> _deferredTasksQueued{0};
     //TransportLayerManager::createWithConfig赋值调用
+    //没什么实际作用
     TickTimer _lastScheduleTimer;
+    		
+
+		
+	//记录这个退出的线程生命期内执行任务的总时间
     AtomicWord<TickSource::Tick> _pastThreadsSpentExecuting{0};
+    //记录这个退出的线程生命期内运行的总时间(包括等待IO及运行IO任务的时间)
     AtomicWord<TickSource::Tick> _pastThreadsSpentRunning{0};
+    //完成线程级的统计
     static thread_local ThreadState* _localThreadState;
 
     // These counters are only used for reporting in serverStatus.
+    //总的入队任务数
     AtomicWord<int64_t> _totalQueued{0};
+    //总执行的任务数
     AtomicWord<int64_t> _totalExecuted{0};
+    //从任务被调度入队，到真正被执行这段过程的时间，也就是等待被调度的时间
     AtomicWord<TickSource::Tick> _totalSpentQueued{0};
 
     // Threads signal this condition variable when they exit so we can gracefully shutdown
     // the executor.
+    //shutdown的时候等待线程消耗的条件变量
     stdx::condition_variable _deathCondition;
 
     // Tasks should signal this condition variable if they want the thread controller to
     // track their progress and do fast stuck detection
-    //条件变量，通知controler线程,通知见ServiceExecutorAdaptive::schedule，等待见_controllerThreadRoutine
+    //条件变量，如果发现工作线程压力大，为了避免task饥饿
+    //通知controler线程,通知见ServiceExecutorAdaptive::schedule，等待见_controllerThreadRoutine
     stdx::condition_variable _scheduleCondition;
 };
 

@@ -504,6 +504,8 @@ src/mongo/s/commands/cluster_profile_cmd.cpp:        actions.addAction(ActionTyp
 
 //mongos和mongod支持的命令统计都不一样，通过 db.serverStatus().metrics.commands查看命令统计信息
 //Command::findCommand中通过c = Command::findCommand(request.getCommandName())获取对应的command
+
+//ClusterWriteCmd  WriteCommand  BasicCommand继承该类
 class Command : public CommandInterface {
 public:
     // The type of the first field in 'cmdObj' must be mongo::String. The first field is
@@ -544,7 +546,7 @@ public:
     std::size_t reserveBytesForReply() const override {
         return 0u;
     }
-
+    //该命令只能在admin中执行
     bool adminOnly() const override {
         return false;
     }
@@ -683,6 +685,7 @@ public:
      *         ...
      *     }
      */
+    ////mongod --setParameter=enableTestCommands
     static bool testCommandsEnabled;
 
     /**
@@ -785,7 +788,8 @@ public:
     static BSONObj filterCommandReplyForPassthrough(const BSONObj& reply);
 
 private:
-    //添加地方见Command::Command(
+    //添加地方见Command::Command(  
+    //所有的command都在_commands中保存
     static CommandMap* _commands;
     static CommandMap* _commandsByBestName;
 
@@ -894,9 +898,91 @@ private:
 
 /**
  * Deprecated. Do not add new subclasses.
+ Commands.h (src\mongo\db):class ErrmsgCommandDeprecated : public BasicCommand {
+ Commands_public.cpp (src\mongo\s\commands):class DropIndexesCmd : public ErrmsgCommandDeprecated {
+ Commands_public.cpp (src\mongo\s\commands):    DropIndexesCmd() : ErrmsgCommandDeprecated("dropIndexes", "deleteIndexes") {}
+ Commands_public.cpp (src\mongo\s\commands):class CreateIndexesCmd : public ErrmsgCommandDeprecated {
+ Commands_public.cpp (src\mongo\s\commands):    CreateIndexesCmd() : ErrmsgCommandDeprecated("createIndexes") {}
+ Commands_public.cpp (src\mongo\s\commands):class ReIndexCmd : public ErrmsgCommandDeprecated {
+ Commands_public.cpp (src\mongo\s\commands):    ReIndexCmd() : ErrmsgCommandDeprecated("reIndex") {}
+ Commands_public.cpp (src\mongo\s\commands):class CollectionModCmd : public ErrmsgCommandDeprecated {
+ Commands_public.cpp (src\mongo\s\commands):    CollectionModCmd() : ErrmsgCommandDeprecated("collMod") {}
+ Compact.cpp (src\mongo\db\commands):class CompactCmd : public ErrmsgCommandDeprecated {
+ Compact.cpp (src\mongo\db\commands):    CompactCmd() : ErrmsgCommandDeprecated("compact") {}
+ Copydb.cpp (src\mongo\db\commands):class CmdCopyDb : public ErrmsgCommandDeprecated {
+ Copydb.cpp (src\mongo\db\commands):    CmdCopyDb() : ErrmsgCommandDeprecated("copydb") {}
+ Copydb_start_commands.cpp (src\mongo\db\commands):class CmdCopyDbGetNonce : public ErrmsgCommandDeprecated {
+ Copydb_start_commands.cpp (src\mongo\db\commands):    CmdCopyDbGetNonce() : ErrmsgCommandDeprecated("copydbgetnonce") {}
+ Copydb_start_commands.cpp (src\mongo\db\commands):class CmdCopyDbSaslStart : public ErrmsgCommandDeprecated {
+ Copydb_start_commands.cpp (src\mongo\db\commands):    CmdCopyDbSaslStart() : ErrmsgCommandDeprecated("copydbsaslstart") {}
+ Cpuprofile.cpp (src\mongo\db\commands):class CpuProfilerCommand : public ErrmsgCommandDeprecated {
+ Cpuprofile.cpp (src\mongo\db\commands):    CpuProfilerCommand(char const* name) : ErrmsgCommandDeprecated(name) {}
+ Create_indexes.cpp (src\mongo\db\commands):class CmdCreateIndex : public ErrmsgCommandDeprecated {
+ Create_indexes.cpp (src\mongo\db\commands):    CmdCreateIndex() : ErrmsgCommandDeprecated(kCommandName) {}
+ Dbcommands.cpp (src\mongo\db\commands):class CmdRepairDatabase : public ErrmsgCommandDeprecated {
+ Dbcommands.cpp (src\mongo\db\commands):    CmdRepairDatabase() : ErrmsgCommandDeprecated("repairDatabase") {}
+ Dbcommands.cpp (src\mongo\db\commands):class CmdProfile : public ErrmsgCommandDeprecated {
+ Dbcommands.cpp (src\mongo\db\commands):    CmdProfile() : ErrmsgCommandDeprecated("profile") {}
+ Dbcommands.cpp (src\mongo\db\commands):class CmdDrop : public ErrmsgCommandDeprecated {
+ Dbcommands.cpp (src\mongo\db\commands):    CmdDrop() : ErrmsgCommandDeprecated("drop") {}
+ Dbcommands.cpp (src\mongo\db\commands):class CmdDatasize : public ErrmsgCommandDeprecated {
+ Dbcommands.cpp (src\mongo\db\commands):    CmdDatasize() : ErrmsgCommandDeprecated("dataSize", "datasize") {}
+ Dbcommands.cpp (src\mongo\db\commands):class CollectionStats : public ErrmsgCommandDeprecated {
+ Dbcommands.cpp (src\mongo\db\commands):    CollectionStats() : ErrmsgCommandDeprecated("collStats", "collstats") {}
+ Dbcommands.cpp (src\mongo\db\commands):class DBStats : public ErrmsgCommandDeprecated {
+ Dbcommands.cpp (src\mongo\db\commands):    DBStats() : ErrmsgCommandDeprecated("dbStats", "dbstats") {}
+ Dbhash.cpp (src\mongo\db\commands):class DBHashCmd : public ErrmsgCommandDeprecated {
+ Dbhash.cpp (src\mongo\db\commands):    DBHashCmd() : ErrmsgCommandDeprecated("dbHash", "dbhash") {}
+ driverHelpers.cpp (src\mongo\db\commands):class BasicDriverHelper : public ErrmsgCommandDeprecated {
+ driverHelpers.cpp (src\mongo\db\commands):    BasicDriverHelper(const char* name) : ErrmsgCommandDeprecated(name) {}
+ Drop_indexes.cpp (src\mongo\db\commands):class CmdReIndex : public ErrmsgCommandDeprecated {
+ Drop_indexes.cpp (src\mongo\db\commands):    CmdReIndex() : ErrmsgCommandDeprecated("reIndex") {}
+ Eval.cpp (src\mongo\db\commands):class CmdEval : public ErrmsgCommandDeprecated {
+ Eval.cpp (src\mongo\db\commands):    CmdEval() : ErrmsgCommandDeprecated("eval", "$eval") {}
+ Fail_point_cmd.cpp (src\mongo\db\commands):class FaultInjectCmd : public ErrmsgCommandDeprecated {
+ Fail_point_cmd.cpp (src\mongo\db\commands):    FaultInjectCmd() : ErrmsgCommandDeprecated("configureFailPoint") {}
+ Fsync.cpp (src\mongo\db\commands):class FSyncCommand : public ErrmsgCommandDeprecated {
+ Fsync.cpp (src\mongo\db\commands):    FSyncCommand() : ErrmsgCommandDeprecated("fsync") {}
+ Fsync.cpp (src\mongo\db\commands):class FSyncUnlockCommand : public ErrmsgCommandDeprecated {
+ Fsync.cpp (src\mongo\db\commands):    FSyncUnlockCommand() : ErrmsgCommandDeprecated("fsyncUnlock") {}
+ Generic.cpp (src\mongo\db\commands):class GetLogCmd : public ErrmsgCommandDeprecated {
+ Generic.cpp (src\mongo\db\commands):    GetLogCmd() : ErrmsgCommandDeprecated("getLog") {}
+ Geo_near_cmd.cpp (src\mongo\db\commands):class Geo2dFindNearCmd : public ErrmsgCommandDeprecated {
+ Geo_near_cmd.cpp (src\mongo\db\commands):    Geo2dFindNearCmd() : ErrmsgCommandDeprecated("geoNear") {}
+ Get_last_error.cpp (src\mongo\db\commands):class CmdGetLastError : public ErrmsgCommandDeprecated {
+ Get_last_error.cpp (src\mongo\db\commands):    CmdGetLastError() : ErrmsgCommandDeprecated("getLastError", "getlasterror") {}
+ Hashcmd.cpp (src\mongo\db\commands):class CmdHashElt : public ErrmsgCommandDeprecated {
+ Hashcmd.cpp (src\mongo\db\commands):    CmdHashElt() : ErrmsgCommandDeprecated("_hashBSONElement"){};
+ Haystack.cpp (src\mongo\db\commands):class GeoHaystackSearchCommand : public ErrmsgCommandDeprecated {
+ Haystack.cpp (src\mongo\db\commands):    GeoHaystackSearchCommand() : ErrmsgCommandDeprecated("geoSearch") {}
+ Merge_chunks_command.cpp (src\mongo\db\s):class MergeChunksCommand : public ErrmsgCommandDeprecated {
+ Merge_chunks_command.cpp (src\mongo\db\s):    MergeChunksCommand() : ErrmsgCommandDeprecated("mergeChunks") {}
+ Migration_destination_manager_legacy_commands.cpp (src\mongo\db\s):class RecvChunkStartCommand : public ErrmsgCommandDeprecated {
+ Migration_destination_manager_legacy_commands.cpp (src\mongo\db\s):    RecvChunkStartCommand() : ErrmsgCommandDeprecated("_recvChunkStart") {}
+ Mr.cpp (src\mongo\db\commands):class MapReduceCommand : public ErrmsgCommandDeprecated {
+ Mr.cpp (src\mongo\db\commands):    MapReduceCommand() : ErrmsgCommandDeprecated("mapReduce", "mapreduce") {}
+ Parameters.cpp (src\mongo\db\commands):class CmdGet : public ErrmsgCommandDeprecated {
+ Parameters.cpp (src\mongo\db\commands):    CmdGet() : ErrmsgCommandDeprecated("getParameter") {}
+ Parameters.cpp (src\mongo\db\commands):class CmdSet : public ErrmsgCommandDeprecated {
+ Parameters.cpp (src\mongo\db\commands):    CmdSet() : ErrmsgCommandDeprecated("setParameter") {}
+ Rename_collection_cmd.cpp (src\mongo\db\commands):class CmdRenameCollection : public ErrmsgCommandDeprecated {
+ Rename_collection_cmd.cpp (src\mongo\db\commands):    CmdRenameCollection() : ErrmsgCommandDeprecated("renameCollection") {}
+ Resync.cpp (src\mongo\db\repl):class CmdResync : public ErrmsgCommandDeprecated {
+ Resync.cpp (src\mongo\db\repl):    CmdResync() : ErrmsgCommandDeprecated(kResyncFieldName) {}
+ Set_shard_version_command.cpp (src\mongo\db\s):class SetShardVersion : public ErrmsgCommandDeprecated {
+ Set_shard_version_command.cpp (src\mongo\db\s):    SetShardVersion() : ErrmsgCommandDeprecated("setShardVersion") {}
+ Split_chunk_command.cpp (src\mongo\db\s):class SplitChunkCommand : public ErrmsgCommandDeprecated {
+ Split_chunk_command.cpp (src\mongo\db\s):    SplitChunkCommand() : ErrmsgCommandDeprecated("splitChunk") {}
+ Split_vector_command.cpp (src\mongo\db\s):class SplitVector : public ErrmsgCommandDeprecated {
+ Split_vector_command.cpp (src\mongo\db\s):    SplitVector() : ErrmsgCommandDeprecated("splitVector") {}
+ Test_commands.cpp (src\mongo\db\commands):class GodInsert : public ErrmsgCommandDeprecated {
+ Test_commands.cpp (src\mongo\db\commands):    GodInsert() : ErrmsgCommandDeprecated("godinsert") {}
+ Touch.cpp (src\mongo\db\commands):class TouchCmd : public ErrmsgCommandDeprecated {
+ Touch.cpp (src\mongo\db\commands):    TouchCmd() : ErrmsgCommandDeprecated("touch") {}
  */
 class ErrmsgCommandDeprecated : public BasicCommand {
     using BasicCommand::BasicCommand;
+    //ErrmsgCommandDeprecated::run中会执行ErrmsgCommandDeprecated::errmsgRun
     bool run(OperationContext* opCtx,
              const std::string& db,
              const BSONObj& cmdObj,

@@ -170,7 +170,7 @@ DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const
 
     // This is before the try block since it handles all exceptions that should not cause the
     // connection to close.
-    //一般走这里面  insert find都是是
+    //一般走这里面  insert find都是是 3.6版本都是走该dbMsg流程
     if (op == dbMsg || (op == dbQuery && NamespaceString(dbm.getns()).isCommand())) {
         return Strategy::clientCommand(opCtx, message);
     }

@@ -32,6 +32,7 @@
 
 namespace mongo {
 
+//参考testCommandsParameter使能  前提是先启动的时候带上参数mongod --setParameter=enableTestCommands
 bool Command::testCommandsEnabled = false;
 
 }  // namespace mongo

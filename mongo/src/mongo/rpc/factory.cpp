@@ -48,6 +48,7 @@
 namespace mongo {
 namespace rpc {
 
+//根据request获取对应message
 Message messageFromOpMsgRequest(Protocol proto, const OpMsgRequest& request) {
     switch (proto) {
         case Protocol::kOpMsg:
@@ -61,6 +62,7 @@ Message messageFromOpMsgRequest(Protocol proto, const OpMsgRequest& request) {
     }
 }
 
+//根据message生成对应Reply
 std::unique_ptr<ReplyInterface> makeReply(const Message* unownedMessage) {
     switch (unownedMessage->operation()) {
         case mongo::dbMsg:
@@ -76,6 +78,7 @@ std::unique_ptr<ReplyInterface> makeReply(const Message* unownedMessage) {
     }
 }
 
+//根据message获取OpMsgRequest
 OpMsgRequest opMsgRequestFromAnyProtocol(const Message& unownedMessage) {
     switch (unownedMessage.operation()) {
         case mongo::dbMsg:
@@ -91,9 +94,10 @@ OpMsgRequest opMsgRequestFromAnyProtocol(const Message& unownedMessage) {
     }
 }
 
+//Strategy::clientCommand中调用，获取对应ReplyBuilder
 std::unique_ptr<ReplyBuilderInterface> makeReplyBuilder(Protocol protocol) {
     switch (protocol) {
-        case Protocol::kOpMsg:
+        case Protocol::kOpMsg:  
             return stdx::make_unique<OpMsgReplyBuilder>();
         case Protocol::kOpQuery:
             return stdx::make_unique<LegacyReplyBuilder>();

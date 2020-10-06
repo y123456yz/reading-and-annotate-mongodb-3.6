@@ -153,13 +153,14 @@ public:
 #endif
 
         // Set up the thread name
+        //改线程名前的线程名称临时保存起来，为什么命名为oldThreadName，是因为可能即将改名了
         auto oldThreadName = getThreadName(); 
-		//改线程名前的线程名称临时保存起来
+		//当前线程名和之前ssm保存的线程名不一样
         if (oldThreadName != _ssm->_threadName) {
-			//记录下之前的线程名
+			//记录下当前线程名，即将该命了，所以是old
             _ssm->_oldThreadName = getThreadName().toString();
 			//log() << "yang test ...........ServiceStateMachine::ThreadGuard:" << _ssm->_oldThreadName;
-			//把运行本ssm状态机的线程名改为conn-x线程
+			//把运行本ssm状态机的线程名改为之前保存的线程名
 			setThreadName(_ssm->_threadName); //把当前线程改名为_threadName
 			//sleep(60);
 			//log() << "yang test ......2.....ServiceStateMachine::ThreadGuard:" << _ssm->_threadName;
@@ -250,7 +251,7 @@ public:
         //状态机状态进入end，则调用对应回收hook处理
         if (_ssm->state() == State::Ended) {
             // The cleanup hook gets moved out of _ssm->_cleanupHook so that it can only be called
-            // once.
+            // once.  //链接关闭的回收处理 ServiceStateMachine::setCleanupHook
             auto cleanupHook = std::move(_ssm->_cleanupHook);
             if (cleanupHook)
                 cleanupHook();
@@ -378,6 +379,7 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
 void ServiceStateMachine::_sinkMessage(ThreadGuard guard, Message toSink) {
     // Sink our response to the client
     //ServiceStateMachine::_sinkMessage->Session::sinkMessage->TransportLayerASIO::sinkMessage
+    //获取ASIOSinkTicket
     auto ticket = _session()->sinkMessage(toSink);
 
     _state.store(State::SinkWait);
@@ -465,6 +467,7 @@ void ServiceStateMachine::_sinkCallback(Status status) {
 		//异常情况调用
         return _runNextInGuard(std::move(guard));
     } else if (_inExhaust) { //3.6.1版本都不会满足，因为exhaust功能没用起来
+    	//注意这里
     	//注意这里的状态是process   _processMessage   还需要继续进行Process处理
         _state.store(State::Process); 
     } else { //正常流程始终进入该分支 _sourceMessage    这里继续进行递归接收数据处理
@@ -474,6 +477,8 @@ void ServiceStateMachine::_sinkCallback(Status status) {
 	//正常流程走这里,继续进行下一次的State::Source报文接收处理
 	//这里的kDeferredTask实际上也指定了工作线程下一次的接受mongodb报文这个阶段不会通过
 	//_scheduleCondition条件变量通知control控制线程
+
+	//本链接对应的一次mongo访问已经应答完成，需要继续要一次调度了
     return _scheduleNextWithGuard(std::move(guard),
                                   ServiceExecutor::kDeferredTask |
                                       ServiceExecutor::kMayYieldBeforeSchedule);
@@ -503,7 +508,7 @@ void ServiceStateMachine::_sinkCallback(Status status) {
 #17 0x00007f22834bce25 in start_thread () from /lib64/libpthread.so.0
 #18 0x00007f22831ea34d in clone () from /lib64/libc.so.6
 */
-//消息处理都会走到这里
+//消息处理都会走到这里  也就是dealTask
 void ServiceStateMachine::_processMessage(ThreadGuard guard) {
     invariant(!_inMessage.empty());
 	//log() << "	yang test ...........	_processMessage ";
@@ -535,6 +540,7 @@ void ServiceStateMachine::_processMessage(ThreadGuard guard) {
 
     // opCtx must be destroyed here so that the operation cannot show
     // up in currentOp results after the response reaches the client
+    //释放opCtx，这样currentop就看不到了
     opCtx.reset();
 
     // Format our response, if we have one
@@ -580,7 +586,9 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
     dassert(curState != State::Ended);
 
     // If this is the first run of the SSM, then update its state to Source
-    if (curState == State::Created) { //初始状态
+    //如果是第一次运行该SSM，则状态为Created，到这里标记可以准备接收数据了
+    if (curState == State::Created) { 
+		//进入Source等待接收数据
         curState = State::Source;
         _state.store(curState);
     }
@@ -606,12 +614,17 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 	*/
     try {
         switch (curState) { 
+			//接收数据  readTask
             case State::Source:  
                 _sourceMessage(std::move(guard));
                 break;
-            case State::Process:
+			//以及接收到完整的一个mongodb报文，可以内部处理(解析+命令处理+应答客户端)
+			//dealTask
+            case State::Process: 
                 _processMessage(std::move(guard));
                 break;
+			//链接异常或者已经关闭，则开始回收处理
+			//cleanTask
             case State::EndSession:
                 _cleanupSession(std::move(guard));
                 break;
@@ -639,7 +652,7 @@ void ServiceStateMachine::_runNextInGuard(ThreadGuard guard) {
 void ServiceStateMachine::start(Ownership ownershipModel) {
     _scheduleNextWithGuard( 
 		//listener线程暂时性的变为conn线程名，在_scheduleNextWithGuard中任
-		//务入队完成后，调用guard.release()恢复listener线程名
+		//务入队完成后，在下面的_scheduleNextWithGuard调用guard.release()恢复listener线程名
         ThreadGuard(this), transport::ServiceExecutor::kEmptyFlags, ownershipModel);
 }
 
@@ -654,6 +667,7 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
 	//该任务func实际上由worker线程运行,worker线程从asio库的全局队列获取任务调度执行
     auto func = [ ssm = shared_from_this(), ownershipModel ] {
 		//ServiceStateMachine::start中的ThreadGuard(this)中线程名赋值为conn-x
+		//新任务重新构造guard
         ThreadGuard guard(ssm.get());  
 		//说明是sync mode,即一个链接一个线程模式
         if (ownershipModel == Ownership::kStatic) 
@@ -670,12 +684,14 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
 	//boost-asio库中的队列任务调度和底层数据收发流程都切入到worker-n线程
     guard.release();
 	//ServiceExecutorAdaptive::schedule(adaptive)   ServiceExecutorSynchronous::schedule(synchronous)
-	//第一次进入该函数的时候在这里面创建新线程
+	//第一次进入该函数的时候在这里面创建新线程，不是第一次则把task任务入队调度
     Status status = _serviceContext->getServiceExecutor()->schedule(std::move(func), flags);
     if (status.isOK()) {
         return;
     }
 
+	//正常流程不会走到这里，会在上面的schedule里面循环调度处理
+	
     // We've had an error, reacquire the ThreadGuard and destroy the SSM
     ThreadGuard terminateGuard(this);  //对应ThreadGuard& operator=(ThreadGuard&& other)
 
@@ -685,10 +701,12 @@ void ServiceStateMachine::_scheduleNextWithGuard(ThreadGuard guard,
     _cleanupSession(std::move(terminateGuard));
 }
 
+//套接字回收处理
 void ServiceStateMachine::terminate() {
     if (state() == State::Ended)
         return;
 
+	//TransportLayerASIO::end
     _session()->getTransportLayer()->end(_session());
 }
 
@@ -709,6 +727,7 @@ void ServiceStateMachine::terminateIfTagsDontMatch(transport::Session::TagMask t
     terminate();
 }
 
+//赋值ServiceEntryPointImpl::startSession，链接回收处理
 void ServiceStateMachine::setCleanupHook(stdx::function<void()> hook) {
     invariant(state() == State::Created);
     _cleanupHook = std::move(hook);
@@ -726,6 +745,7 @@ void ServiceStateMachine::_terminateAndLogIfError(Status status) {
 }
 
 void ServiceStateMachine::_cleanupSession(ThreadGuard guard) {
+	//进入这个状态，等待
     _state.store(State::Ended);
 
     _inMessage.reset();

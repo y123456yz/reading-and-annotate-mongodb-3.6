@@ -45,6 +45,8 @@ class ServiceEntryPointMongos : public ServiceEntryPointImpl {
 
 public:
     using ServiceEntryPointImpl::ServiceEntryPointImpl;
+    
+    //ServiceEntryPointMongod::handleRequest(mongod网络处理)  ServiceEntryPointMongos::handleRequest mongos网络请求处理
     DbResponse handleRequest(OperationContext* opCtx, const Message& request) override;
 };
 
