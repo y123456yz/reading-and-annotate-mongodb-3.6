@@ -44,7 +44,7 @@ namespace rpc {
 
 /**
  * Constructs an RPC Reply.
- */ //见makeReplyBuilder
+ */ //见makeReplyBuilder    OpMsgReplyBuilder  LegacyReplyBuilder  CommandReplyBuilder继承该类
 class ReplyBuilderInterface {
     MONGO_DISALLOW_COPYING(ReplyBuilderInterface);
 

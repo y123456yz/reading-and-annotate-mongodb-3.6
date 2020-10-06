@@ -39,7 +39,7 @@
 namespace mongo {
 
 //内容来源见OpMsg::parse
-struct OpMsg { //OpMsgRequest继承该类
+struct OpMsg { //下面的OpMsgRequest继承该类
     struct DocumentSequence {
         std::string name;
         std::vector<BSONObj> objs;
@@ -105,6 +105,7 @@ struct OpMsg { //OpMsgRequest继承该类
         return it == sequences.end() ? nullptr : &*it;
     }
 
+    //msg解析赋值见OpMsg::parse
     BSONObj body; //赋值见OpMsg::parse   输出打印通过:c->getRedactedCopyForLogging(request.body);
     std::vector<DocumentSequence> sequences; //赋值见OpMsg::parse
 };
@@ -144,7 +145,7 @@ struct OpMsgRequest : public OpMsg {
         uasserted(40571, "OP_MSG requests require a $db argument");
     }
 
-    //find  insert 等
+    //find  insert 等  body中的第一个elem就是command 名
     StringData getCommandName() const {
         return body.firstElementFieldName();
     }

@@ -241,7 +241,7 @@ private:
  * Scoped object, which checks out the session specified in the passed operation context and stores
  * it for later access by the command. The session is installed at construction time and is removed
  * at destruction.
- */
+ */ //²Î¿¼execCommandDatabase
 class OperationContextSession {
     MONGO_DISALLOW_COPYING(OperationContextSession);
 

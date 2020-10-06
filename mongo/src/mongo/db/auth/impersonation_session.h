@@ -34,7 +34,7 @@ class OperationContext;
 /**
  * RAII class to optionally set an impersonated username list into the authorization session
  * for the duration of the life of this object.
- */
+ */ //execCommandDatabase中构造使用
 class ImpersonationSessionGuard {
     MONGO_DISALLOW_COPYING(ImpersonationSessionGuard);
 

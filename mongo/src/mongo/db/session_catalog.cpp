@@ -240,6 +240,7 @@ void SessionCatalog::_releaseSession(const LogicalSessionId& lsid) {
     sri->availableCondVar.notify_one();
 }
 
+//execCommandDatabaseµ÷ÓÃ
 OperationContextSession::OperationContextSession(OperationContext* opCtx, bool checkOutSession)
     : _opCtx(opCtx) {
     if (!opCtx->getLogicalSessionId()) {

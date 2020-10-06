@@ -36,6 +36,7 @@
 
 namespace mongo {
 
+//权限管理可以参考 https://mongoing.com/archives/1774
 class CmdAuthenticate : public BasicCommand {
 public:
     static void disableAuthMechanism(std::string authMechanism);

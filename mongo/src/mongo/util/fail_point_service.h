@@ -46,7 +46,7 @@ FailPointRegistry* getGlobalFailPointRegistry();
  *
  * NOTE: Never use in header files, only sources.
  */
-//例如MONGO_FP_DECLARE(shutdownAtStartup);
+//例如MONGO_FP_DECLARE(shutdownAtStartup);   配合Initializer::execute
 //定义一个GlobalInitializerRegisterer _mongoInitializerRegisterer_fp类，这些宏定义在main前执行
 #define MONGO_FP_DECLARE(fp)                                                          \
     FailPoint fp;                                                                     \

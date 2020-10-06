@@ -74,11 +74,11 @@ private:
 thread_local std::deque<ServiceExecutor::Task> ServiceExecutorSynchronous::_localWorkQueue = {}; //链接入队
 thread_local int ServiceExecutorSynchronous::_localRecursionDepth = 0;
 thread_local int64_t ServiceExecutorSynchronous::_localThreadIdleCounter = 0;
-*/
+*/   //私有线程变量
     static thread_local std::deque<Task> _localWorkQueue;
     static thread_local int _localRecursionDepth;
     static thread_local int64_t _localThreadIdleCounter;
-
+    //shutdown的时候设置为false
     AtomicBool _stillRunning{false};
 
     mutable stdx::mutex _shutdownMutex;

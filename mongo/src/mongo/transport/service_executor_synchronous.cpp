@@ -100,6 +100,7 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
     }
 
 	//除了第一次进入该函数会走后面的创建线程流程，后续的任务进来都是进入该if循环，因为状态机中始终会有任务运行
+	//任务入队
     if (!_localWorkQueue.empty()) {
         /*
          * In perf testing we found that yielding after running a each request produced
@@ -108,12 +109,15 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
          */
          //在perf测试中，我们发现，如果工作线程的数量大于可用内核的数量，那么在微基准测试中，运行每个请
          //求后产生的性能提升为5%。
+         //kMayYieldBeforeSchedule标记当返回客户端应答成功后，开始接收下一个新请求，这时候会设置该标记
         if (flags & ScheduleFlags::kMayYieldBeforeSchedule) {
+			//也就是如果该链接对应的线程如果连续处理了0xf个请求，则需要休息一会儿
             if ((_localThreadIdleCounter++ & 0xf) == 0) {
 				//短暂休息会儿后再处理该链接的下一个用户请求
 				//实际上是调用TCMalloc MarkThreadTemporarilyIdle实现
                 markThreadIdle();
             }
+            //链接数超过了CPU个数，则每处理完一个请求，就yield一次		 
             if (_numRunningWorkerThreads.loadRelaxed() > _numHardwareCores) {
                 stdx::this_thread::yield();//线程本次不参与CPU调度，也就是放慢脚步
             }
@@ -129,13 +133,17 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
 		就不会破坏堆栈，即使对于使用阻塞网络I/O的执行器来说，这是不应该发生的。
 		*/
 		//本线程优先处理对应链接的
-        if ((flags & ScheduleFlags::kMayRecurse) &&  //带kMayRecurse标识，则直接递归执行
+
+		//这里保证了同一次请求的readTask和dealTask一次递归调用执行，不用通过_localWorkQueue入队的方式执行
+		//只有在readTask读取到完整mongodb长度数据后，开始下一个dealTask任务调度的时候才会设置kMayRecurse标记
+		if ((flags & ScheduleFlags::kMayRecurse) &&  //带kMayRecurse标识，则直接递归执行
             (_localRecursionDepth < synchronousServiceExecutorRecursionLimit.loadRelaxed())) {
             ++_localRecursionDepth;
 			if (_localRecursionDepth > 2)
 				log() << "yang test Starting digui ##  1111111111111 ServiceExecutorSynchronous::schedule, depth:" << _localRecursionDepth;
             task();
         } else {
+            //readTask任务走这里
         	if (_localRecursionDepth > 2)
         		log() << "yang test Starting no digui ## 222222222222 ServiceExecutorSynchronous::schedule, depth:" << _localRecursionDepth;
             _localWorkQueue.emplace_back(std::move(task)); //入队
@@ -147,7 +155,7 @@ Status ServiceExecutorSynchronous::schedule(Task task, ScheduleFlags flags) {
     // into the thread local job queue.
     log() << "Starting new executor thread in passthrough mode";
 
-	//创建conn线程，执行对应的task
+	//创建conn线程，线程名conn-xx，执行对应的task
     Status status = launchServiceWorkerThread([ this, task = std::move(task) ] {
 		//这个func是线程回调函数
 	
@@ -211,7 +219,7 @@ mongos> db.serverStatus().network
                 "threadsRunning" : 102
         }
 }
-*/
+*/ 
 void ServiceExecutorSynchronous::appendStats(BSONObjBuilder* bob) const {
     BSONObjBuilder section(bob->subobjStart("serviceExecutorTaskStats"));
     section << kExecutorLabel << kExecutorName << kThreadsRunning

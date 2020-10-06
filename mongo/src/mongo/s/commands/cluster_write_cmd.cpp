@@ -404,7 +404,7 @@ public:
         help << "insert documents";
     }
 
-} clusterInsertCmd;
+} clusterInsertCmd; //这里使用的是在类声明后定义对象的方式来执行构造方法（这时并未使用new实例化方式来创建对象指针）
 
 class ClusterCmdUpdate : public ClusterWriteCmd {
 public:

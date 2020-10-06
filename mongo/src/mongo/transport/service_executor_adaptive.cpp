@@ -193,7 +193,7 @@ ServiceExecutorAdaptive::~ServiceExecutorAdaptive() {
 Status ServiceExecutorAdaptive::start() {
     invariant(!_isRunning.load());
     _isRunning.store(true);
-	//线程回调ServiceExecutorAdaptive::_controllerThreadRoutine
+	//控制线程初始化创建，线程回调ServiceExecutorAdaptive::_controllerThreadRoutine
     _controllerThread = stdx::thread(&ServiceExecutorAdaptive::_controllerThreadRoutine, this);
     for (auto i = 0; i < _config->reservedThreads(); i++) {
         _startWorkerThread(); //启动时候默认启用CPU核心数/2个worker线程
@@ -226,7 +226,7 @@ Status ServiceExecutorAdaptive::shutdown(Milliseconds timeout) {
 //ServiceStateMachine::_scheduleNextWithGuard  
 //adaptive模式，分发链接的线程给_ioContext
 
-//ServiceExecutorAdaptive::schedule中任务入队(listener线程)，ServiceExecutorAdaptive::_workerThreadRoutine(worker线程)出对执行
+//ServiceExecutorAdaptive::schedule中任务入队，ServiceExecutorAdaptive::_workerThreadRoutine(worker线程)出对执行
 Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, ScheduleFlags flags) {
 	//获取当前时间
 	auto scheduleTime = _tickSource->getTicks();
@@ -249,6 +249,7 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
 		//从任务被调度入队，到真正被执行这段过程的时间，也就是等待被调度的时间
         _totalSpentQueued.addAndFetch(start - scheduleTime); //从任务被调度入队，到真正被执行这段过程的时间
 
+		//recursionDepth=0说明开始进入调度处理，后续有可能是递归执行
         if (_localThreadState->recursionDepth++ == 0) {
 			//记录wrappedTask被worker线程调度执行的起始时间
             _localThreadState->executing.markRunning();
@@ -353,6 +354,7 @@ Status ServiceExecutorAdaptive::schedule(ServiceExecutorAdaptive::Task task, Sch
     // starvation.
 
 	//kDeferredTask真正生效在这里
+	//队列中的任务数大于可用线程数，说明worker压力过大，需要创建新的worker线程
     if (_isStarved() && !(flags & kDeferredTask)) {//kDeferredTask真正生效在这里
     	//条件变量，通知controler线程,通知见ServiceExecutorAdaptive::schedule，等待见_controllerThreadRoutine
         _scheduleCondition.notify_one();
@@ -520,9 +522,9 @@ void ServiceExecutorAdaptive::_startWorkerThread() {
     auto it = _threads.emplace(_threads.begin(), _tickSource); 
 	warning() << "yang test   _startWorkerThread: 22222 num2:" << _threads.size();
 
-	//_threadsPending代表当前刚创建或者正在创建的线程总数，也就是创建起来还没有执行task的线程数
+	//还没有执行过task任务的线程数
     _threadsPending.addAndFetch(1);
-	//_threadsRunning代表已经执行过task的线程总数，也就是这些线程不是刚刚创建起来的
+	//worker线程总数
     _threadsRunning.addAndFetch(1);
 
     lk.unlock();
@@ -539,9 +541,10 @@ void ServiceExecutorAdaptive::_startWorkerThread() {
     }
 }
 
-//产生一个随机数
+//产生一个随机数，单位ms
 Milliseconds ServiceExecutorAdaptive::_getThreadJitter() const {
     static stdx::mutex jitterMutex;
+	//
     static std::default_random_engine randomEngine = [] {
         std::random_device seed;
         return std::default_random_engine(seed());
@@ -563,29 +566,40 @@ Milliseconds ServiceExecutorAdaptive::_getThreadJitter() const {
 }
 
 //在线程池内执行的时间。注意这个时间是所有worker的线程的汇总信息，包含历史worker的统计时间。
+//获取指定which类型的工作线程相关运行时间，
+//例如Running代表线程总运行时间(等待数据+任务处理) 
+//Executing只包含执行task任务的时间
 TickSource::Tick ServiceExecutorAdaptive::_getThreadTimerTotal(ThreadTimer which) const {
-    TickSource::Tick accumulator;
-    switch (which) { //获取生命周期已经结束的线程执行任务的总时间
+	//获取一个时间嘀嗒tick
+	TickSource::Tick accumulator;
+	//先把已消耗的线程的数据统计出来
+    switch (which) { 
+		//获取生命周期已经结束的线程执行任务的总时间(只包括执行任务的时间)
         case ThreadTimer::Running:
             accumulator = _pastThreadsSpentRunning.load();
             break;
-        case ThreadTimer::Executing: //获取生命周期已经结束的线程整个生命周期时间(包括空闲时间+执行任务时间)
+		//获取生命周期已经结束的线程整个生命周期时间(包括空闲时间+执行任务时间)
+        case ThreadTimer::Executing: 
             accumulator = _pastThreadsSpentExecuting.load();
             break;
     }
 
+	//然后再把统计当前正在运行的worker线程的不同类型的统计时间统计出来
     stdx::lock_guard<stdx::mutex> lk(_threadsMutex);
     for (auto& thread : _threads) { 
         switch (which) {
-            case ThreadTimer::Running://获取当前线程池中所有工作线程执行任务时间
+			//获取当前线程池中所有工作线程执行任务时间
+            case ThreadTimer::Running:
                 accumulator += thread.running.totalTime();
                 break;
-            case ThreadTimer::Executing: //获取当前线程池中所有工作线程整个生命周期时间(包括空闲时间+执行任务时间)
+			//获取当前线程池中所有工作线程整个生命周期时间(包括空闲时间+执行任务时间)
+            case ThreadTimer::Executing: 
                 accumulator += thread.executing.totalTime();
                 break;
         }
     }
 
+	//返回的时间计算包含了已销毁的线程和当前正在运行的线程的相关统计
     return accumulator;
 }
 

@@ -42,6 +42,7 @@ const int64_t kMicrosPerSecond = 1000 * 1000;
 
 }  // unnamed namespace
 
+//定时器实现也计与时间嘀嗒TickSource实现
 Timer::Timer() : Timer(SystemTickSource::get()) {}
 
 //

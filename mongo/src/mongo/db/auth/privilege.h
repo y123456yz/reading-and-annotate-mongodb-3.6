@@ -132,6 +132,10 @@ typedef std::vector<Privilege> PrivilegeVector;
 可以是Collection，也可以是DB，那Privilege就是Action*Privilege的组合，一个Privilege可以含有多个Action，
 但在Privilege维度上，Action都只能与一个（或者表达式）Resource组合。Privilege的集合可以组合成Role概念，
 方便用户配置。
+
+权限(Privilege)由ResourcePattern及支持的ActionSet构成，代表可以在匹配ResourcePattern的资源上可以
+执行ActionSet里的所有操作。
+参考:https://mongoing.com/archives/1774
 */
 //例如可以参考CreateIndexesCmd::addRequiredPrivileges
 //真正起作用见AuthorizationSession::_isAuthorizedForPrivilege

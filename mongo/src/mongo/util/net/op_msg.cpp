@@ -47,6 +47,7 @@ namespace {
 
 auto kAllSupportedFlags = OpMsg::kChecksumPresent | OpMsg::kMoreToCome;
 
+//OP_MSG flag有效性检查  OpMsg::parse调用
 bool containsUnknownRequiredFlags(uint32_t flags) {
     const uint32_t kRequiredFlagMask = 0xffff;  // Low 2 bytes are required, high 2 are optional.
     return (flags & ~kAllSupportedFlags & kRequiredFlagMask) != 0;
@@ -75,6 +76,14 @@ void OpMsg::replaceFlags(Message* message, uint32_t flags) {
     DataView(message->singleData().data()).write<LittleEndian<uint32_t>>(flags);
 }
 
+/*
+OP_MSG {
+    MsgHeader header;          // standard message header   也就是struct Layout {}
+    uint32 flagBits;           // message flags
+    Sections[] sections;       // data sections
+    optional<uint32> checksum; // optional CRC-32C checksum
+}
+*/
 //opMsgRequestFromAnyProtocol->OpMsgRequest::parse调用
 OpMsg OpMsg::parse(const Message& message) try {
     // It is the caller's responsibility to call the correct parser for a given message type.
@@ -82,17 +91,21 @@ OpMsg OpMsg::parse(const Message& message) try {
     invariant(message.operation() == dbMsg);
 
 	//LOG(1) << "yang test ..... OpMsg::parse";
+	//获取flagBits
     const uint32_t flags = OpMsg::flags(message);
+	//flagBits有效性检查
     uassert(ErrorCodes::IllegalOpMsgFlag,
             str::stream() << "Message contains illegal flags value: Ob"
                           << std::bitset<32>(flags).to_string(),
             !containsUnknownRequiredFlags(flags));
 
+	//判断是否需要校验，已经校验的长度
     constexpr int kCrc32Size = 4;
     const bool haveChecksum = flags & kChecksumPresent;
     const int checksumSize = haveChecksum ? kCrc32Size : 0;
 
     // The sections begin after the flags and before the checksum (if present).
+    //sections字段内容
     BufReader sectionsBuf(message.singleData().data() + sizeof(flags),
                           message.dataSize() - sizeof(flags) - checksumSize);
 
@@ -100,6 +113,7 @@ OpMsg OpMsg::parse(const Message& message) try {
     bool haveBody = false;
     OpMsg msg;
     while (!sectionsBuf.atEof()) {
+		//BufReader::read
         const auto sectionKind = sectionsBuf.read<Section>();
 		//LOG(1) << "yang test ..... OpMsg::parse  sectionKind:" << uint32_t(sectionKind);
         switch (sectionKind) {

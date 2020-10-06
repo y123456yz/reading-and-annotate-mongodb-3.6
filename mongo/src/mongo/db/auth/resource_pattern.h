@@ -46,7 +46,11 @@ namespace mongo {
  * the types also act as patterns, useful for matching against groups of concrete resources as
  * part of the access control system.  See buildResourceSearchList() in
  * authorization_session.cpp for details.
- */ //Privilege._resource成员为该类型
+ //ResourcePattern代表资源（某个数据库、某个集合等）匹配方式，由资源名称(DB.collection格式，
+ //如果为空代表匹配任意资源)及匹配方式组成
+ //可以参考下:https://mongoing.com/archives/1774
+ */ 
+ //Privilege._resource成员为该类型
 class ResourcePattern {
 public:
     /**
@@ -202,6 +206,8 @@ private:
     explicit ResourcePattern(MatchType type) : _matchType(type) {}
     ResourcePattern(MatchType type, const NamespaceString& ns) : _matchType(type), _ns(ns) {}
 
+    //ResourcePattern代表资源（某个数据库、某个集合等）匹配方式，由资源名称(DB.collection格式，
+    //如果为空代表匹配任意资源)及匹配方式组成
     MatchType _matchType;
     NamespaceString _ns;
 };

@@ -502,7 +502,7 @@ Status runGlobalInitializers(const InitializerContext::ArgumentVector& args,
 /*
 主要解析命令行，即启动参数，其中会读取配置文件，解析参数并赋值给变量，
 比如“cpu”，“noauth”，“quota”，“repair path”，“nohints”等。
-*/
+*/ //mongoSMain  mongoDbMain调用
 Status runGlobalInitializers(int argc, const char* const* argv, const char* const* envp) {
     InitializerContext::ArgumentVector args(argc);
     std::copy(argv, argv + argc, args.begin()); //拷贝命令行参数到args数组

@@ -160,6 +160,7 @@ void generateLegacyQueryErrorResponse(const AssertionException* exception,
     response->setData(bb.release());
 }
 
+//_generateErrorResponse调用
 void registerError(OperationContext* opCtx, const DBException& exception) {
     LastError::get(opCtx->getClient()).setLastError(exception.code(), exception.reason());
     CurOp::get(opCtx)->debug().exceptionInfo = exception.toStatus();
@@ -627,6 +628,7 @@ void execCommandDatabase(OperationContext* opCtx,
                     topLevelFields[fieldName]++ == 0);
         }
 
+		//如果是help command，则给出相应help应答
         if (Command::isHelpRequest(helpField)) {
             CurOp::get(opCtx)->ensureStarted();
             // We disable last-error for help requests due to SERVER-11492, because config servers
@@ -641,10 +643,12 @@ void execCommandDatabase(OperationContext* opCtx,
         // servers may result in a deadlock when a server tries to check out a session it is already
         // using to service an earlier operation in the command's chain. To avoid this, only check
         // out sessions for commands that require them (i.e. write commands).
+        //构造OperationContextSession
         OperationContextSession sessionTxnState(
             opCtx, cmdWhitelist.find(command->getName()) != cmdWhitelist.cend());
 
         ImpersonationSessionGuard guard(opCtx);
+		//command认证检测,检查客户端链接使用的账号密码是否有操作该command的权限
         uassertStatusOK(Command::checkAuthorization(command, opCtx, request));
 
         const bool iAmPrimary = replCoord->canAcceptWritesForDatabase_UNSAFE(opCtx, dbname);
@@ -653,6 +657,7 @@ void execCommandDatabase(OperationContext* opCtx,
         if (!opCtx->getClient()->isInDirectClient() &&
             !MONGO_FAIL_POINT(skipCheckingForNotMasterInCommandDispatch)) {
 
+			//是否代码rs.slaveOK设置，如果设置了则即使没有主节点也可以读
             bool commandCanRunOnSecondary = command->slaveOk();
 
             bool commandIsOverriddenToRunOnSecondary =
@@ -691,11 +696,12 @@ void execCommandDatabase(OperationContext* opCtx,
             }
         }
 
-		//只能主节点操作
+		//只能主节点操作，有些命令只能在主节点执行
         if (command->adminOnly()) {
             LOG(2) << "command: " << request.getCommandName();
         }
 
+		//暂时没用
         if (command->maintenanceMode()) {
             mmSetter.reset(new MaintenanceModeSetter(opCtx));
         }
@@ -838,11 +844,12 @@ void curOpCommandSetup(OperationContext* opCtx, const OpMsgRequest& request) {
 
 //mongodb语句解析  ServiceEntryPointMongod::handleRequest中执行
 DbResponse runCommands(OperationContext* opCtx, const Message& message) {
+	//获取message对应的ReplyBuilder，3.6默认对应OpMsgReplyBuilder
     auto replyBuilder = rpc::makeReplyBuilder(rpc::protocolForMessage(message));
     [&] {
         OpMsgRequest request;
         try {  // Parse.
-        	//协议解析
+        	//协议解析 根据message获取对应OpMsgRequest
             request = rpc::opMsgRequestFromAnyProtocol(message);
         } catch (const DBException& ex) {
             // If this error needs to fail the connection, propagate it out.
@@ -870,7 +877,9 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
             // to avoid displaying potentially sensitive information in the logs,
             // we restrict the log message to the name of the unrecognized command.
             // However, the complete command object will still be echoed to the client.
+            //所有的command都在_commands中保存，查找request对应的命令名是否支持
             if (!(c = Command::findCommand(request.getCommandName()))) {
+				//没有找到相应的command的后续处理
                 Command::unknownCommands.increment();
                 std::string msg = str::stream() << "no such command: '" << request.getCommandName()
                                                 << "'";

@@ -56,6 +56,7 @@ using std::string;
 using std::stringstream;
 
 /* For testing only, not for general use. Enabled via command-line */
+//以下几个命令需要mongod --setParameter=enableTestCommands才能生效
 class GodInsert : public ErrmsgCommandDeprecated {
 public:
     GodInsert() : ErrmsgCommandDeprecated("godinsert") {}
@@ -108,6 +109,8 @@ public:
 };
 
 /* for diagnostic / testing purposes. Enabled via command line. */
+//以下几个命令需要mongod --setParameter=enableTestCommands才能生效
+
 class CmdSleep : public BasicCommand {
 public:
     virtual bool supportsWriteConcern(const BSONObj& cmd) const override {
@@ -198,6 +201,8 @@ public:
 };
 
 // Testing only, enabled via command-line.
+//以下几个命令需要mongod --setParameter=enableTestCommands才能生效
+
 class CapTrunc : public BasicCommand {
 public:
     CapTrunc() : BasicCommand("captrunc") {}
@@ -273,6 +278,8 @@ public:
 };
 
 // Testing-only, enabled via command line.
+//以下几个命令需要mongod --setParameter=enableTestCommands才能生效
+
 class EmptyCapped : public BasicCommand {
 public:
     EmptyCapped() : BasicCommand("emptycapped") {}
@@ -299,6 +306,7 @@ public:
 
 // ----------------------------
 
+//以下几个命令需要mongod --setParameter=enableTestCommands才能生效
 MONGO_INITIALIZER(RegisterEmptyCappedCmd)(InitializerContext* context) {
     if (Command::testCommandsEnabled) {
         // Leaked intentionally: a Command registers itself when constructed.
