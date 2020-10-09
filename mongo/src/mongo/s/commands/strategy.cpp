@@ -193,7 +193,7 @@ void execCommandClient(OperationContext* opCtx,
 	db/commands/write_commands/write_commands.cpp:    bool shouldAffectCommandCounter() const final {
 	db/service_entry_point_mongod.cpp:        if (command->shouldAffectCommandCounter()) {
 
-	//mongos的下面两个命令是返回false，其他默认是ture
+	//以下命令不会统计- mongod:CmdInsert  CmdUpdate  CmdDelete find getmore;     mongos:find  getmore
 	s/commands/cluster_find_cmd.cpp:    bool shouldAffectCommandCounter() const final {
 	s/commands/cluster_getmore_cmd.cpp:    bool shouldAffectCommandCounter() const final {
 	s/commands/strategy.cpp:    if (c->shouldAffectCommandCounter()) {
@@ -252,7 +252,10 @@ void execCommandClient(OperationContext* opCtx,
     }
     Command::appendCommandStatus(result, ok);
 }
- 
+
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
+
 //Strategy::clientCommand  Strategy::writeOp  Strategy::clientCommand Strategy::clientCommand中调用
 void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBuilder&& builder) {
     // Handle command option maxTimeMS first thing while processing the command so that the
@@ -421,7 +424,10 @@ DbResponse Strategy::queryOp(OperationContext* opCtx, const NamespaceString& nss
                                          cursorId.getValue())};
 }
 
-//ServiceEntryPointMongos::handleRequest中调用执行
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
+
+//ServiceEntryPointMongos::handleRequest->Strategy::clientCommand中调用执行
 DbResponse Strategy::clientCommand(OperationContext* opCtx, const Message& m) {
     auto reply = rpc::makeReplyBuilder(rpc::protocolForMessage(m));
 
@@ -445,6 +451,7 @@ DbResponse Strategy::clientCommand(OperationContext* opCtx, const Message& m) {
 
             return;  // From lambda. Don't try executing if parsing failed.
         }
+		
 
         try {  // Execute.
             LOG(3) << "Command begin db: " << db << " msg id: " << m.header().getId();

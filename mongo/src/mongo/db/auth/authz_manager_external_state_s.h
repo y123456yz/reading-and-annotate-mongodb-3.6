@@ -45,6 +45,7 @@ namespace mongo {
 /**
  * The implementation of AuthzManagerExternalState functionality for mongos.
  */ //AuthzManagerExternalStateMongos和AuthzManagerExternalStateMongod,一个对应mongos,一个对应mongod
+ //CreateAuthorizationManager中构造使用
 class AuthzManagerExternalStateMongos : public AuthzManagerExternalState {
     MONGO_DISALLOW_COPYING(AuthzManagerExternalStateMongos);
 

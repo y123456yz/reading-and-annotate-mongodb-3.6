@@ -671,7 +671,8 @@ bool AuthorizationSession::isAuthorizedForPrivilege(const Privilege& privilege) 
 bool AuthorizationSession::isAuthorizedForPrivileges(const vector<Privilege>& privileges) {
 	//mongos对应AuthzSessionExternalStateServerCommon::shouldIgnoreAuthChecks
 	//mongod对应AuthzSessionExternalStateMongod::shouldIgnoreAuthChecks
-    if (_externalState->shouldIgnoreAuthChecks()) //如果没有使能认证，直接返回
+	//如果没有使能认证，直接返回  或者客户端是mongos，则不需要用认证
+    if (_externalState->shouldIgnoreAuthChecks()) 
         return true;
 
     for (size_t i = 0; i < privileges.size(); ++i) {

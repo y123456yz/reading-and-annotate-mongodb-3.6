@@ -39,6 +39,7 @@ using std::unique_ptr;
 
 namespace {
 
+//CreateAuthorizationManager
 unique_ptr<AuthzManagerExternalState> createAuthzManagerExternalStateMongod() {
     return stdx::make_unique<AuthzManagerExternalStateMongod>();
 }

@@ -505,7 +505,7 @@ src/mongo/s/commands/cluster_profile_cmd.cpp:        actions.addAction(ActionTyp
 //mongos和mongod支持的命令统计都不一样，通过 db.serverStatus().metrics.commands查看命令统计信息
 //Command::findCommand中通过c = Command::findCommand(request.getCommandName())获取对应的command
 
-//ClusterWriteCmd  WriteCommand  BasicCommand继承该类
+//ClusterWriteCmd  WriteCommand  BasicCommand继承该类   
 class Command : public CommandInterface {
 public:
     // The type of the first field in 'cmdObj' must be mongo::String. The first field is
@@ -860,7 +860,7 @@ private:
      * with the invocation described by "cmdObj".
      *
      * NOTE: Implement checkAuthForOperation that takes an OperationContext* instead.
-     */
+     */ 
     virtual Status checkAuthForCommand(Client* client,
                                        const std::string& dbname,
                                        const BSONObj& cmdObj);
@@ -869,7 +869,8 @@ private:
      * Appends to "*out" the privileges required to run this command on database "dbname" with
      * the invocation described by "cmdObj".  New commands shouldn't implement this, they should
      * implement checkAuthForOperation (which takes an OperationContext*), instead.
-     */
+     */ //是否需要Privileges认证检查，例如CmdIsMaster命令就可以任意执行，而createUser则只能特定账号才可以
+    //判断是否有执行dbname对应操作的权限
     virtual void addRequiredPrivileges(const std::string& dbname,
                                        const BSONObj& cmdObj,
                                        std::vector<Privilege>* out) {

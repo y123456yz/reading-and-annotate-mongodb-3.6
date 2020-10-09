@@ -97,9 +97,10 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(CreateAuthorizationManager,
                                       "CreateAuthorizationExternalStateFactory",
                                       "EndStartupOptionStorage"))
 (InitializerContext* context) {
-    auto authzManager =
+    auto authzManager = //AuthzManagerExternalStateMongos AuthzManagerExternalStateMongod
         stdx::make_unique<AuthorizationManager>(AuthzManagerExternalState::create());
-    authzManager->setAuthEnabled(serverGlobalParams.authState ==
+	//security.authorizationÅäÖÃ
+	authzManager->setAuthEnabled(serverGlobalParams.authState ==
                                  ServerGlobalParams::AuthState::kEnabled);
     authzManager->setShouldValidateAuthSchemaOnStartup(startupAuthSchemaValidation);
     AuthorizationManager::set(getGlobalServiceContext(), std::move(authzManager));

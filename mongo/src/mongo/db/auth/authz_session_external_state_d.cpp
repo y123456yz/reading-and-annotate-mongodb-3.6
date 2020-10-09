@@ -52,6 +52,9 @@ void AuthzSessionExternalStateMongod::startRequest(OperationContext* opCtx) {
     _checkShouldAllowLocalhost(opCtx);
 }
 
+//满足以下任何一个条件，返回false
+//1. 如果是复制集模式，则客户端直接链接mongod，这时候所有客户端命令都需要认证。如果是mongos链接mongod，则不需要认证
+//2. 如果没用启用认证功能
 bool AuthzSessionExternalStateMongod::shouldIgnoreAuthChecks() const {
     // TODO(spencer): get "isInDirectClient" from OperationContext
     return cc().isInDirectClient() ||

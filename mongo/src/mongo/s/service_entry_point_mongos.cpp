@@ -130,6 +130,9 @@ Breakpoint 1, mongo::ServiceEntryPointMongos::handleRequest (this=<optimized out
 //conn-xx线程处理解析完客户端请求后，在NetworkInterfaceASIO::startCommand中的op->_strand.post([this, op, getConnectionStartTime]完成数据异步交接，而后数据由Network线程处理
 //后端应答后，conn线程在BatchWriteExec::executeBatch->while (!ars.done()) {}等待后端应答后发送应答给客户端
 
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
+
 //ServiceEntryPointMongod::handleRequest(mongod网络处理)  ServiceEntryPointMongos::handleRequest mongos网络请求处理
 
 //ServiceStateMachine::_processMessage
@@ -173,7 +176,7 @@ DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const
     //一般走这里面  insert find都是是 3.6版本都是走该dbMsg流程
     if (op == dbMsg || (op == dbQuery && NamespaceString(dbm.getns()).isCommand())) {
         return Strategy::clientCommand(opCtx, message);
-    }
+    } 
 
     NamespaceString nss;
     DbResponse dbResponse;
@@ -194,6 +197,7 @@ DbResponse ServiceEntryPointMongos::handleRequest(OperationContext* opCtx, const
         LOG(3) << "Request::process begin ns: " << nss << " msg id: " << msgId
                << " op: " << networkOpToString(op);
 
+		//3.6版本对应客户端不会再往这里走，走上面的Strategy::clientCommand
         switch (op) { //mongos请求的命令分类
             case dbQuery:
                 // Commands are handled above through Strategy::clientCommand().

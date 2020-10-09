@@ -444,10 +444,12 @@ bool runCommandImpl(OperationContext* opCtx,
     BSONObj cmd = request.body;
 
     // run expects const db std::string (can't bind to temporary)
+    //获取请求中的DB库信息
     const std::string db = request.getDatabase().toString();
 
     BSONObjBuilder inPlaceReplyBob = replyBuilder->getInPlaceReplyBuilder(bytesToReserve);
 
+	//ReadConcern检查
     Status rcStatus = waitForReadConcern(
         opCtx, repl::ReadConcernArgs::get(opCtx), command->allowsAfterClusterTime(cmd));
     if (!rcStatus.isOK()) {
@@ -468,7 +470,9 @@ bool runCommandImpl(OperationContext* opCtx,
     }
 
     bool result;
-    if (!command->supportsWriteConcern(cmd)) {
+	//该命令是否支持WriteConcern
+    if (!command->supportsWriteConcern(cmd)) { //不支持WriteConcern
+    	//命令不支持WriteConcern，但是对应的请求中却带有WriteConcern配置，直接报错不支持
         if (commandSpecifiesWriteConcern(cmd)) {
             auto result = Command::appendCommandStatus(
                 inPlaceReplyBob,
@@ -482,7 +486,8 @@ bool runCommandImpl(OperationContext* opCtx,
 
 		//Command::publicRun 执行不同命令的run
         result = command->publicRun(opCtx, request, inPlaceReplyBob);
-    } else {
+    } else { //支持WriteConcern  
+    	//提前WriteConcern信息异常
         auto wcResult = extractWriteConcern(opCtx, cmd, db);
         if (!wcResult.isOK()) {
             auto result = Command::appendCommandStatus(inPlaceReplyBob, wcResult.getStatus());
@@ -504,7 +509,7 @@ bool runCommandImpl(OperationContext* opCtx,
                 opCtx, command->getName(), lastOpBeforeRun, &inPlaceReplyBob);
         });
 
-		
+		//执行对应的Command::publicRun
         result = command->publicRun(opCtx, request, inPlaceReplyBob);
 
         // Nothing in run() should change the writeConcern.
@@ -564,7 +569,9 @@ MONGO_FP_DECLARE(skipCheckingForNotMasterInCommandDispatch);
  * also checks that the command is permissible to run on the node given its current
  * replication state. All the logic here is independent of any particular command; any
  * functionality relevant to a specific command should be confined to its run() method.
- */ //runCommands->execCommandDatabase调用
+ */ 
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
 void execCommandDatabase(OperationContext* opCtx,
                          Command* command,
                          const OpMsgRequest& request,
@@ -696,7 +703,7 @@ void execCommandDatabase(OperationContext* opCtx,
             }
         }
 
-		//只能主节点操作，有些命令只能在主节点执行
+		//只能admin库操作 
         if (command->adminOnly()) {
             LOG(2) << "command: " << request.getCommandName();
         }
@@ -706,7 +713,8 @@ void execCommandDatabase(OperationContext* opCtx,
             mmSetter.reset(new MaintenanceModeSetter(opCtx));
         }
 
-		//是否进行command统计  find  getmore不会统计到command统计中，其他命令都会统计到command中
+		//command以下命令不会统计- mongod:Insert  Update  Delete find getmore;  mongos:find  getmore
+		//是否进行command统计 CmdInsert  CmdUpdate  CmdDelete  find  getmore不会统计到command统计中，其他命令都会统计到command中
         if (command->shouldAffectCommandCounter()) {
             OpCounters* opCounters = &globalOpCounters;
             opCounters->gotCommand();
@@ -759,7 +767,7 @@ void execCommandDatabase(OperationContext* opCtx,
         bool retval = false;
 
         CurOp::get(opCtx)->ensureStarted(); //记录开始时间，结束时间见ServiceEntryPointMongod::handleRequest->currentOp.done()
-		//该命令执行次数统计
+		//该命令执行次数统计  db.serverStatus().metrics.commands可以获取统计信息
         command->incrementCommandsExecuted();
 
         if (logger::globalLogDomain()->shouldLog(logger::LogComponent::kTracking,
@@ -773,6 +781,7 @@ void execCommandDatabase(OperationContext* opCtx,
 		//真正的命令执行在这里面
         retval = runCommandImpl(opCtx, command, request, replyBuilder, startOperationTime);
 
+		//失败次数统计
         if (!retval) {
             command->incrementCommandsFailed();
         }
@@ -841,6 +850,8 @@ void curOpCommandSetup(OperationContext* opCtx, const OpMsgRequest& request) {
     curop->markCommand_inlock();
     curop->setNS_inlock(nss.ns());
 }
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
 
 //mongodb语句解析  ServiceEntryPointMongod::handleRequest中执行
 DbResponse runCommands(OperationContext* opCtx, const Message& message) {
@@ -1176,8 +1187,9 @@ DbResponse receivedGetMore(OperationContext* opCtx,
 #36 0x00007f8637b5ce25 in start_thread () from /lib64/libpthread.so.0
 #37 0x00007f863788a34d in clone () from /lib64/libc.so.6
 */
-//ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
-//class ServiceEntryPointMongod final : public ServiceEntryPointImpl
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
+
 
 //ServiceEntryPointMongod::handleRequest(mongod)  ServiceEntryPointMongos::handleRequest(mongos)请求处理
 

@@ -565,10 +565,12 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
                                                const NamespaceString& ns,
                                                StmtId stmtId,
                                                const write_ops::UpdateOpEntry& op) {
-    uassert(ErrorCodes::InvalidOptions,
+	//是否可重试可以参考https://www.docs4dev.com/docs/zh/mongodb/v3.6/reference/core-retryable-writes.html#enabling-retryable-writes
+	uassert(ErrorCodes::InvalidOptions,
             "Cannot use (or request) retryable writes with multi=true",
             !(opCtx->getTxnNumber() && op.getMulti()));
 
+	//update操作统计
     globalOpCounters.gotUpdate();
     auto& curOp = *CurOp::get(opCtx);
     {
@@ -583,12 +585,18 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
 
     UpdateLifecycleImpl updateLifecycle(ns);
 
-	//生成UpdateRequest
+	//根据op ns生成UpdateRequest
     UpdateRequest request(ns);
+	//UpdateRequest::setLifecycle  设置update生命周期
     request.setLifecycle(&updateLifecycle);
+	//查询条件
     request.setQuery(op.getQ());
+	//更新内容
     request.setUpdates(op.getU());
+	//UpdateOpEntry::getCollation
+	//Collation特性允许MongoDB的用户根据不同的语言定制排序规则 https://mongoing.com/archives/3912
     request.setCollation(write_ops::collationOf(op));
+	//stmtId设置
     request.setStmtId(stmtId);
     request.setArrayFilters(write_ops::arrayFiltersOf(op));
     request.setMulti(op.getMulti());
@@ -664,6 +672,7 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
 //performDeletes(CmdDelete::runImpl)  performUpdates(CmdUpdate::runImpl)  performInserts(CmdInsert::runImpl)
 WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
+    //检查是否可以对ns进行写操作，有些内部ns是不能写的
     uassertStatusOK(userAllowedWriteNS(wholeOp.getNamespace()));
 
     DisableDocumentValidationIfTrue docValidationDisabler(
@@ -674,7 +683,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
     WriteResult out;
     out.results.reserve(wholeOp.getUpdates().size());
 
-	//write_ops::Update::getUpdates
+	//write_ops::Update::getUpdates    singleOp为UpdateOpEntry类型
     for (auto&& singleOp : wholeOp.getUpdates()) {
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
         if (opCtx->getTxnNumber()) {

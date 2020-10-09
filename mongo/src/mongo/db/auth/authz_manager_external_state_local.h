@@ -48,7 +48,7 @@ class Document;
 /**
  * Common implementation of AuthzManagerExternalState for systems where role
  * and user information are stored locally.
- */
+ */ //AuthzManagerExternalStateMongos和AuthzManagerExternalStateMongod,一个对应mongos,一个对应mongod
 class AuthzManagerExternalStateLocal : public AuthzManagerExternalState {
     MONGO_DISALLOW_COPYING(AuthzManagerExternalStateLocal);
 

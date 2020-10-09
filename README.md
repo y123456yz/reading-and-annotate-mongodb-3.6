@@ -1,16 +1,16 @@
-# reading-and-annotate-mongodb-3.6.1
-mongodb-3.6.1源码注释分析，持续更新
-  
-### .为什么需要对mongodb开源版本做二次开发，需要做哪些必备二次开发:  
-===================================  
-* [为何需要对开源mongodb社区版本做二次开发，需要做哪些必备二次开发](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/development_mongodb.md)  
-* [对开源mongodb社区版本做二次开发收益列表](https://my.oschina.net/u/4087916/blog/3063529)  
+# reading-and-annotate-mongodb-3.6
 
-### .mongodb性能优化、采坑、问题定位解决等:   
+mongodb-3.6源码注释分析，持续更新
+  
+### <<mongodb源码设计实现、性能优化、最佳运维实践----千万级峰值tps/十万亿级数据量文档数据库内核研发及运维之路>>   
   * [百万级高并发mongodb集群性能数十倍提升优化实践(上篇)](https://my.oschina.net/u/4087916/blog/3141909)      
   * [百万级高并发mongodb集群性能数十倍提升优化实践(下篇)](https://my.oschina.net/u/4087916/blog/3155205)    
   * [Mongodb网络传输处理源码实现及性能调优-体验内核性能极致设计](https://my.oschina.net/u/4087916/blog/4295038)      
   * [常用高并发网络线程模型设计及mongodb线程模型优化实践(最全高并发网络IO线程模型设计及优化)](https://my.oschina.net/u/4087916/blog/4431422)  
+  * [Mongodb集群搭建一篇就够了-复制集模式、分片模式、带认证、不带认证等(带详细步骤说明)](https://my.oschina.net/u/4087916/blog/4661542)      
+  * [Mongodb特定场景性能数十倍提升优化实践(记一次mongodb核心集群雪崩故障)](https://blog.51cto.com/14951246)  
+  * [为何需要对开源mongodb社区版本做二次开发，需要做哪些必备二次开发](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/development_mongodb.md)  
+  * [对开源mongodb社区版本做二次开发收益列表](https://my.oschina.net/u/4087916/blog/3063529)  
   
 说明:  
 ===================================  
@@ -76,13 +76,26 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
 #### message协议处理(100%注释): 
  *   [message.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/net/message.h) 
  *   [message.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/net/message.cpp) 
+ 
+#### 时间嘀嗒及系统级定时器实现(100%注释): 
+ *   [tick_source.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/tick_source.h) 
+ *   [system_tick_source.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/system_tick_source.cpp) 
+ *   [system_tick_source.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/system_tick_source.h) 
+ *   [timer.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/timer.cpp) 
+ *   [timer.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/util/timer.h) 
 
 #### mongod/mongos服务入口处理(100%注释): 
  *   [service_entry_point_mongod.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/service_entry_point_mongod.h) 
  *   [service_entry_point_mongod.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/service_entry_point_mongod.cpp) 
  *   [service_entry_point_mongos.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/service_entry_point_mongos.h) 
  *   [service_entry_point_mongos.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/service_entry_point_mongos.cpp)
- 
+
+#### command命令处理模块(注释进行中): 
+ *   [commands.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands.h) 
+ *   [commands.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands.cpp) 
+ *   [write_commands.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands.cpp) 
+ *   [cluster_write_cmd.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/commands/cluster_write_cmd.cpp)
+ *   [strategy.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/commands/strategy.cpp)
  
 #### shard分片源码实现(注释进行中):   
 ###### 分布式锁实现源码注释分析(100%注释): 
