@@ -65,7 +65,7 @@ public:
     void addRequiredPrivileges(const std::string& dbname,
                                const BSONObj& cmdObj,
                                std::vector<Privilege>* out) override {
-        // No auth required
+        // No auth required    表示该命令可以直接执行  无需Privileges认证检查
     }
 
     bool run(OperationContext* opCtx,

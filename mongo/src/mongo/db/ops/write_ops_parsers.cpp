@@ -49,6 +49,7 @@ namespace {
 
 template <class T>
 //例如insert检查//InsertOp::parseLegacy->validateInsertOp->checkOpCountForCommand
+//update中UpdateOp::parse调用
 void checkOpCountForCommand(const T& op, size_t numOps) {
     uassert(ErrorCodes::InvalidLength,
             str::stream() << "Write batch sizes must be between 1 and "
@@ -183,9 +184,9 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
 }
 
 //constructBatchedCommandRequest
-//从请求中解析出update
+//从请求中解析出update   CmdUpdate::runImpl调用
 write_ops::Update UpdateOp::parse(const OpMsgRequest& request) {
-	//write_ops::Update::parse
+	//write_ops::Update::parse  返回Update
     auto updateOp = Update::parse(IDLParserErrorContext("update"), request);
 
     checkOpCountForCommand(updateOp, updateOp.getUpdates().size());

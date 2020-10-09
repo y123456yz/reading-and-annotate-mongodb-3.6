@@ -323,6 +323,7 @@ Status BasicCommand::checkAuthForCommand(Client* client,
 	//例如加索引对应CreateIndexesCmd::addRequiredPrivileges  DropIndexesCmd::addRequiredPrivileges 不同命令有不同实现
 	//DropDatabaseCmd::addRequiredPrivileges等 
 	//log() << "yang test ................... checkAuthForCommand,  begin !!!!!!!!!!!!!!!!!!";
+	//获取dbname对应的Privilege
     this->addRequiredPrivileges(dbname, cmdObj, &privileges);
     if (AuthorizationSession::get(client)->isAuthorizedForPrivileges(privileges)) {
 		//log() << "yang test ................... checkAuthForCommand,  ok !!!!!!!!!!!!!!!!!!";
@@ -360,7 +361,7 @@ static Status _checkAuthorizationImpl(Command* c,
 	//如果使能了认证功能，做认证检查
     if (AuthorizationSession::get(client)->getAuthorizationManager().isAuthEnabled()) {
 		//例如mongos的增删改，见ClusterWriteCmd::checkAuthForRequest
-		//BasicCommand::checkAuthForRequest等，不同命令可能会有不同实现
+		//BasicCommand::checkAuthForRequest  ClusterWriteCmd::checkAuthForRequest WriteCommand::checkAuthForRequest等，不同命令可能会有不同实现
         Status status = c->checkAuthForRequest(opCtx, request);
         if (status == ErrorCodes::Unauthorized) {
             mmb::Document cmdToLog(request.body, mmb::Document::kInPlaceDisabled);
@@ -394,10 +395,14 @@ Status Command::checkAuthorization(Command* c,
     audit::logCommandAuthzCheck(opCtx->getClient(), request, c, status.code());
     return status;
 }
-//execCommandClient->Command::publicRun
-//runCommands->execCommandDatabase->runCommandImpl->Command::publicRun调用
+//execCommandClient->Command::publicRun 
 //execCommandClient中调用
 //Command::runCommandDirectly 调用
+
+//3.6版本mongos通过如下路径调用:ServiceEntryPointMongos::handleRequest->Strategy::clientCommand
+//			->runCommand->execCommandClient
+//一般3.6版本mongod通过如下路径调用:ServiceEntryPointMongod::handleRequest->runCommands
+//			->execCommandDatabase->runCommandImpl->Command::publicRun调用
 bool Command::publicRun(OperationContext* opCtx,
                         const OpMsgRequest& request,
                         BSONObjBuilder& result) {

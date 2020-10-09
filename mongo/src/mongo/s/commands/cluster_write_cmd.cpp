@@ -164,7 +164,7 @@ public:
         return true;
     }
 
-	//_checkAuthorizationImpl中调用
+	//_checkAuthorizationImpl中调用   
     Status checkAuthForRequest(OperationContext* opCtx, const OpMsgRequest& request) final {
 
 		//Status status(ErrorCodes::Unauthorized, str::stream() << " must run from localhost when running db without auth");

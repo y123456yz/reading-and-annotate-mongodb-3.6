@@ -180,10 +180,11 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
     return StatusWith<BSONObj>(b.obj());
 }
 
+//检查是否可以对ns进行写操作，有些内部ns是不能写的
 Status userAllowedWriteNS(StringData ns) {
     return userAllowedWriteNS(nsToDatabaseSubstring(ns), nsToCollectionSubstring(ns));
 }
-
+//检查是否可以对ns进行写操作，有些内部ns是不能写的
 Status userAllowedWriteNS(const NamespaceString& ns) {
     return userAllowedWriteNS(ns.db(), ns.coll());
 }

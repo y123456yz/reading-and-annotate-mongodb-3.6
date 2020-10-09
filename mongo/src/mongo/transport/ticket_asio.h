@@ -103,7 +103,7 @@ private:
     SharedBuffer _buffer;
     //数据赋值见TransportLayerASIO::ASIOSourceTicket::_bodyCallback
     //初始空间赋值见ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
-    Message* _target;
+    Message* _target; 
 };
 
 //TransportLayerASIO类的相关接口使用

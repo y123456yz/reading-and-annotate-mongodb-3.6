@@ -42,6 +42,7 @@
 namespace mongo {
 namespace {
 
+//CreateAuthorizationManager
 std::unique_ptr<AuthzManagerExternalState> createAuthzManagerExternalStateMock() {
     return stdx::make_unique<AuthzManagerExternalStateMock>();
 }

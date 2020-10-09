@@ -61,6 +61,7 @@ public:
         return true;
     }
 
+	//获取dbname对应的Privilege
     void addRequiredPrivileges(const std::string& dbname,
                                const BSONObj& cmdObj,
                                std::vector<Privilege>* out) override {

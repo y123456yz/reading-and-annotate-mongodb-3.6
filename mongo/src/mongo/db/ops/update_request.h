@@ -284,6 +284,7 @@ private:
     bool _fromOplogApplication;
 
     // The lifecycle data, and events used during the update request.
+    //
     UpdateLifecycle* _lifecycle;
 
     // Whether or not we are requesting an explained update. Explained updates are read-only.

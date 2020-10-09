@@ -562,6 +562,7 @@ static ExitCode initService() {
 
 namespace {
 
+//CreateAuthorizationManager
 std::unique_ptr<AuthzManagerExternalState> createAuthzManagerExternalStateMongos() {
     return stdx::make_unique<AuthzManagerExternalStateMongos>();
 }

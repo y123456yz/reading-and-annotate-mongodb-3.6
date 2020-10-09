@@ -339,6 +339,7 @@ public:
             opCtx->getClient(), BatchedCommandRequest::BatchType_Update, request);
     }
 
+	//CmdUpdate::runImpl
     void runImpl(OperationContext* opCtx,
                  const OpMsgRequest& request,
                  BSONObjBuilder& result) final {

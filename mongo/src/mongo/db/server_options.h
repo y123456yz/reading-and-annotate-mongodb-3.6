@@ -117,7 +117,7 @@ struct ServerGlobalParams {
 
     //printCommandLineOpts÷–¥Ú”°
     BSONObj parsedOpts;
-
+    //security.authorization≈‰÷√
     enum AuthState { kEnabled, kDisabled, kUndefined };
 
     AuthState authState = AuthState::kUndefined;

@@ -37,10 +37,12 @@ namespace mongo {
 
 UpdateLifecycleImpl::UpdateLifecycleImpl(const NamespaceString& nsStr) : _nsString(nsStr) {}
 
+//通过这里来设置collection   getExecutorUpdate  UpdateStage::doRestoreState中调用
 void UpdateLifecycleImpl::setCollection(Collection* collection) {
     _collection = collection;
 }
 
+//判断是否生命周期已结束
 bool UpdateLifecycleImpl::canContinue() const {
     // Collection needs to exist to continue
     return _collection;

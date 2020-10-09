@@ -37,6 +37,7 @@ namespace mongo {
 
 class Collection;
 
+//注意是保存_collection，获取对应索引信息等，判断_collection是否已不存在
 class UpdateLifecycleImpl : public UpdateLifecycle {
     MONGO_DISALLOW_COPYING(UpdateLifecycleImpl);
 

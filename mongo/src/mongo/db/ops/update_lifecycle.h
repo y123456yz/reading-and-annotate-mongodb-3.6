@@ -34,7 +34,7 @@ class Collection;
 class OperationContext;
 class UpdateIndexData;
 
-
+//UpdateLifecycleImpl÷–ºÃ≥–
 class UpdateLifecycle {
 public:
     virtual ~UpdateLifecycle() {}
