@@ -206,6 +206,7 @@ public:
     bool isInDirectClient() const {
         return _inDirectClient;
     }
+    //DirectClientScope
     void setInDirectClient(bool newVal) {
         _inDirectClient = newVal;
     }
@@ -243,7 +244,7 @@ private:
     SpinLock _lock;
 
     // Whether this client is running as DBDirectClient
-    //客户端是否直接链接mongod实例
+    //客户端是否直接链接mongod实例,mongos如果做为mongod的客户端则不需要认证
     bool _inDirectClient = false;
 
     // If != NULL, then contains the currently active OperationContext

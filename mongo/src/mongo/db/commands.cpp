@@ -201,14 +201,17 @@ ResourcePattern Command::parseResourcePattern(const std::string& dbname,
 //例如: AddShardCmd() : BasicCommand("addShard", "addshard") {}
 //命令注册，所有注册的命令最终全部保存到_commands全局map变量
 Command::Command(StringData name, StringData oldName) //name和oldName实际上是同一个command，只是可能改名了
-    : _name(name.toString()),
+    : _name(name.toString()), //命令名
+     //对应命令执行统计，total代表总的，failed代表执行失败的次数
       _commandsExecutedMetric("commands." + _name + ".total", &_commandsExecuted),
       _commandsFailedMetric("commands." + _name + ".failed", &_commandsFailed) {
-    // register ourself.
+    //如果_commands map表还没有生成，则new一个
     if (_commands == 0)
         _commands = new CommandMap();
+	//没什么用
     if (_commandsByBestName == 0)
         _commandsByBestName = new CommandMap();
+	//把name命令对应的command添加到map表中
     Command*& c = (*_commands)[name];
     if (c)
         log() << "warning: 2 commands with name: " << _name;

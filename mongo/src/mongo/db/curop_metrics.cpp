@@ -60,6 +60,7 @@ ServerStatusMetricField<Counter64> displayWriteConflicts("operation.writeConflic
 
 }  // namespace
 
+//ServiceEntryPointMongod::handleRequestµ÷ÓÃ
 void recordCurOpMetrics(OperationContext* opCtx) {
     const OpDebug& debug = CurOp::get(opCtx)->debug();
     if (debug.nreturned > 0)

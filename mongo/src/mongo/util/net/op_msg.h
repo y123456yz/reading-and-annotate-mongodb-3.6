@@ -38,14 +38,17 @@
 
 namespace mongo {
 
-//内容来源见OpMsg::parse
+//mongodb报文body解析封装:mongodb>=3.6，都是OP_MSG,OpMsg针对opCode=OP_MSG，mongodb<3.6，opCode=[dbUpdate, dbDelete]，对应body解析由DbMessage
+//内容来源见OpMsg::parse   
 struct OpMsg { //下面的OpMsgRequest继承该类
     struct DocumentSequence {
         std::string name;
         std::vector<BSONObj> objs;
     };
 
+    //是否需要校验
     static constexpr uint32_t kChecksumPresent = 1 << 0;
+    //不应答客户端，见runCommands  Strategy::clientCommand
     static constexpr uint32_t kMoreToCome = 1 << 1;
 
     /**
@@ -105,8 +108,9 @@ struct OpMsg { //下面的OpMsgRequest继承该类
         return it == sequences.end() ? nullptr : &*it;
     }
 
-    //msg解析赋值见OpMsg::parse
+    //msg解析赋值见OpMsg::parse   body的第一个elem也就是命令名，如find insert等
     BSONObj body; //赋值见OpMsg::parse   输出打印通过:c->getRedactedCopyForLogging(request.body);
+    //sequences用法暂时没看懂，感觉没什么用？先跳过
     std::vector<DocumentSequence> sequences; //赋值见OpMsg::parse
 };
 
@@ -118,14 +122,17 @@ struct OpMsg { //下面的OpMsgRequest继承该类
 struct OpMsgRequest : public OpMsg {
     // TODO in C++17 remove constructors so we can use aggregate initialization.
     OpMsgRequest() = default;
+    //构造初始化
     explicit OpMsgRequest(OpMsg&& generic) : OpMsg(std::move(generic)) {}
 
-    //opMsgRequestFromAnyProtocol->OpMsgRequest::parse
+    //opMsgRequestFromAnyProtocol->OpMsgRequest::parse 
+    //从message中解析出OpMsg所需成员信息
     static OpMsgRequest parse(const Message& message) {
         //OpMsg::parse
         return OpMsgRequest(OpMsg::parse(message));
     }
 
+    //根据db body extraFields填充OpMsgRequest
     static OpMsgRequest fromDBAndBody(StringData db,
                                       BSONObj body,
                                       const BSONObj& extraFields = {}) {
@@ -139,6 +146,7 @@ struct OpMsgRequest : public OpMsg {
         return request;
     }
 
+    //从body中获取db name
     StringData getDatabase() const {
         if (auto elem = body["$db"])
             return elem.checkAndGetStringData();

@@ -208,9 +208,10 @@ public:
 
 /* For the database/server protocol, these objects and functions encapsulate
    the various messages transmitted over the connection.
+//mongodb报文body解析封装:mongodb>=3.6，都是OP_MSG,OpMsg针对opCode=OP_MSG，mongodb<3.6，opCode=[dbUpdate, dbDelete]，对应body解析由DbMessage
 
    See http://dochub.mongodb.org/core/mongowireprotocol
-*/ //获取DbMessage内容可以参考InsertOp::parseLegacy
+*/ //DbMessage内容可以参考ServiceEntryPointMongod::handleRequest
 class DbMessage {
     // Assume sizeof(int) == 4 bytes
     MONGO_STATIC_ASSERT(sizeof(int) == 4);
@@ -221,6 +222,7 @@ public:
 
     // Indicates whether this message is expected to have a ns
     //只有部分op协议才会有ns字段，参考https://docs.mongodb.com/v3.6/reference/mongodb-wire-protocol/
+    //3.6对应客户端默认opcode为dbMsg，不会满足该条件
     bool messageShouldHaveNs() const {
         return (_msg.operation() >= dbUpdate) & (_msg.operation() <= dbDelete);
     }

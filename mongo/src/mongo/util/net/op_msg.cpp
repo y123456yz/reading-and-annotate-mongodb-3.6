@@ -47,7 +47,8 @@ namespace {
 
 auto kAllSupportedFlags = OpMsg::kChecksumPresent | OpMsg::kMoreToCome;
 
-//OP_MSG flag有效性检查  OpMsg::parse调用
+//OP_MSG flag有效性检查  OpMsg::parse调用  flag只能对kAllSupportedFlags这两个位进行操作，如果对其他位做了操作，直接报错
+//参考https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#wire-msg-sections
 bool containsUnknownRequiredFlags(uint32_t flags) {
     const uint32_t kRequiredFlagMask = 0xffff;  // Low 2 bytes are required, high 2 are optional.
     return (flags & ~kAllSupportedFlags & kRequiredFlagMask) != 0;
@@ -60,6 +61,7 @@ enum class Section : uint8_t {
 
 }  // namespace
 
+//获取message中的flag
 uint32_t OpMsg::flags(const Message& message) {
     if (message.operation() != dbMsg)
         return 0;  // Other command protocols are the same as no flags set.
@@ -68,6 +70,7 @@ uint32_t OpMsg::flags(const Message& message) {
         .read<LittleEndian<uint32_t>>();
 }
 
+//重置message中的flags
 void OpMsg::replaceFlags(Message* message, uint32_t flags) {
     invariant(!message->empty());
     invariant(message->operation() == dbMsg);
@@ -85,6 +88,7 @@ OP_MSG {
 }
 */
 //opMsgRequestFromAnyProtocol->OpMsgRequest::parse调用
+//从message中解析出OpMsg信息
 OpMsg OpMsg::parse(const Message& message) try {
     // It is the caller's responsibility to call the correct parser for a given message type.
     invariant(!message.empty());
@@ -99,9 +103,11 @@ OpMsg OpMsg::parse(const Message& message) try {
                           << std::bitset<32>(flags).to_string(),
             !containsUnknownRequiredFlags(flags));
 
-	//判断是否需要校验，已经校验的长度
+	//校验码默认4字节
     constexpr int kCrc32Size = 4;
+	//判断该mongo报文body内容是否启用了校验功能
     const bool haveChecksum = flags & kChecksumPresent;
+	//如果有启用校验功能，则报文末尾4字节为校验码
     const int checksumSize = haveChecksum ? kCrc32Size : 0;
 
     // The sections begin after the flags and before the checksum (if present).
@@ -112,18 +118,23 @@ OpMsg OpMsg::parse(const Message& message) try {
     // TODO some validation may make more sense in the IDL parser. I've tagged them with comments.
     bool haveBody = false;
     OpMsg msg;
+	//解析sections对应命令请求数据
     while (!sectionsBuf.atEof()) {
 		//BufReader::read
         const auto sectionKind = sectionsBuf.read<Section>();
 		//LOG(1) << "yang test ..... OpMsg::parse  sectionKind:" << uint32_t(sectionKind);
+		//kind为0对应命令请求body内容，内容通过bson报错
         switch (sectionKind) {
+			//body kind
             case Section::kBody: {
                 uassert(40430, "Multiple body sections in message", !haveBody);
                 haveBody = true;
+				//命令请求的bson信息保存在这里
                 msg.body = sectionsBuf.read<Validated<BSONObj>>();
                 break;
             }
 
+			//DocSequence暂时没看明白，用到的地方很少，跳过
             case Section::kDocSequence: {
                 // We use an O(N^2) algorithm here and an O(N*M) algorithm below. These are fastest
                 // for the current small values of N, but would be problematic if it is large.
@@ -158,6 +169,7 @@ OpMsg OpMsg::parse(const Message& message) try {
 
     // Detect duplicates between doc sequences and body. TODO IDL
     // Technically this is O(N*M) but N is at most 2.
+    //body和sequence去重判断
     for (const auto& docSeq : msg.sequences) {
         const char* name = docSeq.name.c_str();  // Pointer is redirected by next call.
         auto inBody =
@@ -175,6 +187,7 @@ OpMsg OpMsg::parse(const Message& message) try {
     throw;
 }
 
+//OpMsg序列化
 Message OpMsg::serialize() const {
     OpMsgBuilder builder;
     for (auto&& seq : sequences) {
@@ -187,6 +200,9 @@ Message OpMsg::serialize() const {
     return builder.finish();
 }
 
+/**
+ * Makes all BSONObjs in this object share ownership with buffer.
+ */
 void OpMsg::shareOwnershipWith(const ConstSharedBuffer& buffer) {
     if (!body.isOwned()) {
         body.shareOwnershipWith(buffer);
@@ -200,14 +216,17 @@ void OpMsg::shareOwnershipWith(const ConstSharedBuffer& buffer) {
     }
 }
 
+//填充kDocSequence类型的name数据
 auto OpMsgBuilder::beginDocSequence(StringData name) -> DocSequenceBuilder {
     invariant(_state == kEmpty || _state == kDocSequence);
     invariant(!_openBuilder);
     _openBuilder = true;
     _state = kDocSequence;
+	//填充kind 1个字节
     _buf.appendStruct(Section::kDocSequence);
     int sizeOffset = _buf.len();
     _buf.skip(sizeof(int32_t));  // section size.
+    //填充name
     _buf.appendStr(name, true);
     return DocSequenceBuilder(this, &_buf, sizeOffset);
 }
@@ -220,7 +239,7 @@ void OpMsgBuilder::finishDocumentStream(DocSequenceBuilder* docSequenceBuilder) 
     invariant(size > 0);
     DataView(_buf.buf()).write<LittleEndian<int32_t>>(size, docSequenceBuilder->_sizeOffset);
 }
-
+//填充kBody类型数据
 BSONObjBuilder OpMsgBuilder::beginBody() {
     invariant(_state == kEmpty || _state == kDocSequence);
     _state = kBody;
@@ -230,6 +249,7 @@ BSONObjBuilder OpMsgBuilder::beginBody() {
     return BSONObjBuilder(_buf);
 }
 
+//获取body数据
 BSONObjBuilder OpMsgBuilder::resumeBody() {
     invariant(_state == kBody);
     invariant(_bodyStart != 0);
@@ -238,6 +258,7 @@ BSONObjBuilder OpMsgBuilder::resumeBody() {
 
 AtomicBool OpMsgBuilder::disableDupeFieldCheck_forTest{false};
 
+//构造message数据
 Message OpMsgBuilder::finish() {
     if (kDebugBuild && !disableDupeFieldCheck_forTest.load()) {
         std::set<StringData> seenFields;

@@ -46,6 +46,12 @@ using std::vector;
 
 namespace {
 
+
+/*
+mongotop实现原理:
+use admin
+db.runCommand( { top: 1 } )
+*/
 const auto getTop = ServiceContext::declareDecoration<Top>();
 
 }  // namespace
