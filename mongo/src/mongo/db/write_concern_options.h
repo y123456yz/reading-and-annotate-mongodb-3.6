@@ -36,7 +36,7 @@ namespace mongo {
 class Status;
 
 //该参数作用可以参考http://www.mongoing.com/archives/2916
-//runCommandImpl->extractWriteConcern会用到
+//runCommandImpl->extractWriteConcern会用到  extractWriteConcern
 struct WriteConcernOptions {
 public:
     enum class SyncMode { UNSET, NONE, FSYNC, JOURNAL };

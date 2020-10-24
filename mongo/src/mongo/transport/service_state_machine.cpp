@@ -350,7 +350,7 @@ void ServiceStateMachine::_sourceMessage(ThreadGuard guard) {
 	//TransportLayerASIO::sourceMessage  TransportLayerASIO::ASIOSession  后面的wait asio会读取数据放入_inMessage
 	//ServiceStateMachine::_sourceMessage->Session::sourceMessage->TransportLayerASIO::sourceMessage
 	//获取本session接收数据的ticket，也就是ASIOSourceTicket
-    auto ticket = _session()->sourceMessage(&_inMessage); 
+    auto ticket = _session()->sourceMessage(&_inMessage);  
 	//log() << "yang test ......1.... _sourceMessage:" << getThreadName(); 
 	//进入等等接收数据状态
     _state.store(State::SourceWait);  

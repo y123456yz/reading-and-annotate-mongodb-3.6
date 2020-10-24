@@ -83,7 +83,7 @@ bool commandSpecifiesWriteConcern(const BSONObj& cmdObj) {
     return cmdObj.hasField(WriteConcernOptions::kWriteConcernField);
 }
 
-//runCommandImpl调用
+//runCommandImpl调用  提取WriteConcernOptions信息
 StatusWith<WriteConcernOptions> extractWriteConcern(OperationContext* opCtx,
                                                     const BSONObj& cmdObj,
                                                     const std::string& dbName) {

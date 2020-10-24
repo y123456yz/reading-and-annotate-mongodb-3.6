@@ -185,61 +185,77 @@ inline const char* logicalOpToString(LogicalOp logicalOp) {
     }
 }
 
+//注意MsgData和MSGHEADER的区别
 namespace MSGHEADER {
 
 #pragma pack(1)
 /**  头部读取参考:TransportLayerASIO::ASIOSourceTicket::fillImpl
  * See http://dochub.mongodb.org/core/mongowireprotocol
+ 
+msg header	messageLength	整个message长度，包括header长度和body长度
+	requestID	该请求id信息
+	responseTo	应答id
+	opCode	操作类型：OP_UPDATE、OP_INSERT、OP_QUERY、OP_DELETE、OP_MSG等
  */ //MSGHEADER::Layout
 struct Layout {
-    //getMessageLength解析
+    //整个message长度，包括header长度和body长度
     int32_t messageLength;  // total message size, including this
-    //getRequestMsgId解析
+    //requestID	该请求id信息
     int32_t requestID;      // identifier for this message
     //getResponseToMsgId解析
     int32_t responseTo;     // requestID from the original request
     //   (used in responses from db)
-    //getOpCode解析
+    //操作类型：OP_UPDATE、OP_INSERT、OP_QUERY、OP_DELETE、OP_MSG等
     int32_t opCode;
 };
 #pragma pack()
 
+//调用详见TransportLayerASIO::ASIOSourceTicket::_headerCallback
+//下面的View继承该类
+//ConstView实现数据解析
 class ConstView { //MSGHEADER::Layout头部字段解析
 public:
     typedef ConstDataView view_type;
-
+    //初始化构造
     ConstView(const char* data) : _data(data) {}
-
+    //获取_data地址
     const char* view2ptr() const {
         return data().view();
     }
 
     //TransportLayerASIO::ASIOSourceTicket::_headerCallback
+    //解析header头部的messageLength字段
     int32_t getMessageLength() const {
         return data().read<LittleEndian<int32_t>>(offsetof(Layout, messageLength));
     }
 
+    //解析header头部的requestID字段
     int32_t getRequestMsgId() const {
         return data().read<LittleEndian<int32_t>>(offsetof(Layout, requestID));
     }
 
+    //解析header头部的getResponseToMsgId字段
     int32_t getResponseToMsgId() const {
         return data().read<LittleEndian<int32_t>>(offsetof(Layout, responseTo));
     }
 
+    //解析header头部的opCode字段
     int32_t getOpCode() const {
         return data().read<LittleEndian<int32_t>>(offsetof(Layout, opCode));
     }
 
 protected:
+    //mongodb报文数据起始地址
     const view_type& data() const {
         return _data;
     }
 
 private:
+    //数据部分
     view_type _data;
 };
 
+//View构造header头部数据
 class View : public ConstView {
 public:
     typedef DataView view_type;
@@ -247,23 +263,28 @@ public:
     View(char* data) : ConstView(data) {}
 
     using ConstView::view2ptr;
+    //header起始地址
     char* view2ptr() {
         return data().view();
     }
 
     //以下四个接口进行header赋值
+    //填充header头部messageLength字段
     void setMessageLength(int32_t value) {
         data().write(tagLittleEndian(value), offsetof(Layout, messageLength));
     }
 
+    //填充header头部requestID字段
     void setRequestMsgId(int32_t value) {
         data().write(tagLittleEndian(value), offsetof(Layout, requestID));
     }
 
+    //填充header头部responseTo字段
     void setResponseToMsgId(int32_t value) {
         data().write(tagLittleEndian(value), offsetof(Layout, responseTo));
     }
 
+    //填充header头部opCode字段
     void setOpCode(int32_t value) {
         data().write(tagLittleEndian(value), offsetof(Layout, opCode));
     }
@@ -286,15 +307,19 @@ public:
 
 }  // namespace MSGHEADER
 
+
+//注意MsgData和MSGHEADER的区别,MSGHEADER主要是头部字段的解析组装，MsgData更加完善，还可以body部分
 namespace MsgData {
 
 #pragma pack(1)
 struct Layout {
+    //数据填充组成：header部分
     MSGHEADER::Layout header;
+    //数据填充组成: body部分
     char data[4];
 };
 #pragma pack()
-
+//这里是MsgData，前面的ConstView对应的是MSGHEADER
 class ConstView {
 public:
     ConstView(const char* storage) : _storage(storage) {}
@@ -303,28 +328,32 @@ public:
         return storage().view();
     }
 
-    //获取msg header的值
+    //以下四个接口间接执行前面的MSGHEADER中的头部字段解析
+    //填充header头部messageLength字段
     int32_t getLen() const {
         return header().getMessageLength();
     }
 
+    //填充header头部requestID字段
     int32_t getId() const {
         return header().getRequestMsgId();
     }
-
+    //填充header头部responseTo字段
     int32_t getResponseToMsgId() const {
         return header().getResponseToMsgId();
     }
 
-    //获取网络数据报文中的op字段
+    //获取网络数据报文中的opCode字段
     NetworkOp getNetworkOp() const {
         return NetworkOp(header().getOpCode());
     }
 
+    //指向body起始地址
     const char* data() const {
         return storage().view(offsetof(Layout, data));
     }
 
+    //messageLength长度检查
     bool valid() const {
         if (getLen() <= 0 || getLen() > (4 * BSONObjMaxInternalSize))
             return false;
@@ -364,24 +393,28 @@ public:
         return storage().view();
     }
 
+    //以下四个接口间接执行前面的MSGHEADER中的头部字段构造
     //以下四个接口完成msg header赋值
+    //填充header头部messageLength字段
     void setLen(int value) {
         return header().setMessageLength(value);
     }
 
+    //填充header头部messageLength字段
     void setId(int32_t value) {
         return header().setRequestMsgId(value);
     }
-
+    //填充header头部messageLength字段
     void setResponseToMsgId(int32_t value) {
         return header().setResponseToMsgId(value);
     }
-
+    //填充header头部messageLength字段
     void setOperation(int value) {
         return header().setOpCode(value);
     }
 
     using ConstView::data;
+    //指向data
     char* data() {
         return storage().view(offsetof(Layout, data));
     }
@@ -391,6 +424,7 @@ private:
         return const_cast<char*>(ConstView::view2ptr());
     }
 
+    //指向header头部
     MSGHEADER::View header() const {
         return storage().view(offsetof(Layout, header));
     }
@@ -405,9 +439,11 @@ public:
     Value(ZeroInitTag_t zit) : EncodedValueStorage<Layout, ConstView, View>(zit) {}
 };
 
+//Value为前面的Layout，减4是因为有4字节填充data，所以这个就是header长度
 const int MsgDataHeaderSize = sizeof(Value) - 4;
 
-inline int ConstView::dataLen() const { //除去头部后的数据部分
+//除去头部后的数据部分长度
+inline int ConstView::dataLen() const { 
     return getLen() - MsgDataHeaderSize;
 }
 
@@ -418,7 +454,7 @@ class Message {
 public:
     Message() = default;
     explicit Message(SharedBuffer data) : _buf(std::move(data)) {}
-
+    //头部header数据
     MsgData::View header() const {
         verify(!empty());
         return _buf.get();
@@ -434,10 +470,12 @@ public:
         return header();
     }
 
+    //_buf释放为空
     bool empty() const {
         return !_buf;
     }
 
+    //获取报文总长度messageLength
     int size() const {
         if (_buf) {
             return MsgData::ConstView(_buf.get()).getLen();
@@ -445,10 +483,11 @@ public:
         return 0;
     }
 
+    //body长度
     int dataSize() const {
         return size() - sizeof(MSGHEADER::Value);
     }
-
+    //buf重置
     void reset() {
         _buf = {};
     }
@@ -463,7 +502,7 @@ public:
     void setData(int operation, const char* msgtxt) {
         setData(operation, msgtxt, strlen(msgtxt) + 1);
     }
-    //把msgdata拷贝到_buf中
+    //根据operation和msgdata构造一个完整mongodb报文
     void setData(int operation, const char* msgdata, size_t len) {
         verify(empty());
         size_t dataLen = len + sizeof(MsgData::Value) - 4;

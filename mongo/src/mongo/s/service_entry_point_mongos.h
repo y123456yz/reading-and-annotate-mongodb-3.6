@@ -37,7 +37,14 @@ namespace mongo {
 
 /**
  * The entry point from the TransportLayer into Mongos.
- */ //runMongosServer中构造使用
+Tips: 
+  mongos和mongod服务入口类为何要继承网络传输模块服务入口类？
+原因是一个请求对应一个链接session，该session对应的请求又和SSM状态机唯一对应。所有客户端请求
+对应的SSM状态机信息全部保存再ServiceEntryPointImpl._sessions成员中，而command命令处理模块为
+SSM状态机任务中的dealTask任务，通过该继承关系，ServiceEntryPointMongod和ServiceEntryPointMongos子
+类也就可以和状态机及任务处理关联起来，同时也可以获取当前请求对应的session链接信息。
+*/
+//runMongosServer中构造使用
 //class ServiceEntryPointMongos final : public ServiceEntryPointImpl {
 class ServiceEntryPointMongos : public ServiceEntryPointImpl {
 

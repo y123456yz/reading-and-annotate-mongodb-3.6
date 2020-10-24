@@ -568,7 +568,7 @@ yang test Initializer::execute:SetEncryptionHooks
 */
  
 //mongos_options_init.cpp 和 mongod_options_init.cpp中解析配置的时候会使用
-//定义一个GlobalInitializerRegisterer类
+//定义一个GlobalInitializerRegisterer类    例如可以参考SetupPlanCacheCommands
 
 #define MONGO_INITIALIZER_GENERAL(NAME, PREREQUISITES, DEPENDENTS)                        \
     ::mongo::Status _MONGO_INITIALIZER_FUNCTION_NAME(NAME)(::mongo::InitializerContext*); \

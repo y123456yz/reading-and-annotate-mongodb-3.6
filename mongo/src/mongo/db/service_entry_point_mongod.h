@@ -36,20 +36,30 @@ namespace mongo {
 /**
  * The entry point into mongod. Just a wrapper around assembleResponse.
  */
+
+/*
+Tips: 
+  mongos和mongod服务入口类为何要继承网络传输模块服务入口类？
+原因是一个请求对应一个链接session，该session对应的请求又和SSM状态机唯一对应。所有客户端请求
+对应的SSM状态机信息全部保存再ServiceEntryPointImpl._sessions成员中，而command命令处理模块为
+SSM状态机任务中的dealTask任务，通过该继承关系，ServiceEntryPointMongod和ServiceEntryPointMongos子
+类也就可以和状态机及任务处理关联起来，同时也可以获取当前请求对应的session链接信息。
+*/
  
 //ServiceContextMongoD->ServiceContext(包含ServiceEntryPoint成员)
 //ServiceEntryPointMongod->ServiceEntryPointImpl->ServiceEntryPoint
 
 //_initAndListen->（serviceContext->setServiceEntryPoint）中构造使用该类, 存入ServiceContextMongoD::ServiceContext._serviceEntryPoint
 //class ServiceEntryPointMongod final : public ServiceEntryPointImpl { //原始定义
-//mongod服务入口点
+//mongod服务入口点  继承ServiceEntryPointImpl，也就确定了对应的链接session信息
 class ServiceEntryPointMongod : public ServiceEntryPointImpl {//yang change
     MONGO_DISALLOW_COPYING(ServiceEntryPointMongod);
 
 public:
     using ServiceEntryPointImpl::ServiceEntryPointImpl;
     
-    //ServiceEntryPointMongod::handleRequest(mongod网络处理)  ServiceEntryPointMongos::handleRequest mongos网络请求处理
+    //ServiceEntryPointMongod::handleRequest(mongod服务入口处理)  
+    //ServiceEntryPointMongos::handleRequest mongos服务入口处理
     DbResponse handleRequest(OperationContext* opCtx, const Message& request) override;
 };
 

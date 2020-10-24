@@ -84,7 +84,7 @@ void TransportLayerASIO::ASIOSourceTicket::_bodyCallback(const std::error_code& 
         return;
     }
 
-	//buffer转存到_target中
+	//buffer转存到_target中,实际上也就是ServiceStateMachine._inMessage成员
     _target->setData(std::move(_buffer));
 	//流量统计
     networkCounter.hitPhysicalIn(_target->size());
@@ -128,7 +128,8 @@ void TransportLayerASIO::ASIOSourceTicket::_headerCallback(const std::error_code
 
 	//内容还不够一个mongo协议报文，继续读取body长度字节的数据，读取完毕后开始body处理
     _buffer.realloc(msgLen); //注意这里是realloc，保证头部和body在同一个buffer中
-    MsgData::View msgView(_buffer.get());
+	//body部分
+	MsgData::View msgView(_buffer.get());
 
 
 	//读取数据body TransportLayerASIO::ASIOSession::read

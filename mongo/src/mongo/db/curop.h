@@ -102,6 +102,7 @@ public:
     // True if a replan was triggered during the execution of this operation.
     bool replanned{false};
 
+    //计数统计见recordCurOpMetrics
     long long nMatched{-1};   // number of records that match the query
     long long nModified{-1};  // number of records written (no no-ops)
     long long ninserted{-1};
@@ -113,6 +114,7 @@ public:
 
     // The following metrics are initialized with 0 rather than -1 in order to simplify use by the
     // CRUD path.
+    //计数统计见recordCurOpMetrics
     long long nmoved{0};        // updates resulted in a move (moves are expensive)
     long long keysInserted{0};  // Number of index keys inserted.
     long long keysDeleted{0};   // Number of index keys removed.

@@ -279,7 +279,7 @@ private:
     //如果启用了网络压缩，对应有一个compressorId
     boost::optional<MessageCompressorId> _compressorId;
     //接收处理的message信息  一个完整的报文就记录在该msg中, 也就是ASIOSourceTicket._target成员
-    Message _inMessage; //赋值见ServiceStateMachine::_sourceMessage
+    Message _inMessage; //赋值见ServiceStateMachine::_sourceMessage  
 
     //默认初始化kUnowned,标识本SSM状态机处于非活跃状态，主要用来判断是否需要在状态转换中跟新线程名，只对动态线程模型生效
     AtomicWord<Ownership> _owned{Ownership::kUnowned};

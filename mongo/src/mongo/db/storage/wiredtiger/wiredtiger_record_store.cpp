@@ -1574,6 +1574,7 @@ void WiredTigerRecordStore::waitForAllEarlierOplogWritesToBeVisible(OperationCon
     }
 }
 
+//oplogHack ÓÅ»¯ ²Î¿¼https://mongoing.com/archives/27285
 boost::optional<RecordId> WiredTigerRecordStore::oplogStartHack(
     OperationContext* opCtx, const RecordId& startingPosition) const {
     if (!_isOplog)

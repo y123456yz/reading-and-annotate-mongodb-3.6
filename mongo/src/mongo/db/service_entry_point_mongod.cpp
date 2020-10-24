@@ -487,8 +487,9 @@ bool runCommandImpl(OperationContext* opCtx,
 		//Command::publicRun 执行不同命令的run
         result = command->publicRun(opCtx, request, inPlaceReplyBob);
     } else { //支持WriteConcern  
-    	//提前WriteConcern信息异常
+    	//提取WriteConcernOptions信息
         auto wcResult = extractWriteConcern(opCtx, cmd, db);
+		//提取异常，直接异常处理
         if (!wcResult.isOK()) {
             auto result = Command::appendCommandStatus(inPlaceReplyBob, wcResult.getStatus());
             inPlaceReplyBob.doneFast();
@@ -598,7 +599,9 @@ void execCommandDatabase(OperationContext* opCtx,
             replCoord->getReplicationMode() == repl::ReplicationCoordinator::modeReplSet,
             opCtx->getServiceContext()->getGlobalStorageEngine()->supportsDocLocking());
 
+		//获取dbname
         const auto dbname = request.getDatabase().toString();
+		//dbname命名检查
         uassert(
             ErrorCodes::InvalidNamespace,
             str::stream() << "Invalid database name: '" << dbname << "'",
@@ -655,7 +658,7 @@ void execCommandDatabase(OperationContext* opCtx,
             opCtx, cmdWhitelist.find(command->getName()) != cmdWhitelist.cend());
 
         ImpersonationSessionGuard guard(opCtx);
-		//command认证检测,检查客户端链接使用的账号密码是否有操作该command的权限
+		//权限认证检查
         uassertStatusOK(Command::checkAuthorization(command, opCtx, request));
 
         const bool iAmPrimary = replCoord->canAcceptWritesForDatabase_UNSAFE(opCtx, dbname);
@@ -880,7 +883,7 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
         }
 
         try {  // Execute.
-        	//命令初始化
+        	//opCtx初始化
             curOpCommandSetup(opCtx, request);
 
             Command* c = nullptr;
@@ -889,7 +892,7 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
             // we restrict the log message to the name of the unrecognized command.
             // However, the complete command object will still be echoed to the client.
             //所有的command都在_commands中保存，查找request对应的命令名是否支持
-            if (!(c = Command::findCommand(request.getCommandName()))) {
+            if (!(c = Command::findCommand(request.getCommandName()))) { //OpMsgRequest::getCommandName
 				//没有找到相应的command的后续处理
                 Command::unknownCommands.increment();
                 std::string msg = str::stream() << "no such command: '" << request.getCommandName()
@@ -931,6 +934,7 @@ DbResponse runCommands(OperationContext* opCtx, const Message& message) {
         return {};  // Don't reply.
     }
 
+	//OpMsgReplyBuilder::done对数据进行序列化操作
     auto response = replyBuilder->done();
     CurOp::get(opCtx)->debug().responseLength = response.header().dataLen();
 
@@ -1205,21 +1209,23 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 	//s << "yang test ................ServiceEntryPointMongod::handleRequest op:" << op;
 	log() << "yang test ................ServiceEntryPointMongod::handleRequest op:" << (int)op;
 	//log() << "yang test ........ServiceEntryPointMongod::handleRequest 11";
-
+	//根据message构造DbMessage
     DbMessage dbmsg(m);
-	
-    Client& c = *opCtx->getClient();  //根据操作上下文获取对应的client
+	//根据操作上下文获取对应的client
+    Client& c = *opCtx->getClient();  
+    //客户端是否直接链接mongod实例,mongos如果做为mongod的客户端则不需要认证
     if (c.isInDirectClient()) {
         invariant(!opCtx->lockState()->inAWriteUnitOfWork());
     } else {
         LastError::get(c).startRequest();
+		//AuthorizationSession::startRequest
         AuthorizationSession::get(c)->startRequest(opCtx);
 
         // We should not be holding any locks at this point
         invariant(!opCtx->lockState()->isLocked());
     }
 
-	//获取库.表
+	//获取库.表信息，注意只有dbUpdate<opCode<dbDelete的opCode请求才通过dbmsg直接获取库和表信息
     const char* ns = dbmsg.messageShouldHaveNs() ? dbmsg.getns() : NULL;
     const NamespaceString nsString = ns ? NamespaceString(ns) : NamespaceString();
 
@@ -1229,6 +1235,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
             isCommand = true;
         }
     } else if (op == dbCommand || op == dbMsg) {
+        //3.6走这里
         isCommand = true;
     }
 
@@ -1241,7 +1248,8 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         currentOp.setNetworkOp_inlock(op);
         currentOp.setLogicalOp_inlock(networkOpToLogicalOp(op));
     }
-
+	
+    //CurOp::debug 初始化opDebug，慢日志相关记录
     OpDebug& debug = currentOp.debug();
 
 	//启动的时候设置的参数默认是100ms,当操作超过了这个时间且启动时设置--profile为1或者2  
@@ -1250,7 +1258,6 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
     bool shouldLogOpDebug = shouldLog(logger::LogSeverity::Debug(1));
 
     DbResponse dbresponse;
-	//可通过--slowms设置slowMS 
     if (op == dbMsg || op == dbCommand || (op == dbQuery && isCommand)) {
         dbresponse = runCommands(opCtx, m);   //runCommands   新版本插入 查询过程实际上走这里面
     } else if (op == dbQuery) {
@@ -1301,12 +1308,14 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         }
     }
 
-	
+	//计时处理
     currentOp.ensureStarted();
     currentOp.done(); //结束时间确定，开始时间在//execCommandDatabase->ensureStarted
+	//获取runCommands执行时间，也就是内部处理时间
     debug.executionTimeMicros = durationCount<Microseconds>(currentOp.elapsedTimeExcludingPauses());
 
 	//mongod读写的时间延迟统计  ServiceEntryPointMongod::handleRequest
+	//db.runCommand( { top: 1 } )统计相关
     Top::get(opCtx->getServiceContext())
         .incrementGlobalLatencyStats(
             opCtx,
@@ -1346,7 +1355,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
             profile(opCtx, op); //db.system.profile.find().pretty()中查看，记录慢日志到这个集合
         }
     }
-
+	//各种统计信息
     recordCurOpMetrics(opCtx);
     return dbresponse;
 }

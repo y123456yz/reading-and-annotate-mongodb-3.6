@@ -107,6 +107,7 @@ private:
  * { planCacheListQueryShapes: <collection> }
  *
  */
+//SetupPlanCacheCommands中定义
 class PlanCacheListQueryShapes : public PlanCacheCommand {
 public:
     PlanCacheListQueryShapes();
@@ -132,7 +133,7 @@ public:
  *     projection: <projection>
  * }
  *
- */
+ */ //SetupPlanCacheCommands中定义
 class PlanCacheClear : public PlanCacheCommand {
 public:
     PlanCacheClear();
@@ -162,6 +163,7 @@ public:
  * }
  *
  */
+//SetupPlanCacheCommands中定义
 class PlanCacheListPlans : public PlanCacheCommand {
 public:
     PlanCacheListPlans();

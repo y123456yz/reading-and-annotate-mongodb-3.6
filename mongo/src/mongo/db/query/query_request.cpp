@@ -96,6 +96,7 @@ const char kReturnKeyField[] = "returnKey";
 const char kShowRecordIdField[] = "showRecordId";
 const char kSnapshotField[] = "snapshot";
 const char kTailableField[] = "tailable";
+//oplogHack ÓÅ»¯ ²Î¿¼https://mongoing.com/archives/27285
 const char kOplogReplayField[] = "oplogReplay";
 const char kNoCursorTimeoutField[] = "noCursorTimeout";
 const char kAwaitDataField[] = "awaitData";

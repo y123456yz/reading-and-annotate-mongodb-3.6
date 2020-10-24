@@ -66,6 +66,7 @@ public:
     /**
      * Returns the command's name. This value never changes for the lifetime of the command.
      */
+     //command命令名
     virtual const std::string& getName() const = 0;
 
     /**
@@ -74,6 +75,7 @@ public:
      * appended to 'dbname' after a '.' character. If the first field is not of type
      * mongo::String, then 'dbname' is returned unmodified.
      */
+     //获取db.collection
     virtual std::string parseNs(const std::string& dbname, const BSONObj& cmdObj) const = 0;
 
     /**
@@ -82,6 +84,7 @@ public:
      * or a database resource pattern, depending on whether parseNs returns a fully qualifed
      * collection name or just a database name.
      */
+     //获取ResourcePattern资源模式
     virtual ResourcePattern parseResourcePattern(const std::string& dbname,
                                                  const BSONObj& cmdObj) const = 0;
 
@@ -99,11 +102,13 @@ public:
      *            the command supports a write concern. Ex. aggregate only supports write concern
      *            when $out is provided.
      */
+    //该命令是否支持WriteConcern
     virtual bool supportsWriteConcern(const BSONObj& cmd) const = 0;
 
     /**
      * Return true if only the admin ns has privileges to run this command.
      */
+    //该命令是否只能在主节点操作
     virtual bool adminOnly() const = 0;
 
     /**
@@ -113,10 +118,12 @@ public:
      *
      * When localHostOnlyIfNoAuth() is true, adminOnly() must also be true.
      */
+     //该命令是否支持本机非认证操作
     virtual bool localHostOnlyIfNoAuth() = 0;
 
     /* Return true if slaves are allowed to execute the command
     */
+    
     virtual bool slaveOk() const = 0;
 
     /**
@@ -510,10 +517,12 @@ class Command : public CommandInterface {
 public:
     // The type of the first field in 'cmdObj' must be mongo::String. The first field is
     // interpreted as a collection name.
+    //获取集合名collection
     static std::string parseNsFullyQualified(const std::string& dbname, const BSONObj& cmdObj);
 
     // The type of the first field in 'cmdObj' must be mongo::String or Symbol.
     // The first field is interpreted as a collection name.
+    //获取DB.COLLECTION
     static NamespaceString parseNsCollectionRequired(const std::string& dbname,
                                                      const BSONObj& cmdObj);
     static NamespaceString parseNsOrUUID(OperationContext* opCtx,
@@ -533,11 +542,11 @@ public:
     // NOTE: Do not remove this declaration, or relocate it in this class. We
     // are using this method to control where the vtable is emitted.
     virtual ~Command();
-
+    //获取命令名
     const std::string& getName() const final {
         return _name;
     }
-
+    //db.collection
     std::string parseNs(const std::string& dbname, const BSONObj& cmdObj) const override;
 
     ResourcePattern parseResourcePattern(const std::string& dbname,
@@ -546,11 +555,11 @@ public:
     std::size_t reserveBytesForReply() const override {
         return 0u;
     }
-    //该命令只能在admin中执行
+    //该命令只能在admin库中执行
     bool adminOnly() const override {
         return false;
     }
-
+    //是否支持本机不认证执行该命令
     bool localHostOnlyIfNoAuth() override {
         return false;
     }
@@ -559,16 +568,19 @@ public:
         return false;
     }
 
+    //是否进行command操作计数
     bool shouldAffectCommandCounter() const override {
         return true;
     }
-
+    //该命令是否需要认证
     bool requiresAuth() const override {
         return true;
     }
 
+    //help帮助信息
     void help(std::stringstream& help) const override;
 
+    //执行计划信息
     Status explain(OperationContext* opCtx,
                    const std::string& dbname,
                    const BSONObj& cmdObj,
@@ -582,11 +594,12 @@ public:
     bool maintenanceMode() const override {
         return false;
     }
-
+    //maintenance是否支持
     bool maintenanceOk() const override {
         return true; /* assumed true prior to commit */
     }
 
+    //本地是否支持ReadConcern
     bool supportsNonLocalReadConcern(const std::string& dbName,
                                      const BSONObj& cmdObj) const override {
         return false;
@@ -604,10 +617,12 @@ public:
         return ReadWriteType::kCommand;
     }
 
+    //命令执行成功统计
     void incrementCommandsExecuted() final {
         _commandsExecuted.increment();
     }
 
+    //命令执行失败统计
     void incrementCommandsFailed() final {
         _commandsFailed.increment();
     }
@@ -617,17 +632,21 @@ public:
      *
      * Forwards to enhancedRun, but additionally runs audit checks if run throws unauthorized.
      */
+    //对应命令运行
     bool publicRun(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBuilder& result);
 
+    //获取支持的所有命令信息  ListCommandsCmd获取所有支持的命令 db.listCommands()
     static const CommandMap& allCommands() {
         return *_commands;
     }
 
+    //没用
     static const CommandMap& allCommandsByBestName() {
         return *_commandsByBestName;
     }
 
     // Counter for unknown commands
+    //收到不支持命令的统计
     static Counter64 unknownCommands;
 
     /**
@@ -636,10 +655,11 @@ public:
      * It is illegal to call this if the command does not exist.
      */
     static BSONObj runCommandDirectly(OperationContext* txn, const OpMsgRequest& request);
-
+    //根据命令字符串名查找对应命令
     static Command* findCommand(StringData name);
 
     // Helper for setting errmsg and ok field in command result object.
+    //执行结果
     static void appendCommandStatus(BSONObjBuilder& result,
                                     bool ok,
                                     const std::string& errmsg = {});
@@ -685,7 +705,7 @@ public:
      *         ...
      *     }
      */
-    ////mongod --setParameter=enableTestCommands
+    ////mongod --setParameter=enableTestCommands  是否启用了command test功能
     static bool testCommandsEnabled;
 
     /**

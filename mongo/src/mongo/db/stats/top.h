@@ -44,6 +44,9 @@ class ServiceContext;
 
 /**
  * tracks usage by collection
+ mongotop实现原理:
+use admin
+db.runCommand( { top: 1 } )
  */
 class Top {
 public:

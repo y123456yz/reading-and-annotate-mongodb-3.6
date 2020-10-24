@@ -150,6 +150,7 @@ AuthorizationManager& AuthorizationSession::getAuthorizationManager() {
     return _externalState->getAuthorizationManager();
 }
 
+//ServiceEntryPointMongod::handleRequestÖÐµ÷ÓÃ
 void AuthorizationSession::startRequest(OperationContext* opCtx) {
     _externalState->startRequest(opCtx);
     _refreshUserInfoAsNeeded(opCtx);

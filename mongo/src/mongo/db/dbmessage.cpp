@@ -58,6 +58,7 @@ DbMessage::DbMessage(const Message& msg) : _msg(msg), _nsStart(NULL), _mark(NULL
         // Strings can be zero length
         uassert(18633, "Failed to parse ns string", _nsLen < limit);
 
+		//有可能是数组等
         _nextjsobj += _nsLen + 1;  // skip namespace + null  跳过集合名，下次解析从_nextjsobj开始
     }
 }
