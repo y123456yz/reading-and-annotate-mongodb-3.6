@@ -43,7 +43,7 @@ namespace mongo {
  mongodb协议官方文档参考https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/
  */
 const size_t MaxMessageSizeBytes = 48 * 1000 * 1000;
-//ServiceEntryPointMongod::handleRequest
+//ServiceEntryPointMongod::handleRequest   opCode操作类型和LogicalOp逻辑op转换详见networkOpToLogicalOp
 //enum NetworkOp : int32_t {  //LogicalOp和NetworkOp的转换见NetworkOp
 enum NetworkOp { 
 
@@ -87,7 +87,7 @@ inline bool isSupportedRequestNetworkOp(NetworkOp op) {
     }
 }
 
-//赋值见networkOpToLogicalOp
+//赋值见networkOpToLogicalOp，opCode操作类型和LogicalOp逻辑op转换详见networkOpToLogicalOp
 enum class LogicalOp {
     opInvalid,
     opUpdate,

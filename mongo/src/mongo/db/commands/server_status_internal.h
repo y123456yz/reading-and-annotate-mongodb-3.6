@@ -39,6 +39,9 @@ namespace mongo {
 
 class ServerStatusMetric;
 
+//命令统计信息就是通过该MetricTree管理起来
+//ServerStatusMetric::ServerStatusMetric中构造使用  
+//db.serverStatus().metrics.commands统计信息就是通过MetricTree管理起来
 class MetricTree {
 public:
     void add(ServerStatusMetric* metric);
