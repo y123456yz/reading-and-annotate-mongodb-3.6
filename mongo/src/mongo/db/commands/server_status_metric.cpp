@@ -35,6 +35,8 @@
 namespace mongo {
 
 using std::string;
+//命令统计信息就是通过该MetricTree管理起来
+//ServerStatusMetric::ServerStatusMetric中构造使用  db.serverStatus().metrics统计信息就是通过MetricTree管理起来
 
 ServerStatusMetric::ServerStatusMetric(const string& nameIn)
     : _name(nameIn), _leafName(_parseLeafName(nameIn)) {

@@ -35,8 +35,11 @@
 #include "mongo/db/jsobj.h"
 
 namespace mongo {
+//命令统计信息就是通过该MetricTree管理起来
+//ServerStatusMetric::ServerStatusMetric中构造使用  db.serverStatus().metrics.commands统计信息就是通过MetricTree管理起来
 
-//可以参考class MemBase : public ServerStatusMetric {}类
+//可以参考class MemBase : public ServerStatusMetric {}类   
+//ServerStatusMetricField继承该类
 class ServerStatusMetric {
 public:
     /**
@@ -72,7 +75,10 @@ protected:
  *    counter.hit();
  *
  * will show up in db.serverStatus().metrics.path.to.counter
- */
+ 
+ //命令统计信息就是通过该MetricTree管理起来
+ //ServerStatusMetric::ServerStatusMetric中构造使用  db.serverStatus().metrics.commands统计信息就是通过MetricTree管理起来
+ */ //Command._commandsExecutedMetric Command._commandsFailedMetric为该成员类型
 template <typename T>
 class ServerStatusMetricField : public ServerStatusMetric {
 public:

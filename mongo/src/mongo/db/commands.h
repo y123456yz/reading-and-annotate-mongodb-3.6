@@ -232,6 +232,7 @@ public:
      * Commands which implement database read or write logic should override this to return kRead
      * or kWrite as appropriate.
      */
+    //例如find就是kRead，update  delete insert就是kWrite，非读写操作就是kCommand
     enum class ReadWriteType { kCommand, kRead, kWrite };
     virtual ReadWriteType getReadWriteType() const = 0;
 
@@ -551,7 +552,7 @@ public:
 
     ResourcePattern parseResourcePattern(const std::string& dbname,
                                          const BSONObj& cmdObj) const override;
-
+    //应答保留填充字段长度
     std::size_t reserveBytesForReply() const override {
         return 0u;
     }
@@ -608,21 +609,21 @@ public:
     bool allowsAfterClusterTime(const BSONObj& cmdObj) const override {
         return true;
     }
-
+    //3.6版本默认opCode=OP_MSG,所以对应逻辑操作op为LogicalOp::opCommand
     LogicalOp getLogicalOp() const override {
         return LogicalOp::opCommand;
     }
-
+    //例如find就是kRead，update  delete insert就是kWrite，非读写操作就是kCommand
     ReadWriteType getReadWriteType() const override {
         return ReadWriteType::kCommand;
     }
 
-    //命令执行成功统计
+    //该命令执行成功统计
     void incrementCommandsExecuted() final {
         _commandsExecuted.increment();
     }
 
-    //命令执行失败统计
+    //该命令执行失败统计
     void incrementCommandsFailed() final {
         _commandsFailed.increment();
     }
@@ -826,7 +827,7 @@ private:
                              BSONObjBuilder& result) = 0;
 
     // Counters for how many times this command has been executed and failed
-    //db.serverStatus().metrics.commands命令查看
+    //db.serverStatus().metrics.commands命令查看，本命令的执行统计
     Counter64 _commandsExecuted; //该命令执行次数 Command::Command
     Counter64 _commandsFailed;
 
@@ -835,6 +836,8 @@ private:
     const std::string _name;
 
     // Pointers to hold the metrics tree references
+    //每个命令执行是否成功通过MetricTree管理起来，也就是db.serverStatus().metrics.commands统计信息
+    //通过MetricTree管理起来
     ServerStatusMetricField<Counter64> _commandsExecutedMetric;
     ServerStatusMetricField<Counter64> _commandsFailedMetric;
 };

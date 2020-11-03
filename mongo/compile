@@ -7,6 +7,8 @@ pip install setuptools==33.1.1
 sudo yum install python-devel
 
 
+/usr/bin/ld.gold：错误：cannot find -lunwind  ,解决办法：yum install libunwind-devel libunwind
+
 scons --disable-warnings-as-errors --release --ssl --opt=on 
 
 strip mongos可以把mongos二进制文件更小
