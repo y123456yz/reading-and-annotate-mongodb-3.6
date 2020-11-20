@@ -39,7 +39,7 @@
 namespace mongo {
 
 //OpCounterServerStatusSection  LogicalSessionSSS TCMallocServerStatusSection等继承该类
-//每个该类结构，代表db.serverStatus()下面的各个子项名称
+//每个该类结构，代表db.serverStatus()下面的各个子项名称,可以搜索“: ServerStatusSection(”,参考GlobalHistogramServerStatusSection
 class ServerStatusSection {
 public:
     ServerStatusSection(const std::string& sectionName);

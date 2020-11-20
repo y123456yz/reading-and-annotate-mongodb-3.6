@@ -28,6 +28,10 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
 
+
+ https://www.cnblogs.com/gnivor/p/11719958.html  gperftools工具使用，demo参考
+ pprof /root/mongod  ./mongod-host.prof --pdf > test.pdf  生成详细的文档
+
  -bash-4.2# cd /path/on/
  -bash-4.2# 
  -bash-4.2# pprof /root/mongod	./mongod-host.prof 
@@ -88,7 +92,8 @@
  
   /usr/doc/gperftools-2.0/cpu_profiler.html
   /usr/doc/gperftools-2.0/heap_profiler.html
- 
+ http://goog-perftools.sourceforge.net/doc/cpu_profiler.html
+ http://goog-perftools.sourceforge.net/doc/heap_profiler.html
  (pprof) top
  Total: 18 samples
 		7  38.9%  38.9% 	   7  38.9% __pthread_cond_timedwait
