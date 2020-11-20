@@ -40,6 +40,7 @@ namespace {
  */
 class GlobalHistogramServerStatusSection final : public ServerStatusSection {
 public:
+	//db.serverStatus().opLatencies命令获取相关latency信息
     GlobalHistogramServerStatusSection() : ServerStatusSection("opLatencies") {}
 
     bool includeByDefault() const {
@@ -52,6 +53,7 @@ public:
         if (configElem.type() == BSONType::Object) {
             includeHistograms = configElem.Obj()["histograms"].trueValue();
         }
+		//Top::appendGlobalLatencyStats
         Top::get(opCtx->getServiceContext())
             .appendGlobalLatencyStats(includeHistograms, &latencyBuilder);
         return latencyBuilder.obj();

@@ -147,6 +147,8 @@ int OperationLatencyHistogram::_getBucket(uint64_t value) {
     }
 }
 
+//OperationLatencyHistogram::increment中调用
+//读 写 command总操作自增，时延对应增加latency
 void OperationLatencyHistogram::_incrementData(uint64_t latency, int bucket, HistogramData* data) {
     data->buckets[bucket]++;
     data->entryCount++;
@@ -172,7 +174,7 @@ featdoc_1:PRIMARY> db.serverStatus().opLatencies
 featdoc_1:PRIMARY> 
 */
 
-//Top::_incrementHistogram
+//Top::_incrementHistogram   操作和时延计数操作
 void OperationLatencyHistogram::increment(uint64_t latency, Command::ReadWriteType type) {
     int bucket = _getBucket(latency);
     switch (type) {

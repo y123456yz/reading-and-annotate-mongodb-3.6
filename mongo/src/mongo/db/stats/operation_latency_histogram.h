@@ -40,6 +40,7 @@ class BSONObjBuilder;
  *
  * Note: This class is not thread-safe.
  */
+//db.serverStatus().opLatencies相关计数  Top::_incrementHistogram中调用
 class OperationLatencyHistogram {
 public:
     static const int kMaxBuckets = 51;

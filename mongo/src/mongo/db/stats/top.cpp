@@ -230,7 +230,10 @@ featdoc_1:PRIMARY> db.serverStatus().opLatencies
         }
 }
 featdoc_1:PRIMARY> 
-*/
+*/ 
+
+
+//ServiceEntryPointMongod::handleRequest中调用
 void Top::incrementGlobalLatencyStats(OperationContext* opCtx,
                                       uint64_t latency,
                                       Command::ReadWriteType readWriteType) {
@@ -238,11 +241,13 @@ void Top::incrementGlobalLatencyStats(OperationContext* opCtx,
     _incrementHistogram(opCtx, latency, &_globalHistogramStats, readWriteType);
 }
 
+////GlobalHistogramServerStatusSection的generateSection接口调用，db.serverStatus().opLatencies命令触发获取耗时信息
 void Top::appendGlobalLatencyStats(bool includeHistograms, BSONObjBuilder* builder) {
     stdx::lock_guard<SimpleMutex> guard(_lock);
     _globalHistogramStats.append(includeHistograms, builder);
 }
 
+//Top::incrementGlobalLatencyStats调用  读写请求耗时计数
 void Top::_incrementHistogram(OperationContext* opCtx,
                               long long latency,
                               OperationLatencyHistogram* histogram,
