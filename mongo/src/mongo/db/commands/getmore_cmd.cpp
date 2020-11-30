@@ -391,6 +391,7 @@ public:
         return true;
     }
 
+	//GetMoreCmd::run
     bool run(OperationContext* opCtx,
              const std::string& dbname,
              const BSONObj& cmdObj,

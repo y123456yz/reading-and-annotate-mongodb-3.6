@@ -265,7 +265,6 @@ at src/mongo/db/commands/find_cmd.cpp:311
         }
 
 		
-
         auto& qr = qrStatus.getValue(); //也就是获取对应的QueryRequest
 
         // Validate term before acquiring locks, if provided.
