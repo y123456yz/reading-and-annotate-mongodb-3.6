@@ -118,7 +118,7 @@
  * the profile data to the specified "profileFilename."
  *     { _cpuProfilerStart: { profileFilename: '/path/on/mongod-host.prof' } }
 
- > db.adminCommand({ _cpuProfilerStart: { profileFilename: '/path/on/mongod-host.prof' } })
+ > db.adminCommand({ _cpuProfilerStart: { profileFilename: '/root/mongod-host.prof' } })
 { "ok" : 1 }
 > 
  https://jira.mongodb.org/browse/SERVER-13476?jql=text%20~%20%22prof%22

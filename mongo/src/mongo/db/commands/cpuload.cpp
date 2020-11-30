@@ -58,6 +58,7 @@ public:
     virtual void addRequiredPrivileges(const std::string& dbname,
                                        const BSONObj& cmdObj,
                                        std::vector<Privilege>* out) {}  // No auth required
+    //循环执行for循环，其实就是探测CPU的性能，测试CPU用的
     virtual bool run(OperationContext* txn,
                      const string& badns,
                      const BSONObj& cmdObj,

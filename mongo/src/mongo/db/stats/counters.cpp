@@ -62,7 +62,7 @@ void OpCounters::gotQuery() {
     _query.fetchAndAdd(1);
 }
 
-//mongos统计在//ClusterWriteCmd::enhancedRun中调用
+//mongos统计在//ClusterWriteCmd::enhancedRun   performSingleUpdateOp中调用
 void OpCounters::gotUpdate() {
     RARELY _checkWrap();
     _update.fetchAndAdd(1);
