@@ -1310,12 +1310,12 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
 
 	//计时处理
     currentOp.ensureStarted();
+	//CurOp::done
     currentOp.done(); //结束时间确定，开始时间在//execCommandDatabase->ensureStarted
 	//获取runCommands执行时间，也就是内部处理时间
     debug.executionTimeMicros = durationCount<Microseconds>(currentOp.elapsedTimeExcludingPauses());
 
-	//mongod读写的时间延迟统计  ServiceEntryPointMongod::handleRequest
-	//db.runCommand( { top: 1 } )统计相关
+	//mongod读写的时间延迟统计  db.serverStatus().opLatencies  
     Top::get(opCtx->getServiceContext())
         .incrementGlobalLatencyStats(
             opCtx,
@@ -1336,11 +1336,7 @@ DbResponse ServiceEntryPointMongod::handleRequest(OperationContext* opCtx, const
         log() << debug.report(&c, currentOp, lockerInfo.stats); //记录慢日志到日志文件
     }
 
-	/*
-	//该操作将被记录,原因可能有二:
-	一,启动时设置--profile 2,则所有操作将被记录.
-	二,启动时设置--profile 1,且操作时间超过了默认的slowMs,那么操作将被else {//这个地方if部分被删除了,就是在不能获取锁的状况下不记录该操作的代码  
-	*/ 
+	//记录慢日志到system.profile集合 
     if (currentOp.shouldDBProfile(shouldSample)) {
         // Performance profiling is on
         if (opCtx->lockState()->isReadLocked()) {

@@ -50,6 +50,7 @@ class StatusWith;
  * expected from types.
  //ShardingState::_refreshMetadata中返回获取
  */
+//chunk 版本信息 https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 //chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
 //MigrateInfo.version成员为该类型        getCollVersion和getShardVersion都是该类型，参考MigrationSourceManager::MigrationSourceManager
 struct ChunkVersion {
@@ -167,6 +168,12 @@ public:
     chunk 发生split 之后， split 之后的所有 chunk minor version增加， 当 chunk 在 shard 之间发生迁移时， 迁移的 chunk
     在标上增加其major version， 并且在迁移源上选择一个chunk增加其major version， 这样确保不论是访问到源还是目
     标， mongos 看到的版本都增加了
+
+    shard version 和 collection version 形式均为 「25550573|83||5f59e113f7f9b49e704c227f」，这即是一个 chunk version，通过 "|" 和 "||" 将版本信息分为三段：
+第一段为 major version : 整数，用于辨识路由指向是否发生变化，以便各节点及时更新路由。比如在发生chunk 在 shard 之间迁移时会增加
+第二段为 minor version : 整数，主要用于记录不影响路由指向的一些变化。比如chunk 发生 split 时增加
+第三段为 epoch : objectID，标识集合的唯一实例，用于辨识集合是否发生了变化。只有当 collection 被 drop 或者 collection的shardKey发生refined时 会重新生成
+    https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
     */
     int majorVersion() const {
         return _combined >> 32;

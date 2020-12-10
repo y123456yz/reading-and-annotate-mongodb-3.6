@@ -52,11 +52,13 @@ static constexpr int kMaxNumStaleVersionRetries = 10;
  * This is the root of the "read-only" hierarchy of cached catalog metadata. It is read only
  * in the sense that it only reads from the persistent store, but never writes to it. Instead
  * writes happen through the ShardingCatalogManager and the cache hierarchy needs to be invalidated.
+ //MetadataManager和CatalogCache可以参考https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
+
  */ 
 //cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
 //见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
 
-//Grid._catalogCache成员为该类
+//Grid._catalogCache成员为该类  路由信息缓存到本地
 class CatalogCache {
     MONGO_DISALLOW_COPYING(CatalogCache);
 

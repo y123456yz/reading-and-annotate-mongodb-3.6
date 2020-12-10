@@ -21,6 +21,7 @@ mongodb-3.6源码注释分析，持续更新
   * [mongodb内核源码实现、性能调优、最佳运维实践系列-mongodb网络传输层模块源码实现四](https://my.oschina.net/u/4087916/blog/4685419)     
   * [mongodb内核源码实现、性能调优、最佳运维实践系列-command命令处理模块源码实现一](https://my.oschina.net/u/4087916/blog/4709503)      
   * [mongodb内核源码实现、性能调优、最佳运维实践系列-command命令处理模块源码实现二](https://my.oschina.net/u/4087916/blog/4748286)    
+  * [mongodb内核源码实现、性能调优、最佳运维实践系列-command命令处理模块源码实现三](https://my.oschina.net/u/4087916/blog/4782741)   
   
 说明:  
 ===================================  
@@ -106,20 +107,31 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [service_entry_point_mongos.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/service_entry_point_mongos.h) 
  *   [service_entry_point_mongos.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/service_entry_point_mongos.cpp)
 
-#### command命令处理模块(注释完毕,命令太多，清参考前面的《command命令处理模块源码实现》): 
+#### command命令处理模块(注释完毕,命令太多，请参考前面的《command命令处理模块源码实现》): 
  *   [commands.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands.h) 
  *   [commands.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands.cpp) 
  *   [write_commands.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands.cpp) 
  *   [cluster_write_cmd.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/commands/cluster_write_cmd.cpp)
  *   [strategy.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/s/commands/strategy.cpp)
 
-#### command命令中db.serverStatus()相关统计(注释完毕):
+#### db.serverStatus()相关统计(注释完毕):
  *   [server_status.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/server_status.cpp) 
  *   [server_status.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/server_status.h) 
  *   [server_status_internal.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/server_status_internal.cpp) 
  *   [server_status_internal.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/server_status_internal.h) 
  *   [server_status_metric.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/server_status_metric.cpp) 
  *   [server_status_metric.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/server_status_metric.h) 
+
+#### stats相关统计(注释完毕):
+ *   [counters.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/counters.cpp) 
+ *   [counters.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/counters.h) 
+ *   [operation_latency_histogram.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/operation_latency_histogram.cpp) 
+ *   [operation_latency_histogram.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/operation_latency_histogram.h) 
+ *   [top.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/top.cpp) 
+ *   [top.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/top.h) 
+ *   [latency_server_status_section.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.cpp) 
+ *   [toplatency_server_status_sectionh](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.h) 
+ 
  
 #### shard分片源码实现(注释进行中):   
 ###### 分布式锁实现源码注释分析(100%注释): 

@@ -60,19 +60,22 @@ public:
         long long time;
         long long count;
 
+        //Top::_record调用
         void inc(long long micros) {
             count++;
             time += micros;
         }
     };
 
+    //db.runCommand( { top: 1 } )中的统计信息，包括op和时延
+    //Top._usage成员为该类型，注意OperationLatencyHistogram和UsageMap的区别
     struct CollectionData {
         /**
          * constructs a diff
          */
         CollectionData() {}
         CollectionData(const CollectionData& older, const CollectionData& newer);
-
+        //总的，下面的[queries,commands]
         UsageData total;
 
         UsageData readLock;
@@ -92,7 +95,7 @@ public:
         WriteLocked,
         NotLocked,
     };
-
+    //Top._usage  各种命令的详细统计记录在该map表中
     typedef StringMap<CollectionData> UsageMap;
 
 public:
@@ -145,8 +148,10 @@ private:
                              Command::ReadWriteType readWriteType);
 
     mutable SimpleMutex _lock;
+    //读写db.serverStatus().opLatencies汇总相关计数    
     OperationLatencyHistogram _globalHistogramStats;
-    UsageMap _usage;
+    //每个命令详细的qps、时延统计   db.runCommand( { top: 1 } )获取
+    UsageMap _usage;  //map表中每个表占用一个，参考Top::record
     std::string _lastDropped;
 };
 

@@ -87,6 +87,7 @@ StatusWith<NamespaceString> getIndexedNss(const std::vector<BSONObj>& documentsT
 
 }  // namespace
 
+//增 删 改相关的认证检查
 Status checkAuthForWriteCommand(AuthorizationSession* authzSession,
                                 BatchedCommandRequest::BatchType cmdType,
                                 const OpMsgRequest& request) {
@@ -142,3 +143,4 @@ Status checkAuthForWriteCommand(AuthorizationSession* authzSession,
 
 }  // namespace auth
 }  // namespace mongo
+
