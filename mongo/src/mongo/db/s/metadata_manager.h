@@ -47,6 +47,7 @@ namespace mongo {
 
 class ScopedCollectionMetadata;
 
+//MetadataManager和CatalogCache可以参考https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 //CollectionShardingState._metadataManager  ScopedCollectionMetadata._metadataManager成员为该类型
 class MetadataManager {
     MONGO_DISALLOW_COPYING(MetadataManager);

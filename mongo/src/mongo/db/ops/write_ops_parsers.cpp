@@ -133,7 +133,12 @@ NamespaceString extractIndexedNamespace(const Insert& insertOp) {
 }  // namespace write_ops
 
 //constructBatchedCommandRequest
+
+//CmdInsert::runImpl中调用执行
+//从request中解析出write_ops::Insert类成员信息
 write_ops::Insert InsertOp::parse(const OpMsgRequest& request) {
+    //Insert::parse 该函数实现在build/opt/mongo/db/ops/write_ops_gen.cpp中
+    //解析出write_ops::Insert类成员信息
     auto insertOp = Insert::parse(IDLParserErrorContext("insert"), request);
 
     validateInsertOp(insertOp);

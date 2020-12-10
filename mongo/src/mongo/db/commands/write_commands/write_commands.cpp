@@ -307,10 +307,11 @@ public:
             opCtx->getClient(), BatchedCommandRequest::BatchType_Insert, request);
     }
 
-	//插入文档会走这里面
+	//插入文档会走这里面  CmdInsert::runImpl
     void runImpl(OperationContext* opCtx,
                  const OpMsgRequest& request,
                  BSONObjBuilder& result) final {
+        //从request中解析出write_ops::Insert类成员信息
         const auto batch = InsertOp::parse(request);
         const auto reply = performInserts(opCtx, batch);
         serializeReply(opCtx,

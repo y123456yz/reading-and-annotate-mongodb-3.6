@@ -40,7 +40,7 @@ namespace mongo {
 
 //mongodb报文body解析封装:mongodb>=3.6，都是OP_MSG,OpMsg针对opCode=OP_MSG，mongodb<3.6，opCode=[dbUpdate, dbDelete]，对应body解析由DbMessage
 //内容来源见OpMsg::parse   
-struct OpMsg { //下面的OpMsgRequest继承该类
+struct OpMsg { //下面的OpMsgRequest继承该类  例如insert操作对应的OpMsg使用见Insert::parseProtected
     struct DocumentSequence {
         std::string name;
         std::vector<BSONObj> objs;
@@ -118,7 +118,7 @@ struct OpMsg { //下面的OpMsgRequest继承该类
  * An OpMsg that represents a request. This is a separate type from OpMsg only to provide better
  * type-safety along with a place to hang request-specific methods.
  */
-//协议解析得时候会用到，见runCommands
+//协议解析得时候会用到，见runCommands，例如insert操作对应的OpMsg使用见Insert::parseProtected
 struct OpMsgRequest : public OpMsg {
     // TODO in C++17 remove constructors so we can use aggregate initialization.
     OpMsgRequest() = default;

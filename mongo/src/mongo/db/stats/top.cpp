@@ -48,7 +48,7 @@ namespace {
 
 
 /*
-mongotop实现原理:
+mongotop实现原理:  获取每个命令的opcount和时延
 use admin
 db.runCommand( { top: 1 } )
 */
@@ -78,6 +78,13 @@ Top& Top::get(ServiceContext* service) {
     return getTop(service);
 }
 
+/*
+Db_raii.cpp (src\mongo\db):        .record(_opCtx,
+Db_raii.cpp (src\mongo\db):        .record(_opCtx,
+Find_and_modify.cpp (src\mongo\db\commands):        .record(opCtx,
+Write_ops_exec.cpp (src\mongo\db\ops):            .record(opCtx,
+Write_ops_exec.cpp (src\mongo\db\ops):            .record(opCtx,
+*/
 void Top::record(OperationContext* opCtx,
                  StringData ns,
                  LogicalOp logicalOp,
@@ -100,6 +107,7 @@ void Top::record(OperationContext* opCtx,
     _record(opCtx, coll, logicalOp, lockType, micros, readWriteType);
 }
 
+//Top::record调用  各个命令的op及时延统计
 void Top::_record(OperationContext* opCtx,
                   CollectionData& c,
                   LogicalOp logicalOp,
@@ -159,12 +167,15 @@ void Top::cloneMap(Top::UsageMap& out) const {
     stdx::lock_guard<SimpleMutex> lk(_lock);
     out = _usage;
 }
-
+//
+//ServiceEntryPointMongod::handleRequest->Top::incrementGlobalLatencyStats中获取读写时延统计(db.serverStatus().opLatencies)
+//TopCommand::run->Top::append获取命令详细count及时延统计(db.runCommand( { top: 1 } ))
 void Top::append(BSONObjBuilder& b) {
     stdx::lock_guard<SimpleMutex> lk(_lock);
     _appendToUsageMap(b, _usage);
 }
 
+//Top::append调用
 void Top::_appendToUsageMap(BSONObjBuilder& b, const UsageMap& map) const {
     // pull all the names into a vector so we can sort them for the user
 
@@ -196,6 +207,7 @@ void Top::_appendToUsageMap(BSONObjBuilder& b, const UsageMap& map) const {
     }
 }
 
+//Top::_appendToUsageMap调用
 void Top::_appendStatsEntry(BSONObjBuilder& b, const char* statsName, const UsageData& map) const {
     BSONObjBuilder bb(b.subobjStart(statsName));
     bb.appendNumber("time", map.time);
@@ -232,8 +244,11 @@ featdoc_1:PRIMARY> db.serverStatus().opLatencies
 featdoc_1:PRIMARY> 
 */ 
 
+//ServiceEntryPointMongod::handleRequest->Top::incrementGlobalLatencyStats中获取读写时延统计(db.serverStatus().opLatencies)
+//TopCommand::run->Top::append获取命令详细count及时延统计(db.runCommand( { top: 1 } ))
 
-//ServiceEntryPointMongod::handleRequest中调用
+
+//ServiceEntryPointMongod::handleRequest中调用  db.serverStatus().opLatencies中的统计
 void Top::incrementGlobalLatencyStats(OperationContext* opCtx,
                                       uint64_t latency,
                                       Command::ReadWriteType readWriteType) {
@@ -241,13 +256,16 @@ void Top::incrementGlobalLatencyStats(OperationContext* opCtx,
     _incrementHistogram(opCtx, latency, &_globalHistogramStats, readWriteType);
 }
 
-////GlobalHistogramServerStatusSection的generateSection接口调用，db.serverStatus().opLatencies命令触发获取耗时信息
+//GlobalHistogramServerStatusSection的generateSection接口调用，db.serverStatus().opLatencies命令触发获取耗时信息
 void Top::appendGlobalLatencyStats(bool includeHistograms, BSONObjBuilder* builder) {
     stdx::lock_guard<SimpleMutex> guard(_lock);
+	//OperationLatencyHistogram::append
     _globalHistogramStats.append(includeHistograms, builder);
 }
 
 //Top::incrementGlobalLatencyStats调用  读写请求耗时计数
+//db.serverStatus().opLatencies命令  
+//Top::_record   Top::incrementGlobalLatencyStats中执行
 void Top::_incrementHistogram(OperationContext* opCtx,
                               long long latency,
                               OperationLatencyHistogram* histogram,
@@ -255,6 +273,7 @@ void Top::_incrementHistogram(OperationContext* opCtx,
     // Only update histogram if operation came from a user.
     Client* client = opCtx->getClient();
     if (client->isFromUserConnection() && !client->isInDirectClient()) {
+		//OperationLatencyHistogram::increment 
         histogram->increment(latency, readWriteType);
     }
 }

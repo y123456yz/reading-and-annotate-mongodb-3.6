@@ -45,6 +45,7 @@ namespace {
 /**
  * Constructs the default options for the thread pool used by the cache loader.
  */
+//路由刷新过程由该现成实现，参考https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 ThreadPool::Options makeDefaultThreadPoolOptions() {
     ThreadPool::Options options;
     options.poolName = "ConfigServerCatalogCacheLoader";
@@ -77,6 +78,12 @@ struct QueryAndSort {
  * recent and also in order to handle cursor yields between chunks being migrated/split/merged. This
  * ensures that changes to chunk version (which will always be higher) will always come *after* our
  * current position in the chunk cursor.
+ 从config节点拉取权威的路由信息，并进行CatalogCache路由信息刷新。实际最终是通过 ConfigServerCatalogCacheLoader 线程来进行的，构造一个
+
+{
+    "ns": namespace,
+  "lastmod": { $gte: sinceVersion}
+}
  */
 QueryAndSort createConfigDiffQuery(const NamespaceString& nss, ChunkVersion collectionVersion) {
     return {BSON(ChunkType::ns() << nss.ns() << ChunkType::lastmod() << GTE

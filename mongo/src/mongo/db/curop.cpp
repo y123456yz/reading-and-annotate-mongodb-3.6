@@ -281,18 +281,23 @@ void CurOp::raiseDbProfileLevel(int dbProfileLevel) {
     _dbprofile = std::max(dbProfileLevel, _dbprofile);
 }
 
+//命令类型
 Command::ReadWriteType CurOp::getReadWriteType() const {
     if (_command) {
+		//command命令归纳到kCommand
         return _command->getReadWriteType();
     }
     switch (_logicalOp) {
+		//getmore find归纳为读
         case LogicalOp::opGetMore:
         case LogicalOp::opQuery:
             return Command::ReadWriteType::kRead;
+		//增删改统一归纳为写
         case LogicalOp::opUpdate:
         case LogicalOp::opInsert:
         case LogicalOp::opDelete:
             return Command::ReadWriteType::kWrite;
+		//增删改以外的归纳为command
         default:
             return Command::ReadWriteType::kCommand;
     }

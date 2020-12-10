@@ -114,6 +114,8 @@ void OperationLatencyHistogram::_append(const HistogramData& data,
     histogramBuilder.doneFast();
 }
 
+//db.serverStatus().opLatencies命令获取
+//Top::appendGlobalLatencyStats调用
 void OperationLatencyHistogram::append(bool includeHistograms, BSONObjBuilder* builder) const {
     _append(_reads, "reads", includeHistograms, builder);
     _append(_writes, "writes", includeHistograms, builder);
@@ -178,12 +180,15 @@ featdoc_1:PRIMARY>
 void OperationLatencyHistogram::increment(uint64_t latency, Command::ReadWriteType type) {
     int bucket = _getBucket(latency);
     switch (type) {
+		//读时延累加
         case Command::ReadWriteType::kRead:
             _incrementData(latency, bucket, &_reads);
             break;
+		//写时延累加
         case Command::ReadWriteType::kWrite:
             _incrementData(latency, bucket, &_writes);
             break;
+		//command时延累加
         case Command::ReadWriteType::kCommand:
             _incrementData(latency, bucket, &_commands);
             break;
