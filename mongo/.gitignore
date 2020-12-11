@@ -1,7 +1,7 @@
 #/build
 #/build/opt 
-build/opt/mongo/mongod
-build/opt/mongo/mongos
+/build/opt/mongo/mongod
+/build/opt/mongo/mongos
 /build/**/*.o
 /build/**/*.a
 /build/opt/third_party/**/*.o
