@@ -48,7 +48,7 @@ using namespace mongoutils;
 namespace {
 /**
  * Validates the nesting depth of 'obj', returning a non-OK status if it exceeds the limit.
- */ //嵌套文档深度检查
+ */ //嵌套文档深度检查  默认嵌套深度180
 Status validateDepth(const BSONObj& obj) {
     std::vector<BSONObjIterator> frames;
     frames.reserve(16);
@@ -88,11 +88,12 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
                                                  << ", max size: "
                                                  << BSONObjMaxUserSize);
 
-    auto depthStatus = validateDepth(doc);//嵌套文档深度检查
+    auto depthStatus = validateDepth(doc);//嵌套文档深度检查，文档嵌套深度不能超过180
     if (!depthStatus.isOK()) {
         return depthStatus;
     }
 
+	//客户端写进来的数据是否带有ID
     bool firstElementIsId = false;
     bool hasTimestampToFix = false;
     bool hadId = false;
@@ -110,7 +111,19 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
 
             auto fieldName = e.fieldNameStringData();
 
+			//文档内容的key第一个字符不能为$
             if (fieldName[0] == '$') {
+				/*
+				mongos> db.test.insert({"$aa":"bb"})
+				WriteResult({
+				        "nInserted" : 0,
+				        "writeError" : {
+				                "code" : 2,
+				                "errmsg" : "Document can't have $ prefixed field names: $aa"
+				        }
+				})
+				mongos> 
+				*/
                 return StatusWith<BSONObj>(
                     ErrorCodes::BadValue,
                     str::stream() << "Document can't have $ prefixed field names: " << fieldName);
@@ -160,7 +173,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
         BSONElement e = doc["_id"];
         if (e.type()) { //获取_id:XXX中xxx的类型
             b.append(e); 
-        } else {
+        } else {  
         	//bson/bsonobjbuilder.h:    BSONObjBuilder& appendOID(StringData fieldName, OID* oid = 0, bool generateIfBlank = false) {
             b.appendOID("_id", NULL, true); 
         }

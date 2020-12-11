@@ -1,5 +1,14 @@
-/build
-/build/opt 
+#/build
+#/build/opt 
+build/opt/mongo/mongod
+build/opt/mongo/mongos
+/build/**/*.o
+/build/**/*.a
+/build/opt/third_party
+/build/opt/mongo/*.a
+/build/opt/mongo/*.o
+/build/opt/mongo/**/*.o
+/build/opt/mongo/**/*.a
 /build/scons
 /src/mongo/db/modules
 /.jsdbshell

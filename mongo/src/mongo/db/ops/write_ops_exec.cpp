@@ -436,6 +436,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
     return true;
 }
 
+//performInserts调用
 template <typename T>
 StmtId getStmtIdForWriteOp(OperationContext* opCtx, const T& wholeOp, size_t opIndex) {
     return opCtx->getTxnNumber() ? write_ops::getStmtIdForWriteAt(wholeOp, opIndex)
@@ -453,6 +454,7 @@ SingleWriteResult makeWriteResultForInsertOrDeleteRetry() {
 
 //以前老版本receivedInsert中调用，3.6新版本在CmdInsert::runImpl中调用
 //performDeletes(CmdDelete::runImpl)  performUpdates(CmdUpdate::runImpl)  performInserts(CmdInsert::runImpl)分别对应删除、更新、插入
+//把insert的一批数据按照单次最多64个文档，最大256K字节拆分为多个batch，然后调用insertBatchAndHandleErrors处理
 WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& wholeOp) {
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     auto& curOp = *CurOp::get(opCtx);
@@ -500,11 +502,13 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     size_t stmtIdIndex = 0;
     size_t bytesInBatch = 0;
     std::vector<InsertStatement> batch; //数组
+    //默认64
     const size_t maxBatchSize = internalInsertMaxBatchSize.load();
-	//确定InsertStatement类型数组的总长度
+	//确定InsertStatement类型数组的总长度，这里默认一次性最多批量处理64个documents
     batch.reserve(std::min(wholeOp.getDocuments().size(), maxBatchSize));
 
     for (auto&& doc : wholeOp.getDocuments()) {
+		//是否wholeOp中从网络接收到的最后一个document(例如客户端一次性insert多个doc，则这里就是确定是否是最后一个doc)
         const bool isLastDoc = (&doc == &wholeOp.getDocuments().back());
 		//对doc文档做检查，返回新的BSONObj
 		//这里面会遍历所有的bson成员elem，并做相应的检查，并给该doc添加相应的ID
@@ -514,6 +518,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
             // correct order. In an ordered insert, if one of the docs ahead of us fails, we should
             // behave as-if we never got to this document.
         } else {
+        	//获取stdtid
             const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
             if (opCtx->getTxnNumber()) {
                 auto session = OperationContextSession::get(opCtx);
@@ -532,6 +537,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
             batch.emplace_back(stmtId, toInsert);
             bytesInBatch += batch.back().doc.objsize();
 			//这里continue，就是为了把批量插入的文档组成到一个batch数组中，到达一定量一次性插入
+			//batch里面一次最多插入64个文档，总字节数不超过256K
             if (!isLastDoc && batch.size() < maxBatchSize && bytesInBatch < insertVectorMaxBytes)
                 continue;  // Add more to batch before inserting.
         }
