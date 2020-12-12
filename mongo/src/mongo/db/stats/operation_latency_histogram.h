@@ -40,9 +40,18 @@ class BSONObjBuilder;
  *
  * Note: This class is not thread-safe.
  */
-//db.serverStatus().opLatencies相关计数  Top::_incrementHistogram中调用
+//读写db.serverStatus().opLatencies汇总相关计数，所有表的统计 ---全局纬度
+//db.collection.latencyStats( { histograms:true})  --- 表纬度
+//db.collection.latencyStats( { histograms:false}) --- 表纬度
+
+ 
+//Top._globalHistogramStats全局(包含所有表)的操作及时延统计-全局纬度
+//CollectionData.opLatencyHistogram是表级别的读、写、command统计-表纬度
+
+//  Top::_incrementHistogram中调用
 class OperationLatencyHistogram {
 public:
+    //最多记录多少个历史统计db.collection.latencyStats( { histograms:true}) true需要历史信息
     static const int kMaxBuckets = 51;
 
     // Inclusive lower bounds of the histogram buckets.

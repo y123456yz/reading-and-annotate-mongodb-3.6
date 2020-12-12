@@ -215,6 +215,9 @@ void Top::_appendStatsEntry(BSONObjBuilder& b, const char* statsName, const Usag
     bb.done();
 }
 
+//db.collection.latencyStats( { histograms:true}) 
+//db.collection.latencyStats( { histograms:false})
+//单表的读 写 command操作及时延统计
 void Top::appendLatencyStats(StringData ns, bool includeHistograms, BSONObjBuilder* builder) {
     auto hashedNs = UsageMap::HashedKey(ns);
     stdx::lock_guard<SimpleMutex> lk(_lock);

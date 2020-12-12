@@ -232,6 +232,7 @@ public:
      * Commands which implement database read or write logic should override this to return kRead
      * or kWrite as appropriate.
      */
+    //不同请求归类参考getReadWriteType
     //例如find就是kRead，update  delete insert就是kWrite，非读写操作就是kCommand
     enum class ReadWriteType { kCommand, kRead, kWrite };
     virtual ReadWriteType getReadWriteType() const = 0;

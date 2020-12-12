@@ -69,6 +69,7 @@ public:
 
     //db.runCommand( { top: 1 } )中的统计信息，包括op和时延
     //Top._usage成员为该类型，注意OperationLatencyHistogram和UsageMap的区别
+    //map表中每个表占用一个，参考Top::record
     struct CollectionData {
         /**
          * constructs a diff
@@ -77,16 +78,31 @@ public:
         CollectionData(const CollectionData& older, const CollectionData& newer);
         //总的，下面的[queries,commands]
         UsageData total;
-
+        
+        //锁纬度
         UsageData readLock;
         UsageData writeLock;
 
+        //表级别不同操作的时延统计，粒度相比OperationLatencyHistogram更小
+        //请求类型纬度
         UsageData queries;
         UsageData getmore;
         UsageData insert;
         UsageData update;
         UsageData remove;
         UsageData commands;
+        
+        //读写db.serverStatus().opLatencies汇总相关计数，所有表的统计 ---全局纬度
+        //db.collection.latencyStats( { histograms:true})  --- 表纬度
+        //db.collection.latencyStats( { histograms:false}) --- 表纬度
+
+
+        //表级别的读和写时延统计 
+        //Top._globalHistogramStats全局(包含所有表)的操作及时延统计-全局纬度
+        //CollectionData.opLatencyHistogram是表级别的读、写、command统计-表纬度
+
+        //Top::_record中对该表的读、写、command进行统计
+        //汇总型纬度
         OperationLatencyHistogram opLatencyHistogram;
     };
 
@@ -96,6 +112,7 @@ public:
         NotLocked,
     };
     //Top._usage  各种命令的详细统计记录在该map表中
+    //map表中每个表占用一个，参考Top::record
     typedef StringMap<CollectionData> UsageMap;
 
 public:
@@ -148,7 +165,14 @@ private:
                              Command::ReadWriteType readWriteType);
 
     mutable SimpleMutex _lock;
-    //读写db.serverStatus().opLatencies汇总相关计数    
+    //读写db.serverStatus().opLatencies汇总相关计数，所有表的统计 ---全局纬度
+    //db.collection.latencyStats( { histograms:true})  --- 表纬度
+    //db.collection.latencyStats( { histograms:false}) --- 表纬度
+
+
+    
+    //Top._globalHistogramStats全局(包含所有表)的操作及时延统计-全局纬度
+    //CollectionData.opLatencyHistogram是表级别的读、写、command统计-表纬度
     OperationLatencyHistogram _globalHistogramStats;
     //每个命令详细的qps、时延统计   db.runCommand( { top: 1 } )获取
     UsageMap _usage;  //map表中每个表占用一个，参考Top::record

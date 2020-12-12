@@ -88,12 +88,15 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
                                                  << ", max size: "
                                                  << BSONObjMaxUserSize);
 
+
     auto depthStatus = validateDepth(doc);//嵌套文档深度检查，文档嵌套深度不能超过180
     if (!depthStatus.isOK()) {
         return depthStatus;
     }
 
+
 	//客户端写进来的数据是否带有ID
+
     bool firstElementIsId = false;
     bool hasTimestampToFix = false;
     bool hadId = false;

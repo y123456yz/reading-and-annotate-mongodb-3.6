@@ -91,6 +91,55 @@ const std::array<uint64_t, OperationLatencyHistogram::kMaxBuckets>
                                                549755813888,
                                                1099511627776};
 
+
+/*
+ocloud_oFEAkecX_shard_1:PRIMARY> db.collection.latencyStats( { histograms:true}).pretty()
+{
+        "ns" : "cloud_track.collection",
+        "shard" : "ocloud_oFEAkecX_shard_1",
+        "host" : "bjcp1134:20015",
+        "localTime" : ISODate("2020-12-12T11:26:51.790Z"),
+        "latencyStats" : {
+                "reads" : {
+                        "histogram" : [
+                                {
+                                        "micros" : NumberLong(16),
+                                        "count" : NumberLong(6)
+                                },
+                                {
+                                        "micros" : NumberLong(32),
+                                        "count" : NumberLong(19)
+                                },
+                                {
+                                        "micros" : NumberLong(64),
+                                        "count" : NumberLong(1)
+                                },
+                                {
+                                        "micros" : NumberLong(512),
+                                        "count" : NumberLong(1)
+                                },
+                                {
+                                        "micros" : NumberLong(3072),
+                                        "count" : NumberLong(1)
+                                }
+                        ],
+                        "latency" : NumberLong(5559),
+                        "ops" : NumberLong(28)
+                },
+                "writes" : {
+                        "histogram" : [ ],
+                        "latency" : NumberLong(0),
+                        "ops" : NumberLong(0)
+                },
+                "commands" : {
+                        "histogram" : [ ],
+                        "latency" : NumberLong(0),
+                        "ops" : NumberLong(0)
+                }
+        }
+}
+*/
+//OperationLatencyHistogram::append调用
 void OperationLatencyHistogram::_append(const HistogramData& data,
                                         const char* key,
                                         bool includeHistograms,
@@ -114,7 +163,10 @@ void OperationLatencyHistogram::_append(const HistogramData& data,
     histogramBuilder.doneFast();
 }
 
-//db.serverStatus().opLatencies命令获取
+//读写db.serverStatus().opLatencies汇总相关计数，所有表的统计 ---全局纬度
+//db.collection.latencyStats( { histograms:true})  --- 表纬度
+//db.collection.latencyStats( { histograms:false}) --- 表纬度
+
 //Top::appendGlobalLatencyStats调用
 void OperationLatencyHistogram::append(bool includeHistograms, BSONObjBuilder* builder) const {
     _append(_reads, "reads", includeHistograms, builder);
@@ -175,7 +227,10 @@ featdoc_1:PRIMARY> db.serverStatus().opLatencies
 }
 featdoc_1:PRIMARY> 
 */
+//Top._globalHistogramStats全局(包含所有表)的操作及时延统计-全局纬度
+//CollectionData.opLatencyHistogram是表级别的读、写、command统计-表纬度
 
+//不同请求归类参考getReadWriteType
 //Top::_incrementHistogram   操作和时延计数操作
 void OperationLatencyHistogram::increment(uint64_t latency, Command::ReadWriteType type) {
     int bucket = _getBucket(latency);

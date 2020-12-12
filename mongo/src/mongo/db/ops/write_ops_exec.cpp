@@ -539,6 +539,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
             batch.emplace_back(stmtId, toInsert);
             bytesInBatch += batch.back().doc.objsize();
 			//这里continue，就是为了把批量插入的文档组成到一个batch数组中，到达一定量一次性插入
+
 			//batch里面一次最多插入64个文档，总字节数不超过256K
             if (!isLastDoc && batch.size() < maxBatchSize && bytesInBatch < insertVectorMaxBytes)
                 continue;  // Add more to batch before inserting.

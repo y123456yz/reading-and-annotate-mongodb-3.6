@@ -131,10 +131,14 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [top.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/top.h) 
  *   [latency_server_status_section.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.cpp) 
  *   [toplatency_server_status_sectionh](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.h) 
+<<<<<<< HEAD
 
 #### OpMsgRequest和写write_ops:(insert、update、delete)转换操作:
  *   [write_ops_gen.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.cpp) 
  *   [write_ops_gen.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.h) 
+=======
+ 
+>>>>>>> ea64c58aefde9b774f4026c57ff768f0812ee261
  
 #### shard分片源码实现(注释进行中):   
 ###### 分布式锁实现源码注释分析(100%注释): 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #/build
 #/build/opt 
 /build/opt/mongo/mongod
@@ -11,6 +12,10 @@
 /build/opt/mongo/*.o
 /build/opt/mongo/**/*.o
 /build/opt/mongo/**/*.a
+=======
+/build
+/build/opt 
+>>>>>>> ea64c58aefde9b774f4026c57ff768f0812ee261
 /build/scons
 /src/mongo/db/modules
 /.jsdbshell

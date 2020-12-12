@@ -114,7 +114,7 @@ DocumentSource::GetNextResult DocumentSourceCollStats::getNext() {
 
     builder.append("host", getHostNameCachedAndPort());
     builder.appendDate("localTime", jsTime());
-
+	//db.collection.latencyStats( { histograms:true})
     if (_collStatsSpec.hasField("latencyStats")) {
         // If the latencyStats field exists, it must have been validated as an object when parsing.
         bool includeHistograms = false;

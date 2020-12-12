@@ -44,6 +44,7 @@ std::uint32_t BSONDepth::getMaxAllowableDepth() {
 std::uint32_t BSONDepth::getMaxDepthForUserStorage() {
 	//static constexpr std::int32_t kDefaultMaxAllowableDepth = 200;
 	//static constexpr std::uint32_t kExtraSystemDepthLevels = 20;
+
     return static_cast<std::uint32_t>(BSONDepth::maxAllowableDepth -
                                       BSONDepth::kExtraSystemDepthLevels);
 }
