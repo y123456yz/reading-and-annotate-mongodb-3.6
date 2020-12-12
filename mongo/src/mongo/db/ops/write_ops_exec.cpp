@@ -360,7 +360,9 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             }
 
 			//通过这里最终调用AutoGetCollection构造函数，锁构造初始化也在这里
+			//根据表名构造collection
             collection.emplace(opCtx, wholeOp.getNamespace(), MODE_IX);
+			//AutoGetCollection::getCollection
             if (collection->getCollection()) //已经有该集合了
                 break;
 
