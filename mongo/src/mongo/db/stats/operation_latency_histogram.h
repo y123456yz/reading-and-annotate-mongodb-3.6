@@ -51,7 +51,7 @@ class BSONObjBuilder;
 //  Top::_incrementHistogram中调用
 class OperationLatencyHistogram {
 public:
-    //最多记录多少个历史统计db.collection.latencyStats( { histograms:true}) true需要历史信息
+    //桶个数，OperationLatencyHistogram::kLowerBounds数组大小
     static const int kMaxBuckets = 51;
 
     // Inclusive lower bounds of the histogram buckets.

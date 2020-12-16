@@ -81,6 +81,7 @@ public:
 private:
     static const long long kUninitializedTerm = -1;
 
+    //ReplClientInfo::setLastOpToSystemLastOpTime÷–∏≥÷µ
     OpTime _lastOp = OpTime();
     Timestamp _lastSnapshot;
     OID _remoteId = OID();

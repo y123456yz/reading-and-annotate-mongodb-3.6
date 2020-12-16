@@ -224,7 +224,7 @@ public:
     bool enhancedRun(OperationContext* opCtx, //ClusterWriteCmd::enhancedRun
                      const OpMsgRequest& request,
                      BSONObjBuilder& result) final {
-        //BatchedCommandRequest类型
+        //BatchedCommandRequest类型，解析出的doc存放到BatchedCommandRequest._insertReq
         const auto batchedRequest(parseRequest(_writeType, request));
 
         BatchWriteExecStats stats;

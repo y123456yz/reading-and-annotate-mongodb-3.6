@@ -324,6 +324,8 @@ Status CollectionImpl::insertDocumentsForOplog(OperationContext* opCtx,
     return status;
 }
 
+//performInserts->insertBatchAndHandleErrors->insertDocuments->CollectionImpl::insertDocuments
+
 //CollectionImpl::_insertDocuments(插入数据)   KVCatalog::newCollection(记录集合元数据到_mdb_catalog.wt)中执行  
 //write_ops_exec.cpp中的insertDocuments中执行
 //写入存储引擎  

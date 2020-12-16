@@ -293,10 +293,11 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
 
         // TargetedWrites need to be owned once returned
         OwnedPointerVector<TargetedWrite> writesOwned;
+		//对应目标
         vector<TargetedWrite*>& writes = writesOwned.mutableVector();
 
 		//获取该op对应的后端mongod节点TargetedWrite   应该发送该op对应的文档到后端那些mongod
-		//WriteOp::targetWrites
+		//WriteOp::targetWrites也就是对应目标后端mongod实例信息
         Status targetStatus = writeOp.targetWrites(_opCtx, targeter, &writes);
 
         if (!targetStatus.isOK()) {

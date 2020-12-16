@@ -49,6 +49,7 @@ void ReplClientInfo::setLastOp(const OpTime& ot) {
     _lastOp = ot;
 }
 
+//~LastOpFixer()ÖÐµ÷ÓÃ
 void ReplClientInfo::setLastOpToSystemLastOpTime(OperationContext* opCtx) {
     auto replCoord = repl::ReplicationCoordinator::get(opCtx->getServiceContext());
     if (replCoord->isReplEnabled() && opCtx->writesAreReplicated()) {

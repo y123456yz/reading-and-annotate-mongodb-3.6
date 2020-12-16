@@ -21,6 +21,10 @@ pip install --upgrade pip typing
 https://github.com/mongodb/ftdc
 https://www.alexbevi.com/blog/2020/01/26/what-is-mongodb-ftdc-aka-diagnostic-dot-data/
 
+https://www.codercto.com/a/43773.html   链接分片 副本集 单实例等
+https://www.codercto.com/a/43773.html
+
+sql-mongodb协议转换  prestodb
 
 查看所有编译过程 scons mongos  VERBOSE=on -j 2
 

@@ -181,6 +181,7 @@ std::string BatchedCommandRequest::toString() const {
     return toBSON().toString();
 }
 
+//根据origCmdRequest解析出doc存放到新的BatchedCommandRequest结构返回
 BatchedCommandRequest BatchedCommandRequest::cloneInsertWithIds(
     BatchedCommandRequest origCmdRequest) {
     invariant(origCmdRequest.getBatchType() == BatchedCommandRequest::BatchType_Insert);
@@ -208,6 +209,7 @@ BatchedCommandRequest BatchedCommandRequest::cloneInsertWithIds(
         }
     }
 
+	//write_ops::Insert::setDocuments
     newCmdRequest._insertReq->setDocuments(std::move(newDocs));
 
     return newCmdRequest;

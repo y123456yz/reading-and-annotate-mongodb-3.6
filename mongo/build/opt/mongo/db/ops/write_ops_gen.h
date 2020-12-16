@@ -239,7 +239,7 @@ private:
 /**
  * Parser for the 'insert' command.
  */ //也就是对应write_ops::Insert
-class Insert {
+class Insert {  //BatchedCommandRequest._insertReq为该类型
 public:
     //参考 mongodb字段验证规则（schema validation）
     //https://www.cnblogs.com/itxiaoqiang/p/5538287.html   是否验证schema
@@ -273,6 +273,7 @@ public:
      */
     const std::vector<mongo::BSONObj>& getDocuments() const& { return _documents; }
     void getDocuments() && = delete;
+    //BatchedCommandRequest::cloneInsertWithIds
     void setDocuments(std::vector<mongo::BSONObj> value) & { _documents = std::move(value); _hasDocuments = true; }
 
     const StringData getDbName() const& { return _dbName; }
@@ -317,7 +318,7 @@ private:
  db.collection.updateMany(xx) updateOne也就是update中multi=true   更新所有满足条件的
 
  */ //也就是对应write_ops::Update
-class Update {
+class Update { //BatchedCommandRequest._updateReq为该类型
 public:
     static constexpr auto kBypassDocumentValidationFieldName = "bypassDocumentValidation"_sd;
     static constexpr auto kDbNameFieldName = "$db"_sd;
@@ -378,7 +379,7 @@ private:
 /**
  * Parser for the 'delete' command.
  */  //也就是对应write_ops::Delete
-class Delete {
+class Delete {  //BatchedCommandRequest._deleteReq为该类型
 public:
     static constexpr auto kBypassDocumentValidationFieldName = "bypassDocumentValidation"_sd;
     static constexpr auto kDbNameFieldName = "$db"_sd;

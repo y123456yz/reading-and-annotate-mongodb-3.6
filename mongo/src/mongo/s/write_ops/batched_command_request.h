@@ -145,9 +145,9 @@ private:
 
     //参考BatchWriteOp::buildBatchRequest  constructBatchedCommandRequest
     //insert  update  delete请求的详细内容都存在这几个成员中
-    std::unique_ptr<write_ops::Insert> _insertReq;
-    std::unique_ptr<write_ops::Update> _updateReq;
-    std::unique_ptr<write_ops::Delete> _deleteReq;
+    std::unique_ptr<write_ops::Insert> _insertReq; //BatchedCommandRequest._insertReq
+    std::unique_ptr<write_ops::Update> _updateReq; //BatchedCommandRequest._updateReq
+    std::unique_ptr<write_ops::Delete> _deleteReq; //BatchedCommandRequest._deleteReq
 
     boost::optional<ChunkVersion> _shardVersion;
 

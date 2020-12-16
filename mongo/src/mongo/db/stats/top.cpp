@@ -95,15 +95,18 @@ void Top::record(OperationContext* opCtx,
     if (ns[0] == '?')
         return;
 
+	//根据表名从Map表种找到该表在表中对应hash位置
     auto hashedNs = UsageMap::HashedKey(ns);
     stdx::lock_guard<SimpleMutex> lk(_lock);
 
+	//如果ns是已经删除的表，直接返回
     if ((command || logicalOp == LogicalOp::opQuery) && ns == _lastDropped) {
         _lastDropped = "";
         return;
     }
-
+	//找到改表对应的CollectionData
     CollectionData& coll = _usage[hashedNs];
+	//开始表级计数统计
     _record(opCtx, coll, logicalOp, lockType, micros, readWriteType);
 }
 
@@ -114,17 +117,20 @@ void Top::_record(OperationContext* opCtx,
                   LockType lockType,
                   long long micros,
                   Command::ReadWriteType readWriteType) {
-
+    //汇总型详细表级统计
     _incrementHistogram(opCtx, micros, &c.opLatencyHistogram, readWriteType);
-
+    //该表总时延计数，包括增删改查getMore command六项
     c.total.inc(micros);
-
+	//写锁计数
     if (lockType == LockType::WriteLocked)
         c.writeLock.inc(micros);
+	//读锁计数
     else if (lockType == LockType::ReadLocked)
         c.readLock.inc(micros);
 
+	//详细增 删 改  查  getMore command统计及时延
     switch (logicalOp) {
+		//无效类型
         case LogicalOp::opInvalid:
             // use 0 for unknown, non-specific
             break;

@@ -3,6 +3,12 @@
 mongodb-3.6源码注释分析，持续更新
 
 ===================================     
+### 对外演讲   
+  * [Qcon全球软件开发大会分享：OPPO万亿级文档数据库MongoDB集群性能优化实践](https://qcon.infoq.cn/2020/shenzhen/track/916)    
+  * [2019年mongodb年终盛会：OPPO百万级高并发MongoDB集群性能数十倍提升优化实践](https://mongoing.com/archives/29934](https://www.shangyexinzhi.com/article/428874.html)    
+  * [2020年mongodb年终盛会：万亿级文档数据库集群性能优化实践](https://mongoing.com/archives/76151)    
+    
+===================================     
 ### <<mongodb源码设计实现、性能优化、最佳运维实践>>
 ### <<千万级峰值tps/十万亿级数据量文档数据库内核研发及运维之路>>   
   * [百万级高并发mongodb集群性能数十倍提升优化实践(上篇)](https://my.oschina.net/u/4087916/blog/3141909)      
@@ -22,6 +28,7 @@ mongodb-3.6源码注释分析，持续更新
   * [mongodb内核源码实现、性能调优、最佳运维实践系列-command命令处理模块源码实现一](https://my.oschina.net/u/4087916/blog/4709503)      
   * [mongodb内核源码实现、性能调优、最佳运维实践系列-command命令处理模块源码实现二](https://my.oschina.net/u/4087916/blog/4748286)    
   * [mongodb内核源码实现、性能调优、最佳运维实践系列-command命令处理模块源码实现三](https://my.oschina.net/u/4087916/blog/4782741)   
+  * [mongodb内核源码实现、性能调优、最佳运维实践系列-记mongodb详细表级操作及详细时延统计实现原理(教你如何快速进行表级时延问题分析)](https://xie.infoq.cn/article/3184cdc42c26c86e2749c3e5c)   
   
 说明:  
 ===================================  

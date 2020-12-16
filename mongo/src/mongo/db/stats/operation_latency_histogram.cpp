@@ -38,6 +38,7 @@
 
 namespace mongo {
 
+//把时延按照这些维度拆分为不同区间 _getBucket来判断时延统计应该落再那个区间
 const std::array<uint64_t, OperationLatencyHistogram::kMaxBuckets>
     OperationLatencyHistogram::kLowerBounds = {0,
                                                2,
@@ -174,6 +175,26 @@ void OperationLatencyHistogram::append(bool includeHistograms, BSONObjBuilder* b
     _append(_commands, "commands", includeHistograms, builder);
 }
 
+/*
+histogram: [
+  { micros: NumberLong(1), count: NumberLong(10) },
+  { micros: NumberLong(2), count: NumberLong(1) },
+  { micros: NumberLong(4096), count: NumberLong(1) },
+  { micros: NumberLong(16384), count: NumberLong(1000) },
+  { micros: NumberLong(49152), count: NumberLong(100) }
+]
+This indicates that there were:
+
+10 operations taking 1 microsecond or less,    10个操作时延小于1ms
+1 operation in the range (1, 2] microseconds,   1个操作时延范围【1-2】
+1 operation in the range (3072, 4096] microseconds, 1个操作时延范围【3072-4096】
+1000 operations in the range (12288, 16384], and  1000个操作时延范围【12288-16384】
+100 operations in the range (32768, 49152].  100个操作时延范围【32768-49152】
+*/
+
+//记录不同时间段慢日志的详细统计
+//确定latency时延对应在[0-2]、(2-4]、(4-8]、(8-16]、(16-32]、(32-64]、(64-128]...中的那个区间  
+//上面的区间分别对应buckets桶0，桶1，桶2，桶3等待，也就是[0-2]对应桶0、(2-4]对应桶1、(4-8]对应桶2、(8-16]对应桶3，依次类推
 // Computes the log base 2 of value, and checks for cases of split buckets.
 int OperationLatencyHistogram::_getBucket(uint64_t value) {
     // Zero is a special case since log(0) is undefined.
@@ -204,28 +225,17 @@ int OperationLatencyHistogram::_getBucket(uint64_t value) {
 //OperationLatencyHistogram::increment中调用
 //读 写 command总操作自增，时延对应增加latency
 void OperationLatencyHistogram::_incrementData(uint64_t latency, int bucket, HistogramData* data) {
-    data->buckets[bucket]++;
+    //落在bucket桶指定时延范围的对应操作数自增
+	data->buckets[bucket]++;
+	//该操作总计数
     data->entryCount++;
+	//该操作总时延计数
     data->sum += latency;
 }
 
 /*
-featdoc_1:PRIMARY> db.serverStatus().opLatencies
-{
-        "reads" : {
-                "latency" : NumberLong(10756983),
-                "ops" : NumberLong(39463)
-        },
-        "writes" : {
-                "latency" : NumberLong(43305),
-                "ops" : NumberLong(8)
-        },
-        "commands" : {
-                "latency" : NumberLong(117648772),
-                "ops" : NumberLong(144200)
-        }
-}
-featdoc_1:PRIMARY> 
+db.serverStatus().opLatencies(全局纬度) 
+db.collection.latencyStats( { histograms:true}).pretty()(表级纬度) 
 */
 //Top._globalHistogramStats全局(包含所有表)的操作及时延统计-全局纬度
 //CollectionData.opLatencyHistogram是表级别的读、写、command统计-表纬度
@@ -233,17 +243,18 @@ featdoc_1:PRIMARY>
 //不同请求归类参考getReadWriteType
 //Top::_incrementHistogram   操作和时延计数操作
 void OperationLatencyHistogram::increment(uint64_t latency, Command::ReadWriteType type) {
-    int bucket = _getBucket(latency);
+	//确定latency时延对应在[0-2]、(2-4]、(4-8]、(8-16]、(16-32]、(32-64]、(64-128]...中的那个区间??
+	int bucket = _getBucket(latency);
     switch (type) {
-		//读时延累加
+		//读时延累加，操作计数自增
         case Command::ReadWriteType::kRead:
             _incrementData(latency, bucket, &_reads);
             break;
-		//写时延累加
+		//写时延累加，操作计数自增
         case Command::ReadWriteType::kWrite:
             _incrementData(latency, bucket, &_writes);
             break;
-		//command时延累加
+		//command时延累加，操作计数自增
         case Command::ReadWriteType::kCommand:
             _incrementData(latency, bucket, &_commands);
             break;

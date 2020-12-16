@@ -147,6 +147,7 @@ public:
             // here. No-op updates will not generate a new lastOp, so we still need the
             // guard to fire in that case. Operations on the local DB aren't replicated, so they
             // don't need to bump the lastOp.
+            //更新lastOp时间
             replClientInfo().setLastOpToSystemLastOpTime(_opCtx);
         }
     }
@@ -159,6 +160,7 @@ public:
     void finishedOpSuccessfully() {
         // If the op was succesful and bumped LastOp, we don't need to do it again. However, we
         // still need to for no-ops and all failing ops.
+        //通过_needToFixLastOp来判断是否需要更新lastOp时间，真正的更新在~LastOpFixer()
         _needToFixLastOp = (replClientInfo().getLastOp() == _opTimeAtLastOpStart);
     }
 
@@ -168,7 +170,9 @@ private:
     }
 
     OperationContext* const _opCtx;
+	//生效在 ~LastOpFixer()
     bool _needToFixLastOp = true;
+	//是否是操作local库
     const bool _isOnLocalDb;
     repl::OpTime _opTimeAtLastOpStart;
 };
@@ -241,6 +245,7 @@ bool handleError(OperationContext* opCtx,
     return !wholeOp.getOrdered();
 }
 
+//performCreateIndexes
 SingleWriteResult createIndex(OperationContext* opCtx,
                               const NamespaceString& systemIndexes,
                               const BSONObj& spec) {
@@ -276,6 +281,7 @@ SingleWriteResult createIndex(OperationContext* opCtx,
     return result;
 }
 
+//performInserts调用，3.6.3开始的版本，不会有system.index库了，index而是记录到_mdb_catalog.wt，所以这里永远不会进来
 WriteResult performCreateIndexes(OperationContext* opCtx, const write_ops::Insert& wholeOp) {
     // Currently this creates each index independently. We could pass multiple indexes to
     // createIndexes, but there is a lot of complexity involved in doing it correctly. For one
@@ -301,6 +307,8 @@ WriteResult performCreateIndexes(OperationContext* opCtx, const write_ops::Inser
     }
     return out;
 }
+
+//performInserts->insertBatchAndHandleErrors->insertDocuments->CollectionImpl::insertDocuments
 
 //只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors,普通集合一次只会携带一个document进来
 //insertBatchAndHandleErrors中调用执行
@@ -339,7 +347,7 @@ void insertDocuments(OperationContext* opCtx,
 
 /**
  * Returns true if caller should try to insert more documents. Does nothing else if batch is empty.
- */ //performInserts中调用
+ */ //performInserts中调用  performInserts->insertBatchAndHandleErrors->insertDocuments
 bool insertBatchAndHandleErrors(OperationContext* opCtx,
                                 const write_ops::Insert& wholeOp,
                                 std::vector<InsertStatement>& batch,
@@ -407,7 +415,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
         globalOpCounters.gotInsert(); //insert操作计数
         try {
 			//log() << "yang test ............getNamespace().ns():" << wholeOp.getNamespace().ns();
-			//writeConflictRetry里面会执行{}中的函数体
+			//writeConflictRetry里面会执行{}中的函数体 
             writeConflictRetry(opCtx, "insert", wholeOp.getNamespace().ns(), [&] {
                 try {
                     if (!collection)
