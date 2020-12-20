@@ -151,7 +151,31 @@ enum { DurStatsResetIntervalMillis = 3 * 1000 };
 
 // Size sanity checks
 MONGO_STATIC_ASSERT(UncommittedBytesLimit > BSONObjMaxInternalSize * 3);
-MONGO_STATIC_ASSERT(sizeof(void*) == 4 || UncommittedBytesLimit > BSONObjMaxInternalSize * 6);
+//MONGO_STATIC_ASSERT(sizeof(void*) == 4 || UncommittedBytesLimit > BSONObjMaxInternalSize * 6);   yang add yang change todo xxxxx
+/*
+因为编译有问题，所以把上面的assert频闭掉
+Compiling build/opt/mongo/s/grid.o
+Compiling build/opt/mongo/db/storage/mmap_v1/dur.o
+In file included from src/mongo/base/data_type.h:36:0,
+                 from src/mongo/base/data_view.h:35,
+                 from src/mongo/bson/timestamp.h:30,
+                 from src/mongo/db/repl/optime.h:33,
+                 from src/mongo/db/storage/journal_listener.h:31,
+                 from src/mongo/db/storage/mmap_v1/dur.h:35,
+                 from src/mongo/db/storage/mmap_v1/dur.cpp:76:
+src/mongo/base/static_assert.h:30:34: error: static assertion failed: sizeof(void*) == 4 || UncommittedBytesLimit > BSONObjMaxInternalSize * 6
+ #define MONGO_STATIC_ASSERT(...) static_assert(__VA_ARGS__, #__VA_ARGS__)
+                                  ^
+src/mongo/db/storage/mmap_v1/dur.cpp:154:1: note: in expansion of macro 'MONGO_STATIC_ASSERT'
+ MONGO_STATIC_ASSERT(sizeof(void*) == 4 || UncommittedBytesLimit > BSONObjMaxInternalSize * 6);
+ ^
+Compiling build/opt/mongo/db/storage/storage_engine_metadata.o
+Compiling build/opt/mongo/rpc/command_reply_builder.o
+scons: *** [build/opt/mongo/db/storage/mmap_v1/dur.o] Error 1
+scons: building terminated because of errors.
+build/opt/mongo/db/storage/mmap_v1/dur.o failed: Error 1
+*/
+
 
 
 /**

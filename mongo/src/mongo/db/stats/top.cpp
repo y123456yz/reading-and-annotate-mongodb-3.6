@@ -85,6 +85,7 @@ Find_and_modify.cpp (src\mongo\db\commands):        .record(opCtx,
 Write_ops_exec.cpp (src\mongo\db\ops):            .record(opCtx,
 Write_ops_exec.cpp (src\mongo\db\ops):            .record(opCtx,
 */
+//insert在performInserts调用   update和delete在finishCurOp种调用
 void Top::record(OperationContext* opCtx,
                  StringData ns,
                  LogicalOp logicalOp,

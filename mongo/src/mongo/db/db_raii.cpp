@@ -52,7 +52,7 @@ AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, LockMode mode)
 
 AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, Lock::DBLock lock)
     : _dbLock(std::move(lock)), _db(dbHolder().get(opCtx, ns)) {}
-//insertBatchAndHandleErrors
+//insertBatchAndHandleErrors会使用
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
                                      const UUID& uuid,
@@ -86,6 +86,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
       _autoDb(opCtx, nss.db(), std::move(lock)),
       //这里构造集合锁
       _collLock(opCtx->lockState(), nss.ns(), modeColl),
+      //nss为db.collection，确定db和collection是否存在，collection不存在直接返回null
       _coll(_autoDb.getDb() ? _autoDb.getDb()->getCollection(opCtx, nss) : nullptr) {
     Database* db = _autoDb.getDb();
     // If the database exists, but not the collection, check for views.

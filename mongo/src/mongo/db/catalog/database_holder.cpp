@@ -62,6 +62,8 @@ void mongo::registerDbHolderImpl(decltype(mongo::dbHolderImpl) impl) {
     dbHolderImpl = std::move(impl);
 }
 
+//AutoGetDb::AutoGetDbÖĞµ÷ÓÃ
 auto mongo::dbHolder() -> DatabaseHolder& {
     return dbHolderImpl();
 }
+

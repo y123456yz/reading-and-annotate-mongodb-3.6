@@ -116,14 +116,16 @@ public:
 
     /**
      * Returns nullptr if the database didn't exist.
-     */
+     */ //库不存在直接返回NULL
     Database* getDb() const {
+        //AutoGetDb::getDb
         return _autoDb.getDb();
     }
 
     /**
      * Returns nullptr if the collection didn't exist.
      */
+    //如果表不存在，则返回null
     Collection* getCollection() const {
         return _coll;
     }
@@ -132,8 +134,10 @@ private:
     enum class ViewMode { kViewsPermitted, kViewsForbidden };
 
     const ViewMode _viewMode;
+    //库信息
     const AutoGetDb _autoDb;
     const Lock::CollectionLock _collLock;
+    //集合信息
     Collection* const _coll; //集合名
 
     friend class AutoGetCollectionOrView;

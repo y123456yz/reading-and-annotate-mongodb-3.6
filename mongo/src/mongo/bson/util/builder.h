@@ -64,9 +64,7 @@ namespace mongo {
 */
 //文档长度检查wouldMakeBatchesTooBig
 //一个文档最多16M，见fixDocumentForInsert
-
 const int BSONObjMaxUserSize = 160 * 1024 * 1024; 
-
 /*
    Sometimes we need objects slightly larger - an object in the replication local.oplog
    is slightly larger than a user object for example.

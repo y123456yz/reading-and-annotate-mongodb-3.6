@@ -979,6 +979,7 @@ MONGO_INITIALIZER(InitializeDropAllDatabasesExceptLocalImpl)(InitializerContext*
 }  // namespace
 }  // namespace mongo
 
+//mongo::dropAllDatabasesExceptLocalµ÷ÓÃ
 void mongo::dropAllDatabasesExceptLocalImpl(OperationContext* opCtx) {
     Lock::GlobalWrite lk(opCtx);
 

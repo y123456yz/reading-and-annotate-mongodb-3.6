@@ -92,7 +92,7 @@ void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
 
         recordCurOpMetrics(opCtx);
         Top::get(opCtx->getServiceContext())
-            .record(opCtx,
+            .record(opCtx, //Top::record
                     curOp->getNS(),
                     curOp->getLogicalOp(),
                     Top::LockType::WriteLocked,
@@ -347,7 +347,8 @@ void insertDocuments(OperationContext* opCtx,
 
 /**
  * Returns true if caller should try to insert more documents. Does nothing else if batch is empty.
- */ //performInserts中调用  performInserts->insertBatchAndHandleErrors->insertDocuments
+ */ 
+//performInserts中调用  performInserts->insertBatchAndHandleErrors->insertDocuments
 bool insertBatchAndHandleErrors(OperationContext* opCtx,
                                 const write_ops::Insert& wholeOp,
                                 std::vector<InsertStatement>& batch,
@@ -368,13 +369,14 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             }
 
 			//通过这里最终调用AutoGetCollection构造函数，锁构造初始化也在这里
-			//根据表名构造collection
+			//根据表名构造collection   
             collection.emplace(opCtx, wholeOp.getNamespace(), MODE_IX);
 			//AutoGetCollection::getCollection
             if (collection->getCollection()) //已经有该集合了
                 break;
 
-            collection.reset();  //    没有则创建集合及相关的索引文件
+            collection.reset();  
+			//    没有则创建集合及相关的索引文件
             makeCollection(opCtx, wholeOp.getNamespace()); 
         }
 
@@ -474,8 +476,9 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
         // top-level curOp. The rest is handled by the top-level entrypoint.
         //performInserts函数执行完成后，需要调用该函数
         curOp.done(); //performInserts执行完成后调用，记录执行结束时间    
+        //表级tps及时延统计
         Top::get(opCtx->getServiceContext())
-            .record(opCtx,
+            .record(opCtx,   //Top::record
                     wholeOp.getNamespace().ns(),
                     LogicalOp::opInsert,
                     Top::LockType::WriteLocked,

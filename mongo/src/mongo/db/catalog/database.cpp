@@ -61,6 +61,7 @@ void Database::dropDatabase(OperationContext* const opCtx, Database* const db) {
     return dropDatabaseImpl(opCtx, db);
 }
 
+//InitializeDropDatabaseImpl中初始化调用
 void Database::registerDropDatabaseImpl(stdx::function<decltype(dropDatabase)> impl) {
     dropDatabaseImpl = std::move(impl);
 }
