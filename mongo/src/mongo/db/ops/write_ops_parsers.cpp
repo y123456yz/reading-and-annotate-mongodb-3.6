@@ -193,7 +193,7 @@ write_ops::Insert InsertOp::parseLegacy(const Message& msgRaw) {
 //constructBatchedCommandRequest
 //从请求中解析出update   CmdUpdate::runImpl调用
 write_ops::Update UpdateOp::parse(const OpMsgRequest& request) {
-	//write_ops::Update::parse  返回Update
+	//Write_ops_gen.cpp中的Update::parse  返回Update
     auto updateOp = Update::parse(IDLParserErrorContext("update"), request);
 
     checkOpCountForCommand(updateOp, updateOp.getUpdates().size());

@@ -39,7 +39,7 @@
 namespace mongo {
 /**
  * Class for storing FailPoint instances.
- */
+ */ //MongoDB故障点机制参考https://blog.csdn.net/valada/article/details/104452949
 class FailPointRegistry {
 public:
     FailPointRegistry();

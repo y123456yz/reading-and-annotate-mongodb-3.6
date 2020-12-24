@@ -110,7 +110,7 @@ public:
 
 /* for diagnostic / testing purposes. Enabled via command line. */
 //以下几个命令需要mongod --setParameter=enableTestCommands才能生效
-
+//db.runCommand( { sleep: 1 } ); sleep 10s
 class CmdSleep : public BasicCommand {
 public:
     virtual bool supportsWriteConcern(const BSONObj& cmd) const override {
@@ -201,7 +201,7 @@ public:
 };
 
 // Testing only, enabled via command-line.
-//以下几个命令需要mongod --setParameter=enableTestCommands才能生效
+//以下几个命令需要mongod --setParameter=enableTestCommands=1才能生效
 
 class CapTrunc : public BasicCommand {
 public:

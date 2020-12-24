@@ -64,6 +64,7 @@ namespace mongo {
  *    entering fail point or modifying fail point.
  * 2. Client visible fail point states are read-only when active.
  */
+//MongoDB故障点机制参考https://blog.csdn.net/valada/article/details/104452949
 class FailPoint {
     MONGO_DISALLOW_COPYING(FailPoint);
 

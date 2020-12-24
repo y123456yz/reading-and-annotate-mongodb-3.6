@@ -42,7 +42,8 @@ namespace str = mongoutils::str;
 class FieldRef;
 class UpdateLifecycle;
 
-//performSingleUpdateOp中构造使用
+//performSingleUpdateOp中构造使用   //ParsedUpdate._request为该类型
+//和write_ops::UpdateOpEntry对应
 class UpdateRequest {
 public:
     enum ReturnDocOption {

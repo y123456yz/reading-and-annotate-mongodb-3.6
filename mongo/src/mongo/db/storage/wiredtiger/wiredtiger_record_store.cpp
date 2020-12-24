@@ -1165,7 +1165,8 @@ Status WiredTigerRecordStore::insertRecords(OperationContext* opCtx,
 
 //WiredTigerRecordStore::insertRecords
 
-//数据插入(包括元数据文件_mdb_catalog.wt和普通集合数据文件)走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
+//为数据生成id，并存入存储引擎走WiredTigerRecordStore::_insertRecords，索引插入走WiredTigerIndex::insert
+//oplog写入在WiredTigerRecordStore::insertRecordsWithDocWriter
 //写数据文件 索引文件
 Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
                                              Record* records,
@@ -1188,8 +1189,10 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
     WT_CURSOR* c = curwrap.get(); //WiredTigerCursor._cursor成员
     invariant(c);
 
+	//该表中最后一个写入到存储引擎的数据id行号记录到这里面的，下次新数据进来，则继续自增
     RecordId highestId = RecordId();
     dassert(nRecords != 0);
+	//为该数据生成一个存储到KV引擎中的id key，是个自增的数字
     for (size_t i = 0; i < nRecords; i++) { //只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors
         auto& record = records[i];
         if (_isOplog) {
@@ -1201,6 +1204,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
         } else if (_isCapped) { //固定集合
             record.id = _nextId();
         } else {
+        	//RecordId 自增，在写索引表的时候会用到，见CollectionImpl::_insertDocuments
             record.id = _nextId();
         }
         dassert(record.id > highestId);
@@ -1239,6 +1243,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
             return wtRCToStatus(ret, "WiredTigerRecordStore::insertRecord");
     }
 
+	//记录该表中的数据总条数和总数据大小
     _changeNumRecords(opCtx, nRecords);
     _increaseDataSize(opCtx, totalLength);
 
@@ -1246,6 +1251,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
         _oplogStones->updateCurrentStoneAfterInsertOnCommit(
             opCtx, totalLength, highestId, nRecords);
     } else {
+    	//capped collection集合大小不能超过现在，否则需要清除  cappedAndNeedDelete
         cappedDeleteAsNeeded(opCtx, highestId);
     }
 
@@ -1276,6 +1282,10 @@ void WiredTigerRecordStore::notifyCappedWaitersIfNeeded() {
     }
 }
 
+//写操作写oplog流程OpObserverImpl::onInserts->logInsertOps->_logOpsInner
+//->CollectionImpl::insertDocumentsForOplog->WiredTigerRecordStore::insertRecordsWithDocWriter
+
+//CollectionImpl::insertDocumentsForOplog调用
 Status WiredTigerRecordStore::insertRecordsWithDocWriter(OperationContext* opCtx,
                                                          const DocWriter* const* docs,
                                                          const Timestamp* timestamps,

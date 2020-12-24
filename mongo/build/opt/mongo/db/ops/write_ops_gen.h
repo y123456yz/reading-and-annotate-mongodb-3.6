@@ -42,7 +42,7 @@ db.collection.insert(
 */
 //增 删 改的基类  
 //Delete._writeCommandBase   Update._writeCommandBase  Insert._writeCommandBase成员为该类型
-class WriteCommandBase {
+class WriteCommandBase { //可以参考下write_ops.idl文件
 public:
     //参考 mongodb字段验证规则（schema validation）
     //https://www.cnblogs.com/itxiaoqiang/p/5538287.html   是否验证schema
@@ -127,7 +127,8 @@ public:
     static constexpr auto kMultiFieldName = "multi"_sd;
     //update的查询条件，类似sql update查询内where后面的。
     static constexpr auto kQFieldName = "q"_sd;
-    //update的对象和一些更新的操作符（如$,$inc...）等
+    //update的对象和一些更新的操作符（如$,$inc...）等  修改内容 
+    //$修改器，详见https://docs.mongodb.com/v3.6/reference/operator/update-field/
     static constexpr auto kUFieldName = "u"_sd;
     // 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
     static constexpr auto kUpsertFieldName = "upsert"_sd;
@@ -182,6 +183,7 @@ protected:
 private:
     mongo::BSONObj _q;
     mongo::BSONObj _u;
+    //arrayFilters更新MongoDB中的嵌套子文档
     boost::optional<std::vector<mongo::BSONObj>> _arrayFilters;
     bool _multi{false};
     bool _upsert{false};
@@ -231,6 +233,7 @@ protected:
 private:
     mongo::BSONObj _q;
     bool _multi;
+    //Collation特性允许MongoDB的用户根据不同的语言定制排序规则 https://mongoing.com/archives/3912
     boost::optional<mongo::BSONObj> _collation;
     bool _hasQ : 1;
     bool _hasMulti : 1;
@@ -313,6 +316,25 @@ private:
      arrayFilters: [ <filterdocument1>, ... ]
    }
 )
+
+例如:
+ db.products.update(
+   { _id: 1 },
+   { //对应Update._updates数组
+      $set: { item: "apple" },
+      $setOnInsert: { defaultQty: 100 }
+   },
+   { upsert: true }
+ )
+ 
+ db.test1.update(
+ {"name":"yangyazhou"}, 
+ { //对应Update._updates数组
+    $set:{"name":"yangyazhou1"}, 
+    $set:{"age":"31"}
+ }
+ )
+ 
  db.collection.update(query, update, options)
  db.collection.updateOne(xx)  updateOne也就是update中multi=false  只更新一条
  db.collection.updateMany(xx) updateOne也就是update中multi=true   更新所有满足条件的

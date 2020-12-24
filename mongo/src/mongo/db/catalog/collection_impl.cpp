@@ -302,6 +302,8 @@ StatusWithMatchExpression CollectionImpl::parseValidator(
     return statusWithMatcher;
 }
 
+//写操作写oplog流程OpObserverImpl::onInserts->logInsertOps->_logOpsInner
+//->CollectionImpl::insertDocumentsForOplog->WiredTigerRecordStore::insertRecordsWithDocWriter
 //oplog写入存储引擎  _logOpsInner
 Status CollectionImpl::insertDocumentsForOplog(OperationContext* opCtx,
                                                const DocWriter* const* docs,
@@ -315,6 +317,7 @@ Status CollectionImpl::insertDocumentsForOplog(OperationContext* opCtx,
     invariant(!_validator);
     invariant(!_indexCatalog.haveAnyIndexes());
 
+	//WiredTigerRecordStore::insertRecordsWithDocWriter
     Status status = _recordStore->insertRecordsWithDocWriter(opCtx, docs, timestamps, nDocs);
     if (!status.isOK())
         return status;
@@ -350,11 +353,11 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
     }
 
     // Should really be done in the collection object at creation and updated on index create.
-    //IndexCatalogImpl::findIdIndex
+    //IndexCatalogImpl::findIdIndex 确定是否有id索引
     const bool hasIdIndex = _indexCatalog.findIdIndex(opCtx); 
 		
     for (auto it = begin; it != end; it++) {
-        if (hasIdIndex && it->doc["_id"].eoo()) { //如果有id索引，则kv不能携带_id
+        if (hasIdIndex && it->doc["_id"].eoo()) { //如果有id索引，则kv需要携带_id
             return Status(ErrorCodes::InternalError,
                           str::stream()
                               << "Collection::insertDocument got document without _id for ns:"
@@ -365,7 +368,7 @@ Status CollectionImpl::insertDocuments(OperationContext* opCtx,
         if (!status.isOK())
             return status;
     }
-
+	
     const SnapshotId sid = opCtx->recoveryUnit()->getSnapshotId();
 
 	/*  http://www.mongoing.com/archives/5476
@@ -493,9 +496,12 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
     std::vector<Timestamp> timestamps;
     timestamps.reserve(count);
 
+	//it类型为InsertStatement
     for (auto it = begin; it != end; it++) {
+		//doc记录到Record结构
         Record record = {RecordId(), RecordData(it->doc.objdata(), it->doc.objsize())};
         records.push_back(record);
+		//记录oplog时间到timestamps
         Timestamp timestamp = Timestamp(it->oplogSlot.opTime.getTimestamp());
         timestamps.push_back(timestamp);
     }
@@ -532,6 +538,7 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
     std::vector<BsonRecord> bsonRecords;
     bsonRecords.reserve(count);
     int recordIndex = 0;
+	//把插入到普通集合的id(类似行号)记录下来，在后面的索引插入中设置为对应value
     for (auto it = begin; it != end; it++) { //只有固定集合才会一次性多条文档进来，参考insertBatchAndHandleErrors
         RecordId loc = records[recordIndex++].id; //把插入到普通集合的ID记录下来，在后面的索引插入中设置为对应value
         invariant(RecordId::min() < loc);
@@ -895,7 +902,7 @@ uint64_t CollectionImpl::getIndexSize(OperationContext* opCtx, BSONObjBuilder* d
  * 2) drop indexes
  * 3) truncate record store
  * 4) re-write indexes
- */
+ */ //drop表数据，但是不drop索引
 Status CollectionImpl::truncate(OperationContext* opCtx) {
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns().toString(), MODE_X));
     BackgroundOperation::assertNoBgOpInProgForNs(ns());

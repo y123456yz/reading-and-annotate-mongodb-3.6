@@ -242,6 +242,7 @@ public:
 
         std::unique_ptr<Sorter> _sorter;
         const IndexAccessMethod* _real;
+        
         int64_t _keysInserted = 0;
 
         // Set to true if at least one document causes IndexAccessMethod::getKeys() to return a

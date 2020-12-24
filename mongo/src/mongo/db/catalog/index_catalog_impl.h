@@ -441,6 +441,7 @@ private:
     Collection* const _collection;
     const int _maxNumIndexesAllowed;
 
+    //记录所有的索引信息
     IndexCatalogEntryContainer _entries;
 
     // These are the index specs of indexes that were "leftover".

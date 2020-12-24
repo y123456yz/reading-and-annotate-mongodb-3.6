@@ -707,7 +707,7 @@ public:
      *         ...
      *     }
      */
-    ////mongod --setParameter=enableTestCommands  是否启用了command test功能
+    ////mongod  --setParameter enableTestCommands=1  是否启用了command test功能
     static bool testCommandsEnabled;
 
     /**

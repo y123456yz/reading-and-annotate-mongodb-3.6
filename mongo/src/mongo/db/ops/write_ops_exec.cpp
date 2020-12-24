@@ -135,7 +135,7 @@ void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
 
 /**
  * Sets the Client's LastOp to the system OpTime if needed.
- */ //performInserts中构造使用
+ */ //performInserts   performUpdates中构造使用
 class LastOpFixer {
 public:
     LastOpFixer(OperationContext* opCtx, const NamespaceString& ns)
@@ -177,6 +177,7 @@ private:
     repl::OpTime _opTimeAtLastOpStart;
 };
 
+//写必须走主节点判断及版本判断  performSingleUpdateOp中调用
 void assertCanWrite_inlock(OperationContext* opCtx, const NamespaceString& ns) {
     uassert(ErrorCodes::PrimarySteppedDown,
             str::stream() << "Not primary while writing to " << ns.ns(),
@@ -580,6 +581,27 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     return out;
 }
 
+/*
+db.collection.update(
+   <query>,
+   <update>,  //这里是个数组
+   {
+     upsert: <boolean>,
+     multi: <boolean>,
+     writeConcern: <document>,
+     collation: <document>,
+     arrayFilters: [ <filterdocument1>, ... ]
+   }
+)
+
+db.test1.update(
+{"name":"yangyazhou"}, 
+{ //对应Update._updates数组  
+   $set:{"name":"yangyazhou1"}, 
+   $set:{"age":"31"}
+}
+)
+*/
 //performUpdates中调用
 static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
                                                const NamespaceString& ns,
@@ -616,14 +638,19 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
 	//UpdateOpEntry::getCollation
 	//Collation特性允许MongoDB的用户根据不同的语言定制排序规则 https://mongoing.com/archives/3912
     request.setCollation(write_ops::collationOf(op));
-	//stmtId设置
+	//stmtId设置，是跟新数组中的第几个
     request.setStmtId(stmtId);
+	//arrayFilters更新MongoDB中的嵌套子文档
     request.setArrayFilters(write_ops::arrayFiltersOf(op));
+	//跟新满足条件的一条还是多条
     request.setMulti(op.getMulti());
+	//没有则insert
     request.setUpsert(op.getUpsert());
     request.setYieldPolicy(PlanExecutor::YIELD_AUTO);  // ParsedUpdate overrides this for $isolated.
 
+	//根据request生成一个parsedUpdate
     ParsedUpdate parsedUpdate(opCtx, &request);
+	//从request中解析出parsedUpdate类相关成员信息
     uassertStatusOK(parsedUpdate.parseRequest());
 
     boost::optional<AutoGetCollection> collection;
@@ -637,6 +664,7 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
                            ns,
                            MODE_IX,  // DB is always IX, even if collection is X.
                            parsedUpdate.isIsolated() ? MODE_X : MODE_IX);
+		//集合不存在，或者集合不存在并且当前可能把update变为insert，则创建集合
         if (collection->getCollection() || !op.getUpsert())
             break;
 
@@ -648,8 +676,11 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
         curOp.raiseDbProfileLevel(collection->getDb()->getProfilingLevel());
     }
 
+	//写必须走主节点判断及版本判断
     assertCanWrite_inlock(opCtx, ns);
 
+	//执行计划可以参考db.xxx.find(xxx).explain('allPlansExecution')
+	//获取执行计划对应PlanExecutor
     auto exec = uassertStatusOK(
         getExecutorUpdate(opCtx, &curOp.debug(), collection->getCollection(), &parsedUpdate));
 
@@ -658,6 +689,7 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
         CurOp::get(opCtx)->setPlanSummary_inlock(Explain::getPlanSummary(exec.get()));
     }
 
+	//执行计划
     uassertStatusOK(exec->executePlan());
 
     PlanSummaryStats summary;
@@ -668,10 +700,12 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
 
     if (curOp.shouldDBProfile()) {
         BSONObjBuilder execStatsBob;
+		//winningPlan执行阶段统计
         Explain::getWinningPlanStats(exec.get(), &execStatsBob);
         curOp.debug().execStats = execStatsBob.obj();
     }
 
+	//update执行阶段统计
     const UpdateStats* updateStats = UpdateStage::getUpdateStats(exec.get());
     UpdateStage::recordUpdateStatsInOpDebug(updateStats, &curOp.debug());
     curOp.debug().setPlanSummaryMetrics(summary);
@@ -679,8 +713,15 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
 
     const bool didInsert = !res.upserted.isEmpty();
     const long long nMatchedOrInserted = didInsert ? 1 : res.numMatched;
+
+	//LastError::recordUpdate
     LastError::get(opCtx->getClient()).recordUpdate(res.existing, nMatchedOrInserted, res.upserted);
 
+	//一次跟新操作的结果统计记录到这里performSingleUpdateOp
+	/*
+	mongos> db.test1.update({"name":"yangyazhou"}, {$set:{"name":"yangyazhou1", "age":2}})
+	WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+	*/
     SingleWriteResult result;
     result.setN(nMatchedOrInserted);
     result.setNModified(res.numDocsModified);
@@ -701,10 +742,22 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
 
     size_t stmtIdIndex = 0;
     WriteResult out;
+	//update内容数组大小，例如下面的例子为2
+	/*
+	 db.test1.update(
+	 {"name":"yangyazhou"}, 
+	 { //对应Update._updates数组  
+	    $set:{"name":"yangyazhou1"}, 
+	    $set:{"age":"31"}
+	 }
+	 )
+	*/
     out.results.reserve(wholeOp.getUpdates().size());
 
 	//write_ops::Update::getUpdates    singleOp为UpdateOpEntry类型
+	//循环遍历updates数组， 数组成员类型UpdateOpEntry
     for (auto&& singleOp : wholeOp.getUpdates()) {
+		//为每个update数组内容分片一个stmtId
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
         if (opCtx->getTxnNumber()) {
             auto session = OperationContextSession::get(opCtx);
@@ -830,6 +883,7 @@ WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& who
         opCtx, wholeOp.getWriteCommandBase().getBypassDocumentValidation());
     LastOpFixer lastOpFixer(opCtx, wholeOp.getNamespace());
 
+	//
     size_t stmtIdIndex = 0;
     WriteResult out;
     out.results.reserve(wholeOp.getDeletes().size());

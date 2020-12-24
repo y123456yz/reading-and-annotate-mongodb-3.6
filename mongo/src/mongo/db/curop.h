@@ -116,6 +116,7 @@ public:
     // CRUD path.
     //计数统计见recordCurOpMetrics
     long long nmoved{0};        // updates resulted in a move (moves are expensive)
+    //CollectionImpl::_insertDocuments中insert操作时赋值
     long long keysInserted{0};  // Number of index keys inserted.
     long long keysDeleted{0};   // Number of index keys removed.
     long long writeConflicts{0};

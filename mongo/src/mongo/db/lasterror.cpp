@@ -57,6 +57,7 @@ void LastError::setLastError(int code, std::string msg) {
         _hadNotMasterError = true;
 }
 
+//performSingleUpdateOpµ÷ÓÃ
 void LastError::recordUpdate(bool updateObjects, long long nObjects, BSONObj upsertedId) {
     reset(true);
     _nObjects = nObjects;

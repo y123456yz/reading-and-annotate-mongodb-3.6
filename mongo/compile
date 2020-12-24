@@ -1,3 +1,6 @@
+
+c++17可以参考https://github.com/MeouSker77/Cpp17
+
 scons mongod -j 3
  scons mongod --rocksdb=on -j 2 VERBOSE=on CPPPATH=/usr/rocksdb-4.13.5_install/include/ LIBPATH=/usr/rocksdb-4.13.5_install/lib/
 

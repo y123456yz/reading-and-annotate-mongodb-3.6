@@ -395,7 +395,8 @@ OplogDocWriter _logOpWriter(OperationContext* opCtx,
  * oplogCollection - collection to be written to.
  * replicationMode - ReplSet or MasterSlave.
  * finalOpTime - the OpTime of the last DocWriter object.
- */
+ */ 
+ //Ð´²Ù×÷Ð´oplogÁ÷³ÌOpObserverImpl::onInserts->logInsertOps->_logOpsInner->CollectionImpl::insertDocumentsForOplog
 void _logOpsInner(OperationContext* opCtx,
                   const NamespaceString& nss,
                   const DocWriter* const* writers,
@@ -468,7 +469,7 @@ OpTime logOp(OperationContext* opCtx,
     return slot.opTime;
 }
 
-//OpObserverImpl::onInserts
+//OpObserverImpl::onInserts->logInsertOps->_logOpsInner
 std::vector<OpTime> logInsertOps(OperationContext* opCtx,
                                  const NamespaceString& nss,
                                  OptionalCollectionUUID uuid,

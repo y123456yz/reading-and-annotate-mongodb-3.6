@@ -159,6 +159,7 @@ Status ParsedUpdate::parseUpdate() {
     return _driver.parse(_request->getUpdates(), _arrayFilters, _request->isMulti());
 }
 
+//从_request中解析出_arrayFilters
 Status ParsedUpdate::parseArrayFilters() {
     if (!_request->getArrayFilters().empty() &&
         (serverGlobalParams.featureCompatibility.getVersion() !=

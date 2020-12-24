@@ -55,7 +55,7 @@ struct OplogSlot {
     std::int64_t hash = 0;
 };
 
-//初始化赋值可以参考performInserts    
+//初始化赋值可以参考performInserts ，insert批量插入多条数据的时候，每条数据对应一个  InsertStatement
 struct InsertStatement {
 public:
     InsertStatement() = default;
@@ -69,7 +69,9 @@ public:
         : oplogSlot(repl::OpTime(ts, term), 0), doc(toInsert) {}
 
     StmtId stmtId = kUninitializedStmtId;
+    //insert数据的时候会产生oplog，oplog时间通过这里记录
     OplogSlot oplogSlot;
+    //真实doc
     BSONObj doc;
 };
 

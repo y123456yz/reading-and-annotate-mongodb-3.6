@@ -52,11 +52,14 @@ class IndexDescriptor;
 class MatchExpression;
 class OperationContext;
 
+//IndexCatalogEntryContainer._entries成员为该类型
+//IndexCatalogEntryImpl继承IndexCatalogEntry::Impl
 class IndexCatalogEntry {
 public:
     // This class represents the internal vtable for the (potentially polymorphic) implementation of
     // the `IndexCatalogEntry` class.  This allows us to expose an interface to this object without
     // requiring a dependency upon the implementation's definition library.
+    //IndexCatalogEntryImpl继承IndexCatalogEntry::Impl
     class Impl {
     public:
         virtual ~Impl() = 0;
