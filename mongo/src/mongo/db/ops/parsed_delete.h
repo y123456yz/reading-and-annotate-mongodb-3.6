@@ -109,6 +109,7 @@ private:
     OperationContext* _opCtx;
 
     // Unowned pointer to the request object that this executor will process.
+    
     const DeleteRequest* const _request;
 
     // Parsed query object, or NULL if the query proves to be an id hack query.

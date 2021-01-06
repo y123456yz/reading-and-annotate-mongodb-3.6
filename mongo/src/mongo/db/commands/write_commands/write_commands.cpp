@@ -413,6 +413,7 @@ public:
     void runImpl(OperationContext* opCtx,
                  const OpMsgRequest& request,
                  BSONObjBuilder& result) final {
+        //从request中解析出write_ops::Delete结构
         const auto batch = DeleteOp::parse(request);
         const auto reply = performDeletes(opCtx, batch);
         serializeReply(opCtx,

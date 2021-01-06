@@ -257,6 +257,7 @@ void Balancer::joinCurrentRound(OperationContext* opCtx) {
     });
 }
 
+//ConfigSvrMoveChunkCommand::run调用
 Status Balancer::rebalanceSingleChunk(OperationContext* opCtx, const ChunkType& chunk) {
     auto migrateStatus = _chunkSelectionPolicy->selectSpecificChunkToMove(opCtx, chunk);
     if (!migrateStatus.isOK()) {
@@ -281,7 +282,19 @@ Status Balancer::rebalanceSingleChunk(OperationContext* opCtx, const ChunkType& 
                                                     balancerConfig->getSecondaryThrottle(),
                                                     balancerConfig->waitForDelete());
 }
+//源分片收到config server发送过来的moveChunk命令  
+//注意MoveChunkCmd和MoveChunkCommand的区别，MoveChunkCmd为代理收到mongo shell等客户端的处理流程，
+//然后调用configsvr_client::moveChunk，发送_configsvrMoveChunk给config server,由config server统一
+//发送movechunk给shard执行chunk操作，从而执行MoveChunkCommand::run来完成shard见真正的shard间迁移
 
+//MoveChunkCommand为shard收到movechunk命令的真正数据迁移的入口
+//MoveChunkCmd为mongos收到客户端movechunk命令的处理流程，转发给config server
+//ConfigSvrMoveChunkCommand为config server收到mongos发送来的_configsvrMoveChunk命令的处理流程
+
+//自动balancer触发shard做真正的数据迁移入口在Balancer::_moveChunks->MigrationManager::executeMigrationsForAutoBalance
+//手动balance，config收到代理ConfigSvrMoveChunkCommand命令后迁移入口Balancer::moveSingleChunk
+
+//ConfigSvrMoveChunkCommand::run调用,congfig server触发shard迁移
 Status Balancer::moveSingleChunk(OperationContext* opCtx,
                                  const ChunkType& chunk,
                                  const ShardId& newShardId,
@@ -309,7 +322,28 @@ void Balancer::report(OperationContext* opCtx, BSONObjBuilder* builder) {
     builder->append("numBalancerRounds", _numBalancerRounds);
 }
 
-//balancer线程
+/*
+例如下面的chunks分布:
+xx_HTZjQeZL_shard_1 571274
+xx_HTZjQeZL_shard_2 319536
+xx_HTZjQeZL_shard_3 572644
+xx_HTZjQeZL_shard_4 707811
+xx_HTZjQeZL_shard_QubQcjup	145339
+xx_HTZjQeZL_shard_ewMvmPnE	136034
+xx_HTZjQeZL_shard_jaAVvOei	129682
+xx_HTZjQeZL_shard_kxYilhNF	150150
+
+这就是选出的需要迁移的chunk
+mongos> db.migrations.find()
+{ "_id" : "xx_cold_data_db.xx_cold_data_db-user_id_\"359209050\"module_\"album\"md5_\"992F3FF0DDCB009D1A6CCD8647CEAFA5\"", "ns" : "xx_cold_data_db.xx_cold_data_db", "min" : { "user_id" : "359209050", "module" : "album", "md5" : "992F3FF0DDCB009D1A6CCD8647CEAFA5" }, "max" : { "xx" : "359209058", "module" : "album", "md5" : "49D552BEBEAE7D3CB6B53A7FE384E5A4" }, "fromShard" : "xx_HTZjQeZL_shard_1", "toShard" : "xx_HTZjQeZL_shard_QubQcjup", "chunkVersion" : [ Timestamp(588213, 1), ObjectId("5ec496373f311c50a0185499") ], "waitForDelete" : false }
+{ "_id" : "xx_cold_data_db.xx_cold_data_db-user_id_\"278344065\"module_\"album\"md5_\"CAA4B99617A83D0DEE5CE30D4D75829F\"", "ns" : "xx_cold_data_db.xx_cold_data_db", "min" : { "user_id" : "278344065", "module" : "album", "md5" : "CAA4B99617A83D0DEE5CE30D4D75829F" }, "max" : { "xx" : "278344356", "module" : "album", "md5" : "E691E5F8756E723BB44BC2049D624F81" }, "fromShard" : "xx_HTZjQeZL_shard_4", "toShard" : "xx_HTZjQeZL_shard_jaAVvOei", "chunkVersion" : [ Timestamp(588211, 1), ObjectId("5ec496373f311c50a0185499") ], "waitForDelete" : false }
+{ "_id" : "xx_cold_data_db.xx_cold_data_db-user_id_\"226060685\"module_\"album\"md5_\"56A0293EAD54C7A1326C91621A7C4664\"", "ns" : "xx_cold_data_db.xx_cold_data_db", "min" : { "user_id" : "226060685", "module" : "album", "md5" : "56A0293EAD54C7A1326C91621A7C4664" }, "max" : { "xx" : "226061085", "module" : "album", "md5" : "6686C24B301C39C3B3585D8602A26F45" }, "fromShard" : "xx_HTZjQeZL_shard_3", "toShard" : "xx_HTZjQeZL_shard_ewMvmPnE", "chunkVersion" : [ Timestamp(588212, 1), ObjectId("5ec496373f311c50a0185499") ], "waitForDelete" : false }
+*/
+
+//balancer线程  
+//新版本由config server控制,只有主节点才会由该线程，如果发生主从切换，则原主节点会消耗balancer线程，
+//从节点变为新主后，会生成新的balancer线程，这样可以保证一个集群做balancer只会由一个节点触发，解决了早期
+//mongos版本，多个mongos获取分布式锁的问题
 void Balancer::_mainThread() {
     Client::initThread("Balancer");
 
@@ -418,6 +452,8 @@ void Balancer::_mainThread() {
                 LOG(1) << "*** End of balancing round";
             }
 
+			//上一次迁移块成功，这里延时kBalanceRoundDefaultInterval，
+			//如果上一次迁移失败，这里延时kShortBalanceRoundInterval
             _endRound(opCtx.get(),
                       _balancedLastTime ? kShortBalanceRoundInterval
                                         : kBalanceRoundDefaultInterval);
@@ -586,7 +622,21 @@ Status Balancer::_enforceTagRanges(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//源分片收到config server发送过来的moveChunk命令  
+//注意MoveChunkCmd和MoveChunkCommand的区别，MoveChunkCmd为代理收到mongo shell等客户端的处理流程，
+//然后调用configsvr_client::moveChunk，发送_configsvrMoveChunk给config server,由config server统一
+//发送movechunk给shard执行chunk操作，从而执行MoveChunkCommand::run来完成shard见真正的shard间迁移
+
+//MoveChunkCommand为shard收到movechunk命令的真正数据迁移的入口
+//MoveChunkCmd为mongos收到客户端movechunk命令的处理流程，转发给config server
+//ConfigSvrMoveChunkCommand为config server收到mongos发送来的_configsvrMoveChunk命令的处理流程
+
+//自动balancer触发shard做真正的数据迁移入口在Balancer::_moveChunks->MigrationManager::executeMigrationsForAutoBalance
+//手动balance，config收到代理ConfigSvrMoveChunkCommand命令后迁移入口Balancer::moveSingleChunk
+
+//Balancer::_mainThread()调用
 int Balancer::_moveChunks(OperationContext* opCtx,
+						  //需要迁移的chunk记录到这里
                           const BalancerChunkSelectionPolicy::MigrateInfoVector& candidateChunks) {
 	//获取balancer配置信息
 	auto balancerConfig = Grid::get(opCtx)->getBalancerConfiguration();
@@ -597,8 +647,9 @@ int Balancer::_moveChunks(OperationContext* opCtx,
         LOG(1) << "Skipping balancing round because balancer was stopped";
         return 0;
     }
-
+	
     auto migrationStatuses =
+		//MigrationManager::executeMigrationsForAutoBalance 把挑选出来需要迁移的chunk迁移到目的分片
         _migrationManager.executeMigrationsForAutoBalance(opCtx,
                                                           candidateChunks,
                                                           //chunk最大大小
@@ -613,6 +664,7 @@ int Balancer::_moveChunks(OperationContext* opCtx,
     for (const auto& migrationStatusEntry : migrationStatuses) {
         const Status& status = migrationStatusEntry.second;
         if (status.isOK()) {
+			//成功迁移的chunk数自增计数
             numChunksProcessed++;
             continue;
         }
@@ -627,11 +679,12 @@ int Balancer::_moveChunks(OperationContext* opCtx,
         invariant(requestIt != candidateChunks.end());
 
         if (status == ErrorCodes::ChunkTooBig) {
+			//遇到big chunk mongos会splite拆分这个chunk，下次可以继续迁移拆分后得块，所以可以算着本次成功
             numChunksProcessed++;
 
             log() << "Performing a split because migration " << redact(requestIt->toString())
                   << " failed for size reasons" << causedBy(redact(status));
-
+			//遇到大chunk，则splite
             _splitOrMarkJumbo(opCtx, NamespaceString(requestIt->ns), requestIt->minKey);
             continue;
         }

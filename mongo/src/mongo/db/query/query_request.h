@@ -45,6 +45,171 @@ template <typename T>
 class StatusWith;
 
 /**
+ xxx:PRIMARY> db.app_device.find({"xx" : "1dfafdaf", "xxx" : "afdafa"}, {"brand":1}).explain("allPlansExecution")
+ {
+         "queryPlanner" : {
+                 "plannerVersion" : 1,
+                 "namespace" : "xxx.xxx",
+                 "indexFilterSet" : false,
+                 "parsedQuery" : {
+                         "$and" : [
+                                 {
+                                         "appId" : {
+                                                 "$eq" : "jCbBaqYIpP8eqr4iqYSqcqA1"
+                                         }
+                                 },
+                                 {
+                                         "deviceId" : {
+                                                 "$eq" : "5b2af25a97d4495260a3af43"
+                                         }
+                                 }
+                         ]
+                 },
+                 "winningPlan" : {
+                         "stage" : "PROJECTION",
+                         "transformBy" : {
+                                 "brand" : 1
+                         },
+                         "inputStage" : {
+                                 "stage" : "FETCH",
+                                 "inputStage" : {
+                                         "stage" : "IXSCAN",
+                                         "keyPattern" : {
+                                                 "appId" : 1,
+                                                 "deviceId" : 1
+                                         },
+                                         "indexName" : "xxx",
+                                         "isMultiKey" : false,
+                                         "multiKeyPaths" : {
+                                                 "appId" : [ ],
+                                                 "deviceId" : [ ]
+                                         },
+                                         "isUnique" : true,
+                                         "isSparse" : false,
+                                         "isPartial" : false,
+                                         "indexVersion" : 2,
+                                         "direction" : "forward",
+                                         "indexBounds" : {
+                                                 "xx" : [
+                                                         "[\"xx\", \"xx\"]"
+                                                 ],
+                                                 "xx" : [
+                                                         "[\"xx\", \"xx\"]"
+                                                 ]
+                                         }
+                                 }
+                         }
+                 },
+                 "rejectedPlans" : [ ]
+         },
+         "executionStats" : {
+                 "executionSuccess" : true,
+                 "nReturned" : 0,
+                 "executionTimeMillis" : 0,
+                 "totalKeysExamined" : 0,
+                 "totalDocsExamined" : 0,
+                 "executionStages" : {
+                         "stage" : "PROJECTION",
+                         "nReturned" : 0,
+                         "executionTimeMillisEstimate" : 0,
+                         "works" : 1,
+                         "advanced" : 0,
+                         "needTime" : 0,
+                         "needYield" : 0,
+                         "saveState" : 0,
+                         "restoreState" : 0,
+                         "isEOF" : 1,
+                         "invalidates" : 0,
+                         "transformBy" : {
+                                 "brand" : 1
+                         },
+                         "inputStage" : {
+                                 "stage" : "FETCH",
+                                 "nReturned" : 0,
+                                 "executionTimeMillisEstimate" : 0,
+                                 "works" : 1,
+                                 "advanced" : 0,
+                                 "needTime" : 0,
+                                 "needYield" : 0,
+                                 "saveState" : 0,
+                                 "restoreState" : 0,
+                                 "isEOF" : 1,
+                                 "invalidates" : 0,
+                                 "docsExamined" : 0,
+                                 "alreadyHasObj" : 0,
+                                 "inputStage" : {
+                                         "stage" : "IXSCAN",
+                                         "nReturned" : 0,
+                                         "executionTimeMillisEstimate" : 0,
+                                         "works" : 1,
+                                         "advanced" : 0,
+                                         "needTime" : 0,
+                                         "needYield" : 0,
+                                         "saveState" : 0,
+                                         "restoreState" : 0,
+                                         "isEOF" : 1,
+                                         "invalidates" : 0,
+                                         "keyPattern" : {
+                                                 "appId" : 1,
+                                                 "deviceId" : 1
+                                         },
+                                         "indexName" : "xx",
+                                         "isMultiKey" : false,
+                                         "multiKeyPaths" : {
+                                                 "xx" : [ ],
+                                                 "xx" : [ ]
+                                         },
+                                         "isUnique" : true,
+                                         "isSparse" : false,
+                                         "isPartial" : false,
+                                         "indexVersion" : 2,
+                                         "direction" : "forward",
+                                         "indexBounds" : {
+                                                 "xx" : [
+                                                         "[\"xx\", \"xx\"]"
+                                                 ],
+                                                 "xx" : [
+                                                         "[\"xx\", \"xx\"]"
+                                                 ]
+                                         },
+                                         "keysExamined" : 0,
+                                         "seeks" : 1,
+                                         "dupsTested" : 0,
+                                         "dupsDropped" : 0,
+                                         "seenInvalidated" : 0
+                                 }
+                         }
+                 },
+                 "allPlansExecution" : [ ]
+         },
+         "serverInfo" : {
+                 "host" : "bjht8284",
+                 "port" : 20001,
+                 "version" : "3.6.13",
+                 "gitVersion" : "db3c76679b7a3d9b443a0e1b3e45ed02b88c539f"
+         },
+         "ok" : 1,
+         "operationTime" : Timestamp(1608980231, 388),
+         "$gleStats" : {
+                 "lastOpTime" : Timestamp(0, 0),
+                 "electionId" : ObjectId("7fffffff000000000000000d")
+         },
+         "$configServerState" : {
+                 "opTime" : {
+                         "ts" : Timestamp(1608980230, 590),
+                         "t" : NumberLong(7)
+                 }
+         },
+         "$clusterTime" : {
+                 "clusterTime" : Timestamp(1608980231, 388),
+                 "signature" : {
+                         "hash" : BinData(0,"zlsggitLYV/N4QpUNN3cSQWFv6I="),
+                         "keyId" : NumberLong("6861496828462891871")
+                 }
+         }
+ }
+ xx:PRIMARY> 
+查询计划可以参考https://developer.aliyun.com/article/647563
  * Parses the QueryMessage or find command received from the user and makes the various fields
  * more easily accessible.
  */

@@ -79,7 +79,17 @@ MONGO_FP_DECLARE(moveChunkHangAtStep5);
 MONGO_FP_DECLARE(moveChunkHangAtStep6);
 MONGO_FP_DECLARE(moveChunkHangAtStep7);
 
-//源分片收到mongos发送过来的moveChunk命令
+//源分片收到config server发送过来的moveChunk命令  
+//注意MoveChunkCmd和MoveChunkCommand的区别，MoveChunkCmd为代理收到mongo shell等客户端的处理流程，
+//然后调用configsvr_client::moveChunk，发送_configsvrMoveChunk给config server,由config server统一
+//发送movechunk给shard执行chunk操作，从而执行MoveChunkCommand::run来完成shard见真正的shard间迁移
+
+//MoveChunkCommand为shard收到movechunk命令的真正数据迁移的入口
+//MoveChunkCmd为mongos收到客户端movechunk命令的处理流程，转发给config server
+//ConfigSvrMoveChunkCommand为config server收到mongos发送来的_configsvrMoveChunk命令的处理流程
+
+//自动balancer触发shard做真正的数据迁移入口在Balancer::_moveChunks->MigrationManager::executeMigrationsForAutoBalance
+//手动balance，config收到代理ConfigSvrMoveChunkCommand命令后迁移入口Balancer::moveSingleChunk
 class MoveChunkCommand : public BasicCommand {
 public:
     MoveChunkCommand() : BasicCommand("moveChunk") {}

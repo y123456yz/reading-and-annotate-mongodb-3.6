@@ -142,6 +142,7 @@ MigrationSourceManager::MigrationSourceManager(OperationContext* opCtx,
       _donorConnStr(std::move(donorConnStr)),
     //目的分片信息
       _recipientHost(std::move(recipientHost)) {
+      //必须预先获得锁(注意不是断言)
     invariant(!opCtx->lockState()->isLocked());
 
     // Disallow moving a chunk to ourselves

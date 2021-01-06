@@ -409,11 +409,14 @@ StatusWith<unique_ptr<QueryRequest>> QueryRequest::parseFromFindCommand(unique_p
     return std::move(qr);
 }
 
-StatusWith<unique_ptr<QueryRequest>> QueryRequest::makeFromFindCommand(NamespaceString nss,
+//从find请求BSONobj中解析出对应的QueryRequest
+StatusWith<unique_ptr<QueryRequest>> 
+	QueryRequest::makeFromFindCommand(NamespaceString nss,
                                                                        const BSONObj& cmdObj,
                                                                        bool isExplain) {
     BSONElement first = cmdObj.firstElement();
     if (first.type() == BinData && first.binDataType() == BinDataType::newUUID) {
+		//解析出uuid
         auto uuid = uassertStatusOK(UUID::parse(first));
         auto qr = stdx::make_unique<QueryRequest>(uuid);
 		//解析并检查bson文档内容及格式  QueryRequest::parseFromFindCommand

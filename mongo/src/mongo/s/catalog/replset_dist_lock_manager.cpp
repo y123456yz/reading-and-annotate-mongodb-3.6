@@ -368,8 +368,8 @@ StatusWith<bool> ReplSetDistLockManager::isLockExpired(OperationContext* opCtx,
     return false;
 }
 
-//获取分布式锁 
-//DistLockManager::lock调用
+//获取分布式锁，waitFor为最多等多久
+//DistLockManager::lock  MigrationManager::_schedule调用
 StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationContext* opCtx,
                                                                      StringData name,
                                                                      StringData whyMessage,
@@ -539,6 +539,7 @@ StatusWith<DistLockHandle> ReplSetDistLockManager::lockWithSessionID(OperationCo
 
         LOG(1) << "distributed lock '" << name << "' was not acquired.";
 
+		//不等待，则直接返回
         if (waitFor == Milliseconds::zero()) {
             break;
         }

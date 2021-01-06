@@ -132,6 +132,8 @@ StatusWith<BalanceChunkRequest> BalanceChunkRequest::parseFromConfigCommand(cons
     return request;
 }
 
+//configsvr_client::moveChunk调用
+//构造_configsvrMoveChunk命令,外层发送给configserver
 BSONObj BalanceChunkRequest::serializeToMoveCommandForConfig(
     const ChunkType& chunk,
     const ShardId& newShardId,

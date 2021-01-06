@@ -35,6 +35,7 @@
 
 namespace mongo {
 namespace {
+	
 Counter64 returnedCounter;
 Counter64 insertedCounter;
 Counter64 updatedCounter;
@@ -61,6 +62,7 @@ ServerStatusMetricField<Counter64> displayWriteConflicts("operation.writeConflic
 }  // namespace
 
 //ServiceEntryPointMongod::handleRequestµ÷ÓÃ
+//finishCurOp
 void recordCurOpMetrics(OperationContext* opCtx) {
     const OpDebug& debug = CurOp::get(opCtx)->debug();
     if (debug.nreturned > 0)

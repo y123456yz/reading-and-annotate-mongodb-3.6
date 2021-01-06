@@ -69,6 +69,7 @@ void LastError::recordUpdate(bool updateObjects, long long nObjects, BSONObj ups
         _upsertedId = upsertedId;
 }
 
+//performSingleDeleteOp调用统计
 void LastError::recordDelete(long long nDeleted) {
     reset(true);
     _nObjects = nDeleted;

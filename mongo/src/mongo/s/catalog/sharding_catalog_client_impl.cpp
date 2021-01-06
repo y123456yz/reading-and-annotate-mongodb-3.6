@@ -1057,7 +1057,7 @@ Status ShardingCatalogClientImpl::applyChunkOpsDeprecated(OperationContext* opCt
 
 DistLockManager* ShardingCatalogClientImpl::getDistLockManager() {
     invariant(_distLockManager);
-	//获取分布式锁管理器DistLockManager, shard分片模式对应ReplSetDistLockManager
+	//shard分片模式对应ReplSetDistLockManager
     return _distLockManager.get();
 }
 

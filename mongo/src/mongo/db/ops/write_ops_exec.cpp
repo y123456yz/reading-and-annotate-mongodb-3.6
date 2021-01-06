@@ -85,12 +85,15 @@ MONGO_FP_DECLARE(failAllRemoves);
 //performUpdates   performDeletes
 void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
     try {
+		//记录update和delete执行过程消耗的时间
         curOp->done();
         long long executionTimeMicros =
             durationCount<Microseconds>(curOp->elapsedTimeExcludingPauses());
         curOp->debug().executionTimeMicros = executionTimeMicros;
 
+		log() << "yang test ........................ finishCurOp:";
         recordCurOpMetrics(opCtx);
+		//表级操作及时延统计
         Top::get(opCtx->getServiceContext())
             .record(opCtx, //Top::record
                     curOp->getNS(),
@@ -117,11 +120,12 @@ void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
         if (logAll || (shouldSample && logSlow)) {//ServiceEntryPointMongod::handleRequest中也会有输出打印
             Locker::LockerInfo lockerInfo;
             opCtx->lockState()->getLockerInfo(&lockerInfo);
-
+			log() << "yang test ........................ update delete log report:";
 			//OpDebug::report
             log() << curOp->debug().report(opCtx->getClient(), *curOp, lockerInfo.stats);
         }
 
+		//system.profile记录慢日志
         if (curOp->shouldDBProfile(shouldSample)) {
             profile(opCtx, CurOp::get(opCtx)->getNetworkOp());
         }
@@ -816,6 +820,7 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
 
     curOp.debug().ndeleted = 0;
 
+	//根据ns构造DeleteRequest，并通过op赋值初始化
     DeleteRequest request(ns);
     request.setQuery(op.getQ());
     request.setCollation(write_ops::collationOf(op));
@@ -823,7 +828,10 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
     request.setYieldPolicy(PlanExecutor::YIELD_AUTO);  // ParsedDelete overrides this for $isolated.
     request.setStmtId(stmtId);
 
+	//根据DeleteRequest构造ParsedDelete
     ParsedDelete parsedDelete(opCtx, &request);
+	//从request解析出对应成员存入parsedDelete
+	//ParsedDelete::parseRequest
     uassertStatusOK(parsedDelete.parseRequest());
 
     opCtx->checkForInterrupt();
@@ -832,6 +840,7 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
         uasserted(ErrorCodes::InternalError, "failAllRemoves failpoint active!");
     }
 
+	//根据ns构造一个AutoGetCollection
     AutoGetCollection collection(opCtx,
                                  ns,
                                  MODE_IX,  // DB is always IX, even if collection is X.
@@ -839,9 +848,10 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
     if (collection.getDb()) {
         curOp.raiseDbProfileLevel(collection.getDb()->getProfilingLevel());
     }
-
+	//写必须走主节点判断及版本判断
     assertCanWrite_inlock(opCtx, ns);
 
+	//以下和执行计划相关，后续单独一张
     auto exec = uassertStatusOK(
         getExecutorDelete(opCtx, &curOp.debug(), collection.getCollection(), &parsedDelete));
 
@@ -850,7 +860,10 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
         CurOp::get(opCtx)->setPlanSummary_inlock(Explain::getPlanSummary(exec.get()));
     }
 
+	//按照执行计划运行
     uassertStatusOK(exec->executePlan());
+
+	//下面流程是记录各种统计信息
     long long n = DeleteStage::getNumDeleted(*exec);
     curOp.debug().ndeleted = n;
 
@@ -867,6 +880,7 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
         curOp.debug().execStats = execStatsBob.obj();
     }
 
+	//LastError::recordDelete
     LastError::get(opCtx->getClient()).recordDelete(n);
 
     SingleWriteResult result;
@@ -887,9 +901,11 @@ WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& who
     size_t stmtIdIndex = 0;
     WriteResult out;
     out.results.reserve(wholeOp.getDeletes().size());
-	log() << "yang test ........................ performDeletes";
+	log() << "yang test ........................ performDeletes:" << wholeOp.getDeletes().size();
 
+	//singleOp类型为DeleteOpEntry
     for (auto&& singleOp : wholeOp.getDeletes()) {
+		//数组中的第几个delete操作
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
         if (opCtx->getTxnNumber()) {
             auto session = OperationContextSession::get(opCtx);
@@ -908,10 +924,13 @@ WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& who
             stdx::lock_guard<Client> lk(*opCtx->getClient());
             curOp.setCommand_inlock(cmd);
         }
+
+		//该函数接口执行完后执行该finishCurOp
         ON_BLOCK_EXIT([&] { finishCurOp(opCtx, &curOp); });
         try {
             lastOpFixer.startingOp();
             out.results.emplace_back(
+				//该delete op操作真正执行在这里，singleOp类型为DeleteOpEntry
                 performSingleDeleteOp(opCtx, wholeOp.getNamespace(), stmtId, singleOp));
             lastOpFixer.finishedOpSuccessfully();
         } catch (const DBException& ex) {

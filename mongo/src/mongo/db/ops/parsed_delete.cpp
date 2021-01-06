@@ -50,6 +50,7 @@ namespace mongo {
 ParsedDelete::ParsedDelete(OperationContext* opCtx, const DeleteRequest* request)
     : _opCtx(opCtx), _request(request) {}
 
+//从request解析出对应成员存入parsedDelete
 Status ParsedDelete::parseRequest() {
     dassert(!_canonicalQuery.get());
     // It is invalid to request that the DeleteStage return the deleted document during a

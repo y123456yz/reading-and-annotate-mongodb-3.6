@@ -45,8 +45,9 @@ const ReadPreferenceSetting kPrimaryOnlyReadPreference{ReadPreference::PrimaryOn
 
 //MoveChunkCmd::errmsgRun调用 mongos执行moveChunk命令手动迁移块的时候走到这里
 
-//该接口通过configsvr_client::moveChunk方式调用
-Status moveChunk(OperationContext* opCtx,
+//该接口通过configsvr_client::moveChunk方式调用  
+//构造_configsvrMoveChunk命令发送给configserver     configsvr_client::moveChunk
+Status moveChunk(OperationContext* opCtx, 
                  const ChunkType& chunk,
                  const ShardId& newShardId,
                  int64_t maxChunkSizeBytes,
@@ -54,6 +55,7 @@ Status moveChunk(OperationContext* opCtx,
                  bool waitForDelete) {
     auto shardRegistry = Grid::get(opCtx)->shardRegistry();
     auto shard = shardRegistry->getConfigShard();
+	////构造_configsvrMoveChunk命令发送给configserver
     auto cmdResponseStatus = shard->runCommand(
         opCtx,
         kPrimaryOnlyReadPreference,

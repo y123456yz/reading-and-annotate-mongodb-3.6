@@ -274,6 +274,7 @@ private:
 
     // Maps collection namespaces to that collection's active migrations.
     //map表  记录了表和对应块迁移信息，参考MigrationManager::_schedule
+    //_activeMigrations中记录的map对为<表，movechunk信息>
     CollectionMigrationsStateMap _activeMigrations;
 };
 

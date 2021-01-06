@@ -37,6 +37,7 @@
 
 namespace mongo {
 
+//performSingleDeleteOp中构造使用, ParsedDelete._request为该类型
 class DeleteRequest {
     MONGO_DISALLOW_COPYING(DeleteRequest);
 

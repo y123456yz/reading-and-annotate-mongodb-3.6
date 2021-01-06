@@ -256,8 +256,9 @@ at src/mongo/db/commands/find_cmd.cpp:311
         // Parse the command BSON to a QueryRequest.
         const bool isExplain = false;
         // Pass parseNs to makeFromFindCommand in case cmdObj does not have a UUID.
+        //Query_request.cpp 中的QueryRequest::makeFromFindCommand
         //QueryRequest::makeFromFindCommand->parseFromFindCommand
-        //解析并检查bson文档内容及格式
+        //解析并检查bson文档内容及格式，从find请求中解析出的字段存储在QueryRequest
         auto qrStatus = QueryRequest::makeFromFindCommand(
             NamespaceString(parseNs(dbname, cmdObj)), cmdObj, isExplain);
         if (!qrStatus.isOK()) { //BSON报文内容格式是否符合要求

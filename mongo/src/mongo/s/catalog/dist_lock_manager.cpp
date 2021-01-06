@@ -70,7 +70,7 @@ DistLockManager::ScopedDistLock& DistLockManager::ScopedDistLock::operator=(
     return *this;
 }
 
-//获取分布式name锁   //例如ConfigSvrEnableShardingCommand::run调用
+//获取分布式name锁   //例如ConfigSvrEnableShardingCommand::run 等调用
 StatusWith<DistLockManager::ScopedDistLock> DistLockManager::lock(OperationContext* opCtx,
                                                                   StringData name,
                                                                   StringData whyMessage,

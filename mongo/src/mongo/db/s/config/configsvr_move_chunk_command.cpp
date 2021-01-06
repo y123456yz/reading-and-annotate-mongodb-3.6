@@ -81,6 +81,18 @@ mongos执行:db.runCommand({movePrimary:"test", to:"XX_gQmJGvRW_shard_2"})
 2020-09-10T20:41:10.668+0800 I COMMAND  [conn2055546] command test.$cmd appName: "MongoDB Shell" command: clone { clone: "opush_gQmJGvRW_shard_1/10.36.116.42:20001,10.37.72.102:20001,10.37.76.22:20001", collsToIgnore: [], bypassDocumentValidation: true, writeConcern: { w: "majority", wtimeout: 60000 }, $db: "test", $clusterTime: { clusterTime: Timestamp(1599741670, 2347), signature: { hash: BinData(0, C29F3B6CBB7BB2A931E07D1CFA6E71953A464885), keyId: 6829778851464216577 } }, $client: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "3.6.14" }, os: { type: "Linux", name: "CentOS release 6.8 (Final)", architecture: "x86_64", version: "Kernel 2.6.32-642.el6.x86_64" }, mongos: { host: "bjht7266:20003", client: "10.35.150.17:44094", version: "3.6.10" } }, $configServerState: { opTime: { ts: Timestamp(1599741670, 2347), t: 7 } } } numYields:0 reslen:353 locks:{ Global: { acquireCount: { r: 17, w: 15, W: 2 }, acquireWaitCount: { W: 2 }, timeAcquiringMicros: { W: 6420 } }, Database: { acquireCount: { w: 10, W: 5 } }, oplog: { acquireCount: { w: 10 } } } protocol:op_msg 123ms
 
 */
+//源分片收到config server发送过来的moveChunk命令  
+//注意MoveChunkCmd和MoveChunkCommand的区别，MoveChunkCmd为代理收到mongo shell等客户端的处理流程，
+//然后调用configsvr_client::moveChunk，发送_configsvrMoveChunk给config server,由config server统一
+//发送movechunk给shard执行chunk操作，从而执行MoveChunkCommand::run来完成shard见真正的shard间迁移
+
+//MoveChunkCommand为shard收到movechunk命令的真正数据迁移的入口
+//MoveChunkCmd为mongos收到客户端movechunk命令的处理流程，转发给config server
+//ConfigSvrMoveChunkCommand为config server收到mongos发送来的_configsvrMoveChunk命令的处理流程
+
+//自动balancer触发shard做真正的数据迁移入口在Balancer::_moveChunks->MigrationManager::executeMigrationsForAutoBalance
+//手动balance，config收到代理ConfigSvrMoveChunkCommand命令后迁移入口Balancer::moveSingleChunk
+
 
 //mongos对应的接口如下:
 //BalanceChunkRequest::serializeToMoveCommandForConfig      
@@ -123,6 +135,7 @@ public:
         auto request = uassertStatusOK(BalanceChunkRequest::parseFromConfigCommand(cmdObj));
 
         if (request.hasToShardId()) {
+			//Balancer::moveSingleChunk
             uassertStatusOK(Balancer::get(opCtx)->moveSingleChunk(opCtx,
                                                                   request.getChunk(),
                                                                   request.getToShardId(),
@@ -130,6 +143,7 @@ public:
                                                                   request.getSecondaryThrottle(),
                                                                   request.getWaitForDelete()));
         } else {
+        	//Balancer::rebalanceSingleChunk
             uassertStatusOK(Balancer::get(opCtx)->rebalanceSingleChunk(opCtx, request.getChunk()));
         }
 

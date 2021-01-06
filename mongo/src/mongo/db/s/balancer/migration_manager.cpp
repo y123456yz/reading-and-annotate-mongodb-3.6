@@ -111,6 +111,18 @@ MigrationManager::~MigrationManager() {
     invariant(_activeMigrations.empty());
 }
 
+//源分片收到config server发送过来的moveChunk命令  
+//注意MoveChunkCmd和MoveChunkCommand的区别，MoveChunkCmd为代理收到mongo shell等客户端的处理流程，
+//然后调用configsvr_client::moveChunk，发送_configsvrMoveChunk给config server,由config server统一
+//发送movechunk给shard执行chunk操作，从而执行MoveChunkCommand::run来完成shard见真正的shard间迁移
+
+//MoveChunkCommand为shard收到movechunk命令的真正数据迁移的入口
+//MoveChunkCmd为mongos收到客户端movechunk命令的处理流程，转发给config server
+//ConfigSvrMoveChunkCommand为config server收到mongos发送来的_configsvrMoveChunk命令的处理流程
+
+//自动balancer触发shard做真正的数据迁移入口在Balancer::_moveChunks->MigrationManager::executeMigrationsForAutoBalance
+//手动balance，config收到代理ConfigSvrMoveChunkCommand命令后迁移入口Balancer::moveSingleChunk
+
 //Balancer::_moveChunks调用
 MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
     OperationContext* opCtx,
@@ -150,7 +162,7 @@ MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
         }
 
         // Wait for all the scheduled migrations to complete.
-        //获取对应responese
+        //获取对应responese，等待本循环中这一批migrateInfos迁移完成
         for (auto& response : responses) {
             auto notification = std::move(response.first);
             auto migrateInfo = std::move(response.second);
@@ -171,6 +183,7 @@ MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
     return migrationStatuses;
 }
 
+//Balancer::moveSingleChunk  Balancer::rebalanceSingleChunk调用
 Status MigrationManager::executeManualMigration(
     OperationContext* opCtx,
     const MigrateInfo& migrateInfo,
@@ -216,6 +229,7 @@ Status MigrationManager::executeManualMigration(
     return commandStatus;
 }
 
+//Balancer::initiateBalancer调用
 void MigrationManager::startRecoveryAndAcquireDistLocks(OperationContext* opCtx) {
     {
         stdx::lock_guard<stdx::mutex> lock(_mutex);
@@ -289,6 +303,8 @@ void MigrationManager::startRecoveryAndAcquireDistLocks(OperationContext* opCtx)
     scopedGuard.Dismiss();
 }
 
+
+//Balancer::_mainThread调用
 void MigrationManager::finishRecovery(OperationContext* opCtx,
                                       uint64_t maxChunkSizeBytes,
                                       const MigrationSecondaryThrottleOptions& secondaryThrottle) {
@@ -425,8 +441,9 @@ void MigrationManager::drainActiveMigrations() {
     _state = State::kStopped;
 }
 
-//MigrationManager::executeMigrationsForAutoBalance调用
-//向需要迁移的源分片发送moveChunk命令
+//MigrationManager::executeMigrationsForAutoBalance MigrationManager::finishRecovery
+//MigrationManager::executeManualMigration 调用
+//向需要迁移的源分片发送moveChunk命令，迁移migrateInfo对应的块
 shared_ptr<Notification<RemoteCommandResponse>> 
   MigrationManager::_schedule(
     OperationContext* opCtx,
@@ -486,7 +503,7 @@ shared_ptr<Notification<RemoteCommandResponse>>
                    "Migration cannot be executed because the balancer is not running"));
     }
 
-	//构造Migration
+	//构造Migration， moveChunk命令构造
     Migration migration(nss, builder.obj());
 
     auto retVal = migration.completionNotification;
@@ -496,9 +513,28 @@ shared_ptr<Notification<RemoteCommandResponse>>
     return retVal;
 }
 
+/*
+例如下面的chunks分布:
+xx_HTZjQeZL_shard_1 571274
+xx_HTZjQeZL_shard_2 319536
+xx_HTZjQeZL_shard_3 572644
+xx_HTZjQeZL_shard_4 707811
+xx_HTZjQeZL_shard_QubQcjup	145339
+xx_HTZjQeZL_shard_ewMvmPnE	136034
+xx_HTZjQeZL_shard_jaAVvOei	129682
+xx_HTZjQeZL_shard_kxYilhNF	150150
+
+这就是选出的需要迁移的chunk
+mongos> db.migrations.find()
+{ "_id" : "xx_cold_data_db.xx_cold_data_db-user_id_\"359209050\"module_\"album\"md5_\"992F3FF0DDCB009D1A6CCD8647CEAFA5\"", "ns" : "xx_cold_data_db.xx_cold_data_db", "min" : { "user_id" : "359209050", "module" : "album", "md5" : "992F3FF0DDCB009D1A6CCD8647CEAFA5" }, "max" : { "xx" : "359209058", "module" : "album", "md5" : "49D552BEBEAE7D3CB6B53A7FE384E5A4" }, "fromShard" : "xx_HTZjQeZL_shard_1", "toShard" : "xx_HTZjQeZL_shard_QubQcjup", "chunkVersion" : [ Timestamp(588213, 1), ObjectId("5ec496373f311c50a0185499") ], "waitForDelete" : false }
+{ "_id" : "xx_cold_data_db.xx_cold_data_db-user_id_\"278344065\"module_\"album\"md5_\"CAA4B99617A83D0DEE5CE30D4D75829F\"", "ns" : "xx_cold_data_db.xx_cold_data_db", "min" : { "user_id" : "278344065", "module" : "album", "md5" : "CAA4B99617A83D0DEE5CE30D4D75829F" }, "max" : { "xx" : "278344356", "module" : "album", "md5" : "E691E5F8756E723BB44BC2049D624F81" }, "fromShard" : "xx_HTZjQeZL_shard_4", "toShard" : "xx_HTZjQeZL_shard_jaAVvOei", "chunkVersion" : [ Timestamp(588211, 1), ObjectId("5ec496373f311c50a0185499") ], "waitForDelete" : false }
+{ "_id" : "xx_cold_data_db.xx_cold_data_db-user_id_\"226060685\"module_\"album\"md5_\"56A0293EAD54C7A1326C91621A7C4664\"", "ns" : "xx_cold_data_db.xx_cold_data_db", "min" : { "user_id" : "226060685", "module" : "album", "md5" : "56A0293EAD54C7A1326C91621A7C4664" }, "max" : { "xx" : "226061085", "module" : "album", "md5" : "6686C24B301C39C3B3585D8602A26F45" }, "fromShard" : "xx_HTZjQeZL_shard_3", "toShard" : "xx_HTZjQeZL_shard_ewMvmPnE", "chunkVersion" : [ Timestamp(588212, 1), ObjectId("5ec496373f311c50a0185499") ], "waitForDelete" : false }
+*/
+
+//3.6版本balancer migrate由config server触发   
 
 //上面的MigrationManager::_schedule调用
-//向源分片主节点发送moveChunk命令
+//向源分片主节点发送moveChunk命令    splitchunk也是走这个流程，当发起movechunk如果发现chunk big，则会splite该chunk,也会走到该接口
 void MigrationManager::_schedule(WithLock lock,
                                  OperationContext* opCtx,
                                  const HostAndPort& targetHost,
@@ -509,16 +545,19 @@ void MigrationManager::_schedule(WithLock lock,
 	//获取balance需要迁移的表
     const NamespaceString nss(migration.nss);
 
-	//在map表中差值nss
+	//在map表中查找nss
     auto it = _activeMigrations.find(nss);
-	//没找到
-    if (it == _activeMigrations.end()) {
+	//没找到,说明需要重新获取分布式锁，同一个表多分片情况下，例如从4分片扩容到8分片，则会选择4个需要迁移的chunk
+	//在外层的MigrationManager::executeMigrationsForAutoBalance中会每个chunk轮选调用_schedule，这4个chunk实际上只
+	//会获取一次分布式锁，也就是第一个chunk进来的时候获取一次分布式锁，后面3个chunk的movechunk操作不会再次获取该分布式锁
+	//从而实现了同一个表不同分片扩容的并行迁移
+    if (it == _activeMigrations.end()) { //只要当前该表还有chunk在迁移，则不会进入这里面，直接跳过
         const std::string whyMessage(stream() << "Migrating chunk(s) in collection " << nss.ns());
 
         // Acquire the collection distributed lock (blocking call)
-        //获取锁
+        //获取分布式锁
         auto statusWithDistLockHandle =
-        	//DistLockManagerMock::lockWithSessionID
+        	//ReplSetDistLockManager::lockWithSessionID
             Grid::get(opCtx)->catalogClient()->getDistLockManager()->lockWithSessionID(
                 opCtx,
                 nss.ns(), //需要做balance的表
@@ -526,14 +565,14 @@ void MigrationManager::_schedule(WithLock lock,
                 _lockSessionID,
                 DistLockManager::kSingleLockAttemptTimeout);
 		
-		//本mongos已经有该nss表的分布式锁，说明当前正在迁移该表数据
+		//本mongod已经有该nss表的分布式锁，说明当前正在迁移该表数据
         if (!statusWithDistLockHandle.isOK()) { 
             migration.completionNotification->set(
 			/*
 			类似打印如下:
 			Failed with error ‘could not acquire collection lock for mongodbtest.usertable to migrate chunk [{ : MinKey },{ : MaxKey }) 
 			:: caused by :: Lock for migrating chunk [{ : MinKey }, { : MaxKey }) in mongodbtest.usertable is taken.’, from shard0002 to shard0000
-			*/
+			*/ //如果chunk很大，则会触发splite，splite也需要获取nss对应分布式锁，这时候就会引起迁移失败
                 Status(statusWithDistLockHandle.getStatus().code(),
                        stream() << "Could not acquire collection lock for " << nss.ns()
                                 << " to migrate chunks, due to "
@@ -551,7 +590,7 @@ void MigrationManager::_schedule(WithLock lock,
     auto migrations = &it->second;
 
     // Add ourselves to the list of migrations on this collection
-    //migration记录到_activeMigrations
+    //migration记录到_activeMigrations，这样_activeMigrations中记录的map对为<表，movechunk信息>
     migrations->push_front(std::move(migration));
     auto itMigration = migrations->begin();
 
@@ -568,17 +607,22 @@ void MigrationManager::_schedule(WithLock lock,
                 auto opCtx = cc().makeOperationContext();
 
                 stdx::lock_guard<stdx::mutex> lock(_mutex);
+				//该chunk对应movechunk操作执行完成后，调用_complete
                 _complete(lock, opCtx.get(), itMigration, args.response);
             });
 
     if (callbackHandleWithStatus.isOK()) {
+		//一般通过这里返回
         itMigration->callbackHandle = std::move(callbackHandleWithStatus.getValue());
         return;
     }
 
+	//正常情况下不会走到这里
+	//chunk迁移完成后该接口里面释放分布式锁
     _complete(lock, opCtx, itMigration, std::move(callbackHandleWithStatus.getStatus()));
 }
 
+//上面的MigrationManager::_schedule调用
 void MigrationManager::_complete(WithLock lock,
                                  OperationContext* opCtx,
                                  MigrationsList::iterator itMigration,
@@ -600,6 +644,7 @@ void MigrationManager::_complete(WithLock lock,
     migrations->erase(itMigration);
 
 	//如果该nss下面已经没有itMigration，则释放缓存的分布式锁信息
+	//balancer一个循环会选取几个需要迁移的chunk，只有等这批chunk都迁移完成，才会释放分布式锁
     if (migrations->empty()) {
 		//DistLockManagerMock::unlock
         Grid::get(opCtx)->catalogClient()->getDistLockManager()->unlock(
