@@ -298,7 +298,8 @@ at src/mongo/db/commands/find_cmd.cpp:311
         const boost::intrusive_ptr<ExpressionContext> expCtx;
         auto statusWithCQ =
 			// Query会进行简单的处理(标准化)，并构造一些上下文数据结构变成CanonicalQuery(标准化Query)。
-			//通过CanonicalQuery类的canonicalize函数进一步优化表达式树.
+
+		    //从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
             CanonicalQuery::canonicalize(opCtx,
                                          std::move(qr),
                                          expCtx,
@@ -308,10 +309,13 @@ at src/mongo/db/commands/find_cmd.cpp:311
         if (!statusWithCQ.isOK()) {
             return appendCommandStatus(result, statusWithCQ.getStatus());
         }
+
+		//获取赋值后的CanonicalQuery
         std::unique_ptr<CanonicalQuery> cq = std::move(statusWithCQ.getValue());
 
 		//std::move(dbSLock)会调用DBLock::~DBLock
         AutoGetCollectionOrViewForReadCommand ctx(opCtx, nss, std::move(dbSLock));
+		//AutoGetCollectionOrViewForReadCommand::getCollection
         Collection* collection = ctx.getCollection();
         if (ctx.getView()) {
             // Relinquish locks. The aggregation command will re-acquire them.

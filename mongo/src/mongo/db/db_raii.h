@@ -79,7 +79,9 @@ private:
  *
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * the database and the collection references returned by this class should not be retained.
- */ //使用见insertBatchAndHandleErrors
+ */ 
+//AutoGetCollectionOrView._autoColl为该类型
+//使用见insertBatchAndHandleErrors  
 class AutoGetCollection {
     MONGO_DISALLOW_COPYING(AutoGetCollection);
 
@@ -184,7 +186,7 @@ public:
     }
 
 private:
-    const AutoGetCollection _autoColl;
+    const AutoGetCollection _autoColl;  
     std::shared_ptr<ViewDefinition> _view;
 };
 
@@ -329,6 +331,7 @@ private:
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * database and collection references returned by this class should not be retained.
  */
+//AutoGetCollectionOrViewForReadCommand继承该类
 class AutoGetCollectionForReadCommand {
     MONGO_DISALLOW_COPYING(AutoGetCollectionForReadCommand);
 

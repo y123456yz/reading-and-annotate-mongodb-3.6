@@ -45,7 +45,8 @@ using std::string;
  * Returns Status::OK() if it's a valid spec.
  * Returns a Status indicating how it's invalid otherwise.
  */
-// static
+// static   CanonicalQuery::init调用
+//从请求spec中解析出Projection信息，存储到out中
 Status ParsedProjection::make(OperationContext* opCtx,
                               const BSONObj& spec,
                               const MatchExpression* const query,

@@ -219,6 +219,9 @@ private:
 
     bool _canHaveNoopMatchNodes = false;
 
+    //Õë¶ÔÆäËûÏß³ÌµÄ²¢·¢Ð´²Ù×÷£¬$isolate±£Ö¤ÁËÌá½»Ç°ÆäËûÏß³ÌÎÞ·¨ÐÞ¸Ä¶ÔÓ¦µÄÎÄµµ¡£
+    //Õë¶ÔÆäËûÏß³ÌµÄ¶Á²Ù×÷£¬$isolate±£Ö¤ÁËÆäËûÏß³Ì¶ÁÈ¡²»µ½Î´Ìá½»µÄÊý¾Ý¡£
+    //µ«ÊÇ$isolateÓÐÑéÖ¤µÄÐÔÄÜÎÊÌâ£¬ÒòÎªÕâÖÖÇé¿öÏÂÏß³Ì³ÖÓÐËøµÄÊ±¼ä½Ï³¤£¬ÑÏÖØµÄÓ°ÏìmongoµÄ²¢·¢ÐÔ¡
     bool _isIsolated;
 };
 

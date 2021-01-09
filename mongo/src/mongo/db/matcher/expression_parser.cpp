@@ -328,6 +328,7 @@ bool isExpressionDocument(BSONElement e, bool allowIncompleteDBRef) {
 /**
  * Parse 'obj' and return either a MatchExpression or an error.
  */
+//MatchExpressionParser::parse调用
 StatusWithMatchExpression parse(const BSONObj& obj,
                                 const boost::intrusive_ptr<ExpressionContext>& expCtx,
                                 const ExtensionsCallback* extensionsCallback,
@@ -1889,7 +1890,13 @@ Status parseSub(StringData name,
 
 }  // namespace
 
+/*
+通过MatchExpressionParser类的_parse函数解析filter成员,filter语法上可以形成树结构,
+所以最终解析出的表达式将会形成表达式树,每个节点是不同的表达式类型.
 
+MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
+参考https://blog.csdn.net/baijiwei/article/details/78127191
+*/
 StatusWithMatchExpression MatchExpressionParser::parse(
     const BSONObj& obj,
     const boost::intrusive_ptr<ExpressionContext>& expCtx,

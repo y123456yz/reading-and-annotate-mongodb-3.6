@@ -48,14 +48,30 @@ class MatchExpression;
 class TreeMatchExpression;
 
 typedef StatusWith<std::unique_ptr<MatchExpression>> StatusWithMatchExpression;
+
+/*
+Expression_always_boolean.h (db\matcher):class AlwaysBooleanMatchExpression : public MatchExpression {
+Expression_arity.h (db\matcher):class FixedArityMatchExpression : public MatchExpression {
+Expression_expr.h (db\matcher):class ExprMatchExpression final : public MatchExpression {
+Expression_internal_schema_allowed_properties.h (db\matcher\schema):class InternalSchemaAllowedPropertiesMatchExpression final : public MatchExpression {
+Expression_internal_schema_num_properties.h (db\matcher\schema):class InternalSchemaNumPropertiesMatchExpression : public MatchExpression {
+Expression_internal_schema_root_doc_eq.h (db\matcher\schema):class InternalSchemaRootDocEqMatchExpression final : public MatchExpression {
+Expression_path.h (db\matcher):class PathMatchExpression : public MatchExpression {
+Expression_tree.h (db\matcher):class ListOfMatchExpression : public MatchExpression {
+Expression_tree.h (db\matcher):class NotMatchExpression final : public MatchExpression {
+Expression_where_base.h (db\matcher):class WhereMatchExpressionBase : public MatchExpression {
+*/
+
 //MatchExpression是将filter算子里每个逻辑运算转换成各个类型的表达式(GT,ET,LT,AND,OR...)，构成一个表达
 //式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
 //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.477e4df3lsZUre
 //参考https://blog.csdn.net/baijiwei/article/details/78170387
 /* 
-MatchExpression 是查询过程的第一步， 它是由一个Bson生成的， 根据bson的的各种设定， 产生一个树 型的expression结构， 
+MatchExpression 是查询过程的第一步， 它是由一个Bson生成的， 根据bson的的各种设定， 产生一个树型的expression结构， 
 该树形结构中的节点是有一个个的查询操作符。 理解和掌握Mongodb里面第一的操作 符的类型和属性， 是掌握MatchExpression的关键。
 https://blog.csdn.net/baijiwei/article/details/78122733
+
+查询操作符详见:https://docs.mongodb.com/manual/reference/operator/query/
 */
 
 //CanonicalQuery._root  QuerySolutionNode.filter成员是该类型  一个filter对应一个MatchExpression

@@ -209,12 +209,45 @@ class StatusWith;
          }
  }
  xx:PRIMARY> 
+
+db.runCommand(
+   {
+      "find": <string>,
+      "filter": <document>,
+      "sort": <document>,
+      "projection": <document>,
+      "hint": <document or string>,
+      "skip": <int>,
+      "limit": <int>,
+      "batchSize": <int>,
+      "singleBatch": <bool>,
+      "comment": <string>,
+      "maxScan": <int>,
+      "maxTimeMS": <int>,
+      "readConcern": <document>,
+      "max": <document>,
+      "min": <document>,
+      "returnKey": <bool>,
+      "showRecordId": <bool>,
+      "tailable": <bool>,
+      "oplogReplay": <bool>,
+      "noCursorTimeout": <bool>,
+      "awaitData": <bool>,
+      "allowPartialResults": <bool>,
+      "collation": <document>
+   }
+)
+find命令官方文档参数列表参考https://docs.mongodb.com/v3.6/reference/command/find/
+ 
 查询计划可以参考https://developer.aliyun.com/article/647563
  * Parses the QueryMessage or find command received from the user and makes the various fields
  * more easily accessible.
  */
+//从查询请求BSONobj中解析出对应的QueryRequest结构
+
 //在CanonicalQuery::canonicalize中会使用该类的成员来组织filter等查询条件
-class QueryRequest { //parseFromFindCommand中解析赋值
+class QueryRequest { 
+//FindCmd::run->QueryRequest::makeFromFindCommand->parseFromFindCommand中解析赋值
 public:
     static const char kFindCommandName[];
     static const char kShardVersionField[];

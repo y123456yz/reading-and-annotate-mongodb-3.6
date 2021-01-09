@@ -31,6 +31,7 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
+//projection : 选择输出指定的fields，类比SQL的select  例如db.news.find( {}, { id: 1, title: 1 } )只输出id和title字段，第一个参数为查询条件，空代表查询所有
 //CanonicalQuery._proj成员为该类型
 class ParsedProjection {
 public:

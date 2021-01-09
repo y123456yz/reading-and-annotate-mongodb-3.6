@@ -409,6 +409,7 @@ StatusWith<unique_ptr<QueryRequest>> QueryRequest::parseFromFindCommand(unique_p
     return std::move(qr);
 }
 
+//FindCmd::run调用  FindCmd::run->QueryRequest::makeFromFindCommand->parseFromFindCommand
 //从find请求BSONobj中解析出对应的QueryRequest
 StatusWith<unique_ptr<QueryRequest>> 
 	QueryRequest::makeFromFindCommand(NamespaceString nss,
@@ -563,6 +564,7 @@ void QueryRequest::addShowRecordIdMetaProj() {
     _proj = projBob.obj();
 }
 
+//查询请求有效性检查
 Status QueryRequest::validate() const {
     // Min and Max objects must have the same fields.
     if (!_min.isEmpty() && !_max.isEmpty()) {
@@ -743,11 +745,14 @@ bool QueryRequest::isValidSortOrder(const BSONObj& sortObj) {
     return true;
 }
 
-// static
+// static   查询Isolated检查
 bool QueryRequest::isQueryIsolated(const BSONObj& query) {
     BSONObjIterator iter(query);
     while (iter.more()) {
         BSONElement elt = iter.next();
+		//针对其他线程的并发写操作，$isolate保证了提交前其他线程无法修改对应的文档。
+		//针对其他线程的读操作，$isolate保证了其他线程读取不到未提交的数据。
+		//但是$isolate有验证的性能问题，因为这种情况下线程持有锁的时间较长，严重的影响mongo的并发性。
         if (str::equals(elt.fieldName(), "$isolated") && elt.trueValue())
             return true;
         if (str::equals(elt.fieldName(), "$atomic") && elt.trueValue())

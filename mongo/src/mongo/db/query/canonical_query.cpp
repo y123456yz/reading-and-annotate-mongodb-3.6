@@ -124,6 +124,7 @@ StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
         opCtx, std::move(qrStatus.getValue()), expCtx, extensionsCallback, allowedFeatures);
 }
 
+//FindCmd::run调用，//从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
 // static
 StatusWith<std::unique_ptr<CanonicalQuery>> 
   CanonicalQuery::canonicalize(
@@ -132,6 +133,7 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
     const boost::intrusive_ptr<ExpressionContext>& expCtx,
     const ExtensionsCallback& extensionsCallback,
     MatchExpressionParser::AllowedFeatureSet allowedFeatures) {
+    //QueryRequest::validate 查询有效性检查
     auto qrStatus = qr->validate();
     if (!qrStatus.isOK()) {
         return qrStatus;
@@ -155,16 +157,29 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
         newExpCtx = expCtx;
         invariant(CollatorInterface::collatorsMatch(collator.get(), expCtx->getCollator()));
     }
+
+	/*
+	通过MatchExpressionParser类的_parse函数解析filter成员,filter语法上可以形成树结构,
+	所以最终解析出的表达式将会形成表达式树,每个节点是不同的表达式类型.
+
+	MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
+	参考https://blog.csdn.net/baijiwei/article/details/78127191
+	*/
     StatusWithMatchExpression statusWithMatcher = MatchExpressionParser::parse(
         qr->getFilter(), newExpCtx, extensionsCallback, allowedFeatures);
     if (!statusWithMatcher.isOK()) {
         return statusWithMatcher.getStatus();
     }
+
+	//树型的expression结构，该树形结构中的节点是有一个个的查询操作符
     std::unique_ptr<MatchExpression> me = std::move(statusWithMatcher.getValue());
 
     // Make the CQ we'll hopefully return.
+    //构造CanonicalQuery
     std::unique_ptr<CanonicalQuery> cq(new CanonicalQuery());
 
+	//CanonicalQuery::init
+	//从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
     Status initStatus =
         cq->init(opCtx,
                  std::move(qr),
@@ -214,6 +229,8 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
     return std::move(cq);
 }
 
+//CanonicalQuery::canonicalize调用，
+//从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
 Status CanonicalQuery::init(OperationContext* opCtx,
                             std::unique_ptr<QueryRequest> qr,
                             bool canHaveNoopMatchNodes,
@@ -236,21 +253,27 @@ Status CanonicalQuery::init(OperationContext* opCtx,
     //主要对树中各个节点做合并优化
     _root = MatchExpression::optimize(std::move(root));
     sortTree(_root.get());
+
+	//查询有效性检查
     Status validStatus = isValid(_root.get(), *_qr);
     if (!validStatus.isOK()) {
         return validStatus;
     }
 
     // Validate the projection if there is one.
+    //输出过滤检查
     if (!_qr->getProj().isEmpty()) {
         ParsedProjection* pp;
+		////从请求spec中解析出Projection信息，存储到pp中
         Status projStatus = ParsedProjection::make(opCtx, _qr->getProj(), _root.get(), &pp);
         if (!projStatus.isOK()) {
             return projStatus;
         }
+		//存储到_proj
         _proj.reset(pp);
     }
 
+	//排序必须带上排序字段          //QueryRequest::getSort						
     if (_proj && _proj->wantSortKey() && _qr->getSort().isEmpty()) {
         return Status(ErrorCodes::BadValue, "cannot use sortKey $meta projection without a sort");
     }
@@ -341,6 +364,7 @@ bool hasNodeInSubtree(MatchExpression* root,
     return false;
 }
 
+//查询得一些有效性检查  CanonicalQuery::init调用
 // static
 Status CanonicalQuery::isValid(MatchExpression* root, const QueryRequest& parsed) {
     // Analysis below should be done after squashing the tree to make it clearer.
