@@ -56,6 +56,7 @@ const double StorageGlobalParams::kMaxSyncdelaySecs = 9.0 * 1000.0 * 1000.0;
  * If 1, MongoDB will not execute queries that require a table scan and will return an error.
  * NOT recommended for production use.
  */
+//db.adminCommand( { setParameter: 1, notablescan: 1 } ) 加上这个配置，所有查询必须走索引，否则直接报错 
 ExportedServerParameter<bool, ServerParameterType::kStartupAndRuntime> NoTableScanSetting(
     ServerParameterSet::getGlobal(), "notablescan", &storageGlobalParams.noTableScan);
 

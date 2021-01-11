@@ -56,6 +56,7 @@ struct InsertDeleteOptions;
 //CollectionImpl._indexCatalog成员为该类，获取所有的索引信息可以参考fillOutPlannerParams
 class IndexCatalog {
 public:
+    //遍历所有索引信息可以参考fillOutPlannerParams
     class IndexIterator {
     public:
         class Impl {

@@ -54,6 +54,7 @@ struct PlanEnumeratorParams {
     MatchExpression* root;
 
     // Not owned here.
+    //fillOutPlannerParams中获取所有的索引信息填充到这里
     const std::vector<IndexEntry>* indices;
 
     // How many plans are we willing to ouput from an OR? We currently consider

@@ -52,7 +52,7 @@ class IndexDescriptor;
 class MatchExpression;
 class OperationContext;
 
-//IndexCatalogEntryContainer._entries成员为该类型
+//IndexCatalogEntryContainer._entries  成员为该类型
 //IndexCatalogEntryImpl继承IndexCatalogEntry::Impl
 class IndexCatalogEntry {
 public:
@@ -321,6 +321,7 @@ public:
     }
 
 private:
+    
     std::vector<std::unique_ptr<IndexCatalogEntry>> _entries;
 };
 }  // namespace mongo

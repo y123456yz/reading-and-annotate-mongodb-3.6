@@ -30,6 +30,7 @@
 #include "mongo/db/server_options.h"
 #include "mongo/db/server_parameters.h"
 
+//命令行配置方法:db.adminCommand( { setParameter: 1, XXX:11} )  XXX就是下面的参数
 namespace mongo {
 
 MONGO_EXPORT_SERVER_PARAMETER(internalQueryPlanEvaluationWorks, int, 10000);

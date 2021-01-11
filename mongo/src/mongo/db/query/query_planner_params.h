@@ -49,6 +49,8 @@ struct QueryPlannerParams {
 
         // Set this if you don't want a table scan.
         // See http://docs.mongodb.org/manual/reference/parameters/
+        //db.adminCommand( { setParameter: 1, notablescan: 1 } ) 
+        //加上这个配置，所有查询必须走索引，否则直接报错 
         NO_TABLE_SCAN = 1,
 
         // Set this if you *always* want a collscan outputted, even if there's an ixscan.  This
@@ -62,6 +64,7 @@ struct QueryPlannerParams {
         // ShardingState::needCollectionMetadata(current_namespace) in the same lock that you use to
         // build the query executor. You must also wrap the PlanExecutor in a ClientCursor within
         // the same lock. See the comment on ShardFilterStage for details.
+        //getExecutorFind赋值，如果分片模式，带上该标记会坚持数据释放属于本分片，如果数据不应该在本分片，则会删除
         INCLUDE_SHARD_FILTER = 1 << 2,
 
         // Set this if you don't want any plans with a blocking sort stage.  All sorts must be
@@ -69,6 +72,8 @@ struct QueryPlannerParams {
         NO_BLOCKING_SORT = 1 << 3,
 
         // Set this if you want to turn on index intersection.
+        //internalQueryPlannerEnableIndexIntersection配置，不过高版本已经去掉了该配置
+        //2.X版本才支持，可以忽略
         INDEX_INTERSECTION = 1 << 4,
 
         // Set this if you want to try to keep documents deleted or mutated during the execution

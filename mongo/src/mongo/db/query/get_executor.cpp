@@ -130,8 +130,10 @@ void fillOutPlannerParams(OperationContext* opCtx,
                           QueryPlannerParams* plannerParams) {
     // If it's not NULL, we may have indices.  Access the catalog and fill out IndexEntry(s)
     IndexCatalog::IndexIterator ii = collection->getIndexCatalog()->getIndexIterator(opCtx, false);
-    while (ii.more()) { 
+	//获取collection集合对应的所有索引信息存储到indices中
+	while (ii.more()) { 
         const IndexDescriptor* desc = ii.next();
+		//IndexDescriptor::catalogEntry
         IndexCatalogEntry* ice = ii.catalogEntry(desc);
         plannerParams->indices.push_back(IndexEntry(desc->keyPattern(),
                                                     desc->getAccessMethodName(),
@@ -163,30 +165,37 @@ void fillOutPlannerParams(OperationContext* opCtx,
 
     // We will not output collection scans unless there are no indexed solutions. NO_TABLE_SCAN
     // overrides this behavior by not outputting a collscan even if there are no indexed
-    // solutions.
+    // solutions. 
+    //加上这个配置，所有查询必须走索引，否则直接报错 
     if (storageGlobalParams.noTableScan.load()) {
         const string& ns = canonicalQuery->ns();
         // There are certain cases where we ignore this restriction:
         bool ignore = canonicalQuery->getQueryObj().isEmpty() ||
             (string::npos != ns.find(".system.")) || (0 == ns.find("local."));
         if (!ignore) {
+			//db.adminCommand( { setParameter: 1, notablescan: 1 } ) 
+			//加上这个配置，所有查询必须走索引，否则直接报错 
             plannerParams->options |= QueryPlannerParams::NO_TABLE_SCAN;
         }
     }
 
     // If the caller wants a shard filter, make sure we're actually sharded.
     if (plannerParams->options & QueryPlannerParams::INCLUDE_SHARD_FILTER) {
+		//获取元数据信息
         auto collMetadata =
             CollectionShardingState::get(opCtx, canonicalQuery->nss())->getMetadata();
         if (collMetadata) {
+			//获取shardKey
             plannerParams->shardKey = collMetadata->getKeyPattern();
         } else {
             // If there's no metadata don't bother w/the shard filter since we won't know what
             // the key pattern is anyway...
+            //没有获取到元数据信息，则清楚该标记
             plannerParams->options &= ~QueryPlannerParams::INCLUDE_SHARD_FILTER;
         }
     }
 
+	//2.X版本才支持索引交集，可以忽略
     if (internalQueryPlannerEnableIndexIntersection.load()) {
         plannerParams->options |= QueryPlannerParams::INDEX_INTERSECTION;
     }
@@ -518,7 +527,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 */
 //根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
 
-//getExecutorFind中调用
+//FindCmd::run->getExecutorFind中调用
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
 	getExecutor(
     OperationContext* opCtx,
@@ -735,6 +744,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
     }
 
     if (ShardingState::get(opCtx)->needCollectionMetadata(opCtx, nss.ns())) {
+		//如果分片模式，带上该标记会坚持数据释放属于本分片，如果数据不应该在本分片，则会删除
         plannerOptions |= QueryPlannerParams::INCLUDE_SHARD_FILTER;
     }
     return getExecutor( //这里面会pickBestPlan选取最优的plan  根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
