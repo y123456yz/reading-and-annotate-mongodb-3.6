@@ -512,6 +512,7 @@ public:
         return _showRecordId;
     }
 
+    //只有测试中用到了
     void setShowRecordId(bool showRecordId) {
         _showRecordId = showRecordId;
     }
@@ -712,6 +713,7 @@ private:
     BSONObj _max;
 
     bool _returnKey = false;
+    //setShowRecordId中赋值
     bool _showRecordId = false;
     //参考https://www.cnblogs.com/silentcross/archive/2011/07/04/2095424.html  查询带snapshot
     bool _snapshot = false;

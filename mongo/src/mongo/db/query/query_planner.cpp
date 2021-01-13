@@ -614,6 +614,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         LOG(2) << "Index " << i << " is " << params.indices[i].toString();
     }
 
+	//是否支持全部扫描
     const bool canTableScan = !(params.options & QueryPlannerParams::NO_TABLE_SCAN);
     const bool isTailable = query.getQueryRequest().isTailable();
 
@@ -621,7 +622,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // tailable set on the collscan.  TODO: This is a policy departure.  Previously I think you
     // could ask for a tailable cursor and it just tried to give you one.  Now, we fail if we
     // can't provide one.  Is this what we want?
-    if (isTailable) {//Tailable Cursors相关请求走这里，固定结合才用
+    if (isTailable) {//Tailable Cursors相关请求走这里，固定集合才用
         if (!QueryPlannerCommon::hasNode(query.root(), MatchExpression::GEO_NEAR) && canTableScan) {
             QuerySolution* soln = buildCollscanSoln(query, isTailable, params);
             if (NULL != soln) {
@@ -637,6 +638,13 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
 	//You can specify { $natural : 1 } to force the query to perform a forwards collection scan:
 	//	db.users.find().hint( { $natural : 1 } )
+	/*
+	sort(_id:1) 和 sort($natural:1)排序区别
+	_id 排序：按照插入顺序排序
+	$natural 排序：按照数据在磁盘上的组织顺序排序
+	参考:https://blog.csdn.net/qq_33961117/article/details/91416031
+	*/
+	//强制走$natural索引，或者$natural排序
     if (!query.getQueryRequest().getHint().isEmpty() ||
         !query.getQueryRequest().getSort().isEmpty()) {
         BSONObj hintObj = query.getQueryRequest().getHint();
@@ -662,6 +670,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // Figure out what fields we care about.
     unordered_set<string> fields;
+	////获取所有的查询条件，填充到fields数组 
     QueryPlannerIXSelect::getFields(query.root(), "", &fields);
 
 	/* 如果是db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})
@@ -677,6 +686,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     // Filter our indices so we only look at indices that are over our predicates.
+    //选出可能匹配的索引存到这里
     vector<IndexEntry> relevantIndices;
 
     // Hints require us to only consider the hinted index.
@@ -684,6 +694,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // the allowed indices for planning, we should not use the hinted index
     // requested in the query.
     BSONObj hintIndex;
+	//如果indexFiltersApplied为false，hint才有用
     if (!params.indexFiltersApplied) { 
         hintIndex = query.getQueryRequest().getHint();
     }
@@ -725,7 +736,17 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     boost::optional<size_t> hintIndexNumber;
 
     if (hintIndex.isEmpty()) { //如果没有强制指定索引
-		//获取满足条件的索引  把和fields匹配的索引找出来
+    /*
+	db.test.find({"name":"yangyazhou", "age":1, "male":1})
+
+	外层选举出的out索引打印如下:
+	2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+	2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+	2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 2 is kp: { male: 1.0 } name: 'male_1' io: { v: 2, key: { male: 1.0 }, name: "male_1", ns: "test.test", background: true }
+	2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 3 is kp: { male: 1.0, name: 1.0 } name: 'male_1_name_1' io: { v: 2, key: { male: 1.0, name: 1.0 }, name: "male_1_name_1", ns: "test.test", background: true }
+	2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 4 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+	*/
+		//获取满足条件的索引存储到relevantIndices  把和fields匹配的索引找出来,最左的合理索引，都会选出来
         QueryPlannerIXSelect::findRelevantIndices(fields, params.indices, &relevantIndices);
     } else {
         // Sigh.  If the hint is specified it might be using the index name.
@@ -861,8 +882,10 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
         }
 
         return Status::OK();
-    }
+    } ////MIN MAX操作符相关条件这里结束
 
+
+	//打印出选择出的索引
     for (size_t i = 0; i < relevantIndices.size(); ++i) {
 	/* db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})
 	2019-01-03T17:57:20.793+0800 D QUERY	[conn1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "testxx.test" }
@@ -904,11 +927,11 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 	    age == 22.0  || First: 1 notFirst: 2 full path: age
 	    name == "yangyazhou"  || First: 0 2 notFirst: full path: name
 	*/
-    //QuerySolutionNode::toString
     LOG(2) << "Rated tree:" << endl << redact(query.root()->toString()); 
 
     // If there is a GEO_NEAR it must have an index it can use directly.
     const MatchExpression* gnNode = NULL;
+	//GEO相关处理
     if (QueryPlannerCommon::hasNode(query.root(), MatchExpression::GEO_NEAR, &gnNode)) {
         // No index for GEO_NEAR?  No query.
         RelevantTag* tag = static_cast<RelevantTag*>(gnNode->getTag());
@@ -924,6 +947,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // Likewise, if there is a TEXT it must have an index it can use directly.
     const MatchExpression* textNode = NULL;
+	//TEXT相关处理
     if (QueryPlannerCommon::hasNode(query.root(), MatchExpression::TEXT, &textNode)) {
         RelevantTag* tag = static_cast<RelevantTag*>(textNode->getTag());
 
@@ -990,6 +1014,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             // plan cache key.
             std::unique_ptr<MatchExpression> clone(rawTree.get()->shallowClone());
             PlanCacheIndexTree* cacheData;
+			//根据候选索引和MatchExpression生成PlanCacheIndexTree
             Status indexTreeStatus = 
                 cacheDataFromTaggedTree(clone.get(), relevantIndices, &cacheData);
             if (!indexTreeStatus.isOK()) {
@@ -1003,6 +1028,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
 			//QueryPlannerAccess::buildIndexedDataAccess
             // This can fail if enumeration makes a mistake.
+            //根据MatchExpression的节点的类型， 建立对应的QuerySolutionNode节点， 最终形成一个树形的QuerySolutionNode树
             std::unique_ptr<QuerySolutionNode> solnRoot(QueryPlannerAccess::buildIndexedDataAccess(
                 query, rawTree.release(), false, relevantIndices, params));
 

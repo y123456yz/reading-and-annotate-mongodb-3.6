@@ -39,6 +39,7 @@ namespace mongo {
 
 class CollatorInterface;
 
+//prepareExecution中构造使用
 struct ProjectionStageParams {
     enum ProjectionImplementation {
         // The default case.  Will handle every projection.
@@ -59,6 +60,7 @@ struct ProjectionStageParams {
     // If we have a positional or elemMatch projection we need a MatchExpression to pull out the
     // right data.
     // Not owned here, we do not take ownership.
+    //复制参考prepareExecution
     const MatchExpression* fullExpression = nullptr;
 
     // If (COVERED_ONE_INDEX == projObj) this is the key pattern we're extracting covered data

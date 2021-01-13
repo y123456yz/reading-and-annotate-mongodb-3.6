@@ -36,6 +36,8 @@
 
 namespace mongo {
 
+//fillOutPlannerParams中获取collection对应QueryPlannerParams信息
+
 //prepareExecution中使用  fillOutPlannerParams中赋值，把集合对应的所有索引添加到indices数组
 struct QueryPlannerParams {
     QueryPlannerParams()
@@ -73,7 +75,7 @@ struct QueryPlannerParams {
 
         // Set this if you want to turn on index intersection.
         //internalQueryPlannerEnableIndexIntersection配置，不过高版本已经去掉了该配置
-        //2.X版本才支持，可以忽略
+        //internalQueryPlannerEnableIndexIntersection2.X版本才支持，可以忽略  internalQueryPlannerEnableIndexIntersection配置
         INDEX_INTERSECTION = 1 << 4,
 
         // Set this if you want to try to keep documents deleted or mutated during the execution
@@ -96,13 +98,15 @@ struct QueryPlannerParams {
         // Set this if snapshot() should scan the _id index rather than performing a
         // collection scan. The MMAPv1 storage engine sets this option since it cannot
         // guarantee that a collection scan won't miss documents or return duplicates.
-        SNAPSHOT_USE_ID = 1 << 9,
+        //只对MMAP有效
+        SNAPSHOT_USE_ID = 1 << 9, 
 
         // Set this if you don't want any plans with a non-covered projection stage. All projections
         // must be provided/covered by an index.
         NO_UNCOVERED_PROJECTIONS = 1 << 10,
 
         // Set this to generate covered whole IXSCAN plans.
+        //internalQueryPlannerGenerateCoveredWholeIndexScans参数配置
         GENERATE_COVERED_IXSCANS = 1 << 11,
 
         // Set this to track the most recent timestamp seen by this cursor while scanning the oplog.
@@ -122,6 +126,7 @@ struct QueryPlannerParams {
     BSONObj shardKey;
 
     // Were index filters applied to indices?
+    //如果为true，则hint指定索引会失效，参考QueryPlanner::plan
     bool indexFiltersApplied; //fillOutPlannerParams中赋值
 
     // What's the max number of indexed solutions we want to output?  It's expensive to compare

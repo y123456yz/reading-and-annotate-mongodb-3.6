@@ -1896,7 +1896,7 @@ Status parseSub(StringData name,
 
 MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
 参考https://blog.csdn.net/baijiwei/article/details/78127191
-*/
+*/ 
 StatusWithMatchExpression MatchExpressionParser::parse(
     const BSONObj& obj,
     const boost::intrusive_ptr<ExpressionContext>& expCtx,
@@ -1905,6 +1905,7 @@ StatusWithMatchExpression MatchExpressionParser::parse(
     invariant(expCtx.get());
     const DocumentParseLevel currentLevelCall = DocumentParseLevel::kPredicateTopLevel;
     try {
+		//本文件中上面的parse接口
         return ::mongo::parse(obj, expCtx, &extensionsCallback, allowedFeatures, currentLevelCall);
     } catch (const DBException& ex) {
         return {ex.toStatus()};

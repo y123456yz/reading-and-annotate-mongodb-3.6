@@ -62,14 +62,24 @@ namespace {
  *
  * The two OR nodes would compare as equal in this case were it not for tuple item #3 (sort
  * order of children).
- */
+
+ sort tree 主要是对MatchExpression的各个子树进行排序， 排序之后的好处就是对于index查询， 如果某个字段的index被分成了几段， 我们的查询用到其中的2段， 就可以做到对于索引的查找只需要一次就能完成。其具体的排序的顺序： 
+1) operator type (MatchExpression::MatchType) 
+2) path name (MatchExpression::path()) 
+3) sort order of children 
+4) number of children (MatchExpression::numChildren()) 
+代码的实现就比较简单， 按照上面的4中比较方式以及优先级。 
+ */ //matchExpressionLessThan调用
+//参考https://blog.csdn.net/baijiwei/article/details/78170387
 int matchExpressionComparator(const MatchExpression* lhs, const MatchExpression* rhs) {
     MatchExpression::MatchType lhsMatchType = lhs->matchType();
     MatchExpression::MatchType rhsMatchType = rhs->matchType();
+	//首先比较type
     if (lhsMatchType != rhsMatchType) {
         return lhsMatchType < rhsMatchType ? -1 : 1;
     }
 
+	//其次比较path
     StringData lhsPath = lhs->path();
     StringData rhsPath = rhs->path();
     int pathsCompare = lhsPath.compare(rhsPath);
@@ -94,6 +104,7 @@ int matchExpressionComparator(const MatchExpression* lhs, const MatchExpression*
     return 0;
 }
 
+//CanonicalQuery::sortTree中调用
 bool matchExpressionLessThan(const MatchExpression* lhs, const MatchExpression* rhs) {
     return matchExpressionComparator(lhs, rhs) < 0;
 }
@@ -165,13 +176,14 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
 	MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
 	参考https://blog.csdn.net/baijiwei/article/details/78127191
 	*/
+	
     StatusWithMatchExpression statusWithMatcher = MatchExpressionParser::parse(
         qr->getFilter(), newExpCtx, extensionsCallback, allowedFeatures);
     if (!statusWithMatcher.isOK()) {
         return statusWithMatcher.getStatus();
     }
 
-	//树型的expression结构，该树形结构中的节点是有一个个的查询操作符
+	//树型的expression结构，该原始树形结构中的节点是有一个个的查询操作符
     std::unique_ptr<MatchExpression> me = std::move(statusWithMatcher.getValue());
 
     // Make the CQ we'll hopefully return.
@@ -247,14 +259,17 @@ Status CanonicalQuery::init(OperationContext* opCtx,
                          "http://dochub.mongodb.org/core/isolated-deprecation";
         }
     }
-
+	//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+	//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
+	//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
     // Normalize, sort and validate tree.
     //也就是老版本中的CanonicalQuery::normalizeTree，参考https://blog.csdn.net/baijiwei/article/details/78170387
     //主要对树中各个节点做合并优化
     _root = MatchExpression::optimize(std::move(root));
+	//第二轮tree排序
     sortTree(_root.get());
 
-	//查询有效性检查
+	//对tree做有效性检查
     Status validStatus = isValid(_root.get(), *_qr);
     if (!validStatus.isOK()) {
         return validStatus;
@@ -324,7 +339,8 @@ bool CanonicalQuery::isSimpleIdQuery(const BSONObj& query) {
     return hasID;
 }
 
-// static
+// static  CanonicalQuery::init调用  expression tree排序
+//sort tree 主要是对MatchExpression的各个子树进行排序，好处就是做到对于索引的查找只需要一次就能完成。其具体的排序的顺序： 
 void CanonicalQuery::sortTree(MatchExpression* tree) {
     for (size_t i = 0; i < tree->numChildren(); ++i) {
         sortTree(tree->getChild(i));
@@ -335,7 +351,7 @@ void CanonicalQuery::sortTree(MatchExpression* tree) {
     }
 }
 
-// static
+// static   计算child孩子节点总数
 size_t CanonicalQuery::countNodes(const MatchExpression* root, MatchExpression::MatchType type) {
     size_t sum = 0;
     if (type == root->matchType()) {
@@ -364,7 +380,8 @@ bool hasNodeInSubtree(MatchExpression* root,
     return false;
 }
 
-//查询得一些有效性检查  CanonicalQuery::init调用
+//参考https://blog.csdn.net/baijiwei/article/details/78170387
+//对tree做有效性检查  CanonicalQuery::init调用
 // static
 Status CanonicalQuery::isValid(MatchExpression* root, const QueryRequest& parsed) {
     // Analysis below should be done after squashing the tree to make it clearer.
@@ -492,6 +509,7 @@ std::string CanonicalQuery::toString() const {
     return ss;
 }
 
+//CanonicalQuery序列化输出
 std::string CanonicalQuery::toStringShort() const {
     str::stream ss;
     ss << "query: " << _qr->getFilter().toString() << " sort: " << _qr->getSort().toString()

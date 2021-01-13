@@ -66,28 +66,44 @@ Expression_where_base.h (db\matcher):class WhereMatchExpressionBase : public Mat
 //式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
 //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.477e4df3lsZUre
 //参考https://blog.csdn.net/baijiwei/article/details/78170387
+
 /* 
 MatchExpression 是查询过程的第一步， 它是由一个Bson生成的， 根据bson的的各种设定， 产生一个树型的expression结构， 
 该树形结构中的节点是有一个个的查询操作符。 理解和掌握Mongodb里面第一的操作 符的类型和属性， 是掌握MatchExpression的关键。
 https://blog.csdn.net/baijiwei/article/details/78122733
 
 查询操作符详见:https://docs.mongodb.com/manual/reference/operator/query/
+
+各样的操作符、正则表达式、一般的表达式， 在代码实现里面， 为每一种都定义了一个class， 所有的class 
+都继承自MatchExpression， 这样在所有的parse函数的返回值类型都是 MatchExpression*或者MatchExpression&
+//参考https://blog.csdn.net/baijiwei/article/details/78127191
+
+
+//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
+//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
+
 */
+
+//MatchExpressionParser::parse中把查询filter的 or and not等组织成一颗原始tree,
+//默认tree跟root类型为AndMatchExpression，参考MatchExpressionParser::parse
 
 //CanonicalQuery._root  QuerySolutionNode.filter成员是该类型  一个filter对应一个MatchExpression
 //所有的QuerySolutionNode(代表CanonicalQuery._root树中的一个节点，对应一个MatchExpression)组成一颗树
 class MatchExpression { //很多的xxxMatchExpression继承该类
-//AlwaysBooleanMatchExpression  AlwaysBooleanMatchExpression  ExprMatchExpression等继承该类
+//AlwaysBooleanMatchExpression    ExprMatchExpression等继承该类
     MONGO_DISALLOW_COPYING(MatchExpression);
 
 public:
+    //对应继承类初始化构造适合赋值，例如AndMatchExpression() : ListOfMatchExpression(AND) {}
     enum MatchType { //mongodb查询的逻辑操作符解析可以参考类MatchExpressionParser
-        // tree types
-        AND,
-        OR,
+        // tree types  
+        AND, //AndMatchExpression
+        OR,  //OrMatchExpression
 
         // array types
-        ELEM_MATCH_OBJECT,
+        ELEM_MATCH_OBJECT,  //ElemMatchObjectMatchExpression
         ELEM_MATCH_VALUE,
         SIZE,
 
@@ -107,12 +123,12 @@ public:
         BITS_ANY_CLEAR,
 
         // Negations.
-        NOT,
-        NOR,
+        NOT,  //NotMatchExpression
+        NOR,  //NorMatchExpression
 
         // special types
         TYPE_OPERATOR,
-        GEO,
+        GEO,  
         WHERE,
         EXPRESSION,
 
@@ -159,6 +175,7 @@ public:
      * The value of 'expression' must not be nullptr.
      */
     static std::unique_ptr<MatchExpression> optimize(std::unique_ptr<MatchExpression> expression) {
+        //MatchExpression::getOptimizer
         auto optimizer = expression->getOptimizer();
         return optimizer(std::move(expression));
     }

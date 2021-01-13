@@ -51,6 +51,7 @@ using stdx::make_unique;
 const char* IDHackStage::kStageType = "IDHACK";
 
 
+//prepareExecution中会构造使用
 IDHackStage::IDHackStage(OperationContext* opCtx,
                          const Collection* collection,
                          CanonicalQuery* query,
@@ -227,10 +228,11 @@ void IDHackStage::doInvalidate(OperationContext* opCtx, const RecordId& dl, Inva
     }
 }
 
-// static
+// static   prepareExecution会调用， 查询中没有hint强制、没有skip，并且普通id查询等，则直接走id索引，然后true
 bool IDHackStage::supportsQuery(Collection* collection, const CanonicalQuery& query) {
     return !query.getQueryRequest().showRecordId() && query.getQueryRequest().getHint().isEmpty() &&
         !query.getQueryRequest().getSkip() &&
+        //_id查询
         CanonicalQuery::isSimpleIdQuery(query.getQueryRequest().getFilter()) &&
         !query.getQueryRequest().isTailable() &&
         CollatorInterface::collatorsMatch(query.getCollator(), collection->getDefaultCollator());

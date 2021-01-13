@@ -177,6 +177,22 @@ void QueryPlannerIXSelect::getFields(const MatchExpression* node,
     }
 }
 
+/*
+db.test.find({"name":"yangyazhou", "age":1, "male":1})
+
+外层选举出的out索引打印如下:
+2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 2 is kp: { male: 1.0 } name: 'male_1' io: { v: 2, key: { male: 1.0 }, name: "male_1", ns: "test.test", background: true }
+2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 3 is kp: { male: 1.0, name: 1.0 } name: 'male_1_name_1' io: { v: 2, key: { male: 1.0, name: 1.0 }, name: "male_1_name_1", ns: "test.test", background: true }
+2021-01-12T17:57:31.001+0800 D QUERY    [conn1] Relevant index 4 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+
+遍历当前collection的所有索引，{ appId:1, entryId:1, state:1 } 等等，对于每一个索引，查找fields是否
+包含这个索引的第一列。比如对于索引 { appId:1, entryId:1, state:1 }，在fields数组中查找"appId"，能
+够找到就把这个索引加入到RelevantIndices数组；又比如对于 { expireTime: 1 }，在fields数组中查找"expireTime"，
+找不到，就舍弃；再比如对于(假设存在这个索引)  { entryId: 1, appId: 1  }，在fields数组中查找"entryId"，能
+够找到就把这个索引加入到RelevantIndices数组
+*/
 // static  获取满足条件的索引，QueryPlanner::plan中执行
 void QueryPlannerIXSelect::findRelevantIndices(const unordered_set<string>& fields,
                                                const vector<IndexEntry>& allIndices,

@@ -85,6 +85,7 @@ typedef std::string PlanID;
  *   is tagged according to the index tags in the PlanCacheIndexTree.
  *   This is done by QueryPlanner::tagAccordingToCache.
  */
+//cacheDataFromTaggedTree中构造使用
 struct PlanCacheIndexTree {
 
     /**

@@ -40,6 +40,7 @@
 
 namespace mongo {
 
+//参考QueryPlanner::plan使用
 struct PlanEnumeratorParams {
     PlanEnumeratorParams()
         : intersect(false),
@@ -71,11 +72,12 @@ struct PlanEnumeratorParams {
 /**
  * Provides elements from the power set of possible indices to use.  Uses the available
  * predicate information to make better decisions about what indices are best.
- */ //类PlanEnumerator 罗列MatchExpression的各种可能的组合， （indexScan & collectionScan等）， 生成具体的MatchExpression
+ */ //类PlanEnumerator罗列MatchExpression的各种可能的组合， （indexScan & collectionScan等）， 生成具体的MatchExpression
 // PlanEnumerator 类将MatchExpression 抽象为PredicateAssignment， OrAssignment，ArrayAssignment以及AndAssignment 4种赋值类型， 针对每一种类型做相应的处理， 具体是， 
 //找出每一个叶子节点的所有的index， 放进一个数组里面， 依次遍历每一个index， 就能够enumerator 罗列出来所有可能的情形。 
-//参考https://blog.csdn.net/baijiwei/article/details/78174198
-class PlanEnumerator {
+//参考https://blog.csdn.net/baijiwei/article/details/78174198  
+//https://blog.csdn.net/weixin_30357231/article/details/97716803
+class PlanEnumerator {  //参考QueryPlanner::plan
     MONGO_DISALLOW_COPYING(PlanEnumerator);
 
 public:

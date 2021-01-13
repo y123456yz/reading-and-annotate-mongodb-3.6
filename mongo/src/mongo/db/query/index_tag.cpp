@@ -158,6 +158,26 @@ MatchExpression* getIndexedOr(MatchExpression* tree) {
 // Pushes down 'node' along the routes in 'target' specified in 'destinations'. Each value in the
 // route is the index of a child in an indexed OR. Returns true if 'node' is moved to every indexed
 // descendant of 'target'.
+/*
+3.6新特性
+下面根据具体语句来说明，先看下面的查询语句：
+
+find({a: 1, $or: [{b: 2, c: 2}, {b: 3, c: 3}]}) 
+假设有索引 {a: 1, c: 1} 和 {b: 1, c: 1}，在3.6版本之前，会生成两个候选plan：
+
+扫描索引 { a: 1, c: 1 }，且扫描边界为{a: [[1, 1]], c: [["MinKey", "MaxKey"]]}
+扫描索引{ b: 1, c: 1 }（针对OR条件）
+因为有or条件的pushdown机制，条件a:1会被pushdown到or 的所有子分支，即等价于  
+$or: [ { a: 1, b: 2, c: 2 }, { a: 1, b: 3, c: 3 } ]。
+
+3.6版本的变化是，它会认为在扫描{ a: 1, c: 1 }索引的时候，可以有两种不同的边界，一种是
+{a: [[1, 1]], c: [[2, 2]]}，另一种是{a: [[1, 1]], c: [[3, 3]]}，而不仅仅是
+{a: [[1, 1]], c: [["MinKey", "MaxKey"]]}。这两个边界组合生成了一个候选plan。
+
+3.6版本的这种机制的改变在某些时候确实起到了优化作用，扫描的索引树总节点数量变少了，减少了IO次数。
+https://blog.csdn.net/weixin_30357231/article/details/97716803
+
+*/
 bool pushdownNode(MatchExpression* node,
                   MatchExpression* target,
                   std::vector<OrPushdownTag::Destination> destinations) {

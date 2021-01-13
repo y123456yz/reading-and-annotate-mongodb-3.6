@@ -124,6 +124,7 @@ bool turnIxscanIntoCount(QuerySolution* soln);
 }  // namespace
 
 
+//获取collection对应QueryPlannerParams信息
 void fillOutPlannerParams(OperationContext* opCtx,
                           Collection* collection,
                           CanonicalQuery* canonicalQuery,
@@ -235,7 +236,7 @@ struct PrepareExecutionResult {
         : canonicalQuery(std::move(canonicalQuery)),
           querySolution(std::move(querySolution)),
           root(std::move(root)) {}
-
+	//请求标准化信息
     unique_ptr<CanonicalQuery> canonicalQuery;
 	//参考prepareExecution 
     unique_ptr<QuerySolution> querySolution;
@@ -316,6 +317,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         canonicalQuery->setCollator(collection->getDefaultCollator()->clone());
     }
 
+	//获取id索引
     const IndexDescriptor* descriptor = collection->getIndexCatalog()->findIdIndex(opCtx);
 
     // If we have an _id index we can use an idhack plan.
@@ -325,7 +327,9 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         root = make_unique<IDHackStage>(opCtx, collection, canonicalQuery.get(), ws, descriptor);
 
         // Might have to filter out orphaned docs.
+        //过滤掉孤儿文档，也就是不属于该分片的文档
         if (plannerParams.options & QueryPlannerParams::INCLUDE_SHARD_FILTER) { 
+			//如果需要过滤掉孤儿文档，则把SortKeyGeneratorStage添加到tree中
             root = make_unique<ShardFilterStage>(
                 opCtx,
                 CollectionShardingState::get(opCtx, canonicalQuery->nss())->getMetadata(),
@@ -342,6 +346,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
             params.collator = canonicalQuery->getCollator();
 
             // Add a SortKeyGeneratorStage if there is a $meta sortKey projection.
+            //如果需要排序，则把SortKeyGeneratorStage添加到tree中
             if (canonicalQuery->getProj()->wantSortKey()) {
                 root =
                     make_unique<SortKeyGeneratorStage>(opCtx,
@@ -362,15 +367,19 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
                 params.projImpl = ProjectionStageParams::SIMPLE_DOC;
             }
 
+			//ProjectionStage添加到root树中
             root = make_unique<ProjectionStage>(opCtx, params, ws, root.release());
         }
 
+		//构造prepareExecution返回
         return PrepareExecutionResult(
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
     }
 
     // Tailable: If the query requests tailable the collection must be capped.
+    //固定集合，并且是isTailable请求，详见https://blog.51cto.com/ultrasql/1789038
     if (canonicalQuery->getQueryRequest().isTailable()) {
+		//Tailable必须为capped固定集合
         if (!collection->isCapped()) {
             return Status(ErrorCodes::BadValue,
                           "error processing query: " + canonicalQuery->toString() +
@@ -379,6 +388,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     }
 
     // Try to look up a cached solution for the query.
+    //plancache可以参考https://segmentfault.com/a/1190000015236644 
     CachedSolution* rawCS;
 	//从plancache中获取
     if (PlanCache::shouldCacheQuery(*canonicalQuery) &&
