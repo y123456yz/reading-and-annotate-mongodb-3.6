@@ -469,6 +469,7 @@ bool QueryPlannerAnalysis::explodeForSort(const CanonicalQuery& query,
     return true;
 }
 
+//QueryPlannerAnalysis::analyzeDataAccess调用
 // static
 QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query,
                                                      const QueryPlannerParams& params,
@@ -479,6 +480,7 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
     const QueryRequest& qr = query.getQueryRequest();
     const BSONObj& sortObj = qr.getSort();
 
+	//如果查询条件中不带有sort则直接返回
     if (sortObj.isEmpty()) {
         return solnRoot;
     }
@@ -488,6 +490,7 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
 
     // If the sort is $natural, we ignore it, assuming that the caller has detected that and
     // outputted a collscan to satisfy the desired order.
+    //如果是$natural排序，直接返回
     BSONElement natural = dps::extractElementAtPath(sortObj, "$natural");
     if (!natural.eoo()) {
         return solnRoot;
@@ -616,7 +619,7 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
 }
 
 // static  buildWholeIXSoln  buildCollscanSoln调用  QueryPlanner::plan中调用执行
-//没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
+//buildCollscanSoln没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
 QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     const CanonicalQuery& query,
     const QueryPlannerParams& params,
@@ -656,6 +659,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
             }
         }
 
+		//root改为ShardingFilterNode，原solnRoot添加到新root的children，也就是ShardingFilterNode变为新root
         ShardingFilterNode* sfn = new ShardingFilterNode();
         sfn->children.push_back(solnRoot.release());
         solnRoot.reset(sfn);

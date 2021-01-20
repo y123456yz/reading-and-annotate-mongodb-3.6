@@ -241,6 +241,10 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
     return std::move(cq);
 }
 
+//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
+//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
 //CanonicalQuery::canonicalize调用，
 //从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
 Status CanonicalQuery::init(OperationContext* opCtx,
@@ -266,7 +270,7 @@ Status CanonicalQuery::init(OperationContext* opCtx,
     //也就是老版本中的CanonicalQuery::normalizeTree，参考https://blog.csdn.net/baijiwei/article/details/78170387
     //主要对树中各个节点做合并优化
     _root = MatchExpression::optimize(std::move(root));
-	//第二轮tree排序
+	//第二轮tree排序,主要是对MatchExpression的各个子树进行排序，好处就是做到对于索引的查找只需要一次就能完成。其具体的排序的顺序： 
     sortTree(_root.get());
 
 	//对tree做有效性检查
@@ -509,6 +513,8 @@ std::string CanonicalQuery::toString() const {
     return ss;
 }
 
+//例如db.test.find( {$or : [{ $and : [ { name : "yangyazhou2" }, { "age" : 99 } ] },{ $or : [ {  name : "yangyazhou" }, { "xx" : 3} ] } ]} ).sort({"name":-1}).limit(7)
+//对应输出为:Running query as sub-queries: query: { $or: [ { $and: [ { name: "yangyazhou2" }, { age: 99.0 } ] }, { $or: [ { name: "yangyazhou" }, { xx: 3.0 } ] } ] } sort: { name: -1.0 } projection: {} limit: 7
 //CanonicalQuery序列化输出
 std::string CanonicalQuery::toStringShort() const {
     str::stream ss;

@@ -278,6 +278,7 @@ QuerySolution* buildCollscanSoln(const CanonicalQuery& query,
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
 
+
 //QueryPlanner::plan
 QuerySolution* buildWholeIXSoln(const IndexEntry& index,
                                 const CanonicalQuery& query,
@@ -294,6 +295,8 @@ bool providesSort(const CanonicalQuery& query, const BSONObj& kp) {
 
 // static
 const int QueryPlanner::kPlannerVersion = 1;
+
+//根据候选索引和MatchExpression生成PlanCacheIndexTree
 //QueryPlanner::plan中调用
 Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const taggedTree,
                                              const vector<IndexEntry>& relevantIndices,
@@ -585,6 +588,8 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
 //执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache
 
 // static   prepareExecution中调用  调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
+
+//根据已有索引生成对应QuerySolution存放到out数组中
 //注意QueryPlanner::plan和QueryPlanner::planFromCache的区别
 Status QueryPlanner::plan(const CanonicalQuery& query,
                           const QueryPlannerParams& params,
@@ -983,6 +988,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     // If we have any relevant indices, we try to create indexed plans.
+    //生成QuerySolution添加到out中
     if (0 < relevantIndices.size()) {
         // The enumerator spits out trees tagged with IndexTag(s).
         PlanEnumeratorParams enumParams;
@@ -996,6 +1002,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 	
         unique_ptr<MatchExpression> rawTree;
 		//根据CanonicalQuery和满足要求的索引relevantIndices来生成QuerySolution树
+		//PlanEnumerator::getNext
         while ((rawTree = isp.getNext()) && (out->size() < params.maxIndexedSolutions)) {
 		/* 
 	    db.test.find({"name":"yangyazhou"}).sort({"name":1}):
@@ -1046,6 +1053,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                     scd->tree.reset(autoData.release());
                     soln->cacheData.reset(scd);
                 }
+				//QuerySolution添加到out中
                 out->push_back(soln);
             }
         }
@@ -1054,7 +1062,8 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // Don't leave tags on query tree.
     query.root()->resetTag();
 
-    LOG(2) << "Planner: outputted " << out->size() << " indexed solutions."; //满足条件的索引个数
+	//满足条件的索引个数
+    LOG(2) << "Planner: outputted " << out->size() << " indexed solutions."; 
 
     // Produce legible error message for failed OR planning with a TEXT child.
     // TODO: support collection scan for non-TEXT children of OR.
@@ -1072,6 +1081,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     // An index was hinted.  If there are any solutions, they use the hinted index.  If not, we
     // scan the entire index to provide results and output that as our plan.  This is the
     // desired behavior when an index is hinted that is not relevant to the query.
+    //走强制索引
     if (!hintIndex.isEmpty()) {
         if (0 == out->size()) {
             // Push hinted index solution to output list if found. It is possible to end up without
@@ -1088,7 +1098,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // If a sort order is requested, there may be an index that provides it, even if that
     // index is not over any predicates in the query.
-    //sort排序
+    //sort排序并且是GEO类型，同时带有TEXT
     if (!query.getQueryRequest().getSort().isEmpty() &&
         !QueryPlannerCommon::hasNode(query.root(), MatchExpression::GEO_NEAR) &&
         !QueryPlannerCommon::hasNode(query.root(), MatchExpression::TEXT)) {
@@ -1224,8 +1234,10 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     bool collscanRequested = (params.options & QueryPlannerParams::INCLUDE_COLLSCAN);
 
     // No indexed plans?  We must provide a collscan if possible or else we can't run the query.
+    //没有合适的索引并且允许全部扫描
     bool collscanNeeded = (0 == out->size() && canTableScan);
 
+	//如果没有合适的QuerySolution，则进行全部扫描
     if (possibleToCollscan && (collscanRequested || collscanNeeded)) {
 		//没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，上面如果有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
         QuerySolution* collscan = buildCollscanSoln(query, isTailable, params);

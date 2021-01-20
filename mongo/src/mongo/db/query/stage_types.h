@@ -34,10 +34,13 @@ namespace mongo {
  * These map to implementations of the PlanStage interface, all of which live in db/exec/
  */
 enum StageType { //参考PlanStage* buildStages
+    //对应QuerySolutionNode为AndHashNode
     STAGE_AND_HASH, //0
+    //对应QuerySolutionNode为AndSortedNode
     STAGE_AND_SORTED,  //1
     STAGE_CACHED_PLAN, //2
-    //CollectionScan::doWork
+    //CollectionScan::doWork 
+    //对应QuerySolutionNode为CollectionScanNode
     STAGE_COLLSCAN,  //全表扫描   //例如CollectionScanNode赋值参考CollectionScanNode::getType
 
     // This stage sits at the root of the query tree and counts up the number of results
@@ -53,23 +56,28 @@ enum StageType { //参考PlanStage* buildStages
 
     // If we're running a distinct, we only care about one value for each key.  The distinct
     // scan stage is an ixscan with some key-skipping behvaior that only distinct uses.
+    //对应QuerySolutionNode为DistinctNode
     STAGE_DISTINCT_SCAN,//7
 
     // Dummy stage used for receiving notifications of deletions during chunk migration.
     STAGE_NOTIFY_DELETE,//8
 
+    //对应QuerySolutionNode为EnsureSortedNode
     STAGE_ENSURE_SORTED,//9
 
     STAGE_EOF,//10
 
     // This is more of an "internal-only" stage where we try to keep docs that were mutated
     // during query execution.
+    //对应QuerySolutionNode为KeepMutationsNode
     STAGE_KEEP_MUTATIONS,  
-
+    //对应QuerySolutionNode为FetchNode
     STAGE_FETCH, //12  FetchStage::doWork
 
     // The two $geoNear impls imply a fetch+sort and must be stages.
+    //对应QuerySolutionNode为GeoNear2DNode
     STAGE_GEO_NEAR_2D,
+    //对应QuerySolutionNode为GeoNear2DSphereNode
     STAGE_GEO_NEAR_2DSPHERE,
 
     STAGE_GROUP, //15
@@ -79,7 +87,9 @@ enum StageType { //参考PlanStage* buildStages
     // Simple wrapper to iterate a SortedDataInterface::Cursor.
     STAGE_INDEX_ITERATOR,
 
+    ////对应QuerySolutionNode为IndexScanNode
     STAGE_IXSCAN,  //18 索引扫描，INDEX SCAN   IndexScan::doWork
+    //对应QuerySolutionNode为LimitNode
     STAGE_LIMIT,
 
     // Implements parallelCollectionScan.
@@ -87,21 +97,29 @@ enum StageType { //参考PlanStage* buildStages
 
     STAGE_MULTI_PLAN,  //21 MultiPlanStage
     STAGE_OPLOG_START,
+    //对应QuerySolutionNode为OrNode
     STAGE_OR,
+    //对应QuerySolutionNode为ProjectionNode
     STAGE_PROJECTION,
 
     // Stage for running aggregation pipelines.
     STAGE_PIPELINE_PROXY, //25
 
     STAGE_QUEUED_DATA,
+    //对应QuerySolutionNode为ShardingFilterNode
     STAGE_SHARDING_FILTER,
+    //对应QuerySolutionNode为SkipNode
     STAGE_SKIP,
+    //对应QuerySolutionNode为SortNode
     STAGE_SORT,  //29 SortStage
+    //对应QuerySolutionNode为SortKeyGeneratorNode
     STAGE_SORT_KEY_GENERATOR, //30  SortKeyGeneratorStage
+    ////对应QuerySolutionNode为MergeSortNode
     STAGE_SORT_MERGE,
     STAGE_SUBPLAN,
 
     // Stages for running text search.
+    //对应QuerySolutionNode为TextNode
     STAGE_TEXT,
     STAGE_TEXT_OR,
     STAGE_TEXT_MATCH, //35

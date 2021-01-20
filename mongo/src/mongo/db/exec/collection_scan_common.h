@@ -35,7 +35,9 @@ namespace mongo {
 
 class Collection;
 
+//buildStages中使用
 struct CollectionScanParams {
+    //排序顺序，增还是减
     enum Direction {
         FORWARD = 1,
         BACKWARD = -1,

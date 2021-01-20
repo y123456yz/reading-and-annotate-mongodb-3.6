@@ -132,6 +132,7 @@ struct QueryPlannerParams {
     // What's the max number of indexed solutions we want to output?  It's expensive to compare
     // plans via the MultiPlanStage, and the set of possible plans is very large for certain
     // index+query combinations.
+    //д╛хо64 MONGO_EXPORT_SERVER_PARAMETER(internalQueryPlannerMaxIndexedSolutions, int, 64);
     size_t maxIndexedSolutions;
 };
 

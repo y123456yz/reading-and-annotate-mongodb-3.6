@@ -45,7 +45,12 @@ class GeoNearExpression;
 /**
  * This is an abstract representation of a query plan.  It can be transcribed into a tree of
  * PlanStages, which can then be handed to a PlanRunner for execution.
- */ //QueryPlannerAccess::buildIndexedDataAccess中生成该类    
+ */ 
+//所有的QuerySolution.root是一颗tree,所有的树节点类型为QuerySolutionNode，这些节点就挂载到这棵树中
+//QuerySolution.root树种的各个节点真实类型为QuerySolutionNode的继承类，例如CollectionScanNode、AndHashNode等
+//QuerySolutionNode的具体继承类实现见本文件后面
+
+//QueryPlannerAccess::buildIndexedDataAccess中生成该类    
 struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的FetchNode CollectionScanNode  AndHashNode等类中继承该类
     QuerySolutionNode() {}
     virtual ~QuerySolutionNode() {
@@ -174,11 +179,12 @@ private:
  * of stages. 每个查询计划QuerySolution对应一个计划阶段PlanStage. 见getExecutor
  */ //参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
 //prepareExecution中根据QueryPlanner::plan生成QuerySolution
+//PlanExecutor的主要作用是选出最佳的QuerySolution， 并且执行该solution
 //每个索引对应一种执行计划，在MongoDB中叫解决方案 
 struct QuerySolution { //执行计划，可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
     QuerySolution() : hasBlockingStage(false), indexFilterApplied(false) {}
 
-    // Owned here.
+    // Owned here. 
     std::unique_ptr<QuerySolutionNode> root;
 
     // Any filters in root or below point into this object.  Must be owned.
@@ -265,6 +271,7 @@ struct TextNode : public QuerySolutionNode {
     BSONObj indexPrefix;
 };
 
+//QueryPlannerAccess::makeCollectionScan中构造使用
 struct CollectionScanNode : public QuerySolutionNode {
     CollectionScanNode();
     virtual ~CollectionScanNode() {}
@@ -303,6 +310,7 @@ struct CollectionScanNode : public QuerySolutionNode {
     // across a sharded cluster.
     bool shouldTrackLatestOplogTimestamp = false;
 
+    //增排序 还是减排序
     int direction;
 
     // maxScan option to .find() limits how many docs we look at.
@@ -337,7 +345,7 @@ struct AndHashNode : public QuerySolutionNode {
 struct AndSortedNode : public QuerySolutionNode {
     AndSortedNode();
     virtual ~AndSortedNode();
-
+    //对应QuerySolutionNode为AndSortedNode
     virtual StageType getType() const {
         return STAGE_AND_SORTED;
     }
@@ -361,7 +369,7 @@ struct AndSortedNode : public QuerySolutionNode {
 struct OrNode : public QuerySolutionNode {
     OrNode();
     virtual ~OrNode();
-
+    //对应QuerySolutionNode为OrNode
     virtual StageType getType() const {
         return STAGE_OR;
     }
@@ -389,7 +397,7 @@ struct OrNode : public QuerySolutionNode {
 struct MergeSortNode : public QuerySolutionNode {
     MergeSortNode();
     virtual ~MergeSortNode();
-
+    //对应QuerySolutionNode为MergeSortNode
     virtual StageType getType() const {
         return STAGE_SORT_MERGE;
     }
@@ -425,7 +433,7 @@ struct MergeSortNode : public QuerySolutionNode {
 struct FetchNode : public QuerySolutionNode {
     FetchNode();
     virtual ~FetchNode() {}
-
+    //对应QuerySolutionNode为FetchNode
     virtual StageType getType() const {
         return STAGE_FETCH;
     }
@@ -455,7 +463,7 @@ struct IndexScanNode : public QuerySolutionNode {
     virtual ~IndexScanNode() {}
 
     virtual void computeProperties();
-
+    //对应QuerySolutionNode为IndexScanNode
     virtual StageType getType() const {
         return STAGE_IXSCAN;
     }
@@ -532,7 +540,7 @@ struct ProjectionNode : public QuerySolutionNode {
           parsed(proj) {}
 
     virtual ~ProjectionNode() {}
-
+    //对应QuerySolutionNode为ProjectionNode
     virtual StageType getType() const {
         return STAGE_PROJECTION;
     }
@@ -594,6 +602,7 @@ struct ProjectionNode : public QuerySolutionNode {
 };
 
 struct SortKeyGeneratorNode : public QuerySolutionNode {
+    //对应QuerySolutionNode为SortKeyGeneratorNode
     StageType getType() const final {
         return STAGE_SORT_KEY_GENERATOR;
     }
@@ -626,7 +635,7 @@ struct SortNode : public QuerySolutionNode {
     SortNode() : _sorts(SimpleBSONObjComparator::kInstance.makeBSONObjSet()), limit(0) {}
 
     virtual ~SortNode() {}
-
+    //对应QuerySolutionNode为SortNode
     virtual StageType getType() const {
         return STAGE_SORT;
     }
@@ -668,7 +677,7 @@ struct SortNode : public QuerySolutionNode {
 struct LimitNode : public QuerySolutionNode {
     LimitNode() {}
     virtual ~LimitNode() {}
-
+    //对应QuerySolutionNode为LimitNode
     virtual StageType getType() const {
         return STAGE_LIMIT;
     }
@@ -696,7 +705,7 @@ struct LimitNode : public QuerySolutionNode {
 struct SkipNode : public QuerySolutionNode {
     SkipNode() {}
     virtual ~SkipNode() {}
-
+    //对应QuerySolutionNode为SkipNode
     virtual StageType getType() const {
         return STAGE_SKIP;
     }
@@ -729,7 +738,7 @@ struct GeoNear2DNode : public QuerySolutionNode {
           addDistMeta(false) {}
 
     virtual ~GeoNear2DNode() {}
-
+    //对应QuerySolutionNode为GeoNear2DNode
     virtual StageType getType() const {
         return STAGE_GEO_NEAR_2D;
     }
@@ -770,7 +779,7 @@ struct GeoNear2DSphereNode : public QuerySolutionNode {
           addDistMeta(false) {}
 
     virtual ~GeoNear2DSphereNode() {}
-
+    //对应QuerySolutionNode为GeoNear2DSphereNode
     virtual StageType getType() const {
         return STAGE_GEO_NEAR_2DSPHERE;
     }
@@ -812,10 +821,11 @@ struct GeoNear2DSphereNode : public QuerySolutionNode {
  * projection, and in fact should be done as early as possible to avoid propagating stale data
  * through the pipeline.
  */
+//QueryPlannerAnalysis::analyzeDataAccess中使用
 struct ShardingFilterNode : public QuerySolutionNode {
     ShardingFilterNode() {}
     virtual ~ShardingFilterNode() {}
-
+    //对应QuerySolutionNode为ShardingFilterNode
     virtual StageType getType() const {
         return STAGE_SHARDING_FILTER;
     }
@@ -846,7 +856,7 @@ struct KeepMutationsNode : public QuerySolutionNode {
     KeepMutationsNode() : sorts(SimpleBSONObjComparator::kInstance.makeBSONObjSet()) {}
 
     virtual ~KeepMutationsNode() {}
-
+    //对应QuerySolutionNode为KeepMutationsNode
     virtual StageType getType() const {
         return STAGE_KEEP_MUTATIONS;
     }
@@ -884,7 +894,7 @@ struct DistinctNode : public QuerySolutionNode {
         : sorts(SimpleBSONObjComparator::kInstance.makeBSONObjSet()), index(std::move(index)) {}
 
     virtual ~DistinctNode() {}
-
+    //对应QuerySolutionNode为DistinctNode
     virtual StageType getType() const {
         return STAGE_DISTINCT_SCAN;
     }
@@ -925,7 +935,7 @@ struct CountScanNode : public QuerySolutionNode {
         : sorts(SimpleBSONObjComparator::kInstance.makeBSONObjSet()), index(std::move(index)) {}
 
     virtual ~CountScanNode() {}
-
+    //对应QuerySolutionNode为CountScanNode
     virtual StageType getType() const {
         return STAGE_COUNT_SCAN;
     }
@@ -960,10 +970,11 @@ struct CountScanNode : public QuerySolutionNode {
 /**
  * This stage drops results that are out of sorted order.
  */
+
 struct EnsureSortedNode : public QuerySolutionNode {
     EnsureSortedNode() {}
     virtual ~EnsureSortedNode() {}
-
+    //对应QuerySolutionNode为EnsureSortedNode
     virtual StageType getType() const {
         return STAGE_ENSURE_SORTED;
     }

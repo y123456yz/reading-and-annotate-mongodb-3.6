@@ -142,6 +142,7 @@ using std::unique_ptr;
 using std::vector;
 using stdx::make_unique;
 
+//buildCollscanSoln中调用，生成CollectionScanNode
 // static
 std::unique_ptr<QuerySolutionNode> QueryPlannerAccess::makeCollectionScan(
     const CanonicalQuery& query, bool tailable, const QueryPlannerParams& params) {

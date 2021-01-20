@@ -480,6 +480,12 @@ void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
     }
 }
 
+
+/*
+通过 QueryPlannerIXSelect::stripInvalidAssignments 去掉partialindex 或者2Dsparedeng 被认为invalid的赋值； 
+还有另外一个优化index的函数： QueryPlannerIXSelect::stripUnneededAssignments， 它会找出AND几点的EQ操作， 
+如果某个field的EQ操作只有一个index， 就去掉该节点的其他index：
+*/
 // static
 void QueryPlannerIXSelect::stripInvalidAssignments(MatchExpression* node,
                                                    const vector<IndexEntry>& indices) {

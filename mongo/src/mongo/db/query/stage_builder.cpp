@@ -406,7 +406,7 @@ PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
 #7  0x00007f644570e623 in mongo::(anonymous namespace)::FindCmd::run 
 
 */
-//prepareExecution中执行  
+//prepareExecution  CachedPlanStage::replan  SubplanStage::choosePlanForSubqueries SubplanStage::choosePlanWholeQuery中执行  
 //StageBuilder::build函数,根据查询计划生成计划阶段PlanStage,每个查询计划对应一个计划阶段.
 // static (this one is used for Cached and MultiPlanStage) 
 bool StageBuilder::build(OperationContext* opCtx,

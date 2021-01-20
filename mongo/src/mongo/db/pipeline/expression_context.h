@@ -50,7 +50,7 @@
 #include "mongo/util/uuid.h"
 
 namespace mongo {
-//FindCmd::run中会用到
+//FindCmd::run   CanonicalQuery::canonicalize中会用到
 class ExpressionContext : public RefCountable {
 public:
     struct ResolvedNamespace {

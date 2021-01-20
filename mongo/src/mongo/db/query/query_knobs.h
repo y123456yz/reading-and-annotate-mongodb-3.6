@@ -77,6 +77,7 @@ extern AtomicDouble internalQueryCacheEvictionRatio;
 //
 
 // How many indexed solutions will QueryPlanner::plan output?
+//MONGO_EXPORT_SERVER_PARAMETER(internalQueryPlannerMaxIndexedSolutions, int, 64);
 extern AtomicInt32 internalQueryPlannerMaxIndexedSolutions;
 
 // How many solutions will the enumerator consider at each OR?

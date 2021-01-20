@@ -1897,6 +1897,11 @@ Status parseSub(StringData name,
 MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
 参考https://blog.csdn.net/baijiwei/article/details/78127191
 */ 
+
+//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
+//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
 StatusWithMatchExpression MatchExpressionParser::parse(
     const BSONObj& obj,
     const boost::intrusive_ptr<ExpressionContext>& expCtx,

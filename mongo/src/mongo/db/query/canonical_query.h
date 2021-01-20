@@ -209,12 +209,14 @@ private:
     // _root points into _qr->getFilter()
     //参考https://blog.csdn.net/baijiwei/article/details/78170387
     //MatchExpression是将filter算子里每个逻辑运算转换成各个类型的表达式(GT,ET,LT,AND,OR...)，构成一个表达式tree结构，顶层root是一个AndMatchExpression，如果含有AND、OR、NOR，tree的深度就+1. 这个表达式tree会用做以后过滤记录。
-    std::unique_ptr<MatchExpression> _root; 
+    std::unique_ptr<MatchExpression> _root;  //赋值参考CanonicalQuery::init
 
     //projection : 选择输出指定的fields，类比SQL的select  例如db.news.find( {}, { id: 1, title: 1 } )只输出id和title字段，第一个参数为查询条件，空代表查询所有
+    //projection赋值见ParsedProjection::make
     std::unique_ptr<ParsedProjection> _proj; 
 
     //collator是用户可以自定义的除了ByteComparator(逐字节比较排序)之外的比较方法，比如内置的中文比较。collator需要和filter里的逻辑表达式相关联(比如$gt大于运算)。
+    //_collator赋值见ParsedProjection::make
     std::unique_ptr<CollatorInterface> _collator;
 
     bool _canHaveNoopMatchNodes = false;

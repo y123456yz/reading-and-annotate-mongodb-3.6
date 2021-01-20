@@ -195,6 +195,8 @@ private:
     // one-to-one with _candidates.
     //赋值见MultiPlanStage::addPlan   QuerySolution和PlanStage都在该结构中
     //在MultiPlanStage::pickBestPlan中根据这些选择出来的索引对应的解决方案来选择最优的索引
+
+    //这里包含所有的QuerySolution及其对应的PlanStage，参考MultiPlanStage::addPlan
     std::vector<CandidatePlan> _candidates;
 
     // index into _candidates, of the winner of the plan competition

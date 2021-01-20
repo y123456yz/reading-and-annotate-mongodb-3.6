@@ -240,6 +240,7 @@ struct PrepareExecutionResult {
     unique_ptr<CanonicalQuery> canonicalQuery;
 	//参考prepareExecution 
     unique_ptr<QuerySolution> querySolution;
+	//根据QuerySolution生成PlanStage，参考prepareExecution
 	//参考prepareExecution  对应类型CachedPlanStage PlanStage(一个索引满足条件)  MultiPlanStage(多个满足条件)
     unique_ptr<PlanStage> root;  
 };
@@ -311,7 +312,9 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     fillOutPlannerParams(opCtx, collection, canonicalQuery.get(), &plannerParams);
 
     // If the canonical query does not have a user-specified collation, set it from the collection
-    // default. //Collation特性允许MongoDB的用户根据不同的语言定制排序规则,参考http://www.mongoing.com/archives/3912
+    // default. 
+
+	//Collation特性允许MongoDB的用户根据不同的语言定制排序规则,参考http://www.mongoing.com/archives/3912
     if (canonicalQuery->getQueryRequest().getCollation().isEmpty() &&
         collection->getDefaultCollator()) {
         canonicalQuery->setCollator(collection->getDefaultCollator()->clone());
@@ -437,6 +440,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
     vector<QuerySolution*> solutions;
 	//调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
+	//根据已有索引选择合适的索引生成QuerySolution数组
     Status status = QueryPlanner::plan(*canonicalQuery, plannerParams, &solutions); //获取满足条件的plan存入solutions
     if (!status.isOK()) {
         return Status(ErrorCodes::BadValue,
@@ -446,6 +450,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
     // We cannot figure out how to answer the query.  Perhaps it requires an index
     // we do not have?
+    //一般不会走到这里面来，因为QueryPlanner::plan中如果没有合适的QuerySolution，则会生成一个collectionScan
     if (0 == solutions.size()) {
         return Status(ErrorCodes::BadValue,
                       str::stream() << "error processing query: " << canonicalQuery->toString()
@@ -495,7 +500,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         querySolution.reset(solutions[0]); //querySolution取solutions第一个成员
         return PrepareExecutionResult(
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
-    } else { //多个plan满足要求
+    } else { //多个QuerySolution满足要求
         // Many solutions. Create a MultiPlanStage to pick the best, update the cache,
         // and so on. The working set will be shared by all candidate plans.
         auto multiPlanStage = make_unique<MultiPlanStage>(opCtx, collection, canonicalQuery.get());
@@ -507,7 +512,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
 
             // version of StageBuild::build when WorkingSet is shared
             PlanStage* nextPlanRoot;
-			//一个QuerySolution对应一个PlanStage
+			//一个QuerySolution对应一个PlanStage nextPlanRoot
             verify(StageBuilder::build(
                 opCtx, collection, *canonicalQuery, *solutions[ix], ws, &nextPlanRoot));
 

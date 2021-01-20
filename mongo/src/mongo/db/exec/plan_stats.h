@@ -209,6 +209,7 @@ struct CollectionScanStats : public SpecificStats {
 
     // >0 if we're traversing the collection forwards. <0 if we're traversing it
     // backwards.
+    //query的查询顺序，此处是forward，如果用了.sort({w:-1})将显示backward。
     int direction;
 
     // If present, indicates that the collection scan will stop and return EOF the first time it
@@ -263,6 +264,8 @@ struct CountScanStats : public SpecificStats {
     // The starting/ending key(s) of the index scan.
     // startKey and endKey contain the fields of keyPattern, with values
     // that match the corresponding index bounds.
+    //例如查询条件是w:1,使用的index是w与n的联合索引，故w是[1.0,1.0]而n没有指定在查询条件中，
+    //故是[MinKey,MaxKey]。     explain.queryPlanner.winningPlan.indexBounds显示
     BSONObj startKey;
     BSONObj endKey;
     // Whether or not those keys are inclusive or exclusive bounds.
@@ -272,6 +275,10 @@ struct CountScanStats : public SpecificStats {
     int indexVersion;
 
     // Set to true if the index used for the count scan is multikey.
+    /*
+    explain.queryPlanner.winningPlan.isMultiKey
+    是否是Multikey，此处返回是false，如果索引建立在array上，此处将是true。
+     */
     bool isMultiKey;
 
     // Represents which prefixes of the indexed field(s) cause the index to be multikey.
