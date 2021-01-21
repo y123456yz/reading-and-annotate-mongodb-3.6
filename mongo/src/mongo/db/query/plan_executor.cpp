@@ -265,6 +265,7 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
 
     // If we didn't have to do subplanning, we might still have to do regular
     // multi plan selection...
+    //∂‘”¶MultiPlanStage
     foundStage = getStageByType(_root.get(), STAGE_MULTI_PLAN); //multi plan
     if (foundStage) {
         MultiPlanStage* mps = static_cast<MultiPlanStage*>(foundStage);

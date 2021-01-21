@@ -662,6 +662,7 @@ private:
     NamespaceString _nss;
     OptionalCollectionUUID _uuid;
 
+    //find命令官方文档参数列表参考https://docs.mongodb.com/v3.6/reference/command/find/
     //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
     BSONObj _filter;
     BSONObj _proj;

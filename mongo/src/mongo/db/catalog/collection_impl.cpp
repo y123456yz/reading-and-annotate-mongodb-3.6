@@ -866,10 +866,12 @@ std::shared_ptr<CappedInsertNotifier> CollectionImpl::getCappedInsertNotifier() 
     return _cappedNotifier;
 }
 
+//获取表中文档总数，参考MultiPlanStage::getTrialPeriodWorks
 uint64_t CollectionImpl::numRecords(OperationContext* opCtx) const {
     return _recordStore->numRecords(opCtx);
 }
 
+//表中数据大小
 uint64_t CollectionImpl::dataSize(OperationContext* opCtx) const {
     return _recordStore->dataSize(opCtx);
 }

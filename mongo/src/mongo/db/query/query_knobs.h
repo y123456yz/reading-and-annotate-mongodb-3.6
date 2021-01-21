@@ -46,6 +46,7 @@ extern AtomicInt32 internalQueryPlanEvaluationWorks;
 extern AtomicDouble internalQueryPlanEvaluationCollFraction;
 
 // Stop working plans once a plan returns this many results.
+//д╛хо101
 extern AtomicInt32 internalQueryPlanEvaluationMaxResults;
 
 // Do we give a big ranking bonus to intersection plans?

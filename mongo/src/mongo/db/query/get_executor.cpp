@@ -238,7 +238,8 @@ struct PrepareExecutionResult {
           root(std::move(root)) {}
 	//请求标准化信息
     unique_ptr<CanonicalQuery> canonicalQuery;
-	//参考prepareExecution 
+	//参考prepareExecution, 如果满足条件的QuerySolution只有一个，则这里为对应QuerySolution，同时对应一个root
+	//如果满足条件的solution有多个，也就是可能需要在多个索引中选择最优索引，则该参数无用，所有solution存放与root对应的MultiPlanStage中
     unique_ptr<QuerySolution> querySolution;
 	//根据QuerySolution生成PlanStage，参考prepareExecution
 	//参考prepareExecution  对应类型CachedPlanStage PlanStage(一个索引满足条件)  MultiPlanStage(多个满足条件)
@@ -522,7 +523,8 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
         }
 
         root = std::move(multiPlanStage);
-        return PrepareExecutionResult( //querySolution实际上没有赋值，solutions[]实际上是存在于multiPlanStage
+        return PrepareExecutionResult( 
+			//注意querySolution实际上没有赋值，solutions[]实际上是存在于multiPlanStage
             std::move(canonicalQuery), std::move(querySolution), std::move(root));
     }
 }

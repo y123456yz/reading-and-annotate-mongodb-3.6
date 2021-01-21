@@ -180,7 +180,8 @@ Status MultiPlanStage::tryYield(PlanYieldPolicy* yieldPolicy) {
 
 //参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
 //MultiPlanStage::pickBestPlan中执行
-// static   
+//获取采样数，collection的总记录数*0.29如果比10000小就扫描10000次，如果比10000大那么就扫描collection数量*0.29次。  
+// static     
 size_t MultiPlanStage::getTrialPeriodWorks(OperationContext* opCtx, const Collection* collection) {
     // Run each plan some number of times. This number is at least as great as
     // 'internalQueryPlanEvaluationWorks', but may be larger for big collections.
@@ -204,6 +205,7 @@ size_t MultiPlanStage::getTrialPeriodWorks(OperationContext* opCtx, const Collec
     return numWorks;
 }
 
+//获取请求中NToReturn  limit 和internalQueryPlanEvaluationMaxResults的最小值
 // static
 size_t MultiPlanStage::getTrialPeriodNumToReturn(const CanonicalQuery& query) {
     // Determine the number of results which we will produce during the plan
@@ -245,7 +247,9 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // make sense.
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis); 
 
+	//获取采样数，collection的总记录数*0.29如果比10000小就扫描10000次，如果比10000大那么就扫描collection数量*0.29次。  
     size_t numWorks = getTrialPeriodWorks(getOpCtx(), _collection);
+	//获取请求中NToReturn  limit 和internalQueryPlanEvaluationMaxResults的最小值
     size_t numResults = getTrialPeriodNumToReturn(*_query);
 
     // Work the plans, stopping when a plan hits EOF or returns some
@@ -381,11 +385,12 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     return Status::OK();
 }
 
-//MultiPlanStage::pickBestPlan  https://yq.aliyun.com/articles/74635
-//workAllPlans执行所有的查询计划，MultiPlanStage::pickBestPlan最多会调用numWorks次
+//MultiPlanStage::pickBestPlan   https://segmentfault.com/a/1190000015236644  https://yq.aliyun.com/articles/74635
+//workAllPlans执行所有的查询计划，MultiPlanStage::pickBestPlan最多会调用numWorks次，PlanRanker::pickBestPlan中根据这里的work选择最优的
 bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolicy) {
     bool doneWorking = false;
 
+	//候选的查询计划存放在_candidates数组中的
     for (size_t ix = 0; ix < _candidates.size(); ++ix) {
         CandidatePlan& candidate = _candidates[ix];
         if (candidate.failed) {
@@ -406,6 +411,7 @@ bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolic
             // Ensure that the BSONObj underlying the WorkingSetMember is owned in case we choose to
             // return the results from the 'candidate' plan.
             member->makeObjOwnedIfNeeded();
+			//每次调用PlanStage::work的结果id都存储到candidate.results
             candidate.results.push_back(id);
 
             // Once a plan returns enough results, stop working.

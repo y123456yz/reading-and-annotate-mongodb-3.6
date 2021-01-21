@@ -75,9 +75,11 @@ struct CandidatePlan { //Âú×ãÌõ¼þµÄË÷Òý¶¼×ª»»ÎªPlanStageºÍ¶ÔÓ¦µÄQuerySolution´æÈ
     std::unique_ptr<QuerySolution> solution;
     //MultiPlanStage::workAllPlansÖ´ÐÐwork
     PlanStage* root;  // Not owned here.
+    //¸³Öµ²Î¿¼MultiPlanStage::workAllPlans
     WorkingSet* ws;   // Not owned here.
 
     // Any results produced during the plan's execution prior to ranking are retained here.
+    //¸³Öµ²Î¿¼MultiPlanStage::workAllPlans
     std::list<WorkingSetID> results;
 
     bool failed;
