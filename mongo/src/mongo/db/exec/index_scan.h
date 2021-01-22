@@ -134,7 +134,7 @@ private:
     // Contains expressions only over fields in the index key.  We assume this is built
     // correctly by whomever creates this class.
     // The filter is not owned by us.
-    //filter : 查询过滤条件，类比SQL的where表达式
+    //filter : 查询过滤条件，类比SQL的where表达式，也就是find携带的查询条件
     const MatchExpression* const _filter;
 
     // Could our index have duplicates?  If so, we use _returned to dedup.

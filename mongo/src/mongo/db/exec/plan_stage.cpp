@@ -86,9 +86,20 @@ namespace mongo {
 #5  0x00007f2536598e5a in mongo::PlanExecutor::make (opCtx=opCtx@entry=0x7f253eaf2c80, ws=..., rt=..., qs=..., cq=..., collection=0x7f253a7e4e20, nss=..., yieldPolicy=mongo::PlanExecutor::YIELD_AUTO)
     at src/mongo/db/query/plan_executor.cpp:211
 #6  0x00007f2536599f04 in mongo::PlanExecutor::make (opCtx=opCtx@entry=0x7f253eaf2c80, ws=..., rt=..., qs=..., cq=..., collection=0x7f253a7e4e20, yieldPolicy=mongo::PlanExecutor::YIELD_AUTO) at src/mongo/db/query/plan_executor.cpp:182
-#7  0x00007f25365883a7 in mongo::getExecutor		
+#7  0x00007f25365883a7 in mongo::getExecutor	
+
+例如下面的solution： 先执行FetchStage::doWork，然后在FetchStage::doWork中调用IndexScan::doWork执行
+2021-01-22T10:59:08.077+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ name: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1
+
 */ //PlanStage可以参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
-//MultiPlanStage::workAllPlans  PlanExecutor::getNextImpl中执行
+//MultiPlanStage::workAllPlans(选最优索引)  PlanExecutor::getNextImpl(获取真实数据)中执行
 PlanStage::StageState PlanStage::work(WorkingSetID* out) {   //存在根据StageState递归调用的情况
     invariant(_opCtx);
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
@@ -97,7 +108,8 @@ PlanStage::StageState PlanStage::work(WorkingSetID* out) {   //存在根据StageStat
 	//StageType type = this->stageType();
 	//log() << "yang test PlanStage::work stageType:" << (int)type;  
     StageState workResult = doWork(out); 
-//有哪些类的doWork需要执行，参考buildStages 如MultiPlanStage::doWork CollectionScan::doWork  IndexScan::doWork  FetchStage::doWork
+//有哪些类的doWork需要执行，参考buildStages 如MultiPlanStage::doWork CollectionScan::doWork  
+//IndexScan::doWork  FetchStage::doWork
 
     if (StageState::ADVANCED == workResult) {
         ++_commonStats.advanced;

@@ -34,13 +34,13 @@ namespace mongo {
  * These map to implementations of the PlanStage interface, all of which live in db/exec/
  */
 enum StageType { //参考PlanStage* buildStages
-    //对应QuerySolutionNode为AndHashNode
+    //对应QuerySolutionNode为AndHashNode，对应stage为AndHashStage
     STAGE_AND_HASH, //0
-    //对应QuerySolutionNode为AndSortedNode
+    //对应QuerySolutionNode为AndSortedNode，对应stage为AndSortedStage
     STAGE_AND_SORTED,  //1
     STAGE_CACHED_PLAN, //2
     //CollectionScan::doWork 
-    //对应QuerySolutionNode为CollectionScanNode
+    //对应QuerySolutionNode为CollectionScanNode，对应stage为CollectionScan
     STAGE_COLLSCAN,  //全表扫描   //例如CollectionScanNode赋值参考CollectionScanNode::getType
 
     // This stage sits at the root of the query tree and counts up the number of results
@@ -50,34 +50,35 @@ enum StageType { //参考PlanStage* buildStages
     // If we're running a .count(), the query is fully covered by one ixscan, and the ixscan is
     // from one key to another, we can just skip through the keys without bothering to examine
     // them.
+    //对应stage为CountScan
     STAGE_COUNT_SCAN,//5
 
     STAGE_DELETE,//6
 
     // If we're running a distinct, we only care about one value for each key.  The distinct
     // scan stage is an ixscan with some key-skipping behvaior that only distinct uses.
-    //对应QuerySolutionNode为DistinctNode
+    //对应QuerySolutionNode为DistinctNode，对应stage为DistinctScan
     STAGE_DISTINCT_SCAN,//7
 
     // Dummy stage used for receiving notifications of deletions during chunk migration.
     STAGE_NOTIFY_DELETE,//8
 
-    //对应QuerySolutionNode为EnsureSortedNode
+    //对应QuerySolutionNode为EnsureSortedNode，对应stage为STAGE_ENSURE_SORTED
     STAGE_ENSURE_SORTED,//9
 
     STAGE_EOF,//10
 
     // This is more of an "internal-only" stage where we try to keep docs that were mutated
     // during query execution.
-    //对应QuerySolutionNode为KeepMutationsNode
+    //对应QuerySolutionNode为KeepMutationsNode，对应stage为STAGE_KEEP_MUTATIONS
     STAGE_KEEP_MUTATIONS,  
-    //对应QuerySolutionNode为FetchNode
+    //对应QuerySolutionNode为FetchNode，对应stage为FetchStage
     STAGE_FETCH, //12  FetchStage::doWork
 
     // The two $geoNear impls imply a fetch+sort and must be stages.
-    //对应QuerySolutionNode为GeoNear2DNode
+    //对应QuerySolutionNode为GeoNear2DNode，对应stage为GeoNear2DStage
     STAGE_GEO_NEAR_2D,
-    //对应QuerySolutionNode为GeoNear2DSphereNode
+    //对应QuerySolutionNode为GeoNear2DSphereNode，对应stage为GeoNear2DSphereStage
     STAGE_GEO_NEAR_2DSPHERE,
 
     STAGE_GROUP, //15
@@ -87,9 +88,9 @@ enum StageType { //参考PlanStage* buildStages
     // Simple wrapper to iterate a SortedDataInterface::Cursor.
     STAGE_INDEX_ITERATOR,
 
-    ////对应QuerySolutionNode为IndexScanNode
+    //对应QuerySolutionNode为IndexScanNode，对应stage为IndexScan
     STAGE_IXSCAN,  //18 索引扫描，INDEX SCAN   IndexScan::doWork
-    //对应QuerySolutionNode为LimitNode
+    //对应QuerySolutionNode为LimitNode，对应stage为LimitStage
     STAGE_LIMIT,
 
     // Implements parallelCollectionScan.
@@ -97,29 +98,29 @@ enum StageType { //参考PlanStage* buildStages
 
     STAGE_MULTI_PLAN,  //21 MultiPlanStage
     STAGE_OPLOG_START,
-    //对应QuerySolutionNode为OrNode
+    //对应QuerySolutionNode为OrNode，对应stage为OrStage
     STAGE_OR,
-    //对应QuerySolutionNode为ProjectionNode
+    //对应QuerySolutionNode为ProjectionNode,对应stage为ProjectionStage
     STAGE_PROJECTION,
 
     // Stage for running aggregation pipelines.
     STAGE_PIPELINE_PROXY, //25
 
     STAGE_QUEUED_DATA,
-    //对应QuerySolutionNode为ShardingFilterNode
+    //对应QuerySolutionNode为ShardingFilterNode，对应stage为ShardFilterStage
     STAGE_SHARDING_FILTER,
-    //对应QuerySolutionNode为SkipNode
+    //对应QuerySolutionNode为SkipNode，对应stage为SkipStage
     STAGE_SKIP,
-    //对应QuerySolutionNode为SortNode
+    //对应QuerySolutionNode为SortNode，对应stage为STAGE_SORT
     STAGE_SORT,  //29 SortStage
-    //对应QuerySolutionNode为SortKeyGeneratorNode
+    //对应QuerySolutionNode为SortKeyGeneratorNode，对应stage为SortKeyGeneratorStage
     STAGE_SORT_KEY_GENERATOR, //30  SortKeyGeneratorStage
-    ////对应QuerySolutionNode为MergeSortNode
+    //对应QuerySolutionNode为MergeSortNode，对应stage为MergeSortStage
     STAGE_SORT_MERGE,
     STAGE_SUBPLAN,
 
     // Stages for running text search.
-    //对应QuerySolutionNode为TextNode
+    //对应QuerySolutionNode为TextNode，对应stage为TextStage
     STAGE_TEXT,
     STAGE_TEXT_OR,
     STAGE_TEXT_MATCH, //35

@@ -1181,6 +1181,7 @@ bool turnIxscanIntoCount(QuerySolution* soln) {
     QuerySolutionNode* root = soln->root.get();
 
     // Root should be an ixscan or fetch w/o any filters.
+    //如果不是STAGE_FETCH或者STAGE_IXSCAN，直接返回false
     if (!(STAGE_FETCH == root->getType() || STAGE_IXSCAN == root->getType())) {
         return false;
     }

@@ -66,6 +66,7 @@ namespace mongo {
 using std::unique_ptr;
 using stdx::make_unique;
 //prepareExecution->StageBuilder::build调用  配合prepareExecution阅读
+//注意buildStages中有递归调用，这样就可以把整个QuerySolution及其child QuerySolution一起关联起来
 PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
                        Collection* collection,
                        const CanonicalQuery& cq,
@@ -106,7 +107,7 @@ PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
         }
         case STAGE_FETCH: {
             const FetchNode* fn = static_cast<const FetchNode*>(root);
-			//递归
+			//注意这里有递归
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, fn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -115,7 +116,7 @@ PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
         }
         case STAGE_SORT: {
             const SortNode* sn = static_cast<const SortNode*>(root);
-			//递归
+			//注意这里有递归
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, sn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -128,7 +129,7 @@ PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
         }
         case STAGE_SORT_KEY_GENERATOR: {
             const SortKeyGeneratorNode* keyGenNode = static_cast<const SortKeyGeneratorNode*>(root);
-            PlanStage* childStage = //递归
+            PlanStage* childStage = //注意这里有递归
                 buildStages(opCtx, collection, cq, qsol, keyGenNode->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;
@@ -138,7 +139,7 @@ PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
         }
         case STAGE_PROJECTION: {
             const ProjectionNode* pn = static_cast<const ProjectionNode*>(root);
-			//递归
+			//注意这里有递归
             PlanStage* childStage = buildStages(opCtx, collection, cq, qsol, pn->children[0], ws);
             if (nullptr == childStage) {
                 return nullptr;

@@ -47,7 +47,25 @@ class SeekableRecordCursor;
  *
  * Preconditions: Valid RecordId.
  */
-class FetchStage : public PlanStage {
+/*
+2021-01-22T10:59:08.080+0800 D QUERY    [conn-1] Winning solution:
+FETCH  -------------这里PlanStage对应FetchStage   对应慢日志中的docsExamined:1
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ age: 1 }, { name: 1 }, { name: 1, age: 1 }, ]
+---Child:
+------IXSCAN --------------这里PlanStage对应IndexScan  对应慢日志中的keysExamined:1 
+---------indexName = name_1_age_1
+keyPattern = { name: 1.0, age: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou", "yangyazhou"], field #1['age']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ age: 1 }, { name: 1 }, { name: 1, age: 1 }, ]
+
+*/
+
+class IndexScan : public PlanStage {
 public:
     FetchStage(OperationContext* opCtx,
                WorkingSet* ws,

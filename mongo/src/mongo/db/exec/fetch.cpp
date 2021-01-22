@@ -46,6 +46,23 @@ using std::unique_ptr;
 using std::vector;
 using stdx::make_unique;
 
+/*
+2021-01-22T10:59:08.080+0800 D QUERY    [conn-1] Winning solution:
+FETCH  -------------这里对应FetchStage
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ age: 1 }, { name: 1 }, { name: 1, age: 1 }, ]
+---Child:
+------IXSCAN --------------这里对应IndexScan
+---------indexName = name_1_age_1
+keyPattern = { name: 1.0, age: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou", "yangyazhou"], field #1['age']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ age: 1 }, { name: 1 }, { name: 1, age: 1 }, ]
+
+*/
 // static
 const char* FetchStage::kStageType = "FETCH";
 

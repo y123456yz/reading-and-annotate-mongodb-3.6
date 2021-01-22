@@ -151,9 +151,13 @@ void addEqualityFieldSorts(const BSONObj& sortPattern,
 }
 }
 
+
 string QuerySolutionNode::toString() const {
     mongoutils::str::stream ss;
-    appendToString(&ss, 0); //CountScanNode::appendToString  SortNode::appendToString等实现
+	
+	//CountScanNode::appendToString  SortNode::appendToString FetchNode::appendToString等实现
+    appendToString(&ss, 0); 
+	
     return ss;
 }
 
@@ -481,10 +485,26 @@ QuerySolutionNode* MergeSortNode::clone() const {
     return copy;
 }
 
+
+/*
+2021-01-22T10:59:08.077+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ name: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1
+keyPattern = { name: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou", "yangyazhou"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ name: 1 }, ]
+*/
 //
 // FetchNode
 //
-
 FetchNode::FetchNode() : _sorts(SimpleBSONObjComparator::kInstance.makeBSONObjSet()) {}
 
 void FetchNode::appendToString(mongoutils::str::stream* ss, int indent) const {

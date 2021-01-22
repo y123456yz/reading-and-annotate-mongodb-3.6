@@ -51,6 +51,7 @@ WorkingSet::~WorkingSet() {
 }
 
 WorkingSetID WorkingSet::allocate() {
+	//_data中可用空间用完了，下次继续一次性申请一倍的空间
     if (_freeList == INVALID_ID) {
         // The free list is empty so we need to make a single new WSM to return. This relies on
         // vector::resize being amortized O(1) for efficient allocation. Note that the free list

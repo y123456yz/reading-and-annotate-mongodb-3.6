@@ -403,10 +403,14 @@ bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolic
         }
 
         WorkingSetID id = WorkingSet::INVALID_ID;
+		//执行对应PlanStage::work， 不同类型PlanStage可以参考buildStages，
+		//包括CollectionScan、IndexScan等，CollectionScan::work  IndexScan::work
         PlanStage::StageState state = candidate.root->work(&id); //PlanStage::work
 
+		//
         if (PlanStage::ADVANCED == state) {
             // Save result for later.
+            //获取对应的结果，例如CollectionScan::work、IndexScan::work分别代表获取到doc数据、索引数据
             WorkingSetMember* member = candidate.ws->get(id);
             // Ensure that the BSONObj underlying the WorkingSetMember is owned in case we choose to
             // return the results from the 'candidate' plan.

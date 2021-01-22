@@ -193,6 +193,8 @@ boost::optional<IndexKeyEntry> IndexScan::initIndexScan() {
 //IndexScan::doWork获取索引行信息，FetchStage::doWork根据索引行信息取出对应数据行信息，并检查是否符合filter要求
 
 //实际上该work是FetchStage::doWork的child，实际上由FetchStage::doWork调用child接口执行的该函数
+
+//PlanStage::work中调用执行
 PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中执行
     // Get the next kv pair from the index, if any.
     //实际上对应的是索引key和value
@@ -289,10 +291,11 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
     if (!kv->key.isOwned())
         kv->key = kv->key.getOwned();
 
-    // We found something to return, so fill out the WSM.
-    //一个WorkingSetID对应一个WorkingSetMember
+    // We found something to return, so fill out the WSM.  
+    //一个WorkingSetID对应一个WorkingSetMember，id也就是在_workingSet._data数组中的位置
     WorkingSetID id = _workingSet->allocate(); //WorkingSet::allocate
     WorkingSetMember* member = _workingSet->get(id);//WorkingSet::get
+    //索引数据key:value，value对应数据的key,索引KV数据存到member中
     member->recordId = kv->loc; //根据在数据文件中的位置，获取到数据文件中的kv
     member->keyData.push_back(IndexKeyDatum(_keyPattern, kv->key, _iam));
     _workingSet->transitionToRecordIdAndIdx(id);
@@ -303,6 +306,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
         member->addComputed(new IndexKeyComputedData(bob.obj()));
     }
 
+	//id也就是在_workingSet._data数组中的位置
     *out = id; //一个id和一个WorkingSetMember对应
     return PlanStage::ADVANCED;
 }
