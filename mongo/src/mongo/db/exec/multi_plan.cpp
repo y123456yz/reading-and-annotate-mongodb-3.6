@@ -115,6 +115,7 @@ PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
     }
 	LOG(2) << "yang test ...PlanStage::StageState MultiPlanStage::doWork ";
 
+	//选择这个最优的查询计划
     CandidatePlan& bestPlan = _candidates[_bestPlanIdx];
 
     // Look for an already produced result that provides the data the caller wants.
@@ -277,6 +278,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
 	
 	//MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用
 	//PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
+	//MultiPlanStage::doWork中获取真正数据的时候用到
     _bestPlanIdx = PlanRanker::pickBestPlan(_candidates, ranking.get()); //选择最优的查询计划
     verify(_bestPlanIdx >= 0 && _bestPlanIdx < static_cast<int>(_candidates.size()));
 
@@ -381,6 +383,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
                 ->getPlanCache()
                 ->add(*_query,
                       solutions,
+                      //得分排序好的候选查询计划放入到plancache中缓存
                       ranking.release(),
                       getOpCtx()->getServiceContext()->getPreciseClockSource()->now())
                 .transitional_ignore();

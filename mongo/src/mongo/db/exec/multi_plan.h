@@ -50,6 +50,8 @@ namespace mongo {
  * Owns the query solutions and PlanStage roots for all candidate plans.
  */ //执行计划相关 参考http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN
 //匹配多个执行计划存放到该类中，参考prepareExecution->MultiPlanStage::addPlan  
+
+//主要工作是从候选_candidates数组中选择最优索引
 class MultiPlanStage final : public PlanStage { //MultiPlanStage由多个PlanStage构成，参考prepareExecution
 public:
     /** 
@@ -198,7 +200,9 @@ private:
     //在MultiPlanStage::pickBestPlan中根据这些选择出来的索引对应的解决方案来选择最优的索引
 
     //这里包含所有的QuerySolution及其对应的PlanStage，参考MultiPlanStage::addPlan
-    //MultiPlanStage::workAllPlans中选择最优查询计划
+    //MultiPlanStage::workAllPlans中选择最优查询计划，
+    //候选计划及其得分最后排好序存入PlanRankingDecision相关数组中，最终
+    //通过MultiPlanStage::pickBestPlan添加到plancache缓存中
     std::vector<CandidatePlan> _candidates;
 
     // index into _candidates, of the winner of the plan competition

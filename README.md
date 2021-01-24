@@ -10,7 +10,7 @@ mongodb-3.6源码注释分析，持续更新
     
 ### 专栏  
   * [infoq专栏：《MongoDB内核源码设计、性能优化、最佳运维实践》](https://www.infoq.cn/profile/8D2D4D588D3D8A/publish)    
-  * [oschina专栏:《mongodb内核源码中文注释详细分析及性能优化时间系列》](https://my.oschina.net/u/4087916)    
+  * [oschina专栏:《mongodb内核源码中文注释详细分析及性能优化实践系列》](https://my.oschina.net/u/4087916)    
   * [知乎专栏：《MongoDB内核源码设计、性能优化、最佳运维实践》](https://www.zhihu.com/people/yang-ya-zhou-42/columns)    
   * [itpub专栏:《mongodb内核源码设计实现、性能优化、最佳运维实践》](http://blog.itpub.net/column/150)   
 

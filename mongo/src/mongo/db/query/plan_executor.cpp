@@ -619,6 +619,8 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
 
         WorkingSetID id = WorkingSet::INVALID_ID;
 		//PlanStage::work
+		//如果满足条件的索引有多个，一般执行MultiPlanStage::doWork
+		//如果满足条件的索引只有一个，一般就是FetchStage::doWork
         PlanStage::StageState code = _root->work(&id); //PlanStage::work  执行查询计划
 
         if (code != PlanStage::NEED_YIELD)
