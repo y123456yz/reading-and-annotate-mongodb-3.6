@@ -208,6 +208,8 @@ bool opShouldFail(const OperationContext* opCtx, const BSONObj& failPointInfo) {
 }  // namespace
 
 //OperationContext::checkForInterrupt()调用,killop相关，参考https://yq.aliyun.com/articles/6647
+//PlanYieldPolicy::yield  
+//// 检查是否被kill掉了 
 Status OperationContext::checkForInterruptNoAssert() {
     // TODO: Remove the MONGO_likely(getClient()) once all operation contexts are constructed with
     // clients.
@@ -227,7 +229,9 @@ Status OperationContext::checkForInterruptNoAssert() {
             markKilled();
         }
     }
-
+	//标识是否被kill  ErrorCodes::Interrupted标识已经被kill,ErrorCodes::OK标识正常没有被kill
+    //ErrorCodes::ExceededTimeLimit标识kill超时
+    //markKilled赋值
     const auto killStatus = getKillStatus();
     if (killStatus != ErrorCodes::OK) {
         return Status(killStatus, "operation was interrupted");
@@ -362,6 +366,10 @@ StatusWith<stdx::cv_status> OperationContext::waitForConditionOrInterruptNoAsser
     return waitStatus;
 }
 
+//void markKilled(ErrorCodes::Error killCode = ErrorCodes::Interrupted); killCode默认值ErrorCodes::Interrupted
+
+//标识是否被kill  ErrorCodes::Interrupted标识已经被kill,ErrorCodes::OK标识正常没有被kill
+//ErrorCodes::ExceededTimeLimit标识kill超时
 void OperationContext::markKilled(ErrorCodes::Error killCode) {
     invariant(killCode != ErrorCodes::OK);
     stdx::unique_lock<stdx::mutex> lkWaitMutex;
@@ -374,6 +382,8 @@ void OperationContext::markKilled(ErrorCodes::Error killCode) {
         });
         lkWaitMutex = stdx::unique_lock<stdx::mutex>{*_waitMutex};
     }
+
+	//ErrorCodes::OK说明该操作没有kill
     _killCode.compareAndSwap(ErrorCodes::OK, killCode);
     if (lkWaitMutex && _numKillers == 0) {
         invariant(_waitCV);

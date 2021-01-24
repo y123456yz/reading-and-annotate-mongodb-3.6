@@ -39,6 +39,7 @@ class ClockSource;
 class RecordFetcher;
 
 //参考http://www.mongoing.com/archives/5476  让出请求查询的CPU时间片相关
+//构造赋值参考makeYieldPolicy，AlwaysTimeOutYieldPolicy、AlwaysPlanKilledYieldPolicy继承该类
 class PlanYieldPolicy {
 public:
     virtual ~PlanYieldPolicy() {}
@@ -141,6 +142,7 @@ private:
     const PlanExecutor::YieldPolicy _policy;
 
     bool _forceYield;
+    //定时器相关
     ElapsedTracker _elapsedTracker;
 
     // The plan executor which this yield policy is responsible for yielding. Must

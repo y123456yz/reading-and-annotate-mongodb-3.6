@@ -57,7 +57,7 @@ using namespace mongo;
 
 /**
  * Retrieves a collection's plan cache from the database.
- */
+ */ //MultiPlanStage::pickBestPlan中把选出的并计分的查询计划缓存到cache
 static Status getPlanCache(OperationContext* opCtx,
                            Collection* collection,
                            const string& ns,

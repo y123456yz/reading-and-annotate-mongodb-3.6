@@ -37,6 +37,7 @@ namespace mongo {
  * A custom yield policy that always reports the plan should yield, and always returns
  * ErrorCodes::ExceededTimeLimit from yield().
  */
+//makeYieldPolicy中构造使用
 class AlwaysTimeOutYieldPolicy : public PlanYieldPolicy {
 public:
     AlwaysTimeOutYieldPolicy(PlanExecutor* exec)

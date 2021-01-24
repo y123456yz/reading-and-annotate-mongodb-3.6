@@ -377,6 +377,9 @@ public:
      * May be called by any thread that has locked the Client owning this operation context, or
      * without lock by the thread executing on behalf of this operation context.
      */
+    //标识是否被kill  ErrorCodes::Interrupted标识已经被kill,ErrorCodes::OK标识正常没有被kill
+    //ErrorCodes::ExceededTimeLimit标识kill超时
+    //markKilled赋值
     ErrorCodes::Error getKillStatus() const {
         return _killCode.loadRelaxed();
     }
@@ -506,6 +509,9 @@ private:
     // Follows the values of ErrorCodes::Error. The default value is 0 (OK), which means the
     // operation is not killed. If killed, it will contain a specific code. This value changes only
     // once from OK to some kill code.
+    //标识是否被kill  ErrorCodes::Interrupted标识已经被kill,ErrorCodes::OK标识正常没有被kill
+    //ErrorCodes::ExceededTimeLimit标识kill超时
+    //markKilled赋值
     AtomicWord<ErrorCodes::Error> _killCode{ErrorCodes::OK};
 
 

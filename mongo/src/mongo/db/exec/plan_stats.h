@@ -43,7 +43,83 @@ namespace mongo {
 
 /**
  * The interface all specific-to-stage stats provide.
- */
+ */ 
+
+/*
+Stats:
+{ "stage" : "LIMIT",
+  "nReturned" : 3,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 3,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "limitAmount" : 3,
+  "inputStage" : { "stage" : "PROJECTION",
+    "nReturned" : 3,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 3,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "transformBy" : { "age" : 1 },
+    "inputStage" : { "stage" : "FETCH",
+      "nReturned" : 3,
+      "executionTimeMillisEstimate" : 0,
+      "works" : 3,
+      "advanced" : 3,
+      "needTime" : 0,
+      "needYield" : 0,
+      "saveState" : 0,
+      "restoreState" : 0,
+      "isEOF" : 0,
+      "invalidates" : 0,
+      "docsExamined" : 3,
+      "alreadyHasObj" : 0,
+      "inputStage" : { "stage" : "IXSCAN",
+        "nReturned" : 3,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 3,
+        "advanced" : 3,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "name" : 1,
+          "age" : 1 },
+        "indexName" : "name_1_age_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "name" : [],
+          "age" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "name" : [ 
+            "[\"yangyazhou2\", \"yangyazhou2\"]" ],
+          "age" : [ 
+            "[MinKey, MaxKey]" ] },
+        "keysExamined" : 3,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } } } }
+*/
+//下面的AndHashStats AndSortedStats等继承该类    PlanStageStats.specific为该类型
+//每个stage都有对应的统计，例如CollectionScanStats为CollectionScan stage对应统计信息，
+//MultiPlanStats为MultiPlanStage stage对应统计信息
+struct MultiPlanStats
 struct SpecificStats {
     virtual ~SpecificStats() {}
 
@@ -53,7 +129,8 @@ struct SpecificStats {
     virtual SpecificStats* clone() const = 0;
 };
 
-// Every stage has CommonStats.
+// Every stage has CommonStats.  
+//PlanStageStats.common为该类型
 struct CommonStats { //算分用的该类，参考PlanStage::work    explain("allPlansExecution")展示的内容来源就在该结构
     CommonStats(const char* type)
         : stageTypeStr(type),
@@ -70,12 +147,15 @@ struct CommonStats { //算分用的该类，参考PlanStage::work    explain("allPlansExe
     const char* stageTypeStr;
 
     // Count calls into the stage.
+    //works则是总共扫描的次数
     size_t works; //PlanStage::work中赋值，总次数 下面的advanced  needTime  needYield总和
     size_t yields;
     size_t unyields;
     size_t invalidates;
 
     // How many times was this state the return value of work(...)?
+    //common.advanced是每个索引扫描的时候是否能在collection拿到符合条件的记录，
+    //如果能拿到记录那么common.advanced就加1，
     size_t advanced;//赋值见PlanStage::work PlanRanker::scoreTree算分的时候，会用到
     size_t needTime;//赋值见PlanStage::work
     size_t needYield; //赋值见PlanStage::work
@@ -106,6 +186,9 @@ private:
 };
 
 // The universal container for a stage's stats.
+//MultiPlanStage::getStats()中构造使用，使用方法可以参考MultiPlanStage::getStats()
+//以MultiPlanStage为例，使用参考MultiPlanStage::getStats()
+//每个stage有个对应的PlanStageStats统计，这些统计真正在PlanRanker::pickBestPlan使用，目的是选择最优索引
 struct PlanStageStats {
     PlanStageStats(const CommonStats& c, StageType t) : stageType(t), common(c) {}
 
@@ -129,9 +212,10 @@ struct PlanStageStats {
 
     // Stats exported by implementing the PlanStage interface.
     //算分用的该类，参考PlanStage::work 
-    CommonStats common; 
+    CommonStats common;  
 
     // Per-stage place to stash additional information
+    //以MultiPlanStage为例，使用参考MultiPlanStage::getStats()
     std::unique_ptr<SpecificStats> specific;
 
     // The stats of the node's children.
@@ -171,6 +255,7 @@ struct AndHashStats : public SpecificStats {
     size_t memLimit;
 };
 
+
 struct AndSortedStats : public SpecificStats {
     AndSortedStats() : flagged(0) {}
 
@@ -196,6 +281,7 @@ struct CachedPlanStats : public SpecificStats {
     bool replanned;
 };
 
+//CollectionScan对应stage的统计
 struct CollectionScanStats : public SpecificStats {
     CollectionScanStats() : docsTested(0), direction(1) {}
 
@@ -492,6 +578,7 @@ struct MockStats : public SpecificStats {
     }
 };
 
+//MultiPlanStage._specificStats  
 struct MultiPlanStats : public SpecificStats {
     MultiPlanStats() {}
 

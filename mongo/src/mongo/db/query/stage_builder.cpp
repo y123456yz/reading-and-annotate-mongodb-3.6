@@ -364,6 +364,8 @@ PlanStage* buildStages(OperationContext* opCtx,     //该函数存在递归调用
             }
             return new EnsureSortedStage(opCtx, esn->pattern, ws, childStage);
         }
+
+		//以下stage在其他流程中初始化，而不是该接口
         case STAGE_CACHED_PLAN:
         case STAGE_COUNT:
         case STAGE_DELETE:

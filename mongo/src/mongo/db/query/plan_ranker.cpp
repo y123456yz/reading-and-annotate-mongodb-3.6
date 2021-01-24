@@ -83,7 +83,9 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
     // Copy stats trees instead of transferring ownership
     // because multi plan runner will need its own stats
     // trees for explain.
+    //获取候选查询计划的每个stage的统计信息统一存入statTrees数组
     for (size_t i = 0; i < candidates.size(); ++i) { //每个查询计划的分数记录到statTrees
+    	//PlanStage::getStats
         statTrees.push_back(candidates[i].root->getStats());
     }
 
@@ -104,8 +106,12 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
 		粗略来说，会先选几个候选的查询计划，然后会为这些查询计划按照某个规则来打分，分数最高的
 		查询计划就是合适的查询计划，这个查询计划里面使用的索引就是认为合适的索引。
 		*/
+		//对该候选CandidatePlan打分
         double score = scoreTree(statTrees[i].get()); //打分
         LOG(5) << "score = " << score;
+		//说明满足条件的索引数据会更少，配合MultiPlanStage::workAllPlans阅读
+		//如果最优索引，可能扫描10条数据就可以把所有满足条件的数据找到，而不需要扫描更多numResults
+		//如果不是最优索引，可能MultiPlanStage::workAllPlans扫描numResults行还没确定
         if (statTrees[i]->common.isEOF) { //如果状态为IS_EOF则加一分，所以一般达到IS_EOF状态的索引都会被选中为最优执行计划。
             LOG(5) << "Adding +" << eofBonus << " EOF bonus to score.";
             score += 1;
@@ -126,6 +132,7 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
         double runnerUpScore = scoresAndCandidateindices[1].first;
         const double epsilon = 1e-10;
 		//最优的查询计划比第二优的查询计划得分小于1e-10，tieForBest为1，否则为0，
+		//也就是第一和第二的差距微乎其微
         why->tieForBest = std::abs(bestScore - runnerUpScore) < epsilon;
     }
 
@@ -245,6 +252,7 @@ double PlanRanker::scoreTree(const PlanStageStats* stats) {
     // In the case of ties, prefer solutions without a blocking sort
     // to solutions with a blocking sort.
     double noSortBonus = epsilon;
+	//如果后续querysolution中包含sort排序stage，则noSortBonus置0，因为排序是个减分项
     if (hasStage(STAGE_SORT, stats)) { //STAGE_SORT（避免排序）
         noSortBonus = 0;
     }

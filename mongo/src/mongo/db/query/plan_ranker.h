@@ -88,7 +88,7 @@ struct CandidatePlan { //Âú×ãÌõ¼şµÄË÷Òı¶¼×ª»»ÎªPlanStageºÍ¶ÔÓ¦µÄQuerySolution´æÈ
 /**
  * Information about why a plan was picked to be the best.  Data here is placed into the cache
  * and used to compare expected performance with actual.
- */ //MultiPlanStage::pickBestPlanÖĞ»áÓÃµ½
+ */ //MultiPlanStage::pickBestPlanÖĞ»áÓÃµ½£¬×îÓÅ²éÑ¯¼Æ»®Ïà¹Ø¼ÆËãĞÅÏ¢±£´æµ½ÕâÀï
 struct PlanRankingDecision {
     PlanRankingDecision() {}
 

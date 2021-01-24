@@ -105,10 +105,12 @@ public:
      * The yielding policy of the plan executor. By default, an executor does not yield itself
      * (NO_YIELD).
      */
-    enum YieldPolicy {
+    //参考makeYieldPolicy，
+    enum YieldPolicy {//YieldPolicy类型
         // Any call to getNext() may yield. In particular, the executor may be killed during any
         // call to getNext().  If this occurs, getNext() will return DEAD. Additionally, this
         // will handle all WriteConflictExceptions that occur while processing the query.
+        //YieldAuto，是指查询请求会运行一段时间（可配置）后让出CPU时间片
         YIELD_AUTO,
 
         // This will handle WriteConflictExceptions that occur while processing the query, but

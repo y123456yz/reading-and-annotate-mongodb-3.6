@@ -154,6 +154,7 @@ PlanStage::StageState MultiPlanStage::doWork(WorkingSetID* out) {
     return state;
 }
 
+//检查操作是否被kill，没有则让出CPU资源
 Status MultiPlanStage::tryYield(PlanYieldPolicy* yieldPolicy) {
     // These are the conditions which can cause us to yield:
     //   1) The yield policy's timer elapsed, or
@@ -257,6 +258,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     for (size_t ix = 0; ix < numWorks; ++ix) {
 		//workAllPlans执行所有的查询计划，MultiPlanStage::pickBestPlan最多会调用numWorks次
         bool moreToDo = workAllPlans(numResults, yieldPolicy);
+		//只要候选_candidates中的任何一个获取到的数据到了numResults或者达到IS_EOF，就退出这个for循环
         if (!moreToDo) {
             break;
         }
@@ -291,6 +293,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     LOG(2) << "Winning plan: " << redact(Explain::getPlanSummary(bestCandidate.root));
 
     _backupPlanIdx = kNoSuchPlan;
+	//如果得分第一高的候选计划有阻塞的可能，则选择第二得分高的候选计划，以此类推
     if (bestSolution->hasBlockingStage && (0 == alreadyProduced.size())) { //该查询计划有阻塞情况，则选择备用的
         LOG(2) << "Winner has blocking stage, looking for backup plan...";
         for (size_t ix = 0; ix < _candidates.size(); ++ix) {
@@ -306,8 +309,9 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // write to the plan cache.
     //
     // TODO: We can remove this if we introduce replanning logic to the SubplanStage.
+    //_cachingMode默认赋值为CachingMode::AlwaysCache
     bool canCache = (_cachingMode == CachingMode::AlwaysCache);
-    if (_cachingMode == CachingMode::SometimesCache) {
+    if (_cachingMode == CachingMode::SometimesCache) { //一般不走该流程
         // In "sometimes cache" mode, we cache unless we hit one of the special cases below.
         canCache = true;
 
@@ -352,6 +356,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
         std::vector<QuerySolution*> solutions;
 
         // Generate solutions and ranking decisions sorted by score.
+        //所有查询计划及其得分保存到solutions数组
         for (size_t orderingIndex = 0; orderingIndex < candidateOrder.size(); ++orderingIndex) {
             // index into candidates/ranking
             size_t ix = candidateOrder[orderingIndex];
@@ -398,6 +403,7 @@ bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolic
         }
 
         // Might need to yield between calls to work due to the timer elapsing.
+        //检查操作是否被kill，没有则让出CPU资源
         if (!(tryYield(yieldPolicy)).isOK()) {
             return false;
         }
@@ -420,6 +426,7 @@ bool MultiPlanStage::workAllPlans(size_t numResults, PlanYieldPolicy* yieldPolic
 
             // Once a plan returns enough results, stop working.
             if (candidate.results.size() >= numResults) {
+				//该candidate候选plan已经获取到了足够的results
                 doneWorking = true;
             }
         } else if (PlanStage::IS_EOF == state) {
@@ -526,6 +533,7 @@ QuerySolution* MultiPlanStage::bestSolution() {
 
 unique_ptr<PlanStageStats> MultiPlanStage::getStats() {
     _commonStats.isEOF = isEOF();
+	//MultiPlanStage对应统计 
     unique_ptr<PlanStageStats> ret = make_unique<PlanStageStats>(_commonStats, STAGE_MULTI_PLAN);
     ret->specific = make_unique<MultiPlanStats>(_specificStats);
     for (auto&& child : _children) {

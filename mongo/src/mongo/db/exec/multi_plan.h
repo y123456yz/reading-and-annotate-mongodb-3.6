@@ -183,7 +183,8 @@ private:
     const Collection* _collection;
 
     // Describes the cases in which we should write an entry for the winning plan to the plan cache.
-    const CachingMode _cachingMode;
+    //默认赋值为CachingMode::AlwaysCache
+    const CachingMode _cachingMode;//默认赋值为CachingMode::AlwaysCache
 
     // The query that we're trying to figure out the best solution to.
     // not owned here
@@ -207,6 +208,7 @@ private:
 
     // index into _candidates, of the backup plan for sort
     // uses -1 / kNoSuchPlan when best plan is not (yet) known
+    //如果得分第一高的候选计划有阻塞的可能，则选择第二得分高的候选计划，以此类推，该标记表示选择的是候选备份计划
     int _backupPlanIdx;
 
     // Set if this MultiPlanStage cannot continue, and the query must fail. This can happen in
@@ -233,9 +235,10 @@ private:
     // to use to pull the record into memory. We take ownership of the RecordFetcher here,
     // deleting it after we've had a chance to do the fetch. For timing-based yields, we
     // just pass a NULL fetcher.
+    //MultiPlanStage._fetcher
     std::unique_ptr<RecordFetcher> _fetcher;
 
-    // Stats
+    // Stats   MultiPlanStage相关统计  
     MultiPlanStats _specificStats;
 };
 

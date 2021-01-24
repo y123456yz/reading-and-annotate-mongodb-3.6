@@ -43,7 +43,7 @@ MONGO_FP_DECLARE(setYieldAllLocksHang);
 MONGO_FP_DECLARE(setYieldAllLocksWait);
 }  // namespace
 
-// static
+// static  //通过yieldAllLocks暂时让出锁资源。
 void QueryYield::yieldAllLocks(OperationContext* opCtx,
                                stdx::function<void()> whileYieldingFn,
                                const NamespaceString& planExecNS) {

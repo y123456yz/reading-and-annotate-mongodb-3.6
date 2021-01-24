@@ -69,12 +69,15 @@ PlanYieldPolicy::PlanYieldPolicy(PlanExecutor::YieldPolicy policy, ClockSource* 
                       Milliseconds(internalQueryExecYieldPeriodMS.load())),
       _planYielding(nullptr) {}
 
+//判断是否应该yield让出CPU
 bool PlanYieldPolicy::shouldYield() {
     if (!canAutoYield())
         return false;
     invariant(!_planYielding->getOpCtx()->lockState()->inAWriteUnitOfWork());
     if (_forceYield)
         return true;
+
+	//
     return _elapsedTracker.intervalHasElapsed();
 }
 
@@ -82,6 +85,7 @@ void PlanYieldPolicy::resetTimer() {
     _elapsedTracker.resetLastTime();
 }
 
+//检查操作是否被kill，没有则让出CPU资源
 Status PlanYieldPolicy::yield(RecordFetcher* recordFetcher) {
     invariant(_planYielding);
     if (recordFetcher) {
@@ -93,6 +97,7 @@ Status PlanYieldPolicy::yield(RecordFetcher* recordFetcher) {
     }
 }
 
+//检查操作是否被kill，没有则让出CPU资源
 Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
                               stdx::function<void()> whileYieldingFn) {
     invariant(_planYielding);
@@ -115,9 +120,11 @@ Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
             // All YIELD_AUTO plans will get here eventually when the elapsed tracker triggers
             // that it's time to yield. Whether or not we will actually yield, we need to check
             // if this operation has been interrupted.
+            
+			//Mongodb在一个执行计划被Yield出去之后，执行清理工作。 首先检查是否被killOp命令杀掉了，如果没有被杀掉，会通过yieldAllLocks暂时让出锁资源。
             if (_policy == PlanExecutor::YIELD_AUTO) { // 检查是否被kill掉了 
                 auto interruptStatus = opCtx->checkForInterruptNoAssert();
-                if (!interruptStatus.isOK()) {
+                if (!interruptStatus.isOK()) { //已被kill
                     return interruptStatus;
                 }
             }
@@ -135,9 +142,11 @@ Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
                 // Release and reacquire locks.
                 if (beforeYieldingFn)
                     beforeYieldingFn();
+				//通过yieldAllLocks暂时让出锁资源。
                 QueryYield::yieldAllLocks(opCtx, whileYieldingFn, _planYielding->nss());
             }
 
+			
             return _planYielding->restoreStateWithoutRetrying();
         } catch (const WriteConflictException&) {
             CurOp::get(opCtx)->debug().writeConflicts++;

@@ -199,6 +199,7 @@ struct QuerySolution { //执行计划，可以参考https://yq.aliyun.com/articles/647563
     // Hashed AND stage:
     // The hashed AND stage buffers data from multiple index scans and could block. In that case,
     // we would want to fall back on an alternate non-blocking solution.
+    //QueryPlannerAnalysis::analyzeDataAccess中可能赋值为true, 默认false
     bool hasBlockingStage;
 
     // Runner executing this solution might be interested in knowing

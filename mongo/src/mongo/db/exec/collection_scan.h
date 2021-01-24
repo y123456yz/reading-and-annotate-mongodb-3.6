@@ -124,7 +124,7 @@ private:
     // timestamp seen in the collection.  Otherwise, this is a null timestamp.
     Timestamp _latestOplogEntryTimestamp;
 
-    // Stats
+    // Stats   CollectionScan对应stage的统计
     CollectionScanStats _specificStats;
 };
 
