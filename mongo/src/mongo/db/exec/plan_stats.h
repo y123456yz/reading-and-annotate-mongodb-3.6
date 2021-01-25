@@ -119,7 +119,6 @@ Stats:
 //下面的AndHashStats AndSortedStats等继承该类    PlanStageStats.specific为该类型
 //每个stage都有对应的统计，例如CollectionScanStats为CollectionScan stage对应统计信息，
 //MultiPlanStats为MultiPlanStage stage对应统计信息
-struct MultiPlanStats
 struct SpecificStats {
     virtual ~SpecificStats() {}
 

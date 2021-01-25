@@ -38,8 +38,9 @@ SortKeyGenerator::SortKeyGenerator(const BSONObj& sortSpec, const CollatorInterf
     : _collator(collator) {
     BSONObjBuilder btreeBob;
 
+	//排序字段，排序可能对多个字段排序，例如sort({"aa":1, "bb":1})
     for (auto&& elt : sortSpec) {
-        if (elt.isNumber()) {
+        if (elt.isNumber()) { //一般进入这里，else分支先忽略
             btreeBob.append(elt);
             _patternPartTypes.push_back(SortPatternPartType::kFieldPath);
         } else {
@@ -60,6 +61,7 @@ SortKeyGenerator::SortKeyGenerator(const BSONObj& sortSpec, const CollatorInterf
     }
 
     // The fake index key pattern used to generate Btree keys.
+    //排序字段保持到这里
     _sortSpecWithoutMeta = btreeBob.obj();
 
     // If we're just sorting by meta, don't bother with all the key stuff.
@@ -77,10 +79,13 @@ SortKeyGenerator::SortKeyGenerator(const BSONObj& sortSpec, const CollatorInterf
         fixed.push_back(BSONElement());
     }
 
+	//是否稀疏索引
     constexpr bool isSparse = false;
     _indexKeyGen = stdx::make_unique<BtreeKeyGeneratorV1>(fieldNames, fixed, isSparse, _collator);
 }
 
+//生成排序的key  
+//SortKeyGeneratorStage::doWork调用
 StatusWith<BSONObj> SortKeyGenerator::getSortKey(const BSONObj& obj,
                                                  const Metadata* metadata) const {
     if (_sortHasMeta) {
@@ -92,6 +97,7 @@ StatusWith<BSONObj> SortKeyGenerator::getSortKey(const BSONObj& obj,
         return indexKey;
     }
 
+	//返回indexKey
     if (!_sortHasMeta) {
         // We don't have to worry about $meta sort, so the index key becomes the sort key.
         return indexKey;
@@ -126,6 +132,7 @@ StatusWith<BSONObj> SortKeyGenerator::getSortKey(const BSONObj& obj,
     return mergedKeyBob.obj();
 }
 
+//SortKeyGenerator::getSortKey中调用
 StatusWith<BSONObj> SortKeyGenerator::getIndexKey(const BSONObj& obj) const {
     // Not sorting by anything in the key, just bail out early.
     if (_sortSpecWithoutMeta.isEmpty()) {

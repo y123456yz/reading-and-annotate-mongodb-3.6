@@ -115,6 +115,7 @@ struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的FetchNode
     /**
      * Returns true if the tree rooted at this node provides data that is sorted by the
      * its location on disk.
+     * 如果以该节点为根的树提供了按其在磁盘上的位置排序的数据，则返回true。
      *
      * Usage: If all the children of an STAGE_AND_HASH have this property, we can compute the
      * AND faster by replacing the STAGE_AND_HASH with STAGE_AND_SORTED.
@@ -632,6 +633,7 @@ struct SortKeyGeneratorNode : public QuerySolutionNode {
     BSONObj sortSpec;
 };
 
+//QueryPlannerAnalysis::analyzeSort中构造使用
 struct SortNode : public QuerySolutionNode {
     SortNode() : _sorts(SimpleBSONObjComparator::kInstance.makeBSONObjSet()), limit(0) {}
 

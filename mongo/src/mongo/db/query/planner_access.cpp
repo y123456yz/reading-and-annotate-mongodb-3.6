@@ -1401,6 +1401,7 @@ void QueryPlannerAccess::handleFilterAnd(ScanBuildingState* scanState) {
     }
 }
 
+//QueryPlanner::planÖÐµ÷ÓÃ
 QuerySolutionNode* QueryPlannerAccess::makeIndexScan(const IndexEntry& index,
                                                      const CanonicalQuery& query,
                                                      const QueryPlannerParams& params,

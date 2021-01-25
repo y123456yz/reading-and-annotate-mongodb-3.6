@@ -110,17 +110,21 @@ void WorkingSet::clear() {
     _yieldSensitiveIds.clear();
 }
 
+//IDHackStage::doWork  IndexScan::doWork调用
+//标记该条数据走的是id或者其他索引
 void WorkingSet::transitionToRecordIdAndIdx(WorkingSetID id) {
     WorkingSetMember* member = get(id);
     member->_state = WorkingSetMember::RID_AND_IDX;
     _yieldSensitiveIds.push_back(id);
 }
 
+//CountScan::doWork  CollectionScan::doWork调用
 void WorkingSet::transitionToRecordIdAndObj(WorkingSetID id) {
     WorkingSetMember* member = get(id);
     member->_state = WorkingSetMember::RID_AND_OBJ;
 }
 
+//UpdateStage  ProjectionStage相关会调用
 void WorkingSet::transitionToOwnedObj(WorkingSetID id) {
     WorkingSetMember* member = get(id);
     member->transitionToOwnedObj();
@@ -189,6 +193,7 @@ const WorkingSetComputedData* WorkingSetMember::getComputed(
     return _computed[type].get();
 }
 
+//SortKeyGeneratorStage::doWork调用，排序选出的sort key保持到这里
 void WorkingSetMember::addComputed(WorkingSetComputedData* data) {
     verify(!hasComputed(data->type()));
     _computed[data->type()].reset(data);

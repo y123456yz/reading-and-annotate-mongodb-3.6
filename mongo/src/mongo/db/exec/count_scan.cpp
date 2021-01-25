@@ -66,6 +66,8 @@ using std::unique_ptr;
 using std::vector;
 using stdx::make_unique;
 
+// Using fast count: query: { name: "yangyazhou2" } sort: {} projection: {}, planSummary: COUNT_SCAN { name: 1, age: 1 }
+//如果查询走了全字段索引，则直接扫索引表即可计数
 // static
 const char* CountScan::kStageType = "COUNT_SCAN";
 

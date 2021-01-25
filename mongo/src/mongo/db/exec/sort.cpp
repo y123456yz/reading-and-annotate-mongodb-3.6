@@ -102,7 +102,8 @@ bool SortStage::isEOF() {
 
 PlanStage::StageState SortStage::doWork(WorkingSetID* out) {
     const size_t maxBytes = static_cast<size_t>(internalQueryExecMaxBlockingSortBytes.load());
-    if (_memUsage > maxBytes) {
+	//一次排序查询最多消耗的内存数
+	if (_memUsage > maxBytes) {
         mongoutils::str::stream ss;
         ss << "Sort operation used more than the maximum " << maxBytes
            << " bytes of RAM. Add an index, or specify a smaller limit.";
@@ -139,6 +140,7 @@ PlanStage::StageState SortStage::doWork(WorkingSetID* out) {
 
             // We extract the sort key from the WSM's computed data. This must have been generated
             // by a SortKeyGeneratorStage descendent in the execution tree.
+            //获取排序sortKey
             auto sortKeyComputedData =
                 static_cast<const SortKeyComputedData*>(member->getComputed(WSM_SORT_KEY));
             item.sortKey = sortKeyComputedData->getSortKey();
@@ -323,6 +325,7 @@ void SortStage::addToBuffer(const SortableDataItem& item) {
     }
 }
 
+//SortStage::sortBuffer()对_data数据排序
 void SortStage::sortBuffer() {
     if (_limit == 0) {
         const WorkingSetComparator& cmp = *_sortKeyComparator;

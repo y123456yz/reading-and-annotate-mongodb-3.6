@@ -138,6 +138,7 @@ private:
                      MultikeyPaths* multikeyPaths) const final;
 };
 
+//SortKeyGenerator::SortKeyGenerator中构造使用
 class BtreeKeyGeneratorV1 : public BtreeKeyGenerator {
 public:
     BtreeKeyGeneratorV1(std::vector<const char*> fieldNames,

@@ -100,6 +100,8 @@ private:
     BSONObj _point;
 };
 
+//SortKeyGeneratorStage::doWork(SORT_KEY_GENERATOR阶段)中生成排序字段保持到这里，
+//SortStage::doWork(SORT阶段)中获取排序字段使用
 class SortKeyComputedData : public WorkingSetComputedData {
 public:
     SortKeyComputedData(BSONObj sortKey)

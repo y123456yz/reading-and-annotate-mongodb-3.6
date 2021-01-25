@@ -271,14 +271,20 @@ public:
         INVALID,
 
         // Data is from 1 or more indices.
+        //transitionToRecordIdAndIdx赋值该状态标记 
+        //标记该条数据走的是id或者其他索引
         RID_AND_IDX,
 
         // Data is from a collection scan, or data is from an index scan and was fetched. The
         // BSONObj might be owned or unowned.
+        //transitionToRecordIdAndObj赋值该状态标记
+        //CountScan::doWork  CollectionScan::doWork相关的结果获取会带上该标识
         RID_AND_OBJ,
 
         // RecordId has been invalidated, or the obj doesn't correspond to an on-disk document
         // anymore (e.g. is a computed expression).
+        //transitionToOwnedObj赋值该状态标记
+        ////UpdateStage  ProjectionStage相关接口会标记该状态
         OWNED_OBJ,
     };
 
@@ -353,7 +359,7 @@ private:
     friend class WorkingSet;
 
     MemberState _state = WorkingSetMember::INVALID;
-
+    //SortKeyGeneratorStage::doWork调用，排序选出的sort key保持到这里
     std::unique_ptr<WorkingSetComputedData> _computed[WSM_COMPUTED_NUM_TYPES];
 
     std::unique_ptr<RecordFetcher> _fetcher;

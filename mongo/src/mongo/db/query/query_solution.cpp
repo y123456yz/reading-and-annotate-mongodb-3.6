@@ -175,6 +175,8 @@ void QuerySolutionNode::addCommon(mongoutils::str::stream* ss, int indent) const
     *ss << "sortedByDiskLoc = " << sortedByDiskLoc() << '\n';
     addIndent(ss, indent + 1);
     *ss << "getSort = [";
+	//例如name_1_age_1索引，
+	//则sort为getSort = [{ age: 1 }, { name: 1 }, { name: 1, age: 1 }, ]
     for (BSONObjSet::const_iterator it = getSort().begin(); it != getSort().end(); it++) {
         *ss << it->toString() << ", ";
     }

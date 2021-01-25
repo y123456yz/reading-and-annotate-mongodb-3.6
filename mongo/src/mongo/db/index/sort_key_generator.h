@@ -35,6 +35,7 @@
 
 namespace mongo {
 
+//SortKeyGeneratorStage::doWork中构造使用
 class SortKeyGenerator {
 public:
     /**
@@ -74,8 +75,11 @@ public:
 private:
     // Describes whether a component of the sort pattern is a field path (e.g. sort by "a.b"), or
     // else describes the type of $meta sort.
+    //赋值参考SortKeyGenerator::SortKeyGenerator
     enum class SortPatternPartType {
+        //sort({"aa":1, "bb":1}), 这里排序类型为SortPatternPartType::kFieldPath
         kFieldPath,
+        //下面这两种排序方式先忽略
         kMetaTextScore,
         kMetaRandVal,
     };
@@ -86,13 +90,19 @@ private:
 
     // The sort pattern with any $meta sort components stripped out, since the underlying index key
     // generator does not understand $meta sort.
+    //排序字段存入这里，排序可能对多个字段排序，例如sort({"aa":1, "bb":1})
+    //这里面可能包含多个排序的字段，例如sort({"aa":1, "bb":1})，则aa bb都存储在该结构
+    //参考SortKeyGenerator::SortKeyGenerator
     BSONObj _sortSpecWithoutMeta;
 
     // For each element of the raw sort spec, describes whether the element is sorting by a field
     // path or by a particular meta-sort.
+    //排序字段，排序可能对多个字段排序，例如sort({"aa":1, "bb":1}), 这里排序类型为SortPatternPartType::kFieldPath
+    //也就是普通正序或者反序排序，数组里面每个成员对应一个aa或者bb
     std::vector<SortPatternPartType> _patternPartTypes;
 
     // If we're not sorting with a $meta value we can short-cut some work.
+    //$meta相关，先忽略
     bool _sortHasMeta = false;
 
     std::unique_ptr<BtreeKeyGenerator> _indexKeyGen;

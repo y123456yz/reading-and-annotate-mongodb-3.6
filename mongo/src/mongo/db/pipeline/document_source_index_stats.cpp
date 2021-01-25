@@ -41,7 +41,8 @@ using boost::intrusive_ptr;
 REGISTER_DOCUMENT_SOURCE(indexStats,
                          DocumentSourceIndexStats::LiteParsed::parse,
                          DocumentSourceIndexStats::createFromBson);
-
+//查看表product_2014索引使用情况
+//db.product_2014.aggregate({"$indexStats":{}})
 const char* DocumentSourceIndexStats::getSourceName() const {
     return "$indexStats";
 }

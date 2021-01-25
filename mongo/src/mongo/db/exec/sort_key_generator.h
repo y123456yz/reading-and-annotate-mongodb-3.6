@@ -75,6 +75,8 @@ private:
     WorkingSet* const _ws;
 
     // The raw sort pattern as expressed by the user.
+    //排序字段prepareExecution赋值
+    //排序字段，排序可能对多个字段排序，例如sort({"aa":1, "bb":1})
     const BSONObj _sortSpec;
 
     const CollatorInterface* _collator;

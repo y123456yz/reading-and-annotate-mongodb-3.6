@@ -65,7 +65,7 @@ keyPattern = { name: 1.0, age: 1.0 }
 
 */
 
-class IndexScan : public PlanStage {
+class FetchStage : public PlanStage {
 public:
     FetchStage(OperationContext* opCtx,
                WorkingSet* ws,

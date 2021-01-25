@@ -64,6 +64,7 @@ bool SortKeyGeneratorStage::isEOF() {
 
 PlanStage::StageState SortKeyGeneratorStage::doWork(WorkingSetID* out) {
     if (!_sortKeyGen) {
+		//SortKeyGenerator类主要是生产排序用的key
         _sortKeyGen = stdx::make_unique<SortKeyGenerator>(_sortSpec, _collator);
         return PlanStage::NEED_TIME;
     }
@@ -75,11 +76,13 @@ PlanStage::StageState SortKeyGeneratorStage::doWork(WorkingSetID* out) {
         StatusWith<BSONObj> sortKey = BSONObj();
         if (member->hasObj()) {
             SortKeyGenerator::Metadata metadata;
+			//meta先忽略
             if (_sortKeyGen->sortHasMeta() && member->hasComputed(WSM_COMPUTED_TEXT_SCORE)) {
                 auto scoreData = static_cast<const TextScoreComputedData*>(
                     member->getComputed(WSM_COMPUTED_TEXT_SCORE));
                 metadata.textScore = scoreData->getScore();
             }
+			//SortKeyGenerator::getSortKey
             sortKey = _sortKeyGen->getSortKey(member->obj.value(), &metadata);
         } else {
             sortKey = getSortKeyFromIndexKey(*member);
@@ -91,6 +94,7 @@ PlanStage::StageState SortKeyGeneratorStage::doWork(WorkingSetID* out) {
         }
 
         // Add the sort key to the WSM as computed data.
+        //WorkingSetMember::addComputed
         member->addComputed(new SortKeyComputedData(sortKey.getValue()));
 
         return PlanStage::ADVANCED;
@@ -114,6 +118,7 @@ const SpecificStats* SortKeyGeneratorStage::getSpecificStats() const {
     return nullptr;
 }
 
+//SortKeyGeneratorStage::doWork
 StatusWith<BSONObj> SortKeyGeneratorStage::getSortKeyFromIndexKey(
     const WorkingSetMember& member) const {
     invariant(member.getState() == WorkingSetMember::RID_AND_IDX);
