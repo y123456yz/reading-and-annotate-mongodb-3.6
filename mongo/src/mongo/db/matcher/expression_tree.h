@@ -39,6 +39,7 @@
  */
 namespace mongo {
 
+//AndMatchExpression  OrMatchExpression  NorMatchExpression继承该类
 class ListOfMatchExpression : public MatchExpression {
 public:
     ListOfMatchExpression(MatchType type) : MatchExpression(type) {}
@@ -101,6 +102,7 @@ protected:
 private:
     ExpressionOptimizerFunc getOptimizer() const final;
 
+    //该node的child添加到该数组
     std::vector<MatchExpression*> _expressions;
 };
 

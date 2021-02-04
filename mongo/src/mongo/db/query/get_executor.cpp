@@ -125,6 +125,7 @@ bool turnIxscanIntoCount(QuerySolution* soln);
 
 
 //获取collection对应QueryPlannerParams信息
+//获取collection集合对应的所有索引信息存储到indices中，同时对参数做初始化赋值
 void fillOutPlannerParams(OperationContext* opCtx,
                           Collection* collection,
                           CanonicalQuery* canonicalQuery,
@@ -310,6 +311,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     QueryPlannerParams plannerParams;
     plannerParams.options = plannerOptions;
 	//获取plannerParams信息
+	//获取collection集合对应的所有索引信息存储到indices中，同时对参数做初始化赋值
     fillOutPlannerParams(opCtx, collection, canonicalQuery.get(), &plannerParams);
 
     // If the canonical query does not have a user-specified collation, set it from the collection
@@ -558,7 +560,9 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
 	//调用prepareExecution函数通过CanonicalQuery类得到的表达式树得到大于等于一个查询计划和
 	//用于生成执行QuerySolution和PlanStage. ,每个查询计划QuerySolution对应一个计划阶段PlanStage.
 	//用于生成执行QuerySolution和PlanStage. 这两个信息最终都存入到PrepareExecutionResult结构并返回
-    StatusWith<PrepareExecutionResult> executionResult =
+
+	//生成候选querySolution及其对应PlanStage
+	StatusWith<PrepareExecutionResult> executionResult =
         prepareExecution(opCtx, collection, ws.get(), std::move(canonicalQuery), plannerOptions);
 	
     if (!executionResult.isOK()) {
@@ -570,7 +574,9 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>>
     //这里面会pickBestPlan选取最优的plan 
     //调用PlanExecutor::make选择最终的PlanExecutor
     //它初始化PlanExecutor类型,并且调用pickBestPlan选取最优的Plan.里面包含了很多不同类型的PlanStage
-    return PlanExecutor::make(opCtx,
+
+	//选择最优querySolution
+	return PlanExecutor::make(opCtx,
                               std::move(ws),
                               std::move(executionResult.getValue().root),
                               std::move(executionResult.getValue().querySolution),

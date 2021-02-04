@@ -289,6 +289,9 @@ QuerySolution* buildWholeIXSoln(const IndexEntry& index,
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
 
+//例如db.test.find({"name":xx}).sort({age:1}),如果没用name索引
+//或者有name索引，但是name索引获取到的数据很多，然后通过age排序，这可能不是最优的，
+//则会选择age这个排序字段来做为索引，然后过滤出其中的"name":xx
 bool providesSort(const CanonicalQuery& query, const BSONObj& kp) {
     return query.getQueryRequest().getSort().isPrefixOf(kp, SimpleBSONElementComparator::kInstance);
 }
@@ -587,6 +590,8 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
 //https://yq.aliyun.com/articles/74635	MongoDB查询优化：从 10s 到 10ms
 //执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache
 
+//CachedPlanStage::replan  prepareExecution turnIxscanIntoDistinctIxscan
+//SubplanStage::planSubqueries()  SubplanStage::choosePlanWholeQuery 这五个接口调用
 // static   prepareExecution中调用  调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
 
 //根据已有索引生成对应QuerySolution存放到out数组中
@@ -675,7 +680,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // Figure out what fields we care about.
     unordered_set<string> fields;
-	////获取所有的查询条件，填充到fields数组 
+	//获取所有的查询条件，填充到fields数组 
     QueryPlannerIXSelect::getFields(query.root(), "", &fields);
 
 	/* 如果是db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1})
@@ -1168,6 +1173,9 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                     }
                 }
                 if (providesSort(query, QueryPlannerCommon::reverseSortObj(kp))) {
+					//例如db.test.find({"name":xx}).sort({age:1}),如果没用name索引
+					//或者有name索引，但是name索引获取到的数据很多，然后通过age排序，这可能不是最优的，
+					//则会选择age这个排序字段来做为索引，然后过滤出其中的"name":xx
                     LOG(2) << "Planner: outputting soln that uses (reverse) index "
                            << "to provide sort.";
                     QuerySolution* soln = buildWholeIXSoln(params.indices[i], query, params, -1);

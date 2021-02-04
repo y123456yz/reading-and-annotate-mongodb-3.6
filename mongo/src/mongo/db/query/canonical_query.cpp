@@ -176,7 +176,6 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
 	MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
 	参考https://blog.csdn.net/baijiwei/article/details/78127191
 	*/
-	
     StatusWithMatchExpression statusWithMatcher = MatchExpressionParser::parse(
         qr->getFilter(), newExpCtx, extensionsCallback, allowedFeatures);
     if (!statusWithMatcher.isOK()) {
@@ -184,6 +183,7 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
     }
 
 	//树型的expression结构，该原始树形结构中的节点是有一个个的查询操作符
+	//最终存入CanonicalQuery._root
     std::unique_ptr<MatchExpression> me = std::move(statusWithMatcher.getValue());
 
     // Make the CQ we'll hopefully return.

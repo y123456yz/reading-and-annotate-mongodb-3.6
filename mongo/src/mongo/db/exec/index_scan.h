@@ -123,6 +123,7 @@ private:
     WorkingSet* const _workingSet;
 
     // Index access.
+    //索引信息在这接口
     const IndexAccessMethod* const _iam;  // owned by Collection -> IndexCatalog
     //WiredTigerIndexUniqueCursor结构
     std::unique_ptr<SortedDataInterface::Cursor> _indexCursor;

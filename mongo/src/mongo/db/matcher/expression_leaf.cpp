@@ -62,6 +62,7 @@ bool ComparisonMatchExpression::equivalent(const MatchExpression* other) const {
     return path() == realOther->path() && eltCmp.evaluate(_rhs == realOther->_rhs);
 }
 
+//parseComparison调用，path也就是{ aa : 0.99 }或者{ aa: { $lt: "0.99" } },rhs为原始bson
 Status ComparisonMatchExpression::init(StringData path, const BSONElement& rhs) {
     _rhs = rhs;
 

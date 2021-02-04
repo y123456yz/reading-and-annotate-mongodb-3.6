@@ -39,6 +39,13 @@ namespace mongo {
  * leaves, such as $_internalSchemaObjectMatch, may also match against a field
  * path.
  */
+/*
+Expression_array.h (src\mongo\db\matcher):class ArrayMatchingMatchExpression : public PathMatchExpression {
+Expression_internal_schema_object_match.h (src\mongo\db\matcher\schema):class InternalSchemaObjectMatchExpression final : public PathMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class LeafMatchExpression : public PathMatchExpression {
+*/
+//ComparisonMatchExpression继承LeafMatchExpression，LeafMatchExpression继承PathMatchExpression
+//上图的几个类继承该类
 class PathMatchExpression : public MatchExpression {
 public:
     PathMatchExpression(MatchType matchType) : MatchExpression(matchType) {}
@@ -74,8 +81,11 @@ public:
         return _path;
     }
 
-    Status setPath(StringData path) {
+    //ComparisonMatchExpression::init调用
+    //path也就是{ aa : 0.99 }或者{ aa: { $lt: "0.99" } } 
+    Status setPath(StringData path) {//
         _path = path;
+        //ElementPath::init
         auto status = _elementPath.init(_path);
         if (!status.isOK()) {
             return status;
@@ -130,7 +140,9 @@ protected:
     }
 
 private:
+    //上面的setPath赋值
     StringData _path;
+    //上面的setPath赋值
     ElementPath _elementPath;
 
     // We use this when we rewrite the value in '_path' and we need a backing store for the

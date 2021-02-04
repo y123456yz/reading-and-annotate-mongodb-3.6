@@ -297,6 +297,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
     WorkingSetMember* member = _workingSet->get(id);//WorkingSet::get
     //索引数据key:value，value对应数据的key,索引KV数据存到member中
     member->recordId = kv->loc; //根据在数据文件中的位置，获取到数据文件中的kv
+    //索引key和数据对应的KV通过member联系起来
     member->keyData.push_back(IndexKeyDatum(_keyPattern, kv->key, _iam));
     _workingSet->transitionToRecordIdAndIdx(id);
 
@@ -307,7 +308,7 @@ PlanStage::StageState IndexScan::doWork(WorkingSetID* out) { //PlanStage::work中
     }
 
 	//id也就是在_workingSet._data数组中的位置
-    *out = id; //一个id和一个WorkingSetMember对应
+    *out = id; //一个id和一个WorkingSetMember对应,也就是和一条索引KV及数据KV对应
     return PlanStage::ADVANCED;
 }
 

@@ -42,6 +42,7 @@ FieldRef::FieldRef(StringData path) : _size(0) {
     parse(path);
 }
 
+//ElementPath::initµ÷ÓÃ
 void FieldRef::parse(StringData path) {
     if (path.size() == 0) {
         return;

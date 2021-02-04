@@ -77,6 +77,7 @@ using namespace mongo;
 /**
  * Returns true if subtree contains MatchExpression 'type'.
  */
+//tree中是否包含有type类型节点
 bool hasNode(const MatchExpression* root, MatchExpression::MatchType type) {
     if (type == root->matchType()) {
         return true;
@@ -119,6 +120,7 @@ enum class DocumentParseLevel {
     kUserSubDocument,
 };
 
+//根据elem解析出number
 StatusWith<long long> MatchExpressionParser::parseIntegerElementToNonNegativeLong(
     BSONElement elem) {
     auto number = parseIntegerElementToLong(elem);
@@ -134,6 +136,7 @@ StatusWith<long long> MatchExpressionParser::parseIntegerElementToNonNegativeLon
     return number;
 }
 
+//根据elem解析出number
 StatusWith<long long> MatchExpressionParser::parseIntegerElementToLong(BSONElement elem) {
     if (!elem.isNumber()) {
         return Status(ErrorCodes::FailedToParse, str::stream() << "Expected a number in: " << elem);
@@ -179,6 +182,7 @@ StatusWith<long long> MatchExpressionParser::parseIntegerElementToLong(BSONEleme
     return number;
 }
 
+//根据elem解析出number
 StatusWith<int> MatchExpressionParser::parseIntegerElementToInt(BSONElement elem) {
     auto parsedLong = MatchExpressionParser::parseIntegerElementToLong(elem);
     if (!parsedLong.isOK()) {
@@ -214,17 +218,20 @@ stdx::function<StatusWithMatchExpression(StringData,
                                          DocumentParseLevel)>
 retrievePathlessParser(StringData name);
 
+//获取RegexMatchExpression
 StatusWithMatchExpression parseRegexElement(StringData name, BSONElement e) {
     if (e.type() != BSONType::RegEx)
         return {Status(ErrorCodes::BadValue, "not a regex")};
 
     auto temp = stdx::make_unique<RegexMatchExpression>();
+	//RegexMatchExpression::init
     auto s = temp->init(name, e.regex(), e.regexFlags());
     if (!s.isOK())
         return s;
     return {std::move(temp)};
 }
 
+//MatchExpressionParser::parse调用
 StatusWithMatchExpression parseComparison(
     StringData name,
     ComparisonMatchExpression* cmp,
@@ -241,6 +248,7 @@ StatusWithMatchExpression parseComparison(
                                      << "'.")};
     }
 
+	//ComparisonMatchExpression::init
     auto s = temp->init(name, e);
     if (!s.isOK()) {
         return s;
@@ -265,7 +273,9 @@ StatusWithMatchExpression parseComparison(
  * { $ref : "s" } = true (if incomplete DBRef is allowed)
  * { $id : "x" } = true (if incomplete DBRef is allowed)
  * { $db : "x" } = true (if incomplete DBRef is allowed)
- */
+ */ 
+//DBRef参考: http://www.360doc.com/content/17/0711/17/31406094_670607022.shtml
+//判断是否为DBRef文档
 bool isDBRefDocument(const BSONObj& obj, bool allowIncompleteDBRef) {
     bool hasRef = false;
     bool hasID = false;
@@ -293,6 +303,7 @@ bool isDBRefDocument(const BSONObj& obj, bool allowIncompleteDBRef) {
         return hasRef || hasID || hasDB;
     }
 
+	//如果allowIncompleteDBRef为false, 则需要hasRef && hasID同时满足
     return hasRef && hasID;
 }
 
@@ -305,7 +316,11 @@ bool isDBRefDocument(const BSONObj& obj, bool allowIncompleteDBRef) {
  * { $ref : "s" } = false (if incomplete DBRef is allowed)
  * { $id : "x" } = false (if incomplete DBRef is allowed)
  * { $db : "mydb" } = false (if incomplete DBRef is allowed)
+
+此外，{ aa: { $eq: "0.99" } }返回false，{ $eq: "0.99" }返回true
  */
+//DBRef文档以外得$xxx文档返回true， DBRef文档返回false  $xxx返回true
+//也就是DBRef以外的$请求操作符返回true
 bool isExpressionDocument(BSONElement e, bool allowIncompleteDBRef) {
     if (e.type() != BSONType::Object)
         return false;
@@ -328,21 +343,45 @@ bool isExpressionDocument(BSONElement e, bool allowIncompleteDBRef) {
 /**
  * Parse 'obj' and return either a MatchExpression or an error.
  */
-//MatchExpressionParser::parse调用
+//MatchExpressionParser::parse  parseTreeTopLevel调用
 StatusWithMatchExpression parse(const BSONObj& obj,
                                 const boost::intrusive_ptr<ExpressionContext>& expCtx,
                                 const ExtensionsCallback* extensionsCallback,
                                 MatchExpressionParser::AllowedFeatureSet allowedFeatures,
                                 DocumentParseLevel currentLevel) {
+    //root跟expression类型为AndMatchExpression
     auto root = stdx::make_unique<AndMatchExpression>();
 
     const DocumentParseLevel nextLevel = (currentLevel == DocumentParseLevel::kPredicateTopLevel)
         ? DocumentParseLevel::kUserDocumentTopLevel
         : currentLevel;
 
+	//{ find: "product_2015", filter: { $and: [ { manual_state: 2 }, { task_destribute_detail: { $elemMatch: { state: 7, start_time: { $lte: "2021-02-03 15:27:44" } } } } ] }, limit: 20
     for (auto e : obj) {
+		/*
+		and nor or形成tree数，例如
+		db.test.find( {
+		    $and : [
+		        { $and : [ { aa : 0.99 }, { bb : 99 }，{"price":{$gt:2000,$lt:5000}} ] },
+		        { $and : [ { cc : true }, { dd : 20} ] }
+		    ]
+		} )
+
+		db.test2.find({"name" : "yangyazhou2", "age":1})和
+		db.test.find({$and : [{"name" : "yangyazhou2"}, {"age":1})]})等价
+		形成的expression tree树如下:
+		               $and ---------------------  top1层
+		             /      \
+		           /          \ 
+		         $and          $and -------------- top2层
+		         /   \         /    \
+			   /     \     cc:true  dd:20
+		   aa:0.99   bb:99
+		*/ 
+		//filter{}中的第一层operation只能是pathlessOperatorMap map表中操作符
         if (e.fieldName()[0] == '$') {
             auto name = e.fieldNameStringData().substr(1);
+			//根据name获取对应的回调func
             auto parseExpressionMatchFunction = retrievePathlessParser(name);
 
             if (!parseExpressionMatchFunction) {
@@ -351,6 +390,7 @@ StatusWithMatchExpression parse(const BSONObj& obj,
                                              << e.fieldNameStringData())};
             }
 
+			//执行name对应的func
             auto parsedExpression = parseExpressionMatchFunction(
                 name, e, expCtx, extensionsCallback, allowedFeatures, currentLevel);
 
@@ -365,13 +405,17 @@ StatusWithMatchExpression parse(const BSONObj& obj,
             //    - $comment  has no action associated with the operator.
             //    - $isolated is explicitly handled in CanoncialQuery::init()
             if (parsedExpression.getValue().get()) {
+				// 构造上图tree中的top1和top2
                 root->add(parsedExpression.getValue().release());
             }
 
             continue;
         }
 
-        if (isExpressionDocument(e, false)) {
+		//$xxx(xxx不是dbref相关的)，则走这个流程
+		//pathlessOperatorMap map表以外的opration请求走这个分支，例如pathlessOperatorMap表中的操作$eq $gt等
+		//DBRef以外的$请求操作符返回true，走这里
+		if (isExpressionDocument(e, false)) {
             auto s = parseSub(e.fieldNameStringData(),
                               e.Obj(),
                               root.get(),
@@ -383,7 +427,9 @@ StatusWithMatchExpression parse(const BSONObj& obj,
                 return s;
             continue;
         }
-
+		
+		//$regex 正则请求，忽略
+		//类似db.user_info.find({"name":{"$regex":"liu"}})走该分支
         if (e.type() == BSONType::RegEx) {
             auto result = parseRegexElement(e.fieldNameStringData(), e);
             if (!result.isOK())
@@ -392,6 +438,8 @@ StatusWithMatchExpression parse(const BSONObj& obj,
             continue;
         }
 
+		//{ aa : 0.99 }走该分支，{ aa : 0.99 }和{ aa: { $eq: "0.99" } }等价
+		//{"price":{$gt:2000,$lt:5000}}走该分支
         auto eq = parseComparison(
             e.fieldNameStringData(), new EqualityMatchExpression(), e, expCtx, allowedFeatures);
         if (!eq.isOK())
@@ -1211,7 +1259,30 @@ StatusWithMatchExpression parseGeo(StringData name,
     }
 }
 
-template <class T>
+
+
+/*
+and nor or形成tree数，例如
+db.test.find( {
+    $and : [
+        { $and : [ { aa : 0.99 }, { bb : 99 } ] },
+        { $and : [ { cc : true }, { dd : 20} ] }
+    ]
+} )
+形成的expression tree树如下:
+               $and ---------------------  top1层
+             /      \
+           /          \ 
+         $and          $and -------------- top2层
+         /   \         /    \
+	   /     \     cc:true  dd:20
+   aa:0.99   bb:99
+*/ 
+//parseTreeTopLevel构造上面的top1和top2 tree
+
+//$and $nor $or  operation的回调处理，参考pathlessOperatorMap
+//T分别对应AndMatchExpression NorMatchExpression  OrMatchExpression
+template <class T>   
 StatusWithMatchExpression parseTreeTopLevel(
     StringData name,
     BSONElement elem,
@@ -1917,6 +1988,8 @@ StatusWithMatchExpression MatchExpressionParser::parse(
     }
 }
 
+//查询Operators参考https://docs.mongodb.com/manual/reference/operator/query/
+//注意部分operation没有在这两个map表中，可以本文件搜索
 namespace {
 // Maps from query operator string name to function.
 std::unique_ptr<StringMap<
@@ -1962,17 +2035,20 @@ MONGO_INITIALIZER(PathlessOperatorMap)(InitializerContext* context) {
             {"db", &parseDBRef},
             {"expr", &parseExpr},
             {"id", &parseDBRef},
-            {"isolated", &parseAtomicOrIsolated},
+            {"isolated", &parseAtomicOrIsolated}, 
             {"jsonSchema", &parseJSONSchema},
             {"nor", &parseTreeTopLevel<NorMatchExpression>},
-            {"or", &parseTreeTopLevel<OrMatchExpression>},
+            {"or", &parseTreeTopLevel< >},
             {"ref", &parseDBRef},
             {"text", &parseText},
             {"where", &parseWhere},
+            //"not"在parseSubField中处理
         });
     return Status::OK();
 }
 
+//查询Operators参考https://docs.mongodb.com/manual/reference/operator/query/
+//注意部分operation没有在这两个map表中，可以本文件搜索
 // Maps from query operator string name to operator PathAcceptingKeyword.
 std::unique_ptr<StringMap<PathAcceptingKeyword>> queryOperatorMap;
 
@@ -2027,6 +2103,7 @@ MONGO_INITIALIZER(MatchExpressionParser)(InitializerContext* context) {
  * Returns the proper parser for the indicated pathless operator. Returns 'null' if 'name'
  * doesn't represent a known type.
  */
+//从pathlessOperatorMap map表中根据name进行查找对应的
 stdx::function<StatusWithMatchExpression(StringData,
                                          BSONElement,
                                          const boost::intrusive_ptr<ExpressionContext>&,
@@ -2042,6 +2119,7 @@ retrievePathlessParser(StringData name) {
 }
 }  // namespace
 
+//从queryOperatorMap map表中根据opname进行查找
 boost::optional<PathAcceptingKeyword> MatchExpressionParser::parsePathAcceptingKeyword(
     BSONElement typeElem, boost::optional<PathAcceptingKeyword> defaultKeyword) {
     auto fieldName = typeElem.fieldNameStringData();

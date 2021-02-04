@@ -45,6 +45,25 @@ namespace mongo {
 
 class CollatorInterface;
 
+/*
+Expression_geo.h (src\mongo\db\matcher):class GeoMatchExpression : public LeafMatchExpression {
+Expression_geo.h (src\mongo\db\matcher):class GeoNearMatchExpression : public LeafMatchExpression {
+Expression_internal_schema_eq.h (src\mongo\db\matcher\schema):class InternalSchemaEqMatchExpression final : public LeafMatchExpression {
+Expression_internal_schema_fmod.h (src\mongo\db\matcher\schema):class InternalSchemaFmodMatchExpression final : public LeafMatchExpression {
+Expression_internal_schema_str_length.h (src\mongo\db\matcher\schema):class InternalSchemaStrLengthMatchExpression : public LeafMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class ComparisonMatchExpression : public LeafMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class RegexMatchExpression : public LeafMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class ModMatchExpression : public LeafMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class ExistsMatchExpression : public LeafMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class InMatchExpression : public LeafMatchExpression {
+Expression_leaf.h (src\mongo\db\matcher):class BitTestMatchExpression : public LeafMatchExpression {
+Expression_text_base.h (src\mongo\db\matcher):class TextMatchExpressionBase : public LeafMatchExpression {
+Expression_type.h (src\mongo\db\matcher):class TypeMatchExpressionBase : public LeafMatchExpression {
+Geo_near.cpp (src\mongo\db\exec):class TwoDPtInAnnulusExpression : public LeafMatchExpression {
+*/  
+
+//ComparisonMatchExpression继承LeafMatchExpression，LeafMatchExpression继承PathMatchExpression
+//ComparisonMatchExpression(EQ, LTE, LT, GT, GTE)等继承该类，见上面的注释
 class LeafMatchExpression : public PathMatchExpression {
 public:
     explicit LeafMatchExpression(MatchType matchType) : PathMatchExpression(matchType) {}
@@ -74,7 +93,9 @@ public:
 
 /**
  * EQ, LTE, LT, GT, GTE subclass from ComparisonMatchExpression.
- */
+ 上面的subclass分别对应以下类:
+ GTEMatchExpression GTMatchExpression LTMatchExpression LTEMatchExpression EqualityMatchExpression
+ */ //parseComparison中会使用
 class ComparisonMatchExpression : public LeafMatchExpression {
 public:
     explicit ComparisonMatchExpression(MatchType type) : LeafMatchExpression(type) {}
@@ -123,6 +144,8 @@ protected:
         _collator = collator;
     }
 
+    //parseComparison调用，path也就是{ aa : 0.99 }或者{ aa: { $lt: "0.99" } },
+    //rhs为path对应的原始bson
     BSONElement _rhs;
 
     // Collator used to compare elements. By default, simple binary comparison will be used.
@@ -134,6 +157,7 @@ private:
     }
 };
 
+//MatchExpressionParser::parse中调用
 class EqualityMatchExpression : public ComparisonMatchExpression {
 public:
     EqualityMatchExpression() : ComparisonMatchExpression(EQ) {}

@@ -238,6 +238,7 @@ bool WorkingSetMember::getFieldDotted(const string& field, BSONElement* out) con
     return false;
 }
 
+//获取该数据消耗了
 size_t WorkingSetMember::getMemUsage() const {
     size_t memUsage = 0;
 

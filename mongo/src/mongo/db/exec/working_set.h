@@ -187,7 +187,7 @@ private:
  * The key data extracted from an index.  Keeps track of both the key (currently a BSONObj) and
  * the index that provided the key.  The index key pattern is required to correctly interpret
  * the key.
- */
+ */ //一个表可能有多个索引，多个索引对应同一条doc，这些索引key
 struct IndexKeyDatum {
     IndexKeyDatum(const BSONObj& keyPattern, const BSONObj& key, const IndexAccessMethod* index)
         : indexKeyPattern(keyPattern), keyData(key), index(index) {}
@@ -303,7 +303,7 @@ public:
     RecordId recordId; //可以参考IndexScan::doWork
     //obj字段记录的bson文档, 根据recordId获取到的真实数据内容
     Snapshotted<BSONObj> obj; //赋值见WorkingSetCommon::fetch
-    //索引KV的key，
+    //索引KV的key，一个表可能有多个索引，多个索引对应同一条doc
     std::vector<IndexKeyDatum> keyData;   //可以参考IndexScan::doWork
 
     // True if this WSM has survived a yield in RID_AND_IDX state.

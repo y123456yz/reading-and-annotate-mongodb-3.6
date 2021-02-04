@@ -167,6 +167,7 @@ std::unique_ptr<MatchExpression> SubplanStage::rewriteToRootedOr(
     return orChild;
 }
 
+//SubplanStage::pickBestPlanµ÷ÓÃ
 Status SubplanStage::planSubqueries() {
     _orExpression = _query->root()->shallowClone();
     if (isContainedOr(_orExpression.get())) {

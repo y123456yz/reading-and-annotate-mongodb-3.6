@@ -96,6 +96,14 @@ public:
     // root.  We do this once and store it.
     // TODO: Do a FieldRef / StringData pass.
     // TODO: We might want this inside of the MatchExpression.
+    /*
+     db.test.find({"$and": [{"name" : "yangyazhou2"}, {"age":1}]})
+     这个对应的path如下:
+     2021-02-04T15:57:23.657+0800 D QUERY    [conn-1] Rated tree:
+     $and
+        age == 1.0  || First: 1 notFirst: full path: age
+        name == "yangyazhou2"  || First: 0 2 notFirst: full path: name
+    */
     std::string path;
 
     // Points to the innermost containing $elemMatch. If this tag is

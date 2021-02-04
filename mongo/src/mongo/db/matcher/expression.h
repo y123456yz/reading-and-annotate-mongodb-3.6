@@ -50,16 +50,26 @@ class TreeMatchExpression;
 typedef StatusWith<std::unique_ptr<MatchExpression>> StatusWithMatchExpression;
 
 /*
-Expression_always_boolean.h (db\matcher):class AlwaysBooleanMatchExpression : public MatchExpression {
-Expression_arity.h (db\matcher):class FixedArityMatchExpression : public MatchExpression {
-Expression_expr.h (db\matcher):class ExprMatchExpression final : public MatchExpression {
-Expression_internal_schema_allowed_properties.h (db\matcher\schema):class InternalSchemaAllowedPropertiesMatchExpression final : public MatchExpression {
-Expression_internal_schema_num_properties.h (db\matcher\schema):class InternalSchemaNumPropertiesMatchExpression : public MatchExpression {
-Expression_internal_schema_root_doc_eq.h (db\matcher\schema):class InternalSchemaRootDocEqMatchExpression final : public MatchExpression {
-Expression_path.h (db\matcher):class PathMatchExpression : public MatchExpression {
-Expression_tree.h (db\matcher):class ListOfMatchExpression : public MatchExpression {
-Expression_tree.h (db\matcher):class NotMatchExpression final : public MatchExpression {
-Expression_where_base.h (db\matcher):class WhereMatchExpressionBase : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_always_boolean.h (db\matcher):class AlwaysBooleanMatchExpression : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_arity.h (db\matcher):class FixedArityMatchExpression : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_expr.h (db\matcher):class ExprMatchExpression final : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_internal_schema_allowed_properties.h (db\matcher\schema):class InternalSchemaAllowedPropertiesMatchExpression final : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_internal_schema_num_properties.h (db\matcher\schema):class InternalSchemaNumPropertiesMatchExpression : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_internal_schema_root_doc_eq.h (db\matcher\schema):class InternalSchemaRootDocEqMatchExpression final : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_path.h (db\matcher):class PathMatchExpression : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_tree.h (db\matcher):class ListOfMatchExpression : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_tree.h (db\matcher):class NotMatchExpression final : public MatchExpression {
+Expression.h (src\mongo\db\matcher):Expression_where_base.h (db\matcher):class WhereMatchExpressionBase : public MatchExpression {
+Expression_always_boolean.h (src\mongo\db\matcher):class AlwaysBooleanMatchExpression : public MatchExpression {
+Expression_arity.h (src\mongo\db\matcher):class FixedArityMatchExpression : public MatchExpression {
+Expression_expr.h (src\mongo\db\matcher):class ExprMatchExpression final : public MatchExpression {
+Expression_internal_schema_allowed_properties.h (src\mongo\db\matcher\schema):class InternalSchemaAllowedPropertiesMatchExpression final : public MatchExpression {
+Expression_internal_schema_num_properties.h (src\mongo\db\matcher\schema):class InternalSchemaNumPropertiesMatchExpression : public MatchExpression {
+Expression_internal_schema_root_doc_eq.h (src\mongo\db\matcher\schema):class InternalSchemaRootDocEqMatchExpression final : public MatchExpression {
+Expression_path.h (src\mongo\db\matcher):class PathMatchExpression : public MatchExpression {
+Expression_tree.h (src\mongo\db\matcher):class ListOfMatchExpression : public MatchExpression {
+Expression_tree.h (src\mongo\db\matcher):class NotMatchExpression final : public MatchExpression {
+Expression_where_base.h (src\mongo\db\matcher):class WhereMatchExpressionBase : public MatchExpression {
 */
 
 //MatchExpression是将filter算子里每个逻辑运算转换成各个类型的表达式(GT,ET,LT,AND,OR...)，构成一个表达
@@ -91,12 +101,14 @@ https://blog.csdn.net/baijiwei/article/details/78122733
 
 //CanonicalQuery._root  QuerySolutionNode.filter成员是该类型  一个filter对应一个MatchExpression
 //所有的QuerySolutionNode(代表CanonicalQuery._root树中的一个节点，对应一个MatchExpression)组成一颗树
+//MatchExpressionParser会把请求解析成tree树，tree中的节点就是MatchExpression
 class MatchExpression { //很多的xxxMatchExpression继承该类
 //AlwaysBooleanMatchExpression    ExprMatchExpression等继承该类
     MONGO_DISALLOW_COPYING(MatchExpression);
 
 public:
     //对应继承类初始化构造适合赋值，例如AndMatchExpression() : ListOfMatchExpression(AND) {}
+    //参考expression_parser.cpp中的map表定义queryOperatorMap
     enum MatchType { //mongodb查询的逻辑操作符解析可以参考类MatchExpressionParser
         // tree types  
         AND, //AndMatchExpression

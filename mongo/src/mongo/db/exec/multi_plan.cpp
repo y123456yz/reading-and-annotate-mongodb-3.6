@@ -296,9 +296,11 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
 
     _backupPlanIdx = kNoSuchPlan;
 	//如果得分第一高的候选计划有阻塞的可能，则选择第二得分高的候选计划，以此类推
+	////如果有soln->hasBlockingStage = hasSortStage || hasAndHashStage;这两个stage则为blockstage
     if (bestSolution->hasBlockingStage && (0 == alreadyProduced.size())) { //该查询计划有阻塞情况，则选择备用的
         LOG(2) << "Winner has blocking stage, looking for backup plan...";
         for (size_t ix = 0; ix < _candidates.size(); ++ix) {
+			//继续从候选plan中选择
             if (!_candidates[ix].solution->hasBlockingStage) {
                 LOG(2) << "Candidate " << ix << " is backup child";
                 _backupPlanIdx = ix;

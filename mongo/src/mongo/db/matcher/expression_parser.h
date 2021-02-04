@@ -90,7 +90,7 @@ enum class PathAcceptingKeyword {
 
 MatchExpressionParser的作用就是把Bson对象转换为一个树形的MatchExpression对象
 参考https://blog.csdn.net/baijiwei/article/details/78127191
-*/
+*/ //MatchExpressionParser会把请求解析成tree树，tree中的节点就是MatchExpression
 class MatchExpressionParser {
 public:
     /**
