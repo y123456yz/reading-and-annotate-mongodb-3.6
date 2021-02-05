@@ -538,7 +538,19 @@ bool SubplanStage::isEOF() {
     invariant(child());
     return child()->isEOF();
 }
-
+/*
+db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [ {  name : "cc" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
+上面查询最终会下面的MatchExpression tree
+              $or   ------这层对应stage为SubplanStage
+		  /  \    \
+		 /    \    \
+		/   name:cc \	    
+	  $and		    \ 
+	  /   \ 		     \
+	/	  \ 	        "xx" : 3(也就是"xx":{$eq:3})
+name:0.99   age:99
+参考目录中的querysolution.log  
+*/
 PlanStage::StageState SubplanStage::doWork(WorkingSetID* out) {
     if (isEOF()) {
         return PlanStage::IS_EOF;

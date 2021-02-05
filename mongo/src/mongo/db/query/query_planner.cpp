@@ -586,6 +586,20 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
 #30 0x00007f2a4b206e25 in start_thread () from /lib64/libpthread.so.0
 #31 0x00007f2a4af3434d in clone () from /lib64/libc.so.6
 */
+/*
+db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [ {	name : "cc" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
+上面查询最终会下面的MatchExpression tree
+			  $or    ------这层对应stage为SubplanStage
+		  /  \	  \
+		 /	  \    \
+		/	name:cc \		
+	  $and			\ 
+	  /   \ 			 \
+	/	  \ 			"xx" : 3(也就是"xx":{$eq:3})
+name:0.99	age:99
+参考目录中的querysolution.log  
+*/
+
 //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4 MongoDB 执行计划 & 优化器简介 (上)
 //https://yq.aliyun.com/articles/74635	MongoDB查询优化：从 10s 到 10ms
 //执行计划http://mongoing.com/archives/5624?spm=a2c4e.11153940.blogcont647563.13.6ee0730cDKb7RN 深入解析 MongoDB Plan Cache

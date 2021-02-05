@@ -67,6 +67,21 @@ class OperationContext;
  *
  *   --Plans for entire rooted $or queries are neither written to nor read from the plan cache.
  */ 
+/*
+db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [ {  name : "cc" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
+上面查询最终会下面的MatchExpression tree
+              $or   ------这层对应stage为SubplanStage
+          /  \    \
+         /    \    \
+        /   name:cc \       
+      $and          \ 
+      /   \              \
+    /     \             "xx" : 3(也就是"xx":{$eq:3})
+name:0.99   age:99
+参考目录中的querysolution.log  
+*/
+
+
 //例如下面的查询，就会满足这个条件:db.test.find( {$or : [{ $and : [ { name : "yangyazhou2" }, { "age" : 99 } ] },
 //{ $or : [ {  name : "yangyazhou" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
 
