@@ -549,7 +549,7 @@ db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [
 	  /   \ 		     \
 	/	  \ 	        "xx" : 3(也就是"xx":{$eq:3})
 name:0.99   age:99
-参考目录中的querysolution.log  
+参考目录中的querysolution.txt  
 */
 PlanStage::StageState SubplanStage::doWork(WorkingSetID* out) {
     if (isEOF()) {

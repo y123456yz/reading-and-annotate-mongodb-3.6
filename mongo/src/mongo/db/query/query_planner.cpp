@@ -597,7 +597,7 @@ db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [
 	  /   \ 			 \
 	/	  \ 			"xx" : 3(也就是"xx":{$eq:3})
 name:0.99	age:99
-参考目录中的querysolution.log  
+参考目录中的querysolution.txt  
 */
 
 //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4 MongoDB 执行计划 & 优化器简介 (上)
