@@ -95,22 +95,23 @@ bool isContainedOr(const MatchExpression* expr) {
 
 }  // namespace
 
+//如果root为OR类型，则返回false
 bool SubplanStage::canUseSubplanning(const CanonicalQuery& query) {
     const QueryRequest& qr = query.getQueryRequest();
     const MatchExpression* expr = query.root();
 
-    // Hint provided
+    // Hint provided   强制索引返回false
     if (!qr.getHint().isEmpty()) {
         return false;
     }
 
-    // Min provided
+    // Min provided      Min queries 返回false
     // Min queries are a special case of hinted queries.
     if (!qr.getMin().isEmpty()) {
         return false;
     }
 
-    // Max provided
+    // Max provided  max queries 返回false
     // Similar to min, max queries are a special case of hinted queries.
     if (!qr.getMax().isEmpty()) {
         return false;

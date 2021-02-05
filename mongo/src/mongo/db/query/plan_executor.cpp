@@ -259,7 +259,7 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
     PlanStage* foundStage = getStageByType(_root.get(), STAGE_SUBPLAN);
     if (foundStage) {
         SubplanStage* subplan = static_cast<SubplanStage*>(foundStage);
-		//SubplanStage::pickBestPlan 
+		//SubplanStage::pickBestPlan,这里面可能形成递归调用
         return subplan->pickBestPlan(_yieldPolicy.get());
     }
 

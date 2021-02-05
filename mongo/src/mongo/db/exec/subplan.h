@@ -66,7 +66,11 @@ class OperationContext;
  *   another rooted $or query, or shape C as its own query.
  *
  *   --Plans for entire rooted $or queries are neither written to nor read from the plan cache.
- */ //SubplanStage, 主要是针对$or 的处理
+ */ 
+//例如下面的查询，就会满足这个条件:db.test.find( {$or : [{ $and : [ { name : "yangyazhou2" }, { "age" : 99 } ] },
+//{ $or : [ {  name : "yangyazhou" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
+
+//SubplanStage, 主要是针对$or 的处理, prepareExecution中构造试用
 class SubplanStage final : public PlanStage {
 public:
     SubplanStage(OperationContext* opCtx,
