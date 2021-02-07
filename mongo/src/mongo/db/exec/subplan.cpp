@@ -179,6 +179,7 @@ Status SubplanStage::planSubqueries() {
     for (size_t i = 0; i < _plannerParams.indices.size(); ++i) {
         const IndexEntry& ie = _plannerParams.indices[i];
         _indexMap[ie.name] = i;
+		//打印所有的索引信息
         LOG(5) << "Subplanner: index " << i << " is " << ie;
     }
 
