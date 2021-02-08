@@ -50,6 +50,7 @@ public:
             return true;
         }
 
+        //一般会满足这个条件
         return isIndexOnOwnFieldTypeNode(me);
     }
 
@@ -128,7 +129,8 @@ public:
      * or 'me' can use an index on its own field.
      */
     static bool isBoundsGenerating(const MatchExpression* me) {
-        return isBoundsGeneratingNot(me) || nodeCanUseIndexOnOwnField(me);
+        return isBoundsGeneratingNot(me) || 
+            nodeCanUseIndexOnOwnField(me); //一般会满足这个条件
     }
 
     /**

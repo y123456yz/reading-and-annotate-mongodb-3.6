@@ -128,15 +128,16 @@ struct PlanCacheIndexTree {
     // Children owned here.
     std::vector<PlanCacheIndexTree*> children;
 
-    // Owned here.
+    // Owned here. 
+    //cacheDataFromTaggedTree中构造使用
     std::unique_ptr<IndexEntry> entry;
-
+    //cacheDataFromTaggedTree中构造使用
     size_t index_pos;
 
     // The value for this member is taken from the IndexTag of the corresponding match expression
     // and is used to ensure that bounds are correctly intersected and/or compounded when a query is
     // planned from the plan cache.
-    bool canCombineBounds;
+    bool canCombineBounds; //cacheDataFromTaggedTree中构造使用
 
     std::vector<OrPushdown> orPushdowns;
 };
@@ -146,7 +147,9 @@ struct PlanCacheIndexTree {
  * used to create a cache entry. When this data is retrieved
  * from the cache, it is sufficient to reconstruct the original
  * QuerySolution.
- */ //QueryPlanner::plan中构造
+ */ 
+//QueryPlanner::plan中构造, 
+//QuerySolution.cacheData成员为该类型
 struct SolutionCacheData {
     SolutionCacheData()
         : tree(nullptr),
@@ -164,6 +167,7 @@ struct SolutionCacheData {
     // can be used to tag an isomorphic match expression. If 'wholeIXSoln'
     // is true, then 'tree' is used to store the relevant IndexEntry.
     // If 'collscanSoln' is true, then 'tree' should be NULL.
+    //QueryPlanner::plan中赋值，缓存cacheIndex
     std::unique_ptr<PlanCacheIndexTree> tree;
 
     enum SolutionType {

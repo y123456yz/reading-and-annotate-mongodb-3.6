@@ -56,6 +56,12 @@ public:
 
     virtual ~IndexTag() {}
 
+    /*
+    2021-02-08T18:29:37.354+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+    $and
+        name == "yangyazhou2"
+        age $gt 99.0  || Selected Index #1 pos 0 combine   类似这样  
+    */
     virtual void debugString(StringBuilder* builder) const { 
         *builder << " || Selected Index #" << index << " pos " << pos << " combine "
                  << canCombineBounds;
@@ -73,6 +79,7 @@ public:
     size_t index = kNoIndex;
 
     // What position are we in the index?  (Compound.)
+    //候选索引可能多个，我们处在第几个呢
     size_t pos = 0U;
 
     // The plan enumerator can assign multiple predicates to the same position of a multikey index
@@ -88,7 +95,18 @@ public:
 class RelevantTag : public MatchExpression::TagData {
 public:
     RelevantTag() : elemMatchExpr(NULL), pathPrefix("") {}
+    //对于每一个节点， 我们把第一个匹配的index放在RelevantTag 的first字段， 其他的匹配的index放进notfirst 字段；
+    //参考QueryPlannerIXSelect::rateIndices
 
+    /*
+    2021-02-08T14:59:07.634+0800 D QUERY    [conn-1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+    2021-02-08T14:59:07.634+0800 D QUERY    [conn-1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+    2021-02-08T14:59:07.634+0800 D QUERY    [conn-1] Relevant index 2 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+    2021-02-08T14:59:07.635+0800 D QUERY    [conn-1] Rated tree:
+    $and
+        age == 99.0  || First: 1 notFirst: full path: age               //First: 1 ,这里的1代表前面index 1对应索引
+        name == "yangyazhou2"  || First: 0 2 notFirst: full path: name  //First: 0 2 ,这里的0 2代表前面index 0和index 2两个对应索引
+    */
     std::vector<size_t> first;
     std::vector<size_t> notFirst;
 
@@ -125,6 +143,15 @@ public:
     // compound two predicates sharing a path prefix.
     std::string pathPrefix;
 
+    /*
+    2021-02-08T14:59:07.634+0800 D QUERY    [conn-1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+    2021-02-08T14:59:07.634+0800 D QUERY    [conn-1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+    2021-02-08T14:59:07.634+0800 D QUERY    [conn-1] Relevant index 2 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+    2021-02-08T14:59:07.635+0800 D QUERY    [conn-1] Rated tree:
+    $and
+        age == 99.0  || First: 1 notFirst: full path: age               //First: 1 ,这里的1代表前面index 1对应索引
+        name == "yangyazhou2"  || First: 0 2 notFirst: full path: name  //First: 0 2 ,这里的0 2代表前面index 0和index 2两个对应索引
+    */
     virtual void debugString(StringBuilder* builder) const {
         *builder << " || First: ";
         for (size_t i = 0; i < first.size(); ++i) {

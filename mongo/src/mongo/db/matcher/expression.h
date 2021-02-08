@@ -120,10 +120,10 @@ public:
         SIZE,
 
         // leaf types
-        EQ,
-        LTE,
-        LT,
-        GT,
+        EQ,    //EqualityMatchExpression
+        LTE,   //LTEMatchExpression
+        LT,    //LTMatchExpression
+        GT,    //GTMatchExpression
         GTE,
         REGEX,
         MOD,

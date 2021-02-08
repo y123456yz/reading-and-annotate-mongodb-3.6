@@ -143,7 +143,7 @@ static bool boundsGeneratingNodeContainsComparisonToType(MatchExpression* node, 
 2019-01-03T16:58:51.444+0800 D QUERY	[conn1] Predicate over field 'age'
 */
 //获取所有的查询条件，填充到out数组   QueryPlanner::plan中调用执行
-// static
+// static   
 void QueryPlannerIXSelect::getFields(const MatchExpression* node,
                                      string prefix,
                                      unordered_set<string>* out) {
@@ -193,7 +193,8 @@ db.test.find({"name":"yangyazhou", "age":1, "male":1})
 找不到，就舍弃；再比如对于(假设存在这个索引)  { entryId: 1, appId: 1  }，在fields数组中查找"entryId"，能
 够找到就把这个索引加入到RelevantIndices数组
 */
-// static  获取满足条件的索引，QueryPlanner::plan中执行
+// static  
+//获取满足条件的索引，QueryPlanner::plan中执行，最左原则至少匹配一个字段
 void QueryPlannerIXSelect::findRelevantIndices(const unordered_set<string>& fields,
                                                const vector<IndexEntry>& allIndices,
                                                vector<IndexEntry>* out) {
@@ -207,6 +208,7 @@ void QueryPlannerIXSelect::findRelevantIndices(const unordered_set<string>& fiel
     }
 }
 
+//QueryPlannerIXSelect::rateIndices中调用
 // static
 bool QueryPlannerIXSelect::compatible(const BSONElement& elt,
                                       const IndexEntry& index,
@@ -238,7 +240,7 @@ bool QueryPlannerIXSelect::compatible(const BSONElement& elt,
     // We know elt.fieldname() == node->path().
     MatchExpression::MatchType exprtype = node->matchType();
 
-    if (indexedFieldType.empty()) {
+    if (indexedFieldType.empty()) { //普通索引INDEX_BTREE进入这里
         // Can't use a sparse index for $eq with a null element, unless the equality is within a
         // $elemMatch expression since the latter implies a match on the literal element 'null'.
         if (exprtype == MatchExpression::EQ && index.sparse && !elemMatchChild) {
@@ -404,13 +406,25 @@ bool QueryPlannerIXSelect::compatible(const BSONElement& elt,
     }
 }
 
-// static  QueryPlanner::plan中调用  
-//程序走到这里， MatchExpression的每一个节点对应的TagData*或者RelevantTag* 字段还是空的,给MatchExpression._tagData赋值
+
+/*
+2021-02-08T14:59:07.634+0800 D QUERY	[conn-1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+2021-02-08T14:59:07.634+0800 D QUERY	[conn-1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+2021-02-08T14:59:07.634+0800 D QUERY	[conn-1] Relevant index 2 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+2021-02-08T14:59:07.635+0800 D QUERY	[conn-1] Rated tree:
+$and
+	age == 99.0  || First: 1 notFirst: full path: age				//First: 1 ,这里的1代表前面index 1对应索引
+	name == "yangyazhou2"  || First: 0 2 notFirst: full path: name	//First: 0 2 ,这里的0 2代表前面index 0和index 2两个对应索引
+*/
+
 /*
 对于每一个节点， 我们把第一个匹配的index放在RelevantTag 的first
 字段， 其他的匹配的index放进notfirst 字段；如果是NOT， 找到他的子节点； 如果是逻辑节点， 
 使用它的所有的子节点进行深度优先的遍历。 
 */
+
+// static  QueryPlanner::plan中调用  
+//程序走到这里， MatchExpression的每一个节点对应的TagData*或者RelevantTag* 字段还是空的,给MatchExpression._tagData赋值
 void QueryPlannerIXSelect::rateIndices(MatchExpression* node,   
                                        string prefix,
                                        const vector<IndexEntry>& indices,
@@ -423,7 +437,7 @@ void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
 
     // Every indexable node is tagged even when no compatible index is
     // available.
-    if (Indexability::isBoundsGenerating(node)) {
+    if (Indexability::isBoundsGenerating(node)) { //绝大部分情况走这里，如果又对应索引
         string fullPath;
         if (MatchExpression::NOT == node->matchType()) {
             fullPath = prefix + node->getChild(0)->path().toString();
@@ -466,7 +480,8 @@ void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
             node->getChild(0)->setTag(childRt);
         }
     } else if (Indexability::arrayUsesIndexOnChildren(node)) {
-        // See comment in getFields about all/elemMatch and paths.
+		//Example: a: {$elemMatch: {b:1, c:1}}.
+		// See comment in getFields about all/elemMatch and paths.
         if (!node->path().empty()) {
             prefix += node->path().toString() + ".";
         }

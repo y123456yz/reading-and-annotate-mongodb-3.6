@@ -44,7 +44,7 @@ class MatchExpression;
  * This name sucks, but every name involving 'index' is used somewhere.
  */ //QueryPlannerParams.indices(集合对应的所有IndexEntry都存入该数组)成员为该类型，
  //代表一个索引实例，一条索引的详细信息就记录在该结构中
- //赋值参考fillOutPlannerParams
+ //赋值参考fillOutPlannerParams  //PlanCacheIndexTree.entry成员为该类型
 struct IndexEntry { //IndexEntry中的取值实际上是从IndexDescriptor获取的，参考fillOutPlannerParams
     /**
      * Use this constructor if you're making an IndexEntry from the catalog.
@@ -135,7 +135,7 @@ struct IndexEntry { //IndexEntry中的取值实际上是从IndexDescriptor获取的，参考fil
 
     // What type of index is this?  (What access method can we use on the index described
     // by the keyPattern?)
-    IndexType type;
+    IndexType type; //索引类型IndexType
 
     // Null if this index orders strings according to the simple binary compare. If non-null,
     // represents the collator used to generate index keys for indexed strings.

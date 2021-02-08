@@ -118,6 +118,8 @@ bool parsingCanProduceNoopMatchNodes(const ExtensionsCallback& extensionsCallbac
 
 }  // namespace
 
+//FindCmd::run调用
+
 // static
 StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
     OperationContext* opCtx,
@@ -135,7 +137,8 @@ StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
         opCtx, std::move(qrStatus.getValue()), expCtx, extensionsCallback, allowedFeatures);
 }
 
-//FindCmd::run调用，//从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
+//FindCmd::run  调用，
+//从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
 // static
 StatusWith<std::unique_ptr<CanonicalQuery>> 
   CanonicalQuery::canonicalize(
@@ -205,6 +208,7 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
     return std::move(cq);
 }
 
+//SubplanStage::planSubqueries调用
 // static
 StatusWith<std::unique_ptr<CanonicalQuery>> 
  CanonicalQuery::canonicalize(

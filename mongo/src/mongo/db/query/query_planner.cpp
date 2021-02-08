@@ -300,7 +300,7 @@ bool providesSort(const CanonicalQuery& query, const BSONObj& kp) {
 const int QueryPlanner::kPlannerVersion = 1;
 
 //根据候选索引和MatchExpression生成PlanCacheIndexTree
-//QueryPlanner::plan中调用
+//QueryPlanner::plan(生成querySolution)中调用
 Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const taggedTree,
                                              const vector<IndexEntry>& relevantIndices,
                                              PlanCacheIndexTree** out) {
@@ -334,7 +334,7 @@ Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const tagged
         }
 
         IndexEntry* ientry = new IndexEntry(relevantIndices[itag->index]);
-        indexTree->entry.reset(ientry);
+        indexTree->entry.reset(ientry);//PlanCacheIndexTree.entry
         indexTree->index_pos = itag->pos;
         indexTree->canCombineBounds = itag->canCombineBounds;
     } else if (taggedTree->getTag() &&
@@ -369,6 +369,7 @@ Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const tagged
     for (size_t i = 0; i < taggedTree->numChildren(); ++i) {
         MatchExpression* taggedChild = taggedTree->getChild(i);
         PlanCacheIndexTree* indexTreeChild;
+		//递归调用
         Status s = cacheDataFromTaggedTree(taggedChild, relevantIndices, &indexTreeChild);
         if (!s.isOK()) {
             return s;
@@ -597,7 +598,7 @@ db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [
 	  /   \ 			 \
 	/	  \ 			"xx" : 3(也就是"xx":{$eq:3})
 name:0.99	age:99
-参考目录中的querysolution.txt  
+参考目录中的querysolution.txt  由SubplanStage::planSubqueries()负责生成子 tree solution
 */
 
 //参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4 MongoDB 执行计划 & 优化器简介 (上)
@@ -703,6 +704,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
 	如果是db.test.find({"name":"yangyazhou"}).sort({"name":1})
 	2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Predicate over field 'name'
+	//这里把查询条件中得字段一个一个打印出来
 	*/
     for (unordered_set<string>::const_iterator it = fields.begin(); it != fields.end(); ++it) {
         LOG(2) << "Predicate over field '" << *it << "'"; 
@@ -1041,6 +1043,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             std::unique_ptr<MatchExpression> clone(rawTree.get()->shallowClone());
             PlanCacheIndexTree* cacheData;
 			//根据候选索引和MatchExpression生成PlanCacheIndexTree
+			//先把原始的rawTree中的indexTree缓存起来，后面prepareForAccessPlanning会对rawTree树重新排序
             Status indexTreeStatus = 
                 cacheDataFromTaggedTree(clone.get(), relevantIndices, &cacheData);
             if (!indexTreeStatus.isOK()) {
@@ -1061,6 +1064,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             if (!solnRoot) {
                 continue;
             }
+			LOG(2) << "Planner: adding QuerySolutionNode:" << endl << redact(soln->toString());
 
 			//获取对应QuerySolution
             QuerySolution* soln =
@@ -1070,7 +1074,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                 if (indexTreeStatus.isOK()) {
                     SolutionCacheData* scd = new SolutionCacheData();
                     scd->tree.reset(autoData.release());
-                    soln->cacheData.reset(scd);
+                    soln->cacheData.reset(scd); 
                 }
 				//QuerySolution添加到out中
                 out->push_back(soln);

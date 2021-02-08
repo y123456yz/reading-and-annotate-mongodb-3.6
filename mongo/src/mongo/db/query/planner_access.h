@@ -99,6 +99,8 @@ public:
      * predicates one at a time. During the process, there is a fair amount of state
      * information to keep track of, which we consolidate into this data structure.
      */
+     //构建leaf过程的信息存储在该结构中
+    //QueryPlannerAccess::processIndexScans中初始化赋值
     struct ScanBuildingState {
         ScanBuildingState(MatchExpression* theRoot,
                           bool inArrayOp,
@@ -155,6 +157,7 @@ public:
         size_t currentIndexNumber;
 
         // The tag on 'curChild'.
+        //QueryPlannerAccess::processIndexScans赋值
         IndexTag* ixtag;
 
         // Whether the bounds for predicate 'curChild' are exact, inexact and covered by
@@ -199,7 +202,7 @@ public:
 
     /**
      * Return a plan that scans the provided index from [startKey to endKey).
-     */
+     */ //相比scanWholeIndex，多了startKey和endkey
     static QuerySolutionNode* makeIndexScan(const IndexEntry& index,
                                             const CanonicalQuery& query,
                                             const QueryPlannerParams& params,

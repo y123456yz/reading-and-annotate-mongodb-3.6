@@ -6,7 +6,8 @@ mongodb-3.6源码注释分析，持续更新
 ### 对外演讲   
   * [Qcon全球软件开发大会分享：OPPO万亿级文档数据库MongoDB集群性能优化实践](https://qcon.infoq.cn/2020/shenzhen/track/916)    
   * [2019年mongodb年终盛会：OPPO百万级高并发MongoDB集群性能数十倍提升优化实践](https://www.shangyexinzhi.com/article/428874.html)    
-  * [2020年mongodb年终盛会：万亿级文档数据库集群性能优化实践](https://mongoing.com/archives/76151)    
+  * [2020年mongodb年终盛会：万亿级文档数据库集群性能优化实践](https://mongoing.com/archives/76151)  
+  * [2021年dbaplus分享：万亿级文档数据库集群性能优化实践](http://dbaplus.cn/news-162-3666-1.html)      
     
 ### 专栏  
   * [infoq专栏：《MongoDB内核源码设计、性能优化、最佳运维实践》](https://www.infoq.cn/profile/8D2D4D588D3D8A/publish)    
@@ -25,6 +26,7 @@ mongodb-3.6源码注释分析，持续更新
 ===================================     
 ### <<mongodb源码设计实现、性能优化、最佳运维实践>>
 ### <<千万级峰值tps/十万亿级数据量文档数据库内核研发及运维之路>>   
+  * [万亿级数据库 MongoDB 集群性能数十倍提升及机房多活容灾实践](https://xie.infoq.cn/article/304a748ad3dead035a449bd51)  
   * [百万级高并发mongodb集群性能数十倍提升优化实践(上篇)](https://my.oschina.net/u/4087916/blog/3141909)      
   * [百万级高并发mongodb集群性能数十倍提升优化实践(下篇)](https://my.oschina.net/u/4087916/blog/3155205)    
   * [Mongodb网络传输处理源码实现及性能调优-体验内核性能极致设计](https://my.oschina.net/u/4087916/blog/4295038)      

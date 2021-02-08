@@ -162,6 +162,8 @@ private:
      * A class used internally in order to keep track of the results of planning
      * a particular $or branch.
      */
+    //SubplanStage::planSubqueries()中构造试用
+    //OR子tree相关的solutions存到该结构中
     struct BranchPlanningResult {
         MONGO_DISALLOW_COPYING(BranchPlanningResult);
 

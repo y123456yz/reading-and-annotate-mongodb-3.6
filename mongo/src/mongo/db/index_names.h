@@ -46,11 +46,13 @@ class BSONObj;
  *    the data isn't what we expect.
  */
 enum IndexType {
+    //普通索引
     INDEX_BTREE,
     INDEX_2D,
     INDEX_HAYSTACK,
     INDEX_2DSPHERE,
     INDEX_TEXT,
+    //哈希索引使用索引字段值的哈希来维护索引条目。
     INDEX_HASHED,
 };
 

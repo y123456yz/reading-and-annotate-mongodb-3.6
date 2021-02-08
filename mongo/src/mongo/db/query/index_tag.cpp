@@ -41,7 +41,7 @@ namespace mongo {
 using TagType = MatchExpression::TagData::Type;
 
 namespace {
-
+//sortUsingTags调用执行
 bool TagComparison(const MatchExpression* lhs, const MatchExpression* rhs) {
     IndexTag* lhsTag = static_cast<IndexTag*>(lhs->getTag());
     size_t lhsValue = (NULL == lhsTag) ? IndexTag::kNoIndex : lhsTag->index;
@@ -52,6 +52,7 @@ bool TagComparison(const MatchExpression* lhs, const MatchExpression* rhs) {
     size_t rhsPos = (NULL == rhsTag) ? IndexTag::kNoIndex : rhsTag->pos;
 
     // First, order on indices.
+    //优先根据候选索引排序
     if (lhsValue != rhsValue) {
         // This relies on kNoIndex being larger than every other possible index.
         return lhsValue < rhsValue;
@@ -72,22 +73,26 @@ bool TagComparison(const MatchExpression* lhs, const MatchExpression* rhs) {
     }
 
     // Next, order so that the first field of a compound index appears first.
+    //其次根据pos排序
     if (lhsPos != rhsPos) {
         return lhsPos < rhsPos;
     }
 
     // Next, order on fields.
+    //在其次，path排序
     int cmp = lhs->path().compare(rhs->path());
     if (0 != cmp) {
         return 0;
     }
 
     // Finally, order on expression type.
+    //最后根据type类型排序
     return lhs->matchType() < rhs->matchType();
 }
 
 // Sorts the tree using its IndexTag(s). Nodes that use the same index will sort so that they are
 // adjacent to one another.
+//prepareForAccessPlanning调用执行
 void sortUsingTags(MatchExpression* tree) {
     for (size_t i = 0; i < tree->numChildren(); ++i) {
         sortUsingTags(tree->getChild(i));
@@ -243,6 +248,7 @@ void getElemMatchOrPushdownDescendants(MatchExpression* node, std::vector<MatchE
 // Finds all the nodes in the tree with OrPushdownTags and copies them to the Destinations specified
 // in the OrPushdownTag, tagging them with the TagData in the Destination. Removes the node from its
 // current location if possible.
+//prepareForAccessPlanning调用执行
 void resolveOrPushdowns(MatchExpression* tree) {
     if (tree->numChildren() == 0) {
         return;
@@ -325,6 +331,7 @@ void resolveOrPushdowns(MatchExpression* tree) {
 
 const size_t IndexTag::kNoIndex = std::numeric_limits<size_t>::max();
 
+//QueryPlanner::plan调用
 void prepareForAccessPlanning(MatchExpression* tree) {
     resolveOrPushdowns(tree);
     sortUsingTags(tree);

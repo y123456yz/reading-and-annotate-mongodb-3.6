@@ -168,8 +168,23 @@ std::unique_ptr<MatchExpression> SubplanStage::rewriteToRootedOr(
     return orChild;
 }
 
+/*
+db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [ {	name : "cc" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
+上面查询最终会下面的MatchExpression tree
+			  $or	------这层对应stage为SubplanStage
+		  /  \	  \
+		 /	  \    \
+		/	name:cc \		
+	  $and			\ 
+	  /   \ 			 \
+	/	  \ 			"xx" : 3(也就是"xx":{$eq:3})
+name:0.99	age:99
+参考目录中的querysolution.txt,配合该日志阅读  
+*/
+
 //SubplanStage::pickBestPlan调用
 Status SubplanStage::planSubqueries() {
+	//克隆该root expression
     _orExpression = _query->root()->shallowClone();
     if (isContainedOr(_orExpression.get())) {
         _orExpression = rewriteToRootedOr(std::move(_orExpression));
@@ -190,6 +205,7 @@ Status SubplanStage::planSubqueries() {
 
         MatchExpression* orChild = _orExpression->getChild(i);
 
+		//OR下面得子tree各自统一规范化
         // Turn the i-th child into its own query.
         auto statusWithCQ = CanonicalQuery::canonicalize(getOpCtx(), *_query, orChild);
         if (!statusWithCQ.isOK()) {
@@ -222,6 +238,7 @@ Status SubplanStage::planSubqueries() {
             // considering any plan that's a collscan.
             invariant(branchResult->solutions.empty());
             std::vector<QuerySolution*> rawSolutions;
+			//获取该OR 子tree对应得QuerySolution
             Status status =
                 QueryPlanner::plan(*branchResult->canonicalQuery, _plannerParams, &rawSolutions);
             branchResult->solutions = transitional_tools_do_not_use::spool_vector(rawSolutions);
@@ -504,6 +521,20 @@ Status SubplanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
     // work that happens here, so this is needed for the time accounting to make sense.
     ScopedTimer timer(getClock(), &_commonStats.executionTimeMillis);
 
+	/*
+	db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [ {  name : "cc" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
+	上面查询最终会下面的MatchExpression tree
+	              $or   ------这层对应stage为SubplanStage
+			  /  \    \
+			 /    \    \
+			/   name:cc \	    
+		  $and		    \ 
+		  /   \ 		     \
+		/	  \ 	        "xx" : 3(也就是"xx":{$eq:3})
+	name:0.99   age:99
+	参考目录中的querysolution.txt  
+	*/
+	//类似上面得or回走这里面
     // Plan each branch of the $or.
     Status subplanningStatus = planSubqueries();
     if (!subplanningStatus.isOK()) {

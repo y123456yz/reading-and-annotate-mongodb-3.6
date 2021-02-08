@@ -720,7 +720,7 @@ std::vector<QuerySolutionNode*> QueryPlannerAccess::collapseEquivalentScans(
     return transitional_tools_do_not_use::leak_vector(collapsedScans);
 }
 
-// static
+// static      QueryPlannerAccess::buildIndexedAnd调用
 bool QueryPlannerAccess::processIndexScans(const CanonicalQuery& query,
                                            MatchExpression* root,
                                            bool inArrayOperator,
@@ -962,7 +962,7 @@ bool QueryPlannerAccess::processIndexScansSubnode(const CanonicalQuery& query,
     return true;
 }
 
-// static
+// static   QueryPlannerAccess::buildIndexedDataAccess调用
 QuerySolutionNode* QueryPlannerAccess::buildIndexedAnd(const CanonicalQuery& query,
                                                        MatchExpression* root,
                                                        bool inArrayOperator,
@@ -1170,14 +1170,14 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedOr(const CanonicalQuery& quer
 //参考https://blog.csdn.net/baijiwei/article/details/78128632
 // static   QueryPlanner::plan中调用执行
 //这个函数会根据MatchExpression的节点的类型， 建立对应的QuerySolutionNode节点， 最终形成一个树形的QuerySolutionNode树
-//QueryPlannerAccess::buildIndexedDataAccess， 生成一个树形的QuerySolutionNode树。
+//生成一个树形的QuerySolutionNode树。
 QuerySolutionNode* QueryPlannerAccess::buildIndexedDataAccess(const CanonicalQuery& query,
                                                               MatchExpression* root,
                                                               bool inArrayOperator,
                                                               const vector<IndexEntry>& indices,
                                                               const QueryPlannerParams& params) {
     if (root->getCategory() == MatchExpression::MatchCategory::kLogical &&
-        !Indexability::isBoundsGeneratingNot(root)) {
+        !Indexability::isBoundsGeneratingNot(root)) { //一般走这个分支
         if (MatchExpression::AND == root->matchType()) {
             // Takes ownership of root.
             return buildIndexedAnd(query, root, inArrayOperator, indices, params);
@@ -1191,7 +1191,7 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedDataAccess(const CanonicalQue
             }
             return NULL;
         }
-    } else {
+    } else { //
         unique_ptr<MatchExpression> autoRoot;
         if (!inArrayOperator) {
             autoRoot.reset(root);
@@ -1401,7 +1401,8 @@ void QueryPlannerAccess::handleFilterAnd(ScanBuildingState* scanState) {
     }
 }
 
-//QueryPlanner::plan中调用
+//QueryPlanner::plan中调用 
+//相比scanWholeIndex，多了startKey和endkey
 QuerySolutionNode* QueryPlannerAccess::makeIndexScan(const IndexEntry& index,
                                                      const CanonicalQuery& query,
                                                      const QueryPlannerParams& params,
