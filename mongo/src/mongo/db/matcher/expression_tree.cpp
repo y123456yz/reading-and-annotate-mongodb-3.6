@@ -49,7 +49,6 @@ void ListOfMatchExpression::add(MatchExpression* e) {
     _expressions.push_back(e);
 }
 
-
 void ListOfMatchExpression::_debugList(StringBuilder& debug, int level) const {
     for (unsigned i = 0; i < _expressions.size(); i++)
         _expressions[i]->debugString(debug, level + 1);

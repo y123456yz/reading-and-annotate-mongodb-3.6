@@ -42,6 +42,7 @@ using TagType = MatchExpression::TagData::Type;
 
 namespace {
 //sortUsingTags调用执行
+//按照IndexTag.index  IndexTag.pos   IndexTag.path   IndexTag.matchType这四个优先级维度进行MatchExpression排序
 bool TagComparison(const MatchExpression* lhs, const MatchExpression* rhs) {
     IndexTag* lhsTag = static_cast<IndexTag*>(lhs->getTag());
     size_t lhsValue = (NULL == lhsTag) ? IndexTag::kNoIndex : lhsTag->index;
@@ -93,6 +94,7 @@ bool TagComparison(const MatchExpression* lhs, const MatchExpression* rhs) {
 // Sorts the tree using its IndexTag(s). Nodes that use the same index will sort so that they are
 // adjacent to one another.
 //prepareForAccessPlanning调用执行
+//按照IndexTag.index  IndexTag.pos   IndexTag.path   IndexTag.matchType这四个优先级维度进行MatchExpression排序
 void sortUsingTags(MatchExpression* tree) {
     for (size_t i = 0; i < tree->numChildren(); ++i) {
         sortUsingTags(tree->getChild(i));
@@ -334,6 +336,7 @@ const size_t IndexTag::kNoIndex = std::numeric_limits<size_t>::max();
 //QueryPlanner::plan调用
 void prepareForAccessPlanning(MatchExpression* tree) {
     resolveOrPushdowns(tree);
+	//按照IndexTag.index  IndexTag.pos   IndexTag.path   IndexTag.matchType这四个优先级维度进行MatchExpression排序
     sortUsingTags(tree);
 }
 

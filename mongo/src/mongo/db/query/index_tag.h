@@ -76,10 +76,10 @@ public:
     }
 
     // What index should we try to use for this leaf?
+    //候选索引可能多个，我们处在第几个呢
     size_t index = kNoIndex;
 
     // What position are we in the index?  (Compound.)
-    //候选索引可能多个，我们处在第几个呢
     size_t pos = 0U;
 
     // The plan enumerator can assign multiple predicates to the same position of a multikey index

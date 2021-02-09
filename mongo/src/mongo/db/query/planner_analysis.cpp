@@ -509,7 +509,8 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
     BSONObj reverseSort = QueryPlannerCommon::reverseSortObj(sortObj);
     if (sorts.end() != sorts.find(reverseSort)) {
         QueryPlannerCommon::reverseScans(solnRoot);
-		//例如db.test.find({"name":xx, "age"":xx}).sort({"name"})，如果solution利用的是name索引，则会走到这里
+		//例如db.test.find({"name":xx, "age"":xx}).sort({"name"})，如果solution利用的是name索引，
+		//则查询和排序都会利用该索引，则会走到这里
         LOG(5) << "Reversing ixscan to provide sort. Result: " << redact(solnRoot->toString());
         return solnRoot;
     }

@@ -2038,14 +2038,13 @@ MONGO_INITIALIZER(PathlessOperatorMap)(InitializerContext* context) {
             {"isolated", &parseAtomicOrIsolated}, 
             {"jsonSchema", &parseJSONSchema},
             {"nor", &parseTreeTopLevel<NorMatchExpression>},
-            {"or", &parseTreeTopLevel< >},
+            {"or", &parseTreeTopLevel<OrMatchExpression>},
             {"ref", &parseDBRef},
             {"text", &parseText},
             {"where", &parseWhere},
-            //"not"在parseSubField中处理
-        });
+        }); 
     return Status::OK();
-}
+} ////"not"在parseSubField中处理
 
 //查询Operators参考https://docs.mongodb.com/manual/reference/operator/query/
 //注意部分operation没有在这两个map表中，可以本文件搜索

@@ -461,6 +461,7 @@ struct FetchNode : public QuerySolutionNode {
     BSONObjSet _sorts;
 };
 
+//QueryPlannerAccess::makeLeafNode构造使用
 struct IndexScanNode : public QuerySolutionNode {
     IndexScanNode(IndexEntry index);
     virtual ~IndexScanNode() {}
@@ -505,8 +506,8 @@ struct IndexScanNode : public QuerySolutionNode {
 
     // If there's a 'returnKey' projection we add key metadata.
     bool addKeyMetadata;
-
-    IndexBounds bounds;
+    //例如类似bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [MaxKey, MinKey]
+    IndexBounds bounds; 
 
     const CollatorInterface* queryCollator;
 

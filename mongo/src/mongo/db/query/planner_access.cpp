@@ -81,6 +81,7 @@ FetchNode* getFetchNode(QuerySolutionNode* node) {
  * IndexScanNode child, then returns a pointer to the child index scan node. Otherwise returns
  * null.
  */
+//如果node为scan node类型，或者node类型为FETCH类型并且其child为，则返回IndexScanNode
 const IndexScanNode* getIndexScanNode(const QuerySolutionNode* node) {
     if (STAGE_IXSCAN == node->getType()) {
         return static_cast<const IndexScanNode*>(node);
@@ -100,6 +101,7 @@ const IndexScanNode* getIndexScanNode(const QuerySolutionNode* node) {
  * IndexScanNode or FetchNode with an IndexScanNode child and the index scan nodes are identical
  * (same bounds, same filter, same direction, etc.), then returns true. Otherwise returns false.
  */
+//判断lhs和rhs是否完全相同
 bool scansAreEquivalent(const QuerySolutionNode* lhs, const QuerySolutionNode* rhs) {
     const IndexScanNode* leftIxscan = getIndexScanNode(lhs);
     const IndexScanNode* rightIxscan = getIndexScanNode(rhs);
@@ -142,7 +144,7 @@ using std::unique_ptr;
 using std::vector;
 using stdx::make_unique;
 
-//buildCollscanSoln中调用，生成CollectionScanNode
+//buildCollscanSoln中调用，根据query生成CollectionScanNode
 // static
 std::unique_ptr<QuerySolutionNode> QueryPlannerAccess::makeCollectionScan(
     const CanonicalQuery& query, bool tailable, const QueryPlannerParams& params) {
@@ -240,7 +242,7 @@ QuerySolutionNode* QueryPlannerAccess::makeLeafNode(
         }
 
         return ret;
-    } else {
+    } else { //一般普通的GEO_NEAR TEXT以外的走这个分支
         // Note that indexKeyPattern.firstElement().fieldName() may not equal expr->path()
         // because expr might be inside an array operator that provides a path prefix.
         IndexScanNode* isn = new IndexScanNode(index);
@@ -962,7 +964,7 @@ bool QueryPlannerAccess::processIndexScansSubnode(const CanonicalQuery& query,
     return true;
 }
 
-// static   QueryPlannerAccess::buildIndexedDataAccess调用
+// static   QueryPlanner::plan->QueryPlannerAccess::buildIndexedDataAccess调用
 QuerySolutionNode* QueryPlannerAccess::buildIndexedAnd(const CanonicalQuery& query,
                                                        MatchExpression* root,
                                                        bool inArrayOperator,

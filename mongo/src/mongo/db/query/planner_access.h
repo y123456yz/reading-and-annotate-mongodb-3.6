@@ -140,6 +140,7 @@ public:
         bool inArrayOperator;
 
         // A list of relevant indices which 'root' may be tagged to use.
+        //候选索引数组
         const std::vector<IndexEntry>& indices;
 
         // The index access node that we are currently constructing. We may merge
@@ -154,6 +155,7 @@ public:
         // An index into the 'indices', so that 'indices[currentIndexNumber]' gives the
         // index used by 'currentScan'. If there is no currentScan, this should be set
         // to 'IndexTag::kNoIndex'.
+        //选择的是候选索引中的第几个
         size_t currentIndexNumber;
 
         // The tag on 'curChild'.

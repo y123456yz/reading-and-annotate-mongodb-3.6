@@ -285,6 +285,7 @@ bool IndexBoundsBuilder::canUseCoveredMatching(const MatchExpression* expr,
     return tightness >= IndexBoundsBuilder::INEXACT_COVERED;
 }
 
+//ªÒ»°oilOut∫ÕtightnessOut
 // static
 void IndexBoundsBuilder::translate(const MatchExpression* expr,
                                    const BSONElement& elt,

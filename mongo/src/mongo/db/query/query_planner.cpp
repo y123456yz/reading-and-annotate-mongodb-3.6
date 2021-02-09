@@ -950,8 +950,8 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
 	db.test.find({"name":"yangyazhou", "age":22}).sort({"name":1}):
 		$and
-	    age == 22.0  || First: 1 notFirst: 2 full path: age
-	    name == "yangyazhou"  || First: 0 2 notFirst: full path: name
+	    age == 22.0  || First: 1 notFirst: 2 full path: age            //First: 1 这里的1代表第1个候选索引
+	    name == "yangyazhou"  || First: 0 2 notFirst: full path: name  //First: 0 2 这里的0 2代表第0和第2个候选索引
 	*/
     LOG(2) << "Rated tree:" << endl << redact(query.root()->toString()); 
 
@@ -1054,17 +1054,20 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             // We have already cached the tree in canonical order, so now we can order the nodes for
             // access planning.
             prepareForAccessPlanning(rawTree.get());
+			LOG(2) << "About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:" << endl
+                   << redact(rawTree.get()->toString());
 
 			//QueryPlannerAccess::buildIndexedDataAccess
             // This can fail if enumeration makes a mistake.
-            //根据MatchExpression的节点的类型， 建立对应的QuerySolutionNode节点， 最终形成一个树形的QuerySolutionNode树
+            //根据MatchExpression的节点的类型， 建立对应的QuerySolutionNode节点， 
+            //最终形成一个树形的QuerySolutionNode树
             std::unique_ptr<QuerySolutionNode> solnRoot(QueryPlannerAccess::buildIndexedDataAccess(
                 query, rawTree.release(), false, relevantIndices, params));
 
             if (!solnRoot) {
                 continue;
             }
-			LOG(2) << "Planner: adding QuerySolutionNode:" << endl << redact(soln->toString());
+			LOG(2) << "Planner: adding QuerySolutionNode:" << endl << redact(solnRoot->toString());
 
 			//获取对应QuerySolution
             QuerySolution* soln =
