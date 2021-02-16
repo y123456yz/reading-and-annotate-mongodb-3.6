@@ -285,6 +285,8 @@ bool IndexBoundsBuilder::canUseCoveredMatching(const MatchExpression* expr,
     return tightness >= IndexBoundsBuilder::INEXACT_COVERED;
 }
 
+//QueryPlannerAccess::makeLeafNode  QueryPlannerAccess::mergeWithLeafNode调用
+
 //获取oilOut和tightnessOut
 // static
 void IndexBoundsBuilder::translate(const MatchExpression* expr,

@@ -125,6 +125,7 @@ PlanStage::StageState SortStage::doWork(WorkingSetID* out) {
             // Add it into the map for quick invalidation if it has a valid RecordId.
             // A RecordId may be invalidated at any time (during a yield).  We need to get into
             // the WorkingSet as quickly as possible to handle it.
+            //配合SortKeyGeneratorStage::doWork阅读，sort  key和member相关
             WorkingSetMember* member = _ws->get(id);
 
             // Planner must put a fetch before we get here.

@@ -62,6 +62,7 @@ bool SortKeyGeneratorStage::isEOF() {
     return child()->isEOF();
 }
 
+//获取sort key，存入_ws成员变量  配合SortStage::doWork阅读
 PlanStage::StageState SortKeyGeneratorStage::doWork(WorkingSetID* out) {
     if (!_sortKeyGen) {
 		//SortKeyGenerator类主要是生产排序用的key
@@ -94,7 +95,7 @@ PlanStage::StageState SortKeyGeneratorStage::doWork(WorkingSetID* out) {
         }
 
         // Add the sort key to the WSM as computed data.
-        //WorkingSetMember::addComputed
+        //WorkingSetMember::addComputed,sortKey保存到_ws成员
         member->addComputed(new SortKeyComputedData(sortKey.getValue()));
 
         return PlanStage::ADVANCED;

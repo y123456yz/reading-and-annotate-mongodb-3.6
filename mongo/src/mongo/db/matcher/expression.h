@@ -373,7 +373,8 @@ private:
     virtual ExpressionOptimizerFunc getOptimizer() const = 0;
 
     MatchType _matchType;
-    //QueryPlannerIXSelect::rateIndices中赋值，MatchExpression通过_tagData和索引等关联
+    //QueryPlannerIXSelect::rateIndices  QueryPlanner::tagAccordingToCache中赋值，
+    //MatchExpression通过_tagData和索引等关联
     std::unique_ptr<TagData> _tagData; 
 };
 }

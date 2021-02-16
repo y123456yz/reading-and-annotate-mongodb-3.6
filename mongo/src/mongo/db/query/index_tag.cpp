@@ -93,7 +93,7 @@ bool TagComparison(const MatchExpression* lhs, const MatchExpression* rhs) {
 
 // Sorts the tree using its IndexTag(s). Nodes that use the same index will sort so that they are
 // adjacent to one another.
-//prepareForAccessPlanning调用执行
+//prepareForAccessPlanning调用执行,从新对tree排序
 //按照IndexTag.index  IndexTag.pos   IndexTag.path   IndexTag.matchType这四个优先级维度进行MatchExpression排序
 void sortUsingTags(MatchExpression* tree) {
     for (size_t i = 0; i < tree->numChildren(); ++i) {
@@ -337,7 +337,8 @@ const size_t IndexTag::kNoIndex = std::numeric_limits<size_t>::max();
 void prepareForAccessPlanning(MatchExpression* tree) {
     resolveOrPushdowns(tree);
 	//按照IndexTag.index  IndexTag.pos   IndexTag.path   IndexTag.matchType这四个优先级维度进行MatchExpression排序
-    sortUsingTags(tree);
+	//prepareForAccessPlanning调用执行,从新对tree排序
+	sortUsingTags(tree);
 }
 
 }  // namespace mongo

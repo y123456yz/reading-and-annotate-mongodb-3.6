@@ -51,7 +51,9 @@ class GeoNearExpression;
 //QuerySolutionNode的具体继承类实现见本文件后面
 
 //QueryPlannerAccess::buildIndexedDataAccess中生成该类    
-struct QuerySolutionNode { //QuerySolution.root    实际上在该文件后面的FetchNode CollectionScanNode  AndHashNode等类中继承该类
+struct QuerySolutionNode { 
+//QuerySolution.root为该类型   
+//实际上在该文件后面的FetchNode CollectionScanNode  AndHashNode等类中继承该类,
     QuerySolutionNode() {}
     virtual ~QuerySolutionNode() {
         for (size_t i = 0; i < children.size(); ++i) {
@@ -209,6 +211,7 @@ struct QuerySolution { //执行计划，可以参考https://yq.aliyun.com/articles/647563
     bool indexFilterApplied;
 
     // Owned here. Used by the plan cache.
+    //缓存该solution对应索引信息，参考QueryPlanner::plan
     std::unique_ptr<SolutionCacheData> cacheData;
 
     /**
@@ -321,6 +324,21 @@ struct CollectionScanNode : public QuerySolutionNode {
     int maxScan;
 };
 
+
+/*
+例如如下场景会进入： 同一个查询，每个字段各有索引满足条件
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 99.0  || Selected Index #1 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #2 pos 0 combine 1
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    age == 99.0  || Selected Index #1 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #2 pos 0 combine 1
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+*/
+
+//QueryPlannerAccess::buildIndexedAnd中构造使用
 struct AndHashNode : public QuerySolutionNode {
     AndHashNode();
     virtual ~AndHashNode();
@@ -345,6 +363,52 @@ struct AndHashNode : public QuerySolutionNode {
     BSONObjSet _sort;
 };
 
+/* 例如下面的情况会满足使用
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 99.0  || Selected Index #1 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    age == 99.0  || Selected Index #1 pos 0 combine 1
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            age == 99.0  || Selected Index #1 pos 0 combine 1
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+---------Child 1:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [99.0, 99.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+也就是把每个IXSCAN的排序后做合并，例如db.test.find({ name : "yangyazhou2" , "age" : 99 }),
+这个查询对应test表只建了name:1索引和age:1索引，则两个索引都满足候选索引条件，则分别利用两个索引排序，
+然后再对这两个排序好的数据进行AND_SORTED合并排序
+*/
+//QueryPlannerAccess::buildIndexedAnd中构造使用
 struct AndSortedNode : public QuerySolutionNode {
     AndSortedNode();
     virtual ~AndSortedNode();
@@ -494,9 +558,11 @@ struct IndexScanNode : public QuerySolutionNode {
      */
     static std::set<StringData> getFieldsWithStringBounds(const IndexBounds& bounds,
                                                           const BSONObj& indexKeyPattern);
-
+    //例如索引{ name: 1.0, male: 1.0 }对应的getSort就是
+    //[{ male: -1 }, { name: -1 }, { name: -1, male: -1 }, ]
+    //IndexScanNode::computeProperties()赋值
     BSONObjSet _sorts;
-
+    //也就是索引信息，例如{ name: 1.0, male: 1.0 }
     IndexEntry index;
 
     int direction;

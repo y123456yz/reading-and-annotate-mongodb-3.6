@@ -121,6 +121,7 @@ public:
          *
          * This always should be called prior to allocating a new 'currentScan'.
          */
+        //把当前的currentScan一些状态先保存起来
         void resetForNextScan(IndexTag* newTag) {
             currentScan.reset(NULL);
             currentIndexNumber = newTag->index;
@@ -164,6 +165,7 @@ public:
 
         // Whether the bounds for predicate 'curChild' are exact, inexact and covered by
         // the index, or inexact with a fetch required.
+        
         IndexBoundsBuilder::BoundsTightness tightness;
 
         // If 'root' is an $or, the child predicates which are tagged with the same index are

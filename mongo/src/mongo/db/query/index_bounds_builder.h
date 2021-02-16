@@ -61,7 +61,8 @@ public:
      * increasing tightness. These values are used when we need to do comparison between two
      * BoundsTightness values. Such comparisons can answer questions such as "Does predicate
      * X have tighter or looser bounds than predicate Y?".
-     */
+     */ 
+    //ScanBuildingState.tightness成员为该类型
     enum BoundsTightness {
         // Index bounds are inexact, and a fetch is required.
         INEXACT_FETCH = 0,

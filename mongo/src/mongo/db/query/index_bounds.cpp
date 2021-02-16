@@ -124,6 +124,8 @@ bool IndexBounds::operator!=(const IndexBounds& other) const {
     return !(*this == other);
 }
 
+//类似这里得bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [MinKey, MaxKey]
+//['name']: ["yangyazhou2", "yangyazhou2"]
 string OrderedIntervalList::toString() const {
     mongoutils::str::stream ss;
     ss << "['" << name << "']: ";

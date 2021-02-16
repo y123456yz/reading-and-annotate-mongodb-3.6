@@ -163,7 +163,7 @@ private:
      * a particular $or branch.
      */
     //SubplanStage::planSubqueries()中构造试用
-    //OR子tree相关的solutions存到该结构中
+    //OR子tree相关的solutions存到该结构中   SubplanStage._branchResults为该类型
     struct BranchPlanningResult {
         MONGO_DISALLOW_COPYING(BranchPlanningResult);
 
@@ -227,9 +227,11 @@ private:
     std::unique_ptr<QuerySolution> _compositeSolution;
 
     // Holds a list of the results from planning each branch.
+    //SubplanStage::planSubqueries()中赋值  
     std::vector<std::unique_ptr<BranchPlanningResult>> _branchResults;
 
     // We need this to extract cache-friendly index data from the index assignments.
+    //该表对应的所有的索引信息存到该map表中
     std::map<StringData, size_t> _indexMap;
 };
 

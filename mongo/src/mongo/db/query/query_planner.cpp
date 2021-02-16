@@ -279,7 +279,7 @@ QuerySolution* buildCollscanSoln(const CanonicalQuery& query,
 }
 
 
-//QueryPlanner::plan
+//QueryPlanner::plan调用 
 QuerySolution* buildWholeIXSoln(const IndexEntry& index,
                                 const CanonicalQuery& query,
                                 const QueryPlannerParams& params,
@@ -311,6 +311,7 @@ Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const tagged
         return Status(ErrorCodes::BadValue, "Cannot produce cache data: tree is NULL.");
     }
 
+	//根据候选索引relevantIndices信息填充PlanCacheIndexTree
     unique_ptr<PlanCacheIndexTree> indexTree(new PlanCacheIndexTree());
 
     if (taggedTree->getTag() &&
@@ -335,6 +336,7 @@ Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const tagged
 
         IndexEntry* ientry = new IndexEntry(relevantIndices[itag->index]);
         indexTree->entry.reset(ientry);//PlanCacheIndexTree.entry
+        //
         indexTree->index_pos = itag->pos;
         indexTree->canCombineBounds = itag->canCombineBounds;
     } else if (taggedTree->getTag() &&
@@ -381,6 +383,9 @@ Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const tagged
     return Status::OK();
 }
 
+//QueryPlanner::planFromCache  tagOrChildAccordingToCache调用
+
+//填充filter的_tagData信息，把MatchExpression tree和索引信息关联起来
 // static
 Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
                                          const PlanCacheIndexTree* const indexTree,
@@ -430,6 +435,7 @@ Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
         }
     }
 
+	//填充filter的_tagData信息
     if (indexTree->entry.get()) {
         map<StringData, size_t>::const_iterator got = indexMap.find(indexTree->entry->name);
         if (got == indexMap.end()) {
@@ -637,6 +643,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 	//2019-01-03T17:24:40.440+0800 D QUERY    [conn1] Index 3 is kp: { name: 1.0, age: 1.0 } name: 'name_1_age_1' io: { v: 2, key: { name: 1.0, age: 1.0 }, name: "name_1_age_1", ns: "testxx.test" }for (size_t i = 0; i < params.indices.size(); ++i) {
     for (size_t i = 0; i < params.indices.size(); ++i) {
         LOG(2) << "Index " << i << " is " << params.indices[i].toString();
+		LOG(2) << "Index " << i << " is kp:" << params.indices[i].toString(); //便于搜索" is kp:"
     }
 
 	//是否支持全部扫描
@@ -1053,6 +1060,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
             // We have already cached the tree in canonical order, so now we can order the nodes for
             // access planning.
+            //prepareForAccessPlanning调用执行,从新对tree排序
             prepareForAccessPlanning(rawTree.get());
 			LOG(2) << "About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:" << endl
                    << redact(rawTree.get()->toString());
@@ -1124,7 +1132,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // If a sort order is requested, there may be an index that provides it, even if that
     // index is not over any predicates in the query.
-    //sort排序并且是GEO类型，同时带有TEXT
+    //sort排序并且不是GEO类型和TEXT类型
     if (!query.getQueryRequest().getSort().isEmpty() &&
         !QueryPlannerCommon::hasNode(query.root(), MatchExpression::GEO_NEAR) &&
         !QueryPlannerCommon::hasNode(query.root(), MatchExpression::TEXT)) {
@@ -1139,6 +1147,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             }
         }
 
+		//没有合适的index，或者有对应index(但是和排序方向相反，例如索引是name:1,但是排序是name:-1)
         if (!usingIndexToSort) {
             for (size_t i = 0; i < params.indices.size(); ++i) {
                 const IndexEntry& index = params.indices[i];
@@ -1176,10 +1185,11 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                 }
 
                 const BSONObj kp = QueryPlannerAnalysis::getSortPattern(index.keyPattern);
-                if (providesSort(query, kp)) {
+                if (providesSort(query, kp)) { //根据kp排序字段索引正向查询
                     LOG(2) << "Planner: outputting soln that uses index to provide sort.";
                     QuerySolution* soln = buildWholeIXSoln(params.indices[i], query, params);
                     if (NULL != soln) {
+						//记录该solution对应索引信息到cacheData中缓存起来
                         PlanCacheIndexTree* indexTree = new PlanCacheIndexTree();
                         indexTree->setIndexEntry(params.indices[i]);
                         SolutionCacheData* scd = new SolutionCacheData();
@@ -1193,6 +1203,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                         break;
                     }
                 }
+				//根据kp排序字段索引反向查询
                 if (providesSort(query, QueryPlannerCommon::reverseSortObj(kp))) {
 					//例如db.test.find({"name":xx}).sort({age:1}),如果没用name索引
 					//或者有name索引，但是name索引获取到的数据很多，然后通过age排序，这可能不是最优的，
@@ -1201,6 +1212,8 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                            << "to provide sort.";
                     QuerySolution* soln = buildWholeIXSoln(params.indices[i], query, params, -1);
                     if (NULL != soln) {
+						//记录该solution对应索引信息到cacheData中缓存起来
+						
                         PlanCacheIndexTree* indexTree = new PlanCacheIndexTree();
                         indexTree->setIndexEntry(params.indices[i]);
                         SolutionCacheData* scd = new SolutionCacheData();
@@ -1220,6 +1233,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // If a projection exists, there may be an index that allows for a covered plan, even if none
     // were considered earlier.
+    //如果有projection过滤，并且out solution为0，则默认随意选择满足下面if索引判断的索引进行buildWholeIXSoln处理
     const auto projection = query.getProj();
     if (params.options & QueryPlannerParams::GENERATE_COVERED_IXSCANS && out->size() == 0 &&
         query.getQueryObj().isEmpty() && projection && !projection->requiresDocument()) {
@@ -1239,7 +1253,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
                 LOG(2) << "Planner: outputting soln that uses index to provide projection.";
 				LOG(2) << "Planner: outputting a buildWholeIXSoln:" << endl << redact(soln->toString());
                 PlanCacheIndexTree* indexTree = new PlanCacheIndexTree();
-                indexTree->setIndexEntry(index);
+                indexTree->setIndexEntry(index); //走这个固定的索引
 
                 SolutionCacheData* scd = new SolutionCacheData();
                 scd->tree.reset(indexTree);

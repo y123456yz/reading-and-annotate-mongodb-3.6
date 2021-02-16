@@ -85,7 +85,8 @@ typedef std::string PlanID;
  *   is tagged according to the index tags in the PlanCacheIndexTree.
  *   This is done by QueryPlanner::tagAccordingToCache.
  */
-//cacheDataFromTaggedTree中构造使用
+//SolutionCacheData.tree为该类型，缓存solution对应索引信息
+//cacheDataFromTaggedTree  choosePlanForSubqueries  QueryPlanner::plan中构造使用
 struct PlanCacheIndexTree {
 
     /**
@@ -126,12 +127,13 @@ struct PlanCacheIndexTree {
     std::string toString(int indents = 0) const;
 
     // Children owned here.
+    //tree树通过children管理
     std::vector<PlanCacheIndexTree*> children;
 
     // Owned here. 
-    //cacheDataFromTaggedTree中构造使用
+    //cacheDataFromTaggedTree中构造使用，记录索引信息
     std::unique_ptr<IndexEntry> entry;
-    //cacheDataFromTaggedTree中构造使用
+    //cacheDataFromTaggedTree中构造使用  
     size_t index_pos;
 
     // The value for this member is taken from the IndexTag of the corresponding match expression
@@ -150,6 +152,7 @@ struct PlanCacheIndexTree {
  */ 
 //QueryPlanner::plan中构造, 
 //QuerySolution.cacheData成员为该类型
+//该结构实际上记录了该solution的索引信息
 struct SolutionCacheData {
     SolutionCacheData()
         : tree(nullptr),
@@ -167,13 +170,14 @@ struct SolutionCacheData {
     // can be used to tag an isomorphic match expression. If 'wholeIXSoln'
     // is true, then 'tree' is used to store the relevant IndexEntry.
     // If 'collscanSoln' is true, then 'tree' should be NULL.
-    //QueryPlanner::plan中赋值，缓存cacheIndex
-    std::unique_ptr<PlanCacheIndexTree> tree;
+    //QueryPlanner::plan中赋值，缓存cacheIndex，也就是缓存solution对应索引信息
+    std::unique_ptr<PlanCacheIndexTree> tree; 
 
     enum SolutionType {
         // Indicates that the plan should use
         // the index as a proxy for a collection
         // scan (e.g. using index to provide sort).
+        //走固定的索引
         WHOLE_IXSCAN_SOLN,
 
         // The cached plan is a collection scan.
@@ -182,11 +186,12 @@ struct SolutionCacheData {
         // Build the solution by using 'tree'
         // to tag the match expression.
         USE_INDEX_TAGS_SOLN
-    } solnType;
+    } solnType; //默认USE_INDEX_TAGS_SOLN
 
     // The direction of the index scan used as
     // a proxy for a collection scan. Used only
     // for WHOLE_IXSCAN_SOLN.
+    //正序还是反序查询，参考QueryPlanner::plan
     int wholeIXSolnDir;
 
     // True if index filter was applied.

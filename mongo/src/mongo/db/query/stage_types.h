@@ -32,7 +32,9 @@ namespace mongo {
 
 /**
  * These map to implementations of the PlanStage interface, all of which live in db/exec/
- */
+ */ 
+//注意:部分type会有对应QuerySolutionNode和对应stage与之对应，例如AndHashNode:AndHashStage
+//但是也有部分type只有stage没有对应QuerySolutionNode,例如STAGE_SUBPLAN
 enum StageType { //参考PlanStage* buildStages
     //对应QuerySolutionNode为AndHashNode，对应stage为AndHashStage
     STAGE_AND_HASH, //0
@@ -117,6 +119,7 @@ enum StageType { //参考PlanStage* buildStages
     STAGE_SORT_KEY_GENERATOR, //30  SortKeyGeneratorStage
     //对应QuerySolutionNode为MergeSortNode，对应stage为MergeSortStage
     STAGE_SORT_MERGE,
+    //注意:STAGE_SUBPLAN没有对应QuerySolutionNode，对应stage为SubplanStage
     STAGE_SUBPLAN,
 
     // Stages for running text search.

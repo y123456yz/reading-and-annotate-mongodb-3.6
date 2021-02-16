@@ -36,9 +36,11 @@
 
 namespace mongo {
 
+//QueryPlanner::tagAccordingToCache  tagForSort  attachNode调用
 // output from enumerator to query planner
 class IndexTag : public MatchExpression::TagData {
 public:
+    //const size_t IndexTag::kNoIndex = std::numeric_limits<size_t>::max();
     static const size_t kNoIndex;
 
     /**
@@ -76,7 +78,7 @@ public:
     }
 
     // What index should we try to use for this leaf?
-    //候选索引可能多个，我们处在第几个呢
+    //候选索引可能多个，我们处在第几个呢,参考上面的debugString
     size_t index = kNoIndex;
 
     // What position are we in the index?  (Compound.)

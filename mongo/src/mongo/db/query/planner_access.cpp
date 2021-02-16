@@ -179,7 +179,8 @@ std::unique_ptr<QuerySolutionNode> QueryPlannerAccess::makeCollectionScan(
     return std::move(csn);
 }
 
-// static
+//QueryPlannerAccess::processIndexScans中调用
+// static   获取IndexScanNode leaf
 QuerySolutionNode* QueryPlannerAccess::makeLeafNode(
     const CanonicalQuery& query,
     const IndexEntry& index,
@@ -547,7 +548,8 @@ bool QueryPlannerAccess::orNeedsFetch(const ScanBuildingState* scanState) {
     }
 }
 
-// static
+//把scanState.currentScan QuerySolutionNode信息赋值到out数组
+// static  
 void QueryPlannerAccess::finishAndOutputLeaf(ScanBuildingState* scanState,
                                              vector<QuerySolutionNode*>* out) {
     finishLeafNode(scanState->currentScan.get(), scanState->indices[scanState->currentIndexNumber]);
@@ -722,6 +724,8 @@ std::vector<QuerySolutionNode*> QueryPlannerAccess::collapseEquivalentScans(
     return transitional_tools_do_not_use::leak_vector(collapsedScans);
 }
 
+
+//遍历root树，获取每个节点对应得QuerySolutionNode信息，最终存到out数组
 // static      QueryPlannerAccess::buildIndexedAnd调用
 bool QueryPlannerAccess::processIndexScans(const CanonicalQuery& query,
                                            MatchExpression* root,
@@ -732,11 +736,13 @@ bool QueryPlannerAccess::processIndexScans(const CanonicalQuery& query,
     // Initialize the ScanBuildingState.
     ScanBuildingState scanState(root, inArrayOperator, indices);
 
+	//遍历root树，获取每个节点对应得QuerySolutionNode信息，最终存到out数组
     while (scanState.curChild < root->numChildren()) {
         MatchExpression* child = root->getChild(scanState.curChild);
 
         // If there is no tag, it's not using an index.  We've sorted our children such that the
         // children with tags are first, so we stop now.
+        //在prepareForAccessPlanning()中我们对root按照index做了排序，所以如果第一个child都没有tag，则其他的肯定也没有index
         if (NULL == child->getTag()) {
             break;
         }
@@ -797,7 +803,7 @@ bool QueryPlannerAccess::processIndexScans(const CanonicalQuery& query,
             scanState.tightness = IndexBoundsBuilder::INEXACT_FETCH;
             mergeWithLeafNode(child, &scanState);
             handleFilter(&scanState);
-        } else {
+        } else { //获取IndexScanNode赋值给scanState.currentScan
             if (NULL != scanState.currentScan.get()) {
                 // Output the current scan before starting to construct a new out.
                 finishAndOutputLeaf(&scanState, out);
@@ -807,7 +813,7 @@ bool QueryPlannerAccess::processIndexScans(const CanonicalQuery& query,
 
             // Reset state before producing a new leaf.
             scanState.resetForNextScan(scanState.ixtag);
-
+			//获取IndexScanNode赋值给scanState.currentScan
             scanState.currentScan.reset(makeLeafNode(query,
                                                      indices[scanState.currentIndexNumber],
                                                      scanState.ixtag->pos,
@@ -819,7 +825,9 @@ bool QueryPlannerAccess::processIndexScans(const CanonicalQuery& query,
     }
 
     // Output the scan we're done with, if it exists.
+    //IndexScanNode添加到
     if (NULL != scanState.currentScan.get()) {
+		//把scanState.currentScan QuerySolutionNode信息赋值到out数组
         finishAndOutputLeaf(&scanState, out);
     }
 
@@ -987,6 +995,7 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedAnd(const CanonicalQuery& que
     }
 
     vector<QuerySolutionNode*> ixscanNodes;
+	//遍历root树，获取每个节点对应得QuerySolutionNode信息，最终存到ixscanNodes数组
     if (!processIndexScans(query, root, inArrayOperator, indices, params, &ixscanNodes)) {
         return NULL;
     }
@@ -1010,6 +1019,8 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedAnd(const CanonicalQuery& que
         // Figure out if we want AndHashNode or AndSortedNode.
         bool allSortedByDiskLoc = true;
         for (size_t i = 0; i < ixscanNodes.size(); ++i) {
+			//例如IndexScanNode::sortedByDiskLoc
+			//只要任何一个不满足sortedByDiskLoc，则allSortedByDiskLoc为false
             if (!ixscanNodes[i]->sortedByDiskLoc()) {
                 allSortedByDiskLoc = false;
                 break;
@@ -1037,6 +1048,18 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedAnd(const CanonicalQuery& que
         } else {
             // We can't use sort-based intersection, and hash-based intersection is disabled.
             // Clean up the index scans and bail out by returning NULL.
+            /*
+			例如如下场景会进入：
+			2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree:
+			$and
+			    age == 99.0  || Selected Index #1 pos 0 combine 1
+			    name == "yangyazhou2"  || Selected Index #2 pos 0 combine 1
+			2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+			$and
+			    age == 99.0  || Selected Index #1 pos 0 combine 1
+			    name == "yangyazhou2"  || Selected Index #2 pos 0 combine 1
+			2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+			*/
             LOG(5) << "Can't build index intersection solution: "
                    << "AND_SORTED is not possible and AND_HASH is disabled.";
 
@@ -1269,6 +1292,7 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedDataAccess(const CanonicalQue
     return NULL;
 }
 
+//buildWholeIXSoln调用
 QuerySolutionNode* QueryPlannerAccess::scanWholeIndex(const IndexEntry& index,
                                                       const CanonicalQuery& query,
                                                       const QueryPlannerParams& params,

@@ -40,6 +40,51 @@ using std::unique_ptr;
 using std::numeric_limits;
 using std::vector;
 using stdx::make_unique;
+/* 例如下面的情况会满足使用
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 99.0  || Selected Index #1 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    age == 99.0  || Selected Index #1 pos 0 combine 1
+2021-02-10T09:54:03.666+0800 D QUERY    [conn-4] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            age == 99.0  || Selected Index #1 pos 0 combine 1
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+---------Child 1:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [99.0, 99.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+也就是把每个IXSCAN的排序后做合并，例如db.test.find({ name : "yangyazhou2" , "age" : 99 }),
+这个查询对应test表只建了name:1索引和age:1索引，则两个索引都满足候选索引条件，则分别利用两个索引排序，
+然后再对这两个排序好的数据进行AND_SORTED合并排序
+*/
 
 // static
 const char* AndSortedStage::kStageType = "AND_SORTED";

@@ -171,18 +171,18 @@ std::unique_ptr<MatchExpression> SubplanStage::rewriteToRootedOr(
 /*
 db.test.find( {$or : [{ $and : [ { name : "0.99" }, { "age" : 99 } ] },{ $or : [ {	name : "cc" }, { "xx" : 3} ] } ]} ).sort({"name":1}).limit(7)
 上面查询最终会下面的MatchExpression tree
-			  $or	------这层对应stage为SubplanStage
-		  /  \	  \
-		 /	  \    \
-		/	name:cc \		
-	  $and			\ 
-	  /   \ 			 \
-	/	  \ 			"xx" : 3(也就是"xx":{$eq:3})
+		     $or	------这层对应stage为SubplanStage
+		  /   \	  \
+		 /	  \     \
+		/	name:cc  \		
+	  $and			 \ 
+	  /   \ 			  \
+	/	  \ 			 "xx" : 3(也就是"xx":{$eq:3})
 name:0.99	age:99
 参考目录中的querysolution.txt,配合该日志阅读  
 */
 
-//SubplanStage::pickBestPlan调用
+//SubplanStage::pickBestPlan调用，配合prepareExecution生成SubplanStage阅读
 Status SubplanStage::planSubqueries() {
 	//克隆该root expression
     _orExpression = _query->root()->shallowClone();
@@ -212,6 +212,8 @@ Status SubplanStage::planSubqueries() {
             mongoutils::str::stream ss;
             ss << "Can't canonicalize subchild " << orChild->toString() << " "
                << statusWithCQ.getStatus().reason();
+			LOG(5) << "Can't canonicalize subchild " << orChild->toString() << " "
+               << statusWithCQ.getStatus().reason();
             return Status(ErrorCodes::BadValue, ss);
         }
 
@@ -232,6 +234,7 @@ Status SubplanStage::planSubqueries() {
             branchResult->cachedSolution.reset(rawCS);
         } else {
             // No CachedSolution found. We'll have to plan from scratch.
+            //OR下的第几个分支请求
             LOG(5) << "Subplanner: planning child " << i << " of " << _orExpression->numChildren();
 
             // We don't set NO_TABLE_SCAN because peeking at the cache data will keep us from
@@ -247,15 +250,19 @@ Status SubplanStage::planSubqueries() {
                 mongoutils::str::stream ss;
                 ss << "Can't plan for subchild " << branchResult->canonicalQuery->toString() << " "
                    << status.reason();
+				LOG(5) << "Can't plan for subchild " << branchResult->canonicalQuery->toString() << " "
+                   << status.reason();
                 return Status(ErrorCodes::BadValue, ss);
             }
+			//该OR下面的分支对应的indexed solutions.
             LOG(5) << "Subplanner: got " << branchResult->solutions.size() << " solutions";
 
             if (0 == branchResult->solutions.size()) {
                 // If one child doesn't have an indexed solution, bail out.
                 mongoutils::str::stream ss;
                 ss << "No solutions for subchild " << branchResult->canonicalQuery->toString();
-                return Status(ErrorCodes::BadValue, ss);
+				LOG(5) << "No solutions for subchild " << branchResult->canonicalQuery->toString();
+				return Status(ErrorCodes::BadValue, ss);
             }
         }
     }
@@ -269,6 +276,7 @@ namespace {
  * On success, applies the index tags from 'branchCacheData' (which represent the winning
  * plan for 'orChild') to 'compositeCacheData'.
  */
+//SubplanStage::choosePlanForSubqueries调用
 Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
                                   SolutionCacheData* branchCacheData,
                                   MatchExpression* orChild,
@@ -280,12 +288,14 @@ Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
         // For example, we don't cache things for 2d indices.
         mongoutils::str::stream ss;
         ss << "No cache data for subchild " << orChild->toString();
+		LOG(5) << "No cache data for subchild " << orChild->toString();
         return Status(ErrorCodes::BadValue, ss);
     }
 
     if (SolutionCacheData::USE_INDEX_TAGS_SOLN != branchCacheData->solnType) {
         mongoutils::str::stream ss;
         ss << "No indexed cache data for subchild " << orChild->toString();
+		LOG(5) << "No indexed cache data for subchild " << orChild->toString();
         return Status(ErrorCodes::BadValue, ss);
     }
 
@@ -296,6 +306,7 @@ Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
     if (!tagStatus.isOK()) {
         mongoutils::str::stream ss;
         ss << "Failed to extract indices from subchild " << orChild->toString();
+		LOG(5) << "Failed to extract indices from subchild " << orChild->toString();
         return Status(ErrorCodes::BadValue, ss);
     }
 
@@ -307,10 +318,16 @@ Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
 
 }  // namespace
 
+// Use the multi plan stage to select a winning plan for each branch, and then construct
+// the overall winning plan from the resulting index tags.
+
+//SubplanStage::pickBestPlan调用
+//选择子查询对应的plan
 Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
     // This is the skeleton of index selections that is inserted into the cache.
     std::unique_ptr<PlanCacheIndexTree> cacheData(new PlanCacheIndexTree());
 
+	//遍历各个OR子树
     for (size_t i = 0; i < _orExpression->numChildren(); ++i) {
         MatchExpression* orChild = _orExpression->getChild(i);
         BranchPlanningResult* branchResult = _branchResults[i].get();
@@ -320,6 +337,9 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
             Status tagStatus = tagOrChildAccordingToCache(
                 cacheData.get(), branchResult->cachedSolution->plannerData[0], orChild, _indexMap);
             if (!tagStatus.isOK()) {
+				LOG(2) << "SubplanStage::choosePlanForSubqueries 1";
+				mongoutils::str::stream ss;
+                ss << "SubplanStage::choosePlanForSubqueries 2";
                 return tagStatus;
             }
         } else if (1 == branchResult->solutions.size()) {
@@ -327,6 +347,9 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
             Status tagStatus = tagOrChildAccordingToCache(
                 cacheData.get(), soln->cacheData.get(), orChild, _indexMap);
             if (!tagStatus.isOK()) {
+				LOG(2) << "SubplanStage::choosePlanForSubqueries 3";
+				mongoutils::str::stream ss;
+                ss << "SubplanStage::choosePlanForSubqueries 4";
                 return tagStatus;
             }
         } else {
@@ -370,12 +393,17 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
 
             Status planSelectStat = multiPlanStage->pickBestPlan(yieldPolicy);
             if (!planSelectStat.isOK()) {
+				LOG(2) << "SubplanStage::choosePlanForSubqueries 5";
+				mongoutils::str::stream ss;
+                ss << "SubplanStage::choosePlanForSubqueries 6";
                 return planSelectStat;
             }
 
             if (!multiPlanStage->bestPlanChosen()) {
                 mongoutils::str::stream ss;
                 ss << "Failed to pick best plan for subchild "
+                   << branchResult->canonicalQuery->toString();
+				LOG(5) << "Failed to pick best plan for subchild "
                    << branchResult->canonicalQuery->toString();
                 return Status(ErrorCodes::BadValue, ss);
             }
@@ -387,12 +415,14 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
             if (NULL == bestSoln->cacheData.get()) {
                 mongoutils::str::stream ss;
                 ss << "No cache data for subchild " << orChild->toString();
+				LOG(5) << "No cache data for subchild " << orChild->toString();
                 return Status(ErrorCodes::BadValue, ss);
             }
 
             if (SolutionCacheData::USE_INDEX_TAGS_SOLN != bestSoln->cacheData->solnType) {
                 mongoutils::str::stream ss;
                 ss << "No indexed cache data for subchild " << orChild->toString();
+				LOG(5) << "No indexed cache data for subchild " << orChild->toString();
                 return Status(ErrorCodes::BadValue, ss);
             }
 
@@ -403,6 +433,7 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
             if (!tagStatus.isOK()) {
                 mongoutils::str::stream ss;
                 ss << "Failed to extract indices from subchild " << orChild->toString();
+				LOG(5) << "Failed to extract indices from subchild " << orChild->toString();
                 return Status(ErrorCodes::BadValue, ss);
             }
 
@@ -420,10 +451,12 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
     if (!solnRoot) {
         mongoutils::str::stream ss;
         ss << "Failed to build indexed data path for subplanned query\n";
+		LOG(5) << "Failed to build indexed data path for subplanned query\n";
         return Status(ErrorCodes::BadValue, ss);
     }
 
     LOG(5) << "Subplanner: fully tagged tree is " << redact(solnRoot->toString());
+	LOG(2) << "Subplanner: fully tagged tree is " << redact(solnRoot->toString());
 
     // Takes ownership of 'solnRoot'
     _compositeSolution.reset(
@@ -432,6 +465,7 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
     if (NULL == _compositeSolution.get()) {
         mongoutils::str::stream ss;
         ss << "Failed to analyze subplanned query";
+		LOG(2) << "Failed to analyze subplanned query";
         return Status(ErrorCodes::BadValue, ss);
     }
 
@@ -449,6 +483,7 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
     return Status::OK();
 }
 
+//SubplanStage::pickBestPlan调用
 Status SubplanStage::choosePlanWholeQuery(PlanYieldPolicy* yieldPolicy) {
     // Clear out the working set. We'll start with a fresh working set.
     _ws->clear();
@@ -534,7 +569,7 @@ Status SubplanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
 	name:0.99   age:99
 	参考目录中的querysolution.txt  
 	*/
-	//类似上面得or回走这里面
+	//类似上面得or回走这里面,为每个子分支生成各自的querySolutions
     // Plan each branch of the $or.
     Status subplanningStatus = planSubqueries();
     if (!subplanningStatus.isOK()) {
@@ -550,6 +585,7 @@ Status SubplanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
 
     // Use the multi plan stage to select a winning plan for each branch, and then construct
     // the overall winning plan from the resulting index tags.
+    //选择整个OR查询的最优索引
     Status subplanSelectStat = choosePlanForSubqueries(yieldPolicy);
     if (!subplanSelectStat.isOK()) {
         if (subplanSelectStat == ErrorCodes::QueryPlanKilled ||

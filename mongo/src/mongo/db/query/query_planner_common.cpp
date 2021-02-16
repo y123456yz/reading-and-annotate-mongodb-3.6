@@ -35,7 +35,10 @@
 #include "mongo/util/log.h"
 
 namespace mongo {
+//start和end交换一下，这样可以有助于例如db.test.find("name":xx).sort("name":-1),
+//但是索引确实name:1,这种情况也可以利用name索引，就是通过这里来保障
 
+//QueryPlannerAnalysis::analyzeSort调用
 void QueryPlannerCommon::reverseScans(QuerySolutionNode* node) {
     StageType type = node->getType();
 
@@ -44,6 +47,10 @@ void QueryPlannerCommon::reverseScans(QuerySolutionNode* node) {
         isn->direction *= -1;
 
         if (isn->bounds.isSimpleRange) {
+			//交换，这样有利于例如之前是索引是正序，现在通过这个交换来实现反序
+			//start和end交换一下，这样可以有助于例如db.test.find("name":xx).sort("name":-1),
+			//但是索引确实name:1,这种情况也可以利用name索引，就是通过这里来保障
+			
             std::swap(isn->bounds.startKey, isn->bounds.endKey);
             // If only one bound is included, swap which one is included.
             switch (isn->bounds.boundInclusion) {

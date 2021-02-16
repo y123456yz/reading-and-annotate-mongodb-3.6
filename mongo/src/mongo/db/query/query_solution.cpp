@@ -177,6 +177,7 @@ void QuerySolutionNode::addCommon(mongoutils::str::stream* ss, int indent) const
     *ss << "getSort = [";
 	//例如name_1_age_1索引，
 	//则sort为getSort = [{ age: 1 }, { name: 1 }, { name: 1, age: 1 }, ]
+	//IndexScanNode::getSort
     for (BSONObjSet::const_iterator it = getSort().begin(); it != getSort().end(); it++) {
         *ss << it->toString() << ", ";
     }
@@ -600,16 +601,24 @@ bool IndexScanNode::hasField(const string& field) const {
     return false;
 }
 
+
 bool IndexScanNode::sortedByDiskLoc() const {
     // Indices use RecordId as an additional key after the actual index key.
     // Therefore, if we're only examining one index key, the output is sorted
     // by RecordId.
 
+	//bounds可以参考上面的IndexScanNode::appendToString打印
+
     // If it's a simple range query, it's easy to determine if the range is a point.
     if (bounds.isSimpleRange) {
+		//IndexBounds
         return 0 == bounds.startKey.woCompare(bounds.endKey, index.keyPattern);
     }
 
+	//例如bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [MinKey, MaxKey]
+	//则返回true，因为["yangyazhou2", "yangyazhou2"]两个相对，
+	//例如["yangyazhou2", "yangyazhou2222"]是个范围，不相等则返回false
+	//????? 不是很确定是否这个意思
     // If it's a more complex bounds query, we make sure that each field is a point.
     for (size_t i = 0; i < bounds.fields.size(); ++i) {
         const OrderedIntervalList& oil = bounds.fields[i];

@@ -321,6 +321,7 @@ void QueryPlannerAnalysis::analyzeGeo(const QueryPlannerParams& params,
     }
 }
 
+//IndexScanNode::computeProperties()调用
 BSONObj QueryPlannerAnalysis::getSortPattern(const BSONObj& indexKeyPattern) {
     BSONObjBuilder sortBob;
     BSONObjIterator kpIt(indexKeyPattern);
@@ -469,7 +470,40 @@ bool QueryPlannerAnalysis::explodeForSort(const CanonicalQuery& query,
     return true;
 }
 
-//QueryPlannerAnalysis::analyzeDataAccess调用
+/*
+2021-02-10T09:54:03.664+0800 D QUERY    [conn-4] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        age == 99.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []     -------------------可以看到没有sort信息
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1  ------------------可以看到IXSCAN用的是原始索引name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = 1  ------------注意是正序
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []       -------------------可以看到没有sort信息
+2021-02-10T09:54:03.665+0800 D QUERY    [conn-4] Reversing ixscan to provide sort. Result: FETCH
+---filter:
+        age == 99.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ male: -1 }, { name: -1 }, { name: -1, male: -1 }, ] -----------增加了sort信息
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = -1          ------------------注意这里转变为反序，原因我们是sort -1,但是还是可以利用之前的索引
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [MaxKey, MinKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ male: -1 }, { name: -1 }, { name: -1, male: -1 }, ] -----------增加了sort信息
+*/
+//QueryPlannerAnalysis::analyzeDataAccess调用，给solnRoot中节点增加sort相关信息，可以参考上面打印
 // static
 QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query,
                                                      const QueryPlannerParams& params,
@@ -509,8 +543,8 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
     BSONObj reverseSort = QueryPlannerCommon::reverseSortObj(sortObj);
     if (sorts.end() != sorts.find(reverseSort)) {
         QueryPlannerCommon::reverseScans(solnRoot);
-		//例如db.test.find({"name":xx, "age"":xx}).sort({"name"})，如果solution利用的是name索引，
-		//则查询和排序都会利用该索引，则会走到这里
+		//例如db.test.find({"name":xx, "age"":xx}).sort({"name":-1})，但是所有确是name:1,
+		//则可以直接利用name，反一下即可，这种情况则会走到这里
         LOG(5) << "Reversing ixscan to provide sort. Result: " << redact(solnRoot->toString());
         return solnRoot;
     }
