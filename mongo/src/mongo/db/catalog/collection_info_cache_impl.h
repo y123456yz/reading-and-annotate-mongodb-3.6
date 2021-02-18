@@ -53,7 +53,7 @@ public:
 
     /**
      * Get the PlanCache for this collection.
-     */
+     */ //Ò²¾ÍÊÇCollectionInfoCacheImpl::getPlanCache
     PlanCache* getPlanCache() const;
 
     /**
@@ -125,6 +125,7 @@ private:
     UpdateIndexData _indexedPaths;
 
     // A cache for query plans.  
+    //
     std::unique_ptr<PlanCache> _planCache;
 
     // Query settings.

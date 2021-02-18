@@ -301,6 +301,7 @@ const int QueryPlanner::kPlannerVersion = 1;
 
 //根据候选索引和MatchExpression生成PlanCacheIndexTree
 //QueryPlanner::plan(生成querySolution)中调用
+//通过递归调用的方式，生成taggedTree对应的PlanCacheIndexTree，也就是索引树
 Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const taggedTree,
                                              const vector<IndexEntry>& relevantIndices,
                                              PlanCacheIndexTree** out) {
@@ -455,8 +456,10 @@ Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
 
     return Status::OK();
 }
+
 //注意QueryPlanner::plan和QueryPlanner::planFromCache的区别
 // static   prepareExecution中执行，从plancache中获取QuerySolution
+//填充filter的_tagData信息，把MatchExpression tree和索引信息关联起来
 Status QueryPlanner::planFromCache(const CanonicalQuery& query,
                                    const QueryPlannerParams& params,
                                    const CachedSolution& cachedSoln,
@@ -1147,7 +1150,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             }
         }
 
-		//没有合适的index，或者有对应index(但是和排序方向相反，例如索引是name:1,但是排序是name:-1)
+		//没有合适的index，但是需要sort排序，或者有对应index,但是和排序方向相反(例如索引是name:1,但是排序是name:-1)
         if (!usingIndexToSort) {
             for (size_t i = 0; i < params.indices.size(); ++i) {
                 const IndexEntry& index = params.indices[i];
@@ -1233,7 +1236,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 
     // If a projection exists, there may be an index that allows for a covered plan, even if none
     // were considered earlier.
-    //如果有projection过滤，并且out solution为0，则默认随意选择满足下面if索引判断的索引进行buildWholeIXSoln处理
+    //如果find没有携带查询条件，并且有projection过滤，并且out solution为0，则默认随意选择满足下面if索引判断的索引进行buildWholeIXSoln处理
     const auto projection = query.getProj();
     if (params.options & QueryPlannerParams::GENERATE_COVERED_IXSCANS && out->size() == 0 &&
         query.getQueryObj().isEmpty() && projection && !projection->requiresDocument()) {

@@ -179,6 +179,7 @@ public:
     enum ValidationLevel { OFF, MODERATE, STRICT_V };
     enum class StoreDeletedDoc { Off, On };
 
+    //CollectionImplºÃ≥–∏√¿‡
     class Impl : virtual CappedCallback, virtual UpdateNotifier {
     public:
         virtual ~Impl() = 0;

@@ -75,6 +75,7 @@ protected:
 /**
  * @see RecordStore::updateRecord
  */
+//CollectionImpl   Collection¿‡ºÃ≥–∏√¿‡
 class UpdateNotifier {
 public:
     virtual ~UpdateNotifier() {}

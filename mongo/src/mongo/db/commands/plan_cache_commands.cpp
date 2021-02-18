@@ -57,7 +57,8 @@ using namespace mongo;
 
 /**
  * Retrieves a collection's plan cache from the database.
- */ //MultiPlanStage::pickBestPlan中把选出的并计分的查询计划缓存到cache
+ */  
+//下面的PlanCacheListQueryShapes::runPlanCacheCommand等使用该接口
 static Status getPlanCache(OperationContext* opCtx,
                            Collection* collection,
                            const string& ns,
@@ -68,9 +69,11 @@ static Status getPlanCache(OperationContext* opCtx,
         return Status(ErrorCodes::BadValue, "no such collection");
     }
 
+	//获取collection对应的infoCache  CollectionInfoCacheImpl
     CollectionInfoCache* infoCache = collection->infoCache();
     invariant(infoCache);
 
+	//CollectionInfoCacheImpl::getPlanCache
     PlanCache* planCache = infoCache->getPlanCache();
     invariant(planCache);
 
@@ -92,7 +95,7 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(SetupPlanCacheCommands, MONGO_NO_PREREQUISI
     new PlanCacheListQueryShapes();
     new PlanCacheClear();
     new PlanCacheListPlans();
-
+	
     return Status::OK();
 }
 
@@ -221,6 +224,56 @@ StatusWith<unique_ptr<CanonicalQuery>> PlanCacheCommand::canonicalize(OperationC
     return std::move(statusWithCQ.getValue());
 }
 
+/*
+listQueryShapes获取缓存的plancache，也就是缓存的请求
+X-X:PRIMARY> db.XResource.getPlanCache().listQueryShapes()
+{
+		"query" : {
+				"status" : 1,
+				"likedTimes" : {
+						"$gte" : 1500
+				}
+		},
+		"sort" : {
+
+		},
+		"projection" : {
+
+		}
+}
+getPlansByQuery查看cache中的执行计划
+:PRIMARY> db.videoResource.getPlanCache().getPlansByQuery({"query" : {"status" : 1,"likedTimes" : {"$gte" : 1500} },"sort" : {},"projection" : {}})
+{
+        "plans" : [
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 0, can combine? 1\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 1, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+......
+参考querysolution.txt文件中<planCache相关>章节
+*/
 PlanCacheListQueryShapes::PlanCacheListQueryShapes()
     : PlanCacheCommand("planCacheListQueryShapes",
                        "Displays all query shapes in a collection.",

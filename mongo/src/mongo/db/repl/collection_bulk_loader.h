@@ -41,6 +41,7 @@ namespace repl {
 /**
  * Used on a local Collection to create and bulk build indexes.
  */
+//CollectionBulkLoaderImplºÃ≥–∏√¿‡
 class CollectionBulkLoader {
 public:
     virtual ~CollectionBulkLoader() = default;

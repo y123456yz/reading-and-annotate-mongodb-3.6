@@ -222,9 +222,11 @@ Status SubplanStage::planSubqueries() {
         // Plan the i-th child. We might be able to find a plan for the i-th child in the plan
         // cache. If there's no cached plan, then we generate and rank plans using the MPS.
         CachedSolution* rawCS;
+		//线程缓存中获取
         if (PlanCache::shouldCacheQuery(*branchResult->canonicalQuery) &&
             _collection->infoCache()
                 ->getPlanCache()
+                //PlanCache::get从缓存的planCache中获取solution
                 ->get(*branchResult->canonicalQuery, &rawCS)
                 .isOK()) {
             // We have a CachedSolution. Store it for later.
@@ -277,6 +279,7 @@ namespace {
  * plan for 'orChild') to 'compositeCacheData'.
  */
 //SubplanStage::choosePlanForSubqueries调用
+//填充filter的_tagData信息，把MatchExpression tree和索引tree信息关联起来
 Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
                                   SolutionCacheData* branchCacheData,
                                   MatchExpression* orChild,
@@ -292,6 +295,7 @@ Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
         return Status(ErrorCodes::BadValue, ss);
     }
 
+	//该branch没有适合的候选索引，则直接打印报错
     if (SolutionCacheData::USE_INDEX_TAGS_SOLN != branchCacheData->solnType) {
         mongoutils::str::stream ss;
         ss << "No indexed cache data for subchild " << orChild->toString();
@@ -311,6 +315,7 @@ Status tagOrChildAccordingToCache(PlanCacheIndexTree* compositeCacheData,
     }
 
     // Add the child's cache data to the cache data we're creating for the main query.
+    //生成PlanCacheIndexTree tree树
     compositeCacheData->children.push_back(branchCacheData->tree->clone());
 
     return Status::OK();
@@ -347,9 +352,9 @@ Status SubplanStage::choosePlanForSubqueries(PlanYieldPolicy* yieldPolicy) {
             Status tagStatus = tagOrChildAccordingToCache(
                 cacheData.get(), soln->cacheData.get(), orChild, _indexMap);
             if (!tagStatus.isOK()) {
-				LOG(2) << "SubplanStage::choosePlanForSubqueries 3";
 				mongoutils::str::stream ss;
                 ss << "SubplanStage::choosePlanForSubqueries 4";
+				LOG(5) << "No indexed cache data for subchild " << orChild->toString();
                 return tagStatus;
             }
         } else {
@@ -635,6 +640,7 @@ unique_ptr<PlanStageStats> SubplanStage::getStats() {
     return ret;
 }
 
+//判断该子分支是否有缓存的solution
 bool SubplanStage::branchPlannedFromCache(size_t i) const {
     return NULL != _branchResults[i]->cachedSolution.get();
 }

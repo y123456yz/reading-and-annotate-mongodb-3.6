@@ -1489,3 +1489,571 @@ keyPattern = { name: 1.0, age: 1.0 }
 2021-01-24T22:27:48.617+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.version with UUID ab5bbbc2-9a13-4905-bd4d-6701da1ffa4c
 2021-01-24T22:27:48.617+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace config.system.sessions with UUID 509fde18-9764-4f45-9262-e9be5712711f
 
+
+
+
+
+
+
+
+planCache相关
+
+1. listQueryShapes获取缓存的plancache，也就是缓存的请求
+
+xx:PRIMARY> db.xxResource.getPlanCache().getPlansByQuery({)
+[
+        {
+                "query" : {
+                        "status" : 1,
+                        "likedTimes" : {
+                                "$gte" : 1500
+                        }
+                },
+                "sort" : {
+
+                },
+                "projection" : {
+
+                }
+        }
+]
+ 
+getPlansByQuery查看cache中的执行计划 
+xx:PRIMARY> db.xxResource.getPlanCache().getPlansByQuery({"query" : {"status" : 1,"likedTimes" : {"$gte" : 1500} },"sort" : {},"projection" : {}})
+{
+        "plans" : [
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 0, can combine? 1\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 1, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 3,
+                                                "restoreState" : 3,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 101,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 101,
+                                                        "executionTimeMillisEstimate" : 0,
+                                                        "works" : 101,
+                                                        "advanced" : 101,
+                                                        "needTime" : 0,
+                                                        "needYield" : 0,
+                                                        "saveState" : 3,
+                                                        "restoreState" : 3,
+                                                        "isEOF" : 0,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "status" : 1,
+                                                                "likedTimes" : -1,
+                                                                "createTime" : -1,
+                                                                "viewCount" : 1
+                                                        },
+                                                        "indexName" : "status_1_likedTimes_-1_createTime_-1_viewCount_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "status" : [ ],
+                                                                "likedTimes" : [ ],
+                                                                "createTime" : [ ],
+                                                                "viewCount" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "status" : [
+                                                                        "[1, 1]"
+                                                                ],
+                                                                "likedTimes" : [
+                                                                        "[inf.0, 1500]"
+                                                                ],
+                                                                "createTime" : [
+                                                                        "[MaxKey, MinKey]"
+                                                                ],
+                                                                "viewCount" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 101,
+                                                        "seeks" : 1,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        },
+                        "feedback" : {
+                                "nfeedback" : 20,
+                                "scores" : [
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        }
+                                ]
+                        },
+                        "filterSet" : false
+                },
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_viewCount_1_likedTimes_-1_createTime_-1, pos: 0, can combine? 1\n---Leaf status_1_viewCount_1_likedTimes_-1_createTime_-1, pos: 2, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 1.0498049504950495,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 5,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 5,
+                                        "needTime" : 96,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 5,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 5,
+                                                "needTime" : 96,
+                                                "needYield" : 0,
+                                                "saveState" : 3,
+                                                "restoreState" : 3,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 5,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 5,
+                                                        "executionTimeMillisEstimate" : 0,
+                                                        "works" : 101,
+                                                        "advanced" : 5,
+                                                        "needTime" : 96,
+                                                        "needYield" : 0,
+                                                        "saveState" : 3,
+                                                        "restoreState" : 3,
+                                                        "isEOF" : 0,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "status" : 1,
+                                                                "viewCount" : 1,
+                                                                "likedTimes" : -1,
+                                                                "createTime" : -1
+                                                        },
+                                                        "indexName" : "status_1_viewCount_1_likedTimes_-1_createTime_-1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "status" : [ ],
+                                                                "viewCount" : [ ],
+                                                                "likedTimes" : [ ],
+                                                                "createTime" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "status" : [
+                                                                        "[1, 1]"
+                                                                ],
+                                                                "viewCount" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ],
+                                                                "likedTimes" : [
+                                                                        "[inf.0, 1500]"
+                                                                ],
+                                                                "createTime" : [
+                                                                        "[MaxKey, MinKey]"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 101,
+                                                        "seeks" : 96,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        },
+                        "feedback" : {
+
+                        },
+                        "filterSet" : false
+                },
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1, pos: 0, can combine? 1\n---Leaf \n)"
+                        },
+                        "reason" : {
+                                "score" : 1.0201019801980198,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 2,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 2,
+                                        "needTime" : 99,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "filter" : {
+                                                        "likedTimes" : {
+                                                                "$gte" : 1500
+                                                        }
+                                                },
+                                                "nReturned" : 2,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 2,
+                                                "needTime" : 99,
+                                                "needYield" : 0,
+                                                "saveState" : 3,
+                                                "restoreState" : 3,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 101,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 101,
+                                                        "executionTimeMillisEstimate" : 0,
+                                                        "works" : 101,
+                                                        "advanced" : 101,
+                                                        "needTime" : 0,
+                                                        "needYield" : 0,
+                                                        "saveState" : 3,
+                                                        "restoreState" : 3,
+                                                        "isEOF" : 0,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "status" : 1
+                                                        },
+                                                        "indexName" : "status_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "status" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "status" : [
+                                                                        "[1, 1]"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 101,
+                                                        "seeks" : 1,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        },
+                        "feedback" : {
+
+                        },
+                        "filterSet" : false
+                },
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_videoId_1, pos: 0, can combine? 1\n---Leaf \n)"
+                        },
+                        "reason" : {
+                                "score" : 1.0201019801980198,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 2,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 2,
+                                        "needTime" : 99,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "filter" : {
+                                                        "likedTimes" : {
+                                                                "$gte" : 1500
+                                                        }
+                                                },
+                                                "nReturned" : 2,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 2,
+                                                "needTime" : 99,
+                                                "needYield" : 0,
+                                                "saveState" : 3,
+                                                "restoreState" : 3,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 101,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 101,
+                                                        "executionTimeMillisEstimate" : 0,
+                                                        "works" : 101,
+                                                        "advanced" : 101,
+                                                        "needTime" : 0,
+                                                        "needYield" : 0,
+                                                        "saveState" : 3,
+                                                        "restoreState" : 3,
+                                                        "isEOF" : 0,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "status" : 1,
+                                                                "videoId" : 1
+                                                        },
+                                                        "indexName" : "status_1_videoId_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "status" : [ ],
+                                                                "videoId" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "status" : [
+                                                                        "[1, 1]"
+                                                                ],
+                                                                "videoId" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 101,
+                                                        "seeks" : 1,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        },
+                        "feedback" : {
+
+                        },
+                        "filterSet" : false
+                },
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_createTime_-1_likedTimes_-1_viewCount_1, pos: 0, can combine? 1\n---Leaf status_1_createTime_-1_likedTimes_-1_viewCount_1, pos: 2, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 1.0003,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 0,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 0,
+                                        "needTime" : 101,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 0,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 0,
+                                                "needTime" : 101,
+                                                "needYield" : 0,
+                                                "saveState" : 3,
+                                                "restoreState" : 3,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "docsExamined" : 0,
+                                                "alreadyHasObj" : 0,
+                                                "inputStage" : {
+                                                        "stage" : "IXSCAN",
+                                                        "nReturned" : 0,
+                                                        "executionTimeMillisEstimate" : 0,
+                                                        "works" : 101,
+                                                        "advanced" : 0,
+                                                        "needTime" : 101,
+                                                        "needYield" : 0,
+                                                        "saveState" : 3,
+                                                        "restoreState" : 3,
+                                                        "isEOF" : 0,
+                                                        "invalidates" : 0,
+                                                        "keyPattern" : {
+                                                                "status" : 1,
+                                                                "createTime" : -1,
+                                                                "likedTimes" : -1,
+                                                                "viewCount" : 1
+                                                        },
+                                                        "indexName" : "status_1_createTime_-1_likedTimes_-1_viewCount_1",
+                                                        "isMultiKey" : false,
+                                                        "multiKeyPaths" : {
+                                                                "status" : [ ],
+                                                                "createTime" : [ ],
+                                                                "likedTimes" : [ ],
+                                                                "viewCount" : [ ]
+                                                        },
+                                                        "isUnique" : false,
+                                                        "isSparse" : false,
+                                                        "isPartial" : false,
+                                                        "indexVersion" : 2,
+                                                        "direction" : "forward",
+                                                        "indexBounds" : {
+                                                                "status" : [
+                                                                        "[1, 1]"
+                                                                ],
+                                                                "createTime" : [
+                                                                        "[MaxKey, MinKey]"
+                                                                ],
+                                                                "likedTimes" : [
+                                                                        "[inf.0, 1500]"
+                                                                ],
+                                                                "viewCount" : [
+                                                                        "[MinKey, MaxKey]"
+                                                                ]
+                                                        },
+                                                        "keysExamined" : 101,
+                                                        "seeks" : 101,
+                                                        "dupsTested" : 0,
+                                                        "dupsDropped" : 0,
+                                                        "seenInvalidated" : 0
+                                                }
+                                        }
+                                }
+                        },
+                        "feedback" : {
+
+                        },
+                        "filterSet" : false
+                }
+        ],
+        "timeOfCreation" : ISODate("2021-02-01T12:06:09.287Z"),
+        "ok" : 1,
+        "operationTime" : Timestamp(1613641261, 1200),
+        "$gleStats" : {
+                "lastOpTime" : Timestamp(0, 0),
+                "electionId" : ObjectId("7fffffff000000000000000b")
+        },
+        "$configServerState" : {
+                "opTime" : {
+                        "ts" : Timestamp(1613641260, 2814),
+                        "t" : NumberLong(5)
+                }
+        },
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1613641261, 1200),
+                "signature" : {
+                        "hash" : BinData(0,"hiIJ2KgAbiy4nrq5S2RMlSsWMtg="),
+                        "keyId" : NumberLong("6899511060013776937")
+                }
+        }
+}
+xx-xx:PRIMARY> 
+
+
+
+
+

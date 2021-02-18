@@ -383,6 +383,7 @@ Status MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy) {
         if (validSolutions) { //把这些solutions添加到plancache，下次就可以直接用plancache来执行
             _collection->infoCache()
                 ->getPlanCache()
+                //PlanCache::add把该solutions缓存起来
                 ->add(*_query,
                       solutions,
                       //得分排序好的候选查询计划放入到plancache中缓存

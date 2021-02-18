@@ -85,6 +85,7 @@ typedef std::string PlanID;
  *   is tagged according to the index tags in the PlanCacheIndexTree.
  *   This is done by QueryPlanner::tagAccordingToCache.
  */
+//QuerySolution.cacheData.tree中缓存对应的索引tree信息
 //SolutionCacheData.tree为该类型，缓存solution对应索引信息
 //cacheDataFromTaggedTree  choosePlanForSubqueries  QueryPlanner::plan中构造使用
 struct PlanCacheIndexTree {
@@ -151,7 +152,8 @@ struct PlanCacheIndexTree {
  * QuerySolution.
  */ 
 //QueryPlanner::plan中构造, 
-//QuerySolution.cacheData成员为该类型
+//SubplanStage._branchResults.cachedSolution.plannerData为该类型
+//QuerySolution.cacheData  PlanCacheEntry.plannerData成员为该类型
 //该结构实际上记录了该solution的索引信息
 struct SolutionCacheData {
     SolutionCacheData()
@@ -171,20 +173,24 @@ struct SolutionCacheData {
     // is true, then 'tree' is used to store the relevant IndexEntry.
     // If 'collscanSoln' is true, then 'tree' should be NULL.
     //QueryPlanner::plan中赋值，缓存cacheIndex，也就是缓存solution对应索引信息
-    std::unique_ptr<PlanCacheIndexTree> tree; 
+    std::unique_ptr<PlanCacheIndexTree> tree;   //QuerySolution.cacheData.tree中缓存对应的索引tree信息
 
     enum SolutionType {
         // Indicates that the plan should use
         // the index as a proxy for a collection
         // scan (e.g. using index to provide sort).
-        //走固定的索引
-        WHOLE_IXSCAN_SOLN,
+        //没有合适的index，但是需要sort排序，或者有对应index,但是和排序方向相反(例如索引是name:1,但是排序是name:-1)
+        //如果find没有携带查询条件，并且有projection过滤，并且out solution为0，则默认随意选择满足下面if索引判断的索引进行buildWholeIXSoln处理
+        WHOLE_IXSCAN_SOLN,   //参考QueryPlanner::plan
 
         // The cached plan is a collection scan.
-        COLLSCAN_SOLN,
+        //全表扫描
+        COLLSCAN_SOLN,   //参考QueryPlanner::plan
 
         // Build the solution by using 'tree'
         // to tag the match expression.
+        //走固定得索引，SolutionCacheData构造使用的默认值
+        //只在SubplanStage中使用，如果solnType != USE_INDEX_TAGS_SOLN，说明没有合适的候选索引，参考tagOrChildAccordingToCache
         USE_INDEX_TAGS_SOLN
     } solnType; //默认USE_INDEX_TAGS_SOLN
 
@@ -203,6 +209,8 @@ class PlanCacheEntry;
 /**
  * Information returned from a get(...) query.
  */
+//PlanCache::get中构造使用
+//SubplanStage._branchResults.cachedSolution为该类型
 class CachedSolution {
 private:
     MONGO_DISALLOW_COPYING(CachedSolution);
@@ -211,7 +219,7 @@ public:
     CachedSolution(const PlanCacheKey& key, const PlanCacheEntry& entry);
     ~CachedSolution();
 
-    // Owned here.
+    // Owned here. 
     std::vector<SolutionCacheData*> plannerData;
 
     // Key used to provide feedback on the entry.
@@ -237,6 +245,8 @@ public:
  * Used by the cache to track entries and their performance over time.
  * Also used by the plan cache commands to display plan cache state.
  */
+//PlanCache._cache为该类型，PlanCacheEntry缓存到PlanCache._cache结构的lru中
+//PlanCacheListQueryShapes  PlanCacheClear  PlanCacheListPlans三个命令使用查看，见对应command模块
 class PlanCacheEntry {
 private:
     MONGO_DISALLOW_COPYING(PlanCacheEntry);
@@ -297,7 +307,63 @@ public:
  * mapping, the cache contains information on why that mapping was made and statistics on the
  * cache entry's actual performance on subsequent runs.
  *
- */ //plancache可以参考https://segmentfault.com/a/1190000015236644   CollectionInfoCacheImpl._planCache
+ */
+
+/*
+listQueryShapes获取缓存的plancache，也就是缓存的请求
+X-X:PRIMARY> db.XResource.getPlanCache().listQueryShapes()
+{
+		"query" : {
+				"status" : 1,
+				"likedTimes" : {
+						"$gte" : 1500
+				}
+		},
+		"sort" : {
+
+		},
+		"projection" : {
+
+		}
+}
+getPlansByQuery查看cache中的执行计划
+:PRIMARY> db.videoResource.getPlanCache().getPlansByQuery({"query" : {"status" : 1,"likedTimes" : {"$gte" : 1500} },"sort" : {},"projection" : {}})
+{
+        "plans" : [
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 0, can combine? 1\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 1, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+......
+参考querysolution.txt文件中<planCache相关>章节
+*/
+
+
+//plancache可以参考https://segmentfault.com/a/1190000015236644   CollectionInfoCacheImpl._planCache
+//CollectionInfoCacheImpl._planCache成员为该结构类型，PlanCache最终保持到该成员
+//PlanCacheListQueryShapes  PlanCacheClear  PlanCacheListPlans三个命令使用查看，见对应command模块
 class PlanCache {
 private:
     MONGO_DISALLOW_COPYING(PlanCache);
@@ -429,6 +495,8 @@ private:
     void encodeKeyForSort(const BSONObj& sortObj, StringBuilder* keyBuilder) const;
     void encodeKeyForProj(const BSONObj& projObj, StringBuilder* keyBuilder) const;
 
+    //PlanCacheEntry根据PlanCacheKey缓存到这里，支持LRU
+    //查找某个请求的PlanCacheEntry, 参考PlanCache::get
     LRUKeyValue<PlanCacheKey, PlanCacheEntry> _cache;
 
     // Protects _cache.

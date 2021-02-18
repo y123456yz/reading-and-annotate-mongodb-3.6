@@ -694,6 +694,9 @@ void PlanCache::encodeKeyForProj(const BSONObj& projObj, StringBuilder* keyBuild
     }
 }
 
+//PlanCache::add添加，PlanCache::get获取
+
+//MultiPlanStage::pickBestPlan中使用
 Status PlanCache::add(const CanonicalQuery& query,
                       const std::vector<QuerySolution*>& solns,
                       PlanRankingDecision* why,
@@ -749,12 +752,17 @@ Status PlanCache::add(const CanonicalQuery& query,
     return Status::OK();
 }
 
+//PlanCache::add添加，PlanCache::get获取
+
+//可以参考SubplanStage::planSubqueries中的调用方式
+//根据query查找对应的PlanCacheEntry， PlanCache::add添加，PlanCache::get获取
 Status PlanCache::get(const CanonicalQuery& query, CachedSolution** crOut) const {
     PlanCacheKey key = computeKey(query);
     verify(crOut);
 
     stdx::lock_guard<stdx::mutex> cacheLock(_cacheMutex);
     PlanCacheEntry* entry;
+	//从_cache从根据key获取PlanCacheEntry
     Status cacheStatus = _cache.get(key, &entry);
     if (!cacheStatus.isOK()) {
         return cacheStatus;

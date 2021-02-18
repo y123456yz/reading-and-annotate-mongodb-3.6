@@ -177,6 +177,7 @@ private:
         // a set of alternate plans for the branch. The index tags from the cache data
         // can be applied directly to the parent $or MatchExpression when generating the
         // composite solution.
+        //SubplanStage._branchResults.cachedSolution
         std::unique_ptr<CachedSolution> cachedSolution;
 
         // Query solutions resulting from planning the $or branch.

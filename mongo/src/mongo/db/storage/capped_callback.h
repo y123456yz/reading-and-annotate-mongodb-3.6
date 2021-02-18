@@ -41,6 +41,7 @@ class RecordData;
  * When a capped collection is modified (delete/insert/etc) then certain notifications need to
  * be made, which this (pure virtual) interface exposes.
  */
+//CollectionImpl   Collection¿‡ºÃ≥–∏√¿‡
 class CappedCallback {
 public:
     virtual ~CappedCallback() {}

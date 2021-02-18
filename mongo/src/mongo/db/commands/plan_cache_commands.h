@@ -43,6 +43,8 @@ namespace mongo {
  * Defines common attributes for all plan cache related commands
  * such as slaveOk.
  */
+
+//下面的PlanCacheListQueryShapes   PlanCacheClear  PlanCacheListPlans等命令继承该类
 class PlanCacheCommand : public BasicCommand {
 public:
     PlanCacheCommand(const std::string& name, const std::string& helpText, ActionType actionType);

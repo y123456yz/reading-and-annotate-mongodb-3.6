@@ -45,6 +45,7 @@ class OperationContext;
  */
 class CollectionInfoCache {
 public:
+    //CollectionInfoCacheImpl继承该类，接口真正实现在该类
     class Impl {
     public:
         virtual ~Impl() = 0;
@@ -92,6 +93,7 @@ public:
     /**
      * Get the PlanCache for this collection.
      */
+    //例如参考plan_cache_commands.cpp中的getPlanCache接口
     inline PlanCache* getPlanCache() const {
         return this->_impl().getPlanCache();
     }
