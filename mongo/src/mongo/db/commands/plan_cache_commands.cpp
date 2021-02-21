@@ -48,6 +48,57 @@
 #include "mongo/db/query/plan_ranker.h"
 #include "mongo/util/log.h"
 
+/* planCache相关命令在这个文件实现
+listQueryShapes获取缓存的plancache，也就是缓存的请求
+X-X:PRIMARY> db.XResource.getPlanCache().listQueryShapes()
+{
+		"query" : {
+				"status" : 1,
+				"likedTimes" : {
+						"$gte" : 1500
+				}
+		},
+		"sort" : {
+
+		},
+		"projection" : {
+
+		}
+}
+getPlansByQuery查看cache中的执行计划
+:PRIMARY> db.videoResource.getPlanCache().getPlansByQuery({"query" : {"status" : 1,"likedTimes" : {"$gte" : 1500} },"sort" : {},"projection" : {}})
+{
+        "plans" : [
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 0, can combine? 1\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 1, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "LIMIT",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "limitAmount" : 180,
+                                        "inputStage" : {
+                                                "stage" : "FETCH",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+......
+参考querysolution.txt文件中<planCache相关>章节
+*/
+
 namespace {
 
 using std::string;
