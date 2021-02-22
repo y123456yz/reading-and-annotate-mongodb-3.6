@@ -2057,3 +2057,196 @@ xx-xx:PRIMARY>
 
 
 
+planCache:
+ planCache相关命令在这个文件实现
+listQueryShapes获取缓存的plancache，也就是缓存的请求
+X-X:PRIMARY> db.XResource.getPlanCache().listQueryShapes()
+{
+		"query" : {
+				"status" : 1,
+				"likedTimes" : {
+						"$gte" : 1500
+				}
+		},
+		"sort" : {
+
+		},
+		"projection" : {
+
+		}
+}
+getPlansByQuery查看cache中的执行计划
+xx-xx:PRIMARY> db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
+{
+        "plans" : [
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1, pos: 0, can combine? 1\n---Leaf create_time_1, pos: 0, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "FETCH",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 60,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 2,
+                                        "restoreState" : 2,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "docsExamined" : 101,
+                                        "alreadyHasObj" : 0,
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 2,
+                                                "restoreState" : 2,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "create_time" : 1
+                                                },
+                                                "indexName" : "create_time_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "create_time" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 2,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "create_time" : [
+                                                                "[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 101,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        },
+                        "feedback" : {
+                                "nfeedback" : 8,
+                                "scores" : [
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        }
+                                ]
+                        },
+                        "filterSet" : false
+                },
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1_audit_state_1_auto_audit_state_1_manual_state_1, pos: 0, can combine? 1\n---Leaf create_time_1_audit_state_1_auto_audit_state_1_manual_state_1, pos: 0, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "FETCH",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 2,
+                                        "restoreState" : 2,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "docsExamined" : 101,
+                                        "alreadyHasObj" : 0,
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 2,
+                                                "restoreState" : 2,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "create_time" : 1,
+                                                        "audit_state" : 1,
+                                                        "auto_audit_state" : 1,
+                                                        "manual_state" : 1
+                                                },
+                                                "indexName" : "create_time_1_audit_state_1_auto_audit_state_1_manual_state_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "create_time" : [ ],
+                                                        "audit_state" : [ ],
+                                                        "auto_audit_state" : [ ],
+                                                        "manual_state" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 2,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "create_time" : [
+                                                                "[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+                                                        ],
+                                                        "audit_state" : [
+                                                                "[MinKey, MaxKey]"
+                                                        ],
+                                                        "auto_audit_state" : [
+                                                                "[MinKey, MaxKey]"
+                                                        ],
+                                                        "manual_state" : [
+                                                                "[MinKey, MaxKey]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 101,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        },
+                        "feedback" : {
+
+                        },
+                        "filterSet" : false
+                }
+        ],
+
+参考querysolution.txt文件中<planCache相关>章节
+

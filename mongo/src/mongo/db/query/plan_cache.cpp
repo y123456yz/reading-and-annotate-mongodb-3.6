@@ -535,6 +535,8 @@ SolutionCacheData* SolutionCacheData::clone() const {
     return other;
 }
 
+//可以通过PlanCacheListPlans::list查看输出内容，也就是PlanCacheListPlans命令，内容如下:
+//"(index-tagged expression tree: tree=Leaf name_1_age_1__id_1, pos: 0, can combine? 1\n)"
 std::string SolutionCacheData::toString() const {
     switch (this->solnType) {
         case WHOLE_IXSCAN_SOLN:
@@ -774,6 +776,100 @@ Status PlanCache::get(const CanonicalQuery& query, CachedSolution** crOut) const
     return Status::OK();
 }
 
+/*
+xx-xx:PRIMARY> db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
+{
+		"plans" : [
+				{
+						"details" : {
+								"solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1, pos: 0, can combine? 1\n---Leaf create_time_1, pos: 0, can combine? 1\n)"
+						},
+						"reason" : {
+								"score" : 2.0003,
+								"stats" : {
+										"stage" : "FETCH",
+										"nReturned" : 101,
+										"executionTimeMillisEstimate" : 60,
+										"works" : 101,
+										"advanced" : 101,
+										"needTime" : 0,
+										"needYield" : 0,
+										"saveState" : 2,
+										"restoreState" : 2,
+										"isEOF" : 0,
+										"invalidates" : 0,
+										"docsExamined" : 101,
+										"alreadyHasObj" : 0,
+										"inputStage" : {
+												"stage" : "IXSCAN",
+												"nReturned" : 101,
+												"executionTimeMillisEstimate" : 0,
+												"works" : 101,
+												"advanced" : 101,
+												"needTime" : 0,
+												"needYield" : 0,
+												"saveState" : 2,
+												"restoreState" : 2,
+												"isEOF" : 0,
+												"invalidates" : 0,
+												"keyPattern" : {
+														"create_time" : 1
+												},
+												"indexName" : "create_time_1",
+												"isMultiKey" : false,
+												"multiKeyPaths" : {
+														"create_time" : [ ]
+												},
+												"isUnique" : false,
+												"isSparse" : false,
+												"isPartial" : false,
+												"indexVersion" : 2,
+												"direction" : "forward",
+												"indexBounds" : {
+														"create_time" : [
+																"[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+														]
+												},
+												"keysExamined" : 101,
+												"seeks" : 1,
+												"dupsTested" : 0,
+												"dupsDropped" : 0,
+												"seenInvalidated" : 0
+										}
+								}
+						}
+
+                        "feedback" : {
+                                "nfeedback" : 8,
+                                "scores" : [
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        }
+                                ]
+                        },*/
+//CachedPlanStage::updatePlanCache()调用 ,参考上面的feedback
+//feedback添加倒entry->feedback数组中
 Status PlanCache::feedback(const CanonicalQuery& cq, PlanCacheEntryFeedback* feedback) {
     if (NULL == feedback) {
         return Status(ErrorCodes::BadValue, "feedback is NULL");
@@ -807,6 +903,8 @@ void PlanCache::clear() {
     _cache.clear();
 }
 
+//例如这里的computeKey(cq)为getPlansByQuery中的查询db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
+//PlanCache::contains调用
 PlanCacheKey PlanCache::computeKey(const CanonicalQuery& cq) const {
     StringBuilder keyBuilder;
     encodeKeyForMatch(cq.root(), &keyBuilder);
@@ -832,6 +930,7 @@ Status PlanCache::getEntry(const CanonicalQuery& query, PlanCacheEntry** entryOu
     return Status::OK();
 }
 
+//获取所有的PlanCacheEntry信息
 std::vector<PlanCacheEntry*> PlanCache::getAllEntries() const {
     stdx::lock_guard<stdx::mutex> cacheLock(_cacheMutex);
     std::vector<PlanCacheEntry*> entries;
@@ -844,6 +943,8 @@ std::vector<PlanCacheEntry*> PlanCache::getAllEntries() const {
     return entries;
 }
 
+//例如这里的computeKey(cq)为getPlansByQuery中的查询db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
+//查看缓存的plan中是否有cq请求，PlanCacheListPlans::list中调用
 bool PlanCache::contains(const CanonicalQuery& cq) const {
     stdx::lock_guard<stdx::mutex> cacheLock(_cacheMutex);
     return _cache.hasKey(computeKey(cq));

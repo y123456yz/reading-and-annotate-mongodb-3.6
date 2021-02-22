@@ -66,36 +66,178 @@ X-X:PRIMARY> db.XResource.getPlanCache().listQueryShapes()
 		}
 }
 getPlansByQuery查看cache中的执行计划
-:PRIMARY> db.videoResource.getPlanCache().getPlansByQuery({"query" : {"status" : 1,"likedTimes" : {"$gte" : 1500} },"sort" : {},"projection" : {}})
+xx-xx:PRIMARY> db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
 {
         "plans" : [
                 {
                         "details" : {
-                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 0, can combine? 1\n---Leaf status_1_likedTimes_-1_createTime_-1_viewCount_1, pos: 1, can combine? 1\n)"
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1, pos: 0, can combine? 1\n---Leaf create_time_1, pos: 0, can combine? 1\n)"
                         },
                         "reason" : {
                                 "score" : 2.0003,
                                 "stats" : {
-                                        "stage" : "LIMIT",
+                                        "stage" : "FETCH",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 60,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 2,
+                                        "restoreState" : 2,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "docsExamined" : 101,
+                                        "alreadyHasObj" : 0,
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 2,
+                                                "restoreState" : 2,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "create_time" : 1
+                                                },
+                                                "indexName" : "create_time_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "create_time" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 2,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "create_time" : [
+                                                                "[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 101,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        },
+                        "feedback" : {
+                                "nfeedback" : 8,
+                                "scores" : [
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        }
+                                ]
+                        },
+                        "filterSet" : false
+                },
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1_audit_state_1_auto_audit_state_1_manual_state_1, pos: 0, can combine? 1\n---Leaf create_time_1_audit_state_1_auto_audit_state_1_manual_state_1, pos: 0, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "FETCH",
                                         "nReturned" : 101,
                                         "executionTimeMillisEstimate" : 0,
                                         "works" : 101,
                                         "advanced" : 101,
                                         "needTime" : 0,
                                         "needYield" : 0,
-                                        "saveState" : 3,
-                                        "restoreState" : 3,
+                                        "saveState" : 2,
+                                        "restoreState" : 2,
                                         "isEOF" : 0,
                                         "invalidates" : 0,
-                                        "limitAmount" : 180,
+                                        "docsExamined" : 101,
+                                        "alreadyHasObj" : 0,
                                         "inputStage" : {
-                                                "stage" : "FETCH",
+                                                "stage" : "IXSCAN",
                                                 "nReturned" : 101,
                                                 "executionTimeMillisEstimate" : 0,
                                                 "works" : 101,
                                                 "advanced" : 101,
                                                 "needTime" : 0,
-......
+                                                "needYield" : 0,
+                                                "saveState" : 2,
+                                                "restoreState" : 2,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "create_time" : 1,
+                                                        "audit_state" : 1,
+                                                        "auto_audit_state" : 1,
+                                                        "manual_state" : 1
+                                                },
+                                                "indexName" : "create_time_1_audit_state_1_auto_audit_state_1_manual_state_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "create_time" : [ ],
+                                                        "audit_state" : [ ],
+                                                        "auto_audit_state" : [ ],
+                                                        "manual_state" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 2,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "create_time" : [
+                                                                "[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+                                                        ],
+                                                        "audit_state" : [
+                                                                "[MinKey, MaxKey]"
+                                                        ],
+                                                        "auto_audit_state" : [
+                                                                "[MinKey, MaxKey]"
+                                                        ],
+                                                        "manual_state" : [
+                                                                "[MinKey, MaxKey]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 101,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        },
+                        "feedback" : {
+
+                        },
+                        "filterSet" : false
+                }
+        ],
+
 参考querysolution.txt文件中<planCache相关>章节
 */
 
@@ -353,6 +495,7 @@ Status PlanCacheListQueryShapes::list(const PlanCache& planCache, BSONObjBuilder
     invariant(bob);
 
     // Fetch all cached solutions from plan cache.
+    //获取所有的PlanCacheEntry信息
     vector<PlanCacheEntry*> solutions = planCache.getAllEntries();
 
     BSONArrayBuilder arrayBuilder(bob->subarrayStart("shapes"));
@@ -476,18 +619,22 @@ Status PlanCacheListPlans::runPlanCacheCommand(OperationContext* opCtx,
     return list(opCtx, *planCache, ns, cmdObj, bob);
 }
 
+//根据查询请求，获取每个solution的score算分过程
+//例如db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
 // static
 Status PlanCacheListPlans::list(OperationContext* opCtx,
                                 const PlanCache& planCache,
                                 const std::string& ns,
                                 const BSONObj& cmdObj,
                                 BSONObjBuilder* bob) {
+    //序列化查询请求
     auto statusWithCQ = canonicalize(opCtx, ns, cmdObj);
     if (!statusWithCQ.isOK()) {
         return statusWithCQ.getStatus();
     }
     unique_ptr<CanonicalQuery> cq = std::move(statusWithCQ.getValue());
 
+	//查询plancache中是否有缓存该请求
     if (!planCache.contains(*cq)) {
         // Return empty plans in results if query shape does not
         // exist in plan cache.
@@ -497,6 +644,7 @@ Status PlanCacheListPlans::list(OperationContext* opCtx,
     }
 
     PlanCacheEntry* entryRaw;
+	//获取请求对应的PlanCacheEntry
     Status result = planCache.getEntry(*cq, &entryRaw);
     if (!result.isOK()) {
         return result;
@@ -507,6 +655,7 @@ Status PlanCacheListPlans::list(OperationContext* opCtx,
     size_t numPlans = entry->plannerData.size();
     invariant(numPlans == entry->decision->stats.size());
     invariant(numPlans == entry->decision->scores.size());
+	//把该请求满足条件的solution及其打分过程记录下来
     for (size_t i = 0; i < numPlans; ++i) {
         BSONObjBuilder planBob(plansBuilder.subobjStart());
 

@@ -137,7 +137,7 @@ StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
         opCtx, std::move(qrStatus.getValue()), expCtx, extensionsCallback, allowedFeatures);
 }
 
-//FindCmd::run  调用，
+//FindCmd::run     PlanCacheListPlans::list调用，
 //从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
 // static
 StatusWith<std::unique_ptr<CanonicalQuery>> 

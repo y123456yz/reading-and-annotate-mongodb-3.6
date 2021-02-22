@@ -326,6 +326,7 @@ void CachedPlanStage::doInvalidate(OperationContext* opCtx,
     }
 }
 
+//CachedPlanStage::updatePlanCache()中调用
 std::unique_ptr<PlanStageStats> CachedPlanStage::getStats() {
     _commonStats.isEOF = isEOF();
 
@@ -341,12 +342,15 @@ const SpecificStats* CachedPlanStage::getSpecificStats() const {
     return &_specificStats;
 }
 
+//CachedPlanStage::pickBestPlan调用，pickBestPlan获取倒足够的数据或者到了EOF,则更新planCache
 void CachedPlanStage::updatePlanCache() {
     std::unique_ptr<PlanCacheEntryFeedback> feedback = stdx::make_unique<PlanCacheEntryFeedback>();
-    feedback->stats = getStats();
+    feedback->stats = getStats(); //该plan对应的PlanStageStats
+    //该plan对应的solution分数
     feedback->score = PlanRanker::scoreTree(feedback->stats->children[0].get());
 
     PlanCache* cache = _collection->infoCache()->getPlanCache();
+	//PlanCache::feedback
     Status fbs = cache->feedback(*_canonicalQuery, feedback.release());
     if (!fbs.isOK()) {
         LOG(5) << _canonicalQuery->ns() << ": Failed to update cache with feedback: " << redact(fbs)

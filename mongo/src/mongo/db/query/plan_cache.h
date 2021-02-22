@@ -43,6 +43,9 @@
 namespace mongo {
 
 // A PlanCacheKey is a string-ified version of a query's predicate/projection/sort.
+//
+//例如这里的computeKey(cq)为getPlansByQuery中的查询db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
+//参考PlanCache::contains
 typedef std::string PlanCacheKey;
 
 struct PlanRankingDecision;
@@ -53,6 +56,7 @@ struct QuerySolutionNode;
  * When the CachedPlanStage runs a cached query, it can provide feedback to the cache.  This
  * feedback is available to anyone who retrieves that query in the future.
  */
+//CachedPlanStage::updatePlanCache()中构造使用
 struct PlanCacheEntryFeedback {
     // How well did the cached plan perform?
     std::unique_ptr<PlanStageStats> stats;
@@ -154,6 +158,10 @@ struct PlanCacheIndexTree {
 //QueryPlanner::plan中构造, 
 //SubplanStage._branchResults.cachedSolution.plannerData为该类型
 //QuerySolution.cacheData  PlanCacheEntry.plannerData成员为该类型
+
+//可以通过PlanCacheListPlans::list查看输出内容，也就是PlanCacheListPlans命令，内容如下:
+//"(index-tagged expression tree: tree=Leaf name_1_age_1__id_1, pos: 0, can combine? 1\n)"
+
 //该结构实际上记录了该solution的索引信息
 struct SolutionCacheData {
     SolutionCacheData()
@@ -175,6 +183,7 @@ struct SolutionCacheData {
     //QueryPlanner::plan中赋值，缓存cacheIndex，也就是缓存solution对应索引信息
     std::unique_ptr<PlanCacheIndexTree> tree;   //QuerySolution.cacheData.tree中缓存对应的索引tree信息
 
+    //对应不同类型输出参考SolutionCacheData::toString()
     enum SolutionType {
         // Indicates that the plan should use
         // the index as a proxy for a collection
@@ -244,7 +253,203 @@ public:
 /**
  * Used by the cache to track entries and their performance over time.
  * Also used by the plan cache commands to display plan cache state.
- */
+ */ 
+/* planCache相关命令在这个文件实现
+listQueryShapes获取缓存的plancache，也就是缓存的请求
+X-X:PRIMARY> db.XResource.getPlanCache().listQueryShapes()
+{
+        "query" : {
+                "status" : 1,
+                "likedTimes" : {
+                        "$gte" : 1500
+                }
+        },
+        "sort" : {
+
+        },
+        "projection" : {
+
+        }
+}
+getPlansByQuery查看cache中的执行计划
+xx-xx:PRIMARY> db.xx.getPlanCache().getPlansByQuery({"query" : {"create_time" : { "$gte" : "2020-12-27 00:00:00","$lte" : "2021-01-26 23:59:59"}},"sort" : { },"projection" : {}})
+{
+        "plans" : [
+                {
+                        "details" : {
+                                "solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1, pos: 0, can combine? 1\n---Leaf create_time_1, pos: 0, can combine? 1\n)"
+                        },
+                        "reason" : {
+                                "score" : 2.0003,
+                                "stats" : {
+                                        "stage" : "FETCH",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 60,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 2,
+                                        "restoreState" : 2,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "docsExamined" : 101,
+                                        "alreadyHasObj" : 0,
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 2,
+                                                "restoreState" : 2,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "create_time" : 1
+                                                },
+                                                "indexName" : "create_time_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "create_time" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 2,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "create_time" : [
+                                                                "[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 101,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        },
+                        "feedback" : {
+                                "nfeedback" : 8,
+                                "scores" : [
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        },
+                                        {
+                                                "score" : 2.0003
+                                        }
+                                ]
+                        },
+                        "filterSet" : false
+                },
+        {
+                "details" : {
+                        "solution" : "(index-tagged expression tree: tree=Node\n---Leaf create_time_1_audit_state_1_auto_audit_state_1_manual_state_1, pos: 0, can combine? 1\n---Leaf create_time_1_audit_state_1_auto_audit_state_1_manual_state_1, pos: 0, can combine? 1\n)"
+                },
+                "reason" : {
+                        "score" : 2.0003,
+                        "stats" : {
+                                "stage" : "FETCH",
+                                "nReturned" : 101,
+                                "executionTimeMillisEstimate" : 0,
+                                "works" : 101,
+                                "advanced" : 101,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 2,
+                                "restoreState" : 2,
+                                "isEOF" : 0,
+                                "invalidates" : 0,
+                                "docsExamined" : 101,
+                                "alreadyHasObj" : 0,
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "nReturned" : 101,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 101,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 2,
+                                        "restoreState" : 2,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "keyPattern" : {
+                                                "create_time" : 1,
+                                                "audit_state" : 1,
+                                                "auto_audit_state" : 1,
+                                                "manual_state" : 1
+                                        },
+                                        "indexName" : "create_time_1_audit_state_1_auto_audit_state_1_manual_state_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "create_time" : [ ],
+                                                "audit_state" : [ ],
+                                                "auto_audit_state" : [ ],
+                                                "manual_state" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 2,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "create_time" : [
+                                                        "[\"2020-12-27 00:00:00\", \"2021-01-26 23:59:59\"]"
+                                                ],
+                                                "audit_state" : [
+                                                        "[MinKey, MaxKey]"
+                                                ],
+                                                "auto_audit_state" : [
+                                                        "[MinKey, MaxKey]"
+                                                ],
+                                                "manual_state" : [
+                                                        "[MinKey, MaxKey]"
+                                                ]
+                                        },
+                                        "keysExamined" : 101,
+                                        "seeks" : 1,
+                                        "dupsTested" : 0,
+                                        "dupsDropped" : 0,
+                                        "seenInvalidated" : 0
+                                }
+                        }
+                },
+                "feedback" : {
+
+                },
+                "filterSet" : false
+        }
+],
+
+
+......
+参考querysolution.txt文件中<planCache相关>章节
+*/
+
+//PlanCache::getAllEntries中获取entry信息
 //PlanCache._cache为该类型，PlanCacheEntry缓存到PlanCache._cache结构的lru中
 //PlanCacheListQueryShapes  PlanCacheClear  PlanCacheListPlans三个命令使用查看，见对应command模块
 class PlanCacheEntry {
@@ -294,11 +499,15 @@ public:
     //
 
     // Information that went into picking the winning plan and also why
-    // the other plans lost.
+    // the other plans lost. 
+    //PlanCacheListPlans::list通过PlanCacheListPlans命令输出
+    //该planCache 算分过程及其planstage
     std::unique_ptr<PlanRankingDecision> decision;
 
     // Annotations from cached runs.  The CachedPlanStage provides these stats about its
     // runs when they complete.
+    //PlanCacheListPlans::list通过PlanCacheListPlans命令输出
+    //真正来源在CachedPlanStage::updatePlanCache()
     std::vector<PlanCacheEntryFeedback*> feedback;
 };
 
@@ -494,9 +703,9 @@ private:
     void encodeKeyForMatch(const MatchExpression* tree, StringBuilder* keyBuilder) const;
     void encodeKeyForSort(const BSONObj& sortObj, StringBuilder* keyBuilder) const;
     void encodeKeyForProj(const BSONObj& projObj, StringBuilder* keyBuilder) const;
-
+    
     //PlanCacheEntry根据PlanCacheKey缓存到这里，支持LRU
-    //查找某个请求的PlanCacheEntry, 参考PlanCache::get
+    //查找某个请求的PlanCacheEntry, 参考PlanCache::get  PlanCache::getAllEntries()
     LRUKeyValue<PlanCacheKey, PlanCacheEntry> _cache;
 
     // Protects _cache.

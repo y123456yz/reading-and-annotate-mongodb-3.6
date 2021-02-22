@@ -185,6 +185,8 @@ private:
 };
 
 // The universal container for a stage's stats.
+//PlanStageStats输出打印可以参考PlanCacheListPlans::list  PlanRanker::pickBestPlan
+
 //MultiPlanStage::getStats()中构造使用，使用方法可以参考MultiPlanStage::getStats()
 //以MultiPlanStage为例，使用参考MultiPlanStage::getStats()
 //每个stage有个对应的PlanStageStats统计，这些统计真正在PlanRanker::pickBestPlan使用，目的是选择最优索引

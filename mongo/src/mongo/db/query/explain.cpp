@@ -558,6 +558,7 @@ void Explain::statsToBSON(const PlanStageStats& stats,
     childrenBob.doneFast();
 }
 
+//PlanCacheListPlans::list  PlanRanker::pickBestPlanµ÷ÓÃ
 // static
 BSONObj Explain::statsToBSON(const PlanStageStats& stats, ExplainOptions::Verbosity verbosity) {
     BSONObjBuilder bob;
