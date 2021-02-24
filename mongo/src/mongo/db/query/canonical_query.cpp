@@ -137,6 +137,11 @@ StatusWith<std::unique_ptr<CanonicalQuery>> CanonicalQuery::canonicalize(
         opCtx, std::move(qrStatus.getValue()), expCtx, extensionsCallback, allowedFeatures);
 }
 
+//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化(例如AND OR NOR的优化器对应ListOfMatchExpression::getOptimizer())
+//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
+
 //FindCmd::run     PlanCacheListPlans::list调用，
 //从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
 // static
@@ -246,8 +251,9 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
 }
 
 //CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
-//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化(例如AND OR NOR的优化器对应ListOfMatchExpression::getOptimizer())
 //CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
 
 //CanonicalQuery::canonicalize调用，
 //从qr中获取_qr，_isIsolated，_proj等信息存储到CanonicalQuery类中
@@ -346,6 +352,12 @@ bool CanonicalQuery::isSimpleIdQuery(const BSONObj& query) {
 
     return hasID;
 }
+
+
+//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化(例如AND OR NOR的优化器对应ListOfMatchExpression::getOptimizer())
+//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
 
 // static  CanonicalQuery::init调用  expression tree排序
 //sort tree 主要是对MatchExpression的各个子树进行排序，好处就是做到对于索引的查找只需要一次就能完成。其具体的排序的顺序： 

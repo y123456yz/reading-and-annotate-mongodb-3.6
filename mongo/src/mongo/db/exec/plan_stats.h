@@ -128,7 +128,9 @@ struct SpecificStats {
     virtual SpecificStats* clone() const = 0;
 };
 
-// Every stage has CommonStats.  
+// Every stage has CommonStats. 
+//PlanStageStats输出打印可以参考PlanCacheListPlans::list  PlanRanker::pickBestPlan
+
 //PlanStageStats.common为该类型
 struct CommonStats { //算分用的该类，参考PlanStage::work    explain("allPlansExecution")展示的内容来源就在该结构
     CommonStats(const char* type)
@@ -190,6 +192,8 @@ private:
 //MultiPlanStage::getStats()中构造使用，使用方法可以参考MultiPlanStage::getStats()
 //以MultiPlanStage为例，使用参考MultiPlanStage::getStats()
 //每个stage有个对应的PlanStageStats统计，这些统计真正在PlanRanker::pickBestPlan使用，目的是选择最优索引
+
+//PlanRankingDecision.stats成员为该类型
 struct PlanStageStats {
     PlanStageStats(const CommonStats& c, StageType t) : stageType(t), common(c) {}
 

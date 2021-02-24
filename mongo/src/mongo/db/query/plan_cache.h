@@ -156,7 +156,8 @@ struct PlanCacheIndexTree {
  * QuerySolution.
  */ 
 //QueryPlanner::plan中构造, 
-//SubplanStage._branchResults.cachedSolution.plannerData为该类型
+//SubplanStage._branchResults.cachedSolution.plannerData为该类型  
+//CachedSolution.plannerData为该类型
 //QuerySolution.cacheData  PlanCacheEntry.plannerData成员为该类型
 
 //可以通过PlanCacheListPlans::list查看输出内容，也就是PlanCacheListPlans命令，内容如下:
@@ -198,7 +199,7 @@ struct SolutionCacheData {
 
         // Build the solution by using 'tree'
         // to tag the match expression.
-        //走固定得索引，SolutionCacheData构造使用的默认值
+        //走候选索引，SolutionCacheData构造使用的默认值
         //只在SubplanStage中使用，如果solnType != USE_INDEX_TAGS_SOLN，说明没有合适的候选索引，参考tagOrChildAccordingToCache
         USE_INDEX_TAGS_SOLN
     } solnType; //默认USE_INDEX_TAGS_SOLN
@@ -229,7 +230,8 @@ public:
     ~CachedSolution();
 
     // Owned here. 
-    std::vector<SolutionCacheData*> plannerData;
+    //solution缓存在这里面，数组第0个成员是最优的，以此类推，例如QueryPlanner::planFromCache中使用
+    std::vector<SolutionCacheData*> plannerData; 
 
     // Key used to provide feedback on the entry.
     PlanCacheKey key;

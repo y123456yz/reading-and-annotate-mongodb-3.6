@@ -425,6 +425,7 @@ $and
 
 // static  QueryPlanner::plan中调用  
 //程序走到这里， MatchExpression的每一个节点对应的TagData*或者RelevantTag* 字段还是空的,给MatchExpression._tagData赋值
+//MatchExpression._tagData赋值
 void QueryPlannerIXSelect::rateIndices(MatchExpression* node,   
                                        string prefix,
                                        const vector<IndexEntry>& indices,
@@ -437,7 +438,7 @@ void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
 
     // Every indexable node is tagged even when no compatible index is
     // available.
-    if (Indexability::isBoundsGenerating(node)) { //绝大部分情况走这里，如果又对应索引
+    if (Indexability::isBoundsGenerating(node)) { //绝大部分情况走这里，如果有对应索引
         string fullPath;
         if (MatchExpression::NOT == node->matchType()) {
             fullPath = prefix + node->getChild(0)->path().toString();
@@ -447,10 +448,13 @@ void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
 
         verify(NULL == node->getTag());
         RelevantTag* rt = new RelevantTag();
-        node->setTag(rt);
+		//这里赋值给node tag
+        node->setTag(rt); //MatchExpression::setTag
+		//rt path赋值
         rt->path = fullPath;
 
         // TODO: This is slow, with all the string compares.
+        //下面对RelevantTag rt赋值
         for (size_t i = 0; i < indices.size(); ++i) {
             BSONObjIterator it(indices[i].keyPattern);
             BSONElement elt = it.next();
@@ -501,13 +505,18 @@ void QueryPlannerIXSelect::rateIndices(MatchExpression* node,
 还有另外一个优化index的函数： QueryPlannerIXSelect::stripUnneededAssignments， 它会找出AND几点的EQ操作， 
 如果某个field的EQ操作只有一个index， 就去掉该节点的其他index：
 */
+
+//QueryPlanner::plan调用
 // static
 void QueryPlannerIXSelect::stripInvalidAssignments(MatchExpression* node,
+												   //候选索引
                                                    const vector<IndexEntry>& indices) {
-    stripInvalidAssignmentsToTextIndexes(node, indices);
+	//TEXT文本索引相关处理，先跳过，以后分析
+	stripInvalidAssignmentsToTextIndexes(node, indices);
 
     if (MatchExpression::GEO != node->matchType() &&
         MatchExpression::GEO_NEAR != node->matchType()) {
+        //2D相关索引，先跳过
         stripInvalidAssignmentsTo2dsphereIndices(node, indices);
     }
 
@@ -780,6 +789,7 @@ static void stripInvalidAssignmentsToTextIndex(MatchExpression* node,
     }
 }
 
+//TEXT文本索引相关处理，先跳过，以后分析
 // static
 void QueryPlannerIXSelect::stripInvalidAssignmentsToTextIndexes(MatchExpression* node,
                                                                 const vector<IndexEntry>& indices) {
@@ -888,6 +898,7 @@ static void stripInvalidAssignmentsTo2dsphereIndex(MatchExpression* node, size_t
     }
 }
 
+//2D相关索引，先跳过
 // static
 void QueryPlannerIXSelect::stripInvalidAssignmentsTo2dsphereIndices(
     MatchExpression* node, const vector<IndexEntry>& indices) {

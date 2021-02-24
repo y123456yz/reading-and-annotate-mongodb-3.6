@@ -1192,6 +1192,10 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedOr(const CanonicalQuery& quer
     return orResult;
 }
 
+//QueryPlannerAccess::buildIndexedDataAccess和QueryPlannerAnalysis::analyzeDataAccess
+//一起生成QuerySolutionNode tree, 并存储到querySolution.root(也就是这个QuerySolutionNode tree)
+
+
 //参考https://blog.csdn.net/baijiwei/article/details/78128632
 // static   QueryPlanner::plan中调用执行
 //这个函数会根据MatchExpression的节点的类型， 建立对应的QuerySolutionNode节点， 最终形成一个树形的QuerySolutionNode树
@@ -1292,7 +1296,7 @@ QuerySolutionNode* QueryPlannerAccess::buildIndexedDataAccess(const CanonicalQue
     return NULL;
 }
 
-//buildWholeIXSoln调用
+//buildWholeIXSoln调用, 构造FetchNode->IndexScanNode tree树
 QuerySolutionNode* QueryPlannerAccess::scanWholeIndex(const IndexEntry& index,
                                                       const CanonicalQuery& query,
                                                       const QueryPlannerParams& params,
@@ -1316,10 +1320,12 @@ QuerySolutionNode* QueryPlannerAccess::scanWholeIndex(const IndexEntry& index,
 
     // If it's find({}) remove the no-op root.
     if (MatchExpression::AND == filter->matchType() && (0 == filter->numChildren())) {
+		//find({})查询不带任何条件
         solnRoot = isn.release();
     } else {
         // TODO: We may not need to do the fetch if the predicates in root are covered.  But
         // for now it's safe (though *maybe* slower).
+        //IndexScanNode变为FetchNode的child
         unique_ptr<FetchNode> fetch = make_unique<FetchNode>();
         fetch->filter = std::move(filter);
         fetch->children.push_back(isn.release());

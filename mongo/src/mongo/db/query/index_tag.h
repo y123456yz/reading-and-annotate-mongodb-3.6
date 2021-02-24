@@ -36,6 +36,11 @@
 
 namespace mongo {
 
+
+//QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag)
+//QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
+
+
 //QueryPlanner::tagAccordingToCache  tagForSort  attachNode调用
 // output from enumerator to query planner
 class IndexTag : public MatchExpression::TagData {
@@ -92,6 +97,9 @@ public:
     // compound the bounds for multiple leaf expressions on the index.
     bool canCombineBounds = true;
 };
+
+//QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag)
+//QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
 
 // used internally  QueryPlannerIXSelect::rateIndices中使用
 class RelevantTag : public MatchExpression::TagData {

@@ -756,7 +756,7 @@ Status PlanCache::add(const CanonicalQuery& query,
 
 //PlanCache::add添加，PlanCache::get获取
 
-//可以参考SubplanStage::planSubqueries中的调用方式
+//可以参考SubplanStage::planSubqueries    prepareExecution中的调用方式
 //根据query查找对应的PlanCacheEntry， PlanCache::add添加，PlanCache::get获取
 Status PlanCache::get(const CanonicalQuery& query, CachedSolution** crOut) const {
     PlanCacheKey key = computeKey(query);

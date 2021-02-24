@@ -654,8 +654,13 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
     return solnRoot;
 }
 
-// static  buildWholeIXSoln  buildCollscanSoln调用  QueryPlanner::plan中调用执行
 //buildCollscanSoln没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
+
+//buildWholeIXSoln 、 buildCollscanSoln、 QueryPlanner::plan、 QueryPlanner::planFromCache中调用执行
+//该接口生成对应的QuerySolution
+
+//根据请求完善QuerySolutionNode tree，包括增加LimitNode  SkipNode ProjectionNode ShardingFilterNode
+// static   
 QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     const CanonicalQuery& query,
     const QueryPlannerParams& params,
@@ -698,7 +703,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
 		//root改为ShardingFilterNode，原solnRoot添加到新root的children，也就是ShardingFilterNode变为新root
         ShardingFilterNode* sfn = new ShardingFilterNode();
         sfn->children.push_back(solnRoot.release());
-        solnRoot.reset(sfn);
+        solnRoot.reset(sfn); 
     }
 
     bool hasSortStage = false;
@@ -714,6 +719,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     bool hasAndHashStage = hasNode(solnRoot.get(), STAGE_AND_HASH);
     soln->hasBlockingStage = hasSortStage || hasAndHashStage;
 
+	//获取原始QueryRequest信息
     const QueryRequest& qr = query.getQueryRequest();
 
     // If we can (and should), add the keep mutations stage.
@@ -765,6 +771,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     }
 
     // Project the results.
+    //在solnRoot tree中增加ProjectionNode
     if (NULL != query.getProj()) {
         LOG(5) << "PROJECTION: Current plan is:\n" << redact(solnRoot->toString());
 
@@ -786,6 +793,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
             const vector<StringData>& fields = query.getProj()->getRequiredFields();
             bool covered = true;
             for (size_t i = 0; i < fields.size(); ++i) {
+				//FetchNode::hasField  IndexScanNode::hasField
                 if (!solnRoot->hasField(fields[i].toString())) {
                     covered = false;
                     break;
@@ -860,7 +868,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
         projNode->projection = qr.getProj();
         projNode->projType = projType;
         projNode->coveredKeyObj = coveredKeyObj;
-        solnRoot.reset(projNode);
+        solnRoot.reset(projNode); 
     } else {
         // If there's no projection, we must fetch, as the user wants the entire doc.
         if (!solnRoot->fetched() && !(params.options & QueryPlannerParams::IS_COUNT)) {
@@ -870,6 +878,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
         }
     }
 
+	//增加skip QuerySolutionNode  
     if (qr.getSkip()) {
         SkipNode* skip = new SkipNode();
         skip->skip = *qr.getSkip();
@@ -881,6 +890,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     // be enforced by the blocking sort.
     // Otherwise, we need to limit the results in the case of a hard limit
     // (ie. limit in raw query is negative)
+    //增加LimitNode
     if (!hasSortStage) {
         // We don't have a sort stage. This means that, if there is a limit, we will have
         // to enforce it ourselves since it's not handled inside SORT.
@@ -899,6 +909,7 @@ QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
         }
     }
 
+	//solnRoot添加到QuerySolution.root
     soln->root = std::move(solnRoot);
     return soln.release();
 }

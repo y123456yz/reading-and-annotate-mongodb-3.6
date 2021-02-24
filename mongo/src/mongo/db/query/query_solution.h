@@ -46,6 +46,11 @@ class GeoNearExpression;
  * This is an abstract representation of a query plan.  It can be transcribed into a tree of
  * PlanStages, which can then be handed to a PlanRunner for execution.
  */ 
+ 
+//QueryPlannerAccess::buildIndexedDataAccess和QueryPlannerAnalysis::analyzeDataAccess
+//一起生成QuerySolutionNode tree, 并存储倒querySolution.root(也就是这个QuerySolutionNode tree)
+
+ 
 //所有的QuerySolution.root是一颗tree,所有的树节点类型为QuerySolutionNode，这些节点就挂载到这棵树中
 //QuerySolution.root树种的各个节点真实类型为QuerySolutionNode的继承类，例如CollectionScanNode、AndHashNode等
 //QuerySolutionNode的具体继承类实现见本文件后面
@@ -180,13 +185,21 @@ private:
  *
  * A tree of stages may be built from a QuerySolution.  The QuerySolution must outlive the tree
  * of stages. 每个查询计划QuerySolution对应一个计划阶段PlanStage. 见getExecutor
- */ //参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
-//prepareExecution中根据QueryPlanner::plan生成QuerySolution
+ */ 
+//QueryPlannerAccess::buildIndexedDataAccess和QueryPlannerAnalysis::analyzeDataAccess
+//一起生成QuerySolutionNode tree, 并存储到querySolution.root(也就是这个QuerySolutionNode tree)
+
+ 
+ //参考https://yq.aliyun.com/articles/215016?spm=a2c4e.11155435.0.0.21ad5df01WAL0E
+
+//QueryPlannerAnalysis::analyzeDataAccess中生成QuerySolution
 //PlanExecutor的主要作用是选出最佳的QuerySolution， 并且执行该solution
 //每个索引对应一种执行计划，在MongoDB中叫解决方案，参考querysolution.txt日志理解
 struct QuerySolution { //执行计划，可以参考https://yq.aliyun.com/articles/647563?spm=a2c4e.11155435.0.0.7cb74df3gUVck4
     QuerySolution() : hasBlockingStage(false), indexFilterApplied(false) {}
 
+    //QueryPlannerAccess::buildIndexedDataAccess和QueryPlannerAnalysis::analyzeDataAccess
+    //一起生成QuerySolutionNode tree, 并存储倒querySolution.root(也就是这个QuerySolutionNode tree)
     // Owned here. 
     std::unique_ptr<QuerySolutionNode> root;
 
@@ -500,7 +513,7 @@ struct MergeSortNode : public QuerySolutionNode {
 struct FetchNode : public QuerySolutionNode {
     FetchNode();
     virtual ~FetchNode() {}
-    //对应QuerySolutionNode为FetchNode
+    //对应QuerySolutionNode为FetchNode 
     virtual StageType getType() const {
         return STAGE_FETCH;
     }

@@ -113,6 +113,7 @@ struct PlanRankingDecision {
 
     // Stats of all plans sorted in descending order by score.
     // Owned by us.
+    //可以参考PlanCacheListPlans::list通过PlanCacheListPlans命令输出
     std::vector<std::unique_ptr<PlanStageStats>> stats; //赋值参考PlanRanker::pickBestPlan
 
     // The "goodness" score corresponding to 'stats'.

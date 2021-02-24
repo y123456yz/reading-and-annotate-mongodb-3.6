@@ -153,6 +153,7 @@ protected:
 
 private:
     ExpressionOptimizerFunc getOptimizer() const final {
+        //直接返回，不做任何优化
         return [](std::unique_ptr<MatchExpression> expression) { return expression; };
     }
 };

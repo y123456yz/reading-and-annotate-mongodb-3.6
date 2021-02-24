@@ -62,6 +62,9 @@ void ListOfMatchExpression::_listToBSON(BSONArrayBuilder* out) const {
     out->doneFast();
 }
 
+////AndMatchExpression  OrMatchExpression  NorMatchExpression继承ListOfMatchExpression类
+//AND OR NOR的MatchExpression优化器在这里ListOfMatchExpression::getOptimizer()
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize
 MatchExpression::ExpressionOptimizerFunc ListOfMatchExpression::getOptimizer() const {
     return [](std::unique_ptr<MatchExpression> expression) -> std::unique_ptr<MatchExpression> {
         auto& children = static_cast<ListOfMatchExpression&>(*expression)._expressions;
@@ -75,7 +78,8 @@ MatchExpression::ExpressionOptimizerFunc ListOfMatchExpression::getOptimizer() c
             // free twice.
             std::unique_ptr<MatchExpression> childExpressionPtr(childExpression);
             childExpression = nullptr;
-
+			
+			//递归调用，先把最下层的子expression处理掉
             auto optimizedExpression = MatchExpression::optimize(std::move(childExpressionPtr));
             childExpression = optimizedExpression.release();
         }
@@ -86,15 +90,19 @@ MatchExpression::ExpressionOptimizerFunc ListOfMatchExpression::getOptimizer() c
         if (matchType == AND || matchType == OR) {
             std::vector<MatchExpression*> absorbedExpressions;
             for (MatchExpression*& childExpression : children) {
+				//父子expression type一样
                 if (childExpression->matchType() == matchType) {
                     // Move this child out of the children array.
+                    //先把childExpression临时保存到childExpressionPtr
                     std::unique_ptr<ListOfMatchExpression> childExpressionPtr(
                         static_cast<ListOfMatchExpression*>(childExpression));
+					//父expression的子expression指向NULL
                     childExpression = nullptr;  // Null out this child's entry in _expressions, so
                                                 // that it will be deleted by the erase call below.
 
                     // Move all of the grandchildren from the child expression to
                     // absorbedExpressions.
+                    //把原来子expression的子expression(也就是父expression的孙子expresssion)全部插入absorbedExpressions
                     auto& grandChildren = childExpressionPtr->_expressions;
                     absorbedExpressions.insert(
                         absorbedExpressions.end(), grandChildren.begin(), grandChildren.end());
@@ -103,6 +111,16 @@ MatchExpression::ExpressionOptimizerFunc ListOfMatchExpression::getOptimizer() c
                     // Note that 'childExpressionPtr' will now be destroyed.
                 }
             }
+
+/*                                                  
+	      OR                               OR          
+	     /  \                            /  | \      
+	    /    \    优化后(中间一层去掉)  /   |  \   
+	   OR    OR  -------------------   OR   OR  OR   
+	  / \     |
+	 /   \    |
+	OR   OR   OR
+*/
 
             // We replaced each destroyed child expression with nullptr. Now we remove those
             // nullptrs from the array.
@@ -116,11 +134,14 @@ MatchExpression::ExpressionOptimizerFunc ListOfMatchExpression::getOptimizer() c
             if ((matchType == AND || matchType == OR || matchType == INTERNAL_SCHEMA_XOR)) {
                 // Simplify AND/OR/XOR with exactly one operand to an expression consisting of just
                 // that operand.
+                //如果子就一个，则tree也就是子expression
                 MatchExpression* simplifiedExpression = children.front();
                 children.clear();
                 return std::unique_ptr<MatchExpression>(simplifiedExpression);
             } else if (matchType == NOR) {
                 // Simplify NOR of exactly one operand to NOT of that operand.
+                //NOR如果子就一个，则转换为not，例如db.inventory.find( { $nor: [ { price: 1.99 }]})和
+                //db.inventory.find( { price:{not: 1.99 }})一样
                 auto simplifiedExpression = stdx::make_unique<NotMatchExpression>();
                 invariantOK(simplifiedExpression->init(children.front()));
                 children.clear();

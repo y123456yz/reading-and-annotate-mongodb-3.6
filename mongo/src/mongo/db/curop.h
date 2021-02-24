@@ -85,7 +85,10 @@ public:
 
     // detailed options
     long long cursorid{-1};
+
+    //beginQueryOp初始化赋值
     long long ntoreturn{-1};
+    //beginQueryOp初始化赋值
     long long ntoskip{-1};
     bool exhaust{false};
 

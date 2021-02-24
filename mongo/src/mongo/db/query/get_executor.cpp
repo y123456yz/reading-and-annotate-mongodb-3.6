@@ -281,7 +281,7 @@ struct PrepareExecutionResult {
 #12 mongo::ServiceEntryPointMongod::handleRequest (this=<optimized out>, opCtx=0x7f2a54621900, m=...) at src/mongo/db/service_entry_point_mongod.cpp:1161
 #13 0x00007f2a4d0a6b0a in mongo::ServiceStateMachine::_processMessage (this=this@entry=0x7f2a5460a510, guard=...) at src/mongo/transport/service_state_machine.cpp:363
 */ 
-//StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中执行
+//StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getExecutor中调用
 /*
 用于生成执行QuerySolution和PlanStage. 这两个信息最终都存入到PrepareExecutionResult结构并返回
 1 调用QueryPlanner::plan生成查询计划,这将会生成一个或者多个查询计划QuerySolution.
@@ -327,6 +327,7 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     const IndexDescriptor* descriptor = collection->getIndexCatalog()->findIdIndex(opCtx);
 
     // If we have an _id index we can use an idhack plan.
+    //_id查询走这里
     if (descriptor && IDHackStage::supportsQuery(collection, *canonicalQuery)) {
         LOG(2) << "Using idhack: " << redact(canonicalQuery->toStringShort());
 
@@ -396,8 +397,9 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     // Try to look up a cached solution for the query.
     //plancache可以参考https://segmentfault.com/a/1190000015236644 
     CachedSolution* rawCS;
-	//从plancache中获取
+	//从plancache中获取缓存的CachedSolution信息
     if (PlanCache::shouldCacheQuery(*canonicalQuery) &&
+		//planCache::get
         collection->infoCache()->getPlanCache()->get(*canonicalQuery, &rawCS).isOK()) {
         // We have a CachedSolution.  Have the planner turn it into a QuerySolution.
         unique_ptr<CachedSolution> cs(rawCS);

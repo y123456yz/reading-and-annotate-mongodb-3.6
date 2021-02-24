@@ -60,6 +60,7 @@ const auto kTermField = "term"_sd;
 
 /**
  * A command for running .find() queries.
+ find参考https://docs.mongodb.com/manual/reference/command/find/index.html
  */
 class FindCmd : public BasicCommand {
 public:
@@ -310,7 +311,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
             return appendCommandStatus(result, statusWithCQ.getStatus());
         }
 
-		//获取赋值后的CanonicalQuery
+		//获取赋值后的CanonicalQuery，从请求QueryRequest中解析构造CanonicalQuery
         std::unique_ptr<CanonicalQuery> cq = std::move(statusWithCQ.getValue());
 
 		//std::move(dbSLock)会调用DBLock::~DBLock

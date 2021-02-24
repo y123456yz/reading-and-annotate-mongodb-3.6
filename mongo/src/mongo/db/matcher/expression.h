@@ -90,7 +90,7 @@ https://blog.csdn.net/baijiwei/article/details/78122733
 
 
 //CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
-//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
+//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化(例如AND OR NOR的优化器对应ListOfMatchExpression::getOptimizer())
 //CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
 
 
@@ -119,12 +119,15 @@ public:
         ELEM_MATCH_VALUE,
         SIZE,
 
-        // leaf types
+        // leaf types  
+        //这几个比较操作都继承ComparisonMatchExpression
         EQ,    //EqualityMatchExpression
         LTE,   //LTEMatchExpression
         LT,    //LTMatchExpression
         GT,    //GTMatchExpression
         GTE,
+
+        
         REGEX,
         MOD,
         EXISTS,
@@ -186,14 +189,15 @@ public:
      *
      * The value of 'expression' must not be nullptr.
      */
-    	//CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
-	//CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化
-	//CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+    //CanonicalQuery::canonicalize->MatchExpressionParser::parse中生成查询filter中操作符原始tree
+    //CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化(例如AND OR NOR的优化器对应ListOfMatchExpression::getOptimizer())
+    //CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
+
     static std::unique_ptr<MatchExpression> optimize(std::unique_ptr<MatchExpression> expression) {
-        //MatchExpression::getOptimizer 
+        //MatchExpression::getOptimizer，例如AND OR NOR的MatchExpression优化器在这里ListOfMatchExpression::getOptimizer()
         auto optimizer = expression->getOptimizer();
         return optimizer(std::move(expression));
-    }
+    } //也就是MatchExpression::optimize
 
     MatchExpression(MatchType type);
     virtual ~MatchExpression() {}
@@ -283,7 +287,8 @@ public:
     //
     // Tagging mechanism: Hang data off of the tree for retrieval later.
     //
-
+    //QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag)
+    //QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
     class TagData {
     public:
         enum class Type { IndexTag, RelevantTag, OrPushdownTag };
@@ -373,7 +378,9 @@ private:
     virtual ExpressionOptimizerFunc getOptimizer() const = 0;
 
     MatchType _matchType;
-    //QueryPlannerIXSelect::rateIndices  QueryPlanner::tagAccordingToCache中赋值，
+    //QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag)
+    //QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
+    //MatchExpression的具体继承类中对_tagData赋值
     //MatchExpression通过_tagData和索引等关联
     std::unique_ptr<TagData> _tagData; 
 };

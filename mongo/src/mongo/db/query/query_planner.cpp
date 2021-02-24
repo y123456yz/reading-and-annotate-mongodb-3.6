@@ -277,7 +277,18 @@ QuerySolution* buildCollscanSoln(const CanonicalQuery& query,
         QueryPlannerAccess::makeCollectionScan(query, tailable, params));
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
+/*
+// For example:
+// - Sparse index {a: 1, b: 1} should be able to provide a sort for
+//	 find({b: 1}).sort({a: 1}).  SERVER-13908.
+// - Index {a: 1, b: "2dsphere"} (which is "geo-sparse", if
+//	 2dsphereIndexVersion=2) should be able to provide a sort for
+//	 find({b: GEO}).sort({a:1}).  SERVER-10801.
 
+以下两种情况调用：
+1. hint强制索引，会调用该函数
+2. 例如find({b: 1}).sort({a: 1}),同时拥有a索引，也会调用该函数，使用sort字段对应索引
+*/
 
 //QueryPlanner::plan调用 
 QuerySolution* buildWholeIXSoln(const IndexEntry& index,
@@ -288,6 +299,13 @@ QuerySolution* buildWholeIXSoln(const IndexEntry& index,
         QueryPlannerAccess::scanWholeIndex(index, query, params, direction));
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
+
+// For example:
+// - Sparse index {a: 1, b: 1} should be able to provide a sort for
+//	 find({b: 1}).sort({a: 1}).  SERVER-13908.
+// - Index {a: 1, b: "2dsphere"} (which is "geo-sparse", if
+//	 2dsphereIndexVersion=2) should be able to provide a sort for
+//	 find({b: GEO}).sort({a:1}).  SERVER-10801.
 
 //例如db.test.find({"name":xx}).sort({age:1}),如果没用name索引
 //或者有name索引，但是name索引获取到的数据很多，然后通过age排序，这可能不是最优的，
@@ -458,7 +476,7 @@ Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
 }
 
 //注意QueryPlanner::plan和QueryPlanner::planFromCache的区别
-// static   prepareExecution中执行，从plancache中获取QuerySolution
+// static   prepareExecution 中执行，从plancache中获取QuerySolution
 //填充filter的_tagData信息，把MatchExpression tree和索引信息关联起来
 Status QueryPlanner::planFromCache(const CanonicalQuery& query,
                                    const QueryPlannerParams& params,
@@ -471,6 +489,7 @@ Status QueryPlanner::planFromCache(const CanonicalQuery& query,
     invariant(PlanCache::shouldCacheQuery(query));
 
     // Look up winning solution in cached solution's array.
+    //获取数组中第一个SolutionCacheData，这个是最优的候选solution
     const SolutionCacheData& winnerCacheData = *cachedSoln.plannerData[0];
 
     if (SolutionCacheData::WHOLE_IXSCAN_SOLN == winnerCacheData.solnType) {
@@ -936,6 +955,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     // Figure out how useful each index is to each predicate.
+    //给query.root()._tagData赋值
     QueryPlannerIXSelect::rateIndices(query.root(), "", relevantIndices, query.getCollator());
     QueryPlannerIXSelect::stripInvalidAssignments(query.root(), relevantIndices);
 
@@ -1283,7 +1303,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     //没有合适的索引并且允许全部扫描
     bool collscanNeeded = (0 == out->size() && canTableScan);
 
-	//如果没有合适的QuerySolution，则进行全部扫描
+	//如果没有合适的QuerySolution，则进行全表扫描
     if (possibleToCollscan && (collscanRequested || collscanNeeded)) {
 		//没有匹配的索引则需要全表扫描，通过buildCollscanSoln生成查询计划，上面如果有合适的索引则QueryPlannerAnalysis::analyzeDataAccess生成
         QuerySolution* collscan = buildCollscanSoln(query, isTailable, params);

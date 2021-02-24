@@ -121,6 +121,7 @@ void beginQueryOp(OperationContext* opCtx,
                   long long ntoreturn,
                   long long ntoskip) {
     auto curOp = CurOp::get(opCtx);
+	//OpDebug的ntoreturn ntoskip初始化赋值
     curOp->debug().ntoreturn = ntoreturn;
     curOp->debug().ntoskip = ntoskip;
     stdx::lock_guard<Client> lk(*opCtx->getClient());
