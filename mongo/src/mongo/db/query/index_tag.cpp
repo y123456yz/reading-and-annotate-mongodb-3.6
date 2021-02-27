@@ -250,6 +250,52 @@ void getElemMatchOrPushdownDescendants(MatchExpression* node, std::vector<MatchE
 // Finds all the nodes in the tree with OrPushdownTags and copies them to the Destinations specified
 // in the OrPushdownTag, tagging them with the TagData in the Destination. Removes the node from its
 // current location if possible.
+
+/*
+3.6新特性
+下面根据具体语句来说明，先看下面的查询语句：
+
+find({a: 1, $or: [{b: 2, c: 2}, {b: 3, c: 3}]}) 
+假设有索引 {a: 1, c: 1} 和 {b: 1, c: 1}，在3.6版本之前，会生成两个候选plan：
+
+扫描索引 { a: 1, c: 1 }，且扫描边界为{a: [[1, 1]], c: [["MinKey", "MaxKey"]]}
+扫描索引{ b: 1, c: 1 }（针对OR条件）
+因为有or条件的pushdown机制，条件a:1会被pushdown到or 的所有子分支，即等价于  
+$or: [ { a: 1, b: 2, c: 2 }, { a: 1, b: 3, c: 3 } ]。 
+
+3.6版本的变化是，它会认为在扫描{ a: 1, c: 1 }索引的时候，可以有两种不同的边界，一种是
+{a: [[1, 1]], c: [[2, 2]]}，另一种是{a: [[1, 1]], c: [[3, 3]]}，而不仅仅是
+{a: [[1, 1]], c: [["MinKey", "MaxKey"]]}。这两个边界组合生成了一个候选plan。
+
+3.6版本的这种机制的改变在某些时候确实起到了优化作用，扫描的索引树总节点数量变少了，减少了IO次数。
+https://blog.csdn.net/weixin_30357231/article/details/97716803
+
+
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+    a == 1.0  || Move to 0 || Selected Index #0 pos 0 combine 1 || Move to 1 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+
+可以配合querysolution2.txt中的db.test3.find({a: 1, $or: [{b: 2, c: 2}, {b: 3, c: 3}]})查询阅读日志
+*/
+
 //prepareForAccessPlanning调用执行
 void resolveOrPushdowns(MatchExpression* tree) {
     if (tree->numChildren() == 0) {

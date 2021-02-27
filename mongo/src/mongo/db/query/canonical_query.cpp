@@ -100,6 +100,7 @@ int matchExpressionComparator(const MatchExpression* lhs, const MatchExpression*
         return lhs->numChildren() < rhs->numChildren() ? -1 : 1;
     }
 
+	//说明chiled完全一样，例如{$and:[{$or:[{a:1},{a:2}]},{$or:[{a:1},{b:2}]}]}，两个or完全一样
     // They're equal!
     return 0;
 }
@@ -358,9 +359,13 @@ bool CanonicalQuery::isSimpleIdQuery(const BSONObj& query) {
 //CanonicalQuery::canonicalize->CanonicalQuery::init->MatchExpression::optimize对原始tree进行第一轮优化(例如AND OR NOR的优化器对应ListOfMatchExpression::getOptimizer())
 //CanonicalQuery::canonicalize->CanonicalQuery::init->sortTree进行第二轮tree排序
 
+/*
+sort tree 主要是对MatchExpression的各个子树进行排序， 排序之后的好处就是对于index查询， 如果某
+个字段的index被分成了几段， 我们的查询用到其中的2段， 就可以做到对于索引的查找只需要一次就能完成。
+*/
 
 // static  CanonicalQuery::init调用  expression tree排序
-//sort tree 主要是对MatchExpression的各个子树进行排序，好处就是做到对于索引的查找只需要一次就能完成。其具体的排序的顺序： 
+//sort tree 主要是对MatchExpression的各个子树进行排序，好处就是做到对于索引的查找只需要一次就能完成，获取node对应index的时候会更方便。其具体的排序的顺序： 
 void CanonicalQuery::sortTree(MatchExpression* tree) {
     for (size_t i = 0; i < tree->numChildren(); ++i) {
         sortTree(tree->getChild(i));

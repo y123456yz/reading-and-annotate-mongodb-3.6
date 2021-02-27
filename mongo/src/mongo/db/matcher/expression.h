@@ -291,7 +291,10 @@ public:
     //QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
     class TagData {
     public:
-        enum class Type { IndexTag, RelevantTag, OrPushdownTag };
+        enum class Type { 
+                        IndexTag,  //对应IndexTag类
+                        RelevantTag, //对应RelevantTag类
+                        OrPushdownTag };
         virtual ~TagData() {}
         virtual void debugString(StringBuilder* builder) const = 0;
         virtual TagData* clone() const = 0;

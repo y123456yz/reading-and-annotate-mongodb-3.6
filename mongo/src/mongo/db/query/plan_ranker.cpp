@@ -66,6 +66,7 @@ using std::vector;
 
 //选择适合的索引  MultiPlanStage::pickBestPlan(PlanYieldPolicy* yieldPolicy)中调用PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why)
 // static   MultiPlanStage::pickBestPlan中执行，配合MultiPlanStage::workAllPlans阅读
+//多个候选solution的计分机器索引信息保存到why中返回
 size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRankingDecision* why) {
     invariant(!candidates.empty());
     invariant(why);
@@ -168,7 +169,7 @@ size_t PlanRanker::pickBestPlan(const vector<CandidatePlan>& candidates, PlanRan
             score -= eofBonus;
         }
 
-		//候选计划及其得分最后排好序存入PlanRankingDecision相关数组中
+		//候选计划及其得分最后排好序存入PlanRankingDecision why相关数组中
         why->stats.push_back(std::move(statTrees[candidateIndex]));
         why->scores.push_back(score);
         why->candidateOrder.push_back(candidateIndex);

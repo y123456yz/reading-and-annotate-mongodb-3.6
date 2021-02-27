@@ -397,7 +397,8 @@ StatusWith<PrepareExecutionResult> prepareExecution(OperationContext* opCtx,
     // Try to look up a cached solution for the query.
     //plancache可以参考https://segmentfault.com/a/1190000015236644 
     CachedSolution* rawCS;
-	//从plancache中获取缓存的CachedSolution信息
+	
+	//从plancache中获取缓存的CachedSolution信息,然后根据CachedSolution获取QuerySolution
     if (PlanCache::shouldCacheQuery(*canonicalQuery) &&
 		//planCache::get
         collection->infoCache()->getPlanCache()->get(*canonicalQuery, &rawCS).isOK()) {

@@ -535,6 +535,8 @@ SolutionCacheData* SolutionCacheData::clone() const {
     return other;
 }
 
+//QueryPlanner::planFromCache也可以获取，当获取缓存plan的时候
+
 //可以通过PlanCacheListPlans::list查看输出内容，也就是PlanCacheListPlans命令，内容如下:
 //"(index-tagged expression tree: tree=Leaf name_1_age_1__id_1, pos: 0, can combine? 1\n)"
 std::string SolutionCacheData::toString() const {
@@ -698,7 +700,7 @@ void PlanCache::encodeKeyForProj(const BSONObj& projObj, StringBuilder* keyBuild
 
 //PlanCache::add添加，PlanCache::get获取
 
-//MultiPlanStage::pickBestPlan中使用
+//MultiPlanStage::pickBestPlan中把得分高的候选索引添加到plancache
 Status PlanCache::add(const CanonicalQuery& query,
                       const std::vector<QuerySolution*>& solns,
                       PlanRankingDecision* why,

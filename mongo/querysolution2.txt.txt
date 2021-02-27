@@ -1,0 +1,3267 @@
+> db.test.find()
+{ "_id" : ObjectId("5fb382233eb7182b2756cfad") }
+{ "_id" : ObjectId("5ffd6df45ca3bde0fbfe1403"), "name" : "yangyazhou", "age" : 11, "male" : 1 }
+{ "_id" : ObjectId("5ffd6dfe5ca3bde0fbfe1404"), "name" : "yangyazhou", "age" : 11, "male" : 1, "xx" : 1 }
+{ "_id" : ObjectId("60000d033a76b04597281513"), "name" : "yangyazhou", "age" : 113, "male" : 1, "xx" : 1 }
+{ "_id" : ObjectId("600160020c16be9d31e9c02f"), "xx" : 2 }
+{ "_id" : ObjectId("6005367bf6e12f1036c4d74d"), "xx" : 3 }
+{ "_id" : ObjectId("600536bbf6e12f1036c4d74e"), "xx" : 34 }
+{ "_id" : ObjectId("600536c0f6e12f1036c4d74f"), "ss" : 34 }
+{ "_id" : ObjectId("600536ecf6e12f1036c4d750"), "name" : "yangyazhou2", "age" : 113, "male" : 1, "xx" : 1 }
+{ "_id" : ObjectId("600795217e830577d1f018b6"), "name" : "yangyazhou2", "age" : 1133, "male" : 0, "xx" : 21 }
+{ "_id" : ObjectId("600795247e830577d1f018b7"), "name" : "yangyazhou2", "age" : 1133, "male" : 0, "xx" : 21 }
+{ "_id" : ObjectId("600795357e830577d1f018b8"), "name" : "yangyazhou2", "age" : 113, "male" : 1, "xx" : 1 }
+{ "_id" : ObjectId("600796697e830577d1f018b9"), "name" : "yangyazhou2", "age" : 113, "male" : 1, "xx" : 1, "xx2" : 1 }
+> 
+> 
+> db.test.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.test"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "yangtest1" : 1
+                },
+                "name" : "yangtest1_1",
+                "ns" : "test.test",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "name" : 1
+                },
+                "name" : "name_1",
+                "ns" : "test.test",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "age" : 1
+                },
+                "name" : "age_1",
+                "ns" : "test.test",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "male" : 1
+                },
+                "name" : "male_1",
+                "ns" : "test.test",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "male" : 1,
+                        "name" : 1
+                },
+                "name" : "male_1_name_1",
+                "ns" : "test.test",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "name" : 1,
+                        "male" : 1
+                },
+                "name" : "name_1_male_1",
+                "ns" : "test.test",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "male" : 1,
+                        "xx" : 1
+                },
+                "name" : "male_1_xx_1",
+                "ns" : "test.test",
+                "background" : true
+        }
+]
+> db.test.getPlanCache().clear()
+> db.test.find( {$and : [{ $and : [ { name : "yangyazhou2" }, { "age" : 1133 } ] },{ $and : [ {  xx : 21 }, { "male" : 0} ] } ]} )
+{ "_id" : ObjectId("600795217e830577d1f018b6"), "name" : "yangyazhou2", "age" : 1133, "male" : 0, "xx" : 21 }
+{ "_id" : ObjectId("600795247e830577d1f018b7"), "name" : "yangyazhou2", "age" : 1133, "male" : 0, "xx" : 21 }
+
+
+2021-02-25T16:43:47.137+0800 I COMMAND  [conn-1] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-25T16:43:47.137+0800 D COMMAND  [conn-1] run command test.$cmd { find: "test", filter: { $and: [ { $and: [ { name: "yangyazhou2" }, { age: 1133.0 } ] }, { $and: [ { xx: 21.0 }, { male: 0.0 } ] } ] }, lsid: { id: UUID("0fdf7685-c6aa-42c2-8694-2a40933d24bc") }, $db: "test" } find
+2021-02-25T16:43:47.137+0800 D STORAGE  [conn-1] NamespaceUUIDCache: registered namespace test.test with UUID 520904ec-0432-4c00-a15d-788e2f5d707b
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Beginning planning...
+=============================
+Options = INDEX_INTERSECTION SPLIT_LIMITED_SORT CANNOT_TRIM_IXISECT 
+Canonical query:
+ns=test.testTree: $and
+    age == 1133.0
+    male == 0.0
+    name == "yangyazhou2"
+    xx == 21.0
+Sort: {}
+Proj: {}
+=============================
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.test" }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 1 is kp: { yangtest1: 1.0 } name: 'yangtest1_1' io: { v: 2, key: { yangtest1: 1.0 }, name: "yangtest1_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 2 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 3 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 4 is kp: { male: 1.0 } name: 'male_1' io: { v: 2, key: { male: 1.0 }, name: "male_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 5 is kp: { male: 1.0, name: 1.0 } name: 'male_1_name_1' io: { v: 2, key: { male: 1.0, name: 1.0 }, name: "male_1_name_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 6 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Index 7 is kp: { male: 1.0, xx: 1.0 } name: 'male_1_xx_1' io: { v: 2, key: { male: 1.0, xx: 1.0 }, name: "male_1_xx_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Predicate over field 'name'
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Predicate over field 'male'
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Predicate over field 'xx'
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Predicate over field 'age'
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Relevant index 0 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Relevant index 1 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Relevant index 2 is kp: { male: 1.0 } name: 'male_1' io: { v: 2, key: { male: 1.0 }, name: "male_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Relevant index 3 is kp: { male: 1.0, name: 1.0 } name: 'male_1_name_1' io: { v: 2, key: { male: 1.0, name: 1.0 }, name: "male_1_name_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Relevant index 4 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Relevant index 5 is kp: { male: 1.0, xx: 1.0 } name: 'male_1_xx_1' io: { v: 2, key: { male: 1.0, xx: 1.0 }, name: "male_1_xx_1", ns: "test.test", background: true }
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Rated tree:
+$and
+    age == 1133.0  || First: 1 notFirst: full path: age
+    male == 0.0  || First: 2 3 5 notFirst: 4 full path: male
+    name == "yangyazhou2"  || First: 0 4 notFirst: 3 full path: name
+    xx == 21.0  || First: notFirst: 5 full path: xx
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0  || Selected Index #4 pos 1 combine 1
+    name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+    xx == 21.0
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+    male == 0.0  || Selected Index #4 pos 1 combine 1
+    age == 1133.0
+    xx == 21.0
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    xx == 21.0
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    age == 1133.0
+    male == 0.0
+    xx == 21.0
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            male == 0.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = name_1
+keyPattern = { name: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+2021-02-25T16:43:47.138+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            male == 0.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ name: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1
+keyPattern = { name: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ name: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0  || Selected Index #1 pos 0 combine 1
+    male == 0.0
+    name == "yangyazhou2"
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    age == 1133.0  || Selected Index #1 pos 0 combine 1
+    male == 0.0
+    name == "yangyazhou2"
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            male == 0.0
+            name == "yangyazhou2"
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = age_1
+keyPattern = { age: 1.0 }
+---------direction = 1
+---------bounds = field #0['age']: [1133.0, 1133.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            male == 0.0
+            name == "yangyazhou2"
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ age: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = age_1
+keyPattern = { age: 1.0 }
+---------direction = 1
+---------bounds = field #0['age']: [1133.0, 1133.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ age: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0  || Selected Index #2 pos 0 combine 1
+    name == "yangyazhou2"
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    male == 0.0  || Selected Index #2 pos 0 combine 1
+    age == 1133.0
+    name == "yangyazhou2"
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            name == "yangyazhou2"
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = male_1
+keyPattern = { male: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            name == "yangyazhou2"
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = male_1
+keyPattern = { male: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0  || Selected Index #3 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #3 pos 1 combine 1
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    male == 0.0  || Selected Index #3 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #3 pos 1 combine 1
+    age == 1133.0
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = male_1_name_1
+keyPattern = { male: 1.0, name: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0], field #1['name']: ["yangyazhou2", "yangyazhou2"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { male: 1, name: 1 }, { name: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = male_1_name_1
+keyPattern = { male: 1.0, name: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0], field #1['name']: ["yangyazhou2", "yangyazhou2"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { male: 1, name: 1 }, { name: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0  || Selected Index #5 pos 0 combine 1
+    name == "yangyazhou2"
+    xx == 21.0  || Selected Index #5 pos 1 combine 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    male == 0.0  || Selected Index #5 pos 0 combine 1
+    xx == 21.0  || Selected Index #5 pos 1 combine 1
+    age == 1133.0
+    name == "yangyazhou2"
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            name == "yangyazhou2"
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = male_1_xx_1
+keyPattern = { male: 1.0, xx: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0], field #1['xx']: [21.0, 21.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            name == "yangyazhou2"
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { male: 1, xx: 1 }, { xx: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = male_1_xx_1
+keyPattern = { male: 1.0, xx: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0], field #1['xx']: [21.0, 21.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { male: 1, xx: 1 }, { xx: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0  || Selected Index #1 pos 0 combine 1
+    male == 0.0  || Selected Index #4 pos 1 combine 1
+    name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    age == 1133.0  || Selected Index #1 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+    male == 0.0  || Selected Index #4 pos 1 combine 1
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            age == 1133.0  || Selected Index #1 pos 0 combine 1
+            name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+            male == 0.0  || Selected Index #4 pos 1 combine 1
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [1133.0, 1133.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+---------Child 1:
+---------IXSCAN
+------------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0  || Selected Index #1 pos 0 combine 1
+            name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+            male == 0.0  || Selected Index #4 pos 1 combine 1
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [1133.0, 1133.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ age: 1 }, ]
+---------Child 1:
+---------IXSCAN
+------------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0  || Selected Index #5 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+    xx == 21.0  || Selected Index #5 pos 1 combine 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+    male == 0.0  || Selected Index #5 pos 0 combine 1
+    xx == 21.0  || Selected Index #5 pos 1 combine 1
+    age == 1133.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0  || Selected Index #1 pos 0 combine 1
+    male == 0.0
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    age == 1133.0  || Selected Index #1 pos 0 combine 1
+    male == 0.0
+    xx == 21.0
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            age == 1133.0  || Selected Index #1 pos 0 combine 1
+            male == 0.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+---------Child 1:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [1133.0, 1133.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            age == 1133.0  || Selected Index #1 pos 0 combine 1
+            male == 0.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ name: 1 }, ]
+---------Child 1:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [1133.0, 1133.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ age: 1 }, ]
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Tagging memoID 1
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] Enumerator: memo just before moving:
+2021-02-25T16:43:47.139+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age == 1133.0
+    male == 0.0  || Selected Index #5 pos 0 combine 1
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    xx == 21.0  || Selected Index #5 pos 1 combine 1
+2021-02-25T16:43:47.140+0800 D QUERY    [conn-1] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+    male == 0.0  || Selected Index #5 pos 0 combine 1
+    xx == 21.0  || Selected Index #5 pos 1 combine 1
+    age == 1133.0
+2021-02-25T16:43:47.140+0800 D QUERY    [conn-1] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            male == 0.0  || Selected Index #5 pos 0 combine 1
+            xx == 21.0  || Selected Index #5 pos 1 combine 1
+            age == 1133.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+---------Child 1:
+---------IXSCAN
+------------indexName = male_1_xx_1
+keyPattern = { male: 1.0, xx: 1.0 }
+------------direction = 1
+------------bounds = field #0['male']: [0.0, 0.0], field #1['xx']: [21.0, 21.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = []
+2021-02-25T16:43:47.140+0800 D QUERY    [conn-1] Planner: adding solution:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            male == 0.0  || Selected Index #5 pos 0 combine 1
+            xx == 21.0  || Selected Index #5 pos 1 combine 1
+            age == 1133.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ name: 1 }, ]
+---------Child 1:
+---------IXSCAN
+------------indexName = male_1_xx_1
+keyPattern = { male: 1.0, xx: 1.0 }
+------------direction = 1
+------------bounds = field #0['male']: [0.0, 0.0], field #1['xx']: [21.0, 21.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ male: 1 }, { male: 1, xx: 1 }, { xx: 1 }, ]
+2021-02-25T16:43:47.140+0800 D QUERY    [conn-1] Planner: outputted 9 indexed solutions.
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6700) setEndPosition inclusive: 1 { : "yangyazhou2", : 0.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6700)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6280) setEndPosition inclusive: 1 { : "yangyazhou2" }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6280)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6180) setEndPosition inclusive: 1 { : 1133.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6180)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6380) setEndPosition inclusive: 1 { : 0.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6380)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6580) setEndPosition inclusive: 1 { : 0.0, : "yangyazhou2" }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6580)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6880) setEndPosition inclusive: 1 { : 0.0, : 21.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6880)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6180) setEndPosition inclusive: 1 { : 1133.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6180)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6280) setEndPosition inclusive: 1 { : "yangyazhou2" }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6280)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6280) setEndPosition inclusive: 1 { : "yangyazhou2" }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6280)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6700) setEndPosition inclusive: 1 { : "yangyazhou2", : 0.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6700)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6180) setEndPosition inclusive: 1 { : 1133.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6180)       cmp: -1
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6880) setEndPosition inclusive: 1 { : 0.0, : 21.0 }
+2021-02-25T16:43:47.141+0800 I STORAGE  [conn-1] WT index (0x5593f05a6880)       cmp: -1
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] Scoring plan 0:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "age" : { "$eq" : 1133 } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 2,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 2,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 2,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 2,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 2,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "name" : 1,
+      "male" : 1 },
+    "indexName" : "name_1_male_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "name" : [],
+      "male" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "name" : [ 
+        "[\"yangyazhou2\", \"yangyazhou2\"]" ],
+      "male" : [ 
+        "[0.0, 0.0]" ] },
+    "keysExamined" : 2,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { name: 1, male: 1 } planHitEOF=1
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] score = 1.66697
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] Adding +1 EOF bonus to score.
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] Scoring plan 1:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            male == 0.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ name: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1
+keyPattern = { name: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ name: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "age" : { "$eq" : 1133 } }, 
+      { "male" : { "$eq" : 0 } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 2,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 2,
+  "needTime" : 1,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 3,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 3,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 3,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "keyPattern" : { "name" : 1 },
+    "indexName" : "name_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "name" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "name" : [ 
+        "[\"yangyazhou2\", \"yangyazhou2\"]" ] },
+    "keysExamined" : 3,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { name: 1 } planHitEOF=0
+2021-02-25T16:43:47.142+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score = 1.66697
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring plan 2:
+FETCH
+---filter:
+        $and
+            male == 0.0
+            name == "yangyazhou2"
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ age: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = age_1
+keyPattern = { age: 1.0 }
+---------direction = 1
+---------bounds = field #0['age']: [1133.0, 1133.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ age: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "male" : { "$eq" : 0 } }, 
+      { "name" : { "$eq" : "yangyazhou2" } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 2,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 2,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 2,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 2,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 2,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "age" : 1 },
+    "indexName" : "age_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "age" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "age" : [ 
+        "[1133.0, 1133.0]" ] },
+    "keysExamined" : 2,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { age: 1 } planHitEOF=1
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score = 1.66697
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Adding +1 EOF bonus to score.
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring plan 3:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            name == "yangyazhou2"
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = male_1
+keyPattern = { male: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "age" : { "$eq" : 1133 } }, 
+      { "name" : { "$eq" : "yangyazhou2" } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 2,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 2,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 2,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 2,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 2,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "male" : 1 },
+    "indexName" : "male_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "male" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "male" : [ 
+        "[0.0, 0.0]" ] },
+    "keysExamined" : 2,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { male: 1 } planHitEOF=1
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score = 1.66697
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Adding +1 EOF bonus to score.
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring plan 4:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { male: 1, name: 1 }, { name: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = male_1_name_1
+keyPattern = { male: 1.0, name: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0], field #1['name']: ["yangyazhou2", "yangyazhou2"]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { male: 1, name: 1 }, { name: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "age" : { "$eq" : 1133 } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 2,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 2,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 2,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 2,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 2,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "male" : 1,
+      "name" : 1 },
+    "indexName" : "male_1_name_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "male" : [],
+      "name" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "male" : [ 
+        "[0.0, 0.0]" ],
+      "name" : [ 
+        "[\"yangyazhou2\", \"yangyazhou2\"]" ] },
+    "keysExamined" : 2,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { male: 1, name: 1 } planHitEOF=1
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score = 1.66697
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Adding +1 EOF bonus to score.
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring plan 5:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            name == "yangyazhou2"
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { male: 1, xx: 1 }, { xx: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = male_1_xx_1
+keyPattern = { male: 1.0, xx: 1.0 }
+---------direction = 1
+---------bounds = field #0['male']: [0.0, 0.0], field #1['xx']: [21.0, 21.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { male: 1, xx: 1 }, { xx: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "age" : { "$eq" : 1133 } }, 
+      { "name" : { "$eq" : "yangyazhou2" } } ] },
+  "nReturned" : 2,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 2,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 2,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 2,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 2,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "male" : 1,
+      "xx" : 1 },
+    "indexName" : "male_1_xx_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "male" : [],
+      "xx" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "male" : [ 
+        "[0.0, 0.0]" ],
+      "xx" : [ 
+        "[21.0, 21.0]" ] },
+    "keysExamined" : 2,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { male: 1, xx: 1 } planHitEOF=1
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] score = 1.66697
+2021-02-25T16:43:47.143+0800 D QUERY    [conn-1] Adding +1 EOF bonus to score.
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Scoring plan 6:
+FETCH
+---filter:
+        $and
+            age == 1133.0  || Selected Index #1 pos 0 combine 1
+            name == "yangyazhou2"  || Selected Index #4 pos 0 combine 1
+            male == 0.0  || Selected Index #4 pos 1 combine 1
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [1133.0, 1133.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ age: 1 }, ]
+---------Child 1:
+---------IXSCAN
+------------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "age" : { "$eq" : 1133 } }, 
+      { "name" : { "$eq" : "yangyazhou2" } }, 
+      { "male" : { "$eq" : 0 } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 1,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 1,
+  "needTime" : 2,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 1,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "AND_SORTED",
+    "nReturned" : 1,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 1,
+    "needTime" : 2,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "flagged" : 0,
+    "failedAnd_0" : 0,
+    "failedAnd_1" : 0,
+    "inputStages" : [ 
+      { "stage" : "IXSCAN",
+        "nReturned" : 2,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 2,
+        "advanced" : 2,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "age" : 1 },
+        "indexName" : "age_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "age" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "age" : [ 
+            "[1133.0, 1133.0]" ] },
+        "keysExamined" : 2,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 }, 
+      { "stage" : "IXSCAN",
+        "nReturned" : 1,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 1,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "name" : 1,
+          "male" : 1 },
+        "indexName" : "name_1_male_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "name" : [],
+          "male" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "name" : [ 
+            "[\"yangyazhou2\", \"yangyazhou2\"]" ],
+          "male" : [ 
+            "[0.0, 0.0]" ] },
+        "keysExamined" : 1,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } ] } }
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { age: 1 }, IXSCAN { name: 1, male: 1 } planHitEOF=0
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] score(1.33353) = baseScore(1) + productivity((1 advanced)/(3 works) = 0.333333) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0 noIxisectBonus = 0.0002)
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] score = 1.33353
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Scoring plan 7:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            age == 1133.0  || Selected Index #1 pos 0 combine 1
+            male == 0.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ name: 1 }, ]
+---------Child 1:
+---------IXSCAN
+------------indexName = age_1
+keyPattern = { age: 1.0 }
+------------direction = 1
+------------bounds = field #0['age']: [1133.0, 1133.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ age: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "name" : { "$eq" : "yangyazhou2" } }, 
+      { "age" : { "$eq" : 1133 } }, 
+      { "male" : { "$eq" : 0 } }, 
+      { "xx" : { "$eq" : 21 } } ] },
+  "nReturned" : 1,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 1,
+  "needTime" : 2,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 1,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "AND_SORTED",
+    "nReturned" : 1,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 1,
+    "needTime" : 2,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "flagged" : 0,
+    "failedAnd_0" : 1,
+    "failedAnd_1" : 0,
+    "inputStages" : [ 
+      { "stage" : "IXSCAN",
+        "nReturned" : 2,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 2,
+        "advanced" : 2,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "name" : 1 },
+        "indexName" : "name_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "name" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "name" : [ 
+            "[\"yangyazhou2\", \"yangyazhou2\"]" ] },
+        "keysExamined" : 2,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 }, 
+      { "stage" : "IXSCAN",
+        "nReturned" : 1,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 1,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "age" : 1 },
+        "indexName" : "age_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "age" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "age" : [ 
+            "[1133.0, 1133.0]" ] },
+        "keysExamined" : 1,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } ] } }
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { name: 1 }, IXSCAN { age: 1 } planHitEOF=0
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] score(1.33353) = baseScore(1) + productivity((1 advanced)/(3 works) = 0.333333) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0 noIxisectBonus = 0.0002)
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] score = 1.33353
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Scoring plan 8:
+FETCH
+---filter:
+        $and
+            name == "yangyazhou2"  || Selected Index #0 pos 0 combine 1
+            male == 0.0  || Selected Index #5 pos 0 combine 1
+            xx == 21.0  || Selected Index #5 pos 1 combine 1
+            age == 1133.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = []
+---Child:
+------AND_SORTED
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child 0:
+---------IXSCAN
+------------indexName = name_1
+keyPattern = { name: 1.0 }
+------------direction = 1
+------------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ name: 1 }, ]
+---------Child 1:
+---------IXSCAN
+------------indexName = male_1_xx_1
+keyPattern = { male: 1.0, xx: 1.0 }
+------------direction = 1
+------------bounds = field #0['male']: [0.0, 0.0], field #1['xx']: [21.0, 21.0]
+------------fetched = 0
+------------sortedByDiskLoc = 1
+------------getSort = [{ male: 1 }, { male: 1, xx: 1 }, { xx: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$and" : [ 
+      { "name" : { "$eq" : "yangyazhou2" } }, 
+      { "male" : { "$eq" : 0 } }, 
+      { "xx" : { "$eq" : 21 } }, 
+      { "age" : { "$eq" : 1133 } } ] },
+  "nReturned" : 1,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 3,
+  "advanced" : 1,
+  "needTime" : 2,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 1,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "AND_SORTED",
+    "nReturned" : 1,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 3,
+    "advanced" : 1,
+    "needTime" : 2,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "flagged" : 0,
+    "failedAnd_0" : 1,
+    "failedAnd_1" : 0,
+    "inputStages" : [ 
+      { "stage" : "IXSCAN",
+        "nReturned" : 2,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 2,
+        "advanced" : 2,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "name" : 1 },
+        "indexName" : "name_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "name" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "name" : [ 
+            "[\"yangyazhou2\", \"yangyazhou2\"]" ] },
+        "keysExamined" : 2,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 }, 
+      { "stage" : "IXSCAN",
+        "nReturned" : 1,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 1,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "male" : 1,
+          "xx" : 1 },
+        "indexName" : "male_1_xx_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "male" : [],
+          "xx" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "male" : [ 
+            "[0.0, 0.0]" ],
+          "xx" : [ 
+            "[21.0, 21.0]" ] },
+        "keysExamined" : 1,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } ] } }
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Scoring query plan: IXSCAN { name: 1 }, IXSCAN { male: 1, xx: 1 } planHitEOF=0
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] score(1.33353) = baseScore(1) + productivity((1 advanced)/(3 works) = 0.333333) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0 noIxisectBonus = 0.0002)
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] score = 1.33353
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Winning solution:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+2021-02-25T16:43:47.144+0800 D QUERY    [conn-1] Winning plan: IXSCAN { name: 1, male: 1 }
+2021-02-25T16:43:47.145+0800 D QUERY    [conn-1] yang test ...PlanStage::StageState MultiPlanStage::doWork 
+2021-02-25T16:43:47.145+0800 I QUERY    [conn-1] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600795217e830577d1f018b6'), name: "yangyazhou2", age: 1133.0, male: 0.0, xx: 21.0 }
+2021-02-25T16:43:47.145+0800 D QUERY    [conn-1] yang test ...PlanStage::StageState MultiPlanStage::doWork 
+2021-02-25T16:43:47.145+0800 I QUERY    [conn-1] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600795247e830577d1f018b7'), name: "yangyazhou2", age: 1133.0, male: 0.0, xx: 21.0 }
+2021-02-25T16:43:47.145+0800 D QUERY    [conn-1] yang test ...PlanStage::StageState MultiPlanStage::doWork 
+2021-02-25T16:43:47.145+0800 I COMMAND  [conn-1] command test.test appName: "MongoDB Shell" command: find { find: "test", filter: { $and: [ { $and: [ { name: "yangyazhou2" }, { age: 1133.0 } ] }, { $and: [ { xx: 21.0 }, { male: 0.0 } ] } ] }, lsid: { id: UUID("0fdf7685-c6aa-42c2-8694-2a40933d24bc") }, $db: "test" } planSummary: IXSCAN { name: 1, male: 1 } keysExamined:2 docsExamined:2 fromMultiPlanner:1 cursorExhausted:1 numYields:0 nreturned:2 reslen:254 locks:{ Global: { acquireCount: { r: 2 } }, Database: { acquireCount: { r: 1 } }, Collection: { acquireCount: { r: 1 } } } protocol:op_msg 8ms
+
+
+
+
+
+
+
+
+
+
+
+
+第二次执行> db.test.find( {$and : [{ $and : [ { name : "yangyazhou2" }, { "age" : 1133 } ] },{ $and : [ {  xx : 21 }, { "male" : 0} ] } ]} )
+将会这cache plan，参考下面日志：
+2021-02-25T16:48:15.673+0800 I COMMAND  [conn-1] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-25T16:48:15.673+0800 D COMMAND  [conn-1] run command test.$cmd { find: "test", filter: { $and: [ { $and: [ { name: "yangyazhou2" }, { age: 1133.0 } ] }, { $and: [ { xx: 21.0 }, { male: 0.0 } ] } ] }, lsid: { id: UUID("0fdf7685-c6aa-42c2-8694-2a40933d24bc") }, $db: "test" } find
+2021-02-25T16:48:15.673+0800 D STORAGE  [conn-1] NamespaceUUIDCache: registered namespace test.test with UUID 520904ec-0432-4c00-a15d-788e2f5d707b
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Tagging the match expression according to cache data: 
+Filter:
+$and
+    age == 1133.0
+    male == 0.0
+    name == "yangyazhou2"
+    xx == 21.0
+Cache data:
+(index-tagged expression tree: tree=Node
+---Leaf 
+---Leaf name_1_male_1, pos: 1, can combine? 1
+---Leaf name_1_male_1, pos: 0, can combine? 1
+---Leaf 
+)
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 0: _id_
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 1: yangtest1_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 2: name_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 3: age_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 4: male_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 5: male_1_name_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 6: name_1_male_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Index 7: male_1_xx_1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Tagged tree:
+$and
+    name == "yangyazhou2"  || Selected Index #6 pos 0 combine 1
+    male == 0.0  || Selected Index #6 pos 1 combine 1
+    age == 1133.0
+    xx == 21.0
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] Planner: solution constructed from the cache:
+FETCH
+---filter:
+        $and
+            age == 1133.0
+            xx == 21.0
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = name_1_male_1
+keyPattern = { name: 1.0, male: 1.0 }
+---------direction = 1
+---------bounds = field #0['name']: ["yangyazhou2", "yangyazhou2"], field #1['male']: [0.0, 0.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ male: 1 }, { name: 1 }, { name: 1, male: 1 }, ]
+2021-02-25T16:48:15.674+0800 I STORAGE  [conn-1] WT index (0x5593f05a6700) setEndPosition inclusive: 1 { : "yangyazhou2", : 0.0 }
+2021-02-25T16:48:15.674+0800 I STORAGE  [conn-1] WT index (0x5593f05a6700)       cmp: -1
+2021-02-25T16:48:15.674+0800 D QUERY    [conn-1] score(1.66697) = baseScore(1) + productivity((2 advanced)/(3 works) = 0.666667) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-25T16:48:15.674+0800 I QUERY    [conn-1] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600795217e830577d1f018b6'), name: "yangyazhou2", age: 1133.0, male: 0.0, xx: 21.0 }
+2021-02-25T16:48:15.675+0800 I QUERY    [conn-1] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600795247e830577d1f018b7'), name: "yangyazhou2", age: 1133.0, male: 0.0, xx: 21.0 }
+2021-02-25T16:48:15.676+0800 I COMMAND  [conn-1] command test.test appName: "MongoDB Shell" command: find { find: "test", filter: { $and: [ { $and: [ { name: "yangyazhou2" }, { age: 1133.0 } ] }, { $and: [ { xx: 21.0 }, { male: 0.0 } ] } ] }, lsid: { id: UUID("0fdf7685-c6aa-42c2-8694-2a40933d24bc") }, $db: "test" } planSummary: IXSCAN { name: 1, male: 1 } keysExamined:2 docsExamined:2 cursorExhausted:1 numYields:0 nreturned:2 reslen:254 locks:{ Global: { acquireCount: { r: 2 } }, Database: { acquireCount: { r: 1 } }, Collection: { acquireCount: { r: 1 } } } protocol:op_msg 2ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2021-02-27T15:45:46.688+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T15:45:46.688+0800 D COMMAND  [conn-5] run command test.$cmd { find: "test3", filter: { a: 1.0, $or: [ { b: 2.0, c: 2.0 }, { b: 3.0, c: 3.0 } ] }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } find
+2021-02-27T15:45:46.688+0800 D STORAGE  [conn-5] NamespaceUUIDCache: registered namespace test.test3 with UUID 4c0ba900-654e-4d98-8d87-169d5222a6ba
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Beginning planning...
+=============================
+Options = INDEX_INTERSECTION SPLIT_LIMITED_SORT CANNOT_TRIM_IXISECT 
+Canonical query:
+ns=test.test3Tree: $and
+    $or
+        $and
+            b == 2.0
+            c == 2.0
+        $and
+            b == 3.0
+            c == 3.0
+    a == 1.0
+Sort: {}
+Proj: {}
+=============================
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.test3" }
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Index 1 is kp: { a: 1.0, b: 1.0 } name: 'a_1_b_1' io: { v: 2, key: { a: 1.0, b: 1.0 }, name: "a_1_b_1", ns: "test.test3", background: true }
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Index 2 is kp: { c: 1.0, b: 1.0 } name: 'c_1_b_1' io: { v: 2, key: { c: 1.0, b: 1.0 }, name: "c_1_b_1", ns: "test.test3", background: true }
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Predicate over field 'a'
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Predicate over field 'c'
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Predicate over field 'b'
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Relevant index 0 is kp: { a: 1.0, b: 1.0 } name: 'a_1_b_1' io: { v: 2, key: { a: 1.0, b: 1.0 }, name: "a_1_b_1", ns: "test.test3", background: true }
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Relevant index 1 is kp: { c: 1.0, b: 1.0 } name: 'c_1_b_1' io: { v: 2, key: { c: 1.0, b: 1.0 }, name: "c_1_b_1", ns: "test.test3", background: true }
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Rated tree:
+$and
+    $or
+        $and
+            b == 2.0  || First: notFirst: 0 1 full path: b
+            c == 2.0  || First: 1 notFirst: full path: c
+        $and
+            b == 3.0  || First: notFirst: 0 1 full path: b
+            c == 3.0  || First: 1 notFirst: full path: c
+    a == 1.0  || First: 0 notFirst: full path: a
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+    a == 1.0  || Move to 0 || Selected Index #0 pos 0 combine 1 || Move to 1 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+OR
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child 0:
+------FETCH
+---------filter:
+                c == 2.0
+---------fetched = 1
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child:
+------------IXSCAN
+---------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+
+---Child 1:
+------FETCH
+---------filter:
+                c == 3.0
+---------fetched = 1
+---------sortedByDiskLoc = 1
+---------getSort = []
+---------Child:
+------------IXSCAN
+---------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Planner: adding solution:
+OR
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child 0:
+------FETCH
+---------filter:
+                c == 2.0
+---------fetched = 1
+---------sortedByDiskLoc = 1
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------Child:
+------------IXSCAN
+---------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+---Child 1:
+------FETCH
+---------filter:
+                c == 3.0
+---------fetched = 1
+---------sortedByDiskLoc = 1
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------Child:
+------------IXSCAN
+---------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+        $and
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+    a == 1.0  || Move to 1 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.689+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+        $and
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+    a == 1.0
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------FETCH
+---------------filter:
+                        c == 3.0
+---------------fetched = 1
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+---------------Child:
+------------------IXSCAN
+---------------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------------direction = 1
+---------------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [3.0, 3.0]
+---------------------fetched = 0
+---------------------sortedByDiskLoc = 1
+---------------------getSort = []
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [2.0, 2.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------FETCH
+---------------filter:
+                        c == 3.0
+---------------fetched = 1
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------------Child:
+------------------IXSCAN
+---------------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------------direction = 1
+---------------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [3.0, 3.0]
+---------------------fetched = 0
+---------------------sortedByDiskLoc = 1
+---------------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [2.0, 2.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+    a == 1.0  || Move to 0 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+    a == 1.0
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------FETCH
+---------------filter:
+                        c == 2.0
+---------------fetched = 1
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+---------------Child:
+------------------IXSCAN
+---------------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------------direction = 1
+---------------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [2.0, 2.0]
+---------------------fetched = 0
+---------------------sortedByDiskLoc = 1
+---------------------getSort = []
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [3.0, 3.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------FETCH
+---------------filter:
+                        c == 2.0
+---------------fetched = 1
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------------Child:
+------------------IXSCAN
+---------------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------------direction = 1
+---------------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [2.0, 2.0]
+---------------------fetched = 0
+---------------------sortedByDiskLoc = 1
+---------------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [3.0, 3.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.690+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+        $and
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+    a == 1.0
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+        $and
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+    a == 1.0
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [2.0, 2.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [3.0, 3.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = []
+
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [2.0, 2.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [3.0, 3.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0
+            c == 2.0
+        $and
+            b == 3.0
+            c == 3.0
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+    $or
+        $and
+            b == 2.0
+            c == 2.0
+        $and
+            b == 3.0
+            c == 3.0
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        $or
+            $and
+                b == 2.0
+                c == 2.0
+            $and
+                b == 3.0
+                c == 3.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---filter:
+        $or
+            $and
+                b == 2.0
+                c == 2.0
+            $and
+                b == 3.0
+                c == 3.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.691+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+    a == 1.0  || Selected Index #0 pos 0 combine 1 || Move to 0 || Selected Index #0 pos 0 combine 1 || Move to 1 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+        $and
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+    a == 1.0  || Selected Index #0 pos 0 combine 1 || Move to 1 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 3.0  || Selected Index #0 pos 1 combine 1
+            c == 3.0
+        $and
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 0
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.692+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+    a == 1.0  || Selected Index #0 pos 0 combine 1 || Move to 0 || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    $or
+        $and
+            a == 1.0  || Selected Index #0 pos 0 combine 1
+            b == 2.0  || Selected Index #0 pos 1 combine 1
+            c == 2.0
+        $and
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Tagging memoID 4
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Tagging memoID 3
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Tagging memoID 2
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+[Node #1]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 2.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 2.0
+                        pos 1 pred b == 2.0
+
+[Node #2]: AND enumstate counter 1
+        choice 0:
+                subnodes: 
+                idx[0]
+                        pos 1 pred b == 3.0
+
+        choice 1:
+                subnodes: 
+                idx[1]
+                        pos 0 pred c == 3.0
+                        pos 1 pred b == 3.0
+
+[Node #3]: ALL OF: [ 1 2 ]
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    $or
+        $and
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+        $and
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    a == 1.0  || Selected Index #0 pos 0 combine 1
+    $or
+        $and
+            c == 2.0  || Selected Index #1 pos 0 combine 1
+            b == 2.0  || Selected Index #1 pos 1 combine 1
+        $and
+            c == 3.0  || Selected Index #1 pos 0 combine 1
+            b == 3.0  || Selected Index #1 pos 1 combine 1
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Can't build index intersection solution: AND_SORTED is not possible and AND_HASH is disabled.
+2021-02-27T15:45:46.693+0800 D QUERY    [conn-5] Planner: outputted 5 indexed solutions.
+2021-02-27T15:45:46.693+0800 I STORAGE  [conn-5] WT index (0x5593f082f200) setEndPosition inclusive: 1 { : 1.0, : 2.0 }
+2021-02-27T15:45:46.693+0800 I STORAGE  [conn-5] WT index (0x5593f082f200)       cmp: 1
+2021-02-27T15:45:46.693+0800 I STORAGE  [conn-5] WT index (0x5593f082f200) setEndPosition inclusive: 1 { : 1.0, : 3.0 }
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082f200)       cmp: 1
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082f200) setEndPosition inclusive: 1 { : 1.0, : 2.0 }
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082f200)       cmp: 1
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082e600) setEndPosition inclusive: 1 { : 2.0, : 2.0 }
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082e600)       cmp: 1
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082f200) setEndPosition inclusive: 1 { : 1.0, : MaxKey }
+2021-02-27T15:45:46.694+0800 I STORAGE  [conn-5] WT index (0x5593f082f200)       cmp: 1
+2021-02-27T15:45:46.694+0800 D QUERY    [conn-5] Scoring plan 0:
+OR
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child 0:
+------FETCH
+---------filter:
+                c == 2.0
+---------fetched = 1
+---------sortedByDiskLoc = 1
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------Child:
+------------IXSCAN
+---------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+---Child 1:
+------FETCH
+---------filter:
+                c == 3.0
+---------fetched = 1
+---------sortedByDiskLoc = 1
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------Child:
+------------IXSCAN
+---------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+Stats:
+{ "stage" : "OR",
+  "nReturned" : 0,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 1,
+  "advanced" : 0,
+  "needTime" : 1,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "dupsTested" : 0,
+  "dupsDropped" : 0,
+  "recordIdsForgotten" : 0,
+  "inputStages" : [ 
+    { "stage" : "FETCH",
+      "filter" : { "c" : { "$eq" : 2 } },
+      "nReturned" : 0,
+      "executionTimeMillisEstimate" : 0,
+      "works" : 1,
+      "advanced" : 0,
+      "needTime" : 0,
+      "needYield" : 0,
+      "saveState" : 0,
+      "restoreState" : 0,
+      "isEOF" : 1,
+      "invalidates" : 0,
+      "docsExamined" : 0,
+      "alreadyHasObj" : 0,
+      "inputStage" : { "stage" : "IXSCAN",
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 1,
+        "invalidates" : 0,
+        "keyPattern" : { "a" : 1,
+          "b" : 1 },
+        "indexName" : "a_1_b_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "a" : [],
+          "b" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "a" : [ 
+            "[1.0, 1.0]" ],
+          "b" : [ 
+            "[2.0, 2.0]" ] },
+        "keysExamined" : 0,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } }, 
+    { "stage" : "FETCH",
+      "filter" : { "c" : { "$eq" : 3 } },
+      "nReturned" : 0,
+      "executionTimeMillisEstimate" : 0,
+      "works" : 0,
+      "advanced" : 0,
+      "needTime" : 0,
+      "needYield" : 0,
+      "saveState" : 0,
+      "restoreState" : 0,
+      "isEOF" : 0,
+      "invalidates" : 0,
+      "docsExamined" : 0,
+      "alreadyHasObj" : 0,
+      "inputStage" : { "stage" : "IXSCAN",
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 0,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "a" : 1,
+          "b" : 1 },
+        "indexName" : "a_1_b_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "a" : [],
+          "b" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "a" : [ 
+            "[1.0, 1.0]" ],
+          "b" : [ 
+            "[3.0, 3.0]" ] },
+        "keysExamined" : 0,
+        "seeks" : 0,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } } ] }
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { a: 1, b: 1 }, IXSCAN { a: 1, b: 1 } planHitEOF=0
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] score(1.0003) = baseScore(1) + productivity((0 advanced)/(1 works) = 0) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] score = 1.0003
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] Scoring plan 1:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------FETCH
+---------------filter:
+                        c == 3.0
+---------------fetched = 1
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------------Child:
+------------------IXSCAN
+---------------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------------direction = 1
+---------------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [3.0, 3.0]
+---------------------fetched = 0
+---------------------sortedByDiskLoc = 1
+---------------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [2.0, 2.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "a" : { "$eq" : 1 } },
+  "nReturned" : 0,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 1,
+  "advanced" : 0,
+  "needTime" : 1,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 0,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "OR",
+    "nReturned" : 0,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 1,
+    "advanced" : 0,
+    "needTime" : 1,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "recordIdsForgotten" : 0,
+    "inputStages" : [ 
+      { "stage" : "FETCH",
+        "filter" : { "c" : { "$eq" : 3 } },
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 1,
+        "invalidates" : 0,
+        "docsExamined" : 0,
+        "alreadyHasObj" : 0,
+        "inputStage" : { "stage" : "IXSCAN",
+          "nReturned" : 0,
+          "executionTimeMillisEstimate" : 0,
+          "works" : 1,
+          "advanced" : 0,
+          "needTime" : 0,
+          "needYield" : 0,
+          "saveState" : 0,
+          "restoreState" : 0,
+          "isEOF" : 1,
+          "invalidates" : 0,
+          "keyPattern" : { "a" : 1,
+            "b" : 1 },
+          "indexName" : "a_1_b_1",
+          "isMultiKey" : false,
+          "multiKeyPaths" : { "a" : [],
+            "b" : [] },
+          "isUnique" : false,
+          "isSparse" : false,
+          "isPartial" : false,
+          "indexVersion" : 2,
+          "direction" : "forward",
+          "indexBounds" : { "a" : [ 
+              "[1.0, 1.0]" ],
+            "b" : [ 
+              "[3.0, 3.0]" ] },
+          "keysExamined" : 0,
+          "seeks" : 1,
+          "dupsTested" : 0,
+          "dupsDropped" : 0,
+          "seenInvalidated" : 0 } }, 
+      { "stage" : "IXSCAN",
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 0,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "c" : 1,
+          "b" : 1 },
+        "indexName" : "c_1_b_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "c" : [],
+          "b" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "c" : [ 
+            "[2.0, 2.0]" ],
+          "b" : [ 
+            "[2.0, 2.0]" ] },
+        "keysExamined" : 0,
+        "seeks" : 0,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } ] } }
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { a: 1, b: 1 }, IXSCAN { c: 1, b: 1 } planHitEOF=0
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] score(1.0003) = baseScore(1) + productivity((0 advanced)/(1 works) = 0) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T15:45:46.695+0800 D QUERY    [conn-5] score = 1.0003
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] Scoring plan 2:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------FETCH
+---------------filter:
+                        c == 2.0
+---------------fetched = 1
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---------------Child:
+------------------IXSCAN
+---------------------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------------------direction = 1
+---------------------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [2.0, 2.0]
+---------------------fetched = 0
+---------------------sortedByDiskLoc = 1
+---------------------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [3.0, 3.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "a" : { "$eq" : 1 } },
+  "nReturned" : 0,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 1,
+  "advanced" : 0,
+  "needTime" : 1,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 0,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "OR",
+    "nReturned" : 0,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 1,
+    "advanced" : 0,
+    "needTime" : 1,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "recordIdsForgotten" : 0,
+    "inputStages" : [ 
+      { "stage" : "FETCH",
+        "filter" : { "c" : { "$eq" : 2 } },
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 1,
+        "invalidates" : 0,
+        "docsExamined" : 0,
+        "alreadyHasObj" : 0,
+        "inputStage" : { "stage" : "IXSCAN",
+          "nReturned" : 0,
+          "executionTimeMillisEstimate" : 0,
+          "works" : 1,
+          "advanced" : 0,
+          "needTime" : 0,
+          "needYield" : 0,
+          "saveState" : 0,
+          "restoreState" : 0,
+          "isEOF" : 1,
+          "invalidates" : 0,
+          "keyPattern" : { "a" : 1,
+            "b" : 1 },
+          "indexName" : "a_1_b_1",
+          "isMultiKey" : false,
+          "multiKeyPaths" : { "a" : [],
+            "b" : [] },
+          "isUnique" : false,
+          "isSparse" : false,
+          "isPartial" : false,
+          "indexVersion" : 2,
+          "direction" : "forward",
+          "indexBounds" : { "a" : [ 
+              "[1.0, 1.0]" ],
+            "b" : [ 
+              "[2.0, 2.0]" ] },
+          "keysExamined" : 0,
+          "seeks" : 1,
+          "dupsTested" : 0,
+          "dupsDropped" : 0,
+          "seenInvalidated" : 0 } }, 
+      { "stage" : "IXSCAN",
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 0,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "c" : 1,
+          "b" : 1 },
+        "indexName" : "c_1_b_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "c" : [],
+          "b" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "c" : [ 
+            "[3.0, 3.0]" ],
+          "b" : [ 
+            "[3.0, 3.0]" ] },
+        "keysExamined" : 0,
+        "seeks" : 0,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } ] } }
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { a: 1, b: 1 }, IXSCAN { c: 1, b: 1 } planHitEOF=0
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] score(1.0003) = baseScore(1) + productivity((0 advanced)/(1 works) = 0) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] score = 1.0003
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] Scoring plan 3:
+FETCH
+---filter:
+        a == 1.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------OR
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+---------Child 0:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [2.0, 2.0], field #1['b']: [2.0, 2.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+---------Child 1:
+------------IXSCAN
+---------------indexName = c_1_b_1
+keyPattern = { c: 1.0, b: 1.0 }
+---------------direction = 1
+---------------bounds = field #0['c']: [3.0, 3.0], field #1['b']: [3.0, 3.0]
+---------------fetched = 0
+---------------sortedByDiskLoc = 1
+---------------getSort = [{ b: 1 }, { c: 1 }, { c: 1, b: 1 }, ]
+
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "a" : { "$eq" : 1 } },
+  "nReturned" : 0,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 1,
+  "advanced" : 0,
+  "needTime" : 1,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 0,
+  "invalidates" : 0,
+  "docsExamined" : 0,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "OR",
+    "nReturned" : 0,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 1,
+    "advanced" : 0,
+    "needTime" : 1,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 0,
+    "invalidates" : 0,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "recordIdsForgotten" : 0,
+    "inputStages" : [ 
+      { "stage" : "IXSCAN",
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 1,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 1,
+        "invalidates" : 0,
+        "keyPattern" : { "c" : 1,
+          "b" : 1 },
+        "indexName" : "c_1_b_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "c" : [],
+          "b" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "c" : [ 
+            "[2.0, 2.0]" ],
+          "b" : [ 
+            "[2.0, 2.0]" ] },
+        "keysExamined" : 0,
+        "seeks" : 1,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 }, 
+      { "stage" : "IXSCAN",
+        "nReturned" : 0,
+        "executionTimeMillisEstimate" : 0,
+        "works" : 0,
+        "advanced" : 0,
+        "needTime" : 0,
+        "needYield" : 0,
+        "saveState" : 0,
+        "restoreState" : 0,
+        "isEOF" : 0,
+        "invalidates" : 0,
+        "keyPattern" : { "c" : 1,
+          "b" : 1 },
+        "indexName" : "c_1_b_1",
+        "isMultiKey" : false,
+        "multiKeyPaths" : { "c" : [],
+          "b" : [] },
+        "isUnique" : false,
+        "isSparse" : false,
+        "isPartial" : false,
+        "indexVersion" : 2,
+        "direction" : "forward",
+        "indexBounds" : { "c" : [ 
+            "[3.0, 3.0]" ],
+          "b" : [ 
+            "[3.0, 3.0]" ] },
+        "keysExamined" : 0,
+        "seeks" : 0,
+        "dupsTested" : 0,
+        "dupsDropped" : 0,
+        "seenInvalidated" : 0 } ] } }
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { c: 1, b: 1 }, IXSCAN { c: 1, b: 1 } planHitEOF=0
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] score(1.0003) = baseScore(1) + productivity((0 advanced)/(1 works) = 0) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T15:45:46.696+0800 D QUERY    [conn-5] score = 1.0003
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] Scoring plan 4:
+FETCH
+---filter:
+        $or
+            $and
+                b == 2.0
+                c == 2.0
+            $and
+                b == 3.0
+                c == 3.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "$or" : [ 
+      { "$and" : [ 
+          { "b" : { "$eq" : 2 } }, 
+          { "c" : { "$eq" : 2 } } ] }, 
+      { "$and" : [ 
+          { "b" : { "$eq" : 3 } }, 
+          { "c" : { "$eq" : 3 } } ] } ] },
+  "nReturned" : 0,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 1,
+  "advanced" : 0,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 0,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 0,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 1,
+    "advanced" : 0,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "a" : 1,
+      "b" : 1 },
+    "indexName" : "a_1_b_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "a" : [],
+      "b" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "a" : [ 
+        "[1.0, 1.0]" ],
+      "b" : [ 
+        "[MinKey, MaxKey]" ] },
+    "keysExamined" : 0,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { a: 1, b: 1 } planHitEOF=1
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] score(1.0003) = baseScore(1) + productivity((0 advanced)/(1 works) = 0) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] score = 1.0003
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] Adding +1 EOF bonus to score.
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] Winning solution:
+FETCH
+---filter:
+        $or
+            $and
+                b == 2.0
+                c == 2.0
+            $and
+                b == 3.0
+                c == 3.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [1.0, 1.0], field #1['b']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] Winning plan: IXSCAN { a: 1, b: 1 }
+2021-02-27T15:45:46.697+0800 D QUERY    [conn-5] yang test ...PlanStage::StageState MultiPlanStage::doWork 
+2021-02-27T15:45:46.697+0800 I COMMAND  [conn-5] command test.test3 appName: "MongoDB Shell" command: find { find: "test3", filter: { a: 1.0, $or: [ { b: 2.0, c: 2.0 }, { b: 3.0, c: 3.0 } ] }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } planSummary: IXSCAN { a: 1, b: 1 } keysExamined:0 docsExamined:0 fromMultiPlanner:1 cursorExhausted:1 numYields:0 nreturned:0 reslen:83 locks:{ Global: { acquireCount: { r: 2 } }, Database: { acquireCount: { r: 1 } }, Collection: { acquireCount: { r: 1 } } } protocol:op_msg 9ms
+2021-02-27T15:45:46.699+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T15:45:46.699+0800 D COMMAND  [conn-5] run command test.$cmd { isMaster: 1.0, forShell: 1.0, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } isMaster
+2021-02-27T15:45:46.699+0800 D COMMAND  [conn-5] yang test .......... command counters:isMaster
+2021-02-27T15:45:46.699+0800 I COMMAND  [conn-5] command test.$cmd appName: "MongoDB Shell" command: isMaster { isMaster: 1.0, forShell: 1.0, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } numYields:0 reslen:208 locks:{} protocol:op_msg 0ms
+2021-02-27T15:45:47.993+0800 D -        [PeriodicTaskRunner] cleaning up unused lock buckets of the global lock manager
+2021-02-27T15:45:49.322+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test3 with UUID 4c0ba900-654e-4d98-8d87-169d5222a6ba
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test2 with UUID f266c460-dafe-4d6b-a7fa-dc351c25c6cb
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test with UUID 520904ec-0432-4c00-a15d-788e2f5d707b
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.target_collection with UUID bf78adfc-44dc-4e1c-91b1-7cf4378d773f
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.sbtest2 with UUID 7c631919-8cbb-4a96-81ea-4148472dd33b
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace local.startup_log with UUID bf378154-885b-4f4c-a142-2af33af619c8
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.users with UUID 1c42fe42-5d95-4211-8c4e-2ca9f43c6b33
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.version with UUID ab5bbbc2-9a13-4905-bd4d-6701da1ffa4c
+2021-02-27T15:45:49.323+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace config.system.sessions with UUID 509fde18-9764-4f45-9262-e9be5712711f
+
+
+
+
+
+以下查询会有合并
+> db.test.find({"$and":[{"age":{"$gte":1,"$lte":255}}, {"age":{"$gte":111,"$lte":255}}]}, {"xx":1})
+
+2021-02-27T16:38:28.130+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T16:38:28.131+0800 D COMMAND  [conn-5] run command test.$cmd { find: "test", filter: { $and: [ { age: { $gte: 1.0, $lte: 255.0 } }, { age: { $gte: 111.0, $lte: 255.0 } } ] }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } find
+2021-02-27T16:38:28.131+0800 D STORAGE  [conn-5] NamespaceUUIDCache: registered namespace test.test with UUID 520904ec-0432-4c00-a15d-788e2f5d707b
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Beginning planning...
+=============================
+Options = INDEX_INTERSECTION SPLIT_LIMITED_SORT CANNOT_TRIM_IXISECT 
+Canonical query:
+ns=test.testTree: $and
+    age $lte 255.0
+    age $lte 255.0
+    age $gte 1.0
+    age $gte 111.0
+Sort: {}
+Proj: {}
+=============================
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.test" }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 1 is kp: { yangtest1: 1.0 } name: 'yangtest1_1' io: { v: 2, key: { yangtest1: 1.0 }, name: "yangtest1_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 2 is kp: { name: 1.0 } name: 'name_1' io: { v: 2, key: { name: 1.0 }, name: "name_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 3 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 4 is kp: { male: 1.0 } name: 'male_1' io: { v: 2, key: { male: 1.0 }, name: "male_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 5 is kp: { male: 1.0, name: 1.0 } name: 'male_1_name_1' io: { v: 2, key: { male: 1.0, name: 1.0 }, name: "male_1_name_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 6 is kp: { name: 1.0, male: 1.0 } name: 'name_1_male_1' io: { v: 2, key: { name: 1.0, male: 1.0 }, name: "name_1_male_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Index 7 is kp: { male: 1.0, xx: 1.0 } name: 'male_1_xx_1' io: { v: 2, key: { male: 1.0, xx: 1.0 }, name: "male_1_xx_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Predicate over field 'age'
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Relevant index 0 is kp: { age: 1.0 } name: 'age_1' io: { v: 2, key: { age: 1.0 }, name: "age_1", ns: "test.test", background: true }
+2021-02-27T16:38:28.131+0800 D QUERY    [conn-5] Rated tree:
+$and
+    age $lte 255.0  || First: 0 notFirst: full path: age
+    age $lte 255.0  || First: 0 notFirst: full path: age
+    age $gte 1.0  || First: 0 notFirst: full path: age
+    age $gte 111.0  || First: 0 notFirst: full path: age
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    age $lte 255.0  || Selected Index #0 pos 0 combine 1
+    age $lte 255.0  || Selected Index #0 pos 0 combine 1
+    age $gte 1.0  || Selected Index #0 pos 0 combine 1
+    age $gte 111.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    age $lte 255.0  || Selected Index #0 pos 0 combine 1
+    age $lte 255.0  || Selected Index #0 pos 0 combine 1
+    age $gte 1.0  || Selected Index #0 pos 0 combine 1
+    age $gte 111.0  || Selected Index #0 pos 0 combine 1
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+IXSCAN
+---indexName = age_1
+keyPattern = { age: 1.0 }
+---direction = 1
+---bounds = field #0['age']: [111.0, 255.0]
+---fetched = 0
+---sortedByDiskLoc = 0
+---getSort = []
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ age: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = age_1
+keyPattern = { age: 1.0 }
+---------direction = 1
+---------bounds = field #0['age']: [111.0, 255.0]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ age: 1 }, ]
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] Planner: outputted 1 indexed solutions.
+2021-02-27T16:38:28.132+0800 D QUERY    [conn-5] Only one plan is available; it will be run but will not be cached. query: { $and: [ { age: { $gte: 1.0, $lte: 255.0 } }, { age: { $gte: 111.0, $lte: 255.0 } } ] } sort: {} projection: {}, planSummary: IXSCAN { age: 1 }
+2021-02-27T16:38:28.132+0800 I STORAGE  [conn-5] WT index (0x5593f05a6180) setEndPosition inclusive: 1 { : 255.0 }
+2021-02-27T16:38:28.132+0800 I STORAGE  [conn-5] WT index (0x5593f05a6180)       cmp: -1
+2021-02-27T16:38:28.132+0800 I QUERY    [conn-5] yang test....FindCmd::run,OBJ:{ _id: ObjectId('60000d033a76b04597281513'), name: "yangyazhou", age: 113.0, male: 1.0, xx: 1.0 }
+2021-02-27T16:38:28.132+0800 I QUERY    [conn-5] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600536ecf6e12f1036c4d750'), name: "yangyazhou2", age: 113.0, male: 1.0, xx: 1.0 }
+2021-02-27T16:38:28.132+0800 I QUERY    [conn-5] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600795357e830577d1f018b8'), name: "yangyazhou2", age: 113.0, male: 1.0, xx: 1.0 }
+2021-02-27T16:38:28.133+0800 I QUERY    [conn-5] yang test....FindCmd::run,OBJ:{ _id: ObjectId('600796697e830577d1f018b9'), name: "yangyazhou2", age: 113.0, male: 1.0, xx: 1.0, xx2: 1.0 }
+2021-02-27T16:38:28.133+0800 I COMMAND  [conn-5] command test.test appName: "MongoDB Shell" command: find { find: "test", filter: { $and: [ { age: { $gte: 1.0, $lte: 255.0 } }, { age: { $gte: 111.0, $lte: 255.0 } } ] }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } planSummary: IXSCAN { age: 1 } keysExamined:4 docsExamined:4 cursorExhausted:1 numYields:0 nreturned:4 reslen:438 locks:{ Global: { acquireCount: { r: 2 } }, Database: { acquireCount: { r: 1 } }, Collection: { acquireCount: { r: 1 } } } protocol:op_msg 2ms

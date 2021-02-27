@@ -231,7 +231,7 @@ StatusWithMatchExpression parseRegexElement(StringData name, BSONElement e) {
     return {std::move(temp)};
 }
 
-//MatchExpressionParser::parse调用
+//MatchExpressionParser::parse  parseSubField调用
 StatusWithMatchExpression parseComparison(
     StringData name,
     ComparisonMatchExpression* cmp,
@@ -416,6 +416,10 @@ StatusWithMatchExpression parse(const BSONObj& obj,
 		//pathlessOperatorMap map表以外的opration请求走这个分支，例如pathlessOperatorMap表中的操作$eq $gt等
 		//DBRef以外的$请求操作符返回true，走这里
 		if (isExpressionDocument(e, false)) {
+			//{ aa : 0.99 }走该分支，{ aa : 0.99 }和{ aa: { $eq: "0.99" } }等价
+			//{"price":{$gt:2000,$lt:5000}}走该分支
+
+			//这里面循环解析出子expression添加到root tree中
             auto s = parseSub(e.fieldNameStringData(),
                               e.Obj(),
                               root.get(),
@@ -431,6 +435,7 @@ StatusWithMatchExpression parse(const BSONObj& obj,
 		//$regex 正则请求，忽略
 		//类似db.user_info.find({"name":{"$regex":"liu"}})走该分支
         if (e.type() == BSONType::RegEx) {
+
             auto result = parseRegexElement(e.fieldNameStringData(), e);
             if (!result.isOK())
                 return result;
@@ -438,8 +443,7 @@ StatusWithMatchExpression parse(const BSONObj& obj,
             continue;
         }
 
-		//{ aa : 0.99 }走该分支，{ aa : 0.99 }和{ aa: { $eq: "0.99" } }等价
-		//{"price":{$gt:2000,$lt:5000}}走该分支
+		
         auto eq = parseComparison(
             e.fieldNameStringData(), new EqualityMatchExpression(), e, expCtx, allowedFeatures);
         if (!eq.isOK())
@@ -1566,6 +1570,7 @@ StatusWithMatchExpression parseNot(StringData name,
  * If the query is { x : { $gt : 5, $lt : 8 } },
  * 'e' is $gt : 5
  */
+//parseSub中调用，获取相应的expression,在外层添加到tree中
 StatusWithMatchExpression parseSubField(const BSONObj& context,
                                         const AndMatchExpression* andSoFar,
                                         StringData name,
@@ -1574,14 +1579,16 @@ StatusWithMatchExpression parseSubField(const BSONObj& context,
                                         const ExtensionsCallback* extensionsCallback,
                                         MatchExpressionParser::AllowedFeatureSet allowedFeatures,
                                         DocumentParseLevel currentLevel) {
-    if ("$eq"_sd == e.fieldNameStringData()) {
+	//eq走这里
+	if ("$eq"_sd == e.fieldNameStringData()) {
         return parseComparison(name, new EqualityMatchExpression(), e, expCtx, allowedFeatures);
     }
 
+	//not走这里
     if ("$not"_sd == e.fieldNameStringData()) {
         return parseNot(name, e, expCtx, extensionsCallback, allowedFeatures, currentLevel);
     }
-
+    
     auto parseExpMatchType = MatchExpressionParser::parsePathAcceptingKeyword(e);
     if (!parseExpMatchType) {
         // $where cannot be a sub-expression because it works on top-level documents only.
@@ -1946,6 +1953,7 @@ Status parseSub(StringData name,
         }
     }
 
+	//把子expression添加到tree中
     for (auto deep : sub) {
         auto s = parseSubField(
             sub, root, name, deep, expCtx, extensionsCallback, allowedFeatures, currentLevel);
@@ -2119,6 +2127,7 @@ retrievePathlessParser(StringData name) {
 }  // namespace
 
 //从queryOperatorMap map表中根据opname进行查找
+//parseSubField调用
 boost::optional<PathAcceptingKeyword> MatchExpressionParser::parsePathAcceptingKeyword(
     BSONElement typeElem, boost::optional<PathAcceptingKeyword> defaultKeyword) {
     auto fieldName = typeElem.fieldNameStringData();

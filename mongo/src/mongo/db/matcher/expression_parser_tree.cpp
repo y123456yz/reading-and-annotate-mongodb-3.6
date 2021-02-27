@@ -39,6 +39,7 @@
 #include "mongo/util/mongoutils/str.h"
 
 namespace mongo {
+//该接口实际上没用
 Status MatchExpressionParser::_parseTreeList(const BSONObj& arr,
                                              ListOfMatchExpression* out,
                                              const boost::intrusive_ptr<ExpressionContext>& expCtx,
@@ -63,6 +64,7 @@ Status MatchExpressionParser::_parseTreeList(const BSONObj& arr,
     return Status::OK();
 }
 
+//该接口暂时没用
 StatusWithMatchExpression MatchExpressionParser::_parseNot(
     const char* name,
     const BSONElement& e,

@@ -265,7 +265,8 @@ Status PlanExecutor::pickBestPlan(const Collection* collection) {
 
     // If we didn't have to do subplanning, we might still have to do regular
     // multi plan selection...
-    //对应MultiPlanStage
+    //对应MultiPlanStage，如果一个查询有多个候选索引满足条件，则会有多个solution
+    //所以需要选择最优的plan，配合prepareExecution阅读
     foundStage = getStageByType(_root.get(), STAGE_MULTI_PLAN); //multi plan
     if (foundStage) {
         MultiPlanStage* mps = static_cast<MultiPlanStage*>(foundStage);

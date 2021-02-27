@@ -25,6 +25,9 @@
  *    delete this exception statement from all source files in the program,
  *    then also delete it in the license file.
  */
+/*
+
+*/
 
 #pragma once
 
@@ -36,8 +39,13 @@
 
 namespace mongo {
 
+//注意IndexTag、RelevantTag、OrPushdownTag三者区别与联系
+//RelevantTag：记录一个查询所有的候选索引
+//IndexTag：记录当前solution用的某个索引
+//OrPushdownTag: 以后分析，暂时不管
 
-//QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag)
+
+//QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag，获取当前查询所有可能的候选index)
 //QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
 
 
@@ -98,8 +106,13 @@ public:
     bool canCombineBounds = true;
 };
 
-//QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag)
+//QueryPlannerIXSelect::rateIndices(_tagData对应RelevantTag，获取当前查询所有可能的候选index)
 //QueryPlanner::tagAccordingToCache中赋值(_tagData对应IndexTag)
+
+//注意IndexTag、RelevantTag、OrPushdownTag三者区别与联系
+//RelevantTag：记录一个查询所有的候选索引
+//IndexTag：记录当前solution用的某个索引
+//OrPushdownTag: 以后分析，暂时不管
 
 // used internally  QueryPlannerIXSelect::rateIndices中使用
 class RelevantTag : public MatchExpression::TagData {
@@ -190,6 +203,33 @@ public:
  * An OrPushdownTag indicates that this node is a predicate that can be used inside of a sibling
  * indexed OR.
  */
+ 
+//注意IndexTag、RelevantTag、OrPushdownTag三者区别与联系
+//RelevantTag：记录一个查询所有的候选索引
+//IndexTag：记录当前solution用的某个索引
+//OrPushdownTag: 以后分析，暂时不管
+
+/*
+3.6新特性
+下面根据具体语句来说明，先看下面的查询语句：
+
+find({a: 1, $or: [{b: 2, c: 2}, {b: 3, c: 3}]}) 
+假设有索引 {a: 1, c: 1} 和 {b: 1, c: 1}，在3.6版本之前，会生成两个候选plan：
+
+扫描索引 { a: 1, c: 1 }，且扫描边界为{a: [[1, 1]], c: [["MinKey", "MaxKey"]]}
+扫描索引{ b: 1, c: 1 }（针对OR条件）
+因为有or条件的pushdown机制，条件a:1会被pushdown到or 的所有子分支，即等价于  
+$or: [ { a: 1, b: 2, c: 2 }, { a: 1, b: 3, c: 3 } ]。 //实际测试好像没用pushdown
+
+3.6版本的变化是，它会认为在扫描{ a: 1, c: 1 }索引的时候，可以有两种不同的边界，一种是
+{a: [[1, 1]], c: [[2, 2]]}，另一种是{a: [[1, 1]], c: [[3, 3]]}，而不仅仅是
+{a: [[1, 1]], c: [["MinKey", "MaxKey"]]}。这两个边界组合生成了一个候选plan。
+
+3.6版本的这种机制的改变在某些时候确实起到了优化作用，扫描的索引树总节点数量变少了，减少了IO次数。
+https://blog.csdn.net/weixin_30357231/article/details/97716803
+
+*/
+//可以配合querysolution2.txt中的db.test3.find({a: 1, $or: [{b: 2, c: 2}, {b: 3, c: 3}]})查询阅读日志
 class OrPushdownTag final : public MatchExpression::TagData {
 public:
     /**
@@ -232,6 +272,10 @@ public:
          *    {b: 6}   OR
          *           /    \
          *       {c: 7}  {d: 8}
+         *   
+         上面的tree也就是:
+         db.test3.find({"$and":[ {a: 5}, {$or:[{$and:[{b: 6}, {$or:[{c: 7}, {d: 8}]} ]}, {e: 9}]} ]})
+         
          * and the predicate is {a: 5}, then the path {0, 1} means {a: 5} should be
          * AND-combined with {d: 8}.
          */

@@ -425,7 +425,7 @@ $and
 
 // static  QueryPlanner::plan中调用  
 //程序走到这里， MatchExpression的每一个节点对应的TagData*或者RelevantTag* 字段还是空的,给MatchExpression._tagData赋值
-//MatchExpression._tagData赋值
+//MatchExpression._tagData赋值，给node tree上面的节点增加RelevantTag信息，也就是相关候选索引信息和MatchExpression tree节点关联
 void QueryPlannerIXSelect::rateIndices(MatchExpression* node,   
                                        string prefix,
                                        const vector<IndexEntry>& indices,

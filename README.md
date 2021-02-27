@@ -48,6 +48,7 @@ mongodb-3.6源码注释分析，持续更新
   * [盘点 2020 | 我要为分布式数据库 mongodb 在国内影响力提升及推广做点事](https://xie.infoq.cn/article/372320c6bb93ddc5b7ecd0b6b)   
   * [万亿级数据库 MongoDB 集群性能数十倍提升及机房多活容灾实践](https://xie.infoq.cn/article/304a748ad3dead035a449bd51)  
   * [Qcon现代数据架构 -《万亿级数据库 MongoDB 集群性能数十倍提升优化实践》核心 17 问详细解答](https://xie.infoq.cn/article/0c51f3951f3f10671d7d7123e)  
+  * [话题讨论 | mongodb 相比 mysql 拥有十大核心优势，为何国内知名度不高？](https://xie.infoq.cn/article/180d98535bfa0c3e71aff1662)  
     
 说明:  
 ===================================  
@@ -157,14 +158,107 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [top.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/top.h) 
  *   [latency_server_status_section.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.cpp) 
  *   [toplatency_server_status_sectionh](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.h) 
-<<<<<<< HEAD
+
 
 #### OpMsgRequest和写write_ops:(insert、update、delete)转换操作:
  *   [write_ops_gen.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.cpp) 
  *   [write_ops_gen.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.h) 
-=======
+
+#### query请求处理模块:  
+###### query_request请求解析和canonical_query规范化转换操作:
+ *   [query_request.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_request.cpp) 
+ *   [query_request.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_request.h) 
+ *   [canonical_query.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/canonical_query.cpp) 
+ *   [canonical_query.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/canonical_query.h) 
+ *   [parsed_projection.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/parsed_projection.cpp) 
+ *   [parsed_projection.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/parsed_projection.h) 
  
->>>>>>> ea64c58aefde9b774f4026c57ff768f0812ee261
+###### MatchExpression tree生成及优化过程:
+ *   [expression_parser.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_parser.cpp) 
+ *   [expression_parser.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_parser.h) 
+ *   [expression.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression.cpp) 
+ *   [expression.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression.h) 
+ *   [expression_tree.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_tree.cpp) 
+ *   [expression_tree.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_tree.h) 
+
+###### get_executor获取PlanExecutor:
+ *   [get_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.cpp) 
+ *   [get_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.h) 
+
+###### QueryPlannerIXSelect实现MatchExpression tree相关node关联对应RelevantTag:
+ *   [planner_ixselect.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_ixselect.cpp) 
+ *   [planner_ixselect.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_ixselect.h) 
+
+###### plan_enumerator轮询枚举每个查询所有的候选索引信息:
+ *   [plan_enumerator.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_enumerator.cpp) 
+ *   [plan_enumerator.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_enumerator.h) 
+
+###### index_tag相关:
+ *   [index_tag.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/index_tag.cpp) 
+ *   [index_tag.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/index_tag.h) 
+
+###### 生成QuerySolutionNode tree及querysolution:
+ *   [planner_access.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_access.cpp) 
+ *   [planner_access.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_access.h) 
+ *   [planner_analysis.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_analysis.cpp) 
+ *   [planner_analysis.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_analysis.h) 
+ *   [query_planner.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_planner.cpp) 
+ *   [query_planner.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_planner.h) 
+
+###### get_executor根据querysolurion生成PlanStage:
+ *   [get_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.cpp) 
+ *   [get_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.h) 
+ 
+###### PlanStage:
+ *   [plan_stage.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stage.cpp) 
+ *   [plan_stage.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stage.h) 
+ *   [plan_stats.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stats.cpp) 
+ *   [plan_stats.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stats.h) 
+ *   [stage_builder.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/stage_builder.cpp) 
+ *   [stage_builder.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/stage_builder.h) 
+ *   [multi_plan.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/multi_plan.cpp)   
+ *   [multi_plan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/multi_plan.h)  
+ *   [subplan.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/subplan.cpp)   
+ *   [subplan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/subplan.h)  
+ *   [stage_types.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/stage_types.cpp) 
+ *   [collection_scan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/collection_scan.h) 
+ *   [collection_scan.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/collection_scan.cpp) 
+ *   [collection_scan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/collection_scan.h) 
+ *   [index_scan.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/index_scan.cpp) 
+ *   [index_scan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/index_scan.h) 
+ *   [fetch.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/fetch.cpp) 
+ *   [fetch.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/fetch.h) 
+ *   [sort.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/sort.cpp) 
+ *   [sort.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/sort.h)
+ *   [sort_key_generator.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/sort_key_generator.cpp) 
+ *   [sort_key_generator.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/sort_key_generator.h) 
+ *   [projection.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/projection.cpp) 
+ *   [projection.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/projection.h)   
+ *   [limit.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/limit.cpp)   
+ *   [limit.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/limit.h)   
+ *   [skip.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/skip.cpp)   
+ *   [skip.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/skip.h)  
+ *   [cached_plan.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/cached_plan.cpp)   
+ *   [cached_plan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/cached_plan.h) 
+ *   [......](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/)  
+
+###### plan_ranker对每个候选solution打分，选出最优索引:
+ *   [plan_ranker.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_ranker.cpp) 
+ *   [plan_ranker.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_ranker.h) 
+ 
+###### get_executor根据querysolurion生成PlanStage:
+ *   [get_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.cpp) 
+ *   [get_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.h) 
+ 
+###### plan_executor执行器:
+ *   [plan_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_executor.cpp) 
+ *   [plan_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_executor.h) 
+ 
+###### plan_cache plan缓存:
+ *   [plan_cache.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_cache.cpp) 
+ *   [plan_cache.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_cache.h) 
+ *   [plan_cache_commands.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/commands/plan_cache_commands.cpp) 
+ *   [plan_cache_commands.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/commands/plan_cache_commands.h) 
  
 #### shard分片源码实现(注释进行中):   
 ###### 分布式锁实现源码注释分析(100%注释): 

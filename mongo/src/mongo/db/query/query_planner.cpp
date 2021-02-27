@@ -273,8 +273,10 @@ static BSONObj finishMaxObj(const IndexEntry& indexEntry,
 QuerySolution* buildCollscanSoln(const CanonicalQuery& query,
                                  bool tailable,
                                  const QueryPlannerParams& params) {
-    std::unique_ptr<QuerySolutionNode> solnRoot(
+	//构造CollectionScanNode
+	std::unique_ptr<QuerySolutionNode> solnRoot(
         QueryPlannerAccess::makeCollectionScan(query, tailable, params));
+	//根据请求完善QuerySolutionNode tree，包括增加LimitNode  SkipNode ProjectionNode ShardingFilterNode
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
 /*
@@ -295,8 +297,10 @@ QuerySolution* buildWholeIXSoln(const IndexEntry& index,
                                 const CanonicalQuery& query,
                                 const QueryPlannerParams& params,
                                 int direction = 1) {
+    //构造IndexScanNode
     std::unique_ptr<QuerySolutionNode> solnRoot(
         QueryPlannerAccess::scanWholeIndex(index, query, params, direction));
+	//根据请求完善QuerySolutionNode tree，包括增加LimitNode  SkipNode ProjectionNode ShardingFilterNode
     return QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
 }
 
@@ -317,9 +321,9 @@ bool providesSort(const CanonicalQuery& query, const BSONObj& kp) {
 // static
 const int QueryPlanner::kPlannerVersion = 1;
 
-//根据候选索引和MatchExpression生成PlanCacheIndexTree
+//根据候选索引和MatchExpression tree生成PlanCacheIndexTree
 //QueryPlanner::plan(生成querySolution)中调用
-//通过递归调用的方式，生成taggedTree对应的PlanCacheIndexTree，也就是索引树
+//通过递归调用的方式，生成taggedTree对应的PlanCacheIndexTree，也就是索引缓存树
 Status QueryPlanner::cacheDataFromTaggedTree(const MatchExpression* const taggedTree,
                                              const vector<IndexEntry>& relevantIndices,
                                              PlanCacheIndexTree** out) {
@@ -430,6 +434,7 @@ Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
 
     // Continue the depth-first tree traversal.
     for (size_t i = 0; i < filter->numChildren(); ++i) {
+		//递归调用
         Status s = tagAccordingToCache(filter->getChild(i), indexTree->children[i], indexMap);
         if (!s.isOK()) {
             return s;
@@ -476,7 +481,8 @@ Status QueryPlanner::tagAccordingToCache(MatchExpression* filter,
 }
 
 //注意QueryPlanner::plan和QueryPlanner::planFromCache的区别
-// static   prepareExecution 中执行，从plancache中获取QuerySolution
+// static   prepareExecution 中执行，
+//从plancache中获取QuerySolution
 //填充filter的_tagData信息，把MatchExpression tree和索引信息关联起来
 Status QueryPlanner::planFromCache(const CanonicalQuery& query,
                                    const QueryPlannerParams& params,
@@ -955,7 +961,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
     }
 
     // Figure out how useful each index is to each predicate.
-    //给query.root()._tagData赋值
+    //给query.root()._tagData赋值，给node tree上面的节点增加RelevantTag信息，也就是相关候选索引信息和MatchExpression tree节点关联
     QueryPlannerIXSelect::rateIndices(query.root(), "", relevantIndices, query.getCollator());
     QueryPlannerIXSelect::stripInvalidAssignments(query.root(), relevantIndices);
 
@@ -1053,7 +1059,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 	
         unique_ptr<MatchExpression> rawTree;
 		//根据CanonicalQuery和满足要求的索引relevantIndices来生成QuerySolution树
-		//PlanEnumerator::getNext
+		//PlanEnumerator::getNext    这里的理解配合querysolution.txt阅读,枚举每个查询对应的索引信息，最终生成solution
         while ((rawTree = isp.getNext()) && (out->size() < params.maxIndexedSolutions)) {
 		/* 
 	    db.test.find({"name":"yangyazhou"}).sort({"name":1}):
@@ -1065,7 +1071,7 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
 				name == "yangyazhou"  || Selected Index #2 pos 0 combine 1
 		*/
             LOG(2) << "About to build solntree(QuerySolution tree) from tagged tree:" << endl
-                   << redact(rawTree.get()->toString());
+                   << redact(rawTree.get()->toString()); //tag 由前面的PlanEnumeratorParams中添加
 
             // Store the plan cache index tree before calling prepareForAccessingPlanning(), so that
             // the PlanCacheIndexTree has the same sort as the MatchExpression used to generate the
@@ -1100,12 +1106,15 @@ Status QueryPlanner::plan(const CanonicalQuery& query,
             }
 			LOG(2) << "Planner: adding QuerySolutionNode:" << endl << redact(solnRoot->toString());
 
+			//根据请求完善QuerySolutionNode tree，包括增加LimitNode  SkipNode ProjectionNode ShardingFilterNode
+			//最后把完善后的QuerySolutionNode tree赋值给soln->root，最终也就QuerySolution形成 
 			//获取对应QuerySolution
             QuerySolution* soln =
                 QueryPlannerAnalysis::analyzeDataAccess(query, params, std::move(solnRoot));
             if (NULL != soln) {
                 LOG(2) << "Planner: adding solution:" << endl << redact(soln->toString());//QuerySolutionNode::toString
                 if (indexTreeStatus.isOK()) {
+					//该solution对应的 
                     SolutionCacheData* scd = new SolutionCacheData();
                     scd->tree.reset(autoData.release());
                     soln->cacheData.reset(scd); 

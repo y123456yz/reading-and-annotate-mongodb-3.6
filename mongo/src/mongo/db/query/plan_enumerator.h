@@ -79,7 +79,7 @@ struct PlanEnumeratorParams {
 //PlanExecutor的主要作用是选出最佳的QuerySolution， 并且执行该solution
 //参考https://blog.csdn.net/baijiwei/article/details/78174198  
 //https://blog.csdn.net/weixin_30357231/article/details/97716803
-class PlanEnumerator {  //参考QueryPlanner::plan
+class PlanEnumerator {  //参考QueryPlanner::plan, 实现为每个查询枚举所有的候选索引，最终生成solution
     MONGO_DISALLOW_COPYING(PlanEnumerator);
 
 public:

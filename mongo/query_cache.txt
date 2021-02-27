@@ -1,0 +1,431 @@
+只有一个查询有多个候选索引的时候才会缓存plan，如果只有一个候选索引，就没必要缓存了
+
+> 
+> db.test3.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.test3"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "a" : 1,
+                        "b" : 1
+                },
+                "name" : "a_1_b_1",
+                "ns" : "test.test3",
+                "background" : true
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "c" : 1,
+                        "b" : 1
+                },
+                "name" : "c_1_b_1",
+                "ns" : "test.test3",
+                "background" : true
+        }
+]
+> db.test3.find({a:5, b:6})
+{ "_id" : ObjectId("6039f5bcce1d8b2a60b52704"), "a" : 5, "b" : 6, "c" : 7, "d" : 8, "e" : 9 }
+> db.test3.find({a:5, b:6})
+{ "_id" : ObjectId("6039f5bcce1d8b2a60b52704"), "a" : 5, "b" : 6, "c" : 7, "d" : 8, "e" : 9 }
+> 
+> 
+> 
+> 
+> db.test3.createIndex( {a: 1,c:1}, {background: true} )
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 3,
+        "numIndexesAfter" : 4,
+        "ok" : 1
+}
+> db.test3.find({a:5, b:6})
+{ "_id" : ObjectId("6039f5bcce1d8b2a60b52704"), "a" : 5, "b" : 6, "c" : 7, "d" : 8, "e" : 9 }
+> db.test3.find({a:5, b:6})
+{ "_id" : ObjectId("6039f5bcce1d8b2a60b52704"), "a" : 5, "b" : 6, "c" : 7, "d" : 8, "e" : 9 }
+> 
+
+
+
+
+
+
+
+
+
+
+
+
+2021-02-27T21:04:08.504+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T21:04:08.504+0800 D COMMAND  [conn-5] run command test.$cmd { find: "test3", filter: { a: 5.0, b: 6.0 }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } find
+2021-02-27T21:04:08.504+0800 D STORAGE  [conn-5] NamespaceUUIDCache: registered namespace test.test3 with UUID 4c0ba900-654e-4d98-8d87-169d5222a6ba
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Beginning planning...
+=============================
+Options = INDEX_INTERSECTION SPLIT_LIMITED_SORT CANNOT_TRIM_IXISECT 
+Canonical query:
+ns=test.test3Tree: $and
+    a == 5.0
+    b == 6.0
+Sort: {}
+Proj: {}
+=============================
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Index 0 is kp: { _id: 1 } unique name: '_id_' io: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.test3" }
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Index 1 is kp: { a: 1.0, b: 1.0 } name: 'a_1_b_1' io: { v: 2, key: { a: 1.0, b: 1.0 }, name: "a_1_b_1", ns: "test.test3", background: true }
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Index 2 is kp: { c: 1.0, b: 1.0 } name: 'c_1_b_1' io: { v: 2, key: { c: 1.0, b: 1.0 }, name: "c_1_b_1", ns: "test.test3", background: true }
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Index 3 is kp: { a: 1.0, c: 1.0 } name: 'a_1_c_1' io: { v: 2, key: { a: 1.0, c: 1.0 }, name: "a_1_c_1", ns: "test.test3", background: true }
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Predicate over field 'b'
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Predicate over field 'a'
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Relevant index 0 is kp: { a: 1.0, b: 1.0 } name: 'a_1_b_1' io: { v: 2, key: { a: 1.0, b: 1.0 }, name: "a_1_b_1", ns: "test.test3", background: true }
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Relevant index 1 is kp: { a: 1.0, c: 1.0 } name: 'a_1_c_1' io: { v: 2, key: { a: 1.0, c: 1.0 }, name: "a_1_c_1", ns: "test.test3", background: true }
+2021-02-27T21:04:08.504+0800 D QUERY    [conn-5] Rated tree:
+$and
+    a == 5.0  || First: 0 1 notFirst: full path: a
+    b == 6.0  || First: notFirst: 0 full path: b
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    a == 5.0  || Selected Index #1 pos 0 combine 1
+    b == 6.0
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    a == 5.0  || Selected Index #1 pos 0 combine 1
+    b == 6.0
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+FETCH
+---filter:
+        b == 6.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = []
+---Child:
+------IXSCAN
+---------indexName = a_1_c_1
+keyPattern = { a: 1.0, c: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['c']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = []
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---filter:
+        b == 6.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_c_1
+keyPattern = { a: 1.0, c: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['c']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] Tagging memoID 1
+2021-02-27T21:04:08.505+0800 D QUERY    [conn-5] Enumerator: memo just before moving:
+2021-02-27T21:04:08.506+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree:
+$and
+    a == 5.0  || Selected Index #0 pos 0 combine 1
+    b == 6.0  || Selected Index #0 pos 1 combine 1
+2021-02-27T21:04:08.506+0800 D QUERY    [conn-5] About to build solntree(QuerySolution tree) from tagged tree, after prepareForAccessPlanning:
+$and
+    a == 5.0  || Selected Index #0 pos 0 combine 1
+    b == 6.0  || Selected Index #0 pos 1 combine 1
+2021-02-27T21:04:08.506+0800 D QUERY    [conn-5] Planner: adding QuerySolutionNode:
+IXSCAN
+---indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---direction = 1
+---bounds = field #0['a']: [5.0, 5.0], field #1['b']: [6.0, 6.0]
+---fetched = 0
+---sortedByDiskLoc = 1
+---getSort = []
+2021-02-27T21:04:08.506+0800 D QUERY    [conn-5] Planner: adding solution:
+FETCH
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['b']: [6.0, 6.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+2021-02-27T21:04:08.506+0800 D QUERY    [conn-5] Planner: outputted 2 indexed solutions.
+2021-02-27T21:04:08.506+0800 I STORAGE  [conn-5] WT index (0x5593f082e300) setEndPosition inclusive: 1 { : 5.0, : MaxKey }
+2021-02-27T21:04:08.507+0800 I STORAGE  [conn-5] WT index (0x5593f082e300)       cmp: 1
+2021-02-27T21:04:08.507+0800 I STORAGE  [conn-5] WT index (0x5593f082f200) setEndPosition inclusive: 1 { : 5.0, : 6.0 }
+2021-02-27T21:04:08.507+0800 I STORAGE  [conn-5] WT index (0x5593f082f200)       cmp: 1
+2021-02-27T21:04:08.507+0800 D QUERY    [conn-5] Scoring plan 0:
+FETCH
+---filter:
+        b == 6.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_c_1
+keyPattern = { a: 1.0, c: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['c']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "filter" : { "b" : { "$eq" : 6 } },
+  "nReturned" : 1,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 2,
+  "advanced" : 1,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 1,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 1,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 2,
+    "advanced" : 1,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "a" : 1,
+      "c" : 1 },
+    "indexName" : "a_1_c_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "a" : [],
+      "c" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "a" : [ 
+        "[5.0, 5.0]" ],
+      "c" : [ 
+        "[MinKey, MaxKey]" ] },
+    "keysExamined" : 1,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-27T21:04:08.507+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { a: 1, c: 1 } planHitEOF=1
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] score(1.5003) = baseScore(1) + productivity((1 advanced)/(2 works) = 0.5) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] score = 1.5003
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] Adding +1 EOF bonus to score.
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] Scoring plan 1:
+FETCH
+---fetched = 1
+---sortedByDiskLoc = 1
+---getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_b_1
+keyPattern = { a: 1.0, b: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['b']: [6.0, 6.0]
+---------fetched = 0
+---------sortedByDiskLoc = 1
+---------getSort = [{ a: 1 }, { a: 1, b: 1 }, { b: 1 }, ]
+Stats:
+{ "stage" : "FETCH",
+  "nReturned" : 1,
+  "executionTimeMillisEstimate" : 0,
+  "works" : 2,
+  "advanced" : 1,
+  "needTime" : 0,
+  "needYield" : 0,
+  "saveState" : 0,
+  "restoreState" : 0,
+  "isEOF" : 1,
+  "invalidates" : 0,
+  "docsExamined" : 1,
+  "alreadyHasObj" : 0,
+  "inputStage" : { "stage" : "IXSCAN",
+    "nReturned" : 1,
+    "executionTimeMillisEstimate" : 0,
+    "works" : 2,
+    "advanced" : 1,
+    "needTime" : 0,
+    "needYield" : 0,
+    "saveState" : 0,
+    "restoreState" : 0,
+    "isEOF" : 1,
+    "invalidates" : 0,
+    "keyPattern" : { "a" : 1,
+      "b" : 1 },
+    "indexName" : "a_1_b_1",
+    "isMultiKey" : false,
+    "multiKeyPaths" : { "a" : [],
+      "b" : [] },
+    "isUnique" : false,
+    "isSparse" : false,
+    "isPartial" : false,
+    "indexVersion" : 2,
+    "direction" : "forward",
+    "indexBounds" : { "a" : [ 
+        "[5.0, 5.0]" ],
+      "b" : [ 
+        "[6.0, 6.0]" ] },
+    "keysExamined" : 1,
+    "seeks" : 1,
+    "dupsTested" : 0,
+    "dupsDropped" : 0,
+    "seenInvalidated" : 0 } }
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] Scoring query plan: IXSCAN { a: 1, b: 1 } planHitEOF=1
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] score(1.5003) = baseScore(1) + productivity((1 advanced)/(2 works) = 0.5) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] score = 1.5003
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] Adding +1 EOF bonus to score.
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] Winning solution:
+FETCH
+---filter:
+        b == 6.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_c_1
+keyPattern = { a: 1.0, c: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['c']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+2021-02-27T21:04:08.508+0800 D QUERY    [conn-5] Winning plan: IXSCAN { a: 1, c: 1 }
+2021-02-27T21:04:08.509+0800 D QUERY    [conn-5] yang test ...PlanStage::StageState MultiPlanStage::doWork 
+2021-02-27T21:04:08.509+0800 I QUERY    [conn-5] yang test....FindCmd::run,OBJ:{ _id: ObjectId('6039f5bcce1d8b2a60b52704'), a: 5.0, b: 6.0, c: 7.0, d: 8.0, e: 9.0 }
+2021-02-27T21:04:08.509+0800 D QUERY    [conn-5] yang test ...PlanStage::StageState MultiPlanStage::doWork 
+2021-02-27T21:04:08.509+0800 I COMMAND  [conn-5] command test.test3 appName: "MongoDB Shell" command: find { find: "test3", filter: { a: 5.0, b: 6.0 }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } planSummary: IXSCAN { a: 1, c: 1 } keysExamined:1 docsExamined:1 fromMultiPlanner:1 cursorExhausted:1 numYields:0 nreturned:1 reslen:163 locks:{ Global: { acquireCount: { r: 2 } }, Database: { acquireCount: { r: 1 } }, Collection: { acquireCount: { r: 1 } } } protocol:op_msg 5ms
+2021-02-27T21:04:08.511+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T21:04:08.511+0800 D COMMAND  [conn-5] run command test.$cmd { isMaster: 1.0, forShell: 1.0, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } isMaster
+2021-02-27T21:04:08.511+0800 D COMMAND  [conn-5] yang test .......... command counters:isMaster
+2021-02-27T21:04:08.511+0800 I COMMAND  [conn-5] command test.$cmd appName: "MongoDB Shell" command: isMaster { isMaster: 1.0, forShell: 1.0, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } numYields:0 reslen:208 locks:{} protocol:op_msg 0ms
+2021-02-27T21:04:08.697+0800 D -        [PeriodicTaskRunner] cleaning up unused lock buckets of the global lock manager
+
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test3 with UUID 4c0ba900-654e-4d98-8d87-169d5222a6ba
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test2 with UUID f266c460-dafe-4d6b-a7fa-dc351c25c6cb
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test with UUID 520904ec-0432-4c00-a15d-788e2f5d707b
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.target_collection with UUID bf78adfc-44dc-4e1c-91b1-7cf4378d773f
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.sbtest2 with UUID 7c631919-8cbb-4a96-81ea-4148472dd33b
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace local.startup_log with UUID bf378154-885b-4f4c-a142-2af33af619c8
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.users with UUID 1c42fe42-5d95-4211-8c4e-2ca9f43c6b33
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.version with UUID ab5bbbc2-9a13-4905-bd4d-6701da1ffa4c
+2021-02-27T21:04:09.830+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace config.system.sessions with UUID 509fde18-9764-4f45-9262-e9be5712711f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2021-02-27T21:04:13.471+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T21:04:13.471+0800 D COMMAND  [conn-5] run command test.$cmd { find: "test3", filter: { a: 5.0, b: 6.0 }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } find
+2021-02-27T21:04:13.472+0800 D STORAGE  [conn-5] NamespaceUUIDCache: registered namespace test.test3 with UUID 4c0ba900-654e-4d98-8d87-169d5222a6ba
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Tagging the match expression according to cache data: 
+Filter:
+$and
+    a == 5.0
+    b == 6.0
+Cache data:
+(index-tagged expression tree: tree=Node
+---Leaf a_1_c_1, pos: 0, can combine? 1
+---Leaf 
+)
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Index 0: _id_
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Index 1: a_1_b_1
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Index 2: c_1_b_1
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Index 3: a_1_c_1
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Tagged tree:
+$and
+    a == 5.0  || Selected Index #3 pos 0 combine 1
+    b == 6.0
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] Planner: solution constructed from the cache:
+FETCH
+---filter:
+        b == 6.0
+---fetched = 1
+---sortedByDiskLoc = 0
+---getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+---Child:
+------IXSCAN
+---------indexName = a_1_c_1
+keyPattern = { a: 1.0, c: 1.0 }
+---------direction = 1
+---------bounds = field #0['a']: [5.0, 5.0], field #1['c']: [MinKey, MaxKey]
+---------fetched = 0
+---------sortedByDiskLoc = 0
+---------getSort = [{ a: 1 }, { a: 1, c: 1 }, { c: 1 }, ]
+2021-02-27T21:04:13.472+0800 I STORAGE  [conn-5] WT index (0x5593f082e300) setEndPosition inclusive: 1 { : 5.0, : MaxKey }
+2021-02-27T21:04:13.472+0800 I STORAGE  [conn-5] WT index (0x5593f082e300)       cmp: 1
+2021-02-27T21:04:13.472+0800 D QUERY    [conn-5] score(1.5003) = baseScore(1) + productivity((1 advanced)/(2 works) = 0.5) + tieBreakers(0.0001 noFetchBonus + 0.0001 noSortBonus + 0.0001 noIxisectBonus = 0.0003)
+2021-02-27T21:04:13.472+0800 I QUERY    [conn-5] yang test....FindCmd::run,OBJ:{ _id: ObjectId('6039f5bcce1d8b2a60b52704'), a: 5.0, b: 6.0, c: 7.0, d: 8.0, e: 9.0 }
+2021-02-27T21:04:13.473+0800 I COMMAND  [conn-5] command test.test3 appName: "MongoDB Shell" command: find { find: "test3", filter: { a: 5.0, b: 6.0 }, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } planSummary: IXSCAN { a: 1, c: 1 } keysExamined:1 docsExamined:1 cursorExhausted:1 numYields:0 nreturned:1 reslen:163 locks:{ Global: { acquireCount: { r: 2 } }, Database: { acquireCount: { r: 1 } }, Collection: { acquireCount: { r: 1 } } } protocol:op_msg 1ms
+2021-02-27T21:04:13.475+0800 I COMMAND  [conn-5] yang test ................ServiceEntryPointMongod::handleRequest op:2013
+2021-02-27T21:04:13.475+0800 D COMMAND  [conn-5] run command test.$cmd { isMaster: 1.0, forShell: 1.0, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } isMaster
+2021-02-27T21:04:13.475+0800 D COMMAND  [conn-5] yang test .......... command counters:isMaster
+2021-02-27T21:04:13.475+0800 I COMMAND  [conn-5] command test.$cmd appName: "MongoDB Shell" command: isMaster { isMaster: 1.0, forShell: 1.0, lsid: { id: UUID("1b90e5a7-835f-42b6-a0ba-3ca08773329c") }, $db: "test" } numYields:0 reslen:208 locks:{} protocol:op_msg 0ms
+2021-02-27T21:04:13.698+0800 D -        [PeriodicTaskRunner] cleaning up unused lock buckets of the global lock manager
+2021-02-27T21:04:13.831+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test3 with UUID 4c0ba900-654e-4d98-8d87-169d5222a6ba
+2021-02-27T21:04:13.831+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test2 with UUID f266c460-dafe-4d6b-a7fa-dc351c25c6cb
+2021-02-27T21:04:13.831+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.test with UUID 520904ec-0432-4c00-a15d-788e2f5d707b
+2021-02-27T21:04:13.831+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.target_collection with UUID bf78adfc-44dc-4e1c-91b1-7cf4378d773f
+2021-02-27T21:04:13.832+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace test.sbtest2 with UUID 7c631919-8cbb-4a96-81ea-4148472dd33b
+2021-02-27T21:04:13.832+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace local.startup_log with UUID bf378154-885b-4f4c-a142-2af33af619c8
+2021-02-27T21:04:13.832+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.users with UUID 1c42fe42-5d95-4211-8c4e-2ca9f43c6b33
+2021-02-27T21:04:13.832+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace admin.system.version with UUID ab5bbbc2-9a13-4905-bd4d-6701da1ffa4c
+2021-02-27T21:04:13.832+0800 D STORAGE  [clientcursormon] NamespaceUUIDCache: registered namespace config.system.sessions with UUID 509fde18-9764-4f45-9262-e9be5712711f
+

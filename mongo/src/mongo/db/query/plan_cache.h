@@ -89,6 +89,8 @@ typedef std::string PlanID;
  *   is tagged according to the index tags in the PlanCacheIndexTree.
  *   This is done by QueryPlanner::tagAccordingToCache.
  */
+//QueryPlanner::plan->QueryPlanner::cacheDataFromTaggedTree中赋值
+
 //QuerySolution.cacheData.tree中缓存对应的索引tree信息
 //SolutionCacheData.tree为该类型，缓存solution对应索引信息
 //cacheDataFromTaggedTree  choosePlanForSubqueries  QueryPlanner::plan中构造使用
@@ -181,7 +183,9 @@ struct SolutionCacheData {
     // can be used to tag an isomorphic match expression. If 'wholeIXSoln'
     // is true, then 'tree' is used to store the relevant IndexEntry.
     // If 'collscanSoln' is true, then 'tree' should be NULL.
+    //SolutionCacheData::toString()输出该tree信息
     //QueryPlanner::plan中赋值，缓存cacheIndex，也就是缓存solution对应索引信息
+    //QueryPlanner::plan->QueryPlanner::cacheDataFromTaggedTree中赋值，记录solution对应的索引信息
     std::unique_ptr<PlanCacheIndexTree> tree;   //QuerySolution.cacheData.tree中缓存对应的索引tree信息
 
     //对应不同类型输出参考SolutionCacheData::toString()
@@ -221,6 +225,9 @@ class PlanCacheEntry;
  */
 //PlanCache::get中构造使用
 //SubplanStage._branchResults.cachedSolution为该类型
+//QueryPlanner::planFromCache中根据CachedSolution获取QuerySolution
+
+//只有在查询有多个候选索引的时候，才会缓存对应solution信息
 class CachedSolution {
 private:
     MONGO_DISALLOW_COPYING(CachedSolution);
@@ -609,6 +616,7 @@ public:
      * If the mapping was added successfully, returns Status::OK().
      * If the mapping already existed or some other error occurred, returns another Status.
      */
+    //MultiPlanStage::pickBestPlan中把得分高的候选索引添加到plancache
     Status add(const CanonicalQuery& query,
                const std::vector<QuerySolution*>& solns,
                PlanRankingDecision* why,
@@ -708,6 +716,7 @@ private:
     
     //PlanCacheEntry根据PlanCacheKey缓存到这里，支持LRU
     //查找某个请求的PlanCacheEntry, 参考PlanCache::get  PlanCache::getAllEntries()
+    ////MultiPlanStage::pickBestPlan中把得分高的候选索引添加到plancache
     LRUKeyValue<PlanCacheKey, PlanCacheEntry> _cache;
 
     // Protects _cache.

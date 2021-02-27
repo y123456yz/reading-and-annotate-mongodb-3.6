@@ -660,6 +660,7 @@ QuerySolutionNode* QueryPlannerAnalysis::analyzeSort(const CanonicalQuery& query
 //该接口生成对应的QuerySolution
 
 //根据请求完善QuerySolutionNode tree，包括增加LimitNode  SkipNode ProjectionNode ShardingFilterNode
+//最后把完善后的QuerySolutionNode tree赋值给soln->root，最终也就QuerySolution形成 
 // static   
 QuerySolution* QueryPlannerAnalysis::analyzeDataAccess(
     const CanonicalQuery& query,
