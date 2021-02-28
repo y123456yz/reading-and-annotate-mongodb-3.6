@@ -142,6 +142,7 @@ void serializeReply(OperationContext* opCtx,
         errors.push_back(error.obj());
     }
 
+	//写入有异常
     if (result.staleConfigException) {
         // For ordered:false commands we need to duplicate the StaleConfig result for all ops
         // after we stopped. result.results doesn't include the staleConfigException.
@@ -322,6 +323,7 @@ public:
                        &result);
     }
 } cmdInsert;
+//生效见CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl
 //class CmdUpdate final : public WriteCommand {yang add change
 class CmdUpdate : public WriteCommand {
 public:

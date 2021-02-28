@@ -69,6 +69,7 @@ public:
     /**
      * If true, then when an write statement fails, the command returns without executing the remaining statements. If false, then statements are allowed to be executed in parallel and if a statement fails, continue with the remaining statements, if any.
      */
+    //生效使用见CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl
     bool getOrdered() const { return _ordered; }
     void setOrdered(bool value) & { _ordered = std::move(value);  }
 
@@ -85,10 +86,14 @@ protected:
 private:
     //参考 mongodb字段验证规则（schema validation）
     //https://www.cnblogs.com/itxiaoqiang/p/5538287.html   是否验证schema
+    //https://blog.csdn.net/u013066244/article/details/73799927
+    //performInserts performDeletes  performUpdates中生效验证
     bool _bypassDocumentValidation{false};
     //ordered一般针对insert_many bulk_write  这个参数为True时，迫使MongoDB按顺序同步插入数据；
     //而如果为False，则MongoDB会并发的不按固定顺序进行批量插入。显然当我们对性能有要求时，
     //将该参数设为False是非常必要的。
+
+    //生效使用见CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl
     bool _ordered{true};
     //对应请求里每个操作（以insert为例，一个insert命令可以插入多个文档）操作ID
     boost::optional<std::vector<std::int32_t>> _stmtIds;

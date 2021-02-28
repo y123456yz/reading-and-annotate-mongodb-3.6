@@ -393,10 +393,15 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
         acquireCollection(); //执行上面定义的函数
         //MongoDB 固定集合（Capped Collections）是性能出色且有着固定大小的集合，对于大小固定，
         //我们可以想象其就像一个环形队列，当集合空间用完后，再插入的元素就会覆盖最初始的头部的元素！
-        if (!collection->getCollection()->isCapped() && batch.size() > 1) { //如果是固定集合，一次性插入，在同一个事务中，见insertDocuments
+
+		//非固定collection并且batch size > 1，走这个分支
+		//一次性插入，在同一个事务中，见insertDocuments
+		if (!collection->getCollection()->isCapped() && batch.size() > 1) {  
             // First try doing it all together. If all goes well, this is all we need to do.
             // See Collection::_insertDocuments for why we do all capped inserts one-at-a-time.
             lastOpFixer->startingOp();
+
+			//为什么这里没有检查返回值？默认全部成功？
             insertDocuments(opCtx, collection->getCollection(), batch.begin(), batch.end());
             lastOpFixer->finishedOpSuccessfully();
             globalOpCounters.gotInserts(batch.size());
@@ -405,6 +410,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
 
             std::fill_n(std::back_inserter(out->results), batch.size(), std::move(result));
             curOp.debug().ninserted += batch.size();
+			
             return true;
         }
     } catch (const DBException&) {
@@ -414,9 +420,11 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
         // The loop below will handle reporting any non-transient errors.
     }
 
+	//固定集合或者batch=1
+
     // Try to insert the batch one-at-a-time. This path is executed both for singular batches, and
     // for batches that failed all-at-once inserting.
-    //一次性一条一条插入，上面的固定集合是一次性插入
+    //一次性一条一条插入，上面集合是一次性插入
     //log() << "yang test ...insertBatchAndHandleErrors.........getNamespace().ns():" << wholeOp.getNamespace().ns();
     for (auto it = batch.begin(); it != batch.end(); ++it) {
         globalOpCounters.gotInsert(); //insert操作计数
@@ -480,6 +488,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
         // This is the only part of finishCurOp we need to do for inserts because they reuse the
         // top-level curOp. The rest is handled by the top-level entrypoint.
         //performInserts函数执行完成后，需要调用该函数
+        //CurOp::done
         curOp.done(); //performInserts执行完成后调用，记录执行结束时间    
         //表级tps及时延统计
         Top::get(opCtx->getServiceContext())
@@ -509,7 +518,7 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
 		//3.6.3开始的版本，不会有system.index库了，index而是记录到_mdb_catalog.wt，所以这里永远不会进来
         return performCreateIndexes(opCtx, wholeOp);
     }
-
+	//schema检查，参考https://blog.csdn.net/u013066244/article/details/73799927
     DisableDocumentValidationIfTrue docValidationDisabler(
         opCtx, wholeOp.getWriteCommandBase().getBypassDocumentValidation());
     LastOpFixer lastOpFixer(opCtx, wholeOp.getNamespace());
@@ -739,6 +748,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
     invariant(!opCtx->lockState()->inAWriteUnitOfWork());  // Does own retries.
     //检查是否可以对ns进行写操作，有些内部ns是不能写的
     uassertStatusOK(userAllowedWriteNS(wholeOp.getNamespace()));
+	
 
     DisableDocumentValidationIfTrue docValidationDisabler(
         opCtx, wholeOp.getWriteCommandBase().getBypassDocumentValidation());
