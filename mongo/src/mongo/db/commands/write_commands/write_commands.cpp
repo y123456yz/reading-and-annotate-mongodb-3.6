@@ -412,6 +412,7 @@ public:
             opCtx->getClient(), BatchedCommandRequest::BatchType_Delete, request);
     }
 
+	//CmdDelete::runImpl
     void runImpl(OperationContext* opCtx,
                  const OpMsgRequest& request,
                  BSONObjBuilder& result) final {

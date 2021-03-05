@@ -53,6 +53,7 @@ class OperationContext;
  *
  * No locks need to be held during parsing.
  */
+ //performSingleDeleteOp中使用，delete操作相关
 class ParsedDelete {
     MONGO_DISALLOW_COPYING(ParsedDelete);
 

@@ -673,7 +673,7 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgReques
 	//从request中解析出_writeCommandBase成员内容
     _writeCommandBase = WriteCommandBase::parse(ctxt, request.body);
 
-	//解析出_documents，真正的文档内容在这里
+	//sequences信息解析
     for (auto&& sequence : request.sequences) {
 
         if (sequence.name == kDocumentsFieldName) {

@@ -182,7 +182,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> PlanExecutor::make(
                               yieldPolicy);
 }
 
-// static   getExecutor中执行  这里面会pickBestPlan选取最优的plan
+// static   getExecutor getExecutorUpdate getExecutorDelete中执行  这里面会pickBestPlan选取最优的plan
 //初始化PlanExecutor类型,并且调用pickBestPlan选取最优的Plan.里面包含了很多不同类型的PlanStage
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
    PlanExecutor::make(

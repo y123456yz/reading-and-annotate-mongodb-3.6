@@ -152,6 +152,7 @@ StatusWith<BSONObj> fixDocumentForInsert(ServiceContext* service, const BSONObj&
                     if (!s.isOK())
                         return StatusWith<BSONObj>(s);
                 }
+				//一个文档只能由一个ID
                 if (hadId) {
                     return StatusWith<BSONObj>(ErrorCodes::BadValue,
                                                "can't have multiple _id fields in one document");

@@ -505,6 +505,7 @@ bool runCommandImpl(OperationContext* opCtx,
         const auto oldWC = opCtx->getWriteConcern();
         ON_BLOCK_EXIT([&] { opCtx->setWriteConcern(oldWC); });
         opCtx->setWriteConcern(wcResult.getValue());
+		
         ON_BLOCK_EXIT([&] {
             _waitForWriteConcernAndAddToCommandResponse(
                 opCtx, command->getName(), lastOpBeforeRun, &inPlaceReplyBob);

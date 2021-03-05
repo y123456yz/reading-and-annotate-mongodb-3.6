@@ -763,6 +763,10 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getOplogStartHack(
 
 }  // namespace
 
+
+//getExecutorFind对应查询执行计划，getExecutorUpdate对应更新执行计划，getExecutorDelete对应删除执行计划
+
+
 //根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
 //FindCmd::run中调用  通过getExecutorFind函数,得到PlanExecutor.
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
@@ -835,11 +839,13 @@ StatusWith<unique_ptr<PlanStage>> applyProjection(OperationContext* opCtx,
 
 //
 // Delete
+//getExecutorFind对应查询执行计划，getExecutorUpdate对应更新执行计划，getExecutorDelete对应删除执行计划
 //
 
-StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
-getExecutorDelete(
-    OperationContext* opCtx, OpDebug* opDebug, Collection* collection, ParsedDelete* parsedDelete) {
+//StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
+ getExecutorDelete( OperationContext* opCtx, OpDebug* opDebug,  
+ 	Collection* collection, ParsedDelete* parsedDelete) {
+	//获取DeleteRequest
     const DeleteRequest* request = parsedDelete->getRequest();
 
     const NamespaceString& nss(request->getNamespaceString());
@@ -853,6 +859,8 @@ getExecutorDelete(
         }
     }
 
+
+	//capped表不能删除数据
     if (collection && collection->isCapped()) {
         return Status(ErrorCodes::IllegalOperation,
                       str::stream() << "cannot remove from a capped collection: " << nss.ns());
@@ -861,6 +869,7 @@ getExecutorDelete(
     bool userInitiatedWritesAndNotPrimary = opCtx->writesAreReplicated() &&
         !repl::getGlobalReplicationCoordinator()->canAcceptWritesFor(opCtx, nss);
 
+	//复制集只能写主节点
     if (userInitiatedWritesAndNotPrimary) {
         return Status(ErrorCodes::PrimarySteppedDown,
                       str::stream() << "Not primary while removing from " << nss.ns());
@@ -909,10 +918,11 @@ getExecutorDelete(
         const bool hasCollectionDefaultCollation = request->getCollation().isEmpty() ||
             CollatorInterface::collatorsMatch(collator.get(), collection->getDefaultCollator());
 
+		//查询条件是id相关
         if (descriptor && CanonicalQuery::isSimpleIdQuery(unparsedQuery) &&
             request->getProj().isEmpty() && hasCollectionDefaultCollation) {
             LOG(2) << "Using idhack: " << redact(unparsedQuery);
-
+			
             PlanStage* idHackStage = new IDHackStage(
                 opCtx, collection, unparsedQuery["_id"].wrap(), ws.get(), descriptor);
             unique_ptr<DeleteStage> root = make_unique<DeleteStage>(
@@ -968,6 +978,9 @@ getExecutorDelete(
                               collection,
                               policy);
 }
+
+
+//getExecutorFind对应查询执行计划，getExecutorUpdate对应更新执行计划，getExecutorDelete对应删除执行计划
 
 
 

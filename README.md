@@ -164,6 +164,22 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [write_ops_gen.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.cpp) 
  *   [write_ops_gen.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.h) 
 
+#### write写模块:  
+###### write处理入口
+ *   [write_commands_common.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands_common.cpp) 
+ *   [write_commands_common.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands_common.h) 
+ *   [write_commands.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands.cpp) 
+  
+###### OpMsgRequest和写write_ops:(insert、update、delete)转换操作:
+ *   [write_ops_parsers.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_parsers.cpp) 
+ *   [write_ops_parsers.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_parsers.h) 
+ *   [write_ops_gen.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.cpp) 
+ *   [write_ops_gen.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.h) 
+   
+###### 增删改处理:
+ *   [write_ops_exec.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_exec.cpp) 
+ *   [write_ops_exec.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_exec.h) 
+  
 #### query请求处理模块:  
 ###### query_request请求解析和canonical_query规范化转换操作:
  *   [query_request.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_request.cpp) 
@@ -240,6 +256,10 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [skip.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/skip.h)  
  *   [cached_plan.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/cached_plan.cpp)   
  *   [cached_plan.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/cached_plan.h) 
+ *   [update.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/update.cpp)   
+ *   [update.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/update.h)  
+ *   [delete.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/delete.cpp)   
+ *   [delete.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/delete.h) 
  *   [......](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/)  
 
 ###### plan_ranker对每个候选solution打分，选出最优索引:

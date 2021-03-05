@@ -114,11 +114,12 @@ void writeMultiDeleteProperty(bool isMulti, StringData fieldName, BSONObjBuilder
 int32_t getStmtIdForWriteAt(const WriteCommandBase& writeCommandBase, size_t writePos) {
     const auto& stmtIds = writeCommandBase.getStmtIds();
 
+	//获取数组stmtIds第writePos个成员值
     if (stmtIds) {
         return stmtIds->at(writePos);
     }
 
-	//生成一个，也就是这批doc中的第几个
+	//如果stmtIds中全是0，则自己生成一个
     const int32_t kFirstStmtId = 0;
     return kFirstStmtId + writePos;
 }

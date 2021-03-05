@@ -117,6 +117,8 @@ void finishCurOp(OperationContext* opCtx, CurOp* curOp) {
             : opCtx->getClient()->getPrng().nextCanonicalDouble() < serverGlobalParams.sampleRate;
 		
 		//update和delete慢日志这里会记录一次，并且外层的ServiceEntryPointMongod::handleRequest还有记录一次
+		//一次delete或者update可能是同时对多条数据处理，这里是记录单条操作的统计，外层的
+		//ServiceEntryPointMongod::handleRequest是对整个操作(可能是多调数据处理)统计
         if (logAll || (shouldSample && logSlow)) {//ServiceEntryPointMongod::handleRequest中也会有输出打印
             Locker::LockerInfo lockerInfo;
             opCtx->lockState()->getLockerInfo(&lockerInfo);
@@ -207,7 +209,10 @@ void makeCollection(OperationContext* opCtx, const NamespaceString& ns) {
 
 /**
  * Returns true if the operation can continue.
+ //insert一批数据，如果第5条数据写入失败，是否需要后续第6调以后数据的写入
  */
+//insertBatchAndHandleErrors performUpdates等调用  
+//该接口返回值代表canContinue是否可以继续写，如果返回true则前面数据写失败，还可以后续数据写
 bool handleError(OperationContext* opCtx,
                  const DBException& ex,
                  const NamespaceString& nss,
@@ -217,7 +222,10 @@ bool handleError(OperationContext* opCtx,
     auto& curOp = *CurOp::get(opCtx);
     curOp.debug().exceptionInfo = ex.toStatus();
 
+	//判断是什么原因引起的异常，从而返回不同的值
+	//如果是isInterruption错误，直接返回true,意思是不需要后续数据写入
     if (ErrorCodes::isInterruption(ex.code())) {
+		//如果满足这个条件，则不能后续写入
         throw;  // These have always failed the whole batch.
     }
 
@@ -247,6 +255,12 @@ bool handleError(OperationContext* opCtx,
 
     out->results.emplace_back(ex.toStatus());
 
+	/*
+	Optional. If true, then when an insert of a document fails, return without inserting any 
+	remaining documents listed in the inserts array. If false, then when an insert of a document 
+	fails, continue to insert the remaining documents. Defaults to true.
+	*/
+	//如果ordered为false则忽略这条写入失败的数据，继续后续数据写入
     return !wholeOp.getOrdered();
 }
 
@@ -401,7 +415,7 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
             // See Collection::_insertDocuments for why we do all capped inserts one-at-a-time.
             lastOpFixer->startingOp();
 
-			//为什么这里没有检查返回值？默认全部成功？
+			//为什么这里没有检查返回值？默认全部成功？ 实际上通过try catch获取到异常后，再后续改为一条一条插入
             insertDocuments(opCtx, collection->getCollection(), batch.begin(), batch.end());
             lastOpFixer->finishedOpSuccessfully();
             globalOpCounters.gotInserts(batch.size());
@@ -413,9 +427,10 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
 			
             return true;
         }
-    } catch (const DBException&) {
+    } catch (const DBException&) { //批量写入失败，则后面一条一条的写
         collection.reset();
-
+		//注意这里没有return
+		
         // Ignore this failure and behave as-if we never tried to do the combined batch insert.
         // The loop below will handle reporting any non-transient errors.
     }
@@ -450,11 +465,13 @@ bool insertBatchAndHandleErrors(OperationContext* opCtx,
                     throw;
                 }
             });
-        } catch (const DBException& ex) {
+        } catch (const DBException& ex) {//写入异常
+        	//注意这里，如果失败是否还可以继续后续数据的写入
             bool canContinue =
                 handleError(opCtx, ex, wholeOp.getNamespace(), wholeOp.getWriteCommandBase(), out);
             if (!canContinue)
-                return false;
+                return false; //注意这里直接退出循环，也就是本批次数据后续数据没有写入了
+                //例如第1-5条数据写入成功，第6条数据写入失败，则后续数据不在写入
         }
     }
 
@@ -529,9 +546,10 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
     size_t stmtIdIndex = 0;
     size_t bytesInBatch = 0;
     std::vector<InsertStatement> batch; //数组
-    //默认64
+    //默认64,可以通过db.adminCommand( { setParameter: 1, internalInsertMaxBatchSize:xx } )配置
     const size_t maxBatchSize = internalInsertMaxBatchSize.load();
 	//确定InsertStatement类型数组的总长度，这里默认一次性最多批量处理64个documents
+	//write_ops::Insert::getDocuments
     batch.reserve(std::min(wholeOp.getDocuments().size(), maxBatchSize));
 
     for (auto&& doc : wholeOp.getDocuments()) {
@@ -587,8 +605,12 @@ WriteResult performInserts(OperationContext* opCtx, const write_ops::Insert& who
             }
         }
 
+	    //如果ordered未false则忽略这条写入失败的数据，继续后续数据写入
+		//写入失败，不需要后续写入，直接返回
         if (!canContinue)
             break;
+		
+		//如果能继续写入，即使本批次数据写入失败，任然可以下一批数据写入
     }
 
     return out;
@@ -769,7 +791,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
     out.results.reserve(wholeOp.getUpdates().size());
 
 	//write_ops::Update::getUpdates    singleOp为UpdateOpEntry类型
-	//循环遍历updates数组， 数组成员类型UpdateOpEntry
+	//循环遍历updates数组， 数组成员类型UpdateOpEntry    write_ops::Update::getUpdates
     for (auto&& singleOp : wholeOp.getUpdates()) {
 		//为每个update数组内容分片一个stmtId
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
@@ -843,7 +865,7 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
 	//从request解析出对应成员存入parsedDelete
 	//ParsedDelete::parseRequest
     uassertStatusOK(parsedDelete.parseRequest());
-
+	//检查该请求是不是已经被kill掉了
     opCtx->checkForInterrupt();
 
     if (MONGO_FAIL_POINT(failAllRemoves)) {
@@ -878,12 +900,14 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
     curOp.debug().ndeleted = n;
 
     PlanSummaryStats summary;
+	//获取执行器运行的统计信息
     Explain::getSummaryStats(*exec, &summary);
     if (collection.getCollection()) {
         collection.getCollection()->infoCache()->notifyOfQuery(opCtx, summary.indexesUsed);
     }
     curOp.debug().setPlanSummaryMetrics(summary);
 
+	//统计信息序列化
     if (curOp.shouldDBProfile()) {
         BSONObjBuilder execStatsBob;
         Explain::getWinningPlanStats(exec.get(), &execStatsBob);
@@ -913,7 +937,7 @@ WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& who
     out.results.reserve(wholeOp.getDeletes().size());
 	log() << "yang test ........................ performDeletes:" << wholeOp.getDeletes().size();
 
-	//singleOp类型为DeleteOpEntry
+	//singleOp类型为DeleteOpEntry     write_ops::Delete::getDeletes
     for (auto&& singleOp : wholeOp.getDeletes()) {
 		//数组中的第几个delete操作
         const auto stmtId = getStmtIdForWriteOp(opCtx, wholeOp, stmtIdIndex++);
@@ -935,7 +959,7 @@ WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& who
             curOp.setCommand_inlock(cmd);
         }
 
-		//该函数接口执行完后执行该finishCurOp
+		//该函数接口执行完后执行该finishCurOp,包括表级qps统计 表级统计  慢日志记录
         ON_BLOCK_EXIT([&] { finishCurOp(opCtx, &curOp); });
         try {
             lastOpFixer.startingOp();

@@ -30,14 +30,31 @@ namespace write_ops {
 /**
  * Contains basic information included by all write commands
  */ 
-/* 官方文档https://docs.mongodb.com/v3.6/reference/method/db.collection.insert/
-db.collection.insert(
-   <document or array of documents>,
-   {
-     writeConcern: <document>,
-     ordered: <boolean>
-   }
-)
+/* 
+WriteCommandBase:
+    description: "Contains basic information included by all write commands"
+    strict: false
+    fields:
+        bypassDocumentValidation:
+            description: "Enables the operation to bypass document validation. This lets you
+                          write documents that do not meet the validation requirements."
+            type: safeBool
+            default: false
+        ordered:
+            description: "If true, then when an write statement fails, the command returns
+                          without executing the remaining statements. If false, then statements
+                          are allowed to be executed in parallel and if a statement fails,
+                          continue with the remaining statements, if any."
+            type: bool
+            default: true
+        stmtIds:
+            description: "An array of statement numbers relative to the transaction. If this
+                          field is set, its size must be exactly the same as the number of
+                          entries in the corresponding insert/update/delete request. If it is
+                          not set, the statement ids of the contained operation will be
+                          implicitly generated based on their offset, starting from 0."
+            type: array<int>
+            optional: true
 
 */
 //增 删 改的基类  
@@ -52,6 +69,18 @@ public:
     //将该参数设为False是非常必要的。
     static constexpr auto kOrderedFieldName = "ordered"_sd;
     //对应请求里每个操作（以insert为例，一个insert命令可以插入多个文档）操作ID，参考performInserts
+    /* 这个的解释，和事务相关
+    stmtIds:
+    description: "An array of statement numbers relative to the transaction. If this
+                  field is set, its size must be exactly the same as the number of
+                  entries in the corresponding insert/update/delete request. If it is
+                  not set, the statement ids of the contained operation will be
+                  implicitly generated based on their offset, starting from 0."
+    type: array<int>
+    optional: true
+    相对于事务的语句号数组。如果设置了这个字段，它的大小必须与相应的插入/更新/删除请求中的条目数完全相
+    同。如果没有设置，所包含操作的语句id将基于它们的偏移量(从0开始)隐式生成
+     */
     static constexpr auto kStmtIdsFieldName = "stmtIds"_sd;
 
     WriteCommandBase();
@@ -69,7 +98,9 @@ public:
     /**
      * If true, then when an write statement fails, the command returns without executing the remaining statements. If false, then statements are allowed to be executed in parallel and if a statement fails, continue with the remaining statements, if any.
      */
-    //生效使用见CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl
+    //真正生效使用见insertBatchAndHandleErrors->handleError
+    //假设有一批数据，5条，写到第三条的时候失败了，后续的第4-5条数据是否还需要写入，如果为true则放弃后续数据写入
+    //如果ordered未false则忽略这条写入失败的数据，继续后续数据写入
     bool getOrdered() const { return _ordered; }
     void setOrdered(bool value) & { _ordered = std::move(value);  }
 
@@ -94,9 +125,12 @@ private:
     //将该参数设为False是非常必要的。
 
     //生效使用见CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl
+    //一次对多条数据进行插入或者删除或者更新的时候，前面的数据操作失败，是否继续后面的操作
     bool _ordered{true};
     //对应请求里每个操作（以insert为例，一个insert命令可以插入多个文档）操作ID
     boost::optional<std::vector<std::int32_t>> _stmtIds;
+
+    //注意:WriteConcern信息在外层runCommandImpl中通过opCtx->setWriteConcern(wcResult.getValue());保持到该请求对应得opCtx
 };
 
 /**
@@ -104,17 +138,37 @@ private:
  */ 
 /**
  * Parser for the 'update' command.
- db.collection.update(
-   <query>,
-   <update>,
-   {
-     upsert: <boolean>,
-     multi: <boolean>,
-     writeConcern: <document>,
-     collation: <document>,
-     arrayFilters: [ <filterdocument1>, ... ]
-   }
-)
+ {
+    update: <collection>,
+    updates: [
+       { q: <query>, u: <update>, upsert: <boolean>, multi: <boolean>,
+         collation: <document>, arrayFilters: <array> },
+       { q: <query>, u: <update>, upsert: <boolean>, multi: <boolean>,
+         collation: <document>, arrayFilters: <array> },
+       { q: <query>, u: <update>, upsert: <boolean>, multi: <boolean>,
+         collation: <document>, arrayFilters: <array> },
+       ...
+    ],
+    ordered: <boolean>,
+    //注意:WriteConcern信息在外层runCommandImpl中通过opCtx->setWriteConcern(wcResult.getValue());保持到该请求对应得opCtx
+    writeConcern: { <write concern> },
+    bypassDocumentValidation: <boolean>
+ }
+
+
+ db.books.update(
+    { _id: 1 },
+    {
+      $inc: { stock: 5 },
+      $set: {
+        item: "ABC123",
+        "info.publisher": "2222",
+        tags: [ "software" ],
+        "ratings.1": { by: "xyz", rating: 3 }
+      }
+    }
+ )
+
  db.collection.update(query, update, options)
  db.collection.updateOne(xx)  updateOne也就是update中multi=false  只更新一条
  db.collection.updateMany(xx) updateOne也就是update中multi=true   更新所有满足条件的
@@ -200,6 +254,18 @@ private:
 
 /**
  * Parser for the entries in the 'deletes' array of a delete command.
+ {
+   delete: <collection>,
+   deletes: [
+      { q : <query>, limit : <integer>, collation: <document> },
+      { q : <query>, limit : <integer>, collation: <document> },
+      { q : <query>, limit : <integer>, collation: <document> },
+      ...
+   ],
+   ordered: <boolean>,
+   //注意:WriteConcern信息在外层runCommandImpl中通过opCtx->setWriteConcern(wcResult.getValue());保持到该请求对应得opCtx
+   writeConcern: { <write concern> }
+}
  */
 class DeleteOpEntry {
 public:
@@ -246,6 +312,14 @@ private:
 
 /**
  * Parser for the 'insert' command.
+ {
+   insert: <collection>,
+   documents: [ <document>, <document>, <document>, ... ],
+   ordered: <boolean>,
+   //注意:WriteConcern信息在外层runCommandImpl中通过opCtx->setWriteConcern(wcResult.getValue());保持到该请求对应得opCtx
+   writeConcern: { <write concern> },
+   bypassDocumentValidation: <boolean>
+}
  */ //也就是对应write_ops::Insert
 class Insert {  //BatchedCommandRequest._insertReq为该类型
 public:
@@ -296,31 +370,38 @@ protected:
 private:
     static const std::vector<StringData> _knownFields;
 
-    //db.collection
+    //也就是db.collection
     NamespaceString _nss;
     
     WriteCommandBase _writeCommandBase;
     //真正的文档在这里documents
     std::vector<mongo::BSONObj> _documents;
-    //库db
+    //库信息
     std::string _dbName;
+    //是否有documents
     bool _hasDocuments : 1;
     bool _hasDbName : 1;
 };
 
 /**
  * Parser for the 'update' command.
- db.collection.update(
-   <query>,
-   <update>,
-   {
-     upsert: <boolean>,
-     multi: <boolean>,
-     writeConcern: <document>,
-     collation: <document>,
-     arrayFilters: [ <filterdocument1>, ... ]
-   }
-)
+ {
+    update: <collection>,
+    updates: [
+       { q: <query>, u: <update>, upsert: <boolean>, multi: <boolean>,
+         collation: <document>, arrayFilters: <array> },
+       { q: <query>, u: <update>, upsert: <boolean>, multi: <boolean>,
+         collation: <document>, arrayFilters: <array> },
+       { q: <query>, u: <update>, upsert: <boolean>, multi: <boolean>,
+         collation: <document>, arrayFilters: <array> },
+       ...
+    ],
+    ordered: <boolean>,
+    //注意:WriteConcern信息在外层runCommandImpl中通过opCtx->setWriteConcern(wcResult.getValue());保持到该请求对应得opCtx
+    writeConcern: { <write concern> },
+    bypassDocumentValidation: <boolean>
+ }
+https://docs.mongodb.com/v3.6/reference/command/update/
 
 例如:
  db.products.update(
@@ -375,6 +456,7 @@ public:
     /**
      * An array of one or more update statements to perform.
      */
+    //performUpdates调用
     const std::vector<UpdateOpEntry>& getUpdates() const& { return _updates; }
     void getUpdates() && = delete;
     void setUpdates(std::vector<UpdateOpEntry> value) & { _updates = std::move(value); _hasUpdates = true; }
@@ -404,6 +486,19 @@ private:
 };
 
 /**
+ {
+    delete: <collection>,
+    deletes: [
+       { q : <query>, limit : <integer>, collation: <document> },
+       { q : <query>, limit : <integer>, collation: <document> },
+       { q : <query>, limit : <integer>, collation: <document> },
+       ...
+    ],
+    ordered: <boolean>,
+    //注意:WriteConcern信息在外层runCommandImpl中通过opCtx->setWriteConcern(wcResult.getValue());保持到该请求对应得opCtx
+    writeConcern: { <write concern> }
+ }
+
  * Parser for the 'delete' command.
  */  //也就是对应write_ops::Delete
 class Delete {  //BatchedCommandRequest._deleteReq为该类型
@@ -436,6 +531,7 @@ public:
     /**
      * An array of one or more delete statements to perform.
      */
+     //performDeletes调用
     const std::vector<DeleteOpEntry>& getDeletes() const& { return _deletes; }
     void getDeletes() && = delete;
     void setDeletes(std::vector<DeleteOpEntry> value) & { _deletes = std::move(value); _hasDeletes = true; }
@@ -452,10 +548,13 @@ private:
     static const std::vector<StringData> _knownFields;
 
 
+
+    //DB.COLLECTION信息
     NamespaceString _nss;
 
     
     WriteCommandBase _writeCommandBase;
+    //具体的delete内容在这里
     std::vector<DeleteOpEntry> _deletes;
     std::string _dbName;
     bool _hasDeletes : 1;
