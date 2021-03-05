@@ -86,6 +86,7 @@ public:
     }
     CompactCmd() : ErrmsgCommandDeprecated("compact") {}
 
+	//CompactCmd::errmsgRun
     virtual bool errmsgRun(OperationContext* opCtx,
                            const string& db,
                            const BSONObj& cmdObj,
@@ -165,6 +166,7 @@ public:
 
         log() << "compact " << nss.ns() << " begin, options: " << compactOptions;
 
+		//CollectionImpl::compact
         StatusWith<CompactStats> status = collection->compact(opCtx, &compactOptions);
         if (!status.isOK())
             return appendCommandStatus(result, status.getStatus());

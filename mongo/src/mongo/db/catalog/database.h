@@ -59,6 +59,7 @@ class Database {
 public:
     typedef StringMap<Collection*> CollectionMap;
 
+    //DatabaseImpl继承该类，具体接口实现在该类中
     class Impl {
     public:
         virtual ~Impl() = 0;

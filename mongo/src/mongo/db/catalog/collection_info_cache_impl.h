@@ -125,7 +125,7 @@ private:
     UpdateIndexData _indexedPaths;
 
     // A cache for query plans.  
-    //
+    //PlanCache缓存查询计划信息
     std::unique_ptr<PlanCache> _planCache;
 
     // Query settings.

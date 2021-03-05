@@ -104,7 +104,7 @@ private:
 };
 }
 
-
+//CompactCmd::errmsgRun  comapactÃüÁîÖĞµ÷ÓÃ
 StatusWith<CompactStats> CollectionImpl::compact(OperationContext* opCtx,
                                                  const CompactOptions* compactOptions) {
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns().toString(), MODE_X));

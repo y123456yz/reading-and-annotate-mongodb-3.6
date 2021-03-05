@@ -49,6 +49,27 @@ namespace {
  * Shared part of the implementation of the createCollection versions for replicated and regular
  * collection creation.
  */
+/* ²Î¿¼https://docs.mongodb.com/manual/reference/command/create/#:~:text=%20%20%20%20Field%20%20%20,in%20byte%20...%20%2011%20more%20rows%20
+{
+  create: <collection or view name>,
+  capped: <true|false>,
+  autoIndexId: <true|false>,
+  size: <max_size>,
+  max: <max_documents>,
+  storageEngine: <document>,
+  validator: <document>,
+  validationLevel: <string>,
+  validationAction: <string>,
+  indexOptionDefaults: <document>,
+  viewOn: <source>,
+  pipeline: <pipeline>,
+  collation: <document>,
+  writeConcern: <document>,
+  comment: <any>
+}
+
+*/
+
 Status createCollection(OperationContext* opCtx,
                         const NamespaceString& nss,
                         const BSONObj& cmdObj,

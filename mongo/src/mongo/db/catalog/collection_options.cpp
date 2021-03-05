@@ -100,6 +100,27 @@ Status CollectionOptions::validateForStorage() const {
     return CollectionOptions().parse(toBSON(), ParseKind::parseForStorage);
 }
 
+/* 参考https://docs.mongodb.com/manual/reference/command/create/#:~:text=%20%20%20%20Field%20%20%20,in%20byte%20...%20%2011%20more%20rows%20
+{
+  create: <collection or view name>,
+  capped: <true|false>,
+  autoIndexId: <true|false>,
+  size: <max_size>,
+  max: <max_documents>,
+  storageEngine: <document>,
+  validator: <document>,
+  validationLevel: <string>,
+  validationAction: <string>,
+  indexOptionDefaults: <document>,
+  viewOn: <source>,
+  pipeline: <pipeline>,
+  collation: <document>,
+  writeConcern: <document>,
+  comment: <any>
+}
+
+*/
+//创建集合相关的参数信息
 Status CollectionOptions::parse(const BSONObj& options, ParseKind kind) {
     *this = {};
 

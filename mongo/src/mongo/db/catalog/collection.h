@@ -179,7 +179,7 @@ public:
     enum ValidationLevel { OFF, MODERATE, STRICT_V };
     enum class StoreDeletedDoc { Off, On };
 
-    //CollectionImpl继承该类
+    //CollectionImpl继承该类，具体接口在该类实现
     class Impl : virtual CappedCallback, virtual UpdateNotifier {
     public:
         virtual ~Impl() = 0;
