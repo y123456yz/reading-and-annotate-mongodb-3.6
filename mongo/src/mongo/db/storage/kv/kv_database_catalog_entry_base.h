@@ -39,6 +39,8 @@ namespace mongo {
 class KVStorageEngine;
 class KVCollectionCatalogEntry;
 
+//KVDatabaseCatalogEntryBase
+
 class KVDatabaseCatalogEntryBase : public DatabaseCatalogEntry {
 public:
     KVDatabaseCatalogEntryBase(StringData db, KVStorageEngine* engine);

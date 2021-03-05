@@ -48,6 +48,7 @@ enum class DropCollectionSystemCollectionMode {
     kDisallowSystemCollectionDrops,
     kAllowSystemCollectionDrops
 };
+//É¾±í²Ù×÷
 Status dropCollection(OperationContext* opCtx,
                       const NamespaceString& collectionName,
                       BSONObjBuilder& result,

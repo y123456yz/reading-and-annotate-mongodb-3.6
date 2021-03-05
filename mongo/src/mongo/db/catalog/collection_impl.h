@@ -39,7 +39,7 @@ class IndexConsistency;
 class IndexObserver;
 class UUIDCatalog;
 
-
+//集合中文档相关操作实现
 class CollectionImpl final : virtual public Collection::Impl,
                              virtual CappedCallback,
                              virtual UpdateNotifier {

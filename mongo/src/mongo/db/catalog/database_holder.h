@@ -49,6 +49,7 @@ class OperationContext;
  */
 class DatabaseHolder {
 public:
+    //DatabaseHolderImpl类中具体实现
     class Impl {
     public:
         virtual ~Impl() = 0;
