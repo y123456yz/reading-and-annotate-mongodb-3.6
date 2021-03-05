@@ -296,6 +296,7 @@ Status KVStorageEngine::closeDatabase(OperationContext* opCtx, StringData db) {
     return Status::OK();
 }
 
+//DatabaseImpl::dropDatabase
 Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     KVDatabaseCatalogEntryBase* entry;
     {

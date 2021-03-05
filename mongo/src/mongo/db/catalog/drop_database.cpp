@@ -62,6 +62,7 @@ const WriteConcernOptions kDropDatabaseWriteConcern(WriteConcernOptions::kMajori
 /**
  * Removes database from catalog and writes dropDatabase entry to oplog.
  */
+//dropDatabase调用
 Status _finishDropDatabase(OperationContext* opCtx, const std::string& dbName, Database* db) {
     // If Database::dropDatabase() fails, we should reset the drop-pending state on Database.
     auto dropPendingGuard = MakeGuard([db, opCtx] { db->setDropPending(opCtx, false); });
@@ -80,6 +81,8 @@ Status _finishDropDatabase(OperationContext* opCtx, const std::string& dbName, D
 
 }  // namespace
 
+//
+//drop_database.cpp中的dropDatabase和DatabaseImpl::dropDatabase  dropDatabaseImpl什么区别？需要进一步分析
 Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
     uassert(ErrorCodes::IllegalOperation,
             "Cannot drop a database in read-only mode",
@@ -126,6 +129,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
         // on Database.
         auto dropPendingGuard = MakeGuard([&db, opCtx] { db->setDropPending(opCtx, false); });
 
+		//删除DB下面所有的表
         for (auto collection : *db) {
             const auto& nss = collection->ns();
             if (nss.isDropPendingNamespace() && replCoord->isReplEnabled() &&

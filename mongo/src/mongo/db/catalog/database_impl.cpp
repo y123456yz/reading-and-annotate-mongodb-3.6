@@ -872,6 +872,7 @@ const DatabaseCatalogEntry* DatabaseImpl::getDatabaseCatalogEntry() const {
     return _dbEntry;
 }
 
+//drop_database.cpp中的dropDatabase和DatabaseImpl::dropDatabase  dropDatabaseImpl什么区别？需要进一步分析
 void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
     invariant(db);
 
@@ -895,6 +896,7 @@ void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
 
     auto const storageEngine = serviceContext->getGlobalStorageEngine();
     writeConflictRetry(opCtx, "dropDatabase", name, [&] {
+		//
         storageEngine->dropDatabase(opCtx, name).transitional_ignore();
     });
 }

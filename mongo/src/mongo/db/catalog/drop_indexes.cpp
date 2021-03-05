@@ -144,6 +144,8 @@ Status wrappedRun(OperationContext* opCtx,
 }
 }  // namespace
 
+//CmdReIndex::run
+//É¾Ë÷Òý
 Status dropIndexes(OperationContext* opCtx,
                    const NamespaceString& nss,
                    const BSONObj& idxDescriptor,

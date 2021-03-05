@@ -55,6 +55,7 @@ namespace mongo {
  * DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象
  * Database代表一个DB库，Collection代表Mongodb里的一个集合
  */
+//db库相关的操作接口，例如
 class Database {
 public:
     typedef StringMap<Collection*> CollectionMap;

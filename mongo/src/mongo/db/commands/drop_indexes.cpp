@@ -84,7 +84,8 @@ public:
     }
 
     CmdDropIndexes() : BasicCommand("dropIndexes", "deleteIndexes") {}
-    bool run(OperationContext* opCtx,
+	//CmdReIndex::run
+	bool run(OperationContext* opCtx,
              const string& dbname,
              const BSONObj& jsobj,
              BSONObjBuilder& result) {
@@ -113,7 +114,7 @@ public:
         out->push_back(Privilege(parseResourcePattern(dbname, cmdObj), actions));
     }
     CmdReIndex() : ErrmsgCommandDeprecated("reIndex") {}
-
+	
     bool errmsgRun(OperationContext* opCtx,
                    const string& dbname,
                    const BSONObj& jsobj,

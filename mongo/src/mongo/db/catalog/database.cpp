@@ -53,12 +53,14 @@ auto Database::makeImpl(Database* const this_,
 
 void Database::TUHook::hook() noexcept {}
 
+//drop_database.cpp中的dropDatabase和DatabaseImpl::dropDatabase  dropDatabaseImpl什么区别？需要进一步分析
 namespace {
 stdx::function<decltype(Database::dropDatabase)> dropDatabaseImpl;
 }
 
 void Database::dropDatabase(OperationContext* const opCtx, Database* const db) {
-    return dropDatabaseImpl(opCtx, db);
+	//DatabaseImpl::dropDatabase
+	return dropDatabaseImpl(opCtx, db);
 }
 
 //InitializeDropDatabaseImpl中初始化调用
