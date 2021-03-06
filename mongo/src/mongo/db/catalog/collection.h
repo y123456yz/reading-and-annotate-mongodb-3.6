@@ -174,7 +174,15 @@ private:
 * Collection代表Mongodb里的一个集合，其提供关于文档增删改查的所有接口，这些接口最终会调用RecordStore里的相应接口实现。
 */ //_getOrCreateCollectionInstance中查找构造类
 //通过AutoGetCollection相关接口获取对应Collection，可以参考insertBatchAndHandleErrors
-//初始化构造赋值见AutoGetCollection::AutoGetCollection,
+//初始化构造赋值见AutoGetCollection::AutoGetCollection, 
+//DatabaseImpl::_getOrCreateCollectionInstance  AutoGetCollection::AutoGetCollection中调用获取collection
+//DatabaseImpl::createCollection建表  或者DatabaseImpl::init中调用_getOrCreateCollectionInstance真正生成collection信息
+
+/*
+//DatabaseHolderImpl::openDb生成一个Database,生成的Database全部保存到DatabaseHolderImpl._dbs
+//一个库下面的所有表Collection保存到DatabaseImpl._collections map表中
+*/
+
 //AutoGetCollection._coll成员为该类型
 class Collection final : CappedCallback, UpdateNotifier {
 public:
@@ -371,6 +379,7 @@ public:
                                CollectionCatalogEntry* const details,  // does not own
                                RecordStore* const recordStore,         // does not own
                                DatabaseCatalogEntry* const dbce)       // does not own
+        //通过makeImpl接口生成CollectionImpl，然后赋值给_pimpl
         : _pimpl(makeImpl(this, opCtx, fullNS, uuid, details, recordStore, dbce)) {
         this->_impl().init(opCtx);
     }
@@ -805,6 +814,7 @@ private:
         return *this->_pimpl;
     }
 
+    //也就是CollectionImpl
     std::unique_ptr<Impl> _pimpl;
 
     friend class DatabaseImpl;

@@ -106,6 +106,8 @@ public:
     };
 
 private:
+    //也就是IndexCatalogEntry::makeImpl
+    //完成impl初始化，也就是IndexCatalogEntryImpl
     static std::unique_ptr<Impl> makeImpl(IndexCatalogEntry* this_,
                                           OperationContext* opCtx,
                                           StringData ns,
@@ -266,6 +268,7 @@ private:
         return *this->_pimpl;
     }
 
+    //也就是IndexCatalogEntryImpl
     std::unique_ptr<Impl> _pimpl;
 };
 

@@ -61,6 +61,7 @@ MONGO_INITIALIZER_WITH_PREREQUISITES(InitializeDbHolderimpl, ("InitializeDatabas
     return Status::OK();
 }
 
+
 MONGO_INITIALIZER(InitializeDatabaseHolderFactory)(InitializerContext* const) {
     DatabaseHolder::registerFactory([] { return stdx::make_unique<DatabaseHolderImpl>(); });
     return Status::OK();
@@ -94,12 +95,16 @@ StringData _todb(StringData ns) {
 
 }  // namespace
 
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
 
+//AutoGetDb::AutoGetDb  AutoGetOrCreateDb::AutoGetOrCreateDb调用
 Database* DatabaseHolderImpl::get(OperationContext* opCtx, StringData ns) const {
     const StringData db = _todb(ns);
     invariant(opCtx->lockState()->isDbLockedForMode(db, MODE_IS));
 
     stdx::lock_guard<SimpleMutex> lk(_m);
+	//所有的DB保存到了  
     DBs::const_iterator it = _dbs.find(db);
     if (it != _dbs.end()) {
         return it->second;
@@ -124,6 +129,7 @@ std::set<std::string> DatabaseHolderImpl::getNamesWithConflictingCasing(StringDa
     return _getNamesWithConflictingCasing_inlock(name);
 }
 
+//AutoGetOrCreateDb::AutoGetOrCreateDb调用，生成Database
 Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, bool* justCreated) {
     const StringData dbname = _todb(ns);
     invariant(opCtx->lockState()->isDbLockedForMode(dbname, MODE_X));

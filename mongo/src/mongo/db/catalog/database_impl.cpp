@@ -79,6 +79,7 @@
 
 namespace mongo {
 namespace {
+	//InitializeDatabaseFactory完成DatabaseImpl，真正在
 MONGO_INITIALIZER(InitializeDatabaseFactory)(InitializerContext* const) {
     Database::registerFactory([](Database* const this_,
                                  OperationContext* const opCtx,
@@ -648,21 +649,24 @@ void DatabaseImpl::_clearCollectionCache(OperationContext* opCtx,
     _collections.erase(it);
 }
 
-//DatabaseImpl::_getOrCreateCollectionInstance中调用
+//DatabaseImpl::_getOrCreateCollectionInstance  AutoGetCollection::AutoGetCollection中调用
 Collection* DatabaseImpl::getCollection(OperationContext* opCtx, StringData ns) const {
     NamespaceString nss(ns);
     invariant(_name == nss.db());
     return getCollection(opCtx, nss);
 }
 
-//DatabaseImpl::getCollection中调用
+//DatabaseImpl::_getOrCreateCollectionInstance  AutoGetCollection::AutoGetCollection中调用
+
+//从_collections缓存中找出nss对应的表，DatabaseImpl::createCollection创建collection的时候添加到_collections数组
 Collection* DatabaseImpl::getCollection(OperationContext* opCtx, const NamespaceString& nss) const {
     dassert(!cc().getOperationContext() || opCtx == cc().getOperationContext());
     CollectionMap::const_iterator it = _collections.find(nss.ns());
-
+	
     if (it != _collections.end() && it->second) {
         Collection* found = it->second;
         if (enableCollectionUUIDs) {
+			//更新NamespaceUUIDCache
             NamespaceUUIDCache& cache = NamespaceUUIDCache::get(opCtx);
             if (auto uuid = found->uuid())
                 cache.ensureNamespaceInCache(nss, uuid.get());
@@ -833,6 +837,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
 	//查找collection类，找到直接返回，没找到构造一个新的collection类
     Collection* collection = _getOrCreateCollectionInstance(opCtx, nss);
     invariant(collection);
+	//保存到_collections数组
     _collections[ns] = collection; //ns集合对应collection
 
     BSONObj fullIdIndexSpec;

@@ -47,11 +47,24 @@ namespace {
 MONGO_FP_DECLARE(setAutoGetCollectionWait);
 }  // namespace
 
-AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, LockMode mode)
-    : _dbLock(opCtx, ns, mode), _db(dbHolder().get(opCtx, ns)) {}
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
 
+AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, LockMode mode)
+    : _dbLock(opCtx, ns, mode), 
+      //DatabaseHolderImpl::get
+      _db(dbHolder().get(opCtx, ns)) {}
+
+//AutoGetDb::AutoGetDb从db数组获取db信息
 AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, Lock::DBLock lock)
-    : _dbLock(std::move(lock)), _db(dbHolder().get(opCtx, ns)) {}
+    : _dbLock(std::move(lock)), 
+	//DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+	_db(dbHolder().get(opCtx, ns)) {}
+
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+
+
 //insertBatchAndHandleErrors会使用
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
@@ -60,6 +73,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
     : _viewMode(ViewMode::kViewsForbidden),
       _autoDb(opCtx, nss.db(), Lock::DBLock(opCtx, nss.db(), modeAll)),
       _collLock(opCtx->lockState(), nss.ns(), modeAll),
+      //通过UUIDCatalog::lookupCollectionByUUID判断uuid是否存在，可能返回为NULL，表示该uuid不存在
       _coll(UUIDCatalog::get(opCtx).lookupCollectionByUUID(uuid)) {
     // Wait for a configured amount of time after acquiring locks if the failpoint is enabled.
     MONGO_FAIL_POINT_BLOCK(setAutoGetCollectionWait, customWait) {
@@ -112,8 +126,14 @@ AutoGetCollectionOrView::AutoGetCollectionOrView(OperationContext* opCtx,
                 ? _autoColl.getDb()->getViewCatalog()->lookup(opCtx, nss.ns())
                 : nullptr) {}
 
+
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+
 AutoGetOrCreateDb::AutoGetOrCreateDb(OperationContext* opCtx, StringData ns, LockMode mode)
-    : _dbLock(opCtx, ns, mode), _db(dbHolder().get(opCtx, ns)) {
+    : _dbLock(opCtx, ns, mode), 
+		//DatabaseHolderImpl::get
+		_db(dbHolder().get(opCtx, ns)) {
     invariant(mode == MODE_IX || mode == MODE_X);
     _justCreated = false;
     // If the database didn't exist, relock in MODE_X
@@ -121,6 +141,7 @@ AutoGetOrCreateDb::AutoGetOrCreateDb(OperationContext* opCtx, StringData ns, Loc
         if (mode != MODE_X) {
             _dbLock.relockWithMode(MODE_X);
         }
+		//	//DatabaseHolderImpl::openDb
         _db = dbHolder().openDb(opCtx, ns);
         _justCreated = true;
     }

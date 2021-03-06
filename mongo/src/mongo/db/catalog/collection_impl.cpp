@@ -78,7 +78,10 @@ namespace mongo {
 
 namespace {
 MONGO_INITIALIZER(InitializeCollectionFactory)(InitializerContext* const) {
+	//注册Collection的impl接口
     Collection::registerFactory(
+    
+    	//这里面是注册内容，在Collection::makeImpl中执行
         [](Collection* const _this,
            OperationContext* const opCtx,
            const StringData fullNS,
@@ -89,6 +92,7 @@ MONGO_INITIALIZER(InitializeCollectionFactory)(InitializerContext* const) {
             return stdx::make_unique<CollectionImpl>(
                 _this, opCtx, fullNS, uuid, details, recordStore, dbce);
         });
+	
     return Status::OK();
 }
 
@@ -142,7 +146,7 @@ using std::vector;
 
 using logger::LogComponent;
 
-//上面的InitializeCollectionFactory注册
+//上面的InitializeCollectionFactory注册,在Collection::makeImpl中执行
 CollectionImpl::CollectionImpl(Collection* _this_init,
                                OperationContext* opCtx,
                                StringData fullNS,

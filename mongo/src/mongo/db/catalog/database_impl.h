@@ -296,6 +296,8 @@ private:
     // This variable may only be read/written while the database is locked in MODE_X.
     std::unique_ptr<PseudoRandom> _uniqueCollectionNamespacePseudoRandom;
 
+    //_collections存储该DB下面所有的表
+    //从_collections缓存中找出nss对应的表，DatabaseImpl::createCollection创建collection的时候添加到_collections数组
     CollectionMap _collections;
 
     DurableViewCatalogImpl _durableViews;  // interface for system.views operations

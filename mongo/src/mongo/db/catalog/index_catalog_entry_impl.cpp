@@ -53,8 +53,11 @@
 
 namespace mongo {
 namespace {
+	//IndexCatalogEntryImpl注册函数
 MONGO_INITIALIZER(InitializeIndexCatalogEntryFactory)(InitializerContext* const) {
-    IndexCatalogEntry::registerFactory([](IndexCatalogEntry* const this_,
+    IndexCatalogEntry::registerFactory(
+		//真正的IndexCatalogEntryImpl生成构造
+		[](IndexCatalogEntry* const this_,
                                           OperationContext* const opCtx,
                                           const StringData ns,
                                           CollectionCatalogEntry* const collection,

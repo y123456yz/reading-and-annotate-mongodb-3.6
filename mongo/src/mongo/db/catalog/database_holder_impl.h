@@ -47,6 +47,9 @@ class OperationContext;
 /**
  * Registry of opened databases.
  */
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+ 
 class DatabaseHolderImpl : public DatabaseHolder::Impl {
 public:
     DatabaseHolderImpl() = default;
@@ -93,7 +96,8 @@ private:
 
     typedef StringMap<Database*> DBs;
     mutable SimpleMutex _m;
-    DBs _dbs;
+    //所有db保存到这里，通过DatabaseHolderImpl::openDb创建后保存到这里
+    DBs _dbs; 
 };
 }  // namespace mongo
 

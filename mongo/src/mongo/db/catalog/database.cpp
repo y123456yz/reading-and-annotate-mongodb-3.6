@@ -44,11 +44,13 @@ void Database::registerFactory(decltype(factory) newFactory) {
     factory = std::move(newFactory);
 }
 
+//Database初始化构造调用
 auto Database::makeImpl(Database* const this_,
                         OperationContext* const opCtx,
                         const StringData name,
                         DatabaseCatalogEntry* const dbEntry) -> std::unique_ptr<Impl> {
-    return factory(this_, opCtx, name, dbEntry);
+	//也就是registerFactory注册的回调，该回调生成类DatabaseImpl
+	return factory(this_, opCtx, name, dbEntry);
 }
 
 void Database::TUHook::hook() noexcept {}

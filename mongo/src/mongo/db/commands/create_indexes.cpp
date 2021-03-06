@@ -267,6 +267,7 @@ public:
 
         Database* db = dbHolder().get(opCtx, ns.db());
         if (!db) {
+			//DB不存在则创建一个
             db = dbHolder().openDb(opCtx, ns.db());
         }
 

@@ -75,10 +75,12 @@ namespace {
 stdx::function<Collection::factory_function_type> factory;
 }  // namespace
 
+//InitializeCollectionFactory中调用
 void Collection::registerFactory(decltype(factory) newFactory) {
     factory = std::move(newFactory);
 }
 
+//生成CollectionImpl类，Collection初始化构造的时候调用
 auto Collection::makeImpl(Collection* _this,
                           OperationContext* const opCtx,
                           const StringData fullNS,
@@ -86,7 +88,9 @@ auto Collection::makeImpl(Collection* _this,
                           CollectionCatalogEntry* const details,
                           RecordStore* const recordStore,
                           DatabaseCatalogEntry* const dbce) -> std::unique_ptr<Impl> {
-    return factory(_this, opCtx, fullNS, uuid, details, recordStore, dbce);
+	//通过这里调用执行factory接口，也就是InitializeCollectionFactory中Collection::registerFactory{}函数体
+	//从而完成CollectionImpl生成过程
+	return factory(_this, opCtx, fullNS, uuid, details, recordStore, dbce);
 }
 
 void Collection::TUHook::hook() noexcept {}

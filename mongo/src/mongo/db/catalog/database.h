@@ -55,7 +55,11 @@ namespace mongo {
  * DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象
  * Database代表一个DB库，Collection代表Mongodb里的一个集合
  */
-//db库相关的操作接口，例如
+//AutoGetDb._db和AutoGetOrCreateDb._db成员为该类型
+/*
+//DatabaseHolderImpl::openDb生成一个DB,生成的db全部保存到DatabaseHolderImpl._dbs
+//一个库下面的所有表保存到DatabaseImpl._collections map表中
+*/
 class Database {
 public:
     typedef StringMap<Collection*> CollectionMap;
@@ -188,6 +192,7 @@ public:
     explicit inline Database(OperationContext* const opCtx,
                              const StringData name,
                              DatabaseCatalogEntry* const dbEntry)
+         //注册_pimpl为DatabaseImpl(实际上通过Database::makeImpl生成)
         : _pimpl(makeImpl(this, opCtx, name, dbEntry)) {
         this->_impl().init(opCtx);
     }
@@ -199,6 +204,7 @@ public:
     inline Database& operator=(Database&&) = delete;
 
     inline iterator begin() const {
+    //DatabaseImpl::begin 
         return iterator(this->_impl().collections().begin());
     }
 
@@ -208,6 +214,7 @@ public:
 
     // closes files and other cleanup see below.
     inline void close(OperationContext* const opCtx, const std::string& reason) {
+    //DatabaseImpl::close 
         return this->_impl().close(opCtx, reason);
     }
 
@@ -216,6 +223,7 @@ public:
     }
 
     inline void clearTmpCollections(OperationContext* const opCtx) {
+     //DatabaseImpl::clearTmpCollections 
         return this->_impl().clearTmpCollections(opCtx);
     }
 
@@ -230,10 +238,12 @@ public:
     }
 
     inline int getProfilingLevel() const {
+    //DatabaseImpl::getProfilingLevel 
         return this->_impl().getProfilingLevel();
     }
 
     inline const char* getProfilingNS() const {
+    //DatabaseImpl::getProfilingNS 
         return this->_impl().getProfilingNS();
     }
 
@@ -246,6 +256,7 @@ public:
      * The database must be locked in MODE_X when calling this function.
      */
     inline void setDropPending(OperationContext* opCtx, bool dropPending) {
+    //DatabaseImpl::setDropPending 
         this->_impl().setDropPending(opCtx, dropPending);
     }
 
@@ -254,16 +265,19 @@ public:
      * The database must be locked in MODE_X when calling this function.
      */
     inline bool isDropPending(OperationContext* opCtx) const {
+    //DatabaseImpl::isDropPending 
         return this->_impl().isDropPending(opCtx);
     }
 
     inline void getStats(OperationContext* const opCtx,
                          BSONObjBuilder* const output,
                          const double scale = 1) {
+                         //DatabaseImpl::getStats 
         return this->_impl().getStats(opCtx, output, scale);
     }
 
     inline const DatabaseCatalogEntry* getDatabaseCatalogEntry() const {
+    //DatabaseImpl::getDatabaseCatalogEntry  
         return this->_impl().getDatabaseCatalogEntry();
     }
 
@@ -277,6 +291,7 @@ public:
     inline Status dropCollection(OperationContext* const opCtx,
                                  const StringData fullns,
                                  repl::OpTime dropOpTime = {}) {
+                                 //DatabaseImpl::dropCollection  
         return this->_impl().dropCollection(opCtx, fullns, dropOpTime);
     }
     inline Status dropCollectionEvenIfSystem(OperationContext* const opCtx,
@@ -286,6 +301,7 @@ public:
     }
 
     inline Status dropView(OperationContext* const opCtx, const StringData fullns) {
+    //DatabaseImpl::dropView       
         return this->_impl().dropView(opCtx, fullns);
     }
 
@@ -303,6 +319,7 @@ public:
     inline Status createView(OperationContext* const opCtx,
                              const StringData viewName,
                              const CollectionOptions& options) {
+                    //DatabaseImpl::createView         
         return this->_impl().createView(opCtx, viewName, options);
     }
 
@@ -311,10 +328,12 @@ public:
      */
     //AutoGetCollection::AutoGetCollection
     inline Collection* getCollection(OperationContext* opCtx, const StringData ns) const {
+        //DatabaseImpl::getCollection
         return this->_impl().getCollection(opCtx, ns);
     }
 
     inline Collection* getCollection(OperationContext* opCtx, const NamespaceString& ns) const {
+        //DatabaseImpl::getCollection
         return this->_impl().getCollection(opCtx, ns.ns());
     }
 
@@ -323,11 +342,12 @@ public:
      * must be holding a database lock to use this accessor.
      */
     inline ViewCatalog* getViewCatalog() {
+        //DatabaseImpl::getViewCatalog
         return this->_impl().getViewCatalog();
     }
 
     inline Collection* getOrCreateCollection(OperationContext* const opCtx,
-                                             const NamespaceString& nss) {
+        //DatabaseImpl::getOrCreateCollection                                     const NamespaceString& nss) {
         return this->_impl().getOrCreateCollection(opCtx, nss);
     }
 
@@ -335,6 +355,7 @@ public:
                                    const StringData fromNS,
                                    const StringData toNS,
                                    const bool stayTemp) {
+        //DatabaseImpl::renameCollection
         return this->_impl().renameCollection(opCtx, fromNS, toNS, stayTemp);
     }
 
@@ -358,10 +379,12 @@ public:
     // static Status validateDBName( StringData dbname );
 
     inline const NamespaceString& getSystemIndexesName() const {
+    //DatabaseImpl::getSystemIndexesName
         return this->_impl().getSystemIndexesName();
     }
 
     inline const std::string& getSystemViewsName() const {
+    //DatabaseImpl::getSystemViewsName
         return this->_impl().getSystemViewsName();
     }
 
@@ -377,6 +400,7 @@ public:
      */
     inline StatusWith<NamespaceString> makeUniqueCollectionNamespace(
         OperationContext* opCtx, StringData collectionNameModel) {
+        //DatabaseImpl::makeUniqueCollectionNamespace
         return this->_impl().makeUniqueCollectionNamespace(opCtx, collectionNameModel);
     }
 

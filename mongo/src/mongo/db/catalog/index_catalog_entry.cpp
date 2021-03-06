@@ -42,21 +42,26 @@ namespace {
 stdx::function<IndexCatalogEntry::factory_function_type> factory;
 }  // namespace
 
+//InitializeIndexCatalogEntryFactory中调用，注册newFactory，也就是
+//InitializeIndexCatalogEntryFactory函数体中的内容
 void IndexCatalogEntry::registerFactory(decltype(factory) newFactory) {
     factory = std::move(newFactory);
 }
 
+//下面的IndexCatalogEntry::IndexCatalogEntry初始化构造调用
 auto IndexCatalogEntry::makeImpl(IndexCatalogEntry* const this_,
                                  OperationContext* const opCtx,
                                  const StringData ns,
                                  CollectionCatalogEntry* const collection,
                                  std::unique_ptr<IndexDescriptor> descriptor,
                                  CollectionInfoCache* const infoCache) -> std::unique_ptr<Impl> {
-    return factory(this_, opCtx, ns, collection, std::move(descriptor), infoCache);
+	//运行上面IndexCatalogEntry::registerFactory注册的factory
+	return factory(this_, opCtx, ns, collection, std::move(descriptor), infoCache);
 }
 
 void IndexCatalogEntry::TUHook::hook() noexcept {}
 
+//IndexCatalogEntry初始化构造
 IndexCatalogEntry::IndexCatalogEntry(OperationContext* opCtx,
                                      StringData ns,
                                      CollectionCatalogEntry* collection,

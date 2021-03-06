@@ -123,6 +123,11 @@ private:
      * not all databases are guaranteed to have an ordering in it.
      */
     StringMap<std::vector<CollectionUUID>> _orderedCollections;
+    //UUIDCatalog::registerUUIDCatalogEntry添加uuid及collection到_catalog，lookupCollectionByUUID中查找
+
+    
+    //AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+    //AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
     mongo::stdx::unordered_map<CollectionUUID, Collection*, CollectionUUID::Hash> _catalog;
 };
 

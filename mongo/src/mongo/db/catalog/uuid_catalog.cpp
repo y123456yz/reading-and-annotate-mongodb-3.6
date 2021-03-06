@@ -94,7 +94,12 @@ void UUIDCatalog::onCloseDatabase(Database* db) {
         }
     }
 }
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
 
+
+//UUIDCatalog::registerUUIDCatalogEntry添加uuid及collection到_catalog，lookupCollectionByUUID中查找
+//AutoGetCollection::AutoGetCollection调用
 Collection* UUIDCatalog::lookupCollectionByUUID(CollectionUUID uuid) const {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
     auto foundIt = _catalog.find(uuid);

@@ -53,8 +53,15 @@ class Collection;
  * It is guaranteed that the lock will be released when this object goes out of scope, therefore
  * the database reference returned by this class should not be retained.
  */ 
+ 
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+
+ 
 //AutoGetCollection._autoDb成员为该类型,
 //AutoGetCollection::AutoGetCollection中初始化构造
+
+//注意AutoGetOrCreateDb和AutoGetDb的区别
 class AutoGetDb {
     MONGO_DISALLOW_COPYING(AutoGetDb);
 
@@ -68,7 +75,7 @@ public:
 
 private:
     const Lock::DBLock _dbLock;
-    Database* const _db;
+    Database* const _db; 
 };
 
 /**
@@ -82,6 +89,9 @@ private:
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * the database and the collection references returned by this class should not be retained.
  */ 
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+
 //AutoGetCollectionOrView._autoColl为该类型
 //使用见insertBatchAndHandleErrors，可以参考是如何通过AutoGetCollection获取collection的
 class AutoGetCollection {
@@ -143,7 +153,7 @@ private:
     //表锁
     const Lock::CollectionLock _collLock;
     //集合信息 
-    Collection* const _coll; //集合名
+    Collection* const _coll; 
 
     friend class AutoGetCollectionOrView;
     friend class AutoGetCollectionForRead;
@@ -206,6 +216,13 @@ private:
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * the database reference returned by this class should not be retained.
  */ //见makeCollection
+
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组查找uuid
+
+ 
+ //注意AutoGetOrCreateDb和AutoGetDb的区别
+ //makeCollection中创建使用
 class AutoGetOrCreateDb {
     MONGO_DISALLOW_COPYING(AutoGetOrCreateDb);
 
@@ -226,7 +243,7 @@ public:
 
 private:
     Lock::DBLock _dbLock;  // not const, as we may need to relock for implicit create
-    Database* _db;
+    Database* _db;    
     bool _justCreated;
 };
 
