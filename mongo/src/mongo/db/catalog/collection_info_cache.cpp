@@ -39,12 +39,15 @@ stdx::function<CollectionInfoCache::factory_function_type> factory;
 
 CollectionInfoCache::Impl::~Impl() = default;
 
+//InitializeCollectionInfoCacheFactory中完成初始化注册
 void CollectionInfoCache::registerFactory(decltype(factory) newFactory) {
     factory = std::move(newFactory);
 }
 
 auto CollectionInfoCache::makeImpl(Collection* const collection, const NamespaceString& ns)
     -> std::unique_ptr<Impl> {
+    //也就是调用InitializeCollectionInfoCacheFactory
+    //注册Impl为CollectionInfoCacheImpl
     return factory(collection, ns);
 }
 

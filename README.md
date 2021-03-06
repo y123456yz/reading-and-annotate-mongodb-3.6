@@ -160,28 +160,28 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [toplatency_server_status_sectionh](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/stats/latency_server_status_section.h) 
 
 
-#### OpMsgRequest和写write_ops:(insert、update、delete)转换操作:
+#### OpMsgRequest和写write_ops:(insert、update、delete)转换操作(100%注释): :
  *   [write_ops_gen.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.cpp) 
  *   [write_ops_gen.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.h) 
 
 #### write写模块:  
-###### write处理入口
+###### write处理入口(100%注释): 
  *   [write_commands_common.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands_common.cpp) 
  *   [write_commands_common.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands_common.h) 
  *   [write_commands.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/commands/write_commands/write_commands.cpp) 
   
-###### OpMsgRequest和写write_ops:(insert、update、delete)转换操作:
+###### OpMsgRequest和写write_ops:(insert、update、delete)转换操作(100%注释): :
  *   [write_ops_parsers.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_parsers.cpp) 
  *   [write_ops_parsers.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_parsers.h) 
  *   [write_ops_gen.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.cpp) 
  *   [write_ops_gen.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/ops/write_ops_gen.h) 
    
-###### 增删改处理:
+###### 增删改处理(100%注释): :
  *   [write_ops_exec.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_exec.cpp) 
  *   [write_ops_exec.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/ops/write_ops_exec.h) 
   
 #### query请求处理模块:  
-###### query_request请求解析和canonical_query规范化转换操作:
+###### query_request请求解析和canonical_query规范化转换操作(核心流程注释完毕): 
  *   [query_request.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_request.cpp) 
  *   [query_request.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_request.h) 
  *   [canonical_query.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/canonical_query.cpp) 
@@ -189,7 +189,7 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [parsed_projection.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/parsed_projection.cpp) 
  *   [parsed_projection.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/parsed_projection.h) 
  
-###### MatchExpression tree生成及优化过程:
+###### MatchExpression tree生成及优化过程(核心流程注释完毕): 
  *   [expression_parser.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_parser.cpp) 
  *   [expression_parser.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_parser.h) 
  *   [expression.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression.cpp) 
@@ -197,23 +197,23 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [expression_tree.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_tree.cpp) 
  *   [expression_tree.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/matcher/expression_tree.h) 
 
-###### get_executor获取PlanExecutor:
+###### get_executor获取PlanExecutor(核心流程注释完毕): 
  *   [get_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.cpp) 
  *   [get_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.h) 
 
-###### QueryPlannerIXSelect实现MatchExpression tree相关node关联对应RelevantTag:
+###### QueryPlannerIXSelect实现MatchExpression tree相关node关联对应RelevantTag(核心流程注释完毕): 
  *   [planner_ixselect.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_ixselect.cpp) 
  *   [planner_ixselect.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_ixselect.h) 
 
-###### plan_enumerator轮询枚举每个查询所有的候选索引信息:
+###### plan_enumerator轮询枚举每个查询所有的候选索引信息(核心流程注释完毕): 
  *   [plan_enumerator.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_enumerator.cpp) 
  *   [plan_enumerator.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_enumerator.h) 
 
-###### index_tag相关:
+###### index_tag相关(核心流程注释完毕): 
  *   [index_tag.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/index_tag.cpp) 
  *   [index_tag.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/index_tag.h) 
 
-###### 生成QuerySolutionNode tree及querysolution:
+###### 生成QuerySolutionNode tree及querysolution(核心流程注释完毕): 
  *   [planner_access.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_access.cpp) 
  *   [planner_access.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_access.h) 
  *   [planner_analysis.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/planner_analysis.cpp) 
@@ -221,11 +221,11 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [query_planner.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_planner.cpp) 
  *   [query_planner.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/query_planner.h) 
 
-###### get_executor根据querysolurion生成PlanStage:
+###### get_executor根据querysolurion生成PlanStage(核心流程注释完毕): 
  *   [get_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.cpp) 
  *   [get_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.h) 
  
-###### PlanStage:
+###### PlanStage(核心流程注释完毕): 
  *   [plan_stage.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stage.cpp) 
  *   [plan_stage.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stage.h) 
  *   [plan_stats.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/plan_stats.cpp) 
@@ -262,19 +262,19 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [delete.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/delete.h) 
  *   [......](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/)  
 
-###### plan_ranker对每个候选solution打分，选出最优索引:
+###### plan_ranker对每个候选solution打分，选出最优索引(核心流程注释完毕): 
  *   [plan_ranker.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_ranker.cpp) 
  *   [plan_ranker.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_ranker.h) 
  
-###### get_executor根据querysolurion生成PlanStage:
+###### get_executor根据querysolurion生成PlanStage(核心流程注释完毕): 
  *   [get_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.cpp) 
  *   [get_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/get_executor.h) 
  
-###### plan_executor执行器:
+###### plan_executor执行器(核心流程注释完毕): 
  *   [plan_executor.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_executor.cpp) 
  *   [plan_executor.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_executor.h) 
  
-###### plan_cache plan缓存:
+###### plan_cache plan缓存(核心流程注释完毕): 
  *   [plan_cache.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_cache.cpp) 
  *   [plan_cache.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_cache.h) 
  *   [plan_cache_commands.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/commands/plan_cache_commands.cpp) 

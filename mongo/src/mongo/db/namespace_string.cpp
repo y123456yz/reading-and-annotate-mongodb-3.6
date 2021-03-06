@@ -240,6 +240,7 @@ StatusWith<repl::OpTime> NamespaceString::getDropPendingNamespaceOpTime() const 
     return repl::OpTime(Timestamp(Seconds(seconds), increment), term);
 }
 
+//重命名后的"库.表"字符串长度有大小限制
 Status NamespaceString::checkLengthForRename(
     const std::string::size_type longestIndexNameLength) const {
     auto longestAllowed =

@@ -121,6 +121,7 @@ public:
      * Note that these values are derived from the mmap_v1 implementation and that
      * is the only reason they are constrained as such.
      */
+    //db.collection最大字符串长度，也就是库+表总字符串长度
     enum MaxNsLenValue {
         // Maximum possible length of name any namespace, including special ones like $extra.
         // This includes rum for the NUL byte so it can be used when sizing buffers.

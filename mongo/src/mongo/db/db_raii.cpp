@@ -77,6 +77,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
     : AutoGetCollection(opCtx, nss, modeColl, viewMode, Lock::DBLock(opCtx, nss.db(), modeDB)) {}
 
 //上面的AutoGetCollection::AutoGetCollection调用
+//库表的初始化赋值都在这里
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
                                      LockMode modeColl,

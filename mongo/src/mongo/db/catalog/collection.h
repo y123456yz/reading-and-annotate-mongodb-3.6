@@ -174,6 +174,8 @@ private:
 * Collection代表Mongodb里的一个集合，其提供关于文档增删改查的所有接口，这些接口最终会调用RecordStore里的相应接口实现。
 */ //_getOrCreateCollectionInstance中查找构造类
 //通过AutoGetCollection相关接口获取对应Collection，可以参考insertBatchAndHandleErrors
+//初始化构造赋值见AutoGetCollection::AutoGetCollection,
+//AutoGetCollection._coll成员为该类型
 class Collection final : CappedCallback, UpdateNotifier {
 public:
     enum ValidationAction { WARN, ERROR_V };

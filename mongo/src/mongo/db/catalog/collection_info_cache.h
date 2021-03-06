@@ -78,6 +78,7 @@ public:
 
     static void registerFactory(stdx::function<factory_function_type> factory);
 
+    //CollectionInfoCache类初始化构造
     explicit inline CollectionInfoCache(Collection* const collection, const NamespaceString& ns)
         : _pimpl(makeImpl(collection, ns)) {}
 
@@ -159,6 +160,8 @@ public:
         return this->_impl().notifyOfQuery(opCtx, indexesUsed);
     }
 
+    //上面的explicit inline CollectionInfoCache(Collection* const collection, const NamespaceString& ns)
+    //已明确对应
     std::unique_ptr<Impl> _pimpl;
 
     // This structure exists to give us a customization point to decide how to force users of this
