@@ -94,9 +94,10 @@ void UUIDCatalog::onCloseDatabase(Database* db) {
         }
     }
 }
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
-
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
 //UUIDCatalog::registerUUIDCatalogEntry添加uuid及collection到_catalog，lookupCollectionByUUID中查找
 //AutoGetCollection::AutoGetCollection调用

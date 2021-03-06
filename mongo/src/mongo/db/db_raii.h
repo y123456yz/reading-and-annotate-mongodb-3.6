@@ -54,10 +54,11 @@ class Collection;
  * the database reference returned by this class should not be retained.
  */ 
  
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
- 
 //AutoGetCollection._autoDb成员为该类型,
 //AutoGetCollection::AutoGetCollection中初始化构造
 
@@ -89,8 +90,10 @@ private:
  * It is guaranteed that locks will be released when this object goes out of scope, therefore
  * the database and the collection references returned by this class should not be retained.
  */ 
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
 //AutoGetCollectionOrView._autoColl为该类型
 //使用见insertBatchAndHandleErrors，可以参考是如何通过AutoGetCollection获取collection的
@@ -217,8 +220,10 @@ private:
  * the database reference returned by this class should not be retained.
  */ //见makeCollection
 
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组查找uuid
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
  
  //注意AutoGetOrCreateDb和AutoGetDb的区别

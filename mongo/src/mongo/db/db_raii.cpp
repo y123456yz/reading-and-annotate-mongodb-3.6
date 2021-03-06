@@ -47,8 +47,10 @@ namespace {
 MONGO_FP_DECLARE(setAutoGetCollectionWait);
 }  // namespace
 
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
 AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, LockMode mode)
     : _dbLock(opCtx, ns, mode), 
@@ -61,10 +63,13 @@ AutoGetDb::AutoGetDb(OperationContext* opCtx, StringData ns, Lock::DBLock lock)
 	//DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
 	_db(dbHolder().get(opCtx, ns)) {}
 
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
 
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 //insertBatchAndHandleErrors会使用
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
@@ -89,6 +94,11 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      ViewMode viewMode)
     //这里先构造库锁，库锁Lock::DBLock::DBLock->_globalLock里面会构造全局锁
     : AutoGetCollection(opCtx, nss, modeColl, viewMode, Lock::DBLock(opCtx, nss.db(), modeDB)) {}
+
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
 //上面的AutoGetCollection::AutoGetCollection调用
 //库表的初始化赋值都在这里
@@ -127,9 +137,10 @@ AutoGetCollectionOrView::AutoGetCollectionOrView(OperationContext* opCtx,
                 : nullptr) {}
 
 
-//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取DB
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
-
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 AutoGetOrCreateDb::AutoGetOrCreateDb(OperationContext* opCtx, StringData ns, LockMode mode)
     : _dbLock(opCtx, ns, mode), 
 		//DatabaseHolderImpl::get

@@ -48,8 +48,10 @@ class OperationContext;
  * Registry of opened databases.
  */
 //AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
-//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
- 
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
+
 class DatabaseHolderImpl : public DatabaseHolder::Impl {
 public:
     DatabaseHolderImpl() = default;
@@ -96,6 +98,14 @@ private:
 
     typedef StringMap<Database*> DBs;
     mutable SimpleMutex _m;
+
+    
+    //AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+    //DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+    //AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+    //注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
+    
+    //保存到database_holder_impl.h中的全局变量_dbHolder
     //所有db保存到这里，通过DatabaseHolderImpl::openDb创建后保存到这里
     DBs _dbs; 
 };

@@ -47,6 +47,7 @@ class OperationContext;
  * DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象。
  * DatabaseHolderImpl实现该类
  */
+//database_holder_impl.h中的全局变量_dbHolder
 class DatabaseHolder {
 public:
     //DatabaseHolderImpl类中具体实现

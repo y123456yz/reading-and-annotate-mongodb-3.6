@@ -774,6 +774,11 @@ Status DatabaseImpl::createView(OperationContext* opCtx,
     return _views.createView(opCtx, nss, viewOnNss, BSONArray(options.pipeline), options.collation);
 }
 
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到_collections数组中
+//AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
+
+
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl->DatabaseImpl::createCollection
 //在wiredtiger创建集合和索引
 Collection* DatabaseImpl::createCollection(OperationContext* opCtx,

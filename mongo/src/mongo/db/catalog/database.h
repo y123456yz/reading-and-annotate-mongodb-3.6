@@ -55,6 +55,13 @@ namespace mongo {
  * DatabaseHolder是Mongodb数据库操作的入口，提供了打开、关闭数据库的接口，其中openDb接口会创建一个Database对象
  * Database代表一个DB库，Collection代表Mongodb里的一个集合
  */
+
+//AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
+//DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
+//AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
+//注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
+
+ 
 //AutoGetDb._db和AutoGetOrCreateDb._db成员为该类型
 /*
 //DatabaseHolderImpl::openDb生成一个DB,生成的db全部保存到DatabaseHolderImpl._dbs

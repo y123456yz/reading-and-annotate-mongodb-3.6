@@ -58,15 +58,17 @@ stdx::function<decltype(dbHolder)> dbHolderImpl;
 // The `mongo::` prefix is necessary to placate MSVC -- it is unable to properly identify anonymous
 // nested namespace members in `decltype` expressions when defining functions using scope-resolution
 // syntax.
-//InitializeDbHolderimpl中调用
+
 void mongo::registerDbHolderImpl(decltype(mongo::dbHolderImpl) impl) {
+	//InitializeDbHolderimpl中赋值
+	//下面的mongo::dbHolder()运行
     dbHolderImpl = std::move(impl);
 }
 
 //AutoGetDb::AutoGetDb中调用
 //AutoGetDb::AutoGetDb 或者 AutoGetOrCreateDb::AutoGetOrCreateDb调用
 auto mongo::dbHolder() -> DatabaseHolder& {
-	//DatabaseHolderImpl()
+	//也就是mongo::registerDbHolderImpl注册的impl，也就是database_holder_impl.h中的全局变量_dbHolder
     return dbHolderImpl();
 }
 
