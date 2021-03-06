@@ -87,6 +87,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
       //这里构造集合锁
       _collLock(opCtx->lockState(), nss.ns(), modeColl),
       //nss为db.collection，确定db和collection是否存在，collection不存在直接返回null
+      //Database::getCollection
       _coll(_autoDb.getDb() ? _autoDb.getDb()->getCollection(opCtx, nss) : nullptr) {
     Database* db = _autoDb.getDb();
     // If the database exists, but not the collection, check for views.

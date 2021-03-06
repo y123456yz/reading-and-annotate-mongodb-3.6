@@ -52,7 +52,8 @@ class Collection;
  *
  * It is guaranteed that the lock will be released when this object goes out of scope, therefore
  * the database reference returned by this class should not be retained.
- */
+ */ 
+//AutoGetCollection._autoDb成员为该类型
 class AutoGetDb {
     MONGO_DISALLOW_COPYING(AutoGetDb);
 
@@ -81,7 +82,7 @@ private:
  * the database and the collection references returned by this class should not be retained.
  */ 
 //AutoGetCollectionOrView._autoColl为该类型
-//使用见insertBatchAndHandleErrors  
+//使用见insertBatchAndHandleErrors，可以参考是如何通过AutoGetCollection获取collection的
 class AutoGetCollection {
     MONGO_DISALLOW_COPYING(AutoGetCollection);
 
@@ -136,8 +137,9 @@ private:
     enum class ViewMode { kViewsPermitted, kViewsForbidden };
 
     const ViewMode _viewMode;
-    //库信息
+    //库信息  
     const AutoGetDb _autoDb;
+    //表锁
     const Lock::CollectionLock _collLock;
     //集合信息
     Collection* const _coll; //集合名

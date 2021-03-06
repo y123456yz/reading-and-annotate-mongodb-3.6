@@ -703,6 +703,7 @@ struct ValidateResults {
  * it can call back to someone to check if a record is valid.
  * The actual data contained in a Record is totally opaque to the implementation.
  */
+//RecordStoreValidateAdaptorºÃ≥–∏√¿‡
 class ValidateAdaptor {
 public:
     virtual ~ValidateAdaptor() {}

@@ -344,7 +344,8 @@ storageEngine.writeDocument(...);
 DBLock("local", MODEX_IX);
 CollectionLock("oplog.rs", MODEX_IX);
 storageEngine.writeOplog(...);
-*/
+*/  
+    //AutoGetCollection._collLock
     class CollectionLock {
         MONGO_DISALLOW_COPYING(CollectionLock);
 

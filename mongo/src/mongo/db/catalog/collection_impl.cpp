@@ -142,6 +142,7 @@ using std::vector;
 
 using logger::LogComponent;
 
+//ÉÏÃæµÄInitializeCollectionFactory×¢²á
 CollectionImpl::CollectionImpl(Collection* _this_init,
                                OperationContext* opCtx,
                                StringData fullNS,

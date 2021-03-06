@@ -309,6 +309,7 @@ public:
     /**
      * @param ns - this is fully qualified, which is maybe not ideal ???
      */
+    //AutoGetCollection::AutoGetCollection
     inline Collection* getCollection(OperationContext* opCtx, const StringData ns) const {
         return this->_impl().getCollection(opCtx, ns);
     }
