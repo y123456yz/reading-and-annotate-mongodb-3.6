@@ -39,6 +39,7 @@ class IndexConsistency;
 class IndexObserver;
 class UUIDCatalog;
 
+//DatabaseImpl::_getOrCreateCollectionInstance-> new Collection()集合初始化构造的时候完成该类成员初始化赋值
 //集合中文档相关操作实现
 class CollectionImpl final : virtual public Collection::Impl,
                              virtual CappedCallback,
@@ -439,12 +440,18 @@ private:
     bool _enforceQuota(bool userEnforeQuota) const;
 
     int _magic;
-
+    //表名
     const NamespaceString _ns;
+    //表对应uuid
     OptionalCollectionUUID _uuid;
+    //DatabaseImpl::_getOrCreateCollectionInstance->KVDatabaseCatalogEntryBase::getCollectionCatalogEntry获取nss对应KVCollectionCatalogEntry
+    //表nss对应KVCollectionCatalogEntry
     CollectionCatalogEntry* const _details;
+    
+    //DatabaseImpl::_getOrCreateCollectionInstance-> new Collection()集合初始化构造的时候完成该类成员初始化赋值
     //对应WiredTigerRecordStore 
     RecordStore* const _recordStore;
+    
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
     CollectionInfoCache _infoCache;

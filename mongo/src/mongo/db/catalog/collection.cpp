@@ -75,12 +75,12 @@ namespace {
 stdx::function<Collection::factory_function_type> factory;
 }  // namespace
 
-//InitializeCollectionFactory中调用
+//InitializeCollectionFactory中注册调用该函数
 void Collection::registerFactory(decltype(factory) newFactory) {
     factory = std::move(newFactory);
 }
 
-//生成CollectionImpl类，Collection初始化构造的时候调用
+//生成CollectionImpl类，DatabaseImpl::_getOrCreateCollectionInstance-> new Collection初始化构造的时候调用
 auto Collection::makeImpl(Collection* _this,
                           OperationContext* const opCtx,
                           const StringData fullNS,

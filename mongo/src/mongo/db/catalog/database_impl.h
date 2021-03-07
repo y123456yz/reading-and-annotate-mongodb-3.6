@@ -276,8 +276,8 @@ private:
     class RemoveCollectionChange;
 
     const std::string _name;  // "dbname"
-    //DatabaseImpl::DatabaseImpl
-    //真正赋值在DatabaseHolderImpl::openDb
+
+    //真正赋值在DatabaseHolderImpl::openDb， 默认为KVDatabaseCatalogEntryBase
     DatabaseCatalogEntry* _dbEntry;  // not owned here
 
     const std::string _profileName;      // "dbname.system.profile"

@@ -133,7 +133,7 @@ KVStorageEngine::KVStorageEngine(
 	_catalog->init(&opCtx);
 
     std::vector<std::string> collections;
-	//KVCatalog::getAllCollections
+	//KVCatalog::getAllCollections 获取表信息
     _catalog->getAllCollections(&collections);
 
     KVPrefix maxSeenPrefix = KVPrefix::kNotPrefixed;

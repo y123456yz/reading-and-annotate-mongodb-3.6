@@ -42,7 +42,7 @@ namespace mongo {
 class KVCatalog;
 class KVEngine;
 
-//KVDatabaseCatalogEntryBase::createCollection中new改对象  KVDatabaseCatalogEntryBase._collections
+//KVDatabaseCatalogEntryBase::createCollection中new改对象  KVDatabaseCatalogEntryBase._collections[]
 class KVCollectionCatalogEntry final : public BSONCollectionCatalogEntry {
 public:
     KVCollectionCatalogEntry(KVEngine* engine,
@@ -107,6 +107,7 @@ private:
     KVEngine* _engine;    // not owned
     KVCatalog* _catalog;  // not owned
     std::string _ident;
+    //KVDatabaseCatalogEntryBase::createCollection中赋值
     std::unique_ptr<RecordStore> _recordStore;  // owned
 };
 }

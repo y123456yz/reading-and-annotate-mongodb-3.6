@@ -189,6 +189,7 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
         return NULL;
     }
 
+	//KVCollectionCatalogEntry::getRecordStore
     return it->second->getRecordStore();
 }
 
@@ -243,7 +244,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
     invariant(rs);
 
-	//存到mapp表中
+	//存到map表中
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 

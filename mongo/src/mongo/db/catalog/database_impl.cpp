@@ -81,12 +81,15 @@ namespace mongo {
 namespace {
 	//InitializeDatabaseFactory完成DatabaseImpl，真正在Database::makeImpl中执行
 MONGO_INITIALIZER(InitializeDatabaseFactory)(InitializerContext* const) {
-    Database::registerFactory([](Database* const this_,
+    Database::registerFactory(
+		[](Database* const this_,
                                  OperationContext* const opCtx,
                                  const StringData name,
                                  DatabaseCatalogEntry* const dbEntry) {
+                                 //真正在Database::makeImpl中执行
         return stdx::make_unique<DatabaseImpl>(this_, opCtx, name, dbEntry);
-    });
+    }
+	);
     return Status::OK();
 }
 MONGO_FP_DECLARE(hangBeforeLoggingCreateCollection);
@@ -214,6 +217,12 @@ Status DatabaseImpl::validateDBName(StringData dbname) {
     return Status::OK();
 }
 
+//通过AutoGetCollection相关接口获取对应Collection，可以参考insertBatchAndHandleErrors
+//初始化构造赋值见AutoGetCollection::AutoGetCollection, 
+//DatabaseImpl::_getOrCreateCollectionInstance  AutoGetCollection::AutoGetCollection中调用获取collection
+//DatabaseImpl::createCollection或者DatabaseImpl::init中调用_getOrCreateCollectionInstance真正生成collection信息
+
+
 //查找collection类，找到直接返回，没找到构造一个新的collection类  
 //DatabaseImpl::createCollection DatabaseImpl::init 调用
 Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx,
@@ -224,10 +233,12 @@ Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx
         return collection;
     }
 
-	//没找到则构造一个新collection类
+	//没找到则构造一个新collection类  
+	//KVDatabaseCatalogEntryBase::getCollectionCatalogEntry获取nss对应KVCollectionCatalogEntry
     unique_ptr<CollectionCatalogEntry> cce(_dbEntry->getCollectionCatalogEntry(nss.ns()));
+	//获取uuid
     auto uuid = cce->getCollectionOptions(opCtx).uuid;
-
+	//KVDatabaseCatalogEntryBase::getRecordStore
     unique_ptr<RecordStore> rs(_dbEntry->getRecordStore(nss.ns()));
     invariant(rs.get());  // if cce exists, so should this
 

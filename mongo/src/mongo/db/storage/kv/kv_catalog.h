@@ -46,7 +46,7 @@ namespace mongo {
 class OperationContext;
 class RecordStore;
 
-//KVStorageEngine::KVStorageEngine中构造初始化，赋值给_catalog.KVStorageEngine.
+//KVStorageEngine::KVStorageEngine中构造初始化，赋值给KVStorageEngine._catalog
 class KVCatalog { //collection对应的文件名字相关
 public:
     class FeatureTracker;

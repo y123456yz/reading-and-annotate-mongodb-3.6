@@ -38,9 +38,10 @@ namespace mongo {
 
 class KVStorageEngine;
 class KVCollectionCatalogEntry;
+//KVDatabaseCatalogEntry继承KVDatabaseCatalogEntryBase，后者又继承DatabaseCatalogEntry，这样
+//就把kv和catalog联系了起来
 
-//KVDatabaseCatalogEntryBase
-
+//KVDatabaseCatalogEntry继承KVDatabaseCatalogEntryBase，后者又继承DatabaseCatalogEntry
 class KVDatabaseCatalogEntryBase : public DatabaseCatalogEntry {
 public:
     KVDatabaseCatalogEntryBase(StringData db, KVStorageEngine* engine);

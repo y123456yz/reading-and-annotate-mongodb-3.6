@@ -321,9 +321,10 @@ private:
     //默认返回StandardWiredTigerRecordStore类，该类继承WiredTigerRecordStore
     std::unique_ptr<RecordStore> _catalogRecordStore;
     //KVStorageEngine::KVStorageEngine中初始化
-    std::unique_ptr<KVCatalog> _catalog;
+    std::unique_ptr<KVCatalog> _catalog; 
 
     typedef std::map<std::string, KVDatabaseCatalogEntryBase*> DBMap;
+    ////KVStorageEngine::RemoveDBChange::rollback赋值
     DBMap _dbs;
     mutable stdx::mutex _dbsLock;
 

@@ -31,6 +31,8 @@
 #include "mongo/db/storage/kv/kv_database_catalog_entry_base.h"
 
 namespace mongo {
+//KVDatabaseCatalogEntry继承KVDatabaseCatalogEntryBase，后者又继承DatabaseCatalogEntry，这样
+//就把kv和catalog联系了起来
 
 class KVDatabaseCatalogEntry : public KVDatabaseCatalogEntryBase {
 public:
