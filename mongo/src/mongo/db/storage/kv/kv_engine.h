@@ -51,6 +51,11 @@ class SortedDataInterface;
 class SnapshotManager;
 
 //如果用wiredtiger存储引擎，则WiredTigerKVEngine实现该类
+
+//KVEngine(WiredTigerKVEngine)和StorageEngine(KVStorageEngine)的关系: KVStorageEngine._engine类型为WiredTigerKVEngine
+//也就是KVStorageEngine类包含有WiredTigerKVEngine类成员
+
+//DevNullKVEngine EphemeralForTestEngine WiredTigerKVEngine继承该类，默认WiredTigerKVEngine
 class KVEngine {
 public:
     virtual RecoveryUnit* newRecoveryUnit() = 0;

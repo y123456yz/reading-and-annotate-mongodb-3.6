@@ -93,6 +93,7 @@ int NamespaceDetailsCollectionCatalogEntry::getCompletedIndexCount(OperationCont
     return _details->nIndexes;
 }
 
+//CollectionImpl::CollectionImpl中调用，最大索引数目
 int NamespaceDetailsCollectionCatalogEntry::getMaxAllowedIndexes() const {
     return NamespaceDetails::NIndexesMax;
 }

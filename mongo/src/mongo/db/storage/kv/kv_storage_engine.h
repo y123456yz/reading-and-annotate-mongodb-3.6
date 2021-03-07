@@ -62,6 +62,7 @@ struct KVStorageEngineOptions {
  * main implementations should pass the `default...` factory which is linked in with the main
  * `KVDatabaseCatalogEntry` code.
  */
+//Kv_database_catalog_entry.cpp中实现
 std::unique_ptr<KVDatabaseCatalogEntryBase> defaultDatabaseCatalogEntryFactory(
     const StringData name, KVStorageEngine* const engine);
 
@@ -218,7 +219,14 @@ KVStorageEngine实际上不是一个真正存储引擎的实现，只是为了方便接入wiredTiger、roc
 的一个抽象层。 KVStorageEngine实现了StorageEngine的接口，但其实现由KVEngine类代理，wiredTiger等KV存储引擎
 接入mongdb时，只需实现KVEngine定义的接口即可。
 */
-//WiredTigerFactory::create中new改类 
+
+//KVEngine(WiredTigerKVEngine)和StorageEngine(KVStorageEngine)的关系: KVStorageEngine._engine类型为WiredTigerKVEngine
+//也就是KVStorageEngine类包含有WiredTigerKVEngine类成员
+
+
+//KVDatabaseCatalogEntryBase._engine为该类型
+
+//WiredTigerFactory::create中new改类, KVStorageEngine只针对wiredtiger存储引擎，但是如果想支持rocksdb等也可以参考WT模块化实现ROCKSDB支持
 class KVStorageEngine final : public StorageEngine { 
 public:
     /**
@@ -313,6 +321,7 @@ private:
 
     // This must be the first member so it is destroyed last.
     //WiredTigerFactory::create->new KVStorageEngine(kv, options);中调用赋值
+    
     std::unique_ptr<KVEngine> _engine; //WiredTigerKVEngine类型
 
     const bool _supportsDocLocking;

@@ -239,6 +239,7 @@ Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx
 	//获取uuid
     auto uuid = cce->getCollectionOptions(opCtx).uuid;
 	//KVDatabaseCatalogEntryBase::getRecordStore
+	//默认返回为StandardWiredTigerRecordStore类型
     unique_ptr<RecordStore> rs(_dbEntry->getRecordStore(nss.ns()));
     invariant(rs.get());  // if cce exists, so should this
 

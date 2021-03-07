@@ -62,8 +62,14 @@ StorageEngine¶¨ÒåÁËÒ»ÏµÁĞMongdb´æ´¢ÒıÇæĞèÒªÊµÏÖµÄ½Ó¿Ú£¬ÊÇÒ»¸ö½Ó¿ÚÀà£¬ËùÓĞµÄ´æ´¢Ò
 ×ÔÉíµÄ´æ´¢Âß¼­¡£ getDatabaseCatalogEntry½Ó¿ÚÓÃÓÚ»ñÈ¡Ò»¸öDatabaseCatalogEntry¶ÔÏó£¬¸Ã¶ÔÏóÊµÏÖÁË¹ØÓÚ¼¯ºÏ¡¢
 ÎÄµµ²Ù×÷µÄ½Ó¿Ú¡£
 */
+
+//KVEngine(WiredTigerKVEngine)ºÍStorageEngine(KVStorageEngine)µÄ¹ØÏµ: KVStorageEngine._engineÀàĞÍÎªWiredTigerKVEngine
+//Ò²¾ÍÊÇKVStorageEngineÀà°üº¬ÓĞWiredTigerKVEngineÀà³ÉÔ±
+
+//ServiceContextMongoD::initializeGlobalStorageEngine()ÖĞ¸ù¾İ²»Í¬ÅäÖÃÑ¡Ôñ²»Í¬storageEngine
+
 //ServiceContextMongoD._storageEngine³ÉÔ±ÀàĞÍÎª¸ÃÀàĞÍ£¬
-//DevNullStorageEngineFactoryºÍKVStorageEngine¼Ì³Ğ¸ÃÀà
+//KVStorageEngine MMAPV1Engine DevNullStorageEngineFactory¼Ì³Ğ¸ÃÀà£¬ÀıÈçWTÔòÔÚWiredTigerFactory::createÖĞnew¸ÃÀà 
 class StorageEngine {
 public:
     /**

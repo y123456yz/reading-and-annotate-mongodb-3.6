@@ -354,7 +354,8 @@ public:
     }
 
     inline Collection* getOrCreateCollection(OperationContext* const opCtx,
-        //DatabaseImpl::getOrCreateCollection                                     const NamespaceString& nss) {
+                                            const NamespaceString& nss) {
+                                            //DatabaseImpl::getOrCreateCollection 
         return this->_impl().getOrCreateCollection(opCtx, nss);
     }
 

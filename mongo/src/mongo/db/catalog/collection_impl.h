@@ -447,16 +447,18 @@ private:
     //DatabaseImpl::_getOrCreateCollectionInstance->KVDatabaseCatalogEntryBase::getCollectionCatalogEntry获取nss对应KVCollectionCatalogEntry
     //表nss对应KVCollectionCatalogEntry
     CollectionCatalogEntry* const _details;
-    
+
+    //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
     //DatabaseImpl::_getOrCreateCollectionInstance-> new Collection()集合初始化构造的时候完成该类成员初始化赋值
-    //对应WiredTigerRecordStore 
-    RecordStore* const _recordStore;
+    //对应StandardWiredTigerRecordStore 
+    RecordStore* const _recordStore; //_recordStore对应数据操作，_indexCatalog对应索引操作
     
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
     CollectionInfoCache _infoCache;
-    //CollectionImpl._indexCatalog 索引相关   CollectionImpl::CollectionImpl中初始化
-    IndexCatalog _indexCatalog;
+    //索引相关接口
+    //IndexCatalogImpl索引相关接口，
+    IndexCatalog _indexCatalog; //_recordStore对应数据操作，_indexCatalog对应索引操作
 
     mutable stdx::mutex _indexObserverMutex;
     mutable std::unique_ptr<IndexObserver> _indexObserver;
@@ -479,6 +481,7 @@ private:
     // this is mutable because read only users of the Collection class
     // use it keep state.  This seems valid as const correctness of Collection
     // should be about the data.
+    //游标管理
     mutable CursorManager _cursorManager;
 
     // Notifier object for awaitData. Threads polling a capped collection for new data can wait

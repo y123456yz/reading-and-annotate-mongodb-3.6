@@ -72,6 +72,8 @@ extern const std::string kWiredTigerEngineName;
 //WiredTigerSizeStorer._entries[].rs map表中记录所有的集合统计信息
 
 //StandardWiredTigerRecordStore和PrefixedWiredTigerRecordStore继承该类，
+//StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
+
 //默认使用StandardWiredTigerRecordStore，参考WiredTigerKVEngine::getGroupedRecordStore
 class WiredTigerRecordStore : public RecordStore { //代表一个表的统计
     friend class WiredTigerRecordStoreCursorBase;
@@ -344,6 +346,7 @@ private:
     std::shared_ptr<OplogStones> _oplogStones;
 };
 
+//StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
 class StandardWiredTigerRecordStore final : public WiredTigerRecordStore {
 public:
     StandardWiredTigerRecordStore(WiredTigerKVEngine* kvEngine,

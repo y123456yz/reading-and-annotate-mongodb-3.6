@@ -189,7 +189,8 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
         return NULL;
     }
 
-	//KVCollectionCatalogEntry::getRecordStore
+	//KVCollectionCatalogEntry::getRecordStore,也就是获取KVCollectionCatalogEntry._recordStore成员
+	//默认为默认为StandardWiredTigerRecordStore类型
     return it->second->getRecordStore();
 }
 
@@ -240,12 +241,13 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     }
 
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns, ident, true));
-
+	//WiredTigerKVEngine::getGroupedRecordStore
     auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
     invariant(rs);
 
 	//存到map表中
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
+       //WiredTigerKVEngine   KVStorageEngine::getCatalog     WiredTigerKVEngine::getGroupedRecordStore
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 
     return Status::OK();

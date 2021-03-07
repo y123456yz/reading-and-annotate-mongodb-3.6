@@ -34,6 +34,7 @@ namespace mongo {
 //KVDatabaseCatalogEntry继承KVDatabaseCatalogEntryBase，后者又继承DatabaseCatalogEntry，这样
 //就把kv和catalog联系了起来
 
+////KVStorageEngine初始化构造的时候调用
 class KVDatabaseCatalogEntry : public KVDatabaseCatalogEntryBase {
 public:
     using KVDatabaseCatalogEntryBase::KVDatabaseCatalogEntryBase;

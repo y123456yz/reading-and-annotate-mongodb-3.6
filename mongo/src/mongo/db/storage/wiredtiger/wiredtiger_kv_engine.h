@@ -55,6 +55,13 @@ class WiredTigerSessionCache;
 class WiredTigerSizeStorer;
 
 //wiredtiger中的wt文件通过以下方式打开bson内容:wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]" -h . dump table:_mdb_catalog
+
+//KVEngine(WiredTigerKVEngine)和StorageEngine(KVStorageEngine)的关系: KVStorageEngine._engine类型为WiredTigerKVEngine
+//也就是KVStorageEngine类包含有WiredTigerKVEngine类成员
+
+
+////KVStorageEngine._engine
+
 //WiredTigerFactory::create中new该类,然后存放到KVStorageEngine::_engine成员中
 class WiredTigerKVEngine final : public KVEngine {
 public:

@@ -46,6 +46,7 @@
 #include "mongo/util/assert_util.h"
 #include "mongo/util/log.h"
 
+//KVStorageEngine初始化构造的时候使用
 auto mongo::defaultDatabaseCatalogEntryFactory(const StringData name, KVStorageEngine* const engine)
     -> std::unique_ptr<KVDatabaseCatalogEntryBase> {
     return stdx::make_unique<KVDatabaseCatalogEntry>(name, engine);

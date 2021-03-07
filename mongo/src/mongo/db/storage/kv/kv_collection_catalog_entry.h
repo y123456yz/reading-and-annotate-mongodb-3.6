@@ -42,6 +42,7 @@ namespace mongo {
 class KVCatalog;
 class KVEngine;
 
+
 //KVDatabaseCatalogEntryBase::createCollection中new改对象  KVDatabaseCatalogEntryBase._collections[]
 class KVCollectionCatalogEntry final : public BSONCollectionCatalogEntry {
 public:
@@ -103,11 +104,14 @@ protected:
 private:
     class AddIndexChange;
     class RemoveIndexChange;
-
+    
+    //KVDatabaseCatalogEntryBase::createCollection中赋值，
+    //默认WiredTigerKVEngine
     KVEngine* _engine;    // not owned
     KVCatalog* _catalog;  // not owned
     std::string _ident;
-    //KVDatabaseCatalogEntryBase::createCollection中赋值
+    
+    //WiredTigerKVEngine::getGroupedRecordStore中赋值，默认为StandardWiredTigerRecordStore类型
     std::unique_ptr<RecordStore> _recordStore;  // owned
 };
 }

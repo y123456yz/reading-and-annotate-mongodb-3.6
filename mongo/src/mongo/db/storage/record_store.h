@@ -307,6 +307,9 @@ public:
  * storage engines implementing the KVEngine some methods must be thread safe, see KVCatalog. Only
  * for MMAPv1 is this class not thread-safe.
  */ 
+
+ //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
+ 
  //CollectionImpl._recordStore   KVCatalog._rs  
  //KVCollectionCatalogEntry._recordStore  KVStorageEngine._catalogRecordStore
 class RecordStore { //WiredTigerRecordStore继承该类

@@ -81,7 +81,7 @@ MONGO_INITIALIZER(InitializeCollectionFactory)(InitializerContext* const) {
 	//注册Collection的impl接口
     Collection::registerFactory(
     
-    	//这里面是注册内容，在Collection::makeImpl中执行
+    	//这里面是注册内容，在Collection::makeImpl中执行，也就是collection初始化构造的时候调用该函数体接口
         [](Collection* const _this,
            OperationContext* const opCtx,
            const StringData fullNS,
@@ -161,6 +161,7 @@ CollectionImpl::CollectionImpl(Collection* _this_init,
       _dbce(dbce),
       _needCappedLock(supportsDocLocking() && _recordStore->isCapped() && _ns.db() != "local"),
       _infoCache(_this_init, _ns),
+      //构造一个IndexCatalogImpl类赋值给_indexCatalog
       _indexCatalog(_this_init, this->getCatalogEntry()->getMaxAllowedIndexes()),
       _collator(parseCollation(opCtx, _ns, _details->getCollectionOptions(opCtx).collation)),
       _validatorDoc(_details->getCollectionOptions(opCtx).validator.getOwned()),

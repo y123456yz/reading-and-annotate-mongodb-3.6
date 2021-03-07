@@ -842,7 +842,7 @@ StatusWith<unique_ptr<PlanStage>> applyProjection(OperationContext* opCtx,
 //getExecutorFind对应查询执行计划，getExecutorUpdate对应更新执行计划，getExecutorDelete对应删除执行计划
 //
 
-//StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
+StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
  getExecutorDelete( OperationContext* opCtx, OpDebug* opDebug,  
  	Collection* collection, ParsedDelete* parsedDelete) {
 	//获取DeleteRequest

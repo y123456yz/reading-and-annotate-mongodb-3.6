@@ -78,6 +78,7 @@ class PlanExecutor;
  *
  * See clientcursor.h for more information.
  */
+//CollectionImpl._cursorManager为该类型
 class CursorManager {
 public:
     using RegistrationToken = Partitioned<unordered_set<PlanExecutor*>>::PartitionId;

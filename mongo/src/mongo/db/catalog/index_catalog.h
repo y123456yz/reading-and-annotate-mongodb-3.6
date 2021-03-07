@@ -54,6 +54,9 @@ struct InsertDeleteOptions;
  * lifecycle: attached to a Collection.
  */
 //CollectionImpl._indexCatalog成员为该类，获取所有的索引信息可以参考fillOutPlannerParams
+//CollectionImpl::CollectionImpl构造中初始化一个IndexCatalog类
+
+//IndexCatalogImpl中实现该类具体接口
 class IndexCatalog {
 public:
     //遍历所有索引信息可以参考fillOutPlannerParams
@@ -148,6 +151,7 @@ public:
         friend IndexCatalog;
     };
 
+    //IndexCatalogImpl中实现该类具体接口
     class Impl {
     public:
         virtual ~Impl() = 0;

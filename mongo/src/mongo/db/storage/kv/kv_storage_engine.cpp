@@ -294,6 +294,7 @@ KVDatabaseCatalogEntryBase* KVStorageEngine::getDatabaseCatalogEntry(OperationCo
     KVDatabaseCatalogEntryBase*& db = _dbs[dbName.toString()];
     if (!db) {
         // Not registering change since db creation is implicit and never rolled back.
+        //defaultDatabaseCatalogEntryFactory
         db = _databaseCatalogEntryFactory(dbName, this).release();
     }
     return db;
