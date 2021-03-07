@@ -78,6 +78,7 @@ StorageEngine* ServiceContextMongoD::getGlobalStorageEngine() {
     // an error before it's initialized and proceed to exitCleanly which is equipped to deal
     // with a NULL storage engine.
     //初始化见initializeGlobalStorageEngine，例如mongod对应的是ServiceContextMongoD._storageEngine
+    //也就是KVStorageEngine
     return _storageEngine;
 }
 

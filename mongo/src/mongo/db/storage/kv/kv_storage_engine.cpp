@@ -60,7 +60,7 @@ namespace {
 const std::string catalogInfo = "_mdb_catalog";
 }
 
-//wiredtiger对应WiredTigerKVEngine
+//wiredtiger对应WiredTigerKVEngine  KVStorageEngine._engine为WiredTigerKVEngine
 class KVStorageEngine::RemoveDBChange : public RecoveryUnit::Change {
 public:
     RemoveDBChange(KVStorageEngine* engine, StringData db, KVDatabaseCatalogEntryBase* entry)
@@ -80,12 +80,17 @@ public:
     KVDatabaseCatalogEntryBase* const _entry;
 };
 
+//wiredtiger对应WiredTigerKVEngine  KVStorageEngine._engine为WiredTigerKVEngine
+//WiredTigerFactory::create中new该类 
 KVStorageEngine::KVStorageEngine(
+	//对应WiredTigerKVEngine
     KVEngine* engine,
     const KVStorageEngineOptions& options,
+    //默认为defaultDatabaseCatalogEntryFactory
     stdx::function<KVDatabaseCatalogEntryFactory> databaseCatalogEntryFactory)
     : _databaseCatalogEntryFactory(std::move(databaseCatalogEntryFactory)),
       _options(options),
+      //WiredTigerKVEngine  KVStorageEngine._engine为WiredTigerKVEngine
       _engine(engine), 
       //wiredtiger是支持的，见 WiredTigerKVEngine::supportsDocLocking
       _supportsDocLocking(_engine->supportsDocLocking()),
@@ -119,13 +124,16 @@ KVStorageEngine::KVStorageEngine(
         uow.commit();
     }
 
+	//WiredTigerKVEngine::getGroupedRecordStore，默认返回StandardWiredTigerRecordStore类
     _catalogRecordStore = _engine->getGroupedRecordStore(
         &opCtx, catalogInfo, catalogInfo, CollectionOptions(), KVPrefix::kNotPrefixed);
     _catalog.reset(new KVCatalog(
         _catalogRecordStore.get(), _options.directoryPerDB, _options.directoryForIndexes));
-    _catalog->init(&opCtx);
+	//KVCatalog::init
+	_catalog->init(&opCtx);
 
     std::vector<std::string> collections;
+	//KVCatalog::getAllCollections
     _catalog->getAllCollections(&collections);
 
     KVPrefix maxSeenPrefix = KVPrefix::kNotPrefixed;
@@ -299,6 +307,7 @@ Status KVStorageEngine::closeDatabase(OperationContext* opCtx, StringData db) {
 //DatabaseImpl::dropDatabase
 Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     KVDatabaseCatalogEntryBase* entry;
+	//找到对应的DB,没有直接返回
     {
         stdx::lock_guard<stdx::mutex> lk(_dbsLock);
         DBMap::const_iterator it = _dbs.find(db.toString());

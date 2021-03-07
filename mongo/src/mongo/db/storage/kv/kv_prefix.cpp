@@ -31,6 +31,7 @@
 namespace mongo {
 int64_t KVPrefix::_nextValue = 0;
 stdx::mutex KVPrefix::_nextValueMutex;
+//默认都是这个
 const KVPrefix KVPrefix::kNotPrefixed = KVPrefix(-1);
 
 std::string KVPrefix::toString() const {

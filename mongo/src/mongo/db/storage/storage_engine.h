@@ -62,6 +62,8 @@ StorageEngine¶¨ÒåÁËÒ»ÏµÁĞMongdb´æ´¢ÒıÇæĞèÒªÊµÏÖµÄ½Ó¿Ú£¬ÊÇÒ»¸ö½Ó¿ÚÀà£¬ËùÓĞµÄ´æ´¢Ò
 ×ÔÉíµÄ´æ´¢Âß¼­¡£ getDatabaseCatalogEntry½Ó¿ÚÓÃÓÚ»ñÈ¡Ò»¸öDatabaseCatalogEntry¶ÔÏó£¬¸Ã¶ÔÏóÊµÏÖÁË¹ØÓÚ¼¯ºÏ¡¢
 ÎÄµµ²Ù×÷µÄ½Ó¿Ú¡£
 */
+//ServiceContextMongoD._storageEngine³ÉÔ±ÀàĞÍÎª¸ÃÀàĞÍ£¬
+//DevNullStorageEngineFactoryºÍKVStorageEngine¼Ì³Ğ¸ÃÀà
 class StorageEngine {
 public:
     /**
@@ -72,6 +74,7 @@ public:
      * according to the provided configuration parameter.
      */
     //Ä¬ÈÏµÄWiredTiger´æ´¢ÒıÇæ¶ÔÓ¦WiredTigerFactory,¼ûinitializeGlobalStorageEngine
+    //WiredTigerFactory¼Ì³Ğ¸ÃÀà
     class Factory {
     public:
         virtual ~Factory() {}

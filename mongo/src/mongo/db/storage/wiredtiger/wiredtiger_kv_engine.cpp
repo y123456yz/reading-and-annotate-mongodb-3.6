@@ -351,6 +351,7 @@ error_check(cursor->insert(cursor));
 //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
 //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
 //ServiceContextMongoD::initializeGlobalStorageEngine->WiredTigerFactory::create
+//KVStorageEngine._engine为WiredTigerKVEngine
 WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
                                        const std::string& path,
                                        ClockSource* cs,
@@ -847,6 +848,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     return wtRCToStatus(s->create(s, uri.c_str(), config.c_str()));
 }
 
+//KVStorageEngine::KVStorageEngine调用
 std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
     OperationContext* opCtx,
     StringData ns,
@@ -878,6 +880,7 @@ std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
 
     std::unique_ptr<WiredTigerRecordStore> ret;
     if (prefix == KVPrefix::kNotPrefixed) {
+		//默认用这个
         ret = stdx::make_unique<StandardWiredTigerRecordStore>(this, opCtx, params);
     } else {
         ret = stdx::make_unique<PrefixedWiredTigerRecordStore>(this, opCtx, params, prefix);

@@ -45,6 +45,7 @@ class OperationContext;
 
 //KVCollectionCatalogEntry继承BSONCollectionCatalogEntry，BSONCollectionCatalogEntry继承CollectionCatalogEntry
 //NamespaceDetailsCollectionCatalogEntry继承该类
+//DatabaseImpl::_getOrCreateCollectionInstance中构造使用
 class CollectionCatalogEntry {
 public:
     CollectionCatalogEntry(StringData ns) : _ns(ns) {}

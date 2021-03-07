@@ -71,7 +71,8 @@ extern const std::string kWiredTigerEngineName;
 //WiredTigerSizeStorer.Entry *rs为该类型 
 //WiredTigerSizeStorer._entries[].rs map表中记录所有的集合统计信息
 
-//StandardWiredTigerRecordStore和PrefixedWiredTigerRecordStore继承该类
+//StandardWiredTigerRecordStore和PrefixedWiredTigerRecordStore继承该类，
+//默认使用StandardWiredTigerRecordStore，参考WiredTigerKVEngine::getGroupedRecordStore
 class WiredTigerRecordStore : public RecordStore { //代表一个表的统计
     friend class WiredTigerRecordStoreCursorBase;
 

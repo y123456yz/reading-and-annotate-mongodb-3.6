@@ -67,6 +67,7 @@ Status _finishDropDatabase(OperationContext* opCtx, const std::string& dbName, D
     // If Database::dropDatabase() fails, we should reset the drop-pending state on Database.
     auto dropPendingGuard = MakeGuard([db, opCtx] { db->setDropPending(opCtx, false); });
 
+	//DatabaseImpl::dropDatabase
     Database::dropDatabase(opCtx, db);
     dropPendingGuard.Dismiss();
 
@@ -81,8 +82,12 @@ Status _finishDropDatabase(OperationContext* opCtx, const std::string& dbName, D
 
 }  // namespace
 
-//
+
 //drop_database.cpp中的dropDatabase和DatabaseImpl::dropDatabase  dropDatabaseImpl什么区别？需要进一步分析
+//区别如下：drop_database.cpp中的dropDatabase会通过_finishDropDatabase调用DatabaseImpl::dropDatabase
+//drop_database.cpp中的dropDatabase删库及其库下面的表，DatabaseImpl::dropDatabase只删库
+
+//CmdDropDatabase::run 调用
 Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
     uassert(ErrorCodes::IllegalOperation,
             "Cannot drop a database in read-only mode",
@@ -103,6 +108,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
 
     using Result = boost::optional<Status>;
     // Get an optional result--if it's there, early return; otherwise, wait for collections to drop.
+    //先删表
     auto result = writeConflictRetry(opCtx, "dropDatabase_collection", dbName, [&] {
         Lock::GlobalWrite lk(opCtx);
         AutoGetDb autoDB(opCtx, dbName, MODE_X);
@@ -151,6 +157,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
         dropPendingGuard.Dismiss();
 
         // If there are no collection drops to wait for, we complete the drop database operation.
+        //如果库下面没有表信息，则直接删库
         if (numCollectionsToDrop == 0U && latestDropPendingOpTime.isNull()) {
             return Result(_finishDropDatabase(opCtx, dbName, db));
         }
@@ -158,6 +165,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
         return Result(boost::none);
     });
 
+	//获取删表结果
     if (result) {
         return *result;
     }
@@ -188,6 +196,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
         Lock::TempRelease release(opCtx->lockState());
 
         if (numCollectionsToDrop > 0U) {
+			//等等副本集从节点的表也要删除
             auto status =
                 replCoord->awaitReplicationOfLastOpForClient(opCtx, kDropDatabaseWriteConcern)
                     .status;
@@ -226,6 +235,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
 
     dropPendingGuardWhileAwaitingReplication.Dismiss();
 
+	//前面把库下面的所有表删除干净后，可以开始删库了
     return writeConflictRetry(opCtx, "dropDatabase_database", dbName, [&] {
         Lock::GlobalWrite lk(opCtx);
 

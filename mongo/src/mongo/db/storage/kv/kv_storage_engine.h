@@ -305,6 +305,8 @@ public:
 private:
     class RemoveDBChange;
 
+    //KVStorageEngine::getDatabaseCatalogEntry和KVStorageEngine::KVStorageEngine中调用该factory
+    //默认为defaultDatabaseCatalogEntryFactory
     stdx::function<KVDatabaseCatalogEntryFactory> _databaseCatalogEntryFactory;
 
     KVStorageEngineOptions _options;
@@ -316,6 +318,7 @@ private:
     const bool _supportsDocLocking;
     const bool _supportsDBLocking;
 
+    //默认返回StandardWiredTigerRecordStore类，该类继承WiredTigerRecordStore
     std::unique_ptr<RecordStore> _catalogRecordStore;
     //KVStorageEngine::KVStorageEngine中初始化
     std::unique_ptr<KVCatalog> _catalog;

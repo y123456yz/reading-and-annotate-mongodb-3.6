@@ -166,6 +166,7 @@ public:
 
     CmdDropDatabase() : BasicCommand("dropDatabase") {}
 
+	//CmdDropDatabase::run
     bool run(OperationContext* opCtx,
              const string& dbname,
              const BSONObj& cmdObj,

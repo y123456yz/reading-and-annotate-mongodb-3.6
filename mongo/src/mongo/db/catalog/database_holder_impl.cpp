@@ -171,6 +171,7 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
     // different databases for the same name.
     lk.unlock();
     StorageEngine* storageEngine = getGlobalServiceContext()->getGlobalStorageEngine();
+	//KVStorageEngine::getDatabaseCatalogEntry获取对应KVDatabaseCatalogEntryBase信息
     DatabaseCatalogEntry* entry = storageEngine->getDatabaseCatalogEntry(opCtx, dbname);
 
     if (!entry->exists()) {
@@ -192,6 +193,7 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
     return it->second;
 }
 
+//DatabaseImpl::dropDatabase中调用
 void DatabaseHolderImpl::close(OperationContext* opCtx, StringData ns, const std::string& reason) {
     invariant(opCtx->lockState()->isW());
 

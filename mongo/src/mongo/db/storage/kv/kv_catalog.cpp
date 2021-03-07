@@ -302,6 +302,7 @@ std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     return buf.str();
 }
 
+//KVStorageEngine::KVStorageEngine
 void KVCatalog::init(OperationContext* opCtx) {
     // No locking needed since called single threaded.
     auto cursor = _rs->getCursor(opCtx);
@@ -339,7 +340,7 @@ void KVCatalog::init(OperationContext* opCtx) {
 /*
 //由于每个collection创建时都会存储到元数据文件_mdb_catalog中，
 //因此，可以直接从这个文件中得到所有已创建的collection。
-*/
+*/ //KVStorageEngine::KVStorageEngine调用
 void KVCatalog::getAllCollections(std::vector<std::string>* out) const {
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
     for (NSToIdentMap::const_iterator it = _idents.begin(); it != _idents.end(); ++it) {

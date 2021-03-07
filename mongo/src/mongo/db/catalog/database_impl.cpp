@@ -79,7 +79,7 @@
 
 namespace mongo {
 namespace {
-	//InitializeDatabaseFactory完成DatabaseImpl，真正在
+	//InitializeDatabaseFactory完成DatabaseImpl，真正在Database::makeImpl中执行
 MONGO_INITIALIZER(InitializeDatabaseFactory)(InitializerContext* const) {
     Database::registerFactory([](Database* const this_,
                                  OperationContext* const opCtx,
@@ -883,6 +883,8 @@ const DatabaseCatalogEntry* DatabaseImpl::getDatabaseCatalogEntry() const {
 }
 
 //drop_database.cpp中的dropDatabase和DatabaseImpl::dropDatabase  dropDatabaseImpl什么区别？需要进一步分析
+//区别如下：drop_database.cpp中的dropDatabase会通过_finishDropDatabase调用DatabaseImpl::dropDatabase
+//drop_database.cpp中的dropDatabase删库及其库下面的表，DatabaseImpl::dropDatabase只删库
 void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
     invariant(db);
 
@@ -902,11 +904,12 @@ void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
         Top::get(serviceContext).collectionDropped(coll->ns().ns(), true);
     }
 
+	//database_holder_impl::close
     dbHolder().close(opCtx, name, "database dropped");
 
     auto const storageEngine = serviceContext->getGlobalStorageEngine();
     writeConflictRetry(opCtx, "dropDatabase", name, [&] {
-		//
+		//KVStorageEngine::dropDatabase
         storageEngine->dropDatabase(opCtx, name).transitional_ignore();
     });
 }
