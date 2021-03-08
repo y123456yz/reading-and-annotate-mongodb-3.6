@@ -60,7 +60,7 @@ public:
     // the `IndexCatalogEntry` class.  This allows us to expose an interface to this object without
     // requiring a dependency upon the implementation's definition library.
     //IndexCatalogEntryImpl继承IndexCatalogEntry::Impl
-    class Impl {
+    class Impl {//接口实现在IndexCatalogEntryImpl继承IndexCatalogEntry::Impl
     public:
         virtual ~Impl() = 0;
 
@@ -272,6 +272,8 @@ private:
     std::unique_ptr<Impl> _pimpl;
 };
 
+
+////IndexCatalogImpl._entries成员为该类型
 class IndexCatalogEntryContainer {
 public:
     typedef std::vector<std::unique_ptr<IndexCatalogEntry>>::const_iterator const_iterator;
@@ -319,6 +321,7 @@ public:
     }
 
     // pass ownership to EntryContainer
+    //向_entries数组中添加IndexCatalogEntry信息
     void add(IndexCatalogEntry* entry) {
         _entries.push_back(std::unique_ptr<IndexCatalogEntry>{entry});
     }

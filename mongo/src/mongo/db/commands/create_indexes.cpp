@@ -231,6 +231,7 @@ public:
         return Status(ErrorCodes::Unauthorized, "Unauthorized");
     }
 
+	//CmdCreateIndex::errmsgRun
     virtual bool errmsgRun(OperationContext* opCtx,
                            const string& dbname,
                            const BSONObj& cmdObj,
@@ -296,9 +297,12 @@ public:
         }
         specs = std::move(indexSpecsWithDefaults.getValue());
 
+		//IndexCatalogImpl::numIndexesTotal
+		//获取当前该表有多少个索引
         const int numIndexesBefore = collection->getIndexCatalog()->numIndexesTotal(opCtx);
         result.append("numIndexesBefore", numIndexesBefore);
 
+		//构造一个MultiIndexBlockImpl类
         MultiIndexBlock indexer(opCtx, collection);
         indexer.allowBackgroundBuilding();
         indexer.allowInterruption();
@@ -353,6 +357,7 @@ public:
             invariant(e.code() != ErrorCodes::WriteConflict);
             // Must have exclusive DB lock before we clean up the index build via the
             // destructor of 'indexer'.
+            //带有backgroud参数
             if (indexer.getBuildInBackground()) {
                 try {
                     // This function cannot throw today, but we will preemptively prepare for

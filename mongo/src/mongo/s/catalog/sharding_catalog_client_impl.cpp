@@ -1020,6 +1020,7 @@ Status ShardingCatalogClientImpl::applyChunkOpsDeprecated(OperationContext* opCt
         // document in the list of updates should be returned from a query to the chunks
         // collection. The last chunk can be identified by namespace and version number.
 
+		//我们的案例中有遇到一例，参考我总结的案例
         warning() << "chunk operation commit failed and metadata will be revalidated"
                   << causedBy(redact(status));
 

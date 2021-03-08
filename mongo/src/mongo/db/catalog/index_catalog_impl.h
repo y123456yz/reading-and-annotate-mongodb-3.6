@@ -54,6 +54,8 @@ struct InsertDeleteOptions;
  * how many: 1 per Collection.
  * lifecycle: attached to a Collection.
  */
+//CollectionImpl::CollectionImpl构造及赋值，对应IndexCatalogImpl
+//索引相关接口
 class IndexCatalogImpl : public IndexCatalog::Impl {
 public:
     explicit IndexCatalogImpl(IndexCatalog* this_,
@@ -278,6 +280,7 @@ public:
      * 3) indexes entry in .ns file
      * 4) system.namespaces entry for index ns
      */
+    //MultiIndexBlockImpl.IndexToBuild.block为该类型
     class IndexBuildBlock {
         MONGO_DISALLOW_COPYING(IndexBuildBlock);
 
@@ -441,8 +444,9 @@ private:
     Collection* const _collection;
     const int _maxNumIndexesAllowed;
 
+    //可以参考IndexCatalogImpl::indexRecords  IndexCatalogImpl::numIndexesTotal
     //记录所有的索引信息
-    IndexCatalogEntryContainer _entries;
+    IndexCatalogEntryContainer _entries; 
 
     // These are the index specs of indexes that were "leftover".
     // "Leftover" means they were unfinished when a mongod shut down.

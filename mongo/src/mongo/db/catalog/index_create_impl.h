@@ -192,6 +192,7 @@ private:
     class SetNeedToCleanupOnRollback;
     class CleanupIndexesVectorOnRollback;
 
+    
     struct IndexToBuild {
         std::unique_ptr<IndexCatalogImpl::IndexBuildBlock> block;
 

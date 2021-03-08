@@ -58,6 +58,7 @@ class OperationContext;
  * destructed from inside of a WriteUnitOfWork as any cleanup needed should never be rolled back
  * (as it is itself essentially a form of rollback, you don't want to "rollback the rollback").
  */
+//MultiIndexBlockImpl继承该类,可以参考CmdCreateIndex::errmsgRun
 class MultiIndexBlock { 
 public:
     class Impl { //MultiIndexBlockImpl继承实现

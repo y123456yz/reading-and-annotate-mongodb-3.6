@@ -499,12 +499,13 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
 
     std::vector<Record> records;
     records.reserve(count);
+	//每条数据对应一个时间搓
     std::vector<Timestamp> timestamps;
     timestamps.reserve(count);
 
 	//it类型为InsertStatement
     for (auto it = begin; it != end; it++) {
-		//doc记录到Record结构
+		//doc记录到Record结构，注意这里初始化RecordId()为0，真正的id赋值再后面的WiredTigerRecordStore::insertRecords
         Record record = {RecordId(), RecordData(it->doc.objdata(), it->doc.objsize())};
         records.push_back(record);
 		//记录oplog时间到timestamps

@@ -165,6 +165,7 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//IndexCatalogImpl::IndexBuildBlock::init中调用
 IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
     OperationContext* opCtx, std::unique_ptr<IndexDescriptor> descriptor, bool initFromDisk) {
     Status status = _isSpecOk(opCtx, descriptor->infoObj());
@@ -402,6 +403,8 @@ IndexCatalogImpl::IndexBuildBlock::IndexBuildBlock(OperationContext* opCtx,
 //建索引
 //创建集合的时候或者程序重启的时候建索引:DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //MultiIndexBlockImpl::init->IndexCatalogImpl::IndexBuildBlock::init  程序运行过程中，并且集合已经存在的时候建索引
+
+//IndexCatalogImpl::createIndexOnEmptyCollection  MultiIndexBlockImpl::init调用
 Status IndexCatalogImpl::IndexBuildBlock::init() {
     // need this first for names, etc...
     BSONObj keyPattern = _spec.getObjectField("key");
@@ -1088,6 +1091,7 @@ bool IndexCatalogImpl::haveAnyIndexes() const {
     return _entries.size() != 0;
 }
 
+//该表索引总数
 int IndexCatalogImpl::numIndexesTotal(OperationContext* opCtx) const {
     int count = _entries.size() + _unfinishedIndexes.size();
     dassert(_collection->getCatalogEntry()->getTotalIndexCount(opCtx) == count);

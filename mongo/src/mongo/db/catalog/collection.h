@@ -421,6 +421,7 @@ public:
         return this->_impl().refreshUUID(opCtx);
     }
 
+    //CollectionImpl::getIndexCatalog,返回IndexCatalogImpl类型接口
     inline const IndexCatalog* getIndexCatalog() const {
         return this->_impl().getIndexCatalog();
     }
