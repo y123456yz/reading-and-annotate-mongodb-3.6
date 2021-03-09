@@ -307,6 +307,7 @@ private:
     CollectionMap _collections;
 
     DurableViewCatalogImpl _durableViews;  // interface for system.views operations
+    //²Î¿¼https://mongoing.com/archives/3502
     ViewCatalog _views;                    // in-memory representation of _durableViews
     Database* _this;                       // Pointer to wrapper, for external caller compatibility.
 

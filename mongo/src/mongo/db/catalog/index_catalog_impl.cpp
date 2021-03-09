@@ -133,18 +133,27 @@ IndexCatalogImpl::~IndexCatalogImpl() {
 
 Status IndexCatalogImpl::init(OperationContext* opCtx) {
     vector<string> indexNames;
+	//BSONCollectionCatalogEntry::getAllIndexes 
+	//获取所有的所有名
     _collection->getCatalogEntry()->getAllIndexes(opCtx, &indexNames);
 
     for (size_t i = 0; i < indexNames.size(); i++) {
         const string& indexName = indexNames[i];
         BSONObj spec = _collection->getCatalogEntry()->getIndexSpec(opCtx, indexName).getOwned();
 
+		//BSONCollectionCatalogEntry::isIndexReady 索引是否已经构建完成
         if (!_collection->getCatalogEntry()->isIndexReady(opCtx, indexName)) {
+			// These are the index specs of indexes that were "leftover".
+		    // "Leftover" means they were unfinished when a mongod shut down.
+		    // Certain operations are prohibited until someone fixes.
+		    // Retrieve by calling getAndClearUnfinishedIndexes().
+			//索引没有执行完成，加到_unfinishedIndexes
             _unfinishedIndexes.push_back(spec);
             continue;
         }
 
         BSONObj keyPattern = spec.getObjectField("key");
+		//构造IndexDescriptor
         auto descriptor = stdx::make_unique<IndexDescriptor>(
             _collection, _getAccessMethodName(opCtx, keyPattern), spec);
         const bool initFromDisk = true;
@@ -165,7 +174,7 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
     return Status::OK();
 }
 
-//IndexCatalogImpl::IndexBuildBlock::init中调用
+//IndexCatalogImpl::IndexBuildBlock::init  IndexCatalogImpl::init中调用
 IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
     OperationContext* opCtx, std::unique_ptr<IndexDescriptor> descriptor, bool initFromDisk) {
     Status status = _isSpecOk(opCtx, descriptor->infoObj());
@@ -176,6 +185,7 @@ IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
     }
 
     auto* const descriptorPtr = descriptor.get();
+	
     auto entry = stdx::make_unique<IndexCatalogEntry>(opCtx,
                                                       _collection->ns().ns(),
                                                       _collection->getCatalogEntry(),
@@ -183,7 +193,8 @@ IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
                                                       _collection->infoCache());
     std::unique_ptr<IndexAccessMethod> accessMethod(
         _collection->dbce()->getIndex(opCtx, _collection->getCatalogEntry(), entry.get()));
-    entry->init(std::move(accessMethod));
+	//IndexCatalogEntryImpl::init
+	entry->init(std::move(accessMethod));
 
     IndexCatalogEntry* save = entry.get();
     _entries.add(entry.release());
@@ -310,22 +321,28 @@ Status IndexCatalogImpl::_upgradeDatabaseMinorVersionIfNeeded(OperationContext* 
     return Status::OK();
 }
 
+//IndexCatalogImpl::createIndexOnEmptyCollection  MultiIndexBlockImpl::removeExistingIndexes
+//MultiIndexBlockImpl::init  中调用
+//索引个数 索引冲突 索引名冲突等检查
 StatusWith<BSONObj> IndexCatalogImpl::prepareSpecForCreate(OperationContext* opCtx,
                                                            const BSONObj& original) const {
     Status status = _isSpecOk(opCtx, original);
     if (!status.isOK())
         return StatusWith<BSONObj>(status);
 
+	//根据original原始数据构造fixspec
     auto fixed = _fixIndexSpec(opCtx, _collection, original);
     if (!fixed.isOK()) {
         return fixed;
     }
 
     // we double check with new index spec
+    //做一些检查
     status = _isSpecOk(opCtx, fixed.getValue());
     if (!status.isOK())
         return StatusWith<BSONObj>(status);
 
+	////索引个数 索引冲突 索引名冲突等检查
     status = _doesSpecConflictWithExisting(opCtx, fixed.getValue());
     if (!status.isOK())
         return StatusWith<BSONObj>(status);
@@ -337,7 +354,9 @@ StatusWith<BSONObj> IndexCatalogImpl::prepareSpecForCreate(OperationContext* opC
 db/catalog/collection_impl.cpp:        status = _indexCatalog.createIndexOnEmptyCollection(opCtx, indexSpecs[i]).getStatus();
 db/catalog/database_impl.cpp:                fullIdIndexSpec = uassertStatusOK(ic->createIndexOnEmptyCollection(
 
-*/ //DatabaseImpl::createCollection   createSystemIndexes  CollectionImpl::truncate中调用执行
+*/ 
+//DatabaseImpl::createCollection   createSystemIndexes  CollectionImpl::truncate中调用执行
+//空表上面建索引
 StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationContext* opCtx,
                                                                    BSONObj spec) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().toString(), MODE_X));
@@ -349,12 +368,14 @@ StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationCont
     if (!status.isOK())
         return status;
 
+	//索引个数 索引冲突 索引名冲突等检查失败，例如索引名有冲突  索引达到上限等
     StatusWith<BSONObj> statusWithSpec = prepareSpecForCreate(opCtx, spec);
     status = statusWithSpec.getStatus();
     if (!status.isOK())
         return status;
     spec = statusWithSpec.getValue();
 
+	//索引类型 text  hashed  2d  btree中的哪一种
     string pluginName = IndexNames::findPluginName(spec["key"].Obj());
     if (pluginName.size()) {
         Status s = _upgradeDatabaseMinorVersionIfNeeded(opCtx, pluginName);
@@ -762,6 +783,27 @@ Status IndexCatalogImpl::_isSpecOk(OperationContext* opCtx, const BSONObj& spec)
     return Status::OK();
 }
 
+/*
+判断是否冲突，例如
+> db.test.createIndex({name:1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 2,
+        "note" : "all indexes already exist",
+        "ok" : 1
+}
+> db.test.createIndex({name:1},{background: true, unique:true}) 
+{
+        "ok" : 0,
+        "errmsg" : "Index with name: name_1 already exists with different options",
+        "code" : 85,
+        "codeName" : "IndexOptionsConflict"
+}
+*/
+
+//索引个数 索引冲突 索引名冲突等检查
+//IndexCatalogImpl::prepareSpecForCreate中调用
 Status IndexCatalogImpl::_doesSpecConflictWithExisting(OperationContext* opCtx,
                                                        const BSONObj& spec) const {
     const char* name = spec.getStringField("name");
@@ -772,6 +814,7 @@ Status IndexCatalogImpl::_doesSpecConflictWithExisting(OperationContext* opCtx,
 
     {
         // Check both existing and in-progress indexes (2nd param = true)
+        //IndexCatalogImpl::findIndexByName 根据索引名查找索引是否已经存在
         const IndexDescriptor* desc = findIndexByName(opCtx, name, true);
         if (desc) {
             // index already exists with same name
@@ -836,6 +879,7 @@ Status IndexCatalogImpl::_doesSpecConflictWithExisting(OperationContext* opCtx,
         }
     }
 
+	//索引个数超过限制数
     if (numIndexesTotal(opCtx) >= _maxNumIndexesAllowed) {
         string s = str::stream() << "add index fails, too many indexes for "
                                  << _collection->ns().ns() << " key:" << key;
@@ -1058,6 +1102,10 @@ void IndexCatalogImpl::_deleteIndexFromDisk(OperationContext* opCtx,
     }
 }
 
+// These are the index specs of indexes that were "leftover".
+// "Leftover" means they were unfinished when a mongod shut down.
+// Certain operations are prohibited until someone fixes.
+// Retrieve by calling getAndClearUnfinishedIndexes().
 vector<BSONObj> IndexCatalogImpl::getAndClearUnfinishedIndexes(OperationContext* opCtx) {
     vector<BSONObj> toReturn = _unfinishedIndexes;
     _unfinishedIndexes.clear();
@@ -1251,6 +1299,8 @@ IndexDescriptor* IndexCatalogImpl::findIndexByName(OperationContext* opCtx,
     return nullptr;
 }
 
+//索引一样，名字不一样，通过这里判断
+//参考IndexCatalogImpl::_doesSpecConflictWithExisting
 IndexDescriptor* IndexCatalogImpl::findIndexByKeyPatternAndCollationSpec(
     OperationContext* opCtx,
     const BSONObj& key,
@@ -1387,6 +1437,7 @@ Status IndexCatalogImpl::_indexFilteredRecords(OperationContext* opCtx,
     for (auto bsonRecord : bsonRecords) {
         int64_t inserted;
         invariant(bsonRecord.id != RecordId());
+		//IndexCatalogEntryImpl::accessMethod
 		//IndexAccessMethod::insert
         Status status = index->accessMethod()->insert(
             opCtx, *bsonRecord.docPtr, bsonRecord.id, options, &inserted);
@@ -1518,6 +1569,7 @@ void IndexCatalogImpl::prepareInsertDeleteOptions(OperationContext* opCtx,
     }
 }
 
+//
 StatusWith<BSONObj> IndexCatalogImpl::_fixIndexSpec(OperationContext* opCtx,
                                                     Collection* collection,
                                                     const BSONObj& spec) {

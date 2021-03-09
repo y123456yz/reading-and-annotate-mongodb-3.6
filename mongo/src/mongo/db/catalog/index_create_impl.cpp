@@ -171,9 +171,11 @@ MultiIndexBlockImpl::~MultiIndexBlockImpl() {
     }
 }
 
+//如果specs中的索引在_collection中已经存在，则从specs中删除这个索引
 void MultiIndexBlockImpl::removeExistingIndexes(std::vector<BSONObj>* specs) const {
     for (size_t i = 0; i < specs->size(); i++) {
         Status status =
+			//IndexCatalogImpl::prepareSpecForCreate
             _collection->getIndexCatalog()->prepareSpecForCreate(_opCtx, (*specs)[i]).getStatus();
         if (status.code() == ErrorCodes::IndexAlreadyExists) {
             specs->erase(specs->begin() + i);
@@ -193,7 +195,7 @@ MultiIndexBlockImpl::init(const BSONObj& spec) {
     return init(indexes); //MultiIndexBlockImpl::init
 }
 
-//MultiIndexBlockImpl::init中调用
+//上面的MultiIndexBlockImpl::init中调用
 StatusWith<std::vector<BSONObj>> 
 MultiIndexBlockImpl::init(const std::vector<BSONObj>& indexSpecs) {
     WriteUnitOfWork wunit(_opCtx);
@@ -311,9 +313,12 @@ db.things.ensureIndex({name:1}, {background:true});
     return indexInfoObjs;
 }
 
+
+////CmdCreateIndex::errmsgRun调用
 Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* dupsOut) {
     const char* curopMessage = _buildInBackground ? "Index Build (background)" : "Index Build";
-    const auto numRecords = _collection->numRecords(_opCtx);
+	//该表数据大小 CollectionImpl::numRecords
+	const auto numRecords = _collection->numRecords(_opCtx);
     stdx::unique_lock<Client> lk(*_opCtx->getClient());
     ProgressMeterHolder progress(
         CurOp::get(_opCtx)->setMessage_inlock(curopMessage, curopMessage, numRecords));
@@ -324,6 +329,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     unsigned long long n = 0;
 
     PlanExecutor::YieldPolicy yieldPolicy;
+	//backgroud后台索引
     if (_buildInBackground) {
         invariant(_allowInterruption);
         yieldPolicy = PlanExecutor::YIELD_AUTO;

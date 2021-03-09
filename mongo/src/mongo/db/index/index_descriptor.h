@@ -53,6 +53,8 @@ class IndexCatalogEntryContainer;
  *
  * All synchronization is the responsibility of the caller.
  */
+//IndexCatalogImpl::init中构造使用
+
 //索引信息，获取所有所有信息可以参考fillOutPlannerParams
 class IndexDescriptor { //索引信息通过该类表达   如ID索引  唯一索引等都是通过该类表达
 public:
@@ -271,6 +273,7 @@ private:
     Collection* _collection;
 
     // What access method should we use for this index?
+    //btree 2d text等中的一种，参考_getAccessMethodName
     std::string _accessMethodName;
 
     // The BSONObj describing the index.  Accessed through the various members above.

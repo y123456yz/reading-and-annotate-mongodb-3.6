@@ -883,8 +883,10 @@ uint64_t CollectionImpl::dataSize(OperationContext* opCtx) const {
     return _recordStore->dataSize(opCtx);
 }
 
+//索引数据大小
 uint64_t CollectionImpl::getIndexSize(OperationContext* opCtx, BSONObjBuilder* details, int scale) {
-    IndexCatalog* idxCatalog = getIndexCatalog();
+	//获取IndexCatalogImpl
+	IndexCatalog* idxCatalog = getIndexCatalog();
 
     IndexCatalog::IndexIterator ii = idxCatalog->getIndexIterator(opCtx, true);
 

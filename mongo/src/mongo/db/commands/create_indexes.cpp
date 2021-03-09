@@ -72,7 +72,8 @@ const StringData kCommandName = "createIndexes"_sd;
  * specifications that have any missing attributes filled in. If any index specification is
  * malformed, then an error status is returned.
  */
-StatusWith<std::vector<BSONObj>> parseAndValidateIndexSpecs(
+StatusWith<std::vector<BSONObj>> 
+		parseAndValidateIndexSpecs(
     OperationContext* opCtx,
     const NamespaceString& ns,
     const BSONObj& cmdObj,
@@ -245,10 +246,12 @@ public:
 
         // Disallow users from creating new indexes on config.transactions since the sessions
         // code was optimized to not update indexes.
+        //不能对config.transactions表建索引
         uassert(ErrorCodes::IllegalOperation,
                 str::stream() << "not allowed to create index on " << ns.ns(),
                 ns != NamespaceString::kSessionTransactionsTableNamespace);
 
+		//createIndexes命令参数检测，从请求中解析出索引信息
         auto specsWithStatus =
             parseAndValidateIndexSpecs(opCtx, ns, cmdObj, serverGlobalParams.featureCompatibility);
         if (!specsWithStatus.isOK()) {
@@ -259,6 +262,7 @@ public:
         // now we know we have to create index(es)
         // Note: createIndexes command does not currently respect shard versioning.
         Lock::DBLock dbLock(opCtx, ns.db(), MODE_X);
+		//只能在主节点加索引命令
         if (!repl::getGlobalReplicationCoordinator()->canAcceptWritesFor(opCtx, ns)) {
             return appendCommandStatus(
                 result,
@@ -266,21 +270,26 @@ public:
                        str::stream() << "Not primary while creating indexes in " << ns.ns()));
         }
 
+		//获取DB信息，没有则创建
         Database* db = dbHolder().get(opCtx, ns.db());
         if (!db) {
 			//DB不存在则创建一个
             db = dbHolder().openDb(opCtx, ns.db());
         }
 
+		//获取集合信息
         Collection* collection = db->getCollection(opCtx, ns);
         if (collection) {
+			//集合存在
             result.appendBool("createdCollectionAutomatically", false);
-        } else {
+        } else { //集合不存在
+        	//view先跳过
             if (db->getViewCatalog()->lookup(opCtx, ns.ns())) {
                 errmsg = "Cannot create indexes on a view";
                 return appendCommandStatus(result, {ErrorCodes::CommandNotSupportedOnView, errmsg});
             }
 
+			//集合不存在先创建集合
             writeConflictRetry(opCtx, kCommandName, ns.ns(), [&] {
                 WriteUnitOfWork wunit(opCtx);
                 collection = db->createCollection(opCtx, ns.ns(), CollectionOptions());
@@ -290,6 +299,7 @@ public:
             result.appendBool("createdCollectionAutomatically", true);
         }
 
+		//
         auto indexSpecsWithDefaults =
             resolveCollectionDefaultProperties(opCtx, collection, std::move(specs));
         if (!indexSpecsWithDefaults.isOK()) {
@@ -304,17 +314,29 @@ public:
 
 		//构造一个MultiIndexBlockImpl类
         MultiIndexBlock indexer(opCtx, collection);
+		//MultiIndexBlockImpl::allowBackgroundBuilding, 后台添加索引
         indexer.allowBackgroundBuilding();
+		//MultiIndexBlockImpl::allowInterruption 
         indexer.allowInterruption();
 
         const size_t origSpecsSize = specs.size();
+		//MultiIndexBlockImpl::removeExistingIndexes 
+		//如果新加的索引在已有索引列表中存在，则新加的索引从specs索引列表中剔除
+		//通过剔除发判断索引是否已经存在，
+		//注意这里不是真正的删除表的索引，而是剔除已有索引字符信息
         indexer.removeExistingIndexes(&specs);
 
+		//说明索引已经存在
         if (specs.size() == 0) {
             result.append("numIndexesAfter", numIndexesBefore);
             result.append("note", "all indexes already exist");
             return true;
         }
+
+
+		/*
+		例如已经有db.test.createIndex({name:1})索引，然后再添加db.test.createIndex({name:1},{background: true, unique:true}) 
+		*/
 
         if (specs.size() != origSpecsSize) {
             result.append("note", "index already exists");
@@ -323,6 +345,7 @@ public:
         for (size_t i = 0; i < specs.size(); i++) {
             const BSONObj& spec = specs[i];
             if (spec["unique"].trueValue()) {
+				//不能给片建加唯一索引
                 status = checkUniqueIndexConstraints(opCtx, ns.ns(), spec["key"].Obj());
 
                 if (!status.isOK()) {
@@ -352,6 +375,7 @@ public:
 
         try {
             Lock::CollectionLock colLock(opCtx->lockState(), ns.ns(), MODE_IX);
+			//MultiIndexBlockImpl::insertAllDocumentsInCollection 
             uassertStatusOK(indexer.insertAllDocumentsInCollection());
         } catch (const DBException& e) {
             invariant(e.code() != ErrorCodes::WriteConflict);
@@ -412,6 +436,7 @@ public:
     }
 
 private:
+	//不能给片建加唯一索引
     static Status checkUniqueIndexConstraints(OperationContext* opCtx,
                                               StringData ns,
                                               const BSONObj& newIdxKey) {

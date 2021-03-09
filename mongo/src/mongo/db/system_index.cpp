@@ -192,7 +192,7 @@ Status verifySystemIndexes(OperationContext* opCtx) {
     return Status::OK();
 }
 
-//DatabaseImpl::createCollection中执行
+//DatabaseImpl::createCollection中执行   "system.X"集合相关索引
 void createSystemIndexes(OperationContext* opCtx, Collection* collection) {
     invariant(collection);
     const NamespaceString& ns = collection->ns();

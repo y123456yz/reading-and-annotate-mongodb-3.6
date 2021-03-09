@@ -321,6 +321,8 @@ bool IndexAccessMethod::appendCustomStats(OperationContext* opCtx,
     return _newInterface->appendCustomStats(opCtx, output, scale);
 }
 
+//获取该所有数据大小，可以参考CollectionImpl::getIndexSize
+//CollectionImpl::getIndexSize调用
 long long IndexAccessMethod::getSpaceUsedBytes(OperationContext* opCtx) const {
     return _newInterface->getSpaceUsedBytes(opCtx);
 }

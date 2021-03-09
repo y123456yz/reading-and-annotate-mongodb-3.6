@@ -43,6 +43,7 @@
 
 namespace mongo {
 
+//MultiIndexBlockImpl::insertAllDocumentsInCollection  加索引的时候调用
 std::unique_ptr<PlanExecutor, PlanExecutor::Deleter> InternalPlanner::collectionScan(
     OperationContext* opCtx,
     StringData ns,
@@ -63,6 +64,7 @@ std::unique_ptr<PlanExecutor, PlanExecutor::Deleter> InternalPlanner::collection
 
     invariant(ns == collection->ns().ns());
 
+	//生成CollectionScan
     auto cs = _collectionScan(opCtx, ws.get(), collection, direction, startLoc);
 
     // Takes ownership of 'ws' and 'cs'.
@@ -169,6 +171,7 @@ std::unique_ptr<PlanExecutor, PlanExecutor::Deleter> InternalPlanner::updateWith
     return std::move(executor.getValue());
 }
 
+//InternalPlanner::collectionScan调用
 std::unique_ptr<PlanStage> InternalPlanner::_collectionScan(OperationContext* opCtx,
                                                             WorkingSet* ws,
                                                             const Collection* collection,

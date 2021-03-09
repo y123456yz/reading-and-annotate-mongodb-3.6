@@ -452,6 +452,7 @@ private:
     // "Leftover" means they were unfinished when a mongod shut down.
     // Certain operations are prohibited until someone fixes.
     // Retrieve by calling getAndClearUnfinishedIndexes().
+    //索引没有执行完成，加到_unfinishedIndexes
     std::vector<BSONObj> _unfinishedIndexes;
 
     IndexCatalog* const _this;

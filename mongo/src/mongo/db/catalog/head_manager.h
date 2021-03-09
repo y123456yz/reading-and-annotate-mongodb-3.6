@@ -38,6 +38,7 @@ class OperationContext;
  * An abstraction for setting and getting data about the 'head' of an index.  This is the data
  * that lives in the catalog to identify where an index lives.
  */
+//HeadManagerImpl»ù´¡¸ÃÀà
 class HeadManager {
 public:
     virtual ~HeadManager() {}

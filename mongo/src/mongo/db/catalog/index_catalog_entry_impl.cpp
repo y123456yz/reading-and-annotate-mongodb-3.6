@@ -156,6 +156,7 @@ IndexCatalogEntryImpl::~IndexCatalogEntryImpl() {
     _descriptor.reset();
 }
 
+//IndexCatalogImpl::_setupInMemoryStructuresµ÷ÓÃ
 void IndexCatalogEntryImpl::init(std::unique_ptr<IndexAccessMethod> accessMethod) {
     invariant(!_accessMethod);
     _accessMethod = std::move(accessMethod);

@@ -211,7 +211,9 @@ private:
     Collection* _collection;
     OperationContext* _opCtx;
 
+    //上面的allowBackgroundBuilding()赋值为true
     bool _buildInBackground; //后台建索引
+    //allowInterruption()赋值为true
     bool _allowInterruption;
     bool _ignoreUnique;
 

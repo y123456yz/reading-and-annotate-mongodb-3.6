@@ -134,7 +134,7 @@ BSONObj BSONCollectionCatalogEntry::getIndexSpec(OperationContext* opCtx,
     return md.indexes[offset].spec.getOwned();
 }
 
-
+//IndexCatalogImpl::init调用，获取所有的所有名
 void BSONCollectionCatalogEntry::getAllIndexes(OperationContext* opCtx,
                                                std::vector<std::string>* names) const {
     MetaData md = _getMetaData(opCtx);
@@ -189,6 +189,13 @@ Breakpoint 1, mongo::KVCollectionCatalogEntry::_getMetaData (this=0x7fe69d14b400
 #14 writeConflictRetry<mongo::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::Insert&, 
 std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*, mongo::WriteResult*)::<lambda()> > (f=<optimized out>, ns=..., opStr=..., opCtx=0x7fe69d14db80) at src/mongo/db/concurrency/write_conflict_exception.h:91
 */
+// These are the index specs of indexes that were "leftover".
+// "Leftover" means they were unfinished when a mongod shut down.
+// Certain operations are prohibited until someone fixes.
+// Retrieve by calling getAndClearUnfinishedIndexes().
+//索引没有执行完成，加到_unfinishedIndexes
+
+//IndexCatalogImpl::init调用
 bool BSONCollectionCatalogEntry::isIndexReady(OperationContext* opCtx, StringData indexName) const {
     MetaData md = _getMetaData(opCtx);
 

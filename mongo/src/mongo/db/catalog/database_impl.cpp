@@ -876,7 +876,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
             }
         }
 
-		//如何集合是"system.X"相关的索引
+		//如锅集合是"system.X"相关的索引
         if (nss.isSystem()) { //wiredtiger创建普通索引文件
             createSystemIndexes(opCtx, collection);
         }
