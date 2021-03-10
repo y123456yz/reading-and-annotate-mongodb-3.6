@@ -53,6 +53,10 @@ class IndexDescriptor;
 class MatchExpression;
 class OperationContext;
 
+//IndexCatalogImpl::_setupInMemoryStructures中构造使用
+//IndexCatalogImpl(IndexCatalogEntryContainer)._entries(索引数组信息) 成员为该类型，一个索引对应一个IndexCatalogEntry，参考IndexCatalogImpl::_setupInMemoryStructures
+
+//IndexCatalogImpl::_setupInMemoryStructures中构造使用
 class IndexCatalogEntryImpl : public IndexCatalogEntry::Impl {
     MONGO_DISALLOW_COPYING(IndexCatalogEntryImpl);
 
@@ -180,12 +184,15 @@ private:
 
     std::string _ns;
 
+    //对应KVCollectionCatalogEntry
     CollectionCatalogEntry* _collection;  // not owned here
-
+    //索引描述信息全部存到这里
     std::unique_ptr<IndexDescriptor> _descriptor;  // owned here
 
     CollectionInfoCache* _infoCache;  // not owned here
 
+    //btree对应BtreeAccessMethod
+    //IndexCatalogImpl::_setupInMemoryStructures->IndexCatalogEntryImpl::init调用
     std::unique_ptr<IndexAccessMethod> _accessMethod;
 
     // Owned here.

@@ -76,6 +76,9 @@ S2_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, bt
 */ //操作接口，CRUD方法，注意是非线程安全的。对调用者来说，需要考虑底层的所以结构，接口的行为是不透明的。
 //参考http://www.mongoing.com/archives/1462，注意3.6代码结构有很大的变化
 //btree_key_generator.h[cpp] 该对象封装了一套解析解析算法，目的是解析出obj中的索引key
+
+////IndexCatalogEntryImpl._accessMethod为该类型
+//IndexCatalogImpl::_setupInMemoryStructures->KVDatabaseCatalogEntry::getIndex中确定使用那种method
 class IndexAccessMethod { //最终初始化赋值在IndexAccessMethod* KVDatabaseCatalogEntry::getIndex
     MONGO_DISALLOW_COPYING(IndexAccessMethod);
 

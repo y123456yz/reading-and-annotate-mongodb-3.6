@@ -83,6 +83,7 @@ public:
         }
 
         BSONObj spec;
+        ////BSONCollectionCatalogEntry::isIndexReady中会使用，表示索引是否执行完成
         bool ready;
         RecordId head;
         bool multikey;
@@ -95,6 +96,7 @@ public:
         MultikeyPaths multikeyPaths;
     };
 
+    
     struct MetaData {
         void parse(const BSONObj& obj);
         BSONObj toBSON() const;

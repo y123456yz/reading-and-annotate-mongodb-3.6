@@ -52,6 +52,7 @@ namespace mongo {
    It's assumed this is not for super-high RPS things, so we don't do
    anything special in the implementation here to be fast.
 */
+//MultiIndexBlockImpl._backgroundOperation为该类型
 class BackgroundOperation {
     MONGO_DISALLOW_COPYING(BackgroundOperation);
 

@@ -384,6 +384,7 @@ public:
 
 
 private:
+    //IndexCatalogImpl::_setupInMemoryStructures调用，获取对应KVDatabaseCatalogEntry
     inline DatabaseCatalogEntry* dbce() const final {
         return this->_dbce;
     }
@@ -456,7 +457,7 @@ private:
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
     CollectionInfoCache _infoCache;
-    //索引相关接口
+    //索引相关接口  
     //CollectionImpl::CollectionImpl构造及赋值，对应IndexCatalogImpl
     IndexCatalog _indexCatalog; //_recordStore对应数据操作，_indexCatalog对应索引操作
 

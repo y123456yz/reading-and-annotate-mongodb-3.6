@@ -42,6 +42,7 @@ namespace mongo {
 // index to be multikey, we'd have a std::vector<std::set<size_t>>{{0U, 1U}, {0U}}.
 //
 // An empty vector is used to represent that the index doesn't support path-level multikey tracking.
+//IndexCatalogEntryImpl._indexMultikeyPaths为该类型
 using MultikeyPaths = std::vector<std::set<std::size_t>>;
 
 }  // namespace mongo

@@ -52,7 +52,8 @@ class IndexDescriptor;
 class MatchExpression;
 class OperationContext;
 
-//IndexCatalogEntryContainer._entries  成员为该类型
+//IndexCatalogImpl::_setupInMemoryStructures中构造使用
+//IndexCatalogImpl(IndexCatalogEntryContainer)._entries(索引数组信息) 成员为该类型，一个索引对应一个IndexCatalogEntry，参考IndexCatalogImpl::_setupInMemoryStructures
 //IndexCatalogEntryImpl继承IndexCatalogEntry::Impl
 class IndexCatalogEntry {
 public:

@@ -43,6 +43,8 @@ class OperationContext;
  * this is for storing things that you want to cache about a single collection
  * life cycle is managed for you from inside Collection.
  */
+//IndexCatalogEntryImpl._descriptor为该类型
+//CollectionInfoCacheImpl继承该类
 class CollectionInfoCache {
 public:
     //CollectionInfoCacheImpl继承该类，接口真正实现在该类

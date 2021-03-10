@@ -185,10 +185,32 @@ void MultiIndexBlockImpl::removeExistingIndexes(std::vector<BSONObj>* specs) con
     }
 }
 
+/*
+ build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
+2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
+2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
+。。。。。。
+2021-03-10T17:38:54.001+0800 I -        [conn1366036]   Index Build (background): 50631100/53092096 95%
+2021-03-10T17:38:57.001+0800 I -        [conn1366036]   Index Build (background): 51048600/53092096 96%
+2021-03-10T17:39:00.001+0800 I -        [conn1366036]   Index Build (background): 51485100/53092096 96%
+2021-03-10T17:39:03.000+0800 I -        [conn1366036]   Index Build (background): 51916000/53092096 97%
+2021-03-10T17:39:06.001+0800 I -        [conn1366036]   Index Build (background): 52334600/53092096 98%
+2021-03-10T17:39:09.002+0800 I -        [conn1366036]   Index Build (background): 52772500/53092096 99%
+2021-03-10T17:39:12.002+0800 I -        [conn1366036]   Index Build (background): 53195800/53092096 100%
+2021-03-10T17:39:15.000+0800 I -        [conn1366036]   Index Build (background): 53537600/53092096 100%
+2021-03-10T17:39:18.001+0800 I -        [conn1366036]   Index Build (background): 53948100/53092096 101%
+2021-03-10T17:39:21.000+0800 I -        [conn1366036]   Index Build (background): 54359900/53092096 102%
+2021-03-10T17:39:21.177+0800 I INDEX    [conn1366036] build index done.  scanned 54386432 total records. 422 secs
+2021-03-10T17:39:21.177+0800 D INDEX    [conn1366036] marking index messageId_1_pushNoShow_1 as ready in snapshot id 207669429993
+
+*/
+
 //创建集合的时候或者程序重启的时候建索引:DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //MultiIndexBlockImpl::init->IndexCatalogImpl::IndexBuildBlock::init  程序运行过程中，并且集合已经存在的时候建索引
 
 //IndexCatalogImpl::createIndexOnEmptyCollection中调用
+
+//加索引会走到这里面来
 StatusWith<std::vector<BSONObj>> 
 MultiIndexBlockImpl::init(const BSONObj& spec) {
     const auto indexes = std::vector<BSONObj>(1, spec);
@@ -205,10 +227,11 @@ MultiIndexBlockImpl::init(const std::vector<BSONObj>& indexSpecs) {
 	log() << "yang test ...MultiIndexBlockImpl::init";
 	
     const string& ns = _collection->ns().ns();
-
+	//获取该表对应的IndexCatalogImpl信息
     const auto idxCat = _collection->getIndexCatalog();
     invariant(idxCat);
     invariant(idxCat->ok());
+	//IndexCatalogImpl::checkUnfinished 检查是否有为运行完的索引
     Status status = idxCat->checkUnfinished();
     if (!status.isOK())
         return status;
@@ -282,7 +305,8 @@ db.things.ensureIndex({name:1}, {background:true});
         }
 
 		//build index on: test.world properties: { v: 2, key: { geometry: "2dsphere" }, name: "geometry_2dsphere", ns: "test.world", 2dsphereIndexVersion: 3 }
-        log() << "build index on: " << ns << " properties: " << descriptor->toString();
+		
+		log() << "build index on: " << ns << " properties: " << descriptor->toString();
         if (index.bulk)
             log() << "\t building index using bulk method; build may temporarily use up to "
                   << eachIndexBuildMaxMemoryUsageBytes / 1024 / 1024 << " megabytes of RAM";
@@ -313,10 +337,30 @@ db.things.ensureIndex({name:1}, {background:true});
     return indexInfoObjs;
 }
 
+/*
+ build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
+2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
+2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
+。。。。。。
+2021-03-10T17:38:54.001+0800 I -        [conn1366036]   Index Build (background): 50631100/53092096 95%
+2021-03-10T17:38:57.001+0800 I -        [conn1366036]   Index Build (background): 51048600/53092096 96%
+2021-03-10T17:39:00.001+0800 I -        [conn1366036]   Index Build (background): 51485100/53092096 96%
+2021-03-10T17:39:03.000+0800 I -        [conn1366036]   Index Build (background): 51916000/53092096 97%
+2021-03-10T17:39:06.001+0800 I -        [conn1366036]   Index Build (background): 52334600/53092096 98%
+2021-03-10T17:39:09.002+0800 I -        [conn1366036]   Index Build (background): 52772500/53092096 99%
+2021-03-10T17:39:12.002+0800 I -        [conn1366036]   Index Build (background): 53195800/53092096 100%
+2021-03-10T17:39:15.000+0800 I -        [conn1366036]   Index Build (background): 53537600/53092096 100%
+2021-03-10T17:39:18.001+0800 I -        [conn1366036]   Index Build (background): 53948100/53092096 101%
+2021-03-10T17:39:21.000+0800 I -        [conn1366036]   Index Build (background): 54359900/53092096 102%
+2021-03-10T17:39:21.177+0800 I INDEX    [conn1366036] build index done.  scanned 54386432 total records. 422 secs
+2021-03-10T17:39:21.177+0800 D INDEX    [conn1366036] marking index messageId_1_pushNoShow_1 as ready in snapshot id 207669429993
+
+*/
 
 ////CmdCreateIndex::errmsgRun调用
 Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* dupsOut) {
-    const char* curopMessage = _buildInBackground ? "Index Build (background)" : "Index Build";
+	//加索引有类似如下打印:Index Build (background): 13531300/53092096 25%
+	const char* curopMessage = _buildInBackground ? "Index Build (background)" : "Index Build";
 	//该表数据大小 CollectionImpl::numRecords
 	const auto numRecords = _collection->numRecords(_opCtx);
     stdx::unique_lock<Client> lk(*_opCtx->getClient());

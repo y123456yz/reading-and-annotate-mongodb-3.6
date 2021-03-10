@@ -41,6 +41,7 @@ namespace mongo {
  * such allows multiple MongoDB collections share an underlying table. This can be a beneficial
  * tradeoff for workloads that create many collections.
  */
+//IndexCatalogEntryImpl._prefix为该类型
 class KVPrefix {
 public:
     // Represents a table that is not grouped and should not have its keys prefixed.

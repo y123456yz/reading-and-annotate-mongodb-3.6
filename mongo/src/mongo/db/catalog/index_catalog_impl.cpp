@@ -134,7 +134,7 @@ IndexCatalogImpl::~IndexCatalogImpl() {
 Status IndexCatalogImpl::init(OperationContext* opCtx) {
     vector<string> indexNames;
 	//BSONCollectionCatalogEntry::getAllIndexes 
-	//获取所有的所有名
+	//获取所有的索引名
     _collection->getCatalogEntry()->getAllIndexes(opCtx, &indexNames);
 
     for (size_t i = 0; i < indexNames.size(); i++) {
@@ -177,7 +177,8 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
 //IndexCatalogImpl::IndexBuildBlock::init  IndexCatalogImpl::init中调用
 IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
     OperationContext* opCtx, std::unique_ptr<IndexDescriptor> descriptor, bool initFromDisk) {
-    Status status = _isSpecOk(opCtx, descriptor->infoObj());
+	//索引检查，索引版本是否正确等
+	Status status = _isSpecOk(opCtx, descriptor->infoObj());
     if (!status.isOK() && status != ErrorCodes::IndexAlreadyExists) {
         severe() << "Found an invalid index " << descriptor->infoObj() << " on the "
                  << _collection->ns().ns() << " collection: " << redact(status);
@@ -185,17 +186,23 @@ IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
     }
 
     auto* const descriptorPtr = descriptor.get();
-	
+
+	//构造IndexCatalogImpl类
     auto entry = stdx::make_unique<IndexCatalogEntry>(opCtx,
                                                       _collection->ns().ns(),
+                                                      //CollectionCatalogEntry
                                                       _collection->getCatalogEntry(),
                                                       std::move(descriptor),
                                                       _collection->infoCache());
-    std::unique_ptr<IndexAccessMethod> accessMethod(
+
+	//CollectionImpl::dbce获取KVDatabaseCatalogEntry类，然后调用
+	//KVDatabaseCatalogEntry::getIndex获取对应method，betree对应BtreeAccessMethod
+	std::unique_ptr<IndexAccessMethod> accessMethod(
         _collection->dbce()->getIndex(opCtx, _collection->getCatalogEntry(), entry.get()));
-	//IndexCatalogEntryImpl::init
+	//IndexCatalogEntryImpl::init,给IndexCatalogEntryImpl._accessMethod赋值为accessMethod
 	entry->init(std::move(accessMethod));
 
+	//获取IndexCatalogEntryImpl添加到_entries数组中，一个索引信息对应一个IndexCatalogEntryImpl
     IndexCatalogEntry* save = entry.get();
     _entries.add(entry.release());
 
@@ -269,6 +276,7 @@ bool IndexCatalogImpl::_shouldOverridePlugin(OperationContext* opCtx,
     return false;
 }
 
+//索引类型是btree  text  2d中的哪一种
 string IndexCatalogImpl::_getAccessMethodName(OperationContext* opCtx,
                                               const BSONObj& keyPattern) const {
     if (_shouldOverridePlugin(opCtx, keyPattern)) {
@@ -541,6 +549,7 @@ Status _checkValidFilterExpressions(MatchExpression* expression, int level = 0) 
 }
 }
 
+//索引检查，索引版本是否正确等
 Status IndexCatalogImpl::_isSpecOk(OperationContext* opCtx, const BSONObj& spec) const {
     const NamespaceString& nss = _collection->ns();
 

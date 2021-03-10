@@ -41,6 +41,7 @@ namespace mongo {
 using std::vector;
 
 // Standard Btree implementation below.
+//KVDatabaseCatalogEntry::getIndex中构造初始化
 BtreeAccessMethod::BtreeAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree)
     : IndexAccessMethod(btreeState, btree) {
     // The key generation wants these values.

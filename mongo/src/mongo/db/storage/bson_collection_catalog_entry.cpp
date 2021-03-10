@@ -195,7 +195,7 @@ std::vector<mongo::InsertStatement>&, mongo::(anonymous namespace)::LastOpFixer*
 // Retrieve by calling getAndClearUnfinishedIndexes().
 //索引没有执行完成，加到_unfinishedIndexes
 
-//IndexCatalogImpl::init调用
+//IndexCatalogImpl::init调用，索引是否添加完成
 bool BSONCollectionCatalogEntry::isIndexReady(OperationContext* opCtx, StringData indexName) const {
     MetaData md = _getMetaData(opCtx);
 

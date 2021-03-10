@@ -67,6 +67,7 @@ BtreeKeyGenerator::BtreeKeyGenerator(std::vector<const char*> fieldNames,
     _isIdIndex = fieldNames.size() == 1 && std::string("_id") == fieldNames[0];
 }
 
+//BtreeAccessMethod::BtreeAccessMethodππ‘Ï
 std::unique_ptr<BtreeKeyGenerator> BtreeKeyGenerator::make(IndexVersion indexVersion,
                                                            std::vector<const char*> fieldNames,
                                                            std::vector<BSONElement> fixed,

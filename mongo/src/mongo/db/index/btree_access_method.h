@@ -42,7 +42,9 @@ class IndexDescriptor;
 /**
  * The IndexAccessMethod for a Btree index.
  * Any index created with {field: 1} or {field: -1} uses this.
- */ //继承自IndexAccessMethod，声明getKeys，交给由子类实现，是个Adapter模式。
+ */ 
+ //继承自IndexAccessMethod，声明getKeys，交给由子类实现，是个Adapter模式。
+ //KVDatabaseCatalogEntry::getIndex中构造初始化
 class BtreeAccessMethod : public IndexAccessMethod {
 public:
     BtreeAccessMethod(IndexCatalogEntry* btreeState, SortedDataInterface* btree);

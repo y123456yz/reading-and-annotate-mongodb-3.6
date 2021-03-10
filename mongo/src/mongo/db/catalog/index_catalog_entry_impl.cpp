@@ -93,6 +93,7 @@ private:
 IndexCatalogEntryImpl::IndexCatalogEntryImpl(IndexCatalogEntry* const this_,
                                              OperationContext* const opCtx,
                                              const StringData ns,
+                                             //对应KVCollectionCatalogEntry
                                              CollectionCatalogEntry* const collection,
                                              std::unique_ptr<IndexDescriptor> descriptor,
                                              CollectionInfoCache* const infoCache)
@@ -156,7 +157,7 @@ IndexCatalogEntryImpl::~IndexCatalogEntryImpl() {
     _descriptor.reset();
 }
 
-//IndexCatalogImpl::_setupInMemoryStructures调用
+//IndexCatalogImpl::_setupInMemoryStructures->IndexCatalogEntryImpl::init调用
 void IndexCatalogEntryImpl::init(std::unique_ptr<IndexAccessMethod> accessMethod) {
     invariant(!_accessMethod);
     _accessMethod = std::move(accessMethod);

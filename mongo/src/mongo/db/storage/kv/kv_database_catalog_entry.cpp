@@ -54,6 +54,7 @@ auto mongo::defaultDatabaseCatalogEntryFactory(const StringData name, KVStorageE
 
 namespace mongo {
 
+//IndexCatalogImpl::_setupInMemoryStructuresµ÷ÓÃ
 IndexAccessMethod* KVDatabaseCatalogEntry::getIndex(OperationContext* opCtx,
                                                     const CollectionCatalogEntry* collection,
                                                     IndexCatalogEntry* index) {

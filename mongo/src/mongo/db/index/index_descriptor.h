@@ -56,6 +56,8 @@ class IndexCatalogEntryContainer;
 //IndexCatalogImpl::init中构造使用
 
 //索引信息，获取所有所有信息可以参考fillOutPlannerParams
+//IndexCatalogEntryImpl._descriptor为该类型
+
 class IndexDescriptor { //索引信息通过该类表达   如ID索引  唯一索引等都是通过该类表达
 public:
     enum class IndexVersion { kV0 = 0, kV1 = 1, kV2 = 2 };

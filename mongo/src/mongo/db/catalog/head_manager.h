@@ -39,6 +39,8 @@ class OperationContext;
  * that lives in the catalog to identify where an index lives.
  */
 //HeadManagerImpl基础该类
+////IndexCatalogEntryImpl._headManager为该类型
+
 class HeadManager {
 public:
     virtual ~HeadManager() {}

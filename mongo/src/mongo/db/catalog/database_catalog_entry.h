@@ -55,7 +55,8 @@ StorageEngine¶¨ÒåÁËÒ»ÏµÁĞMongdb´æ´¢ÒıÇæĞèÒªÊµÏÖµÄ½Ó¿Ú£¬ÊÇÒ»¸ö½Ó¿ÚÀà£¬ËùÓĞµÄ´æ´¢Ò
 //KVDatabaseCatalogEntry¼Ì³ĞKVDatabaseCatalogEntryBase£¬ºóÕßÓÖ¼Ì³ĞDatabaseCatalogEntry£¬ÕâÑù
 //¾Í°ÑkvºÍcatalogÁªÏµÁËÆğÀ´
 
-//KVDatabaseCatalogEntryBase¼Ì³Ğ¸ÃÀà
+//KVDatabaseCatalogEntry¼Ì³ĞKVDatabaseCatalogEntryBase£¬ºóÕßÓÖ¼Ì³ĞDatabaseCatalogEntry
+
 //StorageEngine::getDatabaseCatalogEntry»ñÈ¡¸ÃÀà
 class DatabaseCatalogEntry {
 public:

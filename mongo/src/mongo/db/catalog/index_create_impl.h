@@ -192,7 +192,7 @@ private:
     class SetNeedToCleanupOnRollback;
     class CleanupIndexesVectorOnRollback;
 
-    
+    //MultiIndexBlockImpl._indexes为该类型
     struct IndexToBuild {
         std::unique_ptr<IndexCatalogImpl::IndexBuildBlock> block;
 
@@ -203,7 +203,9 @@ private:
         InsertDeleteOptions options;
     };
 
+    
     std::vector<IndexToBuild> _indexes;
+    
 
     std::unique_ptr<BackgroundOperation> _backgroundOperation;
 
