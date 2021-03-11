@@ -129,6 +129,8 @@ private:
 // CurOp * op = CurOp::get(opCtx);
 // ProgressMeterHolder pm(op->setMessage("index: (1/3) external sort",
 // "Index: External Sort Progress", d->stats.nrecords, 10)); loop { pm.hit(); }
+
+//MultiIndexBlockImpl::insertAllDocumentsInCollection÷– π”√
 class ProgressMeterHolder {
     MONGO_DISALLOW_COPYING(ProgressMeterHolder);
 

@@ -62,6 +62,8 @@ namespace {
 stdx::function<MultiIndexBlock::factory_function_type> factory;
 }  // namespace
 
+//InitializeMultiIndexBlockFactory中调用
+//注册过程
 void MultiIndexBlock::registerFactory(decltype(factory) newFactory) {
     factory = std::move(newFactory);
 }

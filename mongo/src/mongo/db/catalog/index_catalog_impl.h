@@ -310,6 +310,7 @@ public:
 
         BSONObj _spec;
 
+        //赋值参考IndexCatalogImpl::IndexBuildBlock::init()，来源是IndexDescriptor
         std::string _indexName;
         std::string _indexNamespace;
 

@@ -138,7 +138,12 @@ bool IndexAccessMethod::ignoreKeyTooLong(OperationContext* opCtx) {
 }
 
 // Find the keys for obj, put them in the tree pointing to loc
-//IndexCatalogImpl::_indexFilteredRecords
+
+//BulkBuilder::insert阻塞方式加索引，  IndexAccessMethod::insert非阻塞方式加索引
+
+
+//IndexCatalogImpl::_indexFilteredRecords  MultiIndexBlockImpl::insert中调用
+//每条数据对应索引会产生一个索引KV，索引KV写入存储引擎
 Status IndexAccessMethod::insert(OperationContext* opCtx,
                                  const BSONObj& obj,
                                  const RecordId& loc,
@@ -155,8 +160,9 @@ Status IndexAccessMethod::insert(OperationContext* opCtx,
 
     Status ret = Status::OK();
     for (BSONObjSet::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		//SortedDataInterface    WiredTigerIndex::insert  写入wiredtiger
-        Status status = _newInterface->insert(opCtx, *i, loc, options.dupsAllowed);
+		//SortedDataInterface    WiredTigerIndex::insert    WiredTigerIndex继承SortedDataInterface
+		//把索引KV写入存储引擎
+		Status status = _newInterface->insert(opCtx, *i, loc, options.dupsAllowed);
 
         // Everything's OK, carry on.
         if (status.isOK()) {
@@ -254,6 +260,7 @@ Status IndexAccessMethod::remove(OperationContext* opCtx,
     return Status::OK();
 }
 
+//MultiIndexBlockImpl::init调用
 Status IndexAccessMethod::initializeAsEmpty(OperationContext* opCtx) {
     return _newInterface->initAsEmpty(opCtx);
 }
@@ -452,6 +459,7 @@ Status IndexAccessMethod::compact(OperationContext* opCtx) {
     return this->_newInterface->compact(opCtx);
 }
 
+//MultiIndexBlockImpl::init中初始化调用
 std::unique_ptr<IndexAccessMethod::BulkBuilder> IndexAccessMethod::initiateBulk(
     size_t maxMemoryUsageBytes) {
     return std::unique_ptr<BulkBuilder>(new BulkBuilder(this, _descriptor, maxMemoryUsageBytes));
@@ -468,6 +476,7 @@ IndexAccessMethod::BulkBuilder::BulkBuilder(const IndexAccessMethod* index,
           BtreeExternalSortComparison(descriptor->keyPattern(), descriptor->version()))),
       _real(index) {}
 
+//BulkBuilder::insert阻塞方式加索引，  IndexAccessMethod::insert非阻塞方式加索引
 Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
                                               const BSONObj& obj,
                                               const RecordId& loc,
@@ -589,6 +598,7 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
     return Status::OK();
 }
 
+//IndexAccessMethod::insert中调用,获取索引KV数据的K
 void IndexAccessMethod::getKeys(const BSONObj& obj,
                                 GetKeysMode mode,
                                 BSONObjSet* keys,
@@ -618,6 +628,7 @@ void IndexAccessMethod::getKeys(const BSONObj& obj,
                                               13026,
                                               13027};
     try {
+		//BtreeAccessMethod::doGetKeys
         doGetKeys(obj, keys, multikeyPaths);
     } catch (const AssertionException& ex) {
         if (mode == GetKeysMode::kEnforceConstraints) {

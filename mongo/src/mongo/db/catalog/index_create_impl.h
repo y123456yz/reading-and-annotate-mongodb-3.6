@@ -60,6 +60,33 @@ class OperationContext;
  * destructed from inside of a WriteUnitOfWork as any cleanup needed should never be rolled back
  * (as it is itself essentially a form of rollback, you don't want to "rollback the rollback").
  */
+/*
+db.runCommand(
+  {
+    createIndexes: <collection>,
+    indexes: [
+        {
+            key: {
+                <key-value_pair>,
+                <key-value_pair>,
+                ...
+            },
+            name: <index_name>,
+            <option1>,
+            <option2>,
+            ...
+        },
+        { ... },
+        { ... }
+    ],
+    writeConcern: { <write concern> },
+    commitQuorum: <int|string>,
+    comment: <any>
+  }
+) 
+一个命令可以同时创建多个索引
+*/
+
 class MultiIndexBlockImpl : public MultiIndexBlock::Impl {
     MONGO_DISALLOW_COPYING(MultiIndexBlockImpl);
 
@@ -192,24 +219,31 @@ private:
     class SetNeedToCleanupOnRollback;
     class CleanupIndexesVectorOnRollback;
 
-    //MultiIndexBlockImpl._indexes为该类型
+    //MultiIndexBlockImpl._indexes为该类型，下面的_indexes
+    //MultiIndexBlockImpl::init初始化
     struct IndexToBuild {
         std::unique_ptr<IndexCatalogImpl::IndexBuildBlock> block;
 
+        //索引方法  btree  text 2d等，btree对应Btree_access_method
+        //MultiIndexBlockImpl::insert中真正使用，索引数据对应KV写入存储引擎
+        //非阻塞加索引用这个
         IndexAccessMethod* real = NULL;           // owned elsewhere
         const MatchExpression* filterExpression;  // might be NULL, owned elsewhere
+        //MultiIndexBlockImpl::insert中真正使用，建索引不带backgroud阻塞加索引会使用这个
+        //对应BulkBuilder
         std::unique_ptr<IndexAccessMethod::BulkBuilder> bulk;
 
         InsertDeleteOptions options;
     };
 
-    
+    //一个索引对应一个IndexToBuild，一个命令可以创建多个索引，所以这里是一个数组
     std::vector<IndexToBuild> _indexes;
     
 
     std::unique_ptr<BackgroundOperation> _backgroundOperation;
 
     // Pointers not owned here and must outlive 'this'
+    //通过这里和CollectionImpl联系起来，从而通过CollectionImpl._indexCatalog和IndexCatalogImpl关联起来
     Collection* _collection;
     OperationContext* _opCtx;
 

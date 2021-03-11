@@ -49,6 +49,7 @@ void CollectionIndexUsageTracker::recordIndexAccess(StringData indexName) {
     _indexUsageMap[indexName].accesses.fetchAndAdd(1);
 }
 
+//CollectionInfoCacheImpl::addedIndexÖÐµ÷ÓÃ
 void CollectionIndexUsageTracker::registerIndex(StringData indexName, const BSONObj& indexKey) {
     invariant(!indexName.empty());
     dassert(_indexUsageMap.find(indexName) == _indexUsageMap.end());

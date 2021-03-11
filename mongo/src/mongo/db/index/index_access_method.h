@@ -223,6 +223,7 @@ public:
     // Bulk operations support
     //
 
+    //IndexAccessMethod::initiateBulk÷–≥ı ºªØ
     class BulkBuilder {
     public:
         /**

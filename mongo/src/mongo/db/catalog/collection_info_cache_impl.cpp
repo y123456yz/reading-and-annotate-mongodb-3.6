@@ -219,6 +219,8 @@ void CollectionInfoCacheImpl::init(OperationContext* opCtx) {
     rebuildIndexData(opCtx);
 }
 
+//通过类似_collection->infoCache()->addedIndex(_opCtx, descriptorPtr);方式调用，参考IndexCatalogImpl::IndexBuildBlock::init()
+//IndexCatalogImpl::IndexBuildBlock::init()调用
 void CollectionInfoCacheImpl::addedIndex(OperationContext* opCtx, const IndexDescriptor* desc) {
     // Requires exclusive collection lock.
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_X));

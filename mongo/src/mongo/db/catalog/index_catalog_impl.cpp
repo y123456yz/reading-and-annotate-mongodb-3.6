@@ -157,6 +157,7 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
         auto descriptor = stdx::make_unique<IndexDescriptor>(
             _collection, _getAccessMethodName(opCtx, keyPattern), spec);
         const bool initFromDisk = true;
+		//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
         IndexCatalogEntry* entry =
             _setupInMemoryStructures(opCtx, std::move(descriptor), initFromDisk);
 
@@ -175,6 +176,8 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
 }
 
 //IndexCatalogImpl::IndexBuildBlock::init  IndexCatalogImpl::init中调用
+
+//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
 IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
     OperationContext* opCtx, std::unique_ptr<IndexDescriptor> descriptor, bool initFromDisk) {
 	//索引检查，索引版本是否正确等
@@ -187,7 +190,7 @@ IndexCatalogEntry* IndexCatalogImpl::_setupInMemoryStructures(
 
     auto* const descriptorPtr = descriptor.get();
 
-	//构造IndexCatalogImpl类
+	//构造IndexCatalogEntryImpl类
     auto entry = stdx::make_unique<IndexCatalogEntry>(opCtx,
                                                       _collection->ns().ns(),
                                                       //CollectionCatalogEntry
@@ -433,33 +436,45 @@ IndexCatalogImpl::IndexBuildBlock::IndexBuildBlock(OperationContext* opCtx,
 //创建集合的时候或者程序重启的时候建索引:DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //MultiIndexBlockImpl::init->IndexCatalogImpl::IndexBuildBlock::init  程序运行过程中，并且集合已经存在的时候建索引
 
-//IndexCatalogImpl::createIndexOnEmptyCollection  MultiIndexBlockImpl::init调用
+//IndexCatalogImpl::createIndexOnEmptyCollection 调用
+//CmdCreateIndex::errmsgRun->MultiIndexBlockImpl::init调用
+
+////获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
 Status IndexCatalogImpl::IndexBuildBlock::init() {
     // need this first for names, etc...
+    //获取所有信息的key，可以db.collection.getIndexes()获取
     BSONObj keyPattern = _spec.getObjectField("key");
+	//构造索引IndexDescriptor信息
     auto descriptor = stdx::make_unique<IndexDescriptor>(
         _collection, IndexNames::findPluginName(keyPattern), _spec);
 
 	//log() << "yang test ... IndexCatalogImpl::IndexBuildBlock::init";
+	//获取索引名信息
+	//IndexDescriptor::indexName 
     _indexName = descriptor->indexName();
+	//IndexDescriptor::indexNamespace
     _indexNamespace = descriptor->indexNamespace();
 
     /// ----------   setup on disk structures ----------------
 
 	//KVCollectionCatalogEntry::prepareForIndexBuild
+	//准备工作
     Status status = _collection->getCatalogEntry()->prepareForIndexBuild(_opCtx, descriptor.get());
     if (!status.isOK())
         return status;
 
+	//获取IndexDescriptor信息
     auto* const descriptorPtr = descriptor.get();
     /// ----------   setup in memory structures  ----------------
     const bool initFromDisk = false;
+	//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
     _entry = IndexCatalogImpl::_setupInMemoryStructures(
         _catalog, _opCtx, std::move(descriptor), initFromDisk);
 
     // Register this index with the CollectionInfoCache to regenerate the cache. This way, updates
     // occurring while an index is being build in the background will be aware of whether or not
     // they need to modify any indexes.
+    //CollectionInfoCacheImpl::addedIndex
     _collection->infoCache()->addedIndex(_opCtx, descriptorPtr);
 
     return Status::OK();

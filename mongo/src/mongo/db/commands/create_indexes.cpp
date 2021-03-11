@@ -64,6 +64,32 @@ using IndexVersion = IndexDescriptor::IndexVersion;
 
 namespace {
 
+/*
+db.runCommand(
+  {
+    createIndexes: <collection>,
+    indexes: [
+        {
+            key: {
+                <key-value_pair>,
+                <key-value_pair>,
+                ...
+            },
+            name: <index_name>,
+            <option1>,
+            <option2>,
+            ...
+        },
+        { ... },
+        { ... }
+    ],
+    writeConcern: { <write concern> },
+    commitQuorum: <int|string>,
+    comment: <any>
+  }
+) 
+一个命令可以同时创建多个索引
+*/
 const StringData kIndexesFieldName = "indexes"_sd;
 const StringData kCommandName = "createIndexes"_sd;
 
@@ -72,6 +98,33 @@ const StringData kCommandName = "createIndexes"_sd;
  * specifications that have any missing attributes filled in. If any index specification is
  * malformed, then an error status is returned.
  */
+/*
+db.runCommand(
+  {
+	createIndexes: <collection>,
+	indexes: [
+		{
+			key: {
+				<key-value_pair>,
+				<key-value_pair>,
+				...
+			},
+			name: <index_name>,
+			<option1>,
+			<option2>,
+			...
+		},
+		{ ... },
+		{ ... }
+	],
+	writeConcern: { <write concern> },
+	commitQuorum: <int|string>,
+	comment: <any>
+  }
+) 
+一个命令可以同时创建多个索引,所以cmdObj可能是一个数组
+*/
+
 StatusWith<std::vector<BSONObj>> 
 		parseAndValidateIndexSpecs(
     OperationContext* opCtx,
@@ -232,6 +285,34 @@ public:
         return Status(ErrorCodes::Unauthorized, "Unauthorized");
     }
 
+
+	/*
+	db.runCommand(
+	  {
+		createIndexes: <collection>,
+		indexes: [
+			{
+				key: {
+					<key-value_pair>,
+					<key-value_pair>,
+					...
+				},
+				name: <index_name>,
+				<option1>,
+				<option2>,
+				...
+			},
+			{ ... },
+			{ ... }
+		],
+		writeConcern: { <write concern> },
+		commitQuorum: <int|string>,
+		comment: <any>
+	  }
+	) 
+	一个命令可以同时创建多个索引
+	*/
+    //注意一次可以创建多个索引
 	//CmdCreateIndex::errmsgRun
     virtual bool errmsgRun(OperationContext* opCtx,
                            const string& dbname,
@@ -257,6 +338,8 @@ public:
         if (!specsWithStatus.isOK()) {
             return appendCommandStatus(result, specsWithStatus.getStatus());
         }
+
+		//一个命令中可以创建多个索引，所以这里是数组
         auto specs = std::move(specsWithStatus.getValue());
 
         // now we know we have to create index(es)
@@ -354,8 +437,11 @@ public:
             }
         }
 
+		//创建索引
         std::vector<BSONObj> indexInfoObjs =
             writeConflictRetry(opCtx, kCommandName, ns.ns(), [&indexer, &specs] {
+            	//MultiIndexBlockImpl::init 
+            	//建索引的一些初始化工作
                 return uassertStatusOK(indexer.init(specs));
             });
 
@@ -421,8 +507,10 @@ public:
             WriteUnitOfWork wunit(opCtx);
 
             indexer.commit();
-
+			//构造返回信息
             for (auto&& infoObj : indexInfoObjs) {
+				//加索引的oplog，从节点拉取这条oplog后重放创建索引
+				//OpObserverImpl::onCreateIndex
                 getGlobalServiceContext()->getOpObserver()->onCreateIndex(
                     opCtx, ns, collection->uuid(), infoObj, false);
             }

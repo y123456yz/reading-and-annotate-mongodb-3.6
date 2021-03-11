@@ -60,7 +60,9 @@ struct ValidateResults;
  * modifying the underlying record.  This interface is an attempt to work around that.
  *
  * TODO: See if this actually works.
- */ //IndexAccessMethod._newInterface成员为该类,  WiredTigerIndex继承该类
+ */ 
+//WiredTigerIndex继承该类
+//IndexAccessMethod._newInterface成员为该类,  WiredTigerIndex继承该类
 class SortedDataInterface { //接口赋值可以参考KVDatabaseCatalogEntry::getIndex
 public:
     virtual ~SortedDataInterface() {}
@@ -219,8 +221,9 @@ public:
      *
      * Implementations may override any default implementation if they can provide a more
      * efficient implementation.
-     */ //WiredTigerIndexUniqueCursor->WiredTigerIndexCursorBase->SortedDataInterface::Cursor
-    class Cursor { //SortedDataInterface::Cursor
+     */ 
+    //WiredTigerIndexUniqueCursor->WiredTigerIndexCursorBase->SortedDataInterface::Cursor
+    class Cursor { //SortedDataInterface::Cursor 
     public:
         /**
          * Tells methods that return an IndexKeyEntry what part of the data the caller is

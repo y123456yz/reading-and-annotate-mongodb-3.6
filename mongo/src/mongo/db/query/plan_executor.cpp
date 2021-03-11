@@ -366,6 +366,7 @@ void PlanExecutor::saveState() {
     _currentState = kSaved;
 }
 
+//加索引的时候，会通过MultiIndexBlockImpl::insertAllDocumentsInCollection走到这里
 Status PlanExecutor::restoreState() {
     try {
         return restoreStateWithoutRetrying();
@@ -457,6 +458,8 @@ PlanExecutor::ExecState PlanExecutor::getNext(BSONObj* objOut, RecordId* dlOut) 
     return state;
 }
 
+//建索引 MultiIndexBlockImpl::insertAllDocumentsInCollection中调用
+//loc对应数据的key, objToIndex对应数据value
 PlanExecutor::ExecState PlanExecutor::getNextSnapshotted(Snapshotted<BSONObj>* objOut,
                                                          RecordId* dlOut) {
     // Detaching from the OperationContext means that the returned snapshot ids could be invalid.
@@ -554,7 +557,7 @@ PlanExecutor::ExecState PlanExecutor::waitForInserts(CappedInsertNotifierData* n
 #13 0x00007f882bc3b221 in mongo::BackgroundJob::jobBody (this=0x7f882e8cdfc0) at src/mongo/util/background.cpp:150
 */
 //FindCmd::run循环调用PlanExecutor的getNext函数获得查询结果.
-//PlanExecutor::getNext中调用      执行查询计划
+//PlanExecutor::getNext中调用      执行查询计划  dlOut对应数据的key, objOut对应数据value
 PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, RecordId* dlOut) {
     if (MONGO_FAIL_POINT(planExecutorAlwaysFails)) {
         Status status(ErrorCodes::OperationFailed,

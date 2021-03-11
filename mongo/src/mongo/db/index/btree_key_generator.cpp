@@ -83,6 +83,7 @@ std::unique_ptr<BtreeKeyGenerator> BtreeKeyGenerator::make(IndexVersion indexVer
     return nullptr;
 }
 
+//IndexAccessMethod::getKeys->IndexAccessMethod::getKeys->BtreeKeyGenerator::getKeys->BtreeKeyGeneratorV1::getKeysImpl
 void BtreeKeyGenerator::getKeys(const BSONObj& obj,
                                 BSONObjSet* keys,
                                 MultikeyPaths* multikeyPaths) const {
@@ -307,6 +308,8 @@ void BtreeKeyGeneratorV1::_getKeysArrEltFixed(std::vector<const char*>* fieldNam
                          positionalInfo,
                          multikeyPaths);
 }
+
+//IndexAccessMethod::getKeys->IndexAccessMethod::getKeys->BtreeKeyGenerator::getKeys->BtreeKeyGeneratorV1::getKeysImpl
 
 void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
                                       std::vector<BSONElement> fixed,

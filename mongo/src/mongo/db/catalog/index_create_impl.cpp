@@ -76,6 +76,29 @@ MONGO_FP_DECLARE(crashAfterStartingIndexBuild);
 MONGO_FP_DECLARE(hangAfterStartingIndexBuild);
 MONGO_FP_DECLARE(hangAfterStartingIndexBuildUnlocked);
 
+/*
+参考https://docs.mongodb.com/manual/reference/parameters/#param.maxIndexBuildMemoryUsageMegabytes
+Limits the amount of memory that simultaneous index builds on one collection may consume 
+for the duration of the builds. The specified amount of memory is shared between all indexes 
+built using a single createIndexes command or its shell helper db.collection.createIndexes().
+
+The memory consumed by an index build is separate from the WiredTiger cache memory (see cacheSizeGB).
+//同时创建多个索引，则多个索引最多只能使用这么多内存，
+//例如索引总内存现在为500M，同时创建5个索引，则每个索引最多使用100M
+maxIndexBuildMemoryUsageMegabytes  配置
+
+
+问题：一个命令可以创建多个索引，这些索引最多使用500M内存
+那么如果我不同命令先后创建多个索引，假设我先后创建了5个索引，5个索引总共是消耗5*500M还是也直用500M，
+答案是500*5,因为是多个命令中创建的，所以创建索引的时候不能同时添加，避免内存OOM
+
+加多个索引会同时跑，看日志：
+2021-03-11T11:23:25.001+0800 I -        [conn1307219]   Index Build (background): 242400/53092096 0%
+2021-03-11T11:23:28.001+0800 I -        [conn1320324]   Index Build (background): 8140200/53092096 15%
+2021-03-11T11:23:28.001+0800 I -        [conn1307219]   Index Build (background): 510700/53092096 0%
+2021-03-11T11:23:31.001+0800 I -        [conn1307219]   Index Build (background): 801300/53092096 1%
+2021-03-11T11:23:31.001+0800 I -        [conn1320324]   Index Build (background): 8394200/53092096 15%
+*/
 AtomicInt32 maxIndexBuildMemoryUsageMegabytes(500);
 
 class ExportedMaxIndexBuildMemoryUsageParameter
@@ -205,12 +228,42 @@ void MultiIndexBlockImpl::removeExistingIndexes(std::vector<BSONObj>* specs) con
 
 */
 
+/*
+db.runCommand(
+  {
+    createIndexes: <collection>,
+    indexes: [
+        {
+            key: {
+                <key-value_pair>,
+                <key-value_pair>,
+                ...
+            },
+            name: <index_name>,
+            <option1>,
+            <option2>,
+            ...
+        },
+        { ... },
+        { ... }
+    ],
+    writeConcern: { <write concern> },
+    commitQuorum: <int|string>,
+    comment: <any>
+  }
+) 
+一个命令可以同时创建多个索引
+*/
+
+
 //创建集合的时候或者程序重启的时候建索引:DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //MultiIndexBlockImpl::init->IndexCatalogImpl::IndexBuildBlock::init  程序运行过程中，并且集合已经存在的时候建索引
 
 //IndexCatalogImpl::createIndexOnEmptyCollection中调用
 
-//加索引会走到这里面来
+//加索引会走到这里面来  
+//CmdCreateIndex::errmsgRun调用  
+//建索引的一些初始化工作
 StatusWith<std::vector<BSONObj>> 
 MultiIndexBlockImpl::init(const BSONObj& spec) {
     const auto indexes = std::vector<BSONObj>(1, spec);
@@ -218,8 +271,10 @@ MultiIndexBlockImpl::init(const BSONObj& spec) {
 }
 
 //上面的MultiIndexBlockImpl::init中调用
+//建索引的一些初始化工作
 StatusWith<std::vector<BSONObj>> 
 MultiIndexBlockImpl::init(const std::vector<BSONObj>& indexSpecs) {
+	//放到一个事务中
     WriteUnitOfWork wunit(_opCtx);
 
     invariant(_indexes.empty());
@@ -261,9 +316,13 @@ db.things.ensureIndex({name:1}, {background:true});
     }
 
     std::vector<BSONObj> indexInfoObjs;
+	//索引信息
     indexInfoObjs.reserve(indexSpecs.size());
     std::size_t eachIndexBuildMaxMemoryUsageBytes = 0;
     if (!indexSpecs.empty()) {
+		//一个命令可以同时创建多个索引，则多个索引最多只能使用这么多内存，
+		//例如索引总内存现在为500M，同时创建5个索引，则每个索引最多使用100M
+		
         eachIndexBuildMaxMemoryUsageBytes =
             static_cast<std::size_t>(maxIndexBuildMemoryUsageMegabytes.load()) * 1024 * 1024 /
             indexSpecs.size();
@@ -272,30 +331,42 @@ db.things.ensureIndex({name:1}, {background:true});
     for (size_t i = 0; i < indexSpecs.size(); i++) {
         BSONObj info = indexSpecs[i];
         StatusWith<BSONObj> statusWithInfo =
+			//索引个数 索引冲突 索引名冲突等检查
             _collection->getIndexCatalog()->prepareSpecForCreate(_opCtx, info);
         Status status = statusWithInfo.getStatus();
+		//从这里可以看出前面的索引异常，后面的索引不会执行
         if (!status.isOK())
             return status;
+		//对应索引spec信息
         info = statusWithInfo.getValue();
         indexInfoObjs.push_back(info);
 
         IndexToBuild index;
+
+		//IndexToBuild类赋值             IndexCatalogImpl::IndexBuildBlock 
         index.block.reset(new IndexCatalogImpl::IndexBuildBlock(_opCtx, _collection, info));
-        status = index.block->init(); //IndexCatalogImpl::IndexBuildBlock::init 开始真正的建索引
+		//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
+		//IndexCatalogImpl::IndexBuildBlock::init 
+		status = index.block->init();  
         if (!status.isOK())
             return status;
 
+		//获取索引对应的accessMethod,默认Btree_access_method
         index.real = index.block->getEntry()->accessMethod();
+		//IndexAccessMethod::initializeAsEmpty
         status = index.real->initializeAsEmpty(_opCtx);
         if (!status.isOK())
             return status;
 
+		//如果没有加backgroud参数
         if (!_buildInBackground) {
             // Bulk build process requires foreground building as it assumes nothing is changing
             // under it.
+            //IndexAccessMethod::initiateBulk  bulk初始化，生成一个BulkBuilder
             index.bulk = index.real->initiateBulk(eachIndexBuildMaxMemoryUsageBytes);
         }
 
+		//获取索引对应IndexDescriptor
         const IndexDescriptor* descriptor = index.block->getEntry()->descriptor();
 
         IndexCatalog::prepareInsertDeleteOptions(_opCtx, descriptor, &index.options);
@@ -316,6 +387,7 @@ db.things.ensureIndex({name:1}, {background:true});
         // TODO SERVER-14888 Suppress this in cases we don't want to audit.
         audit::logCreateIndex(_opCtx->getClient(), &info, descriptor->indexName(), ns);
 
+		//IndexToBuild添加到_indexes数组
         _indexes.push_back(std::move(index));
     }
 
@@ -380,6 +452,8 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     } else {
         yieldPolicy = PlanExecutor::WRITE_CONFLICT_RETRY_ONLY;
     }
+
+	//生成加索引对应的PlanExecutor，也就是CollectionScan
     auto exec =
         InternalPlanner::collectionScan(_opCtx, _collection->ns().ns(), _collection, yieldPolicy);
 
@@ -388,6 +462,8 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     PlanExecutor::ExecState state;
     int retries = 0;  // non-zero when retrying our last document.
     while (retries ||
+			//通过Collection Scan的方式获取数据
+			//PlanExecutor::getNextSnapshotted  loc对应数据的key, objToIndex对应数据value
            (PlanExecutor::ADVANCED == (state = exec->getNextSnapshotted(&objToIndex, &loc))) ||
            MONGO_FAIL_POINT(hangAfterStartingIndexBuild)) {
         try {
@@ -403,6 +479,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
             }
 
             // Make sure we are working with the latest version of the document.
+            //该条数据已经删除了，则continue继续循环
             if (objToIndex.snapshotId() != _opCtx->recoveryUnit()->getSnapshotId() &&
                 !_collection->findDoc(_opCtx, loc, &objToIndex)) {
                 // doc was deleted so don't index it.
@@ -435,6 +512,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
             }
 
             // Go to the next document
+            //ProgressMeterHolder::hit
             progress->hit();
             n++;
             retries = 0;
@@ -485,7 +563,10 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     return Status::OK();
 }
 
+//MultiIndexBlockImpl::insertAllDocumentsInCollection中调用
+//每条数据对应索引会产生一个索引KV，索引KV写入存储引擎
 Status MultiIndexBlockImpl::insert(const BSONObj& doc, const RecordId& loc) {
+	//遍历所有的索引
     for (size_t i = 0; i < _indexes.size(); i++) {
         if (_indexes[i].filterExpression && !_indexes[i].filterExpression->matchesBSON(doc)) {
             continue;
@@ -493,9 +574,12 @@ Status MultiIndexBlockImpl::insert(const BSONObj& doc, const RecordId& loc) {
 
         int64_t unused;
         Status idxStatus(ErrorCodes::InternalError, "");
-        if (_indexes[i].bulk) {
+		//BulkBuilder::insert阻塞方式加索引，  IndexAccessMethod::insert非阻塞方式加索引
+        if (_indexes[i].bulk) { //阻塞非backgroud添加索引走这个分支
+        	//BulkBuilder::insert 
             idxStatus = _indexes[i].bulk->insert(_opCtx, doc, loc, _indexes[i].options, &unused);
-        } else {
+        } else { //backgroud后台非阻塞添加索引走这个分支
+        	//IndexAccessMethod::insert
             idxStatus = _indexes[i].real->insert(_opCtx, doc, loc, _indexes[i].options, &unused);
         }
 

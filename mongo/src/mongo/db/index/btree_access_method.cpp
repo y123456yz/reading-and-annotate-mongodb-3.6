@@ -63,9 +63,13 @@ BtreeAccessMethod::BtreeAccessMethod(IndexCatalogEntry* btreeState, SortedDataIn
     massert(16745, "Invalid index version for key generation.", _keyGenerator);
 }
 
+//IndexAccessMethod::getKeys->IndexAccessMethod::getKeys
 void BtreeAccessMethod::doGetKeys(const BSONObj& obj,
                                   BSONObjSet* keys,
                                   MultikeyPaths* multikeyPaths) const {
+    //BtreeKeyGenerator::getKeys
+    
+	//IndexAccessMethod::getKeys->IndexAccessMethod::getKeys->BtreeKeyGenerator::getKeys->BtreeKeyGeneratorV1::getKeysImpl
     _keyGenerator->getKeys(obj, keys, multikeyPaths);
 }
 

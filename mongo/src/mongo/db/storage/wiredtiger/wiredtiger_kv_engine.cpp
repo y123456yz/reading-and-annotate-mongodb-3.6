@@ -961,6 +961,8 @@ Breakpoint 2, mongo::WiredTigerKVEngine::createGroupedSortedDataInterface (this=
 
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild中执行
+
+//KVCollectionCatalogEntry::prepareForIndexBuild调用
 Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* opCtx,
                                                             StringData ident,
                                                             const IndexDescriptor* desc,

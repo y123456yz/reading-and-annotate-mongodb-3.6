@@ -64,10 +64,11 @@ std::unique_ptr<PlanExecutor, PlanExecutor::Deleter> InternalPlanner::collection
 
     invariant(ns == collection->ns().ns());
 
-	//生成CollectionScan
+	//生成CollectionScan planstage
     auto cs = _collectionScan(opCtx, ws.get(), collection, direction, startLoc);
 
     // Takes ownership of 'ws' and 'cs'.
+    //生成PlanExecutor
     auto statusWithPlanExecutor =
         PlanExecutor::make(opCtx, std::move(ws), std::move(cs), collection, yieldPolicy);
     invariant(statusWithPlanExecutor.isOK());

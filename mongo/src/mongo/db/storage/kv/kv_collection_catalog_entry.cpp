@@ -183,7 +183,8 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
 //->KVCollectionCatalogEntry::prepareForIndexBuild
 Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
                                                       const IndexDescriptor* spec) {
-    MetaData md = _getMetaData(opCtx);
+	//BSONCollectionCatalogEntry::MetaData
+	MetaData md = _getMetaData(opCtx);
 
     KVPrefix prefix = KVPrefix::getNextPrefix(ns());
     IndexMetaData imd(spec->infoObj(), false, RecordId(), false, prefix);
@@ -204,11 +205,15 @@ Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
         }
     }
 
+	//BSONCollectionCatalogEntry::MetaData::indexes¸³Öµ
     md.indexes.push_back(imd);
+	//KVCatalog::putMetaData
     _catalog->putMetaData(opCtx, ns().toString(), md);
 
+	//KVCatalog::getIndexIdent
     string ident = _catalog->getIndexIdent(opCtx, ns().ns(), spec->indexName());
 
+	//WiredTigerKVEngine::createGroupedSortedDataInterface
     const Status status = _engine->createGroupedSortedDataInterface(opCtx, ident, spec, prefix);
     if (status.isOK()) {
         opCtx->recoveryUnit()->registerChange(new AddIndexChange(opCtx, this, ident));

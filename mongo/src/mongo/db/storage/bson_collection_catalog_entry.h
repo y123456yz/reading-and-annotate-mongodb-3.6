@@ -71,6 +71,8 @@ public:
 
     // ------ for implementors
 
+    //KVCollectionCatalogEntry::prepareForIndexBuild中初始化
+    //BSONCollectionCatalogEntry::MetaData.indexes为该类型
     struct IndexMetaData {
         IndexMetaData() {}
         IndexMetaData(BSONObj s, bool r, RecordId h, bool m, KVPrefix prefix)
@@ -93,10 +95,12 @@ public:
         // the index key pattern. Each element in the vector is an ordered set of positions
         // (starting at 0) into the corresponding indexed field that represent what prefixes of the
         // indexed field cause the index to be multikey.
+        //KVCollectionCatalogEntry::prepareForIndexBuild中赋值
         MultikeyPaths multikeyPaths;
     };
 
-    
+
+    //KVCollectionCatalogEntry::_getMetaData中获取该metaData信息
     struct MetaData {
         void parse(const BSONObj& obj);
         BSONObj toBSON() const;
@@ -115,6 +119,7 @@ public:
 
         std::string ns;
         CollectionOptions options;
+        //KVCollectionCatalogEntry::prepareForIndexBuild赋值
         std::vector<IndexMetaData> indexes;
         KVPrefix prefix = KVPrefix::kNotPrefixed;
     };

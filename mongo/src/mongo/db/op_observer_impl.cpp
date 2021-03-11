@@ -251,6 +251,8 @@ OpTimeBundle replLogDelete(OperationContext* opCtx,
 
 }  // namespace
 
+//加索引的oplog，从节点拉取这条oplog后重放创建索引
+//CmdCreateIndex::errmsgRun创建索引调用
 void OpObserverImpl::onCreateIndex(OperationContext* opCtx,
                                    const NamespaceString& nss,
                                    OptionalCollectionUUID uuid,

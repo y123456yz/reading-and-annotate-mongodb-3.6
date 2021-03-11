@@ -157,6 +157,7 @@ void BackgroundOperation::awaitNoBgOpInProgForNs(StringData ns) {
     awaitNoBgOps(lk, &nsInProg, ns);
 }
 
+//MultiIndexBlockImpl::initÖÐµ÷ÓÃ
 BackgroundOperation::BackgroundOperation(StringData ns) : _ns(ns) {
     stdx::lock_guard<stdx::mutex> lk(m);
     recordBeginAndInsert(&dbsInProg, _ns.db());

@@ -53,7 +53,7 @@ class IndexCatalogEntryContainer;
  *
  * All synchronization is the responsibility of the caller.
  */
-//IndexCatalogImpl::init中构造使用
+//IndexCatalogImpl::init  IndexCatalogImpl::IndexBuildBlock::init()中构造使用
 
 //索引信息，获取所有所有信息可以参考fillOutPlannerParams
 //IndexCatalogEntryImpl._descriptor为该类型
@@ -270,6 +270,19 @@ public:
     }
 
 private:
+    /*
+        {
+            "v" : 2,
+            "key" : {
+                    "name" : 1,
+                    "male" : 1
+            },
+            "name" : "name_1_male_1",
+            "ns" : "test.test",
+            "background" : true
+        },
+    */
+    
     // Related catalog information of the parent collection
     //所属的Collection
     Collection* _collection;

@@ -413,6 +413,7 @@ std::string KVCatalog::getCollectionIdent(StringData ns) const {
     return it->second.ident;
 }
 
+//KVCollectionCatalogEntry::prepareForIndexBuild调用
 std::string KVCatalog::getIndexIdent(OperationContext* opCtx,
                                      StringData ns,
                                      StringData idxName) const {
@@ -467,6 +468,8 @@ const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationConte
 }
 
 //集合相关的元数据信息记录到_mdb_catalog.wt 如创建某个集合对应的数据文件在哪里，索引文件在哪里
+
+//KVCollectionCatalogEntry::prepareForIndexBuild中调用
 void KVCatalog::putMetaData(OperationContext* opCtx,
                             StringData ns,
                             BSONCollectionCatalogEntry::MetaData& md) {
