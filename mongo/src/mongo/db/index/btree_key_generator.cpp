@@ -54,16 +54,20 @@ const BSONElement undefinedElt = undefinedObj.firstElement();
 
 }  // namespace
 
+//BtreeKeyGeneratorV1::BtreeKeyGeneratorV1中构造使用
 BtreeKeyGenerator::BtreeKeyGenerator(std::vector<const char*> fieldNames,
                                      std::vector<BSONElement> fixed,
                                      bool isSparse)
     : _fieldNames(fieldNames), _isSparse(isSparse), _fixed(fixed) {
     BSONObjBuilder nullKeyBuilder;
     for (size_t i = 0; i < fieldNames.size(); ++i) {
+		//对应jstNULL类型
         nullKeyBuilder.appendNull("");
     }
-    _nullKey = nullKeyBuilder.obj();
 
+	//所有字段都是null类型
+    _nullKey = nullKeyBuilder.obj();
+	//是不是id索引
     _isIdIndex = fieldNames.size() == 1 && std::string("_id") == fieldNames[0];
 }
 
@@ -84,11 +88,22 @@ std::unique_ptr<BtreeKeyGenerator> BtreeKeyGenerator::make(IndexVersion indexVer
 }
 
 //IndexAccessMethod::getKeys->IndexAccessMethod::getKeys->BtreeKeyGenerator::getKeys->BtreeKeyGeneratorV1::getKeysImpl
+
+//从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
+//例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+    
+//如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
+//则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
+
 void BtreeKeyGenerator::getKeys(const BSONObj& obj,
                                 BSONObjSet* keys,
                                 MultikeyPaths* multikeyPaths) const {
     // '_fieldNames' and '_fixed' are passed by value so that they can be mutated as part of the
     // getKeys call.  :|
+    //BtreeKeyGeneratorV1::getKeysImpl
+    //_fieldNames存储索引的各个字段   fixed为从doc中解析出的对应索引字段内容存到该fixed[i]数组
+    //最后把doc数据对应索引数据key拼接到一起
+    //例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
     getKeysImpl(_fieldNames, _fixed, obj, keys, multikeyPaths);
     if (keys->empty() && !_isSparse) {
         keys->insert(_nullKey);
@@ -236,6 +251,7 @@ void BtreeKeyGeneratorV0::getKeysImpl(std::vector<const char*> fieldNames,
     }
 }
 
+//BtreeKeyGenerator::make中构造使用
 BtreeKeyGeneratorV1::BtreeKeyGeneratorV1(std::vector<const char*> fieldNames,
                                          std::vector<BSONElement> fixed,
                                          bool isSparse,
@@ -300,6 +316,8 @@ void BtreeKeyGeneratorV1::_getKeysArrEltFixed(std::vector<const char*>* fieldNam
     }
 
     // Recurse.
+    
+	//从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
     getKeysImplWithArray(*fieldNames,
                          *fixed,
                          arrEntry.type() == Object ? arrEntry.embeddedObject() : BSONObj(),
@@ -311,6 +329,13 @@ void BtreeKeyGeneratorV1::_getKeysArrEltFixed(std::vector<const char*>* fieldNam
 
 //IndexAccessMethod::getKeys->IndexAccessMethod::getKeys->BtreeKeyGenerator::getKeys->BtreeKeyGeneratorV1::getKeysImpl
 
+//例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+    
+//如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
+//则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
+
+//obj为数据doc内容
+//从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
 void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
                                       std::vector<BSONElement> fixed,
                                       const BSONObj& obj,
@@ -319,7 +344,8 @@ void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
     if (_isIdIndex) {
         // we special case for speed
         BSONElement e = obj["_id"];
-        if (e.eoo()) {
+        if (e.eoo()) { //例如"_id":""
+			//生成nullKey
             keys->insert(_nullKey);
         } else if (_collator) {
             BSONObjBuilder b;
@@ -328,6 +354,8 @@ void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
             // Insert a copy so its buffer size fits the object size.
             keys->insert(b.obj().copy());
         } else {
+        	//例如"_id" : ObjectId("604a1dd934a071161a034c3a")，则填充
+        	//ObjectId("604a1dd934a071161a034c3a")内容到keys中
             int size = e.size() + 5 /* bson over head*/ - 3 /* remove _id string */;
             BSONObjBuilder b(size);
             b.appendAs(e, "");
@@ -347,9 +375,17 @@ void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
         invariant(multikeyPaths->empty());
         multikeyPaths->resize(fieldNames.size());
     }
+	
+	//从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
     getKeysImplWithArray(
         std::move(fieldNames), std::move(fixed), obj, keys, 0, _emptyPositionalInfo, multikeyPaths);
 }
+
+//从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
+//例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+    
+//如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
+//则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
 
 void BtreeKeyGeneratorV1::getKeysImplWithArray(
     std::vector<const char*> fieldNames,
@@ -388,6 +424,7 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
     std::vector<boost::optional<size_t>> arrComponents(fieldNames.size());
 
     bool mayExpandArrayUnembedded = true;
+	//加上索引是{aa:1,bb:1}
     for (size_t i = 0; i < fieldNames.size(); ++i) {
         if (*fieldNames[i] == '\0') {
             continue;
@@ -395,16 +432,19 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
 
         bool arrayNestedArray;
         // Extract element matching fieldName[ i ] from object xor array.
+        //解析出doc数据obj中的aa字段和bb字段
         BSONElement e =
             extractNextElement(obj, positionalInfo[i], &fieldNames[i], &arrayNestedArray);
 
         if (e.eoo()) {
+			//没有这个字段，则该字段对应索引填充为null
             // if field not present, set to null
             fixed[i] = nullElt;
             // done expanding this field name
             fieldNames[i] = "";
             numNotFound++;
         } else if (e.type() == Array) {
+        	//如果该字段为数组，走这里
             arrIdxs.insert(i);
             if (arrElt.eoo()) {
                 // we only expand arrays on a single path -- track the path here
@@ -418,19 +458,24 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
             }
         } else {
             // not an array - no need for further expansion
+            //该字段直接填充到fixed[]数组中，注意这里的i，代表索引的第i个字段有对应数据
             fixed[i] = e;
         }
     }
 
+	//不是数组类型走这里
     if (arrElt.eoo()) {
         // No array, so generate a single key.
+        //索引中得字段，在数据中一个都没有，例如索引{aa:1,bb:1}，数据内容{cc:xx, dd:xx}
         if (_isSparse && numNotFound == fieldNames.size()) {
             return;
         }
         BSONObjBuilder b(_sizeTracker);
         for (std::vector<BSONElement>::iterator i = fixed.begin(); i != fixed.end(); ++i) {
-            CollationIndexKey::collationAwareIndexKeyAppend(*i, _collator, &b);
+			//把索引字符串链接起来
+			CollationIndexKey::collationAwareIndexKeyAppend(*i, _collator, &b);
         }
+		//把字符串拼接在一起，例如{aa:xx1, bb:xx2}，对应{aa:1,bb:1}索引，最后keys中的值为xx1_xx2
         keys->insert(b.obj());
     } else if (arrElt.embeddedObject().firstElement().eoo()) {
         // We've encountered an empty array.
@@ -461,6 +506,7 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
                             _emptyPositionalInfo,
                             multikeyPaths);
     } else {
+    //数组
         BSONObj arrObj = arrElt.embeddedObject();
 
         // For positional key patterns, e.g. {'a.1.b': 1}, we lookup the indexed array element

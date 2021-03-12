@@ -154,6 +154,11 @@ Status IndexAccessMethod::insert(OperationContext* opCtx,
     BSONObjSet keys = SimpleBSONObjComparator::kInstance.makeBSONObjSet();
     MultikeyPaths multikeyPaths;
     // Delegate to the subclass.
+    //IndexAccessMethod::getKeys
+    //例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+    
+    //如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
+    //则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
     getKeys(obj, options.getKeysMode, &keys, &multikeyPaths);
 
     const ValidationOperation operation = ValidationOperation::INSERT;
@@ -200,7 +205,9 @@ Status IndexAccessMethod::insert(OperationContext* opCtx,
         return status;
     }
 
+	//一个doc数据，对应的索引数据由多条，一般说明是文档中由数组字段，并建了数组子索引
     if (*numInserted > 1 || isMultikeyFromPaths(multikeyPaths)) {
+		//IndexCatalogEntryImpl::setMultikey
         _btreeState->setMultikey(opCtx, multikeyPaths);
     }
 
@@ -477,6 +484,7 @@ IndexAccessMethod::BulkBuilder::BulkBuilder(const IndexAccessMethod* index,
       _real(index) {}
 
 //BulkBuilder::insert阻塞方式加索引，  IndexAccessMethod::insert非阻塞方式加索引
+//MultiIndexBlockImpl::insert中调用
 Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
                                               const BSONObj& obj,
                                               const RecordId& loc,
@@ -485,6 +493,12 @@ Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
     BSONObjSet keys = SimpleBSONObjComparator::kInstance.makeBSONObjSet();
     MultikeyPaths multikeyPaths;
 
+	//例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+		
+	//如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
+	//则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
+
+	//BtreeAccessMethod::getKeys
     _real->getKeys(obj, options.getKeysMode, &keys, &multikeyPaths);
 
     _everGeneratedMultipleKeys = _everGeneratedMultipleKeys || (keys.size() > 1);
@@ -599,6 +613,14 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
 }
 
 //IndexAccessMethod::insert中调用,获取索引KV数据的K
+//从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
+//例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+
+//例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+    
+//如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
+//则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
+
 void IndexAccessMethod::getKeys(const BSONObj& obj,
                                 GetKeysMode mode,
                                 BSONObjSet* keys,

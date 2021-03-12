@@ -151,6 +151,13 @@ protected:
 };
 
 /// This is the main way to input data to the sorting framework
+
+/*
+“‘œ¬¿‡ºÃ≥–Sorter
+Sorter.cpp (src\mongo\db\sorter):class NoLimitSorter : public Sorter<Key, Value> {
+Sorter.cpp (src\mongo\db\sorter):class LimitOneSorter : public Sorter<Key, Value> {
+Sorter.cpp (src\mongo\db\sorter):class TopKSorter : public Sorter<Key, Value> {
+*/ 
 template <typename Key, typename Value>
 class Sorter {
     MONGO_DISALLOW_COPYING(Sorter);

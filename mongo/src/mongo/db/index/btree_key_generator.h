@@ -99,9 +99,13 @@ public:
 
 protected:
     // These are used by the getKeysImpl(s) below.
+    
+    //BtreeAccessMethod::BtreeAccessMethod中会初始化赋值
+    //也就是索引字段内容存到该数组，例如aa_bb联合索引，则数组存储的是aa和bb两个字符串
     std::vector<const char*> _fieldNames;
     bool _isIdIndex;
     bool _isSparse;
+    //赋值参考BtreeKeyGenerator::BtreeKeyGenerator
     BSONObj _nullKey;  // a full key with all fields null
     BSONSizeTracker _sizeTracker;
 

@@ -88,6 +88,8 @@ using TranslateStack = std::stack<TranslateContext>;
 //
 // If ctxStack is null, _translate must *not* be called with an object or array.  Additionally,
 // an empty string will be used for the field name when appending 'element' to 'out'.
+
+//CollationIndexKey::collationAwareIndexKeyAppend中调用
 void translateElement(StringData fieldName,
                       const BSONElement& element,
                       const CollatorInterface* collator,
@@ -124,6 +126,7 @@ void translateElement(StringData fieldName,
 
 // Translate all strings in 'obj' into comparison keys using 'collator'. The result is
 // appended to 'out'.
+//CollationIndexKey::collationAwareIndexKeyAppend中调用
 void translate(BSONObj obj, const CollatorInterface* collator, BufBuilder* out) {
     invariant(collator);
 
@@ -145,6 +148,7 @@ void translate(BSONObj obj, const CollatorInterface* collator, BufBuilder* out) 
 }
 }
 
+////把elt对应信息拼接在一起放入out中
 void CollationIndexKey::collationAwareIndexKeyAppend(BSONElement elt,
                                                      const CollatorInterface* collator,
                                                      BSONObjBuilder* out) {
@@ -154,6 +158,7 @@ void CollationIndexKey::collationAwareIndexKeyAppend(BSONElement elt,
         return;
     }
 
+	//把elt对应信息拼接在一起放入out中
     if (elt.isABSONObj()) {
         translate(elt.Obj(),
                   collator,

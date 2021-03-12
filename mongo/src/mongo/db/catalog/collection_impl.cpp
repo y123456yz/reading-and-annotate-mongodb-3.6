@@ -1096,6 +1096,7 @@ const CollatorInterface* CollectionImpl::getDefaultCollator() const {
     return _collator.get();
 }
 
+//IndexAccessMethod::insert些索引KV的时候调用
 void CollectionImpl::informIndexObserver(OperationContext* opCtx,
                                          const IndexDescriptor* descriptor,
                                          const IndexKeyEntry& indexEntry,

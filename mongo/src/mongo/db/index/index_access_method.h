@@ -337,6 +337,7 @@ protected:
      */
     bool ignoreKeyTooLong(OperationContext* opCtx);
 
+    //KVDatabaseCatalogEntry::getIndex中初始化，对应IndexCatalogEntryImpl
     IndexCatalogEntry* _btreeState;  // owned by IndexCatalogEntry
     const IndexDescriptor* _descriptor;
 

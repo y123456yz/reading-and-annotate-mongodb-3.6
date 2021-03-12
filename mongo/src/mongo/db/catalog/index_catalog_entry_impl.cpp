@@ -240,6 +240,7 @@ private:
     const std::unique_ptr<RecoveryUnit> _newRecoveryUnit;
 };
 
+//IndexAccessMethod::insert索引KV写入的时候调用
 void IndexCatalogEntryImpl::setMultikey(OperationContext* opCtx,
                                         const MultikeyPaths& multikeyPaths) {
     if (!_indexTracksPathLevelMultikeyInfo && isMultikey()) {
