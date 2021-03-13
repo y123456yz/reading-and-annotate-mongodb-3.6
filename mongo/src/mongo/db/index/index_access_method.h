@@ -244,6 +244,7 @@ public:
                     const IndexDescriptor* descriptor,
                     size_t maxMemoryUsageBytes);
 
+        //排序相关，默认为NoLimitSorter，不限制排序使用的内存
         std::unique_ptr<Sorter> _sorter;
         const IndexAccessMethod* _real;
         

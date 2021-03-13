@@ -396,6 +396,8 @@ private:
     STLComparator _greater;                      // named so calls make sense
 };
 
+//IndexAccessMethod::BulkBuilder::BulkBuilder->Sorter<Key, Value>::make中构造使用
+//Sorter<Key, Value>::make即可构造使用
 template <typename Key, typename Value, typename Comparator>
 class NoLimitSorter : public Sorter<Key, Value> {
 public:
@@ -418,6 +420,7 @@ public:
         _memUsed += key.memUsageForSorter();
         _memUsed += val.memUsageForSorter();
 
+		//超过了最大内存限制，则spill处理
         if (_memUsed > _opts.maxMemoryUsageBytes)
             spill();
     }
@@ -453,6 +456,7 @@ private:
         const Comparator& _comp;
     };
 
+	//spill()调用，对data数据排序并压缩写入文件
     void sort() {
         STLComparator less(_comp);
         std::stable_sort(_data.begin(), _data.end(), less);
@@ -462,10 +466,12 @@ private:
         // std::sort(_data.begin(), _data.end(), comp);
     }
 
+	//add接口调用
     void spill() {
         if (_data.empty())
             return;
 
+		//如果不允许使用磁盘，直接报错
         if (!_opts.extSortAllowed) {
             // XXX This error message is only correct for aggregation, but it is also the
             // only way this code could be hit at the moment. If the Sorter is used
@@ -478,9 +484,10 @@ private:
                           << " bytes, but did not opt in to external sorting. Aborting operation."
                           << " Pass allowDiskUse:true to opt in.");
         }
-
+		//排序
         sort();
 
+		//把排好序的_data数据写入writer中，最终压缩后写入文件中
         SortedFileWriter<Key, Value> writer(_opts, _settings);
         for (; !_data.empty(); _data.pop_front()) {
             writer.addAlreadySorted(_data.front().first, _data.front().second);
@@ -495,9 +502,12 @@ private:
     const Settings _settings;
     SortOptions _opts;
     size_t _memUsed;
+	//KV数据添加到该queue中
     std::deque<Data> _data;                         // the "current" data
     std::vector<std::shared_ptr<Iterator>> _iters;  // data that has already been spilled
 };
+
+//Sorter<Key, Value>::make即可构造使用
 
 template <typename Key, typename Value, typename Comparator>
 class LimitOneSorter : public Sorter<Key, Value> {
@@ -547,6 +557,8 @@ private:
     Data _best;
     bool _haveData;  // false at start, set to true on first call to add()
 };
+
+//Sorter<Key, Value>::make即可构造使用
 
 template <typename Key, typename Value, typename Comparator>
 class TopKSorter : public Sorter<Key, Value> {
@@ -837,6 +849,7 @@ SortedFileWriter<Key, Value>::SortedFileWriter(const SortOptions& opts, const Se
     _file.exceptions(std::ios::failbit | std::ios::badbit | std::ios::eofbit);
 }
 
+//spill()接口调用
 template <typename Key, typename Value>
 void SortedFileWriter<Key, Value>::addAlreadySorted(const Key& key, const Value& val) {
     key.serializeForSorter(_buffer);
@@ -846,6 +859,7 @@ void SortedFileWriter<Key, Value>::addAlreadySorted(const Key& key, const Value&
         spill();
 }
 
+//上面的addAlreadySorted调用，把_buffer压缩后存入文件_file中
 template <typename Key, typename Value>
 void SortedFileWriter<Key, Value>::spill() {
     namespace str = mongoutils::str;
@@ -934,6 +948,7 @@ Sorter<Key, Value>* Sorter<Key, Value>::make(const SortOptions& opts,
             !(opts.extSortAllowed && opts.tempDir.empty()));
 
     switch (opts.limit) {
+		//默认为这个，也就是不限制
         case 0:
             return new sorter::NoLimitSorter<Key, Value, Comparator>(opts, comp, settings);
         case 1:

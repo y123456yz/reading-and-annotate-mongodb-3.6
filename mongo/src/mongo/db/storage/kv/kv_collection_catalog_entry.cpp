@@ -98,6 +98,7 @@ KVCollectionCatalogEntry::KVCollectionCatalogEntry(KVEngine* engine,
 
 KVCollectionCatalogEntry::~KVCollectionCatalogEntry() {}
 
+//IndexCatalogEntryImpl::setMultikeyÖÐµ÷ÓÃ
 bool KVCollectionCatalogEntry::setIndexIsMultikey(OperationContext* opCtx,
                                                   StringData indexName,
                                                   const MultikeyPaths& multikeyPaths) {

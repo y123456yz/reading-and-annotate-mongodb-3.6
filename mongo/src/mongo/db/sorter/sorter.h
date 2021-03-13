@@ -93,12 +93,15 @@ class FileDeleter;
  * Runtime options that control the Sorter's behavior
  */
 struct SortOptions {
+    //KV数
     unsigned long long limit;    /// number of KV pairs to be returned. 0 for no limit.
     size_t maxMemoryUsageBytes;  /// Approximate.
+    //是否运行内存超过限制后使用磁盘来实现排序
     bool extSortAllowed;         /// If false, uassert if more mem needed than allowed.
     std::string tempDir;         /// Directory to directly place files in.
                                  /// Must be explicitly set if extSortAllowed is true.
 
+    //
     SortOptions() : limit(0), maxMemoryUsageBytes(64 * 1024 * 1024), extSortAllowed(false) {}
 
     /// Fluent API to support expressions like SortOptions().Limit(1000).ExtSortAllowed(true)
@@ -158,6 +161,8 @@ Sorter.cpp (src\mongo\db\sorter):class NoLimitSorter : public Sorter<Key, Value>
 Sorter.cpp (src\mongo\db\sorter):class LimitOneSorter : public Sorter<Key, Value> {
 Sorter.cpp (src\mongo\db\sorter):class TopKSorter : public Sorter<Key, Value> {
 */ 
+//IndexAccessMethod::BulkBuilder::BulkBuilder和IndexAccessMethod::BulkBuilder::insert接口中使用
+//IndexAccessMethod::BulkBuilder._sorter为该类型
 template <typename Key, typename Value>
 class Sorter {
     MONGO_DISALLOW_COPYING(Sorter);
@@ -188,6 +193,7 @@ protected:
 };
 
 /// Writes pre-sorted data to a sorted file and hands-back an Iterator over that file.
+//NoLimitSorter::spill接口中使用
 template <typename Key, typename Value>
 class SortedFileWriter {
     MONGO_DISALLOW_COPYING(SortedFileWriter);

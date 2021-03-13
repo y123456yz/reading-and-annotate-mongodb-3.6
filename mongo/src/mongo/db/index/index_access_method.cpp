@@ -475,6 +475,7 @@ std::unique_ptr<IndexAccessMethod::BulkBuilder> IndexAccessMethod::initiateBulk(
 IndexAccessMethod::BulkBuilder::BulkBuilder(const IndexAccessMethod* index,
                                             const IndexDescriptor* descriptor,
                                             size_t maxMemoryUsageBytes)
+    //sorter初始化，默认为sorter::NoLimitSorter，也就是不限制KV数量
     : _sorter(Sorter::make(
           SortOptions()
               .TempDir(storageGlobalParams.dbpath + "/_tmp")
@@ -515,6 +516,8 @@ Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
     }
 
     for (BSONObjSet::iterator it = keys.begin(); it != keys.end(); ++it) {
+		//索引KV排序号放入buffer或者文件中  默认sorter::NoLimitSorter::add,
+		//下面的 IndexAccessMethod::commitBulk中使用数据
         _sorter->add(*it, loc);
         _keysInserted++;
     }
@@ -526,7 +529,7 @@ Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
     return Status::OK();
 }
 
-
+//MultiIndexBlockImpl::doneInserting中调用
 Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
                                      std::unique_ptr<BulkBuilder> bulk,
                                      bool mayInterrupt,
@@ -534,6 +537,7 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
                                      set<RecordId>* dupsToDrop) {
     Timer timer;
 
+	//上面的IndexAccessMethod::BulkBuilder::insert写入bulk，这里获取数据使用
     std::unique_ptr<BulkBuilder::Sorter::Iterator> i(bulk->_sorter->done());
 
     stdx::unique_lock<Client> lk(*opCtx->getClient());
@@ -544,6 +548,7 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
                                              10));
     lk.unlock();
 
+	//生成一个WiredTigerIndex::BulkBuilder
     std::unique_ptr<SortedDataBuilderInterface> builder;
 
     writeConflictRetry(opCtx, "setting index multikey flag", "", [&] {
@@ -570,7 +575,9 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
         opCtx->recoveryUnit()->setRollbackWritesDisabled();
 
         // Get the next datum and add it to the builder.
+        //获取_sorter中排好序的KV
         BulkBuilder::Sorter::Data d = i->next();
+		//WiredTigerIndex::BulkBuilder::addKey bulk方式写入存储引擎
         Status status = builder->addKey(d.first, d.second);
 
         if (!status.isOK()) {

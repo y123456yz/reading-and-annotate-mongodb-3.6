@@ -1,0 +1,19 @@
+主节点日志如下：
+ build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
+2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
+2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
+。。。。。。
+2021-03-10T17:38:54.001+0800 I -        [conn1366036]   Index Build (background): 50631100/53092096 95%
+2021-03-10T17:38:57.001+0800 I -        [conn1366036]   Index Build (background): 51048600/53092096 96%
+2021-03-10T17:39:00.001+0800 I -        [conn1366036]   Index Build (background): 51485100/53092096 96%
+2021-03-10T17:39:03.000+0800 I -        [conn1366036]   Index Build (background): 51916000/53092096 97%
+2021-03-10T17:39:06.001+0800 I -        [conn1366036]   Index Build (background): 52334600/53092096 98%
+2021-03-10T17:39:09.002+0800 I -        [conn1366036]   Index Build (background): 52772500/53092096 99%
+2021-03-10T17:39:12.002+0800 I -        [conn1366036]   Index Build (background): 53195800/53092096 100%
+2021-03-10T17:39:15.000+0800 I -        [conn1366036]   Index Build (background): 53537600/53092096 100%
+2021-03-10T17:39:18.001+0800 I -        [conn1366036]   Index Build (background): 53948100/53092096 101%
+2021-03-10T17:39:21.000+0800 I -        [conn1366036]   Index Build (background): 54359900/53092096 102%
+2021-03-10T17:39:21.177+0800 I INDEX    [conn1366036] build index done.  scanned 54386432 total records. 422 secs
+2021-03-10T17:39:21.177+0800 D INDEX    [conn1366036] marking index messageId_1_pushNoShow_1 as ready in snapshot id 207669429993
+2021-03-10T17:39:21.177+0800 I COMMAND  [conn1366036] command push_stat.$cmd appName: "MongoDB Shell" command: createIndexes { createIndexes: "opush_message_report", indexes: [ { key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", background: true } ], lsid: { id: UUID("d456876a-b8c1-43c1-a6c5-c138b8a5e6c3") }, $clusterTime: { clusterTime: Timestamp(1615368686, 7), signature: { hash: BinData(0, B7439A73D456C80175BF090F7DBA2A73BFB6F823), keyId: 6907950378692640782 } }, $db: "push_stat" } numYields:425101 reslen:364 locks:{ Global: { acquireCount: { r: 42
+

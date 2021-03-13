@@ -491,6 +491,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
             progress->setTotalWhileRunning(_collection->numRecords(_opCtx));
 
             WriteUnitOfWork wunit(_opCtx);
+			//每条数据对应索引会产生一个索引KV，索引KV写入存储引擎
             Status ret = insert(objToIndex.value(), loc);
             if (_buildInBackground)
                 exec->saveState();
@@ -554,6 +555,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
 
     progress->finished();
 
+	//MultiIndexBlockImpl::insertAllDocumentsInCollection调用
     Status ret = doneInserting(dupsOut);
     if (!ret.isOK())
         return ret;
@@ -589,12 +591,14 @@ Status MultiIndexBlockImpl::insert(const BSONObj& doc, const RecordId& loc) {
     return Status::OK();
 }
 
+//
 Status MultiIndexBlockImpl::doneInserting(std::set<RecordId>* dupsOut) {
     for (size_t i = 0; i < _indexes.size(); i++) {
         if (_indexes[i].bulk == NULL)
             continue;
         LOG(1) << "\t bulk commit starting for index: "
                << _indexes[i].block->getEntry()->descriptor()->indexName();
+		//IndexAccessMethod::commitBulk，bulk方式真正再这里写入索引KV到存储引擎
         Status status = _indexes[i].real->commitBulk(_opCtx,
                                                      std::move(_indexes[i].bulk),
                                                      _allowInterruption,
