@@ -514,6 +514,8 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
 
             // Go to the next document
             //ProgressMeterHolder::hit
+            //输出进度信息，例如加索引的
+   			//2021-03-14T14:22:54.000+0800 I -        [conn167]   Index Build: 37460300/54386432 68%
             progress->hit();
             n++;
             retries = 0;
@@ -578,10 +580,11 @@ Status MultiIndexBlockImpl::insert(const BSONObj& doc, const RecordId& loc) {
         Status idxStatus(ErrorCodes::InternalError, "");
 		//BulkBuilder::insert阻塞方式加索引，  IndexAccessMethod::insert非阻塞方式加索引
         if (_indexes[i].bulk) { //阻塞非backgroud添加索引走这个分支
-        	//BulkBuilder::insert 
-            idxStatus = _indexes[i].bulk->insert(_opCtx, doc, loc, _indexes[i].options, &unused);
+        	//BulkBuilder::insert  阻塞式添加，把索引KV数据放入buf内存中，如果内存消耗超过500M，则排好序写入磁盘文件
+			//该分支真正再MultiIndexBlockImpl::doneInserting写入存储引擎
+			idxStatus = _indexes[i].bulk->insert(_opCtx, doc, loc, _indexes[i].options, &unused);
         } else { //backgroud后台非阻塞添加索引走这个分支
-        	//IndexAccessMethod::insert
+        	//IndexAccessMethod::insert  
             idxStatus = _indexes[i].real->insert(_opCtx, doc, loc, _indexes[i].options, &unused);
         }
 
@@ -598,6 +601,7 @@ Status MultiIndexBlockImpl::doneInserting(std::set<RecordId>* dupsOut) {
             continue;
         LOG(1) << "\t bulk commit starting for index: "
                << _indexes[i].block->getEntry()->descriptor()->indexName();
+		//配合上面的MultiIndexBlockImpl::insert接口阅读
 		//IndexAccessMethod::commitBulk，bulk方式真正再这里写入索引KV到存储引擎
         Status status = _indexes[i].real->commitBulk(_opCtx,
                                                      std::move(_indexes[i].bulk),

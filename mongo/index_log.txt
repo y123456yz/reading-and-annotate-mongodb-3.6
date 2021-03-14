@@ -1,0 +1,194 @@
+2021-03-14T14:13:15.519+0800 I INDEX    [conn167] build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushException3: 1.0 }, name: "messageId_1_pushException3_1", ns: "push_stat.opush_message_report", background: true }
+2021-03-14T14:13:18.001+0800 I -        [conn167]   Index Build (background): 378200/54386432 0%
+2021-03-14T14:13:21.001+0800 I -        [conn167]   Index Build (background): 792700/54386432 1%
+2021-03-14T14:13:24.001+0800 I -        [conn167]   Index Build (background): 1200500/54386432 2%
+2021-03-14T14:13:27.000+0800 I -        [conn167]   Index Build (background): 1630300/54386432 2%
+2021-03-14T14:13:30.006+0800 I -        [conn167]   Index Build (background): 2066500/54386432 3%
+2021-03-14T14:13:33.000+0800 I -        [conn167]   Index Build (background): 2487100/54386432 4%
+2021-03-14T14:13:36.001+0800 I -        [conn167]   Index Build (background): 2842600/54386432 5%
+2021-03-14T14:13:39.002+0800 I -        [conn167]   Index Build (background): 3178600/54386432 5%
+2021-03-14T14:13:42.002+0800 I -        [conn167]   Index Build (background): 3533000/54386432 6%
+2021-03-14T14:13:45.005+0800 I -        [conn167]   Index Build (background): 3943400/54386432 7%
+2021-03-14T14:13:48.000+0800 I -        [conn167]   Index Build (background): 4330700/54386432 7%
+2021-03-14T14:13:51.000+0800 I -        [conn167]   Index Build (background): 4726500/54386432 8%
+2021-03-14T14:13:54.001+0800 I -        [conn167]   Index Build (background): 5117000/54386432 9%
+2021-03-14T14:13:57.001+0800 I -        [conn167]   Index Build (background): 5510900/54386432 10%
+2021-03-14T14:14:00.002+0800 I -        [conn167]   Index Build (background): 5903200/54386432 10%
+2021-03-14T14:14:03.001+0800 I -        [conn167]   Index Build (background): 6283200/54386432 11%
+2021-03-14T14:14:06.002+0800 I -        [conn167]   Index Build (background): 6681200/54386432 12%
+2021-03-14T14:14:09.000+0800 I -        [conn167]   Index Build (background): 7067600/54386432 12%
+2021-03-14T14:14:12.001+0800 I -        [conn167]   Index Build (background): 7447000/54386432 13%
+2021-03-14T14:14:15.000+0800 I -        [conn167]   Index Build (background): 7825800/54386432 14%
+2021-03-14T14:14:18.001+0800 I -        [conn167]   Index Build (background): 8234300/54386432 15%
+2021-03-14T14:14:21.001+0800 I -        [conn167]   Index Build (background): 8639300/54386432 15%
+2021-03-14T14:14:24.001+0800 I -        [conn167]   Index Build (background): 9071400/54386432 16%
+2021-03-14T14:14:27.001+0800 I -        [conn167]   Index Build (background): 9514700/54386432 17%
+2021-03-14T14:14:30.001+0800 I -        [conn167]   Index Build (background): 9938100/54386432 18%
+2021-03-14T14:14:33.001+0800 I -        [conn167]   Index Build (background): 10313100/54386432 18%
+2021-03-14T14:14:36.001+0800 I -        [conn167]   Index Build (background): 10742200/54386432 19%
+2021-03-14T14:14:39.000+0800 I -        [conn167]   Index Build (background): 11127400/54386432 20%
+2021-03-14T14:14:42.002+0800 I -        [conn167]   Index Build (background): 11538600/54386432 21%
+2021-03-14T14:14:45.001+0800 I -        [conn167]   Index Build (background): 11955400/54386432 21%
+2021-03-14T14:14:48.001+0800 I -        [conn167]   Index Build (background): 12374600/54386432 22%
+2021-03-14T14:14:51.002+0800 I -        [conn167]   Index Build (background): 12787900/54386432 23%
+2021-03-14T14:14:54.001+0800 I -        [conn167]   Index Build (background): 13198200/54386432 24%
+2021-03-14T14:14:57.000+0800 I -        [conn167]   Index Build (background): 13655600/54386432 25%
+2021-03-14T14:15:00.000+0800 I -        [conn167]   Index Build (background): 14108200/54386432 25%
+2021-03-14T14:15:03.001+0800 I -        [conn167]   Index Build (background): 14540600/54386432 26%
+2021-03-14T14:15:06.001+0800 I -        [conn167]   Index Build (background): 14970500/54386432 27%
+2021-03-14T14:15:09.002+0800 I -        [conn167]   Index Build (background): 15397000/54386432 28%
+2021-03-14T14:15:12.001+0800 I -        [conn167]   Index Build (background): 15847700/54386432 29%
+2021-03-14T14:15:15.000+0800 I -        [conn167]   Index Build (background): 16277900/54386432 29%
+2021-03-14T14:15:18.000+0800 I -        [conn167]   Index Build (background): 16647700/54386432 30%
+2021-03-14T14:15:21.000+0800 I -        [conn167]   Index Build (background): 17042600/54386432 31%
+2021-03-14T14:15:24.000+0800 I -        [conn167]   Index Build (background): 17473300/54386432 32%
+2021-03-14T14:15:27.001+0800 I -        [conn167]   Index Build (background): 17924700/54386432 32%
+2021-03-14T14:15:30.001+0800 I -        [conn167]   Index Build (background): 18379000/54386432 33%
+2021-03-14T14:15:33.001+0800 I -        [conn167]   Index Build (background): 18817100/54386432 34%
+2021-03-14T14:15:36.000+0800 I -        [conn167]   Index Build (background): 19264500/54386432 35%
+2021-03-14T14:15:39.000+0800 I -        [conn167]   Index Build (background): 19701000/54386432 36%
+2021-03-14T14:15:42.000+0800 I -        [conn167]   Index Build (background): 20070400/54386432 36%
+2021-03-14T14:15:45.000+0800 I -        [conn167]   Index Build (background): 20554400/54386432 37%
+2021-03-14T14:15:48.001+0800 I -        [conn167]   Index Build (background): 21027600/54386432 38%
+2021-03-14T14:15:51.001+0800 I -        [conn167]   Index Build (background): 21503600/54386432 39%
+2021-03-14T14:15:54.001+0800 I -        [conn167]   Index Build (background): 21964600/54386432 40%
+2021-03-14T14:15:57.001+0800 I -        [conn167]   Index Build (background): 22415700/54386432 41%
+2021-03-14T14:16:00.001+0800 I -        [conn167]   Index Build (background): 22889600/54386432 42%
+2021-03-14T14:16:03.000+0800 I -        [conn167]   Index Build (background): 23358200/54386432 42%
+2021-03-14T14:16:06.000+0800 I -        [conn167]   Index Build (background): 23835800/54386432 43%
+2021-03-14T14:16:09.002+0800 I -        [conn167]   Index Build (background): 24291100/54386432 44%
+2021-03-14T14:16:12.002+0800 I -        [conn167]   Index Build (background): 24745900/54386432 45%
+2021-03-14T14:16:15.001+0800 I -        [conn167]   Index Build (background): 25195800/54386432 46%
+2021-03-14T14:16:18.001+0800 I -        [conn167]   Index Build (background): 25636700/54386432 47%
+2021-03-14T14:16:21.000+0800 I -        [conn167]   Index Build (background): 26086800/54386432 47%
+2021-03-14T14:16:24.000+0800 I -        [conn167]   Index Build (background): 26531300/54386432 48%
+2021-03-14T14:16:27.000+0800 I -        [conn167]   Index Build (background): 26972300/54386432 49%
+2021-03-14T14:16:30.001+0800 I -        [conn167]   Index Build (background): 27411800/54386432 50%
+2021-03-14T14:16:33.002+0800 I -        [conn167]   Index Build (background): 27865300/54386432 51%
+2021-03-14T14:16:36.002+0800 I -        [conn167]   Index Build (background): 28307000/54386432 52%
+2021-03-14T14:16:39.001+0800 I -        [conn167]   Index Build (background): 28733900/54386432 52%
+2021-03-14T14:16:42.000+0800 I -        [conn167]   Index Build (background): 29172400/54386432 53%
+2021-03-14T14:16:45.000+0800 I -        [conn167]   Index Build (background): 29623700/54386432 54%
+2021-03-14T14:16:48.001+0800 I -        [conn167]   Index Build (background): 30058900/54386432 55%
+2021-03-14T14:16:51.000+0800 I -        [conn167]   Index Build (background): 30431300/54386432 55%
+2021-03-14T14:16:54.002+0800 I -        [conn167]   Index Build (background): 30876100/54386432 56%
+2021-03-14T14:16:57.002+0800 I -        [conn167]   Index Build (background): 31325000/54386432 57%
+2021-03-14T14:17:00.002+0800 I -        [conn167]   Index Build (background): 31743500/54386432 58%
+2021-03-14T14:17:03.002+0800 I -        [conn167]   Index Build (background): 32219800/54386432 59%
+2021-03-14T14:17:06.000+0800 I -        [conn167]   Index Build (background): 32676500/54386432 60%
+2021-03-14T14:17:09.000+0800 I -        [conn167]   Index Build (background): 33120500/54386432 60%
+2021-03-14T14:17:12.000+0800 I -        [conn167]   Index Build (background): 33587300/54386432 61%
+2021-03-14T14:17:15.001+0800 I -        [conn167]   Index Build (background): 34058400/54386432 62%
+2021-03-14T14:17:18.001+0800 I -        [conn167]   Index Build (background): 34509000/54386432 63%
+2021-03-14T14:17:21.001+0800 I -        [conn167]   Index Build (background): 34983600/54386432 64%
+2021-03-14T14:17:24.002+0800 I -        [conn167]   Index Build (background): 35435700/54386432 65%
+2021-03-14T14:17:27.000+0800 I -        [conn167]   Index Build (background): 35895700/54386432 66%
+2021-03-14T14:17:30.000+0800 I -        [conn167]   Index Build (background): 36349600/54386432 66%
+2021-03-14T14:17:33.000+0800 I -        [conn167]   Index Build (background): 36759200/54386432 67%
+2021-03-14T14:17:36.001+0800 I -        [conn167]   Index Build (background): 37173300/54386432 68%
+2021-03-14T14:17:39.001+0800 I -        [conn167]   Index Build (background): 37596900/54386432 69%
+2021-03-14T14:17:42.002+0800 I -        [conn167]   Index Build (background): 38021000/54386432 69%
+2021-03-14T14:17:45.001+0800 I -        [conn167]   Index Build (background): 38442300/54386432 70%
+2021-03-14T14:17:48.001+0800 I -        [conn167]   Index Build (background): 38862700/54386432 71%
+2021-03-14T14:17:51.001+0800 I -        [conn167]   Index Build (background): 39275100/54386432 72%
+2021-03-14T14:17:54.000+0800 I -        [conn167]   Index Build (background): 39695400/54386432 72%
+2021-03-14T14:17:57.001+0800 I -        [conn167]   Index Build (background): 40116900/54386432 73%
+2021-03-14T14:18:00.001+0800 I -        [conn167]   Index Build (background): 40535700/54386432 74%
+2021-03-14T14:18:03.001+0800 I -        [conn167]   Index Build (background): 40878300/54386432 75%
+2021-03-14T14:18:06.002+0800 I -        [conn167]   Index Build (background): 41272800/54386432 75%
+2021-03-14T14:18:09.000+0800 I -        [conn167]   Index Build (background): 41707600/54386432 76%
+2021-03-14T14:18:12.001+0800 I -        [conn167]   Index Build (background): 42136800/54386432 77%
+2021-03-14T14:18:15.019+0800 I -        [conn167]   Index Build (background): 42548100/54386432 78%
+2021-03-14T14:18:18.000+0800 I -        [conn167]   Index Build (background): 42964400/54386432 78%
+2021-03-14T14:18:21.001+0800 I -        [conn167]   Index Build (background): 43371200/54386432 79%
+2021-03-14T14:18:24.001+0800 I -        [conn167]   Index Build (background): 43786700/54386432 80%
+2021-03-14T14:18:27.001+0800 I -        [conn167]   Index Build (background): 44203300/54386432 81%
+2021-03-14T14:18:30.001+0800 I -        [conn167]   Index Build (background): 44618400/54386432 82%
+2021-03-14T14:18:33.000+0800 I -        [conn167]   Index Build (background): 45043200/54386432 82%
+2021-03-14T14:18:36.000+0800 I -        [conn167]   Index Build (background): 45458800/54386432 83%
+2021-03-14T14:18:39.000+0800 I -        [conn167]   Index Build (background): 45879400/54386432 84%
+2021-03-14T14:18:42.001+0800 I -        [conn167]   Index Build (background): 46288300/54386432 85%
+2021-03-14T14:18:45.001+0800 I -        [conn167]   Index Build (background): 46705200/54386432 85%
+2021-03-14T14:18:48.001+0800 I -        [conn167]   Index Build (background): 47115000/54386432 86%
+2021-03-14T14:18:51.001+0800 I -        [conn167]   Index Build (background): 47530700/54386432 87%
+2021-03-14T14:18:54.000+0800 I -        [conn167]   Index Build (background): 47943100/54386432 88%
+2021-03-14T14:18:57.000+0800 I -        [conn167]   Index Build (background): 48349900/54386432 88%
+2021-03-14T14:19:00.000+0800 I -        [conn167]   Index Build (background): 48770500/54386432 89%
+2021-03-14T14:19:03.001+0800 I -        [conn167]   Index Build (background): 49197100/54386432 90%
+2021-03-14T14:19:06.001+0800 I -        [conn167]   Index Build (background): 49633500/54386432 91%
+2021-03-14T14:19:09.001+0800 I -        [conn167]   Index Build (background): 50087200/54386432 92%
+2021-03-14T14:19:12.001+0800 I -        [conn167]   Index Build (background): 50510500/54386432 92%
+2021-03-14T14:19:15.000+0800 I -        [conn167]   Index Build (background): 50901200/54386432 93%
+2021-03-14T14:19:18.000+0800 I -        [conn167]   Index Build (background): 51213900/54386432 94%
+2021-03-14T14:19:21.000+0800 I -        [conn167]   Index Build (background): 51632500/54386432 94%
+2021-03-14T14:19:24.000+0800 I -        [conn167]   Index Build (background): 52060900/54386432 95%
+2021-03-14T14:19:27.001+0800 I -        [conn167]   Index Build (background): 52492600/54386432 96%
+2021-03-14T14:19:30.001+0800 I -        [conn167]   Index Build (background): 52920200/54386432 97%
+2021-03-14T14:19:33.001+0800 I -        [conn167]   Index Build (background): 53353400/54386432 98%
+2021-03-14T14:19:36.001+0800 I -        [conn167]   Index Build (background): 53771000/54386432 98%
+2021-03-14T14:19:39.001+0800 I -        [conn167]   Index Build (background): 54206800/54386432 99%
+2021-03-14T14:19:40.235+0800 I INDEX    [conn167] build index done.  scanned 54386432 total records. 384 secs
+2021-03-14T14:19:40.236+0800 D INDEX    [conn167] marking index messageId_1_pushException3_1 as ready in snapshot id 54815467
+2021-03-14T14:19:40.236+0800 I COMMAND  [conn167] command push_stat.$cmd appName: "MongoDB Shell" command: createIndexes { createIndexes: "opush_message_report", indexes: [ { key: { messageId: 1.0, pushException3: 1.0 }, name: "messageId_1_pushException3_1", background: true } ], lsid: { id: UUID("88725f6f-1e4e-4457-97c0-7e3afd7ceada") }, $db: "push_stat" } numYields:425046 reslen:98 locks:{ Global: { acquireCount: { r: 425048, w: 425048 } }, Database: { acquireCount: { w: 425049, W: 2 } }, Collection: { acquireCount: { w: 425048 } } } protocol:op_msg 384717ms
+2021-03-14T14:20:13.913+0800 I COMMAND  [conn167] CMD: dropIndexes push_stat.opush_message_report
+2021-03-14T14:20:14.095+0800 I COMMAND  [conn167] command push_stat.opush_message_report appName: "MongoDB Shell" command: dropIndexes { deleteIndexes: "opush_message_report", index: "messageId_1_pushException3_1", lsid: { id: UUID("88725f6f-1e4e-4457-97c0-7e3afd7ceada") }, $db: "push_stat" } numYields:0 reslen:39 locks:{ Global: { acquireCount: { r: 1, w: 1 } }, Database: { acquireCount: { W: 1 } } } protocol:op_msg 182ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2021-03-14T14:20:29.880+0800 I INDEX    [conn167] build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushException3: 1.0 }, name: "messageId_1_pushException3_1", ns: "push_stat.opush_message_report" }
+2021-03-14T14:20:29.880+0800 I INDEX    [conn167]        building index using bulk method; build may temporarily use up to 500 megabytes of RAM
+2021-03-14T14:20:32.001+0800 I -        [conn167]   Index Build: 1251900/54386432 2%
+2021-03-14T14:20:34.864+0800 I ACCESS   [conn640] Unauthorized: not authorized on admin to execute command { currentOp: 1, $db: "admin" }
+2021-03-14T14:20:35.001+0800 I -        [conn167]   Index Build: 3096800/54386432 5%
+2021-03-14T14:20:38.001+0800 I -        [conn167]   Index Build: 5016600/54386432 9%
+2021-03-14T14:20:41.001+0800 I -        [conn167]   Index Build: 6927000/54386432 12%
+2021-03-14T14:21:06.487+0800 I -        [conn167]   Index Build: 7945000/54386432 14%
+2021-03-14T14:21:09.000+0800 I -        [conn167]   Index Build: 9564800/54386432 17%
+2021-03-14T14:21:12.000+0800 I -        [conn167]   Index Build: 11496200/54386432 21%
+2021-03-14T14:21:15.004+0800 I -        [conn167]   Index Build: 13482500/54386432 24%
+2021-03-14T14:21:18.001+0800 I -        [conn167]   Index Build: 15425600/54386432 28%
+2021-03-14T14:21:39.569+0800 I -        [conn167]   Index Build: 15889100/54386432 29%
+2021-03-14T14:21:42.001+0800 I -        [conn167]   Index Build: 17447500/54386432 32%
+2021-03-14T14:21:45.001+0800 I -        [conn167]   Index Build: 19329800/54386432 35%
+2021-03-14T14:21:48.000+0800 I -        [conn167]   Index Build: 21180900/54386432 38%
+2021-03-14T14:21:51.000+0800 I -        [conn167]   Index Build: 23058400/54386432 42%
+2021-03-14T14:22:12.479+0800 I -        [conn167]   Index Build: 23833200/54386432 43%
+2021-03-14T14:22:15.000+0800 I -        [conn167]   Index Build: 25482000/54386432 46%
+2021-03-14T14:22:18.000+0800 I -        [conn167]   Index Build: 27377800/54386432 50%
+2021-03-14T14:22:21.001+0800 I -        [conn167]   Index Build: 29339100/54386432 53%
+2021-03-14T14:22:24.001+0800 I -        [conn167]   Index Build: 31263000/54386432 57%
+2021-03-14T14:22:45.356+0800 I -        [conn167]   Index Build: 31777100/54386432 58%
+2021-03-14T14:22:48.001+0800 I -        [conn167]   Index Build: 33569100/54386432 61%
+2021-03-14T14:22:51.001+0800 I -        [conn167]   Index Build: 35602300/54386432 65%
+2021-03-14T14:22:54.000+0800 I -        [conn167]   Index Build: 37460300/54386432 68%
+2021-03-14T14:22:57.000+0800 I -        [conn167]   Index Build: 39166600/54386432 72%
+2021-03-14T14:23:17.309+0800 I -        [conn167]   Index Build: 39720900/54386432 73%
+2021-03-14T14:23:20.000+0800 I -        [conn167]   Index Build: 41386600/54386432 76%
+2021-03-14T14:23:23.000+0800 I -        [conn167]   Index Build: 43081400/54386432 79%
+2021-03-14T14:23:26.001+0800 I -        [conn167]   Index Build: 44813500/54386432 82%
+2021-03-14T14:23:29.001+0800 I -        [conn167]   Index Build: 46546900/54386432 85%
+2021-03-14T14:23:52.102+0800 I -        [conn167]   Index Build: 47664800/54386432 87%
+2021-03-14T14:23:55.001+0800 I -        [conn167]   Index Build: 49462700/54386432 90%
+2021-03-14T14:23:58.001+0800 I -        [conn167]   Index Build: 51308600/54386432 94%
+2021-03-14T14:24:01.000+0800 I -        [conn167]   Index Build: 53087600/54386432 97%
+2021-03-14T14:24:03.130+0800 D INDEX    [conn167]        bulk commit starting for index: messageId_1_pushException3_1
+2021-03-14T14:24:29.000+0800 I -        [conn167]   Index: (2/3) BTree Bottom Up Progress: 17232100/54386432 31%
+2021-03-14T14:24:39.001+0800 I -        [conn167]   Index: (2/3) BTree Bottom Up Progress: 36814000/54386432 67%
+2021-03-14T14:24:48.812+0800 I INDEX    [conn167]        done building bottom layer, going to commit
+2021-03-14T14:24:49.313+0800 I INDEX    [conn167] build index done.  scanned 54386432 total records. 259 secs
+2021-03-14T14:24:49.313+0800 D INDEX    [conn167] marking index messageId_1_pushException3_1 as ready in snapshot id 55241819
+2021-03-14T14:24:49.313+0800 I COMMAND  [conn167] command push_stat.$cmd appName: "MongoDB Shell" command: createIndexes { createIndexes: "opush_message_report", indexes: [ { key: { messageId: 1.0, pushException3: 1.0 }, name: "messageId_1_pushException3_1" } ], lsid: { id: UUID("88725f6f-1e4e-4457-97c0-7e3afd7ceada") }, $db: "push_stat" } numYields:0 reslen:98 locks:{ Global: { acquireCount: { r: 2, w: 2 } }, Database: { acquireCount: { w: 2, W: 1 } }, Collection: { acquireCount: { w: 2 } } } protocol:op_msg 259435ms
+2021-03-14T14:24:49.313+0800 I COMMAND  [conn653] command admin.$cmd appName: "MongoDB Shell" command: listDatabases { listDatabases: 1.0, lsid: { id: UUID("9775f94d-aeef-435d-9902-5bef6873eced") }, $db: "admin" } numYields:0 reslen:438 locks:{ Global: { acquireCount: { r: 16 } }, Database: { acquireCount: { r: 7 }, acquireWaitCount: { r: 1 }, timeAcquiringMicros: { r: 206152907 } } } protocol:op_msg 206154ms
+
+

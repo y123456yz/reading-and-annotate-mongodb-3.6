@@ -148,7 +148,9 @@ public:
     ProgressMeter* get() {
         return &_pm;
     }
-
+    
+    //输出进度信息，例如加索引的
+    //2021-03-14T14:22:54.000+0800 I -        [conn167]   Index Build: 37460300/54386432 68%
     bool hit(int n = 1) {
         return _pm.hit(n);
     }

@@ -273,6 +273,9 @@ private:
 };
 
 /** Merge-sorts results from 0 or more FileIterators */
+//SortIteratorInterface<Key, Value>::merge中调用
+//内存超过500M，就需要排序后存入文件，如果数据很大，则可能又多个排好序的文件，需要对多个文件里面的数据进行合并
+//排序，每个文件KV内容式排好序的，但是文件之间的数据式没用排序的，则通过这里合并排序
 template <typename Key, typename Value, typename Comparator>
 class MergeIterator : public SortIteratorInterface<Key, Value> {
 public:
@@ -397,7 +400,7 @@ private:
 };
 
 //IndexAccessMethod::BulkBuilder::BulkBuilder->Sorter<Key, Value>::make中构造使用
-//Sorter<Key, Value>::make即可构造使用
+//Sorter<Key, Value>::make即可构造使用  实现所有索引KV数据的内存排序
 template <typename Key, typename Value, typename Comparator>
 class NoLimitSorter : public Sorter<Key, Value> {
 public:
@@ -420,18 +423,20 @@ public:
         _memUsed += key.memUsageForSorter();
         _memUsed += val.memUsageForSorter();
 
-		//超过了最大内存限制，则spill处理
+		//超过了最大内存限制，则spill处理, 排序后存入文件
         if (_memUsed > _opts.maxMemoryUsageBytes)
             spill();
     }
 
     Iterator* done() {
         if (_iters.empty()) {
+			//说明所有索引数据都不到500M，也就是不存在磁盘文件排序的问题，则直接内存排序
             sort();
             return new InMemIterator<Key, Value>(_data);
         }
 
         spill();
+		//多个文件合并排序
         return Iterator::merge(_iters, _opts, _comp);
     }
 
@@ -924,6 +929,7 @@ SortIteratorInterface<Key, Value>* SortedFileWriter<Key, Value>::done() {
 // Factory Functions
 //
 
+//多个文件合并排序  NoLimitSorter::done中调用
 template <typename Key, typename Value>
 template <typename Comparator>
 SortIteratorInterface<Key, Value>* SortIteratorInterface<Key, Value>::merge(

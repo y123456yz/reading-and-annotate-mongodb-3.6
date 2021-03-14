@@ -52,7 +52,8 @@ void ProgressMeter::reset(unsigned long long total, int secondsBetween, int chec
     _active = true;
 }
 
-
+//输出进度信息，例如加索引的
+//2021-03-14T14:22:54.000+0800 I -        [conn167]   Index Build: 37460300/54386432 68%
 bool ProgressMeter::hit(int n) {
     if (!_active) {
         warning() << "hit an inactive ProgressMeter";
