@@ -549,7 +549,7 @@ Status WiredTigerIndex::compact(OperationContext* opCtx) {
  * Manages the bulk cursor used by bulk builders.
  */
  //WiredTigerIndex::StandardBulkBuilder和WiredTigerIndex::UniqueBulkBuilder继承该类
- //IndexAccessMethod::commitBulk中使用
+ //IndexAccessMethod::commitBulk中使用  bulk方式写入存储引擎，参考openBulkCursor中open_cursor
 class WiredTigerIndex::BulkBuilder : public SortedDataBuilderInterface {
 public:
     BulkBuilder(WiredTigerIndex* idx, OperationContext* opCtx, KVPrefix prefix)
@@ -614,7 +614,7 @@ public:
     StandardBulkBuilder(WiredTigerIndex* idx, OperationContext* opCtx, KVPrefix prefix)
         : BulkBuilder(idx, opCtx, prefix), _idx(idx) {}
 
-	//IndexAccessMethod::commitBulk中调用
+	//IndexAccessMethod::commitBulk中调用,bulk方式写入存储引擎，参考openBulkCursor中open_cursor
     Status addKey(const BSONObj& key, const RecordId& id) {
         {
             const Status s = checkKeySize(key);

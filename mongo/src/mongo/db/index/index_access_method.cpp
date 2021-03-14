@@ -529,6 +529,12 @@ Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
     return Status::OK();
 }
 
+
+/*
+非backgroud阻塞方式加索引有两个进度：
+1. 一个是索引KV数据写入内存或者文件中的排序进度
+2. 另外一个是这些排好序的数据通过bulk方式写入WT存储引擎的进度
+*/
 //MultiIndexBlockImpl::doneInserting中调用
 Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
                                      std::unique_ptr<BulkBuilder> bulk,
@@ -541,10 +547,12 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
     std::unique_ptr<BulkBuilder::Sorter::Iterator> i(bulk->_sorter->done());
 
     stdx::unique_lock<Client> lk(*opCtx->getClient());
+	//2021-03-14T14:24:29.000+0800 I - [conn167]   Index: (2/3) BTree Bottom Up Progress: 17232100/54386432 31%
     ProgressMeterHolder pm(
         CurOp::get(opCtx)->setMessage_inlock("Index Bulk Build: (2/3) btree bottom up",
                                              "Index: (2/3) BTree Bottom Up Progress",
                                              bulk->_keysInserted,
+                                             //10秒打印一次
                                              10));
     lk.unlock();
 
@@ -601,6 +609,8 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
 
         // If we're here either it's a dup and we're cool with it or the addKey went just
         // fine.
+        //输入类似如下打印信息:  进度打印
+//2021-03-14T14:24:29.000+0800 I - [conn167]   Index: (2/3) BTree Bottom Up Progress: 17232100/54386432 31%
         pm.hit();
         wunit.commit();
     }

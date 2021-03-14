@@ -610,6 +610,7 @@ PlanExecutor::ExecState PlanExecutor::getNextImpl(Snapshotted<BSONObj>* objOut, 
         //   2) some stage requested a yield due to a document fetch, or
         //   3) we need to yield and retry due to a WriteConflictException.
         // In all cases, the actual yielding happens here.
+        //判断是否需要让出CPU，例如检查kill  让出CPU给其他操作等
         if (_yieldPolicy->shouldYield()) {
             auto yieldStatus = _yieldPolicy->yield(fetcher.get());
             if (!yieldStatus.isOK()) {

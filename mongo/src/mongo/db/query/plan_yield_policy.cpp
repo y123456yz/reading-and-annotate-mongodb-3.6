@@ -55,6 +55,7 @@ PlanYieldPolicy::PlanYieldPolicy(PlanExecutor* exec, PlanExecutor::YieldPolicy p
     : _policy(exec->getOpCtx()->lockState()->isGlobalLockedRecursively() ? PlanExecutor::NO_YIELD
                                                                          : policy),
       _forceYield(false),
+      //定时时间到需要让出CPU
       _elapsedTracker(exec->getOpCtx()->getServiceContext()->getFastClockSource(),
                       internalQueryExecYieldIterations.load(),
                       Milliseconds(internalQueryExecYieldPeriodMS.load())),
@@ -64,20 +65,30 @@ PlanYieldPolicy::PlanYieldPolicy(PlanExecutor* exec, PlanExecutor::YieldPolicy p
 PlanYieldPolicy::PlanYieldPolicy(PlanExecutor::YieldPolicy policy, ClockSource* cs)
     : _policy(policy),
       _forceYield(false),
+      //定时器，定时时间到后需要让出CPU
       _elapsedTracker(cs,
                       internalQueryExecYieldIterations.load(),
                       Milliseconds(internalQueryExecYieldPeriodMS.load())),
       _planYielding(nullptr) {}
 
+//PlanExecutor::getNextImpl中调用
+// These are the conditions which can cause us to yield:
+  //   1) The yield policy's timer elapsed, or
+  //   2) some stage requested a yield due to a document fetch, or
+  //   3) we need to yield and retry due to a WriteConflictException.
+
 //判断是否应该yield让出CPU
 bool PlanYieldPolicy::shouldYield() {
+	//首先检查是否可以yield
     if (!canAutoYield())
         return false;
+	
     invariant(!_planYielding->getOpCtx()->lockState()->inAWriteUnitOfWork());
+	//需要强制让出CPU
     if (_forceYield)
         return true;
 
-	//
+	//定时时间点需要让出CPU
     return _elapsedTracker.intervalHasElapsed();
 }
 
@@ -86,6 +97,7 @@ void PlanYieldPolicy::resetTimer() {
 }
 
 //检查操作是否被kill，没有则让出CPU资源
+//PlanExecutor::getNextImpl中调用
 Status PlanYieldPolicy::yield(RecordFetcher* recordFetcher) {
     invariant(_planYielding);
     if (recordFetcher) {
@@ -97,7 +109,7 @@ Status PlanYieldPolicy::yield(RecordFetcher* recordFetcher) {
     }
 }
 
-//检查操作是否被kill，没有则让出CPU资源
+//检查操作是否被kill，没有则让出CPU资源，上面的PlanYieldPolicy::yield调用
 Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
                               stdx::function<void()> whileYieldingFn) {
     invariant(_planYielding);
@@ -120,6 +132,11 @@ Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
             // All YIELD_AUTO plans will get here eventually when the elapsed tracker triggers
             // that it's time to yield. Whether or not we will actually yield, we need to check
             // if this operation has been interrupted.
+
+			//canAutoYield返回true也就是运行一段时间(定时器是是实现)必须要让出CPU，这里面完成如下操作：
+			//  1. 检查操作是否已经被kill
+			//  2. 判断是否需要让出CPU资源，WRITE_CONFLICT_RETRY_ONLY不需要让出CPU资源，其他的满足
+			//     canAutoYield条件的policy需要yield
             
 			//Mongodb在一个执行计划被Yield出去之后，执行清理工作。 首先检查是否被killOp命令杀掉了，如果没有被杀掉，会通过yieldAllLocks暂时让出锁资源。
             if (_policy == PlanExecutor::YIELD_AUTO) { // 检查是否被kill掉了 
@@ -130,12 +147,14 @@ Status PlanYieldPolicy::yield(stdx::function<void()> beforeYieldingFn,
             }
 
             try {
+				//PlanExecutor::saveState
                 _planYielding->saveState();
             } catch (const WriteConflictException&) {
                 invariant(!"WriteConflictException not allowed in saveState");
             }
 
             if (_policy == PlanExecutor::WRITE_CONFLICT_RETRY_ONLY) {
+				//注意这里没用释放锁
                 // Just reset the snapshot. Leave all LockManager locks alone.
                 opCtx->recoveryUnit()->abandonSnapshot();
             } else {

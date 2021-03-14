@@ -105,7 +105,8 @@ public:
      * The yielding policy of the plan executor. By default, an executor does not yield itself
      * (NO_YIELD).
      */
-    //参考makeYieldPolicy，
+    //参考makeYieldPolicy， 
+    //PlanYieldPolicy._policy为该类型，更多参考PlanYieldPolicy
     enum YieldPolicy {//YieldPolicy类型
         // Any call to getNext() may yield. In particular, the executor may be killed during any
         // call to getNext().  If this occurs, getNext() will return DEAD. Additionally, this
@@ -118,6 +119,7 @@ public:
         // occurs so callers must be prepared to get a new snapshot. A PlanExecutor constructed with
         // this yield policy will not be registered to receive invalidations, so the caller must
         // hold their locks continuously from construction to destruction.
+        //参考canReleaseLocksDuringExecution，生效见PlanYieldPolicy::yield
         WRITE_CONFLICT_RETRY_ONLY,
 
         // Use this policy if you want to disable auto-yielding, but will release locks while using
@@ -129,6 +131,7 @@ public:
         //  - This PlanExecutor doesn't logically belong to a Collection, and so does not need to be
         //    locked during execution. For example, a PlanExecutor containing a PipelineProxyStage
         //    which is being used to execute an aggregation pipeline.
+        //参考canReleaseLocksDuringExecution
         NO_YIELD,
 
         // Used for testing, this yield policy will cause the PlanExecutor to time out on the first
@@ -580,6 +583,7 @@ private:
     // stages.
     std::queue<BSONObj> _stash;
 
+    //该plan执行器的状态信息
     enum { kUsable, kSaved, kDetached, kDisposed } _currentState = kUsable;
 
     // Set if this PlanExecutor is registered with the CursorManager.

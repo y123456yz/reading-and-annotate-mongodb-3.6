@@ -98,6 +98,7 @@ public:
      * Returns true if there is a possibility that a collection lock will be yielded at some point
      * during this PlanExecutor's lifetime.
      */
+    //生效见PlanExecutor::PlanExecutor
     bool canReleaseLocksDuringExecution() const {
         switch (_policy) {
             case PlanExecutor::YIELD_AUTO:
@@ -119,6 +120,7 @@ public:
      * either releasing storage engine resources via abandonSnapshot() OR yielding LockManager
      * locks.
      */
+    //PlanYieldPolicy::shouldYield()  MultiPlanStage::workAllPlans  CachedPlanStage::pickBestPlan调用
     bool canAutoYield() const {
         switch (_policy) {
             case PlanExecutor::YIELD_AUTO:
@@ -139,10 +141,11 @@ public:
     }
 
 private:
+    
     const PlanExecutor::YieldPolicy _policy;
 
     bool _forceYield;
-    //定时器相关
+    //定时器相关，定时时间到需要让出CPU
     ElapsedTracker _elapsedTracker;
 
     // The plan executor which this yield policy is responsible for yielding. Must

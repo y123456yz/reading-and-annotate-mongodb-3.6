@@ -445,11 +445,11 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     unsigned long long n = 0;
 
     PlanExecutor::YieldPolicy yieldPolicy;
-	//backgroud后台索引
+	//backgroud后台索引,yield策略生效地方见PlanYieldPolicy::yield
     if (_buildInBackground) {
         invariant(_allowInterruption);
         yieldPolicy = PlanExecutor::YIELD_AUTO;
-    } else {
+    } else {//见PlanYieldPolicy::yield，不会是否锁资源，执行plan的时候
         yieldPolicy = PlanExecutor::WRITE_CONFLICT_RETRY_ONLY;
     }
 
@@ -488,6 +488,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
             }
 
             // Done before insert so we can retry document if it WCEs.
+            //更新表中的总数据量，为后面的加索引进度百分比计算做准备
             progress->setTotalWhileRunning(_collection->numRecords(_opCtx));
 
             WriteUnitOfWork wunit(_opCtx);

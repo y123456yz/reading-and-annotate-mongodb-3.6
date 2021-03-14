@@ -236,9 +236,16 @@ CurOp::CurOp(OperationContext* opCtx, CurOpStack* stack) : _stack(stack) {
     }
 }
 
+//MultiIndexBlockImpl::insertAllDocumentsInCollection
+//   2021-03-10T17:39:06.001+0800 I -        [conn1366036]   Index Build (background): 52334600/53092096 98%
+//IndexAccessMethod::commitBulk
+//   2021-03-14T14:24:29.000+0800 I - [conn167]   Index: (2/3) BTree Bottom Up Progress: 17232100/54386432 31%
+  
+//打印的
 ProgressMeter& CurOp::setMessage_inlock(const char* msg,
                                         std::string name,
                                         unsigned long long progressMeterTotal,
+                                        //多久打印一次
                                         int secondsBetween) {
     if (progressMeterTotal) {
         if (_progressMeter.isActive()) {
