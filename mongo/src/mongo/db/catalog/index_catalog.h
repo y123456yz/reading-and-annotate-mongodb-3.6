@@ -315,6 +315,7 @@ public:
         return this->_impl().numIndexesReady(opCtx);
     }
 
+    //当前正在创建的索引数目
     inline int numIndexesInProgress(OperationContext* const opCtx) const {
         return numIndexesTotal(opCtx) - numIndexesReady(opCtx);
     }

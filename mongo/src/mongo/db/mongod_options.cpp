@@ -1104,9 +1104,11 @@ Status storeMongodOptions(const moe::Environment& params) {
     }
 
     repl::ReplSettings replSettings;
+	//master方式运行
     if (params.count("master")) {
         replSettings.setMaster(params["master"].as<bool>());
     }
+	//slave方式运行
     if (params.count("slave") && params["slave"].as<bool>() == true) {
         replSettings.setSlave(true);
     }
@@ -1133,6 +1135,7 @@ Status storeMongodOptions(const moe::Environment& params) {
     if (params.count("replication.replSetName")) {
         replSettings.setReplSetString(params["replication.replSetName"].as<string>().c_str());
     }
+	//复制集方式运行
     if (params.count("replication.replSet")) {
         /* seed list of hosts for the repl set */
         replSettings.setReplSetString(params["replication.replSet"].as<string>().c_str());

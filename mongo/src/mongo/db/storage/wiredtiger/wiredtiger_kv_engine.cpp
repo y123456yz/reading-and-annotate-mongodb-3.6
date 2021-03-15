@@ -816,7 +816,7 @@ KVStorageEngine::KVStorageEngine
 */ 
 //WiredTigerKVEngine::createGroupedRecordStore(数据文件相关 包括元数据文件如_mdb_catalog.wt和普通数据文件)  
 //WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
-//创建集合对应的wiredtiger .wt文件，同时创建对应的目录
+//调用WT存储引擎的create接口建表
 Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
                                                     StringData ns,
                                                     StringData ident,
@@ -848,7 +848,9 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     return wtRCToStatus(s->create(s, uri.c_str(), config.c_str()));
 }
 
+//建表KVDatabaseCatalogEntryBase::createCollection中调用
 //KVStorageEngine::KVStorageEngine调用
+//获取StandardWiredTigerRecordStore类
 std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
     OperationContext* opCtx,
     StringData ns,

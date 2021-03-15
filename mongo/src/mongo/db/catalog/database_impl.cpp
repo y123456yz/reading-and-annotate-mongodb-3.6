@@ -455,6 +455,7 @@ Status DatabaseImpl::dropView(OperationContext* opCtx, StringData fullns) {
     return status;
 }
 
+//drop删表CmdDrop::errmsgRun->dropCollection会调用
 Status DatabaseImpl::dropCollection(OperationContext* opCtx,
                                     StringData fullns,
                                     repl::OpTime dropOpTime) {
@@ -484,6 +485,9 @@ Status DatabaseImpl::dropCollection(OperationContext* opCtx,
     return dropCollectionEvenIfSystem(opCtx, nss, dropOpTime);
 }
 
+//drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem
+
+////drop删表CmdDrop::errmsgRun->dropCollection会调用
 Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
                                                 const NamespaceString& fullns,
                                                 repl::OpTime dropOpTime) {
@@ -498,12 +502,14 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
             "dropCollection() cannot accept a valid drop optime when writes are replicated.");
     }
 
+	//获取表信息
     Collection* collection = getCollection(opCtx, fullns);
 
     if (!collection) {
         return Status::OK();  // Post condition already met.
     }
 
+	//获取表对应uuid
     auto uuid = collection->uuid();
     auto uuidString = uuid ? uuid.get().toString() : "no UUID";
 
@@ -523,6 +529,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
 
     audit::logDropCollection(&cc(), fullns.toString());
 
+	//删表后，需要清空该表的统计信息，从usage中移除
     Top::get(opCtx->getServiceContext()).collectionDropped(fullns.toString());
 
     // Drop unreplicated collections immediately.
@@ -531,9 +538,12 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
     // collections support the rollback process which is not applicable to master/slave.
     auto replCoord = repl::ReplicationCoordinator::get(opCtx);
     auto opObserver = opCtx->getServiceContext()->getOpObserver();
+	//一般表都是false
     auto isOplogDisabledForNamespace = replCoord->isOplogDisabledFor(opCtx, fullns);
+	//不是复制集方式启动
     auto isMasterSlave =
         repl::ReplicationCoordinator::modeMasterSlave == replCoord->getReplicationMode();
+	//单机方式启动的节点
     if ((dropOpTime.isNull() && isOplogDisabledForNamespace) || isMasterSlave) {
         auto status = _finishDropCollection(opCtx, fullns, collection);
         if (!status.isOK()) {
@@ -623,10 +633,14 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
     return Status::OK();
 }
 
+//drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
+//    ->DatabaseImpl::_finishDropCollection
 Status DatabaseImpl::_finishDropCollection(OperationContext* opCtx,
                                            const NamespaceString& fullns,
                                            Collection* collection) {
     LOG(1) << "dropCollection: " << fullns << " - dropAllIndexes start";
+	//先删除表下的所有索引
+	//IndexCatalogImpl::dropAllIndexes
     collection->getIndexCatalog()->dropAllIndexes(opCtx, true);
 
     invariant(collection->getCatalogEntry()->getTotalIndexCount(opCtx) == 0);
@@ -634,16 +648,23 @@ Status DatabaseImpl::_finishDropCollection(OperationContext* opCtx,
 
     // We want to destroy the Collection object before telling the StorageEngine to destroy the
     // RecordStore.
+    ////从DatabaseImpl._collections集合中把删除的集合去掉，以后就不能通过DatabaseImpl找到该集合了
     _clearCollectionCache(
         opCtx, fullns.toString(), "collection dropped", /*collectionGoingAway*/ true);
 
+	//获取集合uuid
     auto uuid = collection->uuid();
     auto uuidString = uuid ? uuid.get().toString() : "no UUID";
     log() << "Finishing collection drop for " << fullns << " (" << uuidString << ").";
 
+	//KVDatabaseCatalogEntry::dropCollection
     return _dbEntry->dropCollection(opCtx, fullns.toString());
 }
 
+//drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
+//DatabaseImpl::_finishDropCollection中调用
+
+//从DatabaseImpl._collections集合中把删除的集合去掉，以后就不能通过DatabaseImpl找到该集合了
 void DatabaseImpl::_clearCollectionCache(OperationContext* opCtx,
                                          StringData fullns,
                                          const std::string& reason,
@@ -790,6 +811,9 @@ Status DatabaseImpl::createView(OperationContext* opCtx,
 //DatabaseImpl::createCollection创建collection的表全部添加到_collections数组中
 //AutoGetCollection::AutoGetCollection从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息
 
+//手动建表流程：CmdCreate::run->createCollection->mongo::userCreateNSImpl->
+//直接写入数据的时候会建表流程：insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+//    ->mongo::userCreateNSImpl->DatabaseImpl::createCollection
 
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl->DatabaseImpl::createCollection
 //在wiredtiger创建集合和索引
@@ -810,14 +834,18 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
 
     CollectionOptions optionsWithUUID = options;
     bool generatedUUID = false;
+	//默认开启 
+	//每个collection会对应一个uuid，见DatabaseImpl::createCollection，只有3.6以上版本有该uuid
     if (enableCollectionUUIDs && !optionsWithUUID.uuid &&
         serverGlobalParams.featureCompatibility.isSchemaVersion36()) {
         auto coordinator = repl::ReplicationCoordinator::get(opCtx);
         bool fullyUpgraded = serverGlobalParams.featureCompatibility.getVersion() ==
             ServerGlobalParams::FeatureCompatibility::Version::kFullyUpgradedTo36;
         bool canGenerateUUID =
+			//单机方式启动
             (coordinator->getReplicationMode() != repl::ReplicationCoordinator::modeReplSet) ||
-            coordinator->canAcceptWritesForDatabase(opCtx, nss.db()) || nss.isSystemDotProfile();
+			//复制集方式，是否可以写，如果主在就可以  或者 慢日志表
+			coordinator->canAcceptWritesForDatabase(opCtx, nss.db()) || nss.isSystemDotProfile();
 
         if (fullyUpgraded && !canGenerateUUID) {
             std::string msg = str::stream() << "Attempted to create a new collection " << nss.ns()
@@ -825,7 +853,9 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
             severe() << msg;
             uasserted(ErrorCodes::InvalidOptions, msg);
         }
+		//每个表对应一个uuid
         if (canGenerateUUID) {
+			//也就是UUID::gen()，生成唯一UUID
             optionsWithUUID.uuid.emplace(CollectionUUID::gen());
             generatedUUID = true;
         }
@@ -1037,6 +1067,11 @@ void mongo::dropAllDatabasesExceptLocalImpl(OperationContext* opCtx) {
     }
 }
 
+//手动建表流程：CmdCreate::run->createCollection->mongo::userCreateNSImpl->DatabaseImpl::createCollection
+//直接写入数据的时候会建表流程：insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+//    ->mongo::userCreateNSImpl->DatabaseImpl::createCollection
+
+
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
 //mongo::userCreateNS中执行，创建集合
 auto mongo::userCreateNSImpl(OperationContext* opCtx,
@@ -1053,8 +1088,9 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
     if (!NamespaceString::validCollectionComponent(ns))
         return Status(ErrorCodes::InvalidNamespace, str::stream() << "invalid ns: " << ns);
 
+	//
     Collection* collection = db->getCollection(opCtx, ns); //Database::getCollection
-
+	//表已经存在
     if (collection)
         return Status(ErrorCodes::NamespaceExists,
                       str::stream() << "a collection '" << ns.toString() << "' already exists");
@@ -1064,6 +1100,7 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
                       str::stream() << "a view '" << ns.toString() << "' already exists");
 
     CollectionOptions collectionOptions;
+	//创建集合相关参数检查判断
     Status status = collectionOptions.parse(options, parseKind);
 
     if (!status.isOK())

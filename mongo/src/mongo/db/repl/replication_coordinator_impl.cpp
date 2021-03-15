@@ -300,6 +300,7 @@ bool ReplicationCoordinatorImpl::WaiterList::remove_inlock(WaiterType waiter) {
     return true;
 }
 
+//mongod实例可以以master secondary 复制集三种方式运行， mongod --help查看
 namespace {
 ReplicationCoordinator::Mode getReplicationModeFromSettings(const ReplSettings& settings) {
     if (settings.usingReplSets()) {
@@ -1911,6 +1912,7 @@ bool ReplicationCoordinatorImpl::canAcceptWritesForDatabase(OperationContext* op
     return canAcceptWritesForDatabase_UNSAFE(opCtx, dbName);
 }
 
+//是否可以写，如果主节点在就可以写，或者单机启动
 bool ReplicationCoordinatorImpl::canAcceptWritesForDatabase_UNSAFE(OperationContext* opCtx,
                                                                    StringData dbName) {
     // _canAcceptNonLocalWrites is always true for standalone nodes, always false for nodes

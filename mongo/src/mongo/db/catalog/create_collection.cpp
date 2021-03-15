@@ -69,7 +69,12 @@ namespace {
 }
 
 */
+	//手动建表流程：CmdCreate::run->createCollection->mongo::userCreateNSImpl->
+	//直接写入数据的时候会建表流程：insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+	//	  ->mongo::userCreateNSImpl->DatabaseImpl::createCollection
 
+
+//CmdCreate::run中调用，通过该文件下面的createCollection接口走到这里
 Status createCollection(OperationContext* opCtx,
                         const NamespaceString& nss,
                         const BSONObj& cmdObj,
@@ -81,6 +86,7 @@ Status createCollection(OperationContext* opCtx,
     BSONElement firstElt = it.next();
     invariant(firstElt.fieldNameStringData() == "create");
 
+	//部分表不允许建索引，有效性检查
     Status status = userAllowedCreateNS(nss.db(), nss.coll());
     if (!status.isOK()) {
         return status;
@@ -131,6 +137,10 @@ Status createCollection(OperationContext* opCtx,
     });
 }
 }  // namespace
+
+//手动建表流程：CmdCreate::run->createCollection->mongo::userCreateNSImpl->
+//直接写入数据的时候会建表流程：insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+//    ->mongo::userCreateNSImpl->DatabaseImpl::createCollection
 
 Status createCollection(OperationContext* opCtx,
                         const std::string& dbName,

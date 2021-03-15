@@ -393,6 +393,8 @@ public:
 } cmdProfile;
 
 /* drop collection */
+//cmdCreate建表操作，CmdDrop删表操作
+//删表操作命令
 class CmdDrop : public ErrmsgCommandDeprecated {
 public:
     CmdDrop() : ErrmsgCommandDeprecated("drop") {}
@@ -418,6 +420,7 @@ public:
         return true;
     }
 
+	//CmdDrop::errmsgRun删表操作
     virtual bool errmsgRun(OperationContext* opCtx,
                            const string& dbname,
                            const BSONObj& cmdObj,
@@ -449,6 +452,7 @@ public:
 } cmdDrop;
 
 /* create collection */
+//cmdCreate建表操作，CmdDrop删表操作
 class CmdCreate : public BasicCommand {
 public:
     CmdCreate() : BasicCommand("create") {}
@@ -477,6 +481,10 @@ public:
         return AuthorizationSession::get(client)->checkAuthForCreate(nss, cmdObj, false);
     }
 
+	
+	//手动建表流程：CmdCreate::run->createCollection
+	//直接写入数据的时候会建表流程：insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+	//CmdCreate::run
     virtual bool run(OperationContext* opCtx,
                      const string& dbname,
                      const BSONObj& cmdObj,

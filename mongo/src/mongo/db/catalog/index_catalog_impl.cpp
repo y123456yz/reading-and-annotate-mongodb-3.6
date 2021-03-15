@@ -947,6 +947,8 @@ BSONObj IndexCatalogImpl::getDefaultIdIndexSpec(
     return b.obj();
 }
 
+//drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
+//删除表下面的所有索引，只是清除内存中缓存的
 void IndexCatalogImpl::dropAllIndexes(OperationContext* opCtx,
                                       bool includingIdIndex,
                                       std::map<std::string, BSONObj>* droppedIndexes) {
@@ -1163,7 +1165,7 @@ bool IndexCatalogImpl::haveAnyIndexes() const {
     return _entries.size() != 0;
 }
 
-//该表索引总数
+//该表索引总数，可以参考dropCollection调用方法
 int IndexCatalogImpl::numIndexesTotal(OperationContext* opCtx) const {
     int count = _entries.size() + _unfinishedIndexes.size();
     dassert(_collection->getCatalogEntry()->getTotalIndexCount(opCtx) == count);

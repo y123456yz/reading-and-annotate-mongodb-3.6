@@ -49,6 +49,7 @@
 
 namespace mongo {
 
+//CmdDrop::errmsgRun删表操作调用   
 Status dropCollection(OperationContext* opCtx,
                       const NamespaceString& collectionName,
                       BSONObjBuilder& result,
@@ -61,12 +62,15 @@ Status dropCollection(OperationContext* opCtx,
     const std::string dbname = collectionName.db().toString();
 
     return writeConflictRetry(opCtx, "drop", collectionName.ns(), [&] {
+		//获取库信息
         AutoGetDb autoDb(opCtx, dbname, MODE_X);
         Database* const db = autoDb.getDb();
+		//获取表collection信息
         Collection* coll = db ? db->getCollection(opCtx, collectionName) : nullptr;
         auto view =
             db && !coll ? db->getViewCatalog()->lookup(opCtx, collectionName.ns()) : nullptr;
 
+		//表不存在
         if (!db || (!coll && !view)) {
             return Status(ErrorCodes::NamespaceNotFound, "ns not found");
         }
@@ -77,6 +81,7 @@ Status dropCollection(OperationContext* opCtx,
         bool userInitiatedWritesAndNotPrimary = opCtx->writesAreReplicated() &&
             !repl::getGlobalReplicationCoordinator()->canAcceptWritesFor(opCtx, collectionName);
 
+		//必须在主节点操作，无主直接报错
         if (userInitiatedWritesAndNotPrimary) {
             return Status(ErrorCodes::NotMaster,
                           str::stream() << "Not primary while dropping collection "
@@ -88,13 +93,16 @@ Status dropCollection(OperationContext* opCtx,
 
         if (coll) {
             invariant(!view);
+			//获取该表有多少个索引
             int numIndexes = coll->getIndexCatalog()->numIndexesTotal(opCtx);
 
             BackgroundOperation::assertNoBgOpInProgForNs(collectionName.ns());
 
             Status s = systemCollectionMode ==
                     DropCollectionSystemCollectionMode::kDisallowSystemCollectionDrops
+                //DatabaseImpl::dropCollection
                 ? db->dropCollection(opCtx, collectionName.ns(), dropOpTime)
+                //DatabaseImpl::dropCollectionEvenIfSystem
                 : db->dropCollectionEvenIfSystem(opCtx, collectionName, dropOpTime);
 
             if (!s.isOK()) {

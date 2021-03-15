@@ -160,6 +160,7 @@ void Top::_record(OperationContext* opCtx,
     }
 }
 
+//删表后，需要清空该表的统计信息，从usage中移除
 void Top::collectionDropped(StringData ns, bool databaseDropped) {
     stdx::lock_guard<SimpleMutex> lk(_lock);
     _usage.erase(ns);

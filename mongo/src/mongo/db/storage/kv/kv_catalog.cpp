@@ -27,7 +27,164 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+/*
+Êı¾İÄ¿Â¼½á¹¹£º
+©À©¤©¤ admin
+©¦?? ©À©¤©¤ collection-11-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-17-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-57-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-12-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-18-4403473224283218525.wt
+©¦?? ©¸©¤©¤ index-19-4403473224283218525.wt
+©À©¤©¤ config
+©¦?? ©À©¤©¤ collection-15-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-2-2800236074169171616.wt
+©¦?? ©À©¤©¤ collection-2-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-4-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-6-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-16-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-3-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-5-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-7-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-8-8046959287074256623.wt
+©¦?? ©¸©¤©¤ index-9-8046959287074256623.wt
+©À©¤©¤ diagnostic.data
+©¦?? ©À©¤©¤ metrics.2021-03-05T00-12-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-05T12-22-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-06T00-32-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-06T12-47-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-07T00-57-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-07T13-12-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-08T01-22-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-08T13-37-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-09T01-47-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-09T13-57-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-10T02-07-34Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-10T14-02-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-11T02-07-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-11T14-07-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-12T02-17-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-12T14-27-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-13T02-37-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-13T14-47-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-14T02-57-44Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-14T15-14-20Z-00000
+©¦?? ©À©¤©¤ metrics.2021-03-15T03-44-20Z-00000
+©¦?? ©¸©¤©¤ metrics.interim
+©À©¤©¤ journal
+©¦?? ©À©¤©¤ WiredTigerLog.0000172834
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172482
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172489
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172499
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172500
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172502
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172504
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172511
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172512
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172513
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172515
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172521
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172523
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172524
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172528
+©¦?? ©À©¤©¤ WiredTigerPreplog.0000172535
+©¦?? ©¸©¤©¤ WiredTigerPreplog.0000172539
+©À©¤©¤ local
+©¦?? ©À©¤©¤ collection-0-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-0-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-13-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-2-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-4-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-56-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-6-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-8-4403473224283218525.wt
+©¦?? ©À©¤©¤ collection-9-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-10-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-1-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-14-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-1-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-3-4403473224283218525.wt
+©¦?? ©À©¤©¤ index-5-4403473224283218525.wt
+©¦?? ©¸©¤©¤ index-7-4403473224283218525.wt
+©À©¤©¤ _mdb_catalog.wt
+©À©¤©¤ mongod.lock
+©À©¤©¤ myCxxoll
+©¦?? ©À©¤©¤ collection-4-2800236074169171616.wt
+©¦?? ©À©¤©¤ collection-6-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-5-2800236074169171616.wt
+©¦?? ©¸©¤©¤ index-7-2800236074169171616.wt
+©À©¤©¤ xx_monitor_stat   Õâ¸öÊÇ¿â
+©¦?? ©À©¤©¤ collection-12-8046959287074256623.wt        Ò»¸ö¼¯ºÏ¶ÔÓ¦Ò»¸öwtÎÄ¼ş
+©¦?? ©À©¤©¤ collection-16-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-18-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-20-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-22-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-24-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-28-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-29-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-31-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-33-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-35-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-37-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-39-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-42-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-44-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-46-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-48-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-50-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-52-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-54-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-0-2800236074169171616.wt                              Ã¿¸öË÷Òı¶ÔÓ¦Ò»¸öwtÎÄ¼ş
+©¦?? ©À©¤©¤ index-1-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-13-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-17-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-19-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-21-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-23-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-25-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-30-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-3-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-32-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-34-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-36-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-38-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-40-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-43-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-45-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-47-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-49-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-51-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-53-8046959287074256623.wt
+©¦?? ©¸©¤©¤ index-55-8046959287074256623.wt
+©À©¤©¤ xx_stat  Õâ¸öÊÇ¿â
+©¦?? ©À©¤©¤ collection-10-8046959287074256623.wt         Ò»¸ö¼¯ºÏ¶ÔÓ¦Ò»¸öwtÎÄ¼ş
+©¦?? ©À©¤©¤ collection-14-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-26-8046959287074256623.wt
+©¦?? ©À©¤©¤ collection-41-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-11-8046959287074256623.wt                              Ã¿¸öË÷Òı¶ÔÓ¦Ò»¸öwtÎÄ¼ş
+©¦?? ©À©¤©¤ index-13-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-14-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-15-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-15-8046959287074256623.wt
+©¦?? ©À©¤©¤ index-17-2800236074169171616.wt
+©¦?? ©¸©¤©¤ index-27-8046959287074256623.wt
+©À©¤©¤ rollback
+©¦?? ©¸©¤©¤ xx_monitor_stat.device_activity_longconnect2.2020-02-13T13-53-30.0.bson
+©À©¤©¤ sizeStorer.wt
+©À©¤©¤ storage.bson
+©À©¤©¤ test
+©¦?? ©À©¤©¤ collection-10-2800236074169171616.wt
+©¦?? ©À©¤©¤ collection-8-2800236074169171616.wt
+©¦?? ©À©¤©¤ index-11-2800236074169171616.wt
+©¦?? ©¸©¤©¤ index-9-2800236074169171616.wt
+©À©¤©¤ _tmp
+©À©¤©¤ WiredTiger
+©À©¤©¤ WiredTigerLAS.wt
+©À©¤©¤ WiredTiger.lock
+©À©¤©¤ WiredTiger.turtle
+©¸©¤©¤ WiredTiger.wt
 
+*/
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
 
 #include "mongo/db/storage/kv/kv_catalog.h"
@@ -263,7 +420,7 @@ void KVCatalog::FeatureTracker::putInfo(OperationContext* opCtx, const FeatureBi
 
 ////KVStorageEngine::KVStorageEngineÖĞ¹¹Ôì³õÊ¼»¯
 KVCatalog::KVCatalog(RecordStore* rs, bool directoryPerDb, bool directoryForIndexes)
-    : _rs(rs),
+    : _rs(rs), //¶ÔÓ¦WiredTigerRecordStore
       _directoryPerDb(directoryPerDb),
       _directoryForIndexes(directoryForIndexes),
       _rand(_newRand()) {}
@@ -286,7 +443,7 @@ bool KVCatalog::_hasEntryCollidingWithRand() const {
 }
 
 //KVCatalog::newCollection   KVCatalog::putMetaDataÖĞµ÷ÓÃ
-//_newUniqueIdent()º¯Êı»ñµÃcollection¶ÔÓ¦µÄÎÄ¼şÃû×Ö£¨ident£©
+//_newUniqueIdent()º¯Êı»ñµÃcollection¶ÔÓ¦µÄÎÄ¼şÃû×Ö£¨ident£©£¬Ò»¸ö¼¯ºÏ¶ÔÓ¦Ò»¸öwtÎÄ¼ş
 std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     // If this changes to not put _rand at the end, _hasEntryCollidingWithRand will need fixing.
     StringBuilder buf;
@@ -356,16 +513,22 @@ KVCatalog::newCollection()º¯Êı»áµ÷ÓÃ_newUniqueIdent()º¯Êı»ñµÃcollection¶ÔÓ¦µÄÎÄ¼
 //->DatabaseImpl::createCollection->Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection
 
 //CollectionImpl::_insertDocuments(²åÈëÊı¾İ)   KVCatalog::newCollection(¼ÇÂ¼¼¯ºÏÔªÊı¾İµ½_mdb_catalog.wt)ÖĞÖ´ĞĞ  
-//KVDatabaseCatalogEntryBase::createCollectionÖĞÖ´ĞĞ                                      
+//KVDatabaseCatalogEntryBase::createCollectionÖĞÖ´ĞĞ    
+
+//¸üĞÂ_idents£¬¼ÇÂ¼ÏÂ¼¯ºÏ¶ÔÓ¦ÔªÊı¾İĞÅÏ¢£¬Ò²¾ÍÊÇ¼¯ºÏÂ·¾¶  ¼¯ºÏuuid ¼¯ºÏË÷Òı£¬ÒÔ¼°ÔÚÔªÊı¾İ_mdb_catalog.wtÖĞµÄÎ»ÖÃ
+
 Status KVCatalog::newCollection(OperationContext* opCtx,
                                 StringData ns,
                                 const CollectionOptions& options,
                                 KVPrefix prefix) {
     invariant(opCtx->lockState()->isDbLockedForMode(nsToDatabaseSubstring(ns), MODE_X));
 
+	//Ò»¸ö¼¯ºÏ¶ÔÓ¦Ò»¸öwtÎÄ¼ş
     const string ident = _newUniqueIdent(ns, "collection");
 
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
+	//ÔÚÏÂÃæ¸úĞÂ
+	//¸üĞÂ_idents£¬¼ÇÂ¼ÏÂ¼¯ºÏ¶ÔÓ¦ÔªÊı¾İĞÅÏ¢£¬Ò²¾ÍÊÇ¼¯ºÏÂ·¾¶  ¼¯ºÏuuid ¼¯ºÏË÷Òı£¬ÒÔ¼°ÔÚÔªÊı¾İ_mdb_catalog.wtÖĞµÄÎ»ÖÃ
     Entry& old = _idents[ns.toString()];
     if (!old.ident.empty()) {
         return Status(ErrorCodes::NamespaceExists, "collection already exists");
@@ -395,10 +558,13 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
 		stored meta data for test.coll @ RecordId(4) 
 		obj:{ ns: "test.coll", ident: "test/collection/4-7637131936287447509", md: { ns: "test.coll", options: { uuid: UUID("440d1a2b-5122-40e9-b0c0-7ec58f072055") }, indexes: [], prefix: -1 } }
 	    */
+	    //WiredTigerRecordStore::_insertRecords  ¼ÇÂ¼collectionÔªÊı¾İµ½_mdb_catalog.wt£¬Êı¾İÄÚÈİÈçÉÏ
+	    //WiredTigerRecordStore::insertRecord
         _rs->insertRecord(opCtx, obj.objdata(), obj.objsize(), Timestamp(), enforceQuota);
     if (!res.isOK())
         return res.getStatus();
 
+	//¸üĞÂ_idents£¬¼ÇÂ¼ÏÂ¼¯ºÏ¶ÔÓ¦ÔªÊı¾İĞÅÏ¢£¬Ò²¾ÍÊÇ¼¯ºÏÂ·¾¶  ¼¯ºÏuuid ¼¯ºÏË÷Òı£¬ÒÔ¼°ÔÚÔªÊı¾İ_mdb_catalog.wtÖĞµÄÎ»ÖÃ
     old = Entry(ident, res.getValue());
 	//¼¯ºÏÔªÊı¾İĞÅÏ¢´æÈë_mdb_catalog.wt
     LOG(1) << "stored meta data for " << ns << " @ " << res.getValue() << " obj:" << redact(obj);;

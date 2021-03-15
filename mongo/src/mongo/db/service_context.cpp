@@ -99,6 +99,7 @@ bool isMMAPV1() {
     return globalStorageEngine->isMmapV1();
 }
 
+//mongo::userCreateNSImpl中调用，建表的时候存储引擎相关检查
 Status validateStorageOptions(
     const BSONObj& storageEngineOptions,
     stdx::function<Status(const StorageEngine::Factory* const, const BSONObj&)> validateFunc) {

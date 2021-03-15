@@ -128,6 +128,7 @@ KVStorageEngine::KVStorageEngine(
     _catalogRecordStore = _engine->getGroupedRecordStore(
         &opCtx, catalogInfo, catalogInfo, CollectionOptions(), KVPrefix::kNotPrefixed);
     _catalog.reset(new KVCatalog(
+		//WiredTigerRecordStore
         _catalogRecordStore.get(), _options.directoryPerDB, _options.directoryForIndexes));
 	//KVCatalog::init
 	_catalog->init(&opCtx);
@@ -305,7 +306,7 @@ Status KVStorageEngine::closeDatabase(OperationContext* opCtx, StringData db) {
     return Status::OK();
 }
 
-//DatabaseImpl::dropDatabase
+//DatabaseImpl::dropDatabase调用
 Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     KVDatabaseCatalogEntryBase* entry;
 	//找到对应的DB,没有直接返回
@@ -322,9 +323,11 @@ Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     // wherever possible. Eventually we want to move this up so that it can include the logOp
     // inside of the WUOW, but that would require making DB dropping happen inside the Dur
     // system for MMAPv1.
+    //所有操作放入一个事务中
     WriteUnitOfWork wuow(opCtx);
 
     std::list<std::string> toDrop;
+	//获取要删除的表信息
     entry->getCollectionNamespaces(&toDrop);
 
     for (std::list<std::string>::iterator it = toDrop.begin(); it != toDrop.end(); ++it) {

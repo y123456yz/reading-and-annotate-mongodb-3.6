@@ -45,6 +45,7 @@ namespace mongo {
 using std::string;
 using std::vector;
 
+//KVDatabaseCatalogEntryBase::createCollection中构造使用
 class KVDatabaseCatalogEntryBase::AddCollectionChange : public RecoveryUnit::Change {
 public:
     AddCollectionChange(OperationContext* opCtx,
@@ -198,6 +199,7 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
 //->DatabaseImpl::createCollection->Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection
 // Collection* createCollection调用
+//开始调用底层WT存储引擎相关接口建表
 Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
                                                     StringData ns,
                                                     const CollectionOptions& options,
@@ -217,15 +219,17 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 
 	//将collection的ns、ident存储到元数据文件_mdb_catalog中。
     // need to create it  调用KVCatalog::newCollection 创建wiredtiger 数据文件
+    //更新_idents，记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
     Status status = _engine->getCatalog()->newCollection(opCtx, ns, options, prefix);
     if (!status.isOK())
         return status;
 
+	//也就是newCollection中生成的集合ident
     string ident = _engine->getCatalog()->getCollectionIdent(ns); //获取文件名
 	
 	//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  
 	//WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
-	//创建集合对应的wiredtiger .wt文件，同时创建对应的目录
+	//调用WT存储引擎的create接口建表
     status = _engine->getEngine()->createGroupedRecordStore(opCtx, ns, ident, options, prefix);
     if (!status.isOK())
         return status;
@@ -242,12 +246,16 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns, ident, true));
 	//WiredTigerKVEngine::getGroupedRecordStore
+	//生成StandardWiredTigerRecordStore类
     auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
     invariant(rs);
 
-	//存到map表中
+	//存到map表中，把WiredTigerKVEngine  
+	//最终一个表对应一个KVCollectionCatalogEntry，存储到_collections数组中
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
-       //WiredTigerKVEngine   KVStorageEngine::getCatalog     WiredTigerKVEngine::getGroupedRecordStore
+       //WiredTigerKVEngine--存储引擎   
+       //              KVStorageEngine::getCatalog(默认KVDatabaseCatalogEntryBase)---库接口
+       //                                           StandardWiredTigerRecordStore--底层WT存储引擎
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 
     return Status::OK();
@@ -342,9 +350,12 @@ Status KVDatabaseCatalogEntryBase::renameCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
+//drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
+//    ->DatabaseImpl::_finishDropCollection
 Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, StringData ns) {
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
 
+	//找到该表对应的KVCollectionCatalogEntry
     CollectionMap::const_iterator it = _collections.find(ns.toString());
     if (it == _collections.end()) {
         return Status(ErrorCodes::NamespaceNotFound, "cannnot find collection to drop");

@@ -131,6 +131,7 @@ private:
     };
     typedef std::map<std::string, Entry> NSToIdentMap;
     //所有集合信息存到这里面
+    //更新_idents，记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
     NSToIdentMap _idents;
     mutable stdx::mutex _identsLock;
 

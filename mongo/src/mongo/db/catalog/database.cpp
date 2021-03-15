@@ -84,7 +84,10 @@ stdx::function<decltype(dropAllDatabasesExceptLocal)> dropAllDatabasesExceptLoca
                     bool createDefaultIndexes = true,
                     const BSONObj& idIndex = BSONObj());
 */
-// 没有则创建集合及相关的索引文件  //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+//手动建表流程：CmdCreate::run->createCollection
+//直接写入数据的时候会建表流程：insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS
+
+// 没有则创建集合及相关的索引文件  
 auto mongo::userCreateNS(OperationContext* const opCtx,
                          Database* const db,
                          const StringData ns,

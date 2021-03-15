@@ -86,7 +86,7 @@ class StorageInterface;
 class TopologyCoordinator;
 class VoteRequester;
 
-//ReplicationCoordinatorImpl::_settings
+//CreateReplicationManager中构造初始化使用
 class ReplicationCoordinatorImpl : public ReplicationCoordinator {
     MONGO_DISALLOW_COPYING(ReplicationCoordinatorImpl);
 

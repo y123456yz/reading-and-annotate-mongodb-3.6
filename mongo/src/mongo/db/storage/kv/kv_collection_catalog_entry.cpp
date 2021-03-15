@@ -84,16 +84,20 @@ public:
     const std::string _ident;
 };
 
-//KVDatabaseCatalogEntryBase::createCollection中new对象
+//KVDatabaseCatalogEntryBase::createCollection创建集合的时候new对象
 KVCollectionCatalogEntry::KVCollectionCatalogEntry(KVEngine* engine,
                                                    KVCatalog* catalog,
                                                    StringData ns,
                                                    StringData ident,
                                                    std::unique_ptr<RecordStore> rs)
     : BSONCollectionCatalogEntry(ns),
-      _engine(engine),
+      //WiredTigerKVEngine
+      _engine(engine),  
+      //KVDatabaseCatalogEntryBase
       _catalog(catalog),
+      //记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
       _ident(ident.toString()),
+      //StandardWiredTigerRecordStore
       _recordStore(std::move(rs)) {}
 
 KVCollectionCatalogEntry::~KVCollectionCatalogEntry() {}
@@ -182,6 +186,8 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
 //
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild
+
+//非backgroud阻塞方式创建索引的准备工作
 Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
                                                       const IndexDescriptor* spec) {
 	//BSONCollectionCatalogEntry::MetaData

@@ -40,7 +40,7 @@ namespace repl {
 extern int maxSyncSourceLagSecs;
 extern double replElectionTimeoutOffsetLimitFraction;
 
-//_initAndListen中获取  副本相关配置
+//_initAndListen中获取  副本相关配置  真正赋值见setGlobalReplSettings
 class ReplSettings {
 public:
     // Allow index prefetching to be turned on/off

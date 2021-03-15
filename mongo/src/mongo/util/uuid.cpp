@@ -95,6 +95,7 @@ bool UUID::isRFC4122v4() const {
     return (_uuid[6] & ~0x0f) == 0x40 && (_uuid[8] & ~0x3f) == 0x80;  // See RFC 4122, section 4.4.
 }
 
+//DatabaseImpl::createCollection调用，创建集合会生成一个唯一uuid
 UUID UUID::gen() {
     int64_t randomWords[2];
 

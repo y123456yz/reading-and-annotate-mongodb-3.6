@@ -119,6 +119,7 @@ Status CollectionOptions::validateForStorage() const {
   comment: <any>
 }
 
+建表create参考https://docs.mongodb.com/manual/reference/command/create/#:~:text=%20%20%20%20Field%20%20%20,in%20byte%20...%20%2011%20more%20rows%20
 */
 //创建集合相关的参数信息
 Status CollectionOptions::parse(const BSONObj& options, ParseKind kind) {
