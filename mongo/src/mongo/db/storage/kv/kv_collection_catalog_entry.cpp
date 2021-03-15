@@ -175,6 +175,7 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
 
     const string ident = _catalog->getIndexIdent(opCtx, ns().ns(), indexName);
 
+	//BSONCollectionCatalogEntry::MetaData::eraseIndex
     md.eraseIndex(indexName);
     _catalog->putMetaData(opCtx, ns().toString(), md);
 

@@ -516,7 +516,7 @@ KVCatalog::newCollection()º¯Êý»áµ÷ÓÃ_newUniqueIdent()º¯Êý»ñµÃcollection¶ÔÓ¦µÄÎÄ¼
 //KVDatabaseCatalogEntryBase::createCollectionÖÐÖ´ÐÐ    
 
 //¸üÐÂ_idents£¬¼ÇÂ¼ÏÂ¼¯ºÏ¶ÔÓ¦ÔªÊý¾ÝÐÅÏ¢£¬Ò²¾ÍÊÇ¼¯ºÏÂ·¾¶  ¼¯ºÏuuid ¼¯ºÏË÷Òý£¬ÒÔ¼°ÔÚÔªÊý¾Ý_mdb_catalog.wtÖÐµÄÎ»ÖÃ
-
+//KVDatabaseCatalogEntryBase::createCollection->KVCatalog::newCollection
 Status KVCatalog::newCollection(OperationContext* opCtx,
                                 StringData ns,
                                 const CollectionOptions& options,
@@ -718,6 +718,10 @@ Status KVCatalog::renameCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
+//
+//dropÉ¾±íCmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
+//    ->DatabaseImpl::_finishDropCollection->KVDatabaseCatalogEntryBase::dropCollection->KVCatalog::dropCollection
+//ÅäºÏKVDatabaseCatalogEntryBase::createCollection->KVCatalog::newCollectionÔÄ¶Á
 Status KVCatalog::dropCollection(OperationContext* opCtx, StringData ns) {
     invariant(opCtx->lockState()->isDbLockedForMode(nsToDatabaseSubstring(ns), MODE_X));
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
@@ -729,6 +733,7 @@ Status KVCatalog::dropCollection(OperationContext* opCtx, StringData ns) {
     opCtx->recoveryUnit()->registerChange(new RemoveIdentChange(this, ns, it->second));
 
     LOG(1) << "deleting metadata for " << ns << " @ " << it->second.storedLoc;
+	//WiredTigerRecordStore::deleteRecord
     _rs->deleteRecord(opCtx, it->second.storedLoc);
     _idents.erase(it);
 

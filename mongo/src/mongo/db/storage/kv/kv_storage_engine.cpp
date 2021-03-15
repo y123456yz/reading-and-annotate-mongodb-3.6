@@ -60,7 +60,10 @@ namespace {
 const std::string catalogInfo = "_mdb_catalog";
 }
 
-//wiredtiger对应WiredTigerKVEngine  KVStorageEngine._engine为WiredTigerKVEngine
+//KVEngine(WiredTigerKVEngine)和StorageEngine(KVStorageEngine)的关系: KVStorageEngine._engine类型为WiredTigerKVEngine
+//也就是KVStorageEngine类包含有WiredTigerKVEngine类成员
+
+//KVStorageEngine._engine为WiredTigerKVEngine，通过KVStorageEngine._engine和WiredTigerKVEngine关联起来
 class KVStorageEngine::RemoveDBChange : public RecoveryUnit::Change {
 public:
     RemoveDBChange(KVStorageEngine* engine, StringData db, KVDatabaseCatalogEntryBase* entry)

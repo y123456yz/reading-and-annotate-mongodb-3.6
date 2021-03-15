@@ -101,7 +101,7 @@ protected:
 
     typedef std::map<std::string, KVCollectionCatalogEntry*> CollectionMap;
     
-    //KVDatabaseCatalogEntryBase::KVDatabaseCatalogEntryBase, wiredtiger对应WiredTigerKVEngine
+    //KVDatabaseCatalogEntryBase::KVDatabaseCatalogEntryBase, wiredtiger对应KVStorageEngine
     KVStorageEngine* const _engine;  // not owned here
     //KVDatabaseCatalogEntryBase::createCollection中赋值，对应集合信息
     //创建新表都存到该map中

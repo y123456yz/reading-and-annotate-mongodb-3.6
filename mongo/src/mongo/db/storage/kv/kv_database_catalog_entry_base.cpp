@@ -220,7 +220,8 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 	//将collection的ns、ident存储到元数据文件_mdb_catalog中。
     // need to create it  调用KVCatalog::newCollection 创建wiredtiger 数据文件
     //更新_idents，记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
-    Status status = _engine->getCatalog()->newCollection(opCtx, ns, options, prefix);
+	//KVCatalog::newCollection
+	Status status = _engine->getCatalog()->newCollection(opCtx, ns, options, prefix);
     if (!status.isOK())
         return status;
 
@@ -351,7 +352,7 @@ Status KVDatabaseCatalogEntryBase::renameCollection(OperationContext* opCtx,
 }
 
 //drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
-//    ->DatabaseImpl::_finishDropCollection
+//    ->DatabaseImpl::_finishDropCollection->KVDatabaseCatalogEntryBase::dropCollection->KVCatalog::dropCollection
 Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, StringData ns) {
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
 
@@ -369,6 +370,7 @@ Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, Strin
         std::vector<std::string> indexNames;
         entry->getAllIndexes(opCtx, &indexNames);
         for (size_t i = 0; i < indexNames.size(); i++) {
+			//KVCollectionCatalogEntry::removeIndex
             entry->removeIndex(opCtx, indexNames[i]).transitional_ignore();
         }
     }
@@ -377,6 +379,8 @@ Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, Strin
 
     const std::string ident = _engine->getCatalog()->getCollectionIdent(ns);
 
+	//KVStorageEngine::getCatalog获取KVDatabaseCatalogEntry   KVStorageEngine::getCatalog获取KVCatalog
+	//KVCatalog::dropCollection
     Status status = _engine->getCatalog()->dropCollection(opCtx, ns);
     if (!status.isOK()) {
         return status;
