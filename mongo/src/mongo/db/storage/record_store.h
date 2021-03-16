@@ -309,6 +309,7 @@ public:
  */ 
 
  //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
+ //该接口对应一个指定表，对该RecordStore的相关操作实际上是对表对应存储WT引擎的操作
  
  //CollectionImpl._recordStore   KVCatalog._rs  
  //KVCollectionCatalogEntry._recordStore  KVStorageEngine._catalogRecordStore

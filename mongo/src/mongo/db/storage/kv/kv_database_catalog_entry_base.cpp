@@ -197,7 +197,7 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
 
 
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
-//->DatabaseImpl::createCollection->Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection
+//->DatabaseImpl::createCollection->KVDatabaseCatalogEntryBase::createCollection
 // Collection* createCollection调用
 //开始调用底层WT存储引擎相关接口建表
 Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
@@ -247,7 +247,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns, ident, true));
 	//WiredTigerKVEngine::getGroupedRecordStore
-	//生成StandardWiredTigerRecordStore类
+	//生成StandardWiredTigerRecordStore类,该类和表实际上关联起来，对该类的相关接口操作实际上就是对表的KV操作
     auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
     invariant(rs);
 
@@ -256,7 +256,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
        //WiredTigerKVEngine--存储引擎   
        //              KVStorageEngine::getCatalog(默认KVDatabaseCatalogEntryBase)---库接口
-       //                                           StandardWiredTigerRecordStore--底层WT存储引擎
+       //                                           StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 
     return Status::OK();

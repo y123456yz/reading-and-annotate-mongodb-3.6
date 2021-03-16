@@ -473,6 +473,7 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
         _checkpointThread->go();
     }
 
+	//WiredTigerKVEngine::WiredTigerKVEngine中初始化，对应WiredTigerKVEngine._sizeStorerUri="table:sizeStorer"
     _sizeStorerUri = "table:sizeStorer";
     WiredTigerSession session(_conn);
     if (!_readOnly && repair && _hasUri(session.getSession(), _sizeStorerUri)) {
@@ -482,6 +483,7 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
 
     const bool sizeStorerLoggingEnabled = !getGlobalReplSettings().usingReplSets();
     _sizeStorer.reset(
+		//sizeStorer.wt内容  记录各个集合的记录数和集合总字节数，缓存到内存中
         new WiredTigerSizeStorer(_conn, _sizeStorerUri, sizeStorerLoggingEnabled, _readOnly));
     _sizeStorer->fillCache();
 
@@ -848,7 +850,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     return wtRCToStatus(s->create(s, uri.c_str(), config.c_str()));
 }
 
-//建表KVDatabaseCatalogEntryBase::createCollection中调用
+//建表KVDatabaseCatalogEntryBase::createCollection->WiredTigerKVEngine::getGroupedRecordStore中调用
 //KVStorageEngine::KVStorageEngine调用
 //获取StandardWiredTigerRecordStore类
 std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
@@ -859,7 +861,9 @@ std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
     KVPrefix prefix) {
 
     WiredTigerRecordStore::Params params;
+	//表名
     params.ns = ns;
+	//存储路径对应uri，也就是一个RecordStore对应一个表，对该RecordStore操作也就是对表得操作
     params.uri = _uri(ident);
     params.engineName = _canonicalName;
     params.isCapped = options.capped;

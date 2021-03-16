@@ -874,9 +874,10 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
         log() << "createCollection: " << ns << " with no UUID.";
     }
 
-	//Collection* createCollection->KVDatabaseCatalogEntryBase::createCollection 
+	//KVDatabaseCatalogEntryBase::createCollection 
 	//通知wiredtiger创建collection对应的目录文件 
     massertStatusOK(
+    //对应KVDatabaseCatalogEntryBase::createCollection
         _dbEntry->createCollection(opCtx, ns, optionsWithUUID, true /*allocateDefaultSpace*/));
 
 	//wiredtiger对应WiredTigerRecoveryUnit::registerChange

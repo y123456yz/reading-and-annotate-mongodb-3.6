@@ -74,6 +74,10 @@ extern const std::string kWiredTigerEngineName;
 //StandardWiredTigerRecordStore和PrefixedWiredTigerRecordStore继承该类，
 //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
 
+//WiredTigerKVEngine::getGroupedRecordStore->WiredTigerRecordStore::WiredTigerRecordStore中构造使用
+//该接口对应一个指定表，对该RecordStore的相关操作实际上是对表对应存储WT引擎的操作
+
+
 //默认使用StandardWiredTigerRecordStore，参考WiredTigerKVEngine::getGroupedRecordStore
 class WiredTigerRecordStore : public RecordStore { //代表一个表的统计
     friend class WiredTigerRecordStoreCursorBase;
@@ -306,18 +310,27 @@ private:
     void _increaseDataSize(OperationContext* opCtx, int64_t amount);
     RecordData _getData(const WiredTigerCursor& cursor) const;
 
-
+    //存储路径对应uri，也就是一个RecordStore对应一个表，对该RecordStore操作也就是对表得操作
+    //WiredTigerKVEngine::getGroupedRecordStore->WiredTigerRecordStore::WiredTigerRecordStore初始化赋值
     const std::string _uri; //对应table名
+    //WiredTigerRecordStore::WiredTigerRecordStore赋值，
+    //uri和tableid再WiredTigerCursor::WiredTigerCursor中关联配合使用
     const uint64_t _tableId;  // not persisted
 
     // Canonical engine name to use for retrieving options
+    //wiredtiger我们用
     const std::string _engineName;
     // The capped settings should not be updated once operations have started
+    //释放固定表集合
     const bool _isCapped;
     // True if the storage engine is an in-memory storage engine
+    //说明是in-memory存储引擎
     const bool _isEphemeral;
     // True if the namespace of this record store starts with "local.oplog.", and false otherwise.
+    //是否oplog集合
     const bool _isOplog;
+    
+    //针对固定集合的
     int64_t _cappedMaxSize;
     const int64_t _cappedMaxSizeSlack;  // when to start applying backpressure
     const int64_t _cappedMaxDocs;
@@ -345,6 +358,9 @@ private:
     // Non-null if this record store is underlying the active oplog.
     std::shared_ptr<OplogStones> _oplogStones;
 };
+
+//WiredTigerKVEngine::getGroupedRecordStore->WiredTigerRecordStore::WiredTigerRecordStore中构造使用
+//该接口对应一个指定表，对该RecordStore的相关操作实际上是对表对应存储WT引擎的操作
 
 //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
 class StandardWiredTigerRecordStore final : public WiredTigerRecordStore {

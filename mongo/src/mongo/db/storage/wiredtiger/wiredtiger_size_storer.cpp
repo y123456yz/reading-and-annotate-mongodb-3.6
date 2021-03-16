@@ -104,6 +104,7 @@ table:xxxx/collection/2-2872068773297699689
 2018-11-06T17:27:25.738+0800 D STORAGE  [WTCheckpointThread] WiredTigerSizeStorer::storeInto table:config/collection/25-7029101439676270912 -> { numRecords: 0, dataSize: 0 }
 2018-11-06T17:27:25.738+0800 D STORAGE  [WTCheckpointThread] WiredTigerSizeStorer::storeInto table:local/collection/2-7029101439676270912 -> { numRecords: 7, dataSize: 12743 }
 */
+//WiredTigerKVEngine::WiredTigerKVEngine中初始化，对应WiredTigerKVEngine._sizeStorerUri="table:sizeStorer"
 //WiredTigerKVEngine::WiredTigerKVEngine中构造使用   sizeStorer.wt文件的操作
 WiredTigerSizeStorer::WiredTigerSizeStorer(WT_CONNECTION* conn,
                                            const std::string& storageUri,

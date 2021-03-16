@@ -606,6 +606,8 @@ StatusWith<std::string> WiredTigerRecordStore::generateCreateString(
     return StatusWith<std::string>(ss);
 }
 
+//WiredTigerKVEngine::getGroupedRecordStore->WiredTigerRecordStore::WiredTigerRecordStore中构造使用
+
 //StandardWiredTigerRecordStore::StandardWiredTigerRecordStore
 //PrefixedWiredTigerRecordStore::PrefixedWiredTigerRecordStore中调用
 WiredTigerRecordStore::WiredTigerRecordStore(WiredTigerKVEngine* kvEngine,
@@ -1919,7 +1921,7 @@ void WiredTigerRecordStoreCursorBase::reattachToOperationContext(OperationContex
 
 // Standard Implementations:
 
-
+//建表KVDatabaseCatalogEntryBase::createCollection->WiredTigerKVEngine::getGroupedRecordStore中调用
 StandardWiredTigerRecordStore::StandardWiredTigerRecordStore(WiredTigerKVEngine* kvEngine,
                                                              OperationContext* opCtx,
                                                              Params params)
