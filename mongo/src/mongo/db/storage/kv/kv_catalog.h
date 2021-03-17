@@ -46,7 +46,96 @@ namespace mongo {
 class OperationContext;
 class RecordStore;
 
+//_mdb_catalog.wt存储元数据信息，具体内容如下:
+
+/* db.user.ensureIndex({"name":1, "aihao.aa":1, "aihao.bb":1}) db.user.ensureIndex({"name":1, aa:1, bb:1, cc:1})索引对应日志如下：
+2021-03-17T18:10:51.944+0800 D STORAGE  [conn-1] recording new metadata: 
+{
+	md: {
+		ns: "test.user",
+		options: {
+			uuid: UUID("9a09f018-3fb3-4030-b658-680e512c93dd")
+		},
+		indexes: [{
+			spec: {
+				v: 2,
+				key: {
+					_id: 1
+				},
+				name: "_id_",
+				ns: "test.user"
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				_id: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					name: 1.0,
+					aihao.aa: 1.0,
+					aihao.bb: 1.0
+				},
+				name: "name_1_aihao.aa_1_aihao.bb_1",
+				ns: "test.user"
+			},
+			ready: true,
+			multikey: true,
+			multikeyPaths: {
+				name: BinData(0, 00),       //说明是一个独立的字段
+				aihao.aa: BinData(0, 0100), //说明是一个a.b类型的索引
+				aihao.bb: BinData(0, 0100)  //说明是一个a.b类型的索引
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					name: 1.0,
+					aa: 1.0,
+					bb: 1.0,
+					cc: 1.0
+				},
+				name: "name_1_aa_1_bb_1_cc_1",
+				ns: "test.user"
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				name: BinData(0, 00),
+				aa: BinData(0, 00),
+				bb: BinData(0, 00),
+				cc: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}],
+		prefix: -1
+	},
+	idxIdent: {
+		_id_: "test/index/2--8777216180098127804",
+		name_1_aihao.aa_1_aihao.bb_1: "test/index/3--8777216180098127804",
+		name_1_aa_1_bb_1_cc_1: "test/index/4--8777216180098127804"
+	},
+	ns: "test.user",
+	ident: "test/collection/1--8777216180098127804"
+}
+*/
+
+//[initandlisten] recording new metadata: { md: { ns: "admin.system.version", options: 
+//{ uuid: UUID("d24324d6-5465-4634-9f8a-3d6c6f6af801") }, indexes: [ { spec: { v: 2, key: { _id: 1 }, 
+//name: "_id_", ns: "admin.system.version" }, ready: true, multikey: false, multikeyPaths: 
+//{ _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "admin/index/1--9034870482849730886" }, 
+//ns: "admin.system.version", ident: "admin/collection/0--9034870482849730886" }
+
+
 //KVStorageEngine::KVStorageEngine中构造初始化，赋值给KVStorageEngine._catalog
+//对应数据目录的"_mdb_catalog.wt"相关操作
 class KVCatalog { //collection对应的文件名字相关
 public:
     class FeatureTracker;
@@ -115,6 +204,7 @@ private:
     static std::string _newRand();
     bool _hasEntryCollidingWithRand() const;
 
+    //对应数据目录的"_mdb_catalog.wt"，存储表相关元数据信息，例如表名 索引信息等
     RecordStore* _rs;  // not owned   对应WiredTigerRecordStore
     const bool _directoryPerDb;
     const bool _directoryForIndexes;

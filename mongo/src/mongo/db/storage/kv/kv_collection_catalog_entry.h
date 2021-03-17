@@ -43,7 +43,8 @@ class KVCatalog;
 class KVEngine;
 
 
-//KVDatabaseCatalogEntryBase::createCollection中new改对象  KVDatabaseCatalogEntryBase._collections[]
+//KVDatabaseCatalogEntryBase::createCollection中new改对象  
+//KVDatabaseCatalogEntryBase(一个DB)._collections[](多个表)，也就是一个DB下包含多个表，每个表对应一个KVCollectionCatalogEntry
 class KVCollectionCatalogEntry final : public BSONCollectionCatalogEntry {
 public:
     KVCollectionCatalogEntry(KVEngine* engine,

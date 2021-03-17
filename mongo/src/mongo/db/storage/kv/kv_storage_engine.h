@@ -328,12 +328,14 @@ private:
     const bool _supportsDBLocking;
 
     //默认返回StandardWiredTigerRecordStore类，该类继承WiredTigerRecordStore
-    std::unique_ptr<RecordStore> _catalogRecordStore;
+    //对应数据目录的"_mdb_catalog.wt"，存储表相关元数据信息，例如表名 索引信息等
+    std::unique_ptr<RecordStore> _catalogRecordStore; //实际上给下面的_catalog使用
     //KVStorageEngine::KVStorageEngine中初始化
+    //对应数据目录的"_mdb_catalog.wt"相关操作  _mdb_catalog.wt存储元数据信息
     std::unique_ptr<KVCatalog> _catalog; 
 
     typedef std::map<std::string, KVDatabaseCatalogEntryBase*> DBMap;
-    ////KVStorageEngine::RemoveDBChange::rollback赋值
+    //来源再KVStorageEngine::KVStorageEngine，当mongod实例重启后，会从元数据_mdb_catalog.wt中获取db信息
     DBMap _dbs;
     mutable stdx::mutex _dbsLock;
 

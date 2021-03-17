@@ -72,7 +72,7 @@ public:
     // ------ for implementors
 
     //KVCollectionCatalogEntry::prepareForIndexBuild中初始化
-    //BSONCollectionCatalogEntry::MetaData.indexes为该类型
+    //BSONCollectionCatalogEntry::MetaData.indexes为该类型,也就是下面的IndexMetaData
     struct IndexMetaData {
         IndexMetaData() {}
         IndexMetaData(BSONObj s, bool r, RecordId h, bool m, KVPrefix prefix)
@@ -99,8 +99,18 @@ public:
         MultikeyPaths multikeyPaths;
     };
 
+/*
+MetaData内容如下： 可以参考KVCatalog::putMetaData
+//[initandlisten] recording new metadata: { md: { ns: "admin.system.version", options: 
+//{ uuid: UUID("d24324d6-5465-4634-9f8a-3d6c6f6af801") }, indexes: [ { spec: { v: 2, key: { _id: 1 }, 
+//name: "_id_", ns: "admin.system.version" }, ready: true, multikey: false, multikeyPaths: 
+//{ _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "admin/index/1--9034870482849730886" }, 
+//ns: "admin.system.version", ident: "admin/collection/0--9034870482849730886" }
+
+*/
 
     //KVCollectionCatalogEntry::_getMetaData中获取该metaData信息
+    //KVCollectionCatalogEntry类的如下相关接口完成对MetaData的更新:updateValidator   updateFlags  setIsTemp  removeUUID  addUUID  updateTTLSetting  indexBuildSuccess
     struct MetaData {
         void parse(const BSONObj& obj);
         BSONObj toBSON() const;
@@ -117,10 +127,11 @@ public:
 
         KVPrefix getMaxPrefix() const;
 
+        //表信息
         std::string ns;
         CollectionOptions options;
         //KVCollectionCatalogEntry::prepareForIndexBuild赋值
-        std::vector<IndexMetaData> indexes;
+        std::vector<IndexMetaData> indexes; //索引信息
         KVPrefix prefix = KVPrefix::kNotPrefixed;
     };
 

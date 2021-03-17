@@ -105,7 +105,8 @@ protected:
     KVStorageEngine* const _engine;  // not owned here
     //KVDatabaseCatalogEntryBase::createCollection中赋值，对应集合信息
     //创建新表都存到该map中
-    //最终一个表对应一个KVCollectionCatalogEntry，存储到_collections数组中
+    //一个db对应一个KVDatabaseCatalogEntryBase，该DB下可以包含多个KVCollectionCatalogEntry表信息，存入到_collections数组
+    //最终一个表对应一个KVCollectionCatalogEntry，存储到_collections数组中，
     CollectionMap _collections;
 };
 }  // namespace mongo

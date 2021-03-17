@@ -67,6 +67,7 @@ public:
     const std::string _ident; //.wt文件名
 };
 
+//删索引需要记录该历史信息
 class KVCollectionCatalogEntry::RemoveIndexChange : public RecoveryUnit::Change {
 public:
     RemoveIndexChange(OperationContext* opCtx, KVCollectionCatalogEntry* cce, StringData ident)
@@ -102,12 +103,13 @@ KVCollectionCatalogEntry::KVCollectionCatalogEntry(KVEngine* engine,
 
 KVCollectionCatalogEntry::~KVCollectionCatalogEntry() {}
 
-//IndexCatalogEntryImpl::setMultikey中调用
+//IndexCatalogEntryImpl::setMultikey中调用，对indexname对应索引的multikey字段赋值
 bool KVCollectionCatalogEntry::setIndexIsMultikey(OperationContext* opCtx,
                                                   StringData indexName,
                                                   const MultikeyPaths& multikeyPaths) {
     MetaData md = _getMetaData(opCtx);
 
+	//找到该索引在索引数组的下标
     int offset = md.findIndexOffset(indexName);
     invariant(offset >= 0);
 
@@ -153,10 +155,12 @@ bool KVCollectionCatalogEntry::setIndexIsMultikey(OperationContext* opCtx,
         }
     }
 
+	//更新元数据
     _catalog->putMetaData(opCtx, ns().toString(), md);
     return true;
 }
 
+//head成员赋值
 void KVCollectionCatalogEntry::setIndexHead(OperationContext* opCtx,
                                             StringData indexName,
                                             const RecordId& newHead) {
@@ -167,19 +171,25 @@ void KVCollectionCatalogEntry::setIndexHead(OperationContext* opCtx,
     _catalog->putMetaData(opCtx, ns().toString(), md);
 }
 
+//从该表MetaData元数据中清除该index
 Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData indexName) {
-    MetaData md = _getMetaData(opCtx);
+	//获取元数据md
+	MetaData md = _getMetaData(opCtx);
 
+	//没找到，直接返回
     if (md.findIndexOffset(indexName) < 0)
         return Status::OK();  // never had the index so nothing to do.
 
+	//获取该index对应路径文件名
     const string ident = _catalog->getIndexIdent(opCtx, ns().ns(), indexName);
 
 	//BSONCollectionCatalogEntry::MetaData::eraseIndex
+	//从元数据md列表清除该index
     md.eraseIndex(indexName);
     _catalog->putMetaData(opCtx, ns().toString(), md);
 
     // Lazily remove to isolate underlying engine from rollback.
+    //删除索引事件记录下来
     opCtx->recoveryUnit()->registerChange(new RemoveIndexChange(opCtx, this, ident));
     return Status::OK();
 }
@@ -196,6 +206,7 @@ Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
 
     KVPrefix prefix = KVPrefix::getNextPrefix(ns());
     IndexMetaData imd(spec->infoObj(), false, RecordId(), false, prefix);
+	//btree满足条件
     if (indexTypeSupportsPathLevelMultikeyTracking(spec->getAccessMethodName())) {
         const auto feature =
             KVCatalog::FeatureTracker::RepairableFeature::kPathLevelMultikeyTracking;
@@ -315,11 +326,14 @@ void KVCollectionCatalogEntry::setIsTemp(OperationContext* opCtx, bool isTemp) {
 void KVCollectionCatalogEntry::updateCappedSize(OperationContext* opCtx, long long size) {
     MetaData md = _getMetaData(opCtx);
     md.options.cappedSize = size;
+	//KVCatalog::putMetaData
     _catalog->putMetaData(opCtx, ns().toString(), md);
 }
 
+//获取MetaData信息(也就是表和索引信息)，对MetaData的更新也就是该类上面的相关接口调用_catalog->putMetaData实现
 BSONCollectionCatalogEntry::MetaData KVCollectionCatalogEntry::_getMetaData(
     OperationContext* opCtx) const {
+    //KVCatalog::getMetaData
     return _catalog->getMetaData(opCtx, ns().toString());
 }
 }

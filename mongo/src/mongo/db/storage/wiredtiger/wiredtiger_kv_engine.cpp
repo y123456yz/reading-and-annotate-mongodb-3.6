@@ -968,7 +968,7 @@ Breakpoint 2, mongo::WiredTigerKVEngine::createGroupedSortedDataInterface (this=
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild中执行
 
-//KVCollectionCatalogEntry::prepareForIndexBuild调用
+//KVCollectionCatalogEntry::prepareForIndexBuild调用，创建索引对应wt session信息
 Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* opCtx,
                                                             StringData ident,
                                                             const IndexDescriptor* desc,
@@ -991,7 +991,14 @@ Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* op
                     .valuestrsafe();
         }
     }
-
+	
+	/*
+	2018-09-25T17:06:01.582+0800 D STORAGE	[conn1] index create string: type=file,internal_page_max=16k,
+	leaf_page_max=16k,checksum=on,prefix_compression=true,block_compressor=,,,,key_format=u,value_format=u,
+	app_metadata=(formatVersion=8,infoObj={ "v" : 2, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "test.test" }),
+	log=(enabled=true)
+	*/ 
+	//获取建表的字符串信息
     StatusWith<std::string> result = WiredTigerIndex::generateCreateString(
         _canonicalName, _indexOptions, collIndexOptions, *desc, prefix.isPrefixed());
     if (!result.isOK()) {
@@ -1008,7 +1015,7 @@ Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* op
 	*/
     LOG(2) << "WiredTigerKVEngine::createSortedDataInterface ns: " << collection->ns()
            << " ident: " << ident << " config: " << config;
-	//WiredTigerIndex::Create
+	//调用存储引擎接口WiredTigerIndex::Create创建对应的索引文件session信息
     return wtRCToStatus(WiredTigerIndex::Create(opCtx, _uri(ident), config));
 }
 
@@ -1208,6 +1215,7 @@ int WiredTigerKVEngine::reconfigure(const char* str) {
 2018-09-27T11:41:42.575+0800 D STORAGE  [conn1] creating subdirectory: test/collection
 */
 //创建目录，根据ident创建  WiredTigerKVEngine::createGroupedRecordStore  WiredTigerKVEngine::createGroupedSortedDataInterface
+//创建ident相关数据或者索引文件目录
 void WiredTigerKVEngine::_checkIdentPath(StringData ident) {
     size_t start = 0;
     size_t idx;

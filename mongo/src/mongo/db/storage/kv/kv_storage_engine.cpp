@@ -66,6 +66,7 @@ const std::string catalogInfo = "_mdb_catalog";
 //KVStorageEngine._engine为WiredTigerKVEngine，通过KVStorageEngine._engine和WiredTigerKVEngine关联起来
 class KVStorageEngine::RemoveDBChange : public RecoveryUnit::Change {
 public:
+	//删库操作通过这里记录下来
     RemoveDBChange(KVStorageEngine* engine, StringData db, KVDatabaseCatalogEntryBase* entry)
         : _engine(engine), _db(db.toString()), _entry(entry) {}
 
@@ -84,6 +85,9 @@ public:
 };
 
 //wiredtiger对应WiredTigerKVEngine  KVStorageEngine._engine为WiredTigerKVEngine
+
+//mongod实例重启后首先需要加载_mdb_catalog.wt文件获取元数据信息
+
 //WiredTigerFactory::create中new该类 
 KVStorageEngine::KVStorageEngine(
 	//对应WiredTigerKVEngine
@@ -103,7 +107,7 @@ KVStorageEngine::KVStorageEngine(
             !(options.directoryPerDB && !engine->supportsDirectoryPerDB()));
 
     OperationContextNoop opCtx(_engine->newRecoveryUnit()); //WiredTigerKVEngine::newRecoveryUnit
-
+	
     bool catalogExists = engine->hasIdent(&opCtx, catalogInfo);
 
     if (options.forRepair && catalogExists) {
@@ -117,6 +121,7 @@ KVStorageEngine::KVStorageEngine(
 
 		//WiredTigerKVEngine::createGroupedRecordStore
         Status status = _engine->createGroupedRecordStore(
+        
             &opCtx, catalogInfo, catalogInfo, CollectionOptions(), KVPrefix::kNotPrefixed);
         // BadValue is usually caused by invalid configuration string.
         // We still fassert() but without a stack trace.
@@ -129,29 +134,34 @@ KVStorageEngine::KVStorageEngine(
 
 	//WiredTigerKVEngine::getGroupedRecordStore，默认返回StandardWiredTigerRecordStore类
     _catalogRecordStore = _engine->getGroupedRecordStore(
+    //const std::string catalogInfo = "_mdb_catalog"; 也就是该StandardWiredTigerRecordStore对应_mdb_catalog文件
         &opCtx, catalogInfo, catalogInfo, CollectionOptions(), KVPrefix::kNotPrefixed);
     _catalog.reset(new KVCatalog(
-		//WiredTigerRecordStore
+		//StandardWiredTigerRecordStore
         _catalogRecordStore.get(), _options.directoryPerDB, _options.directoryForIndexes));
 	//KVCatalog::init
 	_catalog->init(&opCtx);
 
     std::vector<std::string> collections;
-	//KVCatalog::getAllCollections 获取表信息
+	//KVCatalog::getAllCollections 获取表信息，例如实例重启，需要通过_mdb_catalog.wt获取表元数据信息
     _catalog->getAllCollections(&collections);
 
     KVPrefix maxSeenPrefix = KVPrefix::kNotPrefixed;
+	//从_mdb_catalog.wt中解析出库表元数据信息
+	//mongod实例重启后首先需要加载_mdb_catalog.wt文件获取元数据信息
     for (size_t i = 0; i < collections.size(); i++) {
         std::string coll = collections[i];
         NamespaceString nss(coll);
         string dbName = nss.db().toString();
 
         // No rollback since this is only for committed dbs.
+        
         KVDatabaseCatalogEntryBase*& db = _dbs[dbName];
         if (!db) {
             db = _databaseCatalogEntryFactory(dbName, this).release();
         }
 
+		//KVDatabaseCatalogEntryBase::initCollection调用
         db->initCollection(&opCtx, coll, options.forRepair);
         auto maxPrefixForCollection = _catalog->getMetaData(&opCtx, coll).getMaxPrefix();
         maxSeenPrefix = std::max(maxSeenPrefix, maxPrefixForCollection);
@@ -344,6 +354,7 @@ Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     {
         stdx::lock_guard<stdx::mutex> lk(_dbsLock);
         opCtx->recoveryUnit()->registerChange(new RemoveDBChange(this, db, entry));
+		//从_dbs数组清除该db信息
         _dbs.erase(db.toString());
     }
 

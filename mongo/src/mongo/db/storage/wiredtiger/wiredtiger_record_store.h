@@ -77,6 +77,8 @@ extern const std::string kWiredTigerEngineName;
 //WiredTigerKVEngine::getGroupedRecordStore->WiredTigerRecordStore::WiredTigerRecordStore中构造使用
 //该接口对应一个指定表，对该RecordStore的相关操作实际上是对表对应存储WT引擎的操作
 
+//StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore，对该类的操作也就是对指定表的操作，他们是一个一一对应关系
+
 
 //默认使用StandardWiredTigerRecordStore，参考WiredTigerKVEngine::getGroupedRecordStore
 class WiredTigerRecordStore : public RecordStore { //代表一个表的统计
@@ -362,7 +364,7 @@ private:
 //WiredTigerKVEngine::getGroupedRecordStore->WiredTigerRecordStore::WiredTigerRecordStore中构造使用
 //该接口对应一个指定表，对该RecordStore的相关操作实际上是对表对应存储WT引擎的操作
 
-//StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
+//StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore，对该类的操作也就是对指定表的操作，他们是一个一一对应关系
 class StandardWiredTigerRecordStore final : public WiredTigerRecordStore {
 public:
     StandardWiredTigerRecordStore(WiredTigerKVEngine* kvEngine,

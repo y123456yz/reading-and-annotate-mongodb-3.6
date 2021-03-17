@@ -459,7 +459,7 @@ std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     return buf.str();
 }
 
-//KVStorageEngine::KVStorageEngine
+//KVStorageEngine::KVStorageEngine中调用
 void KVCatalog::init(OperationContext* opCtx) {
     // No locking needed since called single threaded.
     auto cursor = _rs->getCursor(opCtx);
@@ -497,6 +497,9 @@ void KVCatalog::init(OperationContext* opCtx) {
 /*
 //由于每个collection创建时都会存储到元数据文件_mdb_catalog中，
 //因此，可以直接从这个文件中得到所有已创建的collection。
+
+例如实例重启，需要通过_mdb_catalog.wt获取表元数据信息
+
 */ //KVStorageEngine::KVStorageEngine调用
 void KVCatalog::getAllCollections(std::vector<std::string>* out) const {
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
@@ -571,7 +574,7 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
-//获取wt文件名
+//获取wt文件名，也就是磁盘路径名
 std::string KVCatalog::getCollectionIdent(StringData ns) const {
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
     NSToIdentMap::const_iterator it = _idents.find(ns.toString());
@@ -618,6 +621,8 @@ BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* 
 //KVCollectionCatalogEntry::_getMetaData  KVDatabaseCatalogEntryBase::initCollection
 //KVDatabaseCatalogEntryBase::renameCollection  
 //KVStorageEngine::reconcileCatalogAndIdents    KVStorageEngine::KVStorageEngine
+
+//获取MetaData信息，KVCollectionCatalogEntry::_getMetaData调用
 const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationContext* opCtx,
                                                                   StringData ns) {
     BSONObj obj = _findEntry(opCtx, ns);
@@ -635,7 +640,8 @@ const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationConte
 
 //集合相关的元数据信息记录到_mdb_catalog.wt 如创建某个集合对应的数据文件在哪里，索引文件在哪里
 
-//KVCollectionCatalogEntry::prepareForIndexBuild中调用
+//KVCollectionCatalogEntry类的如下相关接口完成对MetaData的更新:updateValidator   updateFlags  setIsTemp  removeUUID  addUUID  updateTTLSetting  indexBuildSuccess
+//KVCollectionCatalogEntry类的相关接口调用，完成MetaData相关成员更新
 void KVCatalog::putMetaData(OperationContext* opCtx,
                             StringData ns,
                             BSONCollectionCatalogEntry::MetaData& md) {
@@ -675,6 +681,84 @@ void KVCatalog::putMetaData(OperationContext* opCtx,
 	//name: "_id_", ns: "admin.system.version" }, ready: true, multikey: false, multikeyPaths: 
 	//{ _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "admin/index/1--9034870482849730886" }, 
 	//ns: "admin.system.version", ident: "admin/collection/0--9034870482849730886" }
+/* db.user.ensureIndex({"name":1, "aihao.aa":1, "aihao.bb":1}) db.user.ensureIndex({"name":1, aa:1, bb:1, cc:1})索引对应日志如下：
+2021-03-17T18:10:51.944+0800 D STORAGE  [conn-1] recording new metadata: 
+{
+	md: {
+		ns: "test.user",
+		options: {
+			uuid: UUID("9a09f018-3fb3-4030-b658-680e512c93dd")
+		},
+		indexes: [{
+			spec: {
+				v: 2,
+				key: {
+					_id: 1
+				},
+				name: "_id_",
+				ns: "test.user"
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				_id: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					name: 1.0,
+					aihao.aa: 1.0,
+					aihao.bb: 1.0
+				},
+				name: "name_1_aihao.aa_1_aihao.bb_1",
+				ns: "test.user"
+			},
+			ready: true,
+			multikey: true,
+			multikeyPaths: {
+				name: BinData(0, 00),
+				aihao.aa: BinData(0, 0100),
+				aihao.bb: BinData(0, 0100)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					name: 1.0,
+					aa: 1.0,
+					bb: 1.0,
+					cc: 1.0
+				},
+				name: "name_1_aa_1_bb_1_cc_1",
+				ns: "test.user"
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				name: BinData(0, 00),
+				aa: BinData(0, 00),
+				bb: BinData(0, 00),
+				cc: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}],
+		prefix: -1
+	},
+	idxIdent: {
+		_id_: "test/index/2--8777216180098127804",
+		name_1_aihao.aa_1_aihao.bb_1: "test/index/3--8777216180098127804",
+		name_1_aa_1_bb_1_cc_1: "test/index/4--8777216180098127804"
+	},
+	ns: "test.user",
+	ident: "test/collection/1--8777216180098127804"
+}
+*/
     LOG(3) << "recording new metadata: " << obj;
     Status status = _rs->updateRecord(opCtx, loc, obj.objdata(), obj.objsize(), false, NULL);
     fassert(28521, status.isOK());
@@ -740,6 +824,7 @@ Status KVCatalog::dropCollection(OperationContext* opCtx, StringData ns) {
     return Status::OK();
 }
 
+//获取某个DB下面所有表的元数据信息
 std::vector<std::string> KVCatalog::getAllIdentsForDB(StringData db) const {
     std::vector<std::string> v;
 
@@ -756,6 +841,7 @@ std::vector<std::string> KVCatalog::getAllIdentsForDB(StringData db) const {
     return v;
 }
 
+//获取集群所有的
 std::vector<std::string> KVCatalog::getAllIdents(OperationContext* opCtx) const {
     std::vector<std::string> v;
 

@@ -138,6 +138,7 @@ bool KVDatabaseCatalogEntryBase::hasUserData() const {
     return !isEmpty();
 }
 
+//磁盘数据大小=所有表的数据+所有表的索引总和
 int64_t KVDatabaseCatalogEntryBase::sizeOnDisk(OperationContext* opCtx) const {
     int64_t size = 0;
 
@@ -169,12 +170,14 @@ Status KVDatabaseCatalogEntryBase::currentFilesCompatible(OperationContext* opCt
     return _engine->getCatalog()->getFeatureTracker()->isCompatibleWithCurrentCode(opCtx);
 }
 
+//获取所有的表名存入out数组
 void KVDatabaseCatalogEntryBase::getCollectionNamespaces(std::list<std::string>* out) const {
     for (CollectionMap::const_iterator it = _collections.begin(); it != _collections.end(); ++it) {
         out->push_back(it->first);
     }
 }
 
+//获取表对应的KVCollectionCatalogEntry，一个表对应一个KVCollectionCatalogEntry
 CollectionCatalogEntry* KVDatabaseCatalogEntryBase::getCollectionCatalogEntry(StringData ns) const {
     CollectionMap::const_iterator it = _collections.find(ns.toString());
     if (it == _collections.end()) {
@@ -184,6 +187,7 @@ CollectionCatalogEntry* KVDatabaseCatalogEntryBase::getCollectionCatalogEntry(St
     return it->second;
 }
 
+//获取对该表进行底层KV操作的KVDatabaseCatalogEntry
 RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
     CollectionMap::const_iterator it = _collections.find(ns.toString());
     if (it == _collections.end()) {
@@ -199,7 +203,7 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
 //->DatabaseImpl::createCollection->KVDatabaseCatalogEntryBase::createCollection
 // Collection* createCollection调用
-//开始调用底层WT存储引擎相关接口建表
+//开始调用底层WT存储引擎相关接口建表，同时生成一个KVCollectionCatalogEntry存入_collections数组
 Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
                                                     StringData ns,
                                                     const CollectionOptions& options,
@@ -262,11 +266,13 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
+//KVStorageEngine::KVStorageEngine中调用
 void KVDatabaseCatalogEntryBase::initCollection(OperationContext* opCtx,
                                                 const std::string& ns,
                                                 bool forRepair) {
     invariant(!_collections.count(ns));
-
+	
+	//获取wt文件名，也就是磁盘路径名
     const std::string ident = _engine->getCatalog()->getCollectionIdent(ns);
 
     std::unique_ptr<RecordStore> rs;
