@@ -66,7 +66,7 @@ namespace mongo {
 /*
 //DatabaseHolderImpl::openDb生成一个DB,生成的db全部保存到DatabaseHolderImpl._dbs
 //一个库下面的所有表保存到DatabaseImpl._collections map表中
-*/
+*/ 
 class Database {
 public:
     typedef StringMap<Collection*> CollectionMap;

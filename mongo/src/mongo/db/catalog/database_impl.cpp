@@ -167,6 +167,7 @@ DatabaseImpl::~DatabaseImpl() {
         delete i->second;
 }
 
+//DatabaseHolderImpl::closeµ÷ÓÃ
 void DatabaseImpl::close(OperationContext* opCtx, const std::string& reason) {
     // XXX? - Do we need to close database under global lock or just DB-lock is sufficient ?
     invariant(opCtx->lockState()->isW());

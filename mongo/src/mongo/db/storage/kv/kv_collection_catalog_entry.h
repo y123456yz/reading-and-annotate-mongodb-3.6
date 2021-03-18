@@ -44,6 +44,8 @@ class KVEngine;
 
 
 //KVDatabaseCatalogEntryBase::createCollection中new改对象  
+
+//该类主要完成对元数据"_mdb_catalog.wt"相关操作
 //KVDatabaseCatalogEntryBase(一个DB)._collections[](多个表)，也就是一个DB下包含多个表，每个表对应一个KVCollectionCatalogEntry
 class KVCollectionCatalogEntry final : public BSONCollectionCatalogEntry {
 public:
@@ -109,9 +111,12 @@ private:
     //KVDatabaseCatalogEntryBase::createCollection中赋值，
     //默认WiredTigerKVEngine
     KVEngine* _engine;    // not owned
+    //对元数据文件"_mdb_catalog.wt"的操作
     KVCatalog* _catalog;  // not owned
+    //记录该表对应数据文件的路径信息
     std::string _ident;
-    
+
+    //对该表的KV操作，底层WT接口
     //WiredTigerKVEngine::getGroupedRecordStore中赋值，默认为StandardWiredTigerRecordStore类型
     std::unique_ptr<RecordStore> _recordStore;  // owned
 };

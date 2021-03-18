@@ -446,14 +446,15 @@ private:
     //表对应uuid
     OptionalCollectionUUID _uuid;
     //DatabaseImpl::_getOrCreateCollectionInstance->KVDatabaseCatalogEntryBase::getCollectionCatalogEntry获取nss对应KVCollectionCatalogEntry
-    //表nss对应KVCollectionCatalogEntry
+    //表nss对应KVCollectionCatalogEntry，
+    //该类主要完成对元数据"_mdb_catalog.wt"相关管理操作
     CollectionCatalogEntry* const _details;
 
     //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
     //DatabaseImpl::_getOrCreateCollectionInstance-> new Collection()集合初始化构造的时候完成该类成员初始化赋值
     //对应StandardWiredTigerRecordStore 
     RecordStore* const _recordStore; //_recordStore对应数据操作，_indexCatalog对应索引操作
-    
+    //该collection对应的上层DatabaseCatalogEntry信息
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
     CollectionInfoCache _infoCache;

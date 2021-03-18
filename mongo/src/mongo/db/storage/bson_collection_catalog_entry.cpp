@@ -144,6 +144,7 @@ void BSONCollectionCatalogEntry::getAllIndexes(OperationContext* opCtx,
     }
 }
 
+//
 bool BSONCollectionCatalogEntry::isIndexMultikey(OperationContext* opCtx,
                                                  StringData indexName,
                                                  MultikeyPaths* multikeyPaths) const {

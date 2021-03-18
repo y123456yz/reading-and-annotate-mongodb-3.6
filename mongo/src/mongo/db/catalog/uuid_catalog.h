@@ -41,11 +41,13 @@ namespace mongo {
 /**
  * This class comprises a UUID to collection catalog, allowing for efficient
  * collection lookup by UUID.
+ 这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
  */
 using CollectionUUID = UUID;
 class Database;
 
-class UUIDCatalog {
+//一个表对应一个UUID，通过该类管理，这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
+class getCatalog {
     MONGO_DISALLOW_COPYING(UUIDCatalog);
 
 public:
@@ -122,6 +124,9 @@ private:
      * Works as a cache of such orderings: every ordering in this map is guaranteed to be valid, but
      * not all databases are guaranteed to have an ordering in it.
      */
+    //赋值参考UUIDCatalog::_getOrdering_inlock 
+    //根据_catalog map表中的uuid进行排序，排序好后存入_orderedCollections
+    //同一个DB下面的CollectionUUID，放到一起，放到二位数组的第一层，例如_orderedCollections[db][]
     StringMap<std::vector<CollectionUUID>> _orderedCollections;
     //UUIDCatalog::registerUUIDCatalogEntry添加uuid及collection到_catalog，lookupCollectionByUUID中查找
 
@@ -130,6 +135,7 @@ private:
     //DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
     //AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
     //注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
+   //包含所有DB的uuid信息，最好排好序存入_orderedCollections[i][j]二维数组，同一个DB的i相同，通过j区分同一个db的不同的uuid
    mongo::stdx::unordered_map<CollectionUUID, Collection*, CollectionUUID::Hash> _catalog;
 };
 

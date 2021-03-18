@@ -36,15 +36,22 @@
 #include "mongo/util/log.h"
 #include "mongo/util/uuid.h"
 
+//一个表对应一个UUID，通过该类管理，这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
+
 namespace mongo {
 namespace {
+//生成一个全局getCatalog
 const ServiceContext::Decoration<UUIDCatalog> getCatalog =
     ServiceContext::declareDecoration<UUIDCatalog>();
 }  // namespace
 
+//获取该svcCtx对应的UUIDCatalog信息
 UUIDCatalog& UUIDCatalog::get(ServiceContext* svcCtx) {
     return getCatalog(svcCtx);
 }
+
+//参考DatabaseHolderImpl::close调用
+//获取该opCtx对应UUIDCatalog信息
 UUIDCatalog& UUIDCatalog::get(OperationContext* opCtx) {
     return getCatalog(opCtx->getServiceContext());
 }
@@ -52,7 +59,9 @@ UUIDCatalog& UUIDCatalog::get(OperationContext* opCtx) {
 void UUIDCatalog::onCreateCollection(OperationContext* opCtx,
                                      Collection* coll,
                                      CollectionUUID uuid) {
-    removeUUIDCatalogEntry(uuid);
+	//清除uuid
+	removeUUIDCatalogEntry(uuid);
+	//UUIDCatalog::registerUUIDCatalogEntry
     registerUUIDCatalogEntry(uuid, coll);
     opCtx->recoveryUnit()->onRollback([this, uuid] { removeUUIDCatalogEntry(uuid); });
 }
@@ -85,6 +94,7 @@ void UUIDCatalog::onRenameCollection(OperationContext* opCtx,
     });
 }
 
+//清除该DB下面得所有表uuid信息  DatabaseHolderImpl::close调用
 void UUIDCatalog::onCloseDatabase(Database* db) {
     for (auto&& coll : *db) {
         if (coll->uuid()) {
@@ -101,11 +111,16 @@ void UUIDCatalog::onCloseDatabase(Database* db) {
 
 //UUIDCatalog::registerUUIDCatalogEntry添加uuid及collection到_catalog，lookupCollectionByUUID中查找
 //AutoGetCollection::AutoGetCollection调用
+
+//一个表对应一个UUID，通过该类管理，这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
+
 Collection* UUIDCatalog::lookupCollectionByUUID(CollectionUUID uuid) const {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
     auto foundIt = _catalog.find(uuid);
     return foundIt == _catalog.end() ? nullptr : foundIt->second;
 }
+
+//一个表对应一个UUID，通过该类管理，这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
 
 NamespaceString UUIDCatalog::lookupNSSByUUID(CollectionUUID uuid) const {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
@@ -114,11 +129,14 @@ NamespaceString UUIDCatalog::lookupNSSByUUID(CollectionUUID uuid) const {
     return foundIt == _catalog.end() ? NamespaceString() : coll->ns();
 }
 
+//生成新的<CollectionUUID, Collection*>对，添加到_catalog map表中
 void UUIDCatalog::registerUUIDCatalogEntry(CollectionUUID uuid, Collection* coll) {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
 
     if (coll && !_catalog.count(uuid)) {
         // Invalidate this database's ordering, since we're adding a new UUID.
+    //清除一个db下的uuid后说明二维数组中的同一个db下面的uuid需要重新排序了，所以这里把整个db清除
+    //可以通过后面的UUIDCatalog::_getOrdering_inlock重新排序
         _orderedCollections.erase(coll->ns().db());
 
         std::pair<CollectionUUID, Collection*> entry = std::make_pair(uuid, coll);
@@ -127,6 +145,7 @@ void UUIDCatalog::registerUUIDCatalogEntry(CollectionUUID uuid, Collection* coll
     }
 }
 
+//从_catalog和_orderedCollections map表中清除uuid信息
 Collection* UUIDCatalog::removeUUIDCatalogEntry(CollectionUUID uuid) {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
 
@@ -135,6 +154,8 @@ Collection* UUIDCatalog::removeUUIDCatalogEntry(CollectionUUID uuid) {
         return nullptr;
 
     // Invalidate this database's ordering, since we're deleting a UUID.
+    //清除一个db下的uuid后说明二维数组中的同一个db下面的uuid需要重新排序了，所以这里把整个db清除
+    //可以通过后面的UUIDCatalog::_getOrdering_inlock重新排序
     _orderedCollections.erase(foundIt->second->ns().db());
 
     auto foundCol = foundIt->second;
@@ -143,6 +164,7 @@ Collection* UUIDCatalog::removeUUIDCatalogEntry(CollectionUUID uuid) {
     return foundCol;
 }
 
+//同一个db下面的uuid是排好序的，这样就可以快速获取uuid的前一个id
 boost::optional<CollectionUUID> UUIDCatalog::prev(const StringData& db, CollectionUUID uuid) {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
     const auto& ordering = _getOrdering_inlock(db, lock);
@@ -156,6 +178,7 @@ boost::optional<CollectionUUID> UUIDCatalog::prev(const StringData& db, Collecti
     return *(current - 1);
 }
 
+//同一个db下面的uuid是排好序的，这样就可以快速获取uuid的下一个id
 boost::optional<CollectionUUID> UUIDCatalog::next(const StringData& db, CollectionUUID uuid) {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
     const auto& ordering = _getOrdering_inlock(db, lock);
@@ -168,6 +191,9 @@ boost::optional<CollectionUUID> UUIDCatalog::next(const StringData& db, Collecti
     return *(current + 1);
 }
 
+//根据_catalog map表中的uuid进行排序，排序好后存入_orderedCollections
+//如果uuid存在与排好序的_orderedCollections[i][j]二位数组中，则直接获取
+//如果不存在，则说明需要重新排序
 const std::vector<CollectionUUID>& UUIDCatalog::_getOrdering_inlock(
     const StringData& db, const stdx::lock_guard<stdx::mutex>&) {
     // If an ordering is already cached,
@@ -176,6 +202,9 @@ const std::vector<CollectionUUID>& UUIDCatalog::_getOrdering_inlock(
         // return it.
         return it->second;
     }
+	
+    //根据_catalog map表中的uuid进行排序，排序好后存入_orderedCollections
+    //同一个DB下面的CollectionUUID，放到一起，放到二位数组的第一层，例如_orderedCollections[db][]
 
     // Otherwise, get all of the UUIDs for this database,
     auto& newOrdering = _orderedCollections[db];

@@ -117,6 +117,7 @@ private:
      */
     void rebuildIndexData(OperationContext* opCtx);
 
+    //该表对应的CollectionImpl信息
     Collection* _collection;  // not owned
     const NamespaceString _ns;
 

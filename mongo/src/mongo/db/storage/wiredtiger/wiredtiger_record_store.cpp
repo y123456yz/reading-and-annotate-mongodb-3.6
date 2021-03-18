@@ -63,6 +63,7 @@
 #include "mongo/util/scopeguard.h"
 #include "mongo/util/time_support.h"
 
+//该文件接口实现底层WT引擎KV相关操作
 namespace mongo {
 
 using std::unique_ptr;
@@ -760,6 +761,7 @@ int64_t WiredTigerRecordStore::cappedMaxSize() const {
     return _cappedMaxSize;
 }
 
+//获取WiredTigerRecordStore对应表的大小
 int64_t WiredTigerRecordStore::storageSize(OperationContext* opCtx,
                                            BSONObjBuilder* extraInfo,
                                            int infoLevel) const {
@@ -785,6 +787,7 @@ int64_t WiredTigerRecordStore::storageSize(OperationContext* opCtx,
 
 //WiredTigerRecordStore::dataFor    WiredTigerRecordStore::findRecord
 // Retrieve the value from a positioned cursor.
+//通过游标获取数据信息
 RecordData WiredTigerRecordStore::_getData(const WiredTigerCursor& cursor) const {
     WT_ITEM value;
     invariantWTOK(cursor->get_value(cursor.get(), &value));
@@ -792,6 +795,7 @@ RecordData WiredTigerRecordStore::_getData(const WiredTigerCursor& cursor) const
     return RecordData(static_cast<const char*>(value.data), value.size).getOwned();
 }
 
+//根据ID获取数据信息
 RecordData WiredTigerRecordStore::dataFor(OperationContext* opCtx, const RecordId& id) const {
     // ownership passes to the shared_array created below
     WiredTigerCursor curwrap(_uri, _tableId, true, opCtx);
@@ -804,6 +808,7 @@ RecordData WiredTigerRecordStore::dataFor(OperationContext* opCtx, const RecordI
     return _getData(curwrap);
 }
 
+//根据ID获取数据信息
 bool WiredTigerRecordStore::findRecord(OperationContext* opCtx,
                                        const RecordId& id,
                                        RecordData* out) const {
@@ -820,6 +825,7 @@ bool WiredTigerRecordStore::findRecord(OperationContext* opCtx,
     return true;
 }
 
+//删除key=id的数据
 void WiredTigerRecordStore::deleteRecord(OperationContext* opCtx, const RecordId& id) {
     // Deletes should never occur on a capped collection because truncation uses
     // WT_SESSION::truncate().

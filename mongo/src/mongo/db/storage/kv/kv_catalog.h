@@ -135,6 +135,9 @@ class RecordStore;
 
 
 //KVStorageEngine::KVStorageEngine中构造初始化，赋值给KVStorageEngine._catalog
+//KVCollectionCatalogEntry._catalog为该类型
+//KVStorageEngine._catalog(KVCatalog类型)
+
 //对应数据目录的"_mdb_catalog.wt"相关操作
 class KVCatalog { //collection对应的文件名字相关
 public:

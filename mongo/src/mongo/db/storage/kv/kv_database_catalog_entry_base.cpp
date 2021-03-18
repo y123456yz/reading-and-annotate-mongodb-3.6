@@ -126,14 +126,17 @@ KVDatabaseCatalogEntryBase::~KVDatabaseCatalogEntryBase() {
     _collections.clear();
 }
 
+//检查该DB下面是否有可用表信息
 bool KVDatabaseCatalogEntryBase::exists() const {
     return !isEmpty();
 }
 
+//是否有表存在
 bool KVDatabaseCatalogEntryBase::isEmpty() const {
     return _collections.empty();
 }
 
+//有表信息则说明有数据存在
 bool KVDatabaseCatalogEntryBase::hasUserData() const {
     return !isEmpty();
 }
@@ -187,7 +190,7 @@ CollectionCatalogEntry* KVDatabaseCatalogEntryBase::getCollectionCatalogEntry(St
     return it->second;
 }
 
-//获取对该表进行底层KV操作的KVDatabaseCatalogEntry
+//获取对该表进行底层KV操作的KVCollectionCatalogEntry
 RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
     CollectionMap::const_iterator it = _collections.find(ns.toString());
     if (it == _collections.end()) {
@@ -196,6 +199,8 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
 
 	//KVCollectionCatalogEntry::getRecordStore,也就是获取KVCollectionCatalogEntry._recordStore成员
 	//默认为默认为StandardWiredTigerRecordStore类型
+	
+	//KVCollectionCatalogEntry::getRecordStore, 也就是获取KVCollectionCatalogEntry._recordStore成员信息
     return it->second->getRecordStore();
 }
 
@@ -229,7 +234,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     if (!status.isOK())
         return status;
 
-	//也就是newCollection中生成的集合ident
+	//也就是newCollection中生成的集合ident，也就是元数据元数据_mdb_catalog.wt文件路径
     string ident = _engine->getCatalog()->getCollectionIdent(ns); //获取文件名
 	
 	//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  
@@ -249,6 +254,8 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
         }
     }
 
+
+	//新建collection这个事件记录下来
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns, ident, true));
 	//WiredTigerKVEngine::getGroupedRecordStore
 	//生成StandardWiredTigerRecordStore类,该类和表实际上关联起来，对该类的相关接口操作实际上就是对表的KV操作
@@ -258,21 +265,21 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 	//存到map表中，把WiredTigerKVEngine  
 	//最终一个表对应一个KVCollectionCatalogEntry，存储到_collections数组中
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
-       //WiredTigerKVEngine--存储引擎   
-       //              KVStorageEngine::getCatalog(默认KVDatabaseCatalogEntryBase)---库接口
+       //WiredTigerKVEngine--存储引擎    
+       //     KVStorageEngine::getCatalog(KVStorageEngine._catalog(KVCatalog类型))---"_mdb_catalog.wt"元数据接口
        //                                           StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 
     return Status::OK();
 }
 
-//KVStorageEngine::KVStorageEngine中调用
+//当mongod重启的时候会，会调用KVStorageEngine::KVStorageEngine调用本接口
 void KVDatabaseCatalogEntryBase::initCollection(OperationContext* opCtx,
                                                 const std::string& ns,
                                                 bool forRepair) {
     invariant(!_collections.count(ns));
 	
-	//获取wt文件名，也就是磁盘路径名
+	//获取ns对应wt文件名，也就是磁盘路径名
     const std::string ident = _engine->getCatalog()->getCollectionIdent(ns);
 
     std::unique_ptr<RecordStore> rs;
@@ -281,12 +288,18 @@ void KVDatabaseCatalogEntryBase::initCollection(OperationContext* opCtx,
         // repaired. This also ensures that if we try to use it, it will blow up.
         rs = nullptr;
     } else {
+    	//获取该表的元数据信息
         BSONCollectionCatalogEntry::MetaData md = _engine->getCatalog()->getMetaData(opCtx, ns);
-        rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, md.options, md.prefix);
+		//WiredTigerKVEngine::getGroupedRecordStore
+		//获取对该表进行底层KV操作的RecordStore
+		rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, md.options, md.prefix);
         invariant(rs);
     }
 
     // No change registration since this is only for committed collections
+   //WiredTigerKVEngine--存储引擎    
+   //     KVStorageEngine::getCatalog(KVStorageEngine._catalog(KVCatalog类型))---"_mdb_catalog.wt"元数据接口
+   //                                           StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
     _collections[ns] = new KVCollectionCatalogEntry(
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 }

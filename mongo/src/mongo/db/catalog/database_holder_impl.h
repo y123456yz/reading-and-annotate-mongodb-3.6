@@ -96,6 +96,7 @@ public:
 private:
     std::set<std::string> _getNamesWithConflictingCasing_inlock(StringData name);
 
+    //对应DatabaseImpl
     typedef StringMap<Database*> DBs;
     mutable SimpleMutex _m;
 
@@ -107,7 +108,7 @@ private:
     
     //保存到database_holder_impl.h中的全局变量_dbHolder
     //所有db保存到这里，通过DatabaseHolderImpl::openDb创建后保存到这里
-    DBs _dbs; 
+    DBs _dbs;  
 };
 }  // namespace mongo
 

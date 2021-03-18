@@ -77,6 +77,7 @@ using std::stringstream;
 
 namespace {
 
+//ns一般是db.collection结构，解析出db信息
 StringData _todb(StringData ns) {
     size_t i = ns.find('.');
     if (i == std::string::npos) {
@@ -133,6 +134,7 @@ std::set<std::string> DatabaseHolderImpl::getNamesWithConflictingCasing(StringDa
 }
 
 //AutoGetOrCreateDb::AutoGetOrCreateDb调用，生成Database
+//DatabaseHolderImpl::openDb创建DB，每个DB对应一个DatabaseImpl
 Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, bool* justCreated) {
     const StringData dbname = _todb(ns);
     invariant(opCtx->lockState()->isDbLockedForMode(dbname, MODE_X));
@@ -170,6 +172,7 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
     // requirement for X-lock on the database when we enter. So there is no way we can insert two
     // different databases for the same name.
     lk.unlock();
+	//获取KVStorageEngine
     StorageEngine* storageEngine = getGlobalServiceContext()->getGlobalStorageEngine();
 	//KVStorageEngine::getDatabaseCatalogEntry获取对应KVDatabaseCatalogEntryBase信息
     DatabaseCatalogEntry* entry = storageEngine->getDatabaseCatalogEntry(opCtx, dbname);
@@ -180,13 +183,16 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
             *justCreated = true;
     }
 
+	//构造DatabaseImpl
     auto newDb = stdx::make_unique<Database>(opCtx, dbname, entry);
 
     // Finally replace our nullptr entry with the new Database pointer.
     removeDbGuard.Dismiss();
     lk.lock();
+	
     auto it = _dbs.find(dbname);
     invariant(it != _dbs.end() && it->second == nullptr);
+	//DatabaseImpl添加到_dbs数组
     it->second = newDb.release();
     invariant(_getNamesWithConflictingCasing_inlock(dbname.toString()).empty());
 
@@ -201,21 +207,25 @@ void DatabaseHolderImpl::close(OperationContext* opCtx, StringData ns, const std
 
     stdx::lock_guard<SimpleMutex> lk(_m);
 
+	//没找到该DB说明本身就不存在
     DBs::const_iterator it = _dbs.find(dbName);
     if (it == _dbs.end()) {
         return;
     }
 
     auto db = it->second;
+	//清除该db下面得所有uuid
     UUIDCatalog::get(opCtx).onCloseDatabase(db);
     for (auto&& coll : *db) {
         NamespaceUUIDCache::get(opCtx).evictNamespace(coll->ns());
     }
 
+	//DatabaseImpl::close
     db->close(opCtx, reason);
     delete db;
     db = nullptr;
 
+	//从_dbs数组中剔除后该db
     _dbs.erase(it);
 
     getGlobalServiceContext()
@@ -252,6 +262,7 @@ bool DatabaseHolderImpl::closeAll(OperationContext* opCtx,
         }
 
         Database* db = _dbs[name];
+		//DatabaseImpl::close
         db->close(opCtx, reason);
         delete db;
 

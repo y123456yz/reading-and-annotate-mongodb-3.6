@@ -58,6 +58,9 @@ class PseudoRandom;
  * The semantics for a const Database are that you can mutate individual collections but not add or
  * remove them.
  */
+//DatabaseHolderImpl::openDb创建DB，每个DB对应一个DatabaseImpl
+
+//DatabaseHolderImpl._dbs为该类型
 class DatabaseImpl : public Database::Impl {
 public:
     typedef StringMap<Collection*> CollectionMap;
