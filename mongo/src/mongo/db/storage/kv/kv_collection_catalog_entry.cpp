@@ -229,7 +229,7 @@ Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
 	//KVCatalog::putMetaData
     _catalog->putMetaData(opCtx, ns().toString(), md);
 
-	//KVCatalog::getIndexIdent
+	//KVCatalog::getIndexIdent  从元数据中获取表索引信息
     string ident = _catalog->getIndexIdent(opCtx, ns().ns(), spec->indexName());
 
 	//WiredTigerKVEngine::createGroupedSortedDataInterface

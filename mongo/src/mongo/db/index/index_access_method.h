@@ -350,6 +350,7 @@ private:
 
     //IndexAccessMethod::IndexAccessMethod中初始化赋值，
     //wiredtiger存储引擎对应WiredTigerIndexUnique
+    //唯一索引WiredTigerIndexUnique    普通索引WiredTigerIndexStandard
     const std::unique_ptr<SortedDataInterface> _newInterface;
 };
 

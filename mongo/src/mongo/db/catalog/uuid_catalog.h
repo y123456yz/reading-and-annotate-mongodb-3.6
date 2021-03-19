@@ -47,7 +47,7 @@ using CollectionUUID = UUID;
 class Database;
 
 //一个表对应一个UUID，通过该类管理，这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
-class getCatalog {
+class UUIDCatalog {
     MONGO_DISALLOW_COPYING(UUIDCatalog);
 
 public:

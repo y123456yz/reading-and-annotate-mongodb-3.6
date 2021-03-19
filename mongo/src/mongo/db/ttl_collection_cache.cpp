@@ -44,11 +44,13 @@ TTLCollectionCache& TTLCollectionCache::get(ServiceContext* ctx) {
     return getTTLCollectionCache(ctx);
 }
 
+//CollectionInfoCacheImpl::computeIndexKeys调用
 void TTLCollectionCache::registerCollection(const NamespaceString& collectionNS) {
     stdx::lock_guard<stdx::mutex> lock(_ttlCollectionsLock);
     _ttlCollections.push_back(collectionNS.ns());
 }
 
+//CollectionInfoCacheImpl::computeIndexKeys调用
 void TTLCollectionCache::unregisterCollection(const NamespaceString& collectionNS) {
     stdx::lock_guard<stdx::mutex> lock(_ttlCollectionsLock);
     auto collIter = std::find(_ttlCollections.begin(), _ttlCollections.end(), collectionNS.ns());

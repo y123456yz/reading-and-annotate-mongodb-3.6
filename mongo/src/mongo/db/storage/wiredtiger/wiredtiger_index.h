@@ -42,6 +42,8 @@ namespace mongo {
 class IndexCatalogEntry;
 class IndexDescriptor;
 struct WiredTigerItem;
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
 
 ////WiredTigerIndexUnique和WiredTigerIndexStandard继承该类
 class WiredTigerIndex : public SortedDataInterface { 
@@ -167,6 +169,9 @@ protected:
 };
 
 
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
+
 class WiredTigerIndexUnique : public WiredTigerIndex { 
 public:
     WiredTigerIndexUnique(OperationContext* ctx,
@@ -191,6 +196,10 @@ public:
 private:
     bool _partial;
 };
+
+
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
 
 class WiredTigerIndexStandard : public WiredTigerIndex {
 public:

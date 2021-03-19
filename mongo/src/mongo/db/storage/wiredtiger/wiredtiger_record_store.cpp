@@ -88,6 +88,7 @@ void checkOplogFormatVersion(OperationContext* opCtx, const std::string& uri) {
 MONGO_FP_DECLARE(WTWriteConflictException);
 MONGO_FP_DECLARE(WTWriteConflictExceptionForReads);
 
+//WiredTigerEngineInitÖÐ×¢²áwtÒýÇæ
 const std::string kWiredTigerEngineName = "wiredTiger";
 
 class WiredTigerRecordStore::OplogStones::InsertChange final : public RecoveryUnit::Change {

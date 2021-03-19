@@ -104,6 +104,7 @@ public:
 /**
  * Holds the index filters in a collection.
  */
+//CollectionInfoCacheImpl._querySettings为该类型
 class QuerySettings {
 private:
     MONGO_DISALLOW_COPYING(QuerySettings);

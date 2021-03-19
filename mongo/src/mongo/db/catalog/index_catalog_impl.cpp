@@ -131,10 +131,13 @@ IndexCatalogImpl::~IndexCatalogImpl() {
     _magic = 123456;
 }
 
+//CollectionImpl::init中调用
+//例如mongod实例重启得时候会调用
 Status IndexCatalogImpl::init(OperationContext* opCtx) {
     vector<string> indexNames;
 	//BSONCollectionCatalogEntry::getAllIndexes 
-	//获取所有的索引名
+	//获取所有的索引名  
+	//从元数据文件"_mdb_catalog.wt"中获取索引信息
     _collection->getCatalogEntry()->getAllIndexes(opCtx, &indexNames);
 
     for (size_t i = 0; i < indexNames.size(); i++) {
@@ -142,6 +145,7 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
         BSONObj spec = _collection->getCatalogEntry()->getIndexSpec(opCtx, indexName).getOwned();
 
 		//BSONCollectionCatalogEntry::isIndexReady 索引是否已经构建完成
+		//mongod shutdown时候还有未执行完得索引
         if (!_collection->getCatalogEntry()->isIndexReady(opCtx, indexName)) {
 			// These are the index specs of indexes that were "leftover".
 		    // "Leftover" means they were unfinished when a mongod shut down.
@@ -158,6 +162,7 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
             _collection, _getAccessMethodName(opCtx, keyPattern), spec);
         const bool initFromDisk = true;
 		//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
+		//一个索引对应一个IndexCatalogEntry
         IndexCatalogEntry* entry =
             _setupInMemoryStructures(opCtx, std::move(descriptor), initFromDisk);
 
@@ -236,6 +241,7 @@ void IndexCatalogImpl::_checkMagic() const {
     fassertFailed(17198);
 }
 
+//检查是否又未执行完成得索引
 Status IndexCatalogImpl::checkUnfinished() const {
     if (_unfinishedIndexes.size() == 0)
         return Status::OK();
@@ -468,6 +474,7 @@ Status IndexCatalogImpl::IndexBuildBlock::init() {
     /// ----------   setup in memory structures  ----------------
     const bool initFromDisk = false;
 	//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
+	//一个索引对应一个IndexCatalogImpl
     _entry = IndexCatalogImpl::_setupInMemoryStructures(
         _catalog, _opCtx, std::move(descriptor), initFromDisk);
 

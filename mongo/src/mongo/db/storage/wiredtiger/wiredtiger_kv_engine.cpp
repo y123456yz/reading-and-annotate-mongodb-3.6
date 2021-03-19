@@ -82,6 +82,11 @@
 #include "mongo/util/scopeguard.h"
 #include "mongo/util/time_support.h"
 
+//wiredtiger使用可以参考: MongoDB如何使用wiredTiger？
+//https://mongoing.com/archives/2214
+//WT元数据文件管理：https://cloud.tencent.com/developer/article/1626996
+//官方wiredtiger example例子参考:
+// https://github.com/y123456yz/reading-and-annotate-wiredtiger-3.0.0/tree/master/wiredtiger/examples/c
 #if !defined(__has_feature)
 #define __has_feature(x) 0
 #endif
@@ -141,6 +146,7 @@ private:
 
 //WiredTigerKVEngine::WiredTigerKVEngine中调用执行
 //WiredTigerKVEngine._checkpointThread成员为该类
+//定期做checkpoint操作
 class WiredTigerKVEngine::WiredTigerCheckpointThread : public BackgroundJob {
 public:
     explicit WiredTigerCheckpointThread(WiredTigerSessionCache* sessionCache)
@@ -328,17 +334,17 @@ stdx::function<bool(StringData)> initRsOplogBackgroundThreadCallback = [](String
 
 /*
 wiredtiger简单例子:
-error_check(wiredtiger_open(home, NULL, CONN_CONFIG, &conn));
+//error_check(wiredtiger_open(home, NULL, CONN_CONFIG, &conn));
 
 //__conn_open_session
-error_check(conn->open_session(conn, NULL, NULL, &session));
+//error_check(conn->open_session(conn, NULL, NULL, &session));
 
 //__session_create	创建table表
 //error_check(session->create(
 	session, "table:access", "key_format=S,value_format=S"));
 
 //__session_open_cursor  //获取一个cursor通过cursorp返回
-error_check(session->open_cursor(
+//error_check(session->open_cursor(
 	session, "table:access", NULL, NULL, &cursor));
 
 //__wt_cursor_set_key
@@ -368,7 +374,9 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
       _canonicalName(canonicalName),
       _path(path),
       _sizeStorerSyncTracker(cs, 100000, Seconds(60)),
+      //mongod --journal 
       _durable(durable),
+      //mongod  --repair 启用
       _ephemeral(ephemeral),
       _readOnly(readOnly) {
     boost::filesystem::path journalPath = path;
@@ -413,15 +421,19 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
         invariant(!_durable);
         ss << "readonly=true,";
     }
+
+	//mongod启动没有携带//mongod --journal 
     if (!_durable && !_readOnly) {
         // If we started without the journal, but previously used the journal then open with the
         // WT log enabled to perform any unclean shutdown recovery and then close and reopen in
         // the normal path without the journal.
+        //启动mongod没有是能journal功能，但是该目录存在，则直接清除该目录
         if (boost::filesystem::exists(journalPath)) {
             string config = ss.str();
             log() << "Detected WT journal files.  Running recovery from last checkpoint.";
             log() << "journal to nojournal transition config: " << config;
-            int ret = wiredtiger_open(path.c_str(), &_eventHandler, config.c_str(), &_conn);
+			//_eventHandler记录wiredtiger_open的事件信息
+			int ret = wiredtiger_open(path.c_str(), &_eventHandler, config.c_str(), &_conn);
             if (ret == EINVAL) {
                 fassertFailedNoTrace(28717);
             } else if (ret != 0) {
@@ -438,6 +450,7 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
             }
         }
         // This setting overrides the earlier setting because it is later in the config string.
+        ////mongod --journal 如果命令行或者配置没有启用journal，则增加该存储引擎参数
         ss << ",log=(enabled=false),";
     }
     string config = ss.str();
@@ -460,14 +473,16 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
         msgasserted(28595, s.reason());
     }
 
-	//_sessionCache指向新的new对象
+	//_sessionCache指向新的new对象，session信息都从这里获取
     _sessionCache.reset(new WiredTigerSessionCache(this)); //_sessionCache指针赋初值
 
+	//启用了journal日志，并且不是repair修数据，则启用WTJournalFlusher线程
     if (_durable && !_ephemeral) {
         _journalFlusher = stdx::make_unique<WiredTigerJournalFlusher>(_sessionCache.get());
         _journalFlusher->go();
     }
 
+	//不是只读节点并且不是repair数据，则启用WTCheckpointThread线程
     if (!_readOnly && !_ephemeral) {
         _checkpointThread = stdx::make_unique<WiredTigerCheckpointThread>(_sessionCache.get());
         _checkpointThread->go();
@@ -476,6 +491,7 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
 	//WiredTigerKVEngine::WiredTigerKVEngine中初始化，对应WiredTigerKVEngine._sizeStorerUri="table:sizeStorer"
     _sizeStorerUri = "table:sizeStorer";
     WiredTigerSession session(_conn);
+	//修复sizeStorer.wt数据
     if (!_readOnly && repair && _hasUri(session.getSession(), _sizeStorerUri)) {
         log() << "Repairing size cache";
         fassertNoTrace(28577, _salvageIfNeeded(_sizeStorerUri.c_str()));
@@ -483,9 +499,11 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
 
     const bool sizeStorerLoggingEnabled = !getGlobalReplSettings().usingReplSets();
     _sizeStorer.reset(
+		//对sizeStorer.wt内容操作 _sizeStorerUri = "table:sizeStorer";
 		//sizeStorer.wt内容  记录各个集合的记录数和集合总字节数，缓存到内存中
         new WiredTigerSizeStorer(_conn, _sizeStorerUri, sizeStorerLoggingEnabled, _readOnly));
-    _sizeStorer->fillCache();
+	//WiredTigerSizeStorer::fillCache
+	_sizeStorer->fillCache();
 
 	//WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
     Locker::setGlobalThrottling(&openReadTransaction, &openWriteTransaction);
@@ -650,6 +668,7 @@ int64_t WiredTigerKVEngine::getIdentSize(OperationContext* opCtx, StringData ide
     return WiredTigerUtil::getIdentSize(session->getSession(), _uri(ident));
 }
 
+//修复ident数据
 Status WiredTigerKVEngine::repairIdent(OperationContext* opCtx, StringData ident) {
     WiredTigerSession* session = WiredTigerRecoveryUnit::get(opCtx)->getSession();
     string uri = _uri(ident);
@@ -661,6 +680,7 @@ Status WiredTigerKVEngine::repairIdent(OperationContext* opCtx, StringData ident
     return _salvageIfNeeded(uri.c_str());
 }
 
+//修复uri文件数据
 Status WiredTigerKVEngine::_salvageIfNeeded(const char* uri) {
     // Using a side session to avoid transactional issues
     WiredTigerSession sessionWrapper(_conn);
@@ -1019,6 +1039,7 @@ Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* op
     return wtRCToStatus(WiredTigerIndex::Create(opCtx, _uri(ident), config));
 }
 
+//唯一索引和普通索引对应SortedDataInterface
 SortedDataInterface* WiredTigerKVEngine::getGroupedSortedDataInterface(OperationContext* opCtx,
                                                                        StringData ident,
                                                                        const IndexDescriptor* desc,
@@ -1178,8 +1199,20 @@ bool WiredTigerKVEngine::_hasUri(WT_SESSION* session, const std::string& uri) co
     return c->search(c) == 0;
 }
 
+/*
+对MongoDB层可见的所有数据表，在_mdb_catalog表中维护了MongoDB需要的元数据，同样在WiredTiger层中，
+会有一份对应的WiredTiger需要的元数据维护在WiredTiger.wt表中。因此，事实上这里有两份数据表的列表，
+并且在某些情况下可能会存在不一致，比如，异常宕机的场景。因此MongoDB在启动过程中，会对这两份数据
+进行一致性检查，如果是异常宕机启动过程，会以WiredTiger.wt表中的数据为准，对_mdb_catalog表中的记录进行修正。这个过程会需要遍历WiredTiger.wt表得到所有数据表的列表。
+
+综上，可以看到，在MongoDB启动过程中，有多处涉及到需要从WiredTiger.wt表中读取数据表的元数据。
+对这种需求，WiredTiger专门提供了一类特殊的『metadata』类型的cursor。
+*/
+//KVStorageEngine::reconcileCatalogAndIdents调用
+//KVStorageEngine::reconcileCatalogAndIdents中获取所有得ident，然后后元数据_mdb_catalog.wt中得内容做比较
 std::vector<std::string> WiredTigerKVEngine::getAllIdents(OperationContext* opCtx) const {
     std::vector<std::string> all;
+	//也就是对WiredTiger.wt得操作
     WiredTigerCursor cursor("metadata:", WiredTigerSession::kMetadataTableId, false, opCtx);
     WT_CURSOR* c = cursor.get();
     if (!c)

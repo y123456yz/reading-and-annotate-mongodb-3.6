@@ -79,6 +79,9 @@ extern const std::string kWiredTigerEngineName;
 
 //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore，对该类的操作也就是对指定表的操作，他们是一个一一对应关系
 
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
+
 
 //默认使用StandardWiredTigerRecordStore，参考WiredTigerKVEngine::getGroupedRecordStore
 class WiredTigerRecordStore : public RecordStore { //代表一个表的统计

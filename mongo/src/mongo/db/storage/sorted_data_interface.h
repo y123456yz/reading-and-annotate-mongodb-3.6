@@ -61,7 +61,11 @@ struct ValidateResults;
  *
  * TODO: See if this actually works.
  */ 
-//WiredTigerIndex继承该类
+//唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+//数据插入WiredTigerRecordStore::_insertRecords
+
+ 
+////WiredTigerIndexUnique和WiredTigerIndexStandard继承WiredTigerIndex类，WiredTigerIndex继承该类WiredTigerIndex
 //IndexAccessMethod._newInterface成员为该类,  WiredTigerIndex继承该类
 class SortedDataInterface { //接口赋值可以参考KVDatabaseCatalogEntry::getIndex
 public:

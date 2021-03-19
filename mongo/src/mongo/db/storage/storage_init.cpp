@@ -42,6 +42,16 @@ namespace mongo {
 // TODO: Does this belong here?
 namespace {
 
+/*
+> db.serverStatus().storageEngine
+{
+        "name" : "wiredTiger",
+        "supportsCommittedReads" : true,
+        "readOnly" : false,
+        "persistent" : true
+}
+> 
+*/
 class StorageSSS : public ServerStatusSection {
 public:
     StorageSSS() : ServerStatusSection("storageEngine") {}

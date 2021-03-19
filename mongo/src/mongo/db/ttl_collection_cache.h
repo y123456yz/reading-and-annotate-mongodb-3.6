@@ -41,6 +41,7 @@
  */
 namespace mongo {
 
+//CollectionInfoCacheImpl::computeIndexKeys中获取使用
 class TTLCollectionCache {
 public:
     static TTLCollectionCache& get(ServiceContext* ctx);

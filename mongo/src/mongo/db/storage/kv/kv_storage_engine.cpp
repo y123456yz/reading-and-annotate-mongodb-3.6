@@ -184,6 +184,17 @@ KVStorageEngine::KVStorageEngine(
  * Third, a KVCatalog may have an index ident that the KVEngine does not. This method will
  * rebuild the index.
  */
+/*
+对MongoDB层可见的所有数据表，在_mdb_catalog表中维护了MongoDB需要的元数据，同样在WiredTiger层中，
+会有一份对应的WiredTiger需要的元数据维护在WiredTiger.wt表中。因此，事实上这里有两份数据表的列表，
+并且在某些情况下可能会存在不一致，比如，异常宕机的场景。因此MongoDB在启动过程中，会对这两份数据
+进行一致性检查，如果是异常宕机启动过程，会以WiredTiger.wt表中的数据为准，对_mdb_catalog表中的记录进行修正。这个过程会需要遍历WiredTiger.wt表得到所有数据表的列表。
+
+综上，可以看到，在MongoDB启动过程中，有多处涉及到需要从WiredTiger.wt表中读取数据表的元数据。
+对这种需求，WiredTiger专门提供了一类特殊的『metadata』类型的cursor。
+*/
+
+//repairDatabasesAndCheckVersion中调用
 StatusWith<std::vector<StorageEngine::CollectionIndexNamePair>>
 KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     // Gather all tables known to the storage engine and drop those that aren't cross-referenced
@@ -199,21 +210,23 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     // expected for a storage engine's ability to persist stable data to extend to "stable
     // tables".
     std::set<std::string> engineIdents;
-    {
+    {   //对应WiredTiger.wt
         std::vector<std::string> vec = _engine->getAllIdents(opCtx);
         engineIdents.insert(vec.begin(), vec.end());
         engineIdents.erase(catalogInfo);
     }
 
     std::set<std::string> catalogIdents;
-    {
+    {   //对应_mdb_catalog.wt
         std::vector<std::string> vec = _catalog->getAllIdents(opCtx);
         catalogIdents.insert(vec.begin(), vec.end());
     }
 
     // Drop all idents in the storage engine that are not known to the catalog. This can happen in
     // the case of a collection or index creation being rolled back.
+    //比较两个元数据文件WiredTiger.wt _mdb_catalog.wt，最终以WiredTiger.wt得数据为准
     for (const auto& it : engineIdents) {
+		log() << "yang test ....reconcileCatalogAndIdents...... ident: " << it;
         if (catalogIdents.find(it) != catalogIdents.end()) {
             continue;
         }
@@ -345,6 +358,7 @@ Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
 
     for (std::list<std::string>::iterator it = toDrop.begin(); it != toDrop.end(); ++it) {
         string coll = *it;
+		//KVDatabaseCatalogEntry::dropCollection
         entry->dropCollection(opCtx, coll).transitional_ignore();
     }
     toDrop.clear();

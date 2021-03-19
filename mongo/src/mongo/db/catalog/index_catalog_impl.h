@@ -57,6 +57,7 @@ struct InsertDeleteOptions;
 //CollectionImpl::CollectionImpl构造及赋值，对应IndexCatalogImpl
 //索引相关接口
 //CollectionImpl._indexCatalog为该类型，该成员让IndexCatalogImpl和collection关联起来
+//CollectionImpl::CollectionImpl构造及赋值 
 class IndexCatalogImpl : public IndexCatalog::Impl {
 public:
     explicit IndexCatalogImpl(IndexCatalog* this_,

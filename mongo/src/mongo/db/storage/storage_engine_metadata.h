@@ -44,7 +44,14 @@ namespace mongo {
  * 'storage.engine' is the only mandatory field in the BSON metadata file.
  * Fields other than 'storage.engine' are ignored.
  */
-//StorageEngineMetadata::forPath//storage.bson是否存在，存在在读取里面的内容来构造StorageEngineMetadata类
+/*
+-bash-4.2# /root/got/mongodb-linux-x86_64-3.6.13/bin/bsondump storage.bson 
+{"storage":{"engine":"wiredTiger","options":{"directoryPerDB":true,"directoryForIndexes":true,"groupCollections":false}}}
+2021-03-19T12:18:19.320+0800    1 objects found
+*/
+//StorageEngineMetadata::forPath
+
+//storage.bson是否存在，存在在读取里面的内容来构造StorageEngineMetadata类
 class StorageEngineMetadata {
     MONGO_DISALLOW_COPYING(StorageEngineMetadata);
 

@@ -49,25 +49,25 @@
 namespace mongo {
 /*
 wiredtiger简单例子:
-error_check(wiredtiger_open(home, NULL, CONN_CONFIG, &conn));
+//error_check(wiredtiger_open(home, NULL, CONN_CONFIG, &conn));
 
 //__conn_open_session
-error_check(conn->open_session(conn, NULL, NULL, &session));
+//error_check(conn->open_session(conn, NULL, NULL, &session));
 
 //__session_create	创建table表
-error_check(session->create(
+//error_check(session->create(
 	session, "table:access", "key_format=S,value_format=S"));
 
 //__session_open_cursor  //获取一个cursor通过cursorp返回
-error_check(session->open_cursor(
+//error_check(session->open_cursor(
 	session, "table:access", NULL, NULL, &cursor));
 
 //__wt_cursor_set_key
-cursor->set_key(cursor, "key1");	
+//cursor->set_key(cursor, "key1");	
 //__wt_cursor_set_value
-cursor->set_value(cursor, "value1");
+//cursor->set_value(cursor, "value1");
 //__curfile_insert
-error_check(cursor->insert(cursor));
+//error_check(cursor->insert(cursor));
 */
 //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
 //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
@@ -82,7 +82,7 @@ db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_co
 db/storage/wiredtiger/wiredtiger_kv_engine.cpp:    WiredTigerSession session(_conn);
 db/storage/wiredtiger/wiredtiger_session_cache.cpp:        UniqueWiredTigerSession session = getSession();
 */ //上面的注释这些地方会构造使用
-//WiredTigerSessionCache::getSession中执行
+//WiredTigerSessionCache::getSession->WiredTigerSession::WiredTigerSession从conn中获取一个session信息 
 WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64_t cursorEpoch)
     : _epoch(epoch),
       _cursorEpoch(cursorEpoch),

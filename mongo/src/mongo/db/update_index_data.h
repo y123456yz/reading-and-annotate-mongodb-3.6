@@ -47,6 +47,7 @@ bool getCanonicalIndexField(StringData fullName, std::string* out);
  * Holds pre-processed index spec information to allow update to quickly determine if an update
  * can be applied as a delta to a document, or if the document must be re-indexed.
  */
+//²Î¿¼CollectionInfoCacheImpl::getIndexKeys  CollectionInfoCacheImpl::computeIndexKeys
 class UpdateIndexData {
 public:
     UpdateIndexData();

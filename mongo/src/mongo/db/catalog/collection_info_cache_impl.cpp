@@ -75,6 +75,7 @@ CollectionInfoCacheImpl::~CollectionInfoCacheImpl() {
     }
 }
 
+//获取_indexedPaths
 const UpdateIndexData& CollectionInfoCacheImpl::getIndexKeys(OperationContext* opCtx) const {
     // This requires "some" lock, and MODE_IS is an expression for that, for now.
     dassert(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_IS));
@@ -82,28 +83,33 @@ const UpdateIndexData& CollectionInfoCacheImpl::getIndexKeys(OperationContext* o
     return _indexedPaths;
 }
 
+//生成最新的_indexedPaths
 void CollectionInfoCacheImpl::computeIndexKeys(OperationContext* opCtx) {
     _indexedPaths.clear();
 
     bool hadTTLIndex = _hasTTLIndex;
     _hasTTLIndex = false;
 
+	//遍历该表下面的所有index信息
     IndexCatalog::IndexIterator i = _collection->getIndexCatalog()->getIndexIterator(opCtx, true);
     while (i.more()) {
         IndexDescriptor* descriptor = i.next();
 
+		//非TEXT索引
         if (descriptor->getAccessMethodName() != IndexNames::TEXT) {
             BSONObj key = descriptor->keyPattern();
             const BSONObj& infoObj = descriptor->infoObj();
+			//过期索引
             if (infoObj.hasField("expireAfterSeconds")) {
                 _hasTTLIndex = true;
             }
             BSONObjIterator j(key);
             while (j.more()) {
                 BSONElement e = j.next();
+				//索引信息添加到_indexedPaths
                 _indexedPaths.addPath(e.fieldName());
             }
-        } else {
+        } else { //text索引
             fts::FTSSpec ftsSpec(descriptor->infoObj());
 
             if (ftsSpec.wildcard()) {
@@ -140,6 +146,8 @@ void CollectionInfoCacheImpl::computeIndexKeys(OperationContext* opCtx) {
 
     TTLCollectionCache& ttlCollectionCache = TTLCollectionCache::get(getGlobalServiceContext());
 
+	//以前没有TTL索引，现在有了，则需要registerCollection
+	//以前有TTL索引，现在没有了，则需要注销
     if (_hasTTLIndex != hadTTLIndex) {
         if (_hasTTLIndex) {
             ttlCollectionCache.registerCollection(_collection->ns());
@@ -163,6 +171,7 @@ void CollectionInfoCacheImpl::notifyOfQuery(OperationContext* opCtx,
     }
 }
 
+//清除缓存的_planCache
 void CollectionInfoCacheImpl::clearQueryCache() {
     LOG(1) << _collection->ns().ns() << ": clearing plan cache - collection info cache reset";
     if (NULL != _planCache.get()) {
@@ -204,6 +213,7 @@ void CollectionInfoCacheImpl::updatePlanCacheIndexEntries(OperationContext* opCt
     _planCache->notifyOfIndexEntries(indexEntries);
 }
 
+//CollectionImpl::init中调用
 void CollectionInfoCacheImpl::init(OperationContext* opCtx) {
     // Requires exclusive collection lock.
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_X));
@@ -240,6 +250,7 @@ void CollectionInfoCacheImpl::droppedIndex(OperationContext* opCtx, StringData i
 }
 
 void CollectionInfoCacheImpl::rebuildIndexData(OperationContext* opCtx) {
+	//清除缓存的querycache
     clearQueryCache();
 
     _keysComputed = false;

@@ -62,7 +62,8 @@ public:
  * This is a structure that caches 1 cursor for each uri.
  * The idea is that there is a pool of these somewhere.
  * NOT THREADSAFE
- */  //WiredTigerSessionCache._sessions中存起来
+ */  
+//WiredTigerSessionCache._sessions中存起来
 class WiredTigerSession {
 public:
     /**

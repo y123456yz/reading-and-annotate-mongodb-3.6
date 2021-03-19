@@ -53,6 +53,11 @@ namespace mongo {
 namespace dps = ::mongo::dotted_path_support;
 
 namespace {
+/*
+-bash-4.2# /root/got/mongodb-linux-x86_64-3.6.13/bin/bsondump storage.bson 
+{"storage":{"engine":"wiredTiger","options":{"directoryPerDB":true,"directoryForIndexes":true,"groupCollections":false}}}
+2021-03-19T12:18:19.320+0800	1 objects found
+*/
 
 //.bson文件可以通过bsondump转为json, /home/yyz/mongodb-test/bin/bsondump --bsonFile=/data/db/storage.bson --outFile=./test.json
 //转换后文件内容{"storage":{"engine":"wiredTiger","options":{"directoryPerDB":true,"directoryForIndexes":true,"groupCollections":false}}}

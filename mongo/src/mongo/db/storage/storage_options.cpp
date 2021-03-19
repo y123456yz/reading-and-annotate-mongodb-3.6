@@ -65,10 +65,18 @@ ExportedServerParameter<bool, ServerParameterType::kStartupAndRuntime> NoTableSc
  * working memory to disk. By default, mongod flushes memory to disk every 60 seconds.
  * In almost every situation you should not set this value and use the default setting.
  */
+/*
+Specify the interval in seconds between fsync operations where mongod flushes its working memory 
+to disk. By default, mongod flushes memory to disk every 60 seconds. Do not change this value unless 
+you see a background flush average greater than 60 seconds.
+
+Consider the following example which sets the syncdelay to 60 seconds:
+*/
 class SyncdelaySetting
     : public ExportedServerParameter<double, ServerParameterType::kStartupAndRuntime> {
 public:
     SyncdelaySetting()
+		//db.runCommand( { setParameter: 1, syncdelay: 60 } )
         : ExportedServerParameter<double, ServerParameterType::kStartupAndRuntime>(
               ServerParameterSet::getGlobal(), "syncdelay", &storageGlobalParams.syncdelay) {}
 
@@ -95,7 +103,15 @@ public:
     JournalCommitIntervalSetting()
         : ExportedServerParameter<int, ServerParameterType::kRuntimeOnly>(
               ServerParameterSet::getGlobal(),
+              //也可以通过命令行中的--journalCommitInterval <value>配置
               "journalCommitInterval",
+              /*
+			   storage:
+			   dbPath: <string>
+			   journal:
+			      enabled: <boolean>
+			      commitIntervalMs: <num>
+			 */
               &storageGlobalParams.journalCommitIntervalMs) {}
 
     virtual Status validate(const int& potentialNewValue) {

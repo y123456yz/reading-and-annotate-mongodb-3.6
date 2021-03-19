@@ -57,6 +57,7 @@ bool IndexEntryComparison::operator()(const IndexKeyEntry& lhs, const IndexKeyEn
 //
 // Reading the comment in the .h file is highly recommended if you need to understand what this
 // function is doing
+//比较两个IndexKeyEntry是否完全相同
 int IndexEntryComparison::compare(const IndexKeyEntry& lhs, const IndexKeyEntry& rhs) const {
     BSONObjIterator lhsIt(lhs.key);
     BSONObjIterator rhsIt(rhs.key);

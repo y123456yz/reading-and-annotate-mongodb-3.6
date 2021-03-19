@@ -123,6 +123,7 @@ private:
 
     // ---  index keys cache
     bool _keysComputed;
+    //存放该表所有的索引信息
     UpdateIndexData _indexedPaths;
 
     // A cache for query plans.  

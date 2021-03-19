@@ -52,6 +52,7 @@ RecoveryUnit封装了wiredTiger层的事务。RecoveryUnit::_txnOpen 对应于WT层的beginTr
 RecoveryUnit::_txnClose封装了WT层的commit_transaction和rollback_transaction。
 */
 //OperationContext::_recoveryUnit为RecoveryUnit类类型, WiredTigerRecoveryUnit继承该类
+//WiredTigerRecoveryUnit继承该类
 class RecoveryUnit {
     MONGO_DISALLOW_COPYING(RecoveryUnit);
 

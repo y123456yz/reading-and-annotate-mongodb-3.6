@@ -86,6 +86,14 @@ struct StorageGlobalParams {
 
     // --journalCommitInterval
     static const int kMaxJournalCommitIntervalMs;
+
+    /*
+    storage:
+   dbPath: <string>
+   journal:
+      enabled: <boolean>
+      commitIntervalMs: <num>
+    */
     /* MongoDB 里的 journal 行为 主要由2个参数控制，storage.journal.enabled 决定是否开启journal，
     storage.journal.commitInternalMs 决定 journal 刷盘的间隔，默认为100ms，用户也可以通过写入时指定 
     writeConcern 为 {j: ture} 来每次写入时都确保 journal 刷盘。 */

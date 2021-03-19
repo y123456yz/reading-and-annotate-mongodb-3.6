@@ -55,6 +55,7 @@
 
 namespace mongo {
 
+//下面的WiredTigerEngineInit初始化注册
 //确定对应的存储引擎
 namespace {
 class WiredTigerFactory : public StorageEngine::Factory {
@@ -98,6 +99,7 @@ public:
                                    getGlobalServiceContext()->getFastClockSource(),
                                    wiredTigerGlobalOptions.engineConfig,
                                    cacheMB,
+                                   //mongod --journal 
                                    params.dur,
                                    ephemeral,
                                    params.repair,

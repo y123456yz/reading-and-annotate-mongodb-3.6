@@ -764,7 +764,8 @@ std::vector<std::string> KVCatalog::getAllIdentsForDB(StringData db) const {
     return v;
 }
 
-//获取集群所有的
+//KVStorageEngine::reconcileCatalogAndIdents调用
+//获取集群所有的ident信息
 std::vector<std::string> KVCatalog::getAllIdents(OperationContext* opCtx) const {
     std::vector<std::string> v;
 

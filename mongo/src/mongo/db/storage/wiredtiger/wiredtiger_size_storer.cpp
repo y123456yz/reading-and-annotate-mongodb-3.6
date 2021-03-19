@@ -198,10 +198,12 @@ void WiredTigerSizeStorer::loadFromCache(StringData uri,
     *dataSize = it->second.dataSize;
 }
 
+//从sizeStorer.wt读取数据存入cache相关结构中
 void WiredTigerSizeStorer::fillCache() {
     stdx::lock_guard<stdx::mutex> cursorLock(_cursorMutex);
     _checkMagic();
 
+	//typedef std::map<std::string, Entry> Map; 
     Map m;
     {
         // Seek to beginning if needed.

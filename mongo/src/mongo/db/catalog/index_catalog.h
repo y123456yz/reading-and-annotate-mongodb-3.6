@@ -449,7 +449,7 @@ public:
         return this->_impl().checkUnfinished();
     }
 
-    //索引遍历用，可以参考IndexCatalogImpl::findIdIndex  fillOutPlannerParams
+    //索引遍历用，可以参考IndexCatalogImpl::findIdIndex  fillOutPlannerParams CollectionInfoCacheImpl::computeIndexKeys
     inline IndexIterator getIndexIterator(OperationContext* const opCtx,
                                           const bool includeUnfinishedIndexes) const {
         return IndexIterator(opCtx, this, includeUnfinishedIndexes);

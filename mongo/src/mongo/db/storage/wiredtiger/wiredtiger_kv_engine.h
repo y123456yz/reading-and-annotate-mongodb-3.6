@@ -54,7 +54,7 @@ class WiredTigerRecordStore;
 class WiredTigerSessionCache;
 class WiredTigerSizeStorer;
 
-//wiredtiger中的wt文件通过以下方式打开bson内容:wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]" -h . dump table:_mdb_catalog
+//wiredtiger中的wt文件通过以下方式打开wt内容:wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]" -h . dump table:_mdb_catalog
 
 //KVEngine(WiredTigerKVEngine)和StorageEngine(KVStorageEngine)的关系: KVStorageEngine._engine类型为WiredTigerKVEngine
 //也就是KVStorageEngine类包含有WiredTigerKVEngine类成员
@@ -70,6 +70,7 @@ public:
                        ClockSource* cs,
                        const std::string& extraOpenOptions,
                        size_t cacheSizeGB,
+                       //mongod --journal 
                        bool durable,
                        bool ephemeral,
                        bool repair,

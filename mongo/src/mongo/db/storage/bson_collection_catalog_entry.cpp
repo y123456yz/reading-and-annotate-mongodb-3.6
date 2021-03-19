@@ -135,6 +135,7 @@ BSONObj BSONCollectionCatalogEntry::getIndexSpec(OperationContext* opCtx,
 }
 
 //IndexCatalogImpl::init调用，获取所有的所有名
+//从元数据文件"_mdb_catalog.wt"中获取索引信息
 void BSONCollectionCatalogEntry::getAllIndexes(OperationContext* opCtx,
                                                std::vector<std::string>* names) const {
     MetaData md = _getMetaData(opCtx);

@@ -178,10 +178,12 @@ CollectionImpl::CollectionImpl(Collection* _this_init,
 
 void CollectionImpl::init(OperationContext* opCtx) {
     _magic = kMagicNumber;
+	//IndexCatalogImpl::init
     _indexCatalog.init(opCtx).transitional_ignore();
     if (isCapped())
         _recordStore->setCappedCallback(this);
 
+	//CollectionInfoCacheImpl::init
     _infoCache.init(opCtx);
 }
 

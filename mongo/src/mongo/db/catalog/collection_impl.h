@@ -457,6 +457,7 @@ private:
     //该collection对应的上层DatabaseCatalogEntry信息
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
+    //对应CollectionInfoCacheImpl
     CollectionInfoCache _infoCache;
     //索引相关接口  
     //CollectionImpl::CollectionImpl构造及赋值，对应IndexCatalogImpl

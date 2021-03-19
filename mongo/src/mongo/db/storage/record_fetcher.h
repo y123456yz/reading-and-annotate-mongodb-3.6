@@ -37,6 +37,7 @@ class OperationContext;
  *
  * @see RecordStore::recordNeedsFetch
  */
+//只有MmapV1RecordFetcher继承该类，MMAP忽略
 class RecordFetcher {
 public:
     virtual ~RecordFetcher() {}
