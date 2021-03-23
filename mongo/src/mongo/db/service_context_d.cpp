@@ -130,6 +130,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
         if (storageGlobalParams.engineSetByUser) {
             // Verify that the name of the user-supplied storage engine matches the contents of
             // the metadata file.   获取存储引擎，默认的WiredTiger存储引擎对应WiredTigerFactory
+            //检查该存储引擎是否支持
             const StorageEngine::Factory* factory =
                 mapFindWithDefault(_storageFactories,
                                    storageGlobalParams.engine,
@@ -174,6 +175,7 @@ void ServiceContextMongoD::initializeGlobalStorageEngine() {
 	//获取存储引擎，默认的WiredTiger存储引擎对应WiredTigerFactory
     const StorageEngine::Factory* factory = _storageFactories[storageGlobalParams.engine];
 
+	//如果 --storageEngine xx配置错误，这里直接退出，不支持
     uassert(18656,
             str::stream() << "Cannot start server with an unknown storage engine: "
                           << storageGlobalParams.engine,

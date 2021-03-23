@@ -45,7 +45,7 @@ struct WiredTigerItem;
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
 
-////WiredTigerIndexUnique和WiredTigerIndexStandard继承该类
+//WiredTigerIndexUnique和WiredTigerIndexStandard继承该类
 class WiredTigerIndex : public SortedDataInterface { 
 public:
     /**

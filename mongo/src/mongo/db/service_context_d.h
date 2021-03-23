@@ -43,7 +43,7 @@ class StorageEngineLockFile;
 //_initAndListen中会构造使用该类   
 class ServiceContextMongoD final : public ServiceContext {
 public:
-    //下面的FactoryMap _storageFactories;使用
+    //下面的FactoryMap //ServiceContextMongoD._storageFactories成员;使用
     using FactoryMap = std::map<std::string, const StorageEngine::Factory*>;
 
     ServiceContextMongoD();
@@ -83,7 +83,7 @@ private:
 
     // All possible storage engines are registered here through MONGO_INIT.
     //所有的存储引起都注册到这里 registerStorageEngine
-    FactoryMap _storageFactories;
+    FactoryMap _storageFactories; 
 };
 
 //上面的ServiceContextMongoD:makeStorageFactoriesIterator 使用到该类做遍历

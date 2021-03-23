@@ -55,7 +55,13 @@ namespace {
 int MAGIC = 123123;
 }
 
-/* sizeStorer.wt内容  记录各个集合的记录数和集合总字节数
+/* 
+注意一定要使用官方版本wiredtiger，不要使用我这里分析得：
+./wt -v -h /home/yangyazhou/backup2  -C "extensions=[./ext/compressors/snappy/.libs/libwiredtiger_snappy.so]"   dump table:sizeStorer
+-h指定数据目录加-j表示json打印：
+./wt -v -h /home/yangyazhou/backup2  -C "extensions=[./ext/compressors/snappy/.libs/libwiredtiger_snappy.so]"   dump table:sizeStorer
+
+sizeStorer.wt内容  记录各个集合的记录数和集合总字节数
 [root@bogon db]# wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]"  -h . dump table:sizeStorer
 WiredTiger Dump (WiredTiger Version 3.0.0)
 Format=print

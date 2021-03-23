@@ -82,6 +82,8 @@
 #include "mongo/util/scopeguard.h"
 #include "mongo/util/time_support.h"
 
+//wiredtiger中的wt文件通过以下方式打开wt内容:wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]" -h . dump table:_mdb_catalog
+
 //wiredtiger使用可以参考: MongoDB如何使用wiredTiger？
 //https://mongoing.com/archives/2214
 //WT元数据文件管理：https://cloud.tencent.com/developer/article/1626996
@@ -356,6 +358,7 @@ error_check(cursor->insert(cursor));
 */
 //WiredTigerKVEngine::WiredTigerKVEngine中wiredtiger_open获取到的conn
 //WiredTigerSession::WiredTigerSession中conn->open_session获取到的session
+
 //ServiceContextMongoD::initializeGlobalStorageEngine->WiredTigerFactory::create
 //KVStorageEngine._engine为WiredTigerKVEngine
 WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
@@ -372,6 +375,7 @@ WiredTigerKVEngine::WiredTigerKVEngine(const std::string& canonicalName,
       _clockSource(cs),
       _oplogManager(stdx::make_unique<WiredTigerOplogManager>()),
       _canonicalName(canonicalName),
+      //数据目录
       _path(path),
       _sizeStorerSyncTracker(cs, 100000, Seconds(60)),
       //mongod --journal 
@@ -911,6 +915,7 @@ std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
     } else {
         ret = stdx::make_unique<PrefixedWiredTigerRecordStore>(this, opCtx, params, prefix);
     }
+	//初始化获取当前table中最大RecordId，最大数据量 数据行数，启动startOplogManager OplogBackgroundThread等
     ret->postConstructorInit(opCtx);
 
     return std::move(ret);
@@ -1186,6 +1191,7 @@ bool WiredTigerKVEngine::hasIdent(OperationContext* opCtx, StringData ident) con
     return _hasUri(WiredTigerRecoveryUnit::get(opCtx)->getSession()->getSession(), _uri(ident));
 }
 
+//检查uri对应文件目录是否存在
 bool WiredTigerKVEngine::_hasUri(WT_SESSION* session, const std::string& uri) const {
     // can't use WiredTigerCursor since this is called from constructor.
     WT_CURSOR* c = NULL;
@@ -1419,6 +1425,7 @@ MongoDB 要支持 majority 的 readConcern 级别， 必须设置 replication.enableMajorit
 后， MongoDB 会起一个单独的snapshot 线程， 会周期性的对当前的数据集进行snapshot， 并记录 snapshot 时最新
 oplog的时间戳， 得到一个映射表。参考<<MONGODB原理与实战>> readConcern 实现原理章节
 */
+//WiredTigerRecordStore::postConstructorInit调用
 void WiredTigerKVEngine::startOplogManager(OperationContext* opCtx,
                                            const std::string& uri,
                                            WiredTigerRecordStore* oplogRecordStore) {

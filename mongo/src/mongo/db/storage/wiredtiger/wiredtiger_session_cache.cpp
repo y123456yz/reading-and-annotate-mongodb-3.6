@@ -56,11 +56,11 @@ wiredtiger简单例子:
 
 //__session_create	创建table表
 //error_check(session->create(
-	session, "table:access", "key_format=S,value_format=S"));
+//	session, "table:access", "key_format=S,value_format=S"));
 
 //__session_open_cursor  //获取一个cursor通过cursorp返回
 //error_check(session->open_cursor(
-	session, "table:access", NULL, NULL, &cursor));
+//	session, "table:access", NULL, NULL, &cursor));
 
 //__wt_cursor_set_key
 //cursor->set_key(cursor, "key1");	

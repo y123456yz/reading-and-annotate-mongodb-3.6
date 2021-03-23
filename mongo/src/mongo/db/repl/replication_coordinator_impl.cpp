@@ -1912,7 +1912,7 @@ bool ReplicationCoordinatorImpl::canAcceptWritesForDatabase(OperationContext* op
     return canAcceptWritesForDatabase_UNSAFE(opCtx, dbName);
 }
 
-//是否可以写，如果主节点在就可以写，或者单机启动
+//是否允许不安全写，如果主节点在就可以写，或者单机启动
 bool ReplicationCoordinatorImpl::canAcceptWritesForDatabase_UNSAFE(OperationContext* opCtx,
                                                                    StringData dbName) {
     // _canAcceptNonLocalWrites is always true for standalone nodes, always false for nodes

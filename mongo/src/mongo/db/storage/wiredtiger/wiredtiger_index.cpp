@@ -255,6 +255,12 @@ int WiredTigerIndex::Create(OperationContext* opCtx,
     // Don't use the session from the recovery unit: create should not be used in a transaction
     WiredTigerSession session(WiredTigerRecoveryUnit::get(opCtx)->getSessionCache()->conn());
     WT_SESSION* s = session.getSession();
+	/*
+	use test
+	db.test.ensureIndex({"yangt":"hashed"},{background: true}),对应打印如下：
+	
+	 create uri: table:test/index/1-3924552931388685949 config: type=file,internal_page_max=16k,leaf_page_max=16k,checksum=on,block_compressor=,,,,key_format=u,value_format=u,app_metadata=(formatVersion=8,infoObj={ "v" : 2, "key" : { "yangt" : "hashed" }, "name" : "yangt_hashed", "ns" : "test.test", "background" : true }),log=(enabled=true)
+	*/
     LOG(1) << "create uri: " << uri << " config: " << config;
     return s->create(s, uri.c_str(), config.c_str());
 }
@@ -1252,20 +1258,25 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
                                       const BSONObj& key,   //存入索引文件类似key:id, 也就是这个key对应的value为id，然后从数据文件中查找该id对应的value
                                       const RecordId& id,
                                       bool dupsAllowed) {
-                                      
+    //构造索引KV中的K                                  
     const KeyString data(keyStringVersion(), key, _ordering);
+	//根据key构造WiredTigerItem
     WiredTigerItem keyItem(data.getBuffer(), data.getSize());
 
+	//构造KV中得V，也就是数据部分的K
     KeyString value(keyStringVersion(), id);
     if (!data.getTypeBits().isAllZeros())
         value.appendTypeBits(data.getTypeBits());
 //	log(1) << "yang test WiredTigerIndexUnique::_insert key: " << redact(&key);  
 	//log() << "yang test WiredTigerIndexUnique::_insert";
 
+	//根据V构造WiredTigerItem
     WiredTigerItem valueItem(value.getBuffer(), value.getSize());
-	//WiredTigerIndex::setKey
+	//WiredTigerIndex::setKey 设置key
     setKey(c, keyItem.Get());  
+	//设置value
     c->set_value(c, valueItem.Get());
+	//该索引VK写入存储引擎
     int ret = WT_OP_CHECK(c->insert(c)); //插入
 
 	
@@ -1273,10 +1284,22 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
 	//log() << "yang test WiredTigerIndexUnique::_insert" << " key:" << redact(record)<< " value:"<< id;
 	//	<< " value:" << redact(value.toBson());
 	
-
+	//key一样，但是value和索引表的value不一样，说明冲突了
     if (ret != WT_DUPLICATE_KEY) { //说明是第一次插入该唯一key
-        return wtRCToStatus(ret);
+    	//insert成功
+        return wtRCToStatus(ret); 
     }
+
+	//该功能意义是啥？唯一索引还可以允许重复？？？？？？????????//??????????????????????????????????
+
+	/*
+	假设有如下两条数据，有{{name:1}, {unique:true}}这个唯一索引：
+	{"name":"yangyazhou", "interests":"mongodb"}  对应数据表中KV={Data_RecordId(1): {"name":"yangyazhou", "interests":"mongodb"}}
+	{"name":"yangyazhou", "interests":"mysql"}    对应数据表中KV={Data_RecordId(2): {"name":"yangyazhou", "interests":"mysql"}}
+
+	则索引表的KV只会有一条，而不是两条：KV={RecordId(1): Data_RecordId(1),RecData_RecordIdordId(2)}，一个K对应两条data数据
+	*/
+	
 
 	//说明重复了，以前已经有该唯一key在wiredtiger索引文件中
     // we might be in weird mode where there might be multiple values
@@ -1287,39 +1310,49 @@ Status WiredTigerIndexUnique::_insert(WT_CURSOR* c,
     invariantWTOK(ret);
 
     WT_ITEM old;
+	//获取之前所有KEY的value信息
     invariantWTOK(c->get_value(c, &old));
 
     bool insertedId = false;
 
+	//索引表对应该K的value信息拷贝到该BufReader
+	//清空value，下面的while中重新生成
     value.resetToEmpty();
     BufReader br(old.data, old.size);
     while (br.remaining()) {
+		//获取该K对应的索引表V RecordId
         RecordId idInIndex = KeyString::decodeRecordId(&br);
+		//新的所有KV和索引表已有KV完全一样，返回OK
         if (id == idInIndex)
             return Status::OK();  // already in index
 
+		//新的value id比索引表中已有id小，则把新id添加到value中
         if (!insertedId && id < idInIndex) {
             value.appendRecordId(id);
             value.appendTypeBits(data.getTypeBits());
             insertedId = true;
         }
 
+		//
         // Copy from old to new value
+        //把原理索引表中的V也添加到value中
         value.appendRecordId(idInIndex);
         value.appendTypeBits(KeyString::TypeBits::fromBuffer(keyStringVersion(), &br));
     }
 
-    if (!dupsAllowed) //不允许重复，则报错
+	//dupsAllowed赋值参考IndexCatalogImpl::prepareInsertDeleteOptions
+    if (!dupsAllowed) //不允许重复，则报错,一般都是走这里，重复直接报错
         return dupKeyError(key);
 
     if (!insertedId) {
+		//说明这次新的id比索引表中的id大，则新id添加到原来旧id末尾
+		//也就是一个索引对多条数据
         // This id is higher than all currently in the index for this key
         value.appendRecordId(id);
         value.appendTypeBits(data.getTypeBits());
     }
 
-	//做更新，则该唯一key的value为新的value
-
+	//做更新，则该唯一key的value为新的value,数据部分
     valueItem = WiredTigerItem(value.getBuffer(), value.getSize());
     c->set_value(c, valueItem.Get());
     return wtRCToStatus(c->update(c));
@@ -1482,10 +1515,12 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
     int ret = WT_OP_CHECK(c->insert(c));
 
     if (ret != WT_DUPLICATE_KEY)
+		//有可能是写入失败，有可能是写入成功
         return wtRCToStatus(ret);
     // If the record was already in the index, we just return OK.
     // This can happen, for example, when building a background index while documents are being
     // written and reindexed.
+    //索引K重复，正常的，直接返回OK
     return Status::OK();
 }
 

@@ -687,8 +687,10 @@ WiredTigerRecordStore::~WiredTigerRecordStore() {
     }
 }
 
+//初始化获取当前table中最大RecordId，最大数据量 数据行数，启动startOplogManager OplogBackgroundThread等
 void WiredTigerRecordStore::postConstructorInit(OperationContext* opCtx) {
     // Find the largest RecordId currently in use and estimate the number of records.
+    //获取该表table最大的recordID
     std::unique_ptr<SeekableRecordCursor> cursor = getCursor(opCtx, /*forward=*/false);
     if (auto record = cursor->next()) {
         int64_t max = record->id.repr();
@@ -697,6 +699,7 @@ void WiredTigerRecordStore::postConstructorInit(OperationContext* opCtx) {
         if (_sizeStorer) {
             long long numRecords;
             long long dataSize;
+			//获取当前最大数据量和数据行数
             _sizeStorer->loadFromCache(_uri, &numRecords, &dataSize);
             _numRecords.store(numRecords);
             _dataSize.store(dataSize);
@@ -1245,7 +1248,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
-		//log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
+		log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

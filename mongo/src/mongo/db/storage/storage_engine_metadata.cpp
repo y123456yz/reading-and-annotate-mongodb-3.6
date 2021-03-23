@@ -136,10 +136,12 @@ const BSONObj& StorageEngineMetadata::getStorageEngineOptions() const {
     return _storageEngineOptions;
 }
 
+//mongod启动从ServiceContextMongoD::initializeGlobalStorageEngine()获取
 void StorageEngineMetadata::setStorageEngine(const std::string& storageEngine) {
     _storageEngine = storageEngine;
 }
 
+//mongod启动从ServiceContextMongoD::initializeGlobalStorageEngine()获取
 void StorageEngineMetadata::setStorageEngineOptions(const BSONObj& storageEngineOptions) {
     _storageEngineOptions = storageEngineOptions.getOwned();
 }

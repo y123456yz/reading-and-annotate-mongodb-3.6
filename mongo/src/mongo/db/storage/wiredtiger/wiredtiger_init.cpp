@@ -95,6 +95,7 @@ public:
         const bool ephemeral = false;
         WiredTigerKVEngine* kv =
             new WiredTigerKVEngine(getCanonicalName().toString(),
+            					   //Êý¾ÝÄ¿Â¼
                                    params.dbpath,
                                    getGlobalServiceContext()->getFastClockSource(),
                                    wiredTigerGlobalOptions.engineConfig,

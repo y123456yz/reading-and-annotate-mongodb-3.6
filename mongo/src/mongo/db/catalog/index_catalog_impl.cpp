@@ -1589,14 +1589,17 @@ void IndexCatalogImpl::prepareInsertDeleteOptions(OperationContext* opCtx,
     auto replCoord = repl::ReplicationCoordinator::get(opCtx);
     if (replCoord->shouldRelaxIndexConstraints(opCtx, NamespaceString(desc->parentNS()))) {
         options->getKeysMode = IndexAccessMethod::GetKeysMode::kRelaxConstraints;
-    } else {
+    } else { 
+    	//默认为alwaysAllowNonLocalWrites这个
         options->getKeysMode = IndexAccessMethod::GetKeysMode::kEnforceConstraints;
     }
 
     // Don't allow dups for Id key. Allow dups for non-unique keys or when constraints relaxed.
     if (KeyPattern::isIdKeyPattern(desc->keyPattern())) {
+		//_id索引直接不允许同一个索引key的value重复，也就是不能有重复_id
         options->dupsAllowed = false;
     } else {
+    	//唯一索引为false，不允许重复，除非getKeysMode为kRelaxConstraints
         options->dupsAllowed = !desc->unique() ||
             options->getKeysMode == IndexAccessMethod::GetKeysMode::kRelaxConstraints;
     }

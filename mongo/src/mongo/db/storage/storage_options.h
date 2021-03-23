@@ -62,6 +62,7 @@ struct StorageGlobalParams {
     bool engineSetByUser = false; //如果配置文件中有storage.engine配置，则为true，见storeMongodOptions
 
     // The directory where the mongod instance stores its data.
+    //数据目录
     std::string dbpath = kDefaultDbPath;
 
     // --upgrade

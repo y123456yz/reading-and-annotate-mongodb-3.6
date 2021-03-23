@@ -192,3 +192,25 @@
 2021-03-14T14:24:49.313+0800 I COMMAND  [conn653] command admin.$cmd appName: "MongoDB Shell" command: listDatabases { listDatabases: 1.0, lsid: { id: UUID("9775f94d-aeef-435d-9902-5bef6873eced") }, $db: "admin" } numYields:0 reslen:438 locks:{ Global: { acquireCount: { r: 16 } }, Database: { acquireCount: { r: 7 }, acquireWaitCount: { r: 1 }, timeAcquiringMicros: { r: 206152907 } } } protocol:op_msg 206154ms
 
 
+注意从节点拉取oplog后加索引过程和主节点一直，只是从节点不会记录createIndexes这条慢日志：
+从节点日志结尾如下：
+2021-03-22T08:01:39.007+0800 I -        [repl index builder 30]   Index Build (background): 431397600/429129658 100%
+2021-03-22T08:01:42.006+0800 I -        [repl index builder 30]   Index Build (background): 431427900/429129647 100%
+2021-03-22T08:01:45.001+0800 I -        [repl index builder 30]   Index Build (background): 431460800/429129633 100%
+2021-03-22T08:01:48.007+0800 I -        [repl index builder 30]   Index Build (background): 431532900/429129633 100%
+2021-03-22T08:01:50.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+2021-03-22T08:01:51.006+0800 I -        [repl index builder 30]   Index Build (background): 431562000/429129634 100%
+2021-03-22T08:01:54.002+0800 I -        [repl index builder 30]   Index Build (background): 431606200/429129635 100%
+2021-03-22T08:01:57.004+0800 I -        [repl index builder 30]   Index Build (background): 431661000/429129636 100%
+2021-03-22T08:02:00.002+0800 I -        [repl index builder 30]   Index Build (background): 431715100/429129636 100%
+2021-03-22T08:02:03.001+0800 I -        [repl index builder 30]   Index Build (background): 431759100/429129637 100%
+2021-03-22T08:02:05.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+2021-03-22T08:02:06.004+0800 I -        [repl index builder 30]   Index Build (background): 431824600/429129636 100%
+2021-03-22T08:02:09.003+0800 I -        [repl index builder 30]   Index Build (background): 431879500/429129634 100%
+2021-03-22T08:02:11.156+0800 I INDEX    [repl index builder 30] build index done.  scanned 431935085 total records. 52725 secs
+2021-03-22T08:02:20.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+2021-03-22T08:02:35.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+2021-03-22T08:02:50.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+2021-03-22T08:04:05.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+2021-03-22T08:04:20.459+0800 I ACCESS   [conn917] Successfully authenticated as principal Qfr1ODB8RLLz4AJt on admin from client xx:50126
+

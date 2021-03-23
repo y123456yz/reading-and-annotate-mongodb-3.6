@@ -391,6 +391,8 @@ struct InsertDeleteOptions {
     bool logIfError = false;
 
     // Are duplicate keys allowed in the index?
+    //是否允许重复key
+    //赋值参考IndexCatalogImpl::prepareInsertDeleteOptions
     bool dupsAllowed = false;
 
     // Should we relax the index constraints?

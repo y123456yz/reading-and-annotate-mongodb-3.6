@@ -61,8 +61,21 @@ struct ValidateResults;
  *
  * TODO: See if this actually works.
  */ 
+
+/*
+Btree_interface.cpp (src\mongo\db\storage\mmap_v1\btree):class BtreeInterfaceImpl final : public SortedDataInterface {
+Btree_interface.cpp (src\mongo\db\storage\mmap_v1\btree):    class Cursor final : public SortedDataInterface::Cursor {
+Btree_interface.cpp (src\mongo\db\storage\mmap_v1\btree):    class RandomCursor final : public SortedDataInterface::Cursor {
+Btree_interface_test.cpp (src\mongo\db\storage\mmap_v1\btree):class MyHarnessHelper final : public SortedDataInterfaceHarnessHelper {
+Devnull_kv_engine.cpp (src\mongo\db\storage\devnull):class DevNullSortedDataInterface : public SortedDataInterface {
+Wiredtiger_index.cpp (src\mongo\db\storage\wiredtiger):class WiredTigerIndexCursorBase : public SortedDataInterface::Cursor {
+Wiredtiger_index.h (src\mongo\db\storage\wiredtiger):class WiredTigerIndex : public SortedDataInterface { 
+*/
+ 
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
+
+
 
  
 ////WiredTigerIndexUnique和WiredTigerIndexStandard继承WiredTigerIndex类，WiredTigerIndex继承该类WiredTigerIndex
