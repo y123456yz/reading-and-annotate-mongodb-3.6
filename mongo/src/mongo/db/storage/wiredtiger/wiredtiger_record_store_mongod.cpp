@@ -57,6 +57,8 @@ namespace {
 std::set<NamespaceString> _backgroundThreadNamespaces;
 stdx::mutex _backgroundThreadMutex;
 
+//WT RecordStoreThread:线程
+//initRsOplogBackgroundThread中初始化线程启用
 class WiredTigerRecordStoreThread : public BackgroundJob {
 public:
     WiredTigerRecordStoreThread(const NamespaceString& ns)
@@ -71,6 +73,8 @@ public:
     /**
      * Returns true iff there was an oplog to delete from.
      */
+    
+    //下面的WiredTigerRecordStoreThread::run线程循环体中运行
     bool _deleteExcessDocuments() {
         if (!getGlobalServiceContext()->getGlobalStorageEngine()) {
             LOG(2) << "no global storage engine yet";
@@ -102,6 +106,8 @@ public:
             if (!rs->yieldAndAwaitOplogDeletionRequest(&opCtx)) {
                 return false;  // Oplog went away.
             }
+
+			//WiredTigerRecordStore::reclaimOplog调用
             rs->reclaimOplog(&opCtx);
         } catch (const std::exception& e) {
             severe() << "error in WiredTigerRecordStoreThread: " << e.what();
@@ -112,6 +118,7 @@ public:
         return true;
     }
 
+	//线程循环体
     virtual void run() {
         Client::initThread(_name.c_str());
 
@@ -127,6 +134,7 @@ private:
     std::string _name;
 };
 
+////WiredTigerRecordStore::postConstructorInit中调用
 bool initRsOplogBackgroundThread(StringData ns) {
     if (!NamespaceString::oplog(ns)) {
         return false;

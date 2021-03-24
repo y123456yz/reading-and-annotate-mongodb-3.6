@@ -359,6 +359,7 @@ Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     for (std::list<std::string>::iterator it = toDrop.begin(); it != toDrop.end(); ++it) {
         string coll = *it;
 		//KVDatabaseCatalogEntry::dropCollection
+		//这里面会对数据表做真正的删除操作
         entry->dropCollection(opCtx, coll).transitional_ignore();
     }
     toDrop.clear();

@@ -1126,7 +1126,9 @@ Status IndexCatalogImpl::_dropIndex(OperationContext* opCtx, IndexCatalogEntry* 
 void IndexCatalogImpl::_deleteIndexFromDisk(OperationContext* opCtx,
                                             const string& indexName,
                                             const string& indexNamespace) {
-    Status status = _collection->getCatalogEntry()->removeIndex(opCtx, indexName);
+	//collectionImpl::getCatalogEntry获取元数据操作接口类
+	//KVCollectionCatalogEntry::removeIndex
+	Status status = _collection->getCatalogEntry()->removeIndex(opCtx, indexName);
     if (status.code() == ErrorCodes::NamespaceNotFound) {
         // this is ok, as we may be partially through index creation
     } else if (!status.isOK()) {

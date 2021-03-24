@@ -44,6 +44,7 @@ namespace mongo {
 // TODO(geert): Enable checks by default
 MONGO_EXPORT_STARTUP_SERVER_PARAMETER(debugCollectionUUIDs, bool, false);
 
+//È«¾ÖµÄUUIDCache
 const OperationContext::Decoration<NamespaceUUIDCache> NamespaceUUIDCache::get =
     OperationContext::declareDecoration<NamespaceUUIDCache>();
 

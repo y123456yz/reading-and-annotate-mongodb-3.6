@@ -59,10 +59,14 @@ public:
           _ident(ident.toString()),
           _dropOnRollback(dropOnRollback) {}
 
+	
+	////KVDatabaseCatalogEntryBase::commit->WiredTigerKVEngine::dropIdent删表中调用，真正的表删除
+	//KVCollectionCatalogEntry::RemoveIndexChange::commit()->WiredTigerKVEngine::dropIdent 删索引，中调用，真正删除索引在这里
     virtual void commit() {}
     virtual void rollback() {
         if (_dropOnRollback) {
             // Intentionally ignoring failure
+            //真正的删表操作在这里
             _dce->_engine->getEngine()->dropIdent(_opCtx, _ident).transitional_ignore();
         }
 
@@ -82,6 +86,7 @@ public:
 
 class KVDatabaseCatalogEntryBase::RemoveCollectionChange : public RecoveryUnit::Change {
 public:
+	////真正的表删除在这里，通过这里触发，参考KVDatabaseCatalogEntryBase::dropCollection
     RemoveCollectionChange(OperationContext* opCtx,
                            KVDatabaseCatalogEntryBase* dce,
                            StringData collection,
@@ -95,12 +100,15 @@ public:
           _entry(entry),
           _dropOnCommit(dropOnCommit) {}
 
+	
     virtual void commit() {
         delete _entry;
 
         // Intentionally ignoring failure here. Since we've removed the metadata pointing to the
         // collection, we should never see it again anyway.
         if (_dropOnCommit)
+			//表真正清理在这里
+			//WiredTigerKVEngine::dropIdent
             _dce->_engine->getEngine()->dropIdent(_opCtx, _ident).transitional_ignore();
     }
 
@@ -407,7 +415,9 @@ Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, Strin
 
     // This will lazily delete the KVCollectionCatalogEntry and notify the storageEngine to
     // drop the collection only on WUOW::commit().
+    //真正的表删除在这里，通过这里触发，在外层的KVStorageEngine::dropDatabase中调用WUOW::commit()触发真正的删除
     opCtx->recoveryUnit()->registerChange(
+    //最终外层调用触发RemoveCollectionChange::commit真正进行删除
         new RemoveCollectionChange(opCtx, this, ns, ident, it->second, true));
 
     _collections.erase(ns.toString());

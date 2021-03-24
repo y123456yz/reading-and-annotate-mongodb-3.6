@@ -944,6 +944,7 @@ void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
 
     auto const serviceContext = opCtx->getServiceContext();
 
+	//从统计信息中清除该表，表示不用对该表做计算操作了，因为表已经清除
     for (auto&& coll : *db) {
         Top::get(serviceContext).collectionDropped(coll->ns().ns(), true);
     }

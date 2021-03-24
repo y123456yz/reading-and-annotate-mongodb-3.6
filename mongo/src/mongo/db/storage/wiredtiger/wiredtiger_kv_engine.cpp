@@ -1060,6 +1060,9 @@ KVCollectionCatalogEntry::AddIndexChange
 class KVDatabaseCatalogEntryBase::RemoveCollectionChange
 KVStorageEngine::reconcileCatalogAndIdents
 */
+
+////KVDatabaseCatalogEntryBase::commit->WiredTigerKVEngine::dropIdent删表中调用，真正的表删除
+//KVCollectionCatalogEntry::RemoveIndexChange::commit()->WiredTigerKVEngine::dropIdent 删索引，中调用，真正删除索引在这里
 Status WiredTigerKVEngine::dropIdent(OperationContext* opCtx, StringData ident) {
     string uri = _uri(ident);
 
@@ -1282,11 +1285,14 @@ void WiredTigerKVEngine::setJournalListener(JournalListener* jl) {
     return _sessionCache->setJournalListener(jl); //WiredTigerSessionCache::setJournalListener
 }
 
+//SetInitRsOplogBackgroundThreadCallback中初始化为initRsOplogBackgroundThread
 void WiredTigerKVEngine::setInitRsOplogBackgroundThreadCallback(
     stdx::function<bool(StringData)> cb) {
     initRsOplogBackgroundThreadCallback = std::move(cb);
 }
 
+//上面的函数中对initRsOplogBackgroundThreadCallback赋值，这里运行
+//WiredTigerRecordStore::postConstructorInit中调用
 bool WiredTigerKVEngine::initRsOplogBackgroundThread(StringData ns) {
     return initRsOplogBackgroundThreadCallback(ns);
 }

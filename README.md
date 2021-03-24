@@ -262,7 +262,97 @@ MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。�
  *   [delete.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/delete.cpp)   
  *   [delete.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/delete.h) 
  *   [......](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/exec/)  
+  
+  
+#### storage存储模块:  
+##### catalog中间层相关实现: 
+###### database中间层接口相关(重要接口注释): 
+ *   [database.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database.cpp) 
+ *   [database.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database.h) 
+ *   [database_impl.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_impl.h) 
+ *   [database_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_impl.cpp) 
+ *   [database_holder.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_holder.h) 
+ *   [database_holder.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_holder.cpp) 
+ *   [database_holder_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_holder_impl.cpp) 
+ *   [database_holder_impl.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_holder_impl.h) 
+ *   [database_catalog_entry.h (通过这里和KVStorageEngine关联)](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/database_catalog_entry.h) 
+  
+###### collection中间层接口相关(重要接口注释): 
+ *   [collection.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection.cpp) 
+ *   [collection.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection.h) 
+ *   [collection_impl.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_impl.h) 
+ *   [collection_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_impl.cpp) 
+ *   [collection_info_cache.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_info_cache.h) 
+ *   [collection_info_cache.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_info_cache.cpp) 
+ *   [collection_info_cache_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_info_cache_impl.cpp) 
+ *   [collection_info_cache_impl.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_info_cache_impl.h) 
+ *   [collection_options.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_options.cpp) 
+ *   [collection_options.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_options.h) 
+ *   [collection_catalog_entry.h (通过这里和KVStorageEngine关联)](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/collection_catalog_entry.h) 
+  
+###### index中间层接口相关(重要接口注释): 
+ *   [index_catalog.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog.cpp) 
+ *   [index_catalog.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog.h) 
+ *   [index_catalog_impl.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog_impl.h) 
+ *   [index_catalog_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog_impl.cpp) 
+ *   [index_catalog_entry.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog_entry.h) 
+ *   [index_catalog_entry.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog_entry.cpp) 
+ *   [index_catalog_entry_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog_entry_impl.cpp) 
+ *   [index_catalog_entry_impl.h (通过这里和CollectionInfoCache、CollectionCatalogEntry、IndexAccessMethod等关联)](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_catalog_entry_impl.h) 
+ *   [index_create.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_create.cpp) 
+ *   [index_create.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_create.h) 
+ *   [index_create_impl.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_create_impl.cpp) 
+ *   [index_create_impl.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/index_create_impl.h) 
+  
+##### storage层相关实现(重要接口注释): 
+ *   [record_data.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/record_data.cpp) 
+ *   [record_data.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/record_data.h) 
+ *   [record_store.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/record_store.h) 
+ *   [sorted_data_interface.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/sorted_data_interface.h) 
+ *   [storage_engine.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_engine.h) 
+ *   [storage_engine_lock_file.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_engine_lock_file.cpp) 
+ *   [storage_engine_lock_file.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_engine_lock_file.h) 
+ *   [storage_engine_metadata.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_engine_metadata.cpp) 
+ *   [storage_engine_metadata.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_engine_metadata.h) 
+ *   [storage_init.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_init.cpp) 
+ *   [storage_options.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_options.h) 
+ *   [storage_options.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/storage_options.cpp) 
+  
+###### kv引擎管理注册(重要接口注释): 
+ *   [kv_storage_engine.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_storage_engine.cpp) 
+ *   [kv_storage_engine.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_storage_engine.h) 
+ *   [kv_catalog.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_catalog.h) 
+ *   [kv_catalog.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_catalog.cpp) 
+ *   [kv_collection_catalog_entry.h(通过这里和catalog中间层collection衔接)](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_collection_catalog_entry.h) 
+ *   [kv_collection_catalog_entry.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_collection_catalog_entry.cpp) 
+ *   [kv_database_catalog_entry.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_database_catalog_entry.cpp) 
+ *   [kv_database_catalog_entry.h(通过这里和catalog中间层database衔接)](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_database_catalog_entry.h) 
+ *   [kv_database_catalog_entry_base.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_database_catalog_entry_base.cpp) 
+ *   [kv_database_catalog_entry_base.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/kv_database_catalog_entry_base.h) 
+   
+###### wiredtiger存储引擎接口相关(重要接口注释): 
+ *   [wiredtiger_global_options.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_global_options.cpp) 
+ *   [wiredtiger_global_options.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_global_options.h) 
+ *   [wiredtiger_init.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_init.h) 
+ *   [wiredtiger_init.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_init.cpp) 
+ *   [wiredtiger_kv_engine.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_kv_engine.h) 
+ *   [wiredtiger_kv_engine.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_kv_engine.cpp) 
+ *   [wiredtiger_parameters.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_parameters.cpp) 
+ *   [wiredtiger_parameters.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_parameters.h) 
+ *   [wiredtiger_record_store.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_record_store.cpp) 
+ *   [wiredtiger_record_store.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_record_store.h) 
+ *   [wiredtiger_recovery_unit.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_recovery_unit.h) 
+ *   [wiredtiger_recovery_unit.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_recovery_unit.cpp) 
+ *   [wiredtiger_server_status.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_server_status.cpp) 
+ *   [wiredtiger_server_status.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_server_status.h) 
+ *   [wiredtiger_session_cache.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_session_cache.cpp) 
+ *   [wiredtiger_session_cache.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_session_cache.h) 
+ *   [wiredtiger_size_storer.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_size_storer.h) 
+ *   [wiredtiger_size_storer.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_size_storer.cpp) 
+ *   [wiredtiger_util.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_util.cpp) 
+ *   [wiredtiger_util.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/src/mongo/db/catalog/wiredtiger_util.h) 
 
+   
 ###### plan_ranker对每个候选solution打分，选出最优索引(核心流程注释完毕): 
  *   [plan_ranker.cpp](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_ranker.cpp) 
  *   [plan_ranker.h](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6.1/blob/master/mongo/build/opt/mongo/db/query/plan_ranker.h) 

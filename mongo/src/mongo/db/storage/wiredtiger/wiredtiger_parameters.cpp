@@ -39,6 +39,7 @@ namespace mongo {
 
 using std::string;
 
+//db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=25GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_trigger=25"})
 WiredTigerEngineRuntimeConfigParameter::WiredTigerEngineRuntimeConfigParameter(
     WiredTigerKVEngine* engine)
     : ServerParameter(

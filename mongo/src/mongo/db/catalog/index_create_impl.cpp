@@ -392,6 +392,7 @@ db.things.ensureIndex({name:1}, {background:true});
     }
 
     if (_buildInBackground)
+		//该表后台加索引记录到BackgroundOperation
         _backgroundOperation.reset(new BackgroundOperation(ns));
 
     wunit.commit();

@@ -1070,6 +1070,9 @@ bool WiredTigerRecordStore::yieldAndAwaitOplogDeletionRequest(OperationContext* 
     return !oplogStones->isDead();
 }
 
+//WiredTigerRecordStoreThread::_deleteExcessDocuments调用
+//local库replset.oplogTruncateAfterPoint表相关内容处理，清理该表中指定时间范围得数据
+//oplogTruncateAfterPoint 只用于备库，用来保证 oplog batch 应用的原子性，最终目的是确保主备数据的一致性
 void WiredTigerRecordStore::reclaimOplog(OperationContext* opCtx) {
     while (auto stone = _oplogStones->peekOldestStoneIfNeeded()) {
         invariant(stone->lastRecord.isNormal());
@@ -1248,7 +1251,8 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
 		//KV插入wiredtiger
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
-		log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
+		//2021-03-24T10:58:46.762+0800 I STORAGE  [conn-1] yang test ...WiredTigerRecordStore::_insertRecords . _uri:table:test/collection/7-380857198902467499 key:RecordId(15) value:{ _id: ObjectId('605aaae6cd83d63c5a6bb264'), name1: 2223.0 }
+		//log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

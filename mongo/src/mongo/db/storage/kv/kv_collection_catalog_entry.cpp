@@ -59,6 +59,7 @@ public:
     virtual void commit() {}
     virtual void rollback() {
         // Intentionally ignoring failure.
+        //真正的索引表删除在这里
         _cce->_engine->dropIdent(_opCtx, _ident).transitional_ignore();
     }
 
@@ -74,9 +75,13 @@ public:
         : _opCtx(opCtx), _cce(cce), _ident(ident.toString()) {}
 
     virtual void rollback() {}
+	
+	//KVDatabaseCatalogEntryBase::commit->WiredTigerKVEngine::dropIdent删表中调用，真正的表删除
+	//KVCollectionCatalogEntry::RemoveIndexChange::commit()->WiredTigerKVEngine::dropIdent 删索引，中调用，真正删除索引在这里
     virtual void commit() {
         // Intentionally ignoring failure here. Since we've removed the metadata pointing to the
         // index, we should never see it again anyway.
+        //真正的索引表删除在这里
         _cce->_engine->dropIdent(_opCtx, _ident).transitional_ignore();
     }
 
@@ -172,6 +177,7 @@ void KVCollectionCatalogEntry::setIndexHead(OperationContext* opCtx,
 }
 
 //从该表MetaData元数据中清除该index
+//IndexCatalogImpl::_deleteIndexFromDisk调用
 Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData indexName) {
 	//获取元数据md
 	MetaData md = _getMetaData(opCtx);
@@ -189,7 +195,7 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
     _catalog->putMetaData(opCtx, ns().toString(), md);
 
     // Lazily remove to isolate underlying engine from rollback.
-    //删除索引事件记录下来
+    //删除索引事件记录下来，真正的索引文件删除在这里
     opCtx->recoveryUnit()->registerChange(new RemoveIndexChange(opCtx, this, ident));
     return Status::OK();
 }

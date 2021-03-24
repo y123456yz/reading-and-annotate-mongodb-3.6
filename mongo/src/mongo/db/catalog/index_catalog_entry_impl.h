@@ -183,16 +183,19 @@ private:
     // -----
 
     std::string _ns;
+   
 
     //对应KVCollectionCatalogEntry
     CollectionCatalogEntry* _collection;  // not owned here
     //索引描述信息全部存到这里
     std::unique_ptr<IndexDescriptor> _descriptor;  // owned here
 
+    //CollectionInfoCacheImpl类型
     CollectionInfoCache* _infoCache;  // not owned here
 
     //btree对应BtreeAccessMethod
     //IndexCatalogImpl::_setupInMemoryStructures->IndexCatalogEntryImpl::init调用
+    //通过这里进行底层wt存储引擎的KV操作，参考IndexCatalogImpl::_indexFilteredRecords
     std::unique_ptr<IndexAccessMethod> _accessMethod;
 
     // Owned here.

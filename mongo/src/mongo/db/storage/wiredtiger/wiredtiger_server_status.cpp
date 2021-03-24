@@ -55,6 +55,7 @@ bool WiredTigerServerStatusSection::includeByDefault() const {
     return true;
 }
 
+//db.serverStatus().wiredTiger获取存储引擎监控信息
 BSONObj WiredTigerServerStatusSection::generateSection(OperationContext* opCtx,
                                                        const BSONElement& configElement) const {
     Lock::GlobalLock lk(opCtx, LockMode::MODE_IS, UINT_MAX);

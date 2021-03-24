@@ -172,6 +172,7 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
     // requirement for X-lock on the database when we enter. So there is no way we can insert two
     // different databases for the same name.
     lk.unlock();
+
 	//获取KVStorageEngine
     StorageEngine* storageEngine = getGlobalServiceContext()->getGlobalStorageEngine();
 	//KVStorageEngine::getDatabaseCatalogEntry获取对应KVDatabaseCatalogEntryBase信息
@@ -216,6 +217,7 @@ void DatabaseHolderImpl::close(OperationContext* opCtx, StringData ns, const std
     auto db = it->second;
 	//清除该db下面得所有uuid
     UUIDCatalog::get(opCtx).onCloseDatabase(db);
+	//从全局NamespaceUUIDCache中清除NamespaceUUIDCache._cache
     for (auto&& coll : *db) {
         NamespaceUUIDCache::get(opCtx).evictNamespace(coll->ns());
     }
@@ -228,6 +230,7 @@ void DatabaseHolderImpl::close(OperationContext* opCtx, StringData ns, const std
 	//从_dbs数组中剔除后该db
     _dbs.erase(it);
 
+	//KVStorageEngine::closeDatabase
     getGlobalServiceContext()
         ->getGlobalStorageEngine()
         ->closeDatabase(opCtx, dbName.toString())
@@ -253,7 +256,7 @@ bool DatabaseHolderImpl::closeAll(OperationContext* opCtx,
         string name = *i;
 
         LOG(2) << "DatabaseHolder::closeAll name:" << name;
-
+		//该库下面有表在后台加索引，则需要删除后才能删除该表相关数据
         if (!force && BackgroundOperation::inProgForDb(name)) {
             log() << "WARNING: can't close database " << name
                   << " because a bg job is in progress - try killOp command";

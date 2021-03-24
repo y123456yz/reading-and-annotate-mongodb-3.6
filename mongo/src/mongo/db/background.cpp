@@ -119,11 +119,14 @@ void awaitNoBgOps(stdx::unique_lock<stdx::mutex>& lk, BgInfoMap* bgiMap, StringD
 
 }  // namespace
 
+//说明当前这个库存在正在后台加索引的表
+//DatabaseHolderImpl::closeAll调用
 bool BackgroundOperation::inProgForDb(StringData db) {
     stdx::lock_guard<stdx::mutex> lk(m);
     return dbsInProg.find(db) != dbsInProg.end();
 }
 
+//说明这个表当前正在后台加索引
 bool BackgroundOperation::inProgForNs(StringData ns) {
     stdx::lock_guard<stdx::mutex> lk(m);
     return nsInProg.find(ns) != nsInProg.end();
@@ -147,10 +150,12 @@ void BackgroundOperation::assertNoBgOpInProgForNs(StringData ns) {
             !inProgForNs(ns));
 }
 
+
 void BackgroundOperation::awaitNoBgOpInProgForDb(StringData db) {
     stdx::unique_lock<stdx::mutex> lk(m);
     awaitNoBgOps(lk, &dbsInProg, db);
 }
+
 
 void BackgroundOperation::awaitNoBgOpInProgForNs(StringData ns) {
     stdx::unique_lock<stdx::mutex> lk(m);
@@ -158,6 +163,7 @@ void BackgroundOperation::awaitNoBgOpInProgForNs(StringData ns) {
 }
 
 //MultiIndexBlockImpl::init中调用
+//把这个backgroud操作记录下来，包括是那个库的那个表在做backgroud操作，只有后台加索引才会用该类
 BackgroundOperation::BackgroundOperation(StringData ns) : _ns(ns) {
     stdx::lock_guard<stdx::mutex> lk(m);
     recordBeginAndInsert(&dbsInProg, _ns.db());
@@ -170,6 +176,7 @@ BackgroundOperation::~BackgroundOperation() {
     recordEndAndRemove(&nsInProg, _ns.ns());
 }
 
+//把当前后台的操作打印下来
 void BackgroundOperation::dump(std::ostream& ss) {
     stdx::lock_guard<stdx::mutex> lk(m);
     if (nsInProg.size()) {

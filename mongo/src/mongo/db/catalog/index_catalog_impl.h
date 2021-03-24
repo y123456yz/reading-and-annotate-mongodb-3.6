@@ -444,6 +444,7 @@ private:
 
 
     int _magic;
+    //和指定的集合关联起来  CollectionImpl
     Collection* const _collection;
     const int _maxNumIndexesAllowed;
 
