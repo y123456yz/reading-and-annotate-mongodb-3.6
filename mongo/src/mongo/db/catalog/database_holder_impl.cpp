@@ -256,7 +256,7 @@ bool DatabaseHolderImpl::closeAll(OperationContext* opCtx,
         string name = *i;
 
         LOG(2) << "DatabaseHolder::closeAll name:" << name;
-		//该库下面有表在后台加索引，则需要删除后才能删除该表相关数据
+		//该库下面有表在后台加索引，则需要删除kill掉该后台操作后才能删除该表相关数据
         if (!force && BackgroundOperation::inProgForDb(name)) {
             log() << "WARNING: can't close database " << name
                   << " because a bg job is in progress - try killOp command";

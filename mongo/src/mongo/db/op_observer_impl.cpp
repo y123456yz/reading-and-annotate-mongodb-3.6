@@ -599,6 +599,7 @@ void OpObserverImpl::onCollMod(OperationContext* opCtx,
     }
 }
 
+//_finishDropDatabaseµ÷ÓÃ
 void OpObserverImpl::onDropDatabase(OperationContext* opCtx, const std::string& dbName) {
     const NamespaceString cmdNss{dbName, "$cmd"};
     const auto cmdObj = BSON("dropDatabase" << 1);
@@ -627,6 +628,7 @@ void OpObserverImpl::onDropDatabase(OperationContext* opCtx, const std::string& 
         ->logOp(opCtx, "c", cmdNss, cmdObj, nullptr);
 }
 
+//DatabaseImpl::dropCollectionEvenIfSystem
 repl::OpTime OpObserverImpl::onDropCollection(OperationContext* opCtx,
                                               const NamespaceString& collectionName,
                                               OptionalCollectionUUID uuid) {

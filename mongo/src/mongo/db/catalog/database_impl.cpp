@@ -550,6 +550,8 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
         if (!status.isOK()) {
             return status;
         }
+
+		//OpObserverImpl::onDropCollection
         opObserver->onDropCollection(opCtx, fullns, uuid);
         return Status::OK();
     }
@@ -587,12 +589,14 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
                   << index->indexNamespace()
                   << "' would be too long after drop-pending rename. Dropping index immediately.";
             fassertStatusOK(40463, collection->getIndexCatalog()->dropIndex(opCtx, index));
-            opObserver->onDropIndex(
+			//OpObserverImpl::onDropIndex
+			opObserver->onDropIndex(
                 opCtx, fullns, collection->uuid(), index->indexName(), index->infoObj());
         }
 
         // Log oplog entry for collection drop and proceed to complete rest of two phase drop
         // process.
+        //OpObserverImpl::onDropCollection
         dropOpTime = opObserver->onDropCollection(opCtx, fullns, uuid);
 
         // Drop collection immediately if OpObserver did not write entry to oplog.
@@ -610,6 +614,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
         // in the context of applying an oplog entry on a secondary.
         // OpObserver::onDropCollection() should be returning a null OpTime because we should not be
         // writing to the oplog.
+       	//OpObserver::onDropCollection
         auto opTime = opObserver->onDropCollection(opCtx, fullns, uuid);
         if (!opTime.isNull()) {
             severe() << "dropCollection: " << fullns << " (" << uuidString
@@ -929,6 +934,8 @@ const DatabaseCatalogEntry* DatabaseImpl::getDatabaseCatalogEntry() const {
 //drop_database.cpp中的dropDatabase和DatabaseImpl::dropDatabase  dropDatabaseImpl什么区别？需要进一步分析
 //区别如下：drop_database.cpp中的dropDatabase会通过_finishDropDatabase调用DatabaseImpl::dropDatabase
 //drop_database.cpp中的dropDatabase删库及其库下面的表，DatabaseImpl::dropDatabase只删库
+
+//删库dropDatabase->_finishDropDatabase调用
 void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
     invariant(db);
 

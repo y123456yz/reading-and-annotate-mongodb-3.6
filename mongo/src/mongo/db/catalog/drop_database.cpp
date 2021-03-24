@@ -74,6 +74,7 @@ Status _finishDropDatabase(OperationContext* opCtx, const std::string& dbName, D
     log() << "dropDatabase " << dbName << " - finished";
 
     WriteUnitOfWork wunit(opCtx);
+	//OpObserverImpl::onDropDatabase
     getGlobalServiceContext()->getOpObserver()->onDropDatabase(opCtx, dbName);
     wunit.commit();
 
@@ -150,6 +151,7 @@ Status dropDatabase(OperationContext* opCtx, const std::string& dbName) {
             }
             log() << "dropDatabase " << dbName << " - dropping collection: " << nss;
             WriteUnitOfWork wunit(opCtx);
+			//DatabaseImpl::dropCollectionEvenIfSystem
             fassertStatusOK(40476, db->dropCollectionEvenIfSystem(opCtx, nss));
             wunit.commit();
             numCollectionsToDrop++;

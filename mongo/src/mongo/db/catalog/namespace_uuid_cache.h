@@ -85,6 +85,6 @@ public:
 private:
     //记录collection和UUID的对应关系
     using CollectionUUIDMap = StringMap<CollectionUUID>;
-    CollectionUUIDMap _cache;
+    CollectionUUIDMap _cache; 
 };
 }  // namespace mongo
