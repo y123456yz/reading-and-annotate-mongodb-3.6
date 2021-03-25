@@ -368,8 +368,11 @@ https://www.jianshu.com/p/d838a5905303
  */ //四种模式的锁，锁放入ticketHolders指针数组
 
 //文章参考 https://yq.aliyun.com/articles/655101 浅析MongoDB中的意向锁
-
+//https://mongoing.com/archives/4768
+//https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
+
+//每个模式对应一个TicketHolder，参考ticketHolders
 enum LockMode { //不同锁的统计在LockStats中实现
     MODE_NONE = 0,
     MODE_IS = 1,
@@ -404,7 +407,8 @@ bool isModeCovered(LockMode mode, LockMode coveringMode);
 
 /**
  * Returns whether the passed in mode is S or IS. Used for validation checks.
- */ //判断是否读锁
+ */ 
+//判断是否读锁或者读意向锁
 inline bool isSharedLockMode(LockMode mode) {
     return (mode == MODE_IS || mode == MODE_S);
 }

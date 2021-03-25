@@ -309,6 +309,7 @@ void CondVarLockGrantNotification::notify(ResourceId resId, LockResult result) {
     _cond.notify_all();
 }
 
+//每一种mode对应一个TicketHolder，依赖linux的sem信号量实现
 namespace { //赋值见setGlobalThrottling //WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
 TicketHolder* ticketHolders[LockModesCount] = {}; 
 }  // namespace
@@ -412,24 +413,24 @@ template <bool IsForMMAPV1>  //等待获取全局锁成功见Lock::GlobalLock::GlobalLock-
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
     if (_modeForTicket == MODE_NONE) {
+		//判断是否读锁或者读意向锁
         const bool reader = isSharedLockMode(mode);
-        auto holder = ticketHolders[mode]; //是那种模式的锁
+		//该mode对应的ticketHolders
+        auto holder = ticketHolders[mode]; 
+		//该循环中等锁
         if (holder) { //如果mode为MODE_X， 这里ticketHolders[MODE_X]为NULL，见setGlobalThrottling
-		/*
-    如果holder不为空，Client会先进去kQueuedReader或kQueuedWriter状态，然后获取一个ticket，获取到后转
-换为kActiveReader或kActiveWriter状态。这里的ticket是什么东西？
-    这里的ticket是引擎可以设置的一个限制。正常情况下，如果没有锁竞争，所有的读写请求都会被pass到引擎层，
-这样就有个问题，你请求到了引擎层面，还是得排队执行，而且不同引擎处理能力肯定也不同，于是引擎层就可
-以通过设置这个ticket，来限制一下传到引擎层面的最大并发数。比如
-    wiredtiger设置了读写ticket均为128，也就是说wiredtiger引擎层最多支持128的读写并发（这个值经过测试是非常合理的经验值，无需修改）。
-	globalLock完成后，client就进入了kActiveReader或kActiveWriter中的一种状态，这个就对应了globalLock.activerClients字段里的指标，接下来才开始lockBegin，加DB、Collection等层次锁，更底层的锁竞争会间接影响到globalLock。
-		*/
             _clientState.store(reader ? kQueuedReader : kQueuedWriter); 
-		//等待锁期间为Queued状态，获取到锁后变为Active状态，获取超时变为inactive
+			//等待锁期间为Queued状态，获取到锁后变为Active状态，获取超时变为inactive
             if (timeout == Milliseconds::max()) {
-                holder->waitForTicket(); //等待wiredtiger有可用ticket 从这里可以看出锁操作实际上是依赖信号量的
+				//TicketHolder::waitForTicket一直等有信号锁锁可用
+                holder->waitForTicket();  
+
+
+			//最大等待锁时间，超过这个时间直接返回可用
             } else if (!holder->waitForTicketUntil(Date_t::now() + timeout)) {
-                _clientState.store(kInactive); //没获取到锁，也就是信号量用完了，状态变为inactive
+            	//没获取到锁，也就是信号量用完了，状态变为inactive
+                _clientState.store(kInactive); 
+				//获取锁超时
                 return LOCK_TIMEOUT;
             }
         }

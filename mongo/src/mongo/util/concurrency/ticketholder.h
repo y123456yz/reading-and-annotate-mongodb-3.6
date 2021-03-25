@@ -39,6 +39,7 @@
 namespace mongo {
 
 //listener类包含该成员  //Listener.globalTicketHolder   TicketHolder openWriteTransaction(128);  TicketHolder openReadTransaction(128);
+//信号量锁封装
 class TicketHolder {
     MONGO_DISALLOW_COPYING(TicketHolder);
 
@@ -64,9 +65,11 @@ public:
 
 private:
 #if defined(__linux__)
+    //信号量
     mutable sem_t _sem;
 
     // You can read _outof without a lock, but have to hold _resizeMutex to change.
+    //总的信号量数
     AtomicInt32 _outof;
     stdx::mutex _resizeMutex;
 #else

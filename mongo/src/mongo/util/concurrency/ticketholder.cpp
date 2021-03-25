@@ -143,17 +143,20 @@ Status TicketHolder::resize(int newSize) {
     return Status::OK();
 }
 
+//还剩多少可用
 int TicketHolder::available() const {
     int val = 0;
     _check(sem_getvalue(&_sem, &val));
     return val;
 }
 
+//用了多少
 int TicketHolder::used() const {
     return outof() - available();
 }
 
 ////TicketServerParameter::append
+//总的信号量
 int TicketHolder::outof() const {
     return _outof.load();
 }

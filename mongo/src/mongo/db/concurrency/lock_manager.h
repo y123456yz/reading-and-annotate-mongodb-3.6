@@ -53,6 +53,8 @@ namespace mongo {
 //文章参考 https://yq.aliyun.com/articles/655101 浅析MongoDB中的意向锁
 //LockManager globalLockManager;
 //DeadlockDetector._lockMgr为该类型
+
+//主要完成锁的冲突检测等，实现并发控制
 class LockManager {
     MONGO_DISALLOW_COPYING(LockManager);
 
