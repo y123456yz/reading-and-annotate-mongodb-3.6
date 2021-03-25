@@ -1,5 +1,5 @@
 jira == 1.0.10
-pyyaml == 3.11
+pyyaml == 5.4
 unittest-xml-reporting == 2.1.0
 # Linters
 yapf == 0.16.0
