@@ -45,7 +45,8 @@ const ServiceContext::Decoration<UUIDCatalog> getCatalog =
     ServiceContext::declareDecoration<UUIDCatalog>();
 }  // namespace
 
-//获取该svcCtx对应的UUIDCatalog信息
+//获取该svcCtx对应的UUIDCatalog信息,DatabaseImpl::_getOrCreateCollectionInstance中调用
+//获取全局UUIDCatalog，也就是上面的getCatalog
 UUIDCatalog& UUIDCatalog::get(ServiceContext* svcCtx) {
     return getCatalog(svcCtx);
 }

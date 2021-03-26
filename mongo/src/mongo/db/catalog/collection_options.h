@@ -137,6 +137,7 @@ struct CollectionOptions {
     int flags = Flag_UsePowerOf2Sizes;  // a bitvector of UserFlags
     bool flagsSet = false;
 
+    //说明是否为临时表
     bool temp = false;
 
     // Storage engine collection options. Always owned or empty.

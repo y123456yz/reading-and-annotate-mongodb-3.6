@@ -185,6 +185,7 @@ void DatabaseImpl::close(OperationContext* opCtx, const std::string& reason) {
     }
 }
 
+//库名有效性检查
 Status DatabaseImpl::validateDBName(StringData dbname) {
     if (dbname.size() <= 0)
         return Status(ErrorCodes::BadValue, "db name is empty");
@@ -234,10 +235,12 @@ Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx
         return collection;
     }
 
+	//DatabaseImpl._collections列表没用该collection，则从元数据_mdb_catalog.wt获取表信息
+
 	//没找到则构造一个新collection类  
 	//KVDatabaseCatalogEntryBase::getCollectionCatalogEntry获取nss对应KVCollectionCatalogEntry
     unique_ptr<CollectionCatalogEntry> cce(_dbEntry->getCollectionCatalogEntry(nss.ns()));
-	//获取uuid
+	//获取uuid BSONCollectionCatalogEntry::getCollectionOptions
     auto uuid = cce->getCollectionOptions(opCtx).uuid;
 	//KVDatabaseCatalogEntryBase::getRecordStore
 	//默认返回为StandardWiredTigerRecordStore类型
@@ -251,8 +254,10 @@ Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx
         // to rollback UUIDCatalog changes because we are initializing existing collections.
         auto&& uuidCatalog = UUIDCatalog::get(opCtx);
         if (!opCtx->lockState()->inAWriteUnitOfWork()) {
+			//UUIDCatalog::registerUUIDCatalogEntry
             uuidCatalog.registerUUIDCatalogEntry(uuid.get(), coll);
         } else {
+        	//UUIDCatalog::onCreateCollection
             uuidCatalog.onCreateCollection(opCtx, coll, uuid.get());
         }
     }
@@ -273,6 +278,7 @@ DatabaseImpl::DatabaseImpl(Database* const this_,
       _views(&_durableViews),
       _this(this_) {}
 
+//mongod启动的时候
 void DatabaseImpl::init(OperationContext* const opCtx) {
     Status status = validateDBName(_name);
 
@@ -284,11 +290,15 @@ void DatabaseImpl::init(OperationContext* const opCtx) {
     _profile = serverGlobalParams.defaultProfile;
 
     list<string> collections;
+	//KVDatabaseCatalogEntryBase::getCollectionNamespaces
+	//从元数据文件_mdb_catalog.wt中获取所有的表信息
     _dbEntry->getCollectionNamespaces(&collections);
 
+	//把从原数据文件_mdb_catalog.wt获取到的表信息全部添加到_collections数组
     for (list<string>::const_iterator it = collections.begin(); it != collections.end(); ++it) {
         const string ns = *it;
         NamespaceString nss(ns);
+		//collection初始化，生成对应CollectionImpl
         _collections[ns] = _getOrCreateCollectionInstance(opCtx, nss);
     }
 
@@ -306,6 +316,7 @@ void DatabaseImpl::init(OperationContext* const opCtx) {
     }
 }
 
+//清除该库下面所有的临时表
 void DatabaseImpl::clearTmpCollections(OperationContext* opCtx) {
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
 
@@ -320,8 +331,10 @@ void DatabaseImpl::clearTmpCollections(OperationContext* opCtx) {
 
         CollectionOptions options = coll->getCollectionOptions(opCtx);
 
+		//不是临时表
         if (!options.temp)
             continue;
+		//清除这个临时表
         try {
             WriteUnitOfWork wunit(opCtx);
             Status status = dropCollection(opCtx, ns, {});
@@ -340,6 +353,7 @@ void DatabaseImpl::clearTmpCollections(OperationContext* opCtx) {
     }
 }
 
+//创建慢日志表system.profile并设置日志打印级别
 Status DatabaseImpl::setProfilingLevel(OperationContext* opCtx, int newLevel) {
     if (_profile == newLevel) {
         return Status::OK();
@@ -365,6 +379,7 @@ Status DatabaseImpl::setProfilingLevel(OperationContext* opCtx, int newLevel) {
     return Status::OK();
 }
 
+//设置删库标记
 void DatabaseImpl::setDropPending(OperationContext* opCtx, bool dropPending) {
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
     if (dropPending) {
@@ -378,11 +393,13 @@ void DatabaseImpl::setDropPending(OperationContext* opCtx, bool dropPending) {
     }
 }
 
+//该库是否正在被删除
 bool DatabaseImpl::isDropPending(OperationContext* opCtx) const {
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
     return _dropPending;
 }
 
+//db.stats统计
 void DatabaseImpl::getStats(OperationContext* opCtx, BSONObjBuilder* output, double scale) {
     list<string> collections;
     _dbEntry->getCollectionNamespaces(&collections);
@@ -450,6 +467,7 @@ void DatabaseImpl::getStats(OperationContext* opCtx, BSONObjBuilder* output, dou
     }
 }
 
+//view相关，先跳过，以后有空再分析
 Status DatabaseImpl::dropView(OperationContext* opCtx, StringData fullns) {
     Status status = _views.dropView(opCtx, NamespaceString(fullns));
     Top::get(opCtx->getServiceContext()).collectionDropped(fullns);
@@ -457,6 +475,7 @@ Status DatabaseImpl::dropView(OperationContext* opCtx, StringData fullns) {
 }
 
 //drop删表CmdDrop::errmsgRun->dropCollection会调用
+//DatabaseImpl::clearTmpCollections调用
 Status DatabaseImpl::dropCollection(OperationContext* opCtx,
                                     StringData fullns,
                                     repl::OpTime dropOpTime) {
@@ -546,6 +565,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
         repl::ReplicationCoordinator::modeMasterSlave == replCoord->getReplicationMode();
 	//单机方式启动的节点
     if ((dropOpTime.isNull() && isOplogDisabledForNamespace) || isMasterSlave) {
+		//真正的底层WT存储引擎相关表及其索引删除在这里
         auto status = _finishDropCollection(opCtx, fullns, collection);
         if (!status.isOK()) {
             return status;
@@ -641,6 +661,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
 
 //drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
 //    ->DatabaseImpl::_finishDropCollection
+//真正的底层WT存储引擎相关表及其索引删除在这里
 Status DatabaseImpl::_finishDropCollection(OperationContext* opCtx,
                                            const NamespaceString& fullns,
                                            Collection* collection) {
@@ -664,6 +685,7 @@ Status DatabaseImpl::_finishDropCollection(OperationContext* opCtx,
     log() << "Finishing collection drop for " << fullns << " (" << uuidString << ").";
 
 	//KVDatabaseCatalogEntry::dropCollection
+	//真正的表文件相关底层删除在这里
     return _dbEntry->dropCollection(opCtx, fullns.toString());
 }
 
@@ -756,6 +778,7 @@ Status DatabaseImpl::renameCollection(OperationContext* opCtx,
     return s;
 }
 
+//获取collection信息，没用则创建
 Collection* DatabaseImpl::getOrCreateCollection(OperationContext* opCtx,
                                                 const NamespaceString& nss) {
     Collection* c = getCollection(opCtx, nss);
@@ -766,6 +789,7 @@ Collection* DatabaseImpl::getOrCreateCollection(OperationContext* opCtx,
     return c;
 }
 
+//检测是否可以创建集合
 void DatabaseImpl::_checkCanCreateCollection(OperationContext* opCtx,
                                              const NamespaceString& nss,
                                              const CollectionOptions& options) {
@@ -1207,3 +1231,4 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
 
     return Status::OK();
 }
+

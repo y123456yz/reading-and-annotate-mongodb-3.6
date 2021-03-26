@@ -102,11 +102,16 @@ protected:
     typedef std::map<std::string, KVCollectionCatalogEntry*> CollectionMap;
     
     //KVDatabaseCatalogEntryBase::KVDatabaseCatalogEntryBase, wiredtiger对应KVStorageEngine
+    //KVStorageEngine._dbs中包含有所有的库信息
     KVStorageEngine* const _engine;  // not owned here
     //KVDatabaseCatalogEntryBase::createCollection中赋值，对应集合信息
     //创建新表都存到该map中
     //一个db对应一个KVDatabaseCatalogEntryBase，该DB下可以包含多个KVCollectionCatalogEntry表信息，存入到_collections数组
     //最终一个表对应一个KVCollectionCatalogEntry，存储到_collections数组中，
-    CollectionMap _collections;
+
+    //来源有两个地方：
+    //1. mongod重启，通过KVStorageEngine::KVStorageEngine->KVDatabaseCatalogEntryBase::initCollection从元数据_mdb_catalog.wt中加载表信息
+    //2. KVDatabaseCatalogEntryBase::createCollection创建实时表
+    CollectionMap _collections; //从_mdb_catalog.wt
 };
 }  // namespace mongo

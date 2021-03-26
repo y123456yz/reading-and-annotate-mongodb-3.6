@@ -53,6 +53,7 @@ class OperationContext;
 
 
 //KVCollectionCatalogEntry->BSONCollectionCatalogEntry继承CollectionCatalogEntry
+//mmap引擎的NamespaceDetailsCollectionCatalogEntry也继承该类
 class CollectionCatalogEntry {
 public:
     CollectionCatalogEntry(StringData ns) : _ns(ns) {}

@@ -46,6 +46,13 @@ namespace mongo {
 using CollectionUUID = UUID;
 class Database;
 
+/*
+//生成一个全局getCatalog
+const ServiceContext::Decoration<UUIDCatalog> getCatalog =
+    ServiceContext::declareDecoration<UUIDCatalog>();
+}  // namespace
+所有表的uuid通过这个全局getCatalog变量管理起来
+*/
 //一个表对应一个UUID，通过该类管理，这个类包含一个UUID到集合目录，允许通过UUID进行高效的集合查找
 class UUIDCatalog {
     MONGO_DISALLOW_COPYING(UUIDCatalog);

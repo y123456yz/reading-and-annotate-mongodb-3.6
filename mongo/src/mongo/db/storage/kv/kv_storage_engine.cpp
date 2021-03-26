@@ -69,7 +69,7 @@ public:
 	//删库操作通过这里记录下来
     RemoveDBChange(KVStorageEngine* engine, StringData db, KVDatabaseCatalogEntryBase* entry)
         : _engine(engine), _db(db.toString()), _entry(entry) {}
-
+	
     virtual void commit() {
         delete _entry;
     }
@@ -140,6 +140,8 @@ KVStorageEngine::KVStorageEngine(
 		//StandardWiredTigerRecordStore
         _catalogRecordStore.get(), _options.directoryPerDB, _options.directoryForIndexes));
 	//KVCatalog::init
+	//KVStorageEngine::KVStorageEngine->KVCatalog::init初始化构造的时候就从元数据
+	//文件_mdb_catalog.wt中获取元数据信息
 	_catalog->init(&opCtx);
 
     std::vector<std::string> collections;
@@ -150,18 +152,21 @@ KVStorageEngine::KVStorageEngine(
 	//从_mdb_catalog.wt中解析出库表元数据信息
 	//mongod实例重启后首先需要加载_mdb_catalog.wt文件获取元数据信息
     for (size_t i = 0; i < collections.size(); i++) {
+		//从_mdb_catalog.wt文件中获取库名和表名
         std::string coll = collections[i];
         NamespaceString nss(coll);
         string dbName = nss.db().toString();
 
         // No rollback since this is only for committed dbs.
-        
+
+		//这里对_dbs赋值，可以看出一个dbname对应一个db KVDatabaseCatalogEntryBase
         KVDatabaseCatalogEntryBase*& db = _dbs[dbName];
         if (!db) {
             db = _databaseCatalogEntryFactory(dbName, this).release();
         }
 
 		//KVDatabaseCatalogEntryBase::initCollection调用
+		//这样保障了同一个db下面的所有的表都存储在了KVDatabaseCatalogEntryBase._collections[]数组中
         db->initCollection(&opCtx, coll, options.forRepair);
         auto maxPrefixForCollection = _catalog->getMetaData(&opCtx, coll).getMaxPrefix();
         maxSeenPrefix = std::max(maxSeenPrefix, maxPrefixForCollection);
@@ -315,6 +320,7 @@ void KVStorageEngine::listDatabases(std::vector<std::string>* out) const {
     }
 }
 
+
 KVDatabaseCatalogEntryBase* KVStorageEngine::getDatabaseCatalogEntry(OperationContext* opCtx,
                                                                      StringData dbName) {
     stdx::lock_guard<stdx::mutex> lk(_dbsLock);
@@ -322,6 +328,7 @@ KVDatabaseCatalogEntryBase* KVStorageEngine::getDatabaseCatalogEntry(OperationCo
     if (!db) {
         // Not registering change since db creation is implicit and never rolled back.
         //defaultDatabaseCatalogEntryFactory
+        //生成一个KVDatabaseCatalogEntry类
         db = _databaseCatalogEntryFactory(dbName, this).release();
     }
     return db;
@@ -368,11 +375,15 @@ Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
 
     {
         stdx::lock_guard<stdx::mutex> lk(_dbsLock);
+		//WiredTigerRecoveryUnit::registerChange 注册到WiredTigerRecoveryUnit，
+		//最终在下面的commit中会调用WiredTigerRecoveryUnit::_commit()和WiredTigerRecoveryUnit::_abort()
+		//执行RemoveDBChange的rollback或者commit
         opCtx->recoveryUnit()->registerChange(new RemoveDBChange(this, db, entry));
 		//从_dbs数组清除该db信息
         _dbs.erase(db.toString());
     }
 
+	//这里面最终执行registerChange注册的RemoveDBChange::commit释放内存
     wuow.commit();
     return Status::OK();
 }

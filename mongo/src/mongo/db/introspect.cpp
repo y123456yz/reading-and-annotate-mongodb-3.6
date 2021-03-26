@@ -166,7 +166,7 @@ void profile(OperationContext* opCtx, NetworkOp op) {
     }
 }
 
-
+//创建慢日志表system.profile
 Status createProfileCollection(OperationContext* opCtx, Database* db) {
     invariant(opCtx->lockState()->isDbLockedForMode(db->name(), MODE_X));
 

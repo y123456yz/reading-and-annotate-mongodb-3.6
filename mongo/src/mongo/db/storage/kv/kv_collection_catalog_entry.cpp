@@ -48,7 +48,7 @@ bool indexTypeSupportsPathLevelMultikeyTracking(StringData accessMethod) {
     return accessMethod == IndexNames::BTREE || accessMethod == IndexNames::GEO_2DSPHERE;
 }
 
-}  // namespace
+}  // namespace 
 
 //KVDatabaseCatalogEntryBase::createCollection÷–new∏√¿‡
 class KVCollectionCatalogEntry::AddIndexChange : public RecoveryUnit::Change {

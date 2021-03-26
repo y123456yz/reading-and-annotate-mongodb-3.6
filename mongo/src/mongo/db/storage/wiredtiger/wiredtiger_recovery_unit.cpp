@@ -119,6 +119,7 @@ void WiredTigerRecoveryUnit::_abort() {
         if (_session && _active) {
             _txnClose(false);
         }
+		
 
         for (Changes::const_reverse_iterator it = _changes.rbegin(), end = _changes.rend();
              it != end;
@@ -175,7 +176,7 @@ bool WiredTigerRecoveryUnit::waitUntilDurable() {
     return true;
 }
 
-//DatabaseImpl::createCollection中调用
+//DatabaseImpl::createCollection  KVStorageEngine::dropDatabase等调用
 void WiredTigerRecoveryUnit::registerChange(Change* change) {
     invariant(_inUnitOfWork);
     _changes.push_back(std::unique_ptr<Change>{change});

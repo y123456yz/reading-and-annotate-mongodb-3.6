@@ -104,7 +104,8 @@ BSONCollectionCatalogEntry::BSONCollectionCatalogEntry(StringData ns)
     : CollectionCatalogEntry(ns) {}
 
 CollectionOptions BSONCollectionCatalogEntry::getCollectionOptions(OperationContext* opCtx) const {
-    MetaData md = _getMetaData(opCtx);
+	//KVCollectionCatalogEntry::_getMetaData获取元数据信息
+	MetaData md = _getMetaData(opCtx);
     return md.options;
 }
 

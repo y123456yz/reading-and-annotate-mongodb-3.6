@@ -281,6 +281,7 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
+//KVStorageEngine::KVStorageEngine->KVDatabaseCatalogEntryBase::initCollection从元数据_mdb_catalog.wt中加载表信息
 //当mongod重启的时候会，会调用KVStorageEngine::KVStorageEngine调用本接口
 void KVDatabaseCatalogEntryBase::initCollection(OperationContext* opCtx,
                                                 const std::string& ns,

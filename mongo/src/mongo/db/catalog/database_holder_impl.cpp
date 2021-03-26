@@ -134,7 +134,8 @@ std::set<std::string> DatabaseHolderImpl::getNamesWithConflictingCasing(StringDa
 }
 
 //AutoGetOrCreateDb::AutoGetOrCreateDb调用，生成Database
-//DatabaseHolderImpl::openDb创建DB，每个DB对应一个DatabaseImpl
+//DatabaseHolderImpl::openDb创建DB，每个DB对应一个DatabaseImpl，
+//使用某个库的时候才会openDb，如果不使用么某个DB，即使存在也不会构造对应DatabaseImpl
 Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, bool* justCreated) {
     const StringData dbname = _todb(ns);
     invariant(opCtx->lockState()->isDbLockedForMode(dbname, MODE_X));
@@ -146,6 +147,7 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
 
     // The following will insert a nullptr for dbname, which will treated the same as a non-
     // existant database by the get method, yet still counts in getNamesWithConflictingCasing.
+    //该库在内存中已经存在，直接返回
     if (auto db = _dbs[dbname])
         return db;
 
@@ -176,6 +178,8 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
 	//获取KVStorageEngine
     StorageEngine* storageEngine = getGlobalServiceContext()->getGlobalStorageEngine();
 	//KVStorageEngine::getDatabaseCatalogEntry获取对应KVDatabaseCatalogEntryBase信息
+	//获取该db对应的DatabaseCatalogEntry信息，
+	//一个db对应一个KVDatabaseCatalogEntryBase，包含该db得所有表信息
     DatabaseCatalogEntry* entry = storageEngine->getDatabaseCatalogEntry(opCtx, dbname);
 
     if (!entry->exists()) {
@@ -195,6 +199,7 @@ Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, boo
     invariant(it != _dbs.end() && it->second == nullptr);
 	//DatabaseImpl添加到_dbs数组
     it->second = newDb.release();
+	//冲突检测
     invariant(_getNamesWithConflictingCasing_inlock(dbname.toString()).empty());
 
     return it->second;

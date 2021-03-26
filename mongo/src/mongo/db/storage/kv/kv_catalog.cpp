@@ -459,7 +459,8 @@ std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     return buf.str();
 }
 
-//KVStorageEngine::KVStorageEngine中调用
+//KVStorageEngine::KVStorageEngine中调用，KVStorageEngine::KVStorageEngine初始化构造的时候就从
+//元数据文件_mdb_catalog.wt中获取元数据信息
 void KVCatalog::init(OperationContext* opCtx) {
     // No locking needed since called single threaded.
     auto cursor = _rs->getCursor(opCtx);
