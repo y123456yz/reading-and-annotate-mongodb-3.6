@@ -23,7 +23,7 @@ mongodb-3.6源码注释分析，持续更新
 
 ###《mongodb内核源码设计与实现》源码模块化分析  
 #### 第一阶段：单机内核源码分析  
-![单机模块化架构图](/image/单机模块架构.png)  
+![单机模块化架构图](/image/单机模块化架构图.png)  
 |#|单机模块名|核心代码中文注释|说明|模块文档输出|
 |:-|:-|:-|:-|:-|
 |1|[网络收发处理(含工作线程模型)](https://github.com/y123456yz/reading-and-annotate-mongodb-3.6/blob/master/mongo/README.md#L8)|网络处理模块核心代码实现(100%注释分析)|完成ASIO库、网络数据收发、同步线程模型、动态线程池模型等功能|[详见infoq专栏：《MongoDB内核源码设计、性能优化、最佳运维实践》](https://www.infoq.cn/profile/8D2D4D588D3D8A/publish)|
