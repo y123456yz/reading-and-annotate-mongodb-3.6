@@ -289,6 +289,14 @@ bool BSONCollectionCatalogEntry::MetaData::eraseIndex(StringData name) {
     return true;
 }
 
+//建一个新表的元数据打印:db.createCollection("mycol", { capped : true, autoIndexId : true, size :	 6142800, max : 10000 } )
+//{ md: { ns: "test.mycol", options: { uuid: UUID("75591c22-bd0f-4a56-ac95-ef90224cf3df"), capped: true, size: 6142976, max: 10000, autoIndexId: true }, 
+//indexes: [ { spec: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.mycol" }, ready: false, multikey: false, 
+//multikeyPaths: { _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "test/index/2--6948813758302814892" }, 
+//ns: "test.mycol", ident: "test/collection/1--6948813758302814892" }
+
+//原表重命名，则md中的索引也需要修改，例如上面的indexes中的test.mycol，对应库test，表mycol，如果表mycol
+//重命名为mycol2，则indexes中所有的mycol需要修改为mycol2
 void BSONCollectionCatalogEntry::MetaData::rename(StringData toNS) {
     ns = toNS.toString();
     for (size_t i = 0; i < indexes.size(); i++) {
@@ -315,6 +323,12 @@ KVPrefix BSONCollectionCatalogEntry::MetaData::getMaxPrefix() const {
         });
 }
 
+//参考如下打印:
+//[initandlisten] recording new metadata: { md: { ns: "admin.system.version", options: 
+//{ uuid: UUID("d24324d6-5465-4634-9f8a-3d6c6f6af801") }, indexes: [ { spec: { v: 2, key: { _id: 1 }, 
+//name: "_id_", ns: "admin.system.version" }, ready: true, multikey: false, multikeyPaths: 
+//{ _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "admin/index/1--9034870482849730886" }, 
+//ns: "admin.system.version", ident: "admin/collection/0--9034870482849730886" }
 BSONObj BSONCollectionCatalogEntry::MetaData::toBSON() const {
     BSONObjBuilder b;
     b.append("ns", ns);

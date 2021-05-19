@@ -309,6 +309,13 @@ Status waitForReadConcern(OperationContext* opCtx,
     return Status::OK();
 }
 
+/*
+当客户端采用 “linearizable” readConcern 时，在读取完 Primary 上最新的数据后，在返回前会向 Oplog 中
+显示的写一条 noop 的操作，然后等待这条操作在多数派节点复制成功。显然，如果当前读取的节点并不是真正的
+主，那么这条 noop 操作就不可能在 majority 节点复制成功，同时，如果 noop 操作在 majority 节点复制成功，
+也就意味着之前读取的在 noop 之前写入的数据也已经复制到多数派节点，确保了读到的数据不会被回滚。
+https://mongoing.com/archives/77853
+*/
 Status waitForLinearizableReadConcern(OperationContext* opCtx) {
 
     repl::ReplicationCoordinator* replCoord =

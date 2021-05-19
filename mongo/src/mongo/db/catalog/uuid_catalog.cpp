@@ -57,6 +57,7 @@ UUIDCatalog& UUIDCatalog::get(OperationContext* opCtx) {
     return getCatalog(opCtx->getServiceContext());
 }
 
+//DatabaseImpl::_getOrCreateCollectionInstance调用
 void UUIDCatalog::onCreateCollection(OperationContext* opCtx,
                                      Collection* coll,
                                      CollectionUUID uuid) {
@@ -67,6 +68,7 @@ void UUIDCatalog::onCreateCollection(OperationContext* opCtx,
     opCtx->recoveryUnit()->onRollback([this, uuid] { removeUUIDCatalogEntry(uuid); });
 }
 
+//KVCollectionCatalogEntry::removeUUID  OpObserverImpl::onDropCollection调用  
 void UUIDCatalog::onDropCollection(OperationContext* opCtx, CollectionUUID uuid) {
     Collection* foundColl = removeUUIDCatalogEntry(uuid);
     opCtx->recoveryUnit()->onRollback(
@@ -131,6 +133,7 @@ NamespaceString UUIDCatalog::lookupNSSByUUID(CollectionUUID uuid) const {
 }
 
 //生成新的<CollectionUUID, Collection*>对，添加到_catalog map表中
+//DatabaseImpl::_getOrCreateCollectionInstance调用
 void UUIDCatalog::registerUUIDCatalogEntry(CollectionUUID uuid, Collection* coll) {
     stdx::lock_guard<stdx::mutex> lock(_catalogLock);
 

@@ -45,6 +45,8 @@
 
 namespace mongo {
 
+//Session lsid 可以通过调用 startSession 命令让 server 端分配，也可以客户端自己分配，这样可以节省一次网络开销；
+//参考https://mongoing.com/%3Fp%3D6084
 class StartSessionCommand final : public BasicCommand {
     MONGO_DISALLOW_COPYING(StartSessionCommand);
 

@@ -471,6 +471,13 @@ OpTime ReplicationCoordinatorExternalStateImpl::onTransitionToPrimary(OperationC
     return opTimeToReturn;
 }
 
+/*
+MongoDB 采用了信息转发的方式来解决这个问题，当 S1 收到 S2 汇报过来的 replSetUpdatePosition 命令，
+进行处理时（processReplSetUpdatePosition()），如果发现自己不是 Primary 角色，会立刻触发一个 
+forwardSlaveProgress 任务，即，把自己的 Oplog Apply 信息，连同自己的 Secondary 汇报过来的，
+构造一个 replSetUpdatePosition 命令，发往上游，从而保证，当任一个 Secondary 节点的 Oplog Apply 
+进度推进，Primary 都能够及时的收到消息，尽可能降低 w>1 时，因 writeConcern 而带来的写操作延迟。
+*/
 void ReplicationCoordinatorExternalStateImpl::forwardSlaveProgress() {
     _syncSourceFeedback.forwardSlaveProgress();
 }

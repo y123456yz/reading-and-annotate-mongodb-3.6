@@ -685,6 +685,7 @@ void OpObserverImpl::onDropIndex(OperationContext* opCtx,
     const auto cmdNss = nss.getCommandNS();
     const auto cmdObj = BSON("dropIndexes" << nss.coll() << "index" << indexName);
 
+	//删索引对应的oplog
     repl::logOp(opCtx,
                 "c",
                 cmdNss,
@@ -697,6 +698,7 @@ void OpObserverImpl::onDropIndex(OperationContext* opCtx,
                 kUninitializedStmtId,
                 {});
 
+	//AuthorizationManager::logOp
     AuthorizationManager::get(opCtx->getServiceContext())
         ->logOp(opCtx, "c", cmdNss, cmdObj, &indexInfo);
 }

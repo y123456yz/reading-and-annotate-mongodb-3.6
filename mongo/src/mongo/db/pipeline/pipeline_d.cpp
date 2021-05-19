@@ -127,6 +127,8 @@ public:
         return _client.getLastErrorDetailed();
     }
 
+	//DocumentSourceIndexStats::getNext()中调用
+	//db.collection.aggregate({"$indexStats":{}})会用到
     CollectionIndexUsageMap getIndexStats(OperationContext* opCtx,
                                           const NamespaceString& ns) final {
         AutoGetCollectionForReadCommand autoColl(opCtx, ns);
@@ -137,6 +139,7 @@ public:
             return CollectionIndexUsageMap();
         }
 
+		//CollectionInfoCacheImpl::getIndexUsageStats()
         return collection->infoCache()->getIndexUsageStats();
     }
 

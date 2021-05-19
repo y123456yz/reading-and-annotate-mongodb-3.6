@@ -136,6 +136,7 @@ public:
      */
     virtual const ReplSettings& getSettings() const = 0;
 
+    //modeMasterSlave参考:https://docs.mongodb.com/v3.4/core/master-slave/ 
     //ReplicationCoordinator::Mode getReplicationModeFromSettings中初始化
     //mongod可以已master secondary 复制集三种方式启动，参考mongod --help
     enum Mode { modeNone = 0, modeReplSet, modeMasterSlave };

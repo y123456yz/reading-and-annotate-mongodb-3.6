@@ -245,6 +245,56 @@ void ServiceContextMongoD::shutdownGlobalStorageEngineCleanly() {
     }
 }
 
+/*
+存储引擎注册识别区分流程：
+ServiceContextMongoD._storageFactories
+
+void ServiceContextMongoD::registerStorageEngine(const std::string& name,
+                                                 const StorageEngine::Factory* factory) {
+    // No double-registering.
+    invariant(0 == _storageFactories.count(name));
+
+    // Some sanity checks: the factory must exist,
+    invariant(factory);
+
+    // and all factories should be added before we pick a storage engine.
+    invariant(NULL == _storageEngine);
+
+    _storageFactories[name] = factory;
+}
+
+
+MONGO_INITIALIZER_WITH_PREREQUISITES(DevNullEngineInit, ("SetGlobalEnvironment"))
+(InitializerContext* context) {
+    getGlobalServiceContext()->registerStorageEngine("devnull", new DevNullStorageEngineFactory());------对应DevNullKVEngine
+    return Status::OK();
+}
+}
+
+
+MONGO_INITIALIZER_WITH_PREREQUISITES(MMAPV1EngineInit, ("SetGlobalEnvironment"))
+(InitializerContext* context) {
+    getGlobalServiceContext()->registerStorageEngine("mmapv1", new MMAPV1Factory());   --------对应MMAPV1Engine
+    return Status::OK();
+}
+
+MONGO_INITIALIZER_WITH_PREREQUISITES(WiredTigerEngineInit, ("SetGlobalEnvironment"))  ---------WiredTigerKVEngine
+(InitializerContext* context) {
+    getGlobalServiceContext()->registerStorageEngine(kWiredTigerEngineName,
+                                                     new WiredTigerFactory());
+
+    return Status::OK();
+}
+
+ServiceContextMongoD::initializeGlobalStorageEngine() {
+	//获取存储引擎，默认的WiredTiger存储引擎对应WiredTigerFactory
+    const StorageEngine::Factory* factory = _storageFactories[storageGlobalParams.engine];
+		//WiredTigerFactory::create  //根据params参数构造KVStorageEngine类
+    _storageEngine = factory->create(storageGlobalParams, _lockFile.get());
+    _storageEngine->finishInit(); //void KVStorageEngine::finishInit() {}
+}
+*/
+
 void ServiceContextMongoD::registerStorageEngine(const std::string& name,
                                                  const StorageEngine::Factory* factory) {
     // No double-registering.

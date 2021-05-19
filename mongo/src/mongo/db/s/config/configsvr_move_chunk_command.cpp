@@ -134,6 +134,7 @@ public:
              BSONObjBuilder& result) override {
         auto request = uassertStatusOK(BalanceChunkRequest::parseFromConfigCommand(cmdObj));
 
+		//手动movechunk
         if (request.hasToShardId()) {
 			//Balancer::moveSingleChunk
             uassertStatusOK(Balancer::get(opCtx)->moveSingleChunk(opCtx,
@@ -142,7 +143,7 @@ public:
                                                                   request.getMaxChunkSizeBytes(),
                                                                   request.getSecondaryThrottle(),
                                                                   request.getWaitForDelete()));
-        } else {
+        } else { //自动movechunk
         	//Balancer::rebalanceSingleChunk
             uassertStatusOK(Balancer::get(opCtx)->rebalanceSingleChunk(opCtx, request.getChunk()));
         }

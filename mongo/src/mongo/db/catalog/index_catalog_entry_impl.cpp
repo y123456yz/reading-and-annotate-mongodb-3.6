@@ -128,6 +128,7 @@ IndexCatalogEntryImpl::IndexCatalogEntryImpl(IndexCatalogEntry* const this_,
         _collator = std::move(statusWithCollator.getValue());
     }
 
+	////基于age列创建大于25岁的部分索引 db.persons.createIndex({country:1},{partialFilterExpression: {age: {$gt:25}}})
     if (BSONElement filterElement = _descriptor->getInfoElement("partialFilterExpression")) {
         invariant(filterElement.isABSONObj());
         BSONObj filter = filterElement.Obj();
@@ -183,7 +184,7 @@ MultikeyPaths IndexCatalogEntryImpl::getMultikeyPaths(OperationContext* opCtx) c
 }
 
 // ---
-
+//索引创建成功，标记一下
 void IndexCatalogEntryImpl::setIsReady(bool newIsReady) {
     _isReady = newIsReady;
 }
@@ -341,11 +342,13 @@ bool IndexCatalogEntryImpl::_catalogIsReady(OperationContext* opCtx) const {
 }
 
 RecordId IndexCatalogEntryImpl::_catalogHead(OperationContext* opCtx) const {
+	//CollectionCatalogEntry::getIndexHead
     return _collection->getIndexHead(opCtx, _descriptor->indexName());
 }
 
 bool IndexCatalogEntryImpl::_catalogIsMultikey(OperationContext* opCtx,
                                                MultikeyPaths* multikeyPaths) const {
+    //KVCollectionCatalogEntry::isIndexMultikey
     return _collection->isIndexMultikey(opCtx, _descriptor->indexName(), multikeyPaths);
 }
 

@@ -57,6 +57,7 @@ wt -C "extensions=[/usr/local/lib/libwiredtiger_snappy.so]" -h . dump table:_mdb
 
 */
 namespace {
+//KVStorageEngine::KVStorageEngine中创建对应的_mdb_catalog.wt元数据文件，例如第一次创建集群，实例启动的时候需要创建
 const std::string catalogInfo = "_mdb_catalog";
 }
 
@@ -120,6 +121,7 @@ KVStorageEngine::KVStorageEngine(
         WriteUnitOfWork uow(&opCtx);
 
 		//WiredTigerKVEngine::createGroupedRecordStore
+		//_mdb_catalog.wt元数据文件不存在，则创建对应的_mdb_catalog.wt元数据文件，例如第一次创建集群，实例启动的时候需要创建
         Status status = _engine->createGroupedRecordStore(
         
             &opCtx, catalogInfo, catalogInfo, CollectionOptions(), KVPrefix::kNotPrefixed);
@@ -171,7 +173,7 @@ KVStorageEngine::KVStorageEngine(
         auto maxPrefixForCollection = _catalog->getMetaData(&opCtx, coll).getMaxPrefix();
         maxSeenPrefix = std::max(maxSeenPrefix, maxPrefixForCollection);
     }
-
+	
     KVPrefix::setLargestPrefix(maxSeenPrefix);
     opCtx.recoveryUnit()->abandonSnapshot();
 }
@@ -201,7 +203,7 @@ KVStorageEngine::KVStorageEngine(
 
 //repairDatabasesAndCheckVersion中调用
 StatusWith<std::vector<StorageEngine::CollectionIndexNamePair>>
-KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
+	KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     // Gather all tables known to the storage engine and drop those that aren't cross-referenced
     // in the _mdb_catalog. This can happen for two reasons.
     //
@@ -214,8 +216,16 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     // _mdb_catalog will reflect the "stable" set of collections/indexes. However, it's not
     // expected for a storage engine's ability to persist stable data to extend to "stable
     // tables".
+    
+	//WiredTigerKVEngine::getAllIdents和KVCatalog::getAllIdents区别：
+	// 1. WiredTigerKVEngine::getAllIdents对应WiredTiger.wt元数据文件，由wiredtiger存储引擎自己维护
+	// 2. KVCatalog::getAllIdents对应_mdb_catalog.wt，由mongodb server层storage模块维护
+	// 3. 这两个元数据相比较，冲突的时候collection以_mdb_catalog.wt为准，该表下面的索引以WiredTiger.wt为准
+	//    参考KVStorageEngine::reconcileCatalogAndIdents
+
     std::set<std::string> engineIdents;
     {   //对应WiredTiger.wt
+    	//WiredTigerKVEngine::getAllIdents
         std::vector<std::string> vec = _engine->getAllIdents(opCtx);
         engineIdents.insert(vec.begin(), vec.end());
         engineIdents.erase(catalogInfo);
@@ -223,19 +233,23 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
 
     std::set<std::string> catalogIdents;
     {   //对应_mdb_catalog.wt
+    	//KVCatalog::getAllIdents
         std::vector<std::string> vec = _catalog->getAllIdents(opCtx);
         catalogIdents.insert(vec.begin(), vec.end());
     }
 
     // Drop all idents in the storage engine that are not known to the catalog. This can happen in
     // the case of a collection or index creation being rolled back.
-    //比较两个元数据文件WiredTiger.wt _mdb_catalog.wt，最终以WiredTiger.wt得数据为准
+    
+    //把WiredTiger.wt中有，但是_mdb_catalog.wt中没有的元数据信息清除 
     for (const auto& it : engineIdents) {
 		log() << "yang test ....reconcileCatalogAndIdents...... ident: " << it;
+		//找到了相同的ident数据目录文件，继续下一个
         if (catalogIdents.find(it) != catalogIdents.end()) {
             continue;
         }
 
+		//是否普通数据集合或者索引集合
         if (!_catalog->isUserDataIdent(it)) {
             continue;
         }
@@ -243,6 +257,7 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
         const auto& toRemove = it;
         log() << "Dropping unknown ident: " << toRemove;
         WriteUnitOfWork wuow(opCtx);
+		//WiredTigerKVEngine::dropIdent 删除对应ident文件
         fassertStatusOK(40591, _engine->dropIdent(opCtx, toRemove));
         wuow.commit();
     }
@@ -253,6 +268,7 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     // other contexts such as `recoverToStableTimestamp`.
     std::vector<std::string> collections;
     _catalog->getAllCollections(&collections);
+	//如果_mdb_catalog.wt中有，但是WiredTiger.wt中没有对应元数据信息，则直接抛出异常
     for (const auto& coll : collections) {
         const auto& identForColl = _catalog->getCollectionIdent(coll);
         if (engineIdents.find(identForColl) == engineIdents.end()) {
@@ -266,6 +282,7 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     // Scan all indexes and return those in the catalog where the storage engine does not have the
     // corresponding ident. The caller is expected to rebuild these indexes.
     std::vector<CollectionIndexNamePair> ret;
+	//遍历_mdb_catalog.wt中的元数据集合信息
     for (const auto& coll : collections) {
         const BSONCollectionCatalogEntry::MetaData metaData = _catalog->getMetaData(opCtx, coll);
         for (const auto& indexMetaData : metaData.indexes) {
@@ -275,9 +292,11 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
                 continue;
             }
 
+			//_mdb_catalog.wt元数据有该索引，但是WiredTiger.wt元数据中却没用该索引，则说明需要重做该索引
             log() << "Expected index data is missing, rebuilding. NS: " << coll
                   << " Index: " << indexName << " Ident: " << indexIdent;
 
+			//这些索引添加到ret返回
             ret.push_back(CollectionIndexNamePair(coll, indexName));
         }
     }
@@ -285,6 +304,8 @@ KVStorageEngine::reconcileCatalogAndIdents(OperationContext* opCtx) {
     return ret;
 }
 
+//ServiceContextMongoD::shutdownGlobalStorageEngineCleanly()调用
+//shutdown回收处理
 void KVStorageEngine::cleanShutdown() {
     for (DBMap::const_iterator it = _dbs.begin(); it != _dbs.end(); ++it) {
         delete it->second;
@@ -339,7 +360,7 @@ Status KVStorageEngine::closeDatabase(OperationContext* opCtx, StringData db) {
     return Status::OK();
 }
 
-//DatabaseImpl::dropDatabase调用
+//DatabaseImpl::dropDatabase调用，先删除所有的表，然后再从_dbs数组中清除该db
 Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     KVDatabaseCatalogEntryBase* entry;
 	//找到对应的DB,没有直接返回
@@ -388,6 +409,7 @@ Status KVStorageEngine::dropDatabase(OperationContext* opCtx, StringData db) {
     return Status::OK();
 }
 
+//FSyncLockThread::run()调用  db.adminCommand( { fsync: 1, lock: true } )
 int KVStorageEngine::flushAllFiles(OperationContext* opCtx, bool sync) {
     return _engine->flushAllFiles(opCtx, sync);
 }
@@ -427,6 +449,7 @@ SnapshotManager* KVStorageEngine::getSnapshotManager() const {
     return _engine->getSnapshotManager();
 }
 
+////CmdRepairDatabase::errmsgRun
 Status KVStorageEngine::repairRecordStore(OperationContext* opCtx, const std::string& ns) {
     Status status = _engine->repairIdent(opCtx, _catalog->getCollectionIdent(ns));
     if (!status.isOK())
@@ -436,6 +459,7 @@ Status KVStorageEngine::repairRecordStore(OperationContext* opCtx, const std::st
     return Status::OK();
 }
 
+//ReplicationCoordinatorExternalStateImpl::startThreads
 void KVStorageEngine::setJournalListener(JournalListener* jl) {
     _engine->setJournalListener(jl);
 }
@@ -452,7 +476,12 @@ void KVStorageEngine::setInitialDataTimestamp(Timestamp initialDataTimestamp) {
     _engine->setInitialDataTimestamp(initialDataTimestamp);
 }
 
-
+/*
+WiredTiger 提供设置 oldest timestamp 的功能，允许由 MongoDB 来设置该时间戳，含义是Read as of a timestamp
+不会提供更小的时间戳来进行一致性读，也就是说，WiredTiger 无需维护 oldest timestamp 之前的所有历史版本。
+MongoDB 层需要频繁（及时）更新 oldest timestamp，避免让 WT cache 压力太大。
+参考https://mongoing.com/%3Fp%3D6084
+*/
 void KVStorageEngine::setOldestTimestamp(Timestamp oldestTimestamp) {
 	//WiredTigerKVEngine::setOldestTimestamp
     _engine->setOldestTimestamp(oldestTimestamp);

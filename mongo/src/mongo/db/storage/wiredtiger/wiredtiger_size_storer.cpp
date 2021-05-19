@@ -174,7 +174,7 @@ void WiredTigerSizeStorer::onDestroy(WiredTigerRecordStore* rs) {
     entry.rs = NULL;
 }
 
-//WiredTigerRecordStore::_increaseDataSize
+//WiredTigerRecordStore::_increaseDataSize   WiredTigerKVEngine::okToRename
 //修改_entries[uri]的值，也就是修改内存中的值中调用  
 //WiredTigerSizeStorer::storeToCache和WiredTigerSizeStorer::loadFromCache对应
 void WiredTigerSizeStorer::storeToCache(StringData uri, long long numRecords, long long dataSize) {
@@ -252,6 +252,7 @@ void WiredTigerSizeStorer::syncCache(bool syncToDisk) {
 
     Map myMap;
     {
+		//找出内存中和WT存储引擎中不一致的dataSize和numRecords存储到myMap
         stdx::lock_guard<stdx::mutex> lk(_entriesMutex);
         for (Map::iterator it = _entries.begin(); it != _entries.end(); ++it) {
             std::string uriKey = it->first;

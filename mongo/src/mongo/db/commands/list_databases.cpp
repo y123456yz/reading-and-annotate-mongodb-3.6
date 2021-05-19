@@ -80,6 +80,7 @@ public:
         out->push_back(Privilege(ResourcePattern::forClusterResource(), actions));
     }
 
+	//db.runCommand({ listDatabases : 1 })
     CmdListDatabases() : BasicCommand("listDatabases") {}
 
     bool run(OperationContext* opCtx,

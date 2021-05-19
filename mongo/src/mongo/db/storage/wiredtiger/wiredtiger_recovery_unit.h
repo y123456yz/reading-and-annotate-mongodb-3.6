@@ -47,6 +47,9 @@ namespace mongo {
 
 class BSONObjBuilder;
 
+//ServiceContextMongoD::_newOpCtx中new该类使用
+
+//WriteUnitOfWork类实现对该类的封装
 class WiredTigerRecoveryUnit final : public RecoveryUnit {
 public:
     WiredTigerRecoveryUnit(WiredTigerSessionCache* sc);
@@ -150,6 +153,7 @@ private:
     //WiredTigerRecoveryUnit::_txnOpen赋值true， RecoveryUnit::_txnClose赋值false
     bool _active;
     bool _isTimestamped = false;
+    //WiredTigerRecoveryUnit::WiredTigerRecoveryUnit和WiredTigerRecoveryUnit::_txnClose完成ID自增
     uint64_t _mySnapshotId;
     bool _readFromMajorityCommittedSnapshot = false;
     Timestamp _majorityCommittedSnapshot;

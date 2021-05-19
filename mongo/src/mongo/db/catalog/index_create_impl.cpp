@@ -165,6 +165,7 @@ MultiIndexBlockImpl::MultiIndexBlockImpl(OperationContext* opCtx, Collection* co
       _ignoreUnique(false),
       _needToCleanup(true) {}
 
+//清除所有索引
 MultiIndexBlockImpl::~MultiIndexBlockImpl() {
     if (!_needToCleanup || _indexes.empty())
         return;
@@ -175,6 +176,7 @@ MultiIndexBlockImpl::~MultiIndexBlockImpl() {
             // Because that may need to write, it is done inside
             // of a WUOW. Nothing inside this block can fail, and it is made fatal if it does.
             for (size_t i = 0; i < _indexes.size(); i++) {
+				//IndexCatalogImpl::IndexBuildBlock::fail()
                 _indexes[i].block->fail();
             }
             wunit.commit();
@@ -261,8 +263,12 @@ db.runCommand(
 
 //IndexCatalogImpl::createIndexOnEmptyCollection中调用
 
-//加索引会走到这里面来  
-//CmdCreateIndex::errmsgRun调用  
+//当某个实例上面真正构建索引，突然实例挂了，mongod重启后调用: 
+// restartInProgressIndexesFromLastShutdown->checkNS调用
+
+
+//加索引和重做索引会走到这里面来  
+//CmdCreateIndex::errmsgRun  CmdReIndex::errmsgRun调用  
 //建索引的一些初始化工作
 StatusWith<std::vector<BSONObj>> 
 MultiIndexBlockImpl::init(const BSONObj& spec) {

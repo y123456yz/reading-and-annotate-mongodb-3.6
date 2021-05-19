@@ -74,7 +74,9 @@ typedef BgInfoMap::const_iterator BgInfoMapIterator;
 
 // Static data for this file is never destroyed.
 stdx::mutex& m = *(new stdx::mutex());
+//当前真在后台加索引的库
 BgInfoMap& dbsInProg = *(new BgInfoMap());
+//当前真在后台加索引的表
 BgInfoMap& nsInProg = *(new BgInfoMap());
 
 void BgInfo::recordBegin() {
@@ -132,6 +134,7 @@ bool BackgroundOperation::inProgForNs(StringData ns) {
     return nsInProg.find(ns) != nsInProg.end();
 }
 
+////检查是否有在创建后台索引等
 void BackgroundOperation::assertNoBgOpInProgForDb(StringData db) {
     uassert(ErrorCodes::BackgroundOperationInProgressForDatabase,
             mongoutils::str::stream()

@@ -158,6 +158,7 @@ public:
     void appendAsQuery(BSONObjBuilder* builder) const;
     BSONObj asQuery() const;
 
+//参考https://mongoing.com/archives/77853
 private:
     Timestamp _timestamp;
     //赋值见OpTime初始化构造

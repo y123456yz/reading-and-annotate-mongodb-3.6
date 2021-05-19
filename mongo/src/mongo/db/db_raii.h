@@ -133,7 +133,9 @@ public:
 
     /**
      * Returns nullptr if the database didn't exist.
-     */ //库不存在直接返回NULL
+     */ 
+
+    //库不存在直接返回NULL
     Database* getDb() const {
         //AutoGetDb::getDb
         return _autoDb.getDb();
@@ -439,6 +441,7 @@ private:
  * Opens the database that we want to use and sets the appropriate namespace on the
  * current operation.
  */
+//cmdCreate::run->createCollection 建表中会用到该类生成DatabaseImpl
 class OldClientContext {
     MONGO_DISALLOW_COPYING(OldClientContext);
 
@@ -474,6 +477,8 @@ private:
     bool _justCreated;
     bool _doVersion;
     const std::string _ns;
+    //OldClientContext::OldClientContext->OldClientContext::_finishInit()
+    //调用DatabaseImpl::openDb创建对应DB信息
     Database* _db;
     OperationContext* _opCtx;
 

@@ -54,6 +54,7 @@
 #include "mongo/db/views/view.h"
 #include "mongo/util/scopeguard.h"
 
+//EmptyCapped::run->mongo::emptyCapped
 mongo::Status mongo::emptyCapped(OperationContext* opCtx, const NamespaceString& collectionName) {
     AutoGetDb autoDb(opCtx, collectionName.db(), MODE_X);
 

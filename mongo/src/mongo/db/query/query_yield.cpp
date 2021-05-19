@@ -43,6 +43,8 @@ MONGO_FP_DECLARE(setYieldAllLocksHang);
 MONGO_FP_DECLARE(setYieldAllLocksWait);
 }  // namespace
 
+//Mongodb的查询过程中，会阶段性的将过程Yield出去，一方面是为了检测过程是否已经被终止，一方面是为
+//了让出时间片给其它线程执行。而Yield出去的查询，会连带释放掉WiredTiger层的Snapshot。
 // static  //通过yieldAllLocks暂时让出锁资源。
 void QueryYield::yieldAllLocks(OperationContext* opCtx,
                                stdx::function<void()> whileYieldingFn,
@@ -67,6 +69,7 @@ void QueryYield::yieldAllLocks(OperationContext* opCtx,
     opCtx->recoveryUnit()->abandonSnapshot();
 
     // Track the number of yields in CurOp.
+    //CurOp::yielded yield统计
     CurOp::get(opCtx)->yielded();
 
     MONGO_FAIL_POINT_PAUSE_WHILE_SET(setYieldAllLocksHang);

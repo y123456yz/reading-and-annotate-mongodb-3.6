@@ -55,6 +55,8 @@ using std::string;
 using std::vector;
 
 namespace {
+//当某个实例上面真正构建索引，突然实例挂了，mongod重启后调用: 
+// restartInProgressIndexesFromLastShutdown->checkNS调用
 void checkNS(OperationContext* opCtx, const std::list<std::string>& nsToCheck) {
     bool firstTime = true;
     for (std::list<std::string>::const_iterator it = nsToCheck.begin(); it != nsToCheck.end();
@@ -113,6 +115,7 @@ void checkNS(OperationContext* opCtx, const std::list<std::string>& nsToCheck) {
                 continue;
             }
 
+			//MultiIndexBlock::init
             uassertStatusOK(indexer.init(indexesToBuild));
 
             wunit.commit();

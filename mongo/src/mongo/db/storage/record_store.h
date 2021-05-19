@@ -311,6 +311,10 @@ public:
 
  //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
  //该接口对应一个指定表，对该RecordStore的相关操作实际上是对表对应存储WT引擎的操作
+
+ //WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+ //WiredTigerRecordStore(表数据文件操作)
+
  
  //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore，对该类的操作也就是对指定表的操作，他们是一个一一对应关系
 

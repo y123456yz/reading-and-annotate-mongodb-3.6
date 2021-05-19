@@ -957,6 +957,8 @@ size_t PlanCache::size() const {
     return _cache.size();
 }
 
+//CollectionInfoCacheImpl::updatePlanCacheIndexEntries中调用，
+//CollectionInfoCacheImpl::updatePlanCacheIndexEntries中完成IndexEntry和IndexDescriptor的转换
 void PlanCache::notifyOfIndexEntries(const std::vector<IndexEntry>& indexEntries) {
     _indexabilityState.updateDiscriminators(indexEntries);
 }

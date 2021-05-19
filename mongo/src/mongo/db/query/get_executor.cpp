@@ -666,6 +666,7 @@ std::pair<boost::optional<Timestamp>, boost::optional<Timestamp>> extractTsRange
     }
 }
 
+//oplogHack 优化 参考https://mongoing.com/archives/27285
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getOplogStartHack(
     OperationContext* opCtx,
     Collection* collection,
@@ -770,7 +771,7 @@ StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> getOplogStartHack(
 //根据CanonicalQuery得到的表达式树,调用getExecutor得到最终的PlanExecutor
 //FindCmd::run中调用  通过getExecutorFind函数,得到PlanExecutor.
 StatusWith<unique_ptr<PlanExecutor, PlanExecutor::Deleter>> 
- getExecutorFind(
+ getExecutorFind( //oplogHack 优化 参考https://mongoing.com/archives/27285
     OperationContext* opCtx,
     Collection* collection,
     const NamespaceString& nss,

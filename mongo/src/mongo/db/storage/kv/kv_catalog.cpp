@@ -184,6 +184,114 @@
 ├── WiredTiger.turtle
 └── WiredTiger.wt
 
+{
+	md: {
+		ns: "test.mycol",
+		options: {
+			uuid: UUID("75591c22-bd0f-4a56-ac95-ef90224cf3df"),
+			capped: true,
+			size: 6142976,
+			max: 10000,
+			autoIndexId: true
+		},
+		indexes: [{
+			spec: {
+				v: 2,
+				key: {
+					_id: 1
+				},
+				name: "_id_",
+				ns: "test.mycol"
+			},
+			ready: false,
+			multikey: false,
+			multikeyPaths: {
+				_id: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}],
+		prefix: -1
+	},
+	idxIdent: {  //索引ident，再KVCollectionCatalogEntry中管理起来
+		_id_: "test/index/2--6948813758302814892"
+	},
+	ns: "test.mycol",
+	//表ident   ，记录到KVCatalog._idents中，
+	ident: "test/collection/1--6948813758302814892"
+}
+
+{
+	md: {
+		ns: "test.test",
+		options: {
+			uuid: UUID("520904ec-0432-4c00-a15d-788e2f5d707b")
+			//建表参数都在这里
+		},
+		indexes: [{
+			spec: {
+				v: 2,
+				key: {
+					_id: 1
+				},
+				name: "_id_",
+				ns: "test.test"
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				_id: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					name: 1.0,
+					age: 1.0
+				},
+				name: "name_1_age_1",
+				ns: "test.test",
+				background: true
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				name: BinData(0, 00),
+				age: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					zipcode: 1.0
+				},
+				name: "zipcode_1",
+				ns: "test.test",
+				background: true
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				zipcode: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}],
+		prefix: -1
+	},
+	idxIdent: {
+		_id_: "test/index/8-380857198902467499",
+		name_1_age_1: "test/index/0--6948813758302814892",
+		zipcode_1: "test/index/3--6948813758302814892"
+	},
+	ns: "test.test",
+	ident: "test/collection/7-380857198902467499"
+}
+
 */
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
 
@@ -420,7 +528,7 @@ void KVCatalog::FeatureTracker::putInfo(OperationContext* opCtx, const FeatureBi
 
 ////KVStorageEngine::KVStorageEngine中构造初始化
 KVCatalog::KVCatalog(RecordStore* rs, bool directoryPerDb, bool directoryForIndexes)
-    : _rs(rs), //对应WiredTigerRecordStore
+    : _rs(rs), //对应WiredTigerRecordStore,对应_mdb_catalog.wt元数据文件操作
       _directoryPerDb(directoryPerDb),
       _directoryForIndexes(directoryForIndexes),
       _rand(_newRand()) {}
@@ -429,10 +537,12 @@ KVCatalog::~KVCatalog() {
     _rs = NULL;
 }
 
+//生成随机数
 std::string KVCatalog::_newRand() {
     return str::stream() << std::unique_ptr<SecureRandom>(SecureRandom::create())->nextInt64();
 }
 
+//ident文件是否以指定随机数结尾，必须把最大的随机数记录下来，以后有新表等从该随机数自动加1，避免重复
 bool KVCatalog::_hasEntryCollidingWithRand() const {
     // Only called from init() so don't need to lock.
     for (NSToIdentMap::const_iterator it = _idents.begin(); it != _idents.end(); ++it) {
@@ -444,6 +554,7 @@ bool KVCatalog::_hasEntryCollidingWithRand() const {
 
 //KVCatalog::newCollection   KVCatalog::putMetaData中调用
 //_newUniqueIdent()函数获得collection对应的文件名字（ident），一个集合对应一个wt文件
+//注意，这里是生成一个唯一的ident，这里的算法值得学习
 std::string KVCatalog::_newUniqueIdent(StringData ns, const char* kind) {
     // If this changes to not put _rand at the end, _hasEntryCollidingWithRand will need fixing.
     StringBuilder buf;
@@ -478,6 +589,7 @@ void KVCatalog::init(OperationContext* opCtx) {
         }
 
         // No rollback since this is just loading already committed data.
+        //表及其对应的ident信息
         string ns = obj["ns"].String();
         string ident = obj["ident"].String();
         _idents[ns] = Entry(ident, record->id);
@@ -570,12 +682,16 @@ Status KVCatalog::newCollection(OperationContext* opCtx,
 
 	//更新_idents，记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
     old = Entry(ident, res.getValue());
+	//2021-05-01T11:12:42.394+0800 D STORAGE  [conn-1] stored meta data for test.mycol @ RecordId(6) 
+	//obj:{ ns: "test.mycol", ident: "test/collection/1--6948813758302814892", md: { ns: "test.mycol", 
+	//options: { uuid: UUID("75591c22-bd0f-4a56-ac95-ef90224cf3df"), capped: true, size: 6142976, max: 10000, autoIndexId: true }, 
+	//indexes: [], prefix: -1 } }
 	//集合元数据信息存入_mdb_catalog.wt
     LOG(1) << "stored meta data for " << ns << " @ " << res.getValue() << " obj:" << redact(obj);;
     return Status::OK();
 }
 
-//获取wt文件名，也就是磁盘路径名
+//获取ns表对应的元数据信息，内容可以参考KVCatalog::newCollection
 std::string KVCatalog::getCollectionIdent(StringData ns) const {
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
     NSToIdentMap::const_iterator it = _idents.find(ns.toString());
@@ -584,6 +700,7 @@ std::string KVCatalog::getCollectionIdent(StringData ns) const {
 }
 
 //KVCollectionCatalogEntry::prepareForIndexBuild调用
+//获取索引对应文件目录数据
 std::string KVCatalog::getIndexIdent(OperationContext* opCtx,
                                      StringData ns,
                                      StringData idxName) const {
@@ -592,7 +709,8 @@ std::string KVCatalog::getIndexIdent(OperationContext* opCtx,
     return idxIdent[idxName].String();
 }
 
-//_mdb_catalog.wt中查找   KVCatalog::getMetaData中执行
+//_mdb_catalog.wt中查找   下面的KVCatalog::getMetaData中执行
+//获取ns表对应元数据信息，再mdb_catalog的第几行，内容是什么
 BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* out) const {
     RecordId dl;
     {
@@ -602,6 +720,10 @@ BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* 
         dl = it->second.storedLoc;
     }
 
+/*
+2021-04-19T14:55:07.391+0800 D STORAGE  [conn-2] KVCatalog::_findEntry looking up metadata for: yyztest.account2 @ RecordId(32)
+2021-04-19T14:55:07.391+0800 D STORAGE  [conn-2] KVCatalog::_findEntry looking up metadata for: yyztest.account2 @ RecordId(32) data:{ md: { ns: "yyztest.account2", options: { uuid: UUID("8cf59aef-c3d2-4bc7-8385-96d8807f41f9") }, indexes: [ { spec: { v: 2, key: { _id: 1 }, name: "_id_", ns: "yyztest.account2" }, ready: true, multikey: false, multikeyPaths: { _id: BinData(0, 00) }, head: 0, prefix: -1 }, { spec: { v: 2, unique: true, key: { game: 1.0, plat: 1.0, serverAccounts.roles.roleId: 1.0 }, name: "game_1_plat_1_serverAccounts.roles.roleId_1", ns: "yyztest.account2", background: true }, ready: true, multikey: true, multikeyPaths: { game: BinData(0, 00), plat: BinData(0, 00), serverAccounts.roles.roleId: BinData(0, 010100) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "yyztest/index/10-5463452279079700935", game_1_plat_1_serverAccounts.roles.roleId_1: "yyztest/index/11-5463452279079700935" }, ns: "yyztest.account2", ident: "yyztest/collection/9-5463452279079700935" }
+*/
     LOG(3) << "KVCatalog::_findEntry looking up metadata for: " << ns << " @ " << dl;
     RecordData data;
     if (!_rs->findRecord(opCtx, dl, &data)) {
@@ -624,6 +746,7 @@ BSONObj KVCatalog::_findEntry(OperationContext* opCtx, StringData ns, RecordId* 
 //KVStorageEngine::reconcileCatalogAndIdents    KVStorageEngine::KVStorageEngine
 
 //获取MetaData信息，KVCollectionCatalogEntry::_getMetaData调用
+//获取表ns的元数据信息
 const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationContext* opCtx,
                                                                   StringData ns) {
     BSONObj obj = _findEntry(opCtx, ns);
@@ -639,10 +762,13 @@ const BSONCollectionCatalogEntry::MetaData KVCatalog::getMetaData(OperationConte
     return md;
 }
 
+
 //集合相关的元数据信息记录到_mdb_catalog.wt 如创建某个集合对应的数据文件在哪里，索引文件在哪里
 
 //KVCollectionCatalogEntry类的如下相关接口完成对MetaData的更新:updateValidator   updateFlags  setIsTemp  removeUUID  addUUID  updateTTLSetting  indexBuildSuccess
 //KVCollectionCatalogEntry类的相关接口调用，完成MetaData相关成员更新
+
+//更新某个表的元数据信息  KVCollectionCatalogEntry类的相关接口调用，完成MetaData相关成员更新
 void KVCatalog::putMetaData(OperationContext* opCtx,
                             StringData ns,
                             BSONCollectionCatalogEntry::MetaData& md) {
@@ -660,14 +786,23 @@ void KVCatalog::putMetaData(OperationContext* opCtx,
             oldIdentMap = obj["idxIdent"].Obj();
 
         // fix ident map
+        /* 例如已经有_id_索引，和name_1_age_1索引，新键db.test.createIndex( { zipcode: 1}, {background: true} )
+		idxIdent: {
+			_id_: "test/index/8-380857198902467499",   注意test对应的是库
+			name_1_age_1: "test/index/0--6948813758302814892",
+			zipcode_1: "test/index/3--6948813758302814892"
+		},
+		*/
         for (size_t i = 0; i < md.indexes.size(); i++) {
             string name = md.indexes[i].name();
             BSONElement e = oldIdentMap[name];
+			//先把原有的找出来存入newIdentMap
             if (e.type() == String) {
                 newIdentMap.append(e);
                 continue;
             }
             // missing, create new
+            //新加的索引也追加进去
             newIdentMap.append(name, _newUniqueIdent(ns, "index"));
         }
         b.append("idxIdent", newIdentMap.obj());
@@ -683,11 +818,19 @@ void KVCatalog::putMetaData(OperationContext* opCtx,
 	//{ _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "admin/index/1--9034870482849730886" }, 
 	//ns: "admin.system.version", ident: "admin/collection/0--9034870482849730886" }
 
+	//建一个新表的元数据打印:db.createCollection("mycol", { capped : true, autoIndexId : true, size :    6142800, max : 10000 } )
+	//{ md: { ns: "test.mycol", options: { uuid: UUID("75591c22-bd0f-4a56-ac95-ef90224cf3df"), capped: true, size: 6142976, max: 10000, autoIndexId: true }, 
+	//indexes: [ { spec: { v: 2, key: { _id: 1 }, name: "_id_", ns: "test.mycol" }, ready: false, multikey: false, 
+	//multikeyPaths: { _id: BinData(0, 00) }, head: 0, prefix: -1 } ], prefix: -1 }, idxIdent: { _id_: "test/index/2--6948813758302814892" }, 
+	//ns: "test.mycol", ident: "test/collection/1--6948813758302814892" }
+
     LOG(3) << "recording new metadata: " << obj;
     Status status = _rs->updateRecord(opCtx, loc, obj.objdata(), obj.objsize(), false, NULL);
     fassert(28521, status.isOK());
 }
 
+//表重命名后元数据也要更新，包括表名 表ident 索引也修改
+//KVDatabaseCatalogEntryBase::renameCollection调用
 Status KVCatalog::renameCollection(OperationContext* opCtx,
                                    StringData fromNS,
                                    StringData toNS,
@@ -695,20 +838,26 @@ Status KVCatalog::renameCollection(OperationContext* opCtx,
     RecordId loc;
     BSONObj old = _findEntry(opCtx, fromNS, &loc).getOwned();
     {
+		//存储新表元数据信息
         BSONObjBuilder b;
 
+		//新表名
         b.append("ns", toNS);
 
         BSONCollectionCatalogEntry::MetaData md;
+		//解析处原表的md信息
         md.parse(old["md"].Obj());
+		//BSONCollectionCatalogEntry::MetaData::rename 表对应索引元数据也需要修改
         md.rename(toNS);
         if (!stayTemp)
             md.options.temp = false;
+		//把修改后的md组装到b中
         b.append("md", md.toBSON());
 
         b.appendElementsUnique(old);
 
         BSONObj obj = b.obj();
+		//把表对应元数据信息更新为替换后的新的
         Status status = _rs->updateRecord(opCtx, loc, obj.objdata(), obj.objsize(), false, NULL);
         fassert(28522, status.isOK());
     }
@@ -730,6 +879,7 @@ Status KVCatalog::renameCollection(OperationContext* opCtx,
 //drop删表CmdDrop::errmsgRun->dropCollection->DatabaseImpl::dropCollectionEvenIfSystem->DatabaseImpl::_finishDropCollection
 //    ->DatabaseImpl::_finishDropCollection->KVDatabaseCatalogEntryBase::dropCollection->KVCatalog::dropCollection
 //配合KVDatabaseCatalogEntryBase::createCollection->KVCatalog::newCollection阅读
+//删除表后需要从元数据中删除该表
 Status KVCatalog::dropCollection(OperationContext* opCtx, StringData ns) {
     invariant(opCtx->lockState()->isDbLockedForMode(nsToDatabaseSubstring(ns), MODE_X));
     stdx::lock_guard<stdx::mutex> lk(_identsLock);
@@ -765,8 +915,14 @@ std::vector<std::string> KVCatalog::getAllIdentsForDB(StringData db) const {
     return v;
 }
 
+//WiredTigerKVEngine::getAllIdents和KVCatalog::getAllIdents区别：
+// 1. WiredTigerKVEngine::getAllIdents对应WiredTiger.wt元数据文件，由wiredtiger存储引擎自己维护
+// 2. KVCatalog::getAllIdents对应_mdb_catalog.wt，由mongodb server层storage模块维护
+// 3. 这两个元数据相比较，冲突的时候collection以_mdb_catalog.wt为准，该表下面的索引以WiredTiger.wt为准
+//	  参考KVStorageEngine::reconcileCatalogAndIdents
+
 //KVStorageEngine::reconcileCatalogAndIdents调用
-//获取集群所有的ident信息
+//获取集群所有的ident信息，包括表的，也包括index的
 std::vector<std::string> KVCatalog::getAllIdents(OperationContext* opCtx) const {
     std::vector<std::string> v;
 
@@ -795,6 +951,7 @@ std::vector<std::string> KVCatalog::getAllIdents(OperationContext* opCtx) const 
     return v;
 }
 
+//用户数据包括普通表数据和索引数据
 bool KVCatalog::isUserDataIdent(StringData ident) const {
     return ident.find("index-") != std::string::npos || ident.find("index/") != std::string::npos ||
         ident.find("collection-") != std::string::npos ||

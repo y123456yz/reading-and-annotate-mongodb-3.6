@@ -39,6 +39,7 @@ class BSONObjBuilder;
  *  The LogicalTime class holds the cluster time of the cluster. It provides conversions to
  *  a Timestamp to allow integration with opLog.
  */
+//LogicalClock._clusterTime为该类型
 class LogicalTime {
 public:
     LogicalTime() = default;

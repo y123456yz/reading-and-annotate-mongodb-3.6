@@ -47,6 +47,15 @@ const char* DocumentSourceIndexStats::getSourceName() const {
     return "$indexStats";
 }
 
+/*
+mongos> db.news_doc_profile.aggregate({"$indexStats":{}})
+{ "name" : "outId_1", "key" : { "outId" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(1292908), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "_id_", "key" : { "_id" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong("9656445014"), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "docId_1", "key" : { "docId" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(132015475), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "publishTime_1", "key" : { "publishTime" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(25), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "updateTime_1", "key" : { "updateTime" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(82756), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+mongos> 
+*/
 DocumentSource::GetNextResult DocumentSourceIndexStats::getNext() {
     pExpCtx->checkForInterrupt();
 

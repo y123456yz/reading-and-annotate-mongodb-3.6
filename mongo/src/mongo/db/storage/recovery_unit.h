@@ -42,6 +42,12 @@ namespace mongo {
 class BSONObjBuilder;
 class OperationContext;
 
+//Dur_recovery_unit.h (mongo\src\mongo\db\storage\mmap_v1):class DurRecoveryUnit : public RecoveryUnit {
+//Ephemeral_for_test_recovery_unit.h (mongo\src\mongo\db\storage\ephemeral_for_test):class EphemeralForTestRecoveryUnit : public RecoveryUnit {
+//Heap_record_store_btree.h (mongo\src\mongo\db\storage\mmap_v1):class HeapRecordStoreBtreeRecoveryUnit : public RecoveryUnit {
+//Recovery_unit_noop.h (mongo\src\mongo\db\storage):class RecoveryUnitNoop : public RecoveryUnit {
+//Wiredtiger_recovery_unit.h (mongo\src\mongo\db\storage\wiredtiger):class WiredTigerRecoveryUnit final : public RecoveryUnit {
+
 /**
  * A RecoveryUnit is responsible for ensuring that data is persisted.
  * All on-disk information must be mutated through this interface.

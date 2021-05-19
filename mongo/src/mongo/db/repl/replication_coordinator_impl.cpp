@@ -1051,6 +1051,8 @@ void ReplicationCoordinatorImpl::setMyHeartbeatMessage(const std::string& msg) {
     _topCoord->setMyHeartbeatMessage(_replExecutor->now(), msg);
 }
 
+//mongo在每应用完一批oplogs之后，会调用setMyLastAppliedOpTimeForward 方法设置local_timestamp为这一批oplog中最后一条的ts。
+//参考https://mongoing.com/archives/6102
 void ReplicationCoordinatorImpl::setMyLastAppliedOpTimeForward(const OpTime& opTime,
                                                                DataConsistency consistency) {
     stdx::unique_lock<stdx::mutex> lock(_mutex);
@@ -1096,6 +1098,8 @@ void ReplicationCoordinatorImpl::_resetMyLastOpTimes_inlock() {
     _stableOpTimeCandidates.clear();
 }
 
+//参考https://mongoing.com/archives/77853
+// 这里是向 sync source 汇报自己的 oplog apply 进度信息
 void ReplicationCoordinatorImpl::_reportUpstream_inlock(stdx::unique_lock<stdx::mutex> lock) {
     invariant(lock.owns_lock());
 
@@ -1582,6 +1586,9 @@ ReplicationCoordinatorImpl::awaitReplicationOfLastOpForClient(
     return {std::move(status), duration_cast<Milliseconds>(timer.elapsed())};
 }
 
+//当 w > 1 时就需要等待足够多的 Secondary 节点也确认写操作执行成功，这个时候 MongoDB 
+//会通过执行 ReplicationCoordinatorImpl::_awaitReplication_inlock 阻塞在一个条件变量上，
+//等待被唤醒，被阻塞的用户线程会被加入到 _replicationWaiterList 中
 Status ReplicationCoordinatorImpl::_awaitReplication_inlock(
     stdx::unique_lock<stdx::mutex>* lock,
     OperationContext* opCtx,

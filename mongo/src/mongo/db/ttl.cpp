@@ -134,6 +134,7 @@ private:
         ttlPasses.increment();
 
         // Get all TTL indexes from every collection.
+        //把拥有TTL的索引找出来
         for (const std::string& collectionNS : ttlCollections) {
             NamespaceString collectionNSS(collectionNS);
             AutoGetCollection autoGetCollection(&opCtx, collectionNSS, MODE_IS);

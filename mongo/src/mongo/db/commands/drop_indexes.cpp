@@ -114,7 +114,7 @@ public:
         out->push_back(Privilege(parseResourcePattern(dbname, cmdObj), actions));
     }
     CmdReIndex() : ErrmsgCommandDeprecated("reIndex") {}
-	
+	//reindex就是先把所有索引删除，然后在一个一个添加索引
     bool errmsgRun(OperationContext* opCtx,
                    const string& dbname,
                    const BSONObj& jsobj,
@@ -188,6 +188,7 @@ public:
 
         result.appendNumber("nIndexesWas", all.size());
 
+		//先删除所有的索引
         {
             WriteUnitOfWork wunit(opCtx);
             collection->getIndexCatalog()->dropAllIndexes(opCtx, true);
@@ -197,6 +198,7 @@ public:
         MultiIndexBlock indexer(opCtx, collection);
         // do not want interruption as that will leave us without indexes.
 
+		//然后重新添加索引 MultiIndexBlock::init
         auto indexInfoObjs = indexer.init(all);
         if (!indexInfoObjs.isOK()) {
             return appendCommandStatus(result, indexInfoObjs.getStatus());

@@ -267,8 +267,11 @@ Status IndexAccessMethod::remove(OperationContext* opCtx,
     return Status::OK();
 }
 
-//MultiIndexBlockImpl::init调用
+//MultiIndexBlockImpl::init(手动加索引)  IndexCatalogImpl::createIndexOnEmptyCollection(空表写数据或者建表)调用
 Status IndexAccessMethod::initializeAsEmpty(OperationContext* opCtx) {
+	//唯一索引WiredTigerIndexUnique    普通索引WiredTigerIndexStandard
+
+	//WiredTigerIndex::initAsEmpty，啥也没做这里面
     return _newInterface->initAsEmpty(opCtx);
 }
 

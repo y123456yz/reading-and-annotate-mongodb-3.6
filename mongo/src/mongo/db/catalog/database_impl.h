@@ -63,6 +63,7 @@ class PseudoRandom;
 //DatabaseHolderImpl._dbs为该类型
 class DatabaseImpl : public Database::Impl {
 public:
+    //对应CollectionImpl
     typedef StringMap<Collection*> CollectionMap;
 
     /**
@@ -281,7 +282,8 @@ private:
     const std::string _name;  // "dbname"
 
     //真正赋值在DatabaseHolderImpl::openDb， 默认为KVDatabaseCatalogEntryBase
-    DatabaseCatalogEntry* _dbEntry;  // not owned here
+    //通过该成员让DB内存管理结构DatabaseImpl和DB元数据管理关联起来
+    DatabaseCatalogEntry* _dbEntry;  // not owned here 
 
     const std::string _profileName;      // "dbname.system.profile"
     const NamespaceString _indexesName;  // "dbname.system.indexes"
@@ -305,8 +307,11 @@ private:
     //AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
     //注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
-    //_collections存储该DB下面所有的表
-    //从_collections缓存中找出nss对应的表，DatabaseImpl::createCollection创建collection的时候添加到_collections数组
+    //_collections存储该DB下面所有的表，表来源：
+    //1. DatabaseImpl::createCollection创建collection的时候添加到_collections数组
+    //2. 构造DatabaseImpl的时候通过DatabaseImpl::init从元数据_mdb_catalog.wt中获取库对应的表信息
+
+    //_collections实现对表得底层KV管理操作等
     CollectionMap _collections;
 
     DurableViewCatalogImpl _durableViews;  // interface for system.views operations

@@ -66,6 +66,7 @@ std::string KVPrefix::toString() const {
     return generateNextPrefix();
 }
 
+//groupCollection才会生效，参考KVPrefix KVPrefix::getNextPrefix
 /* static */ KVPrefix KVPrefix::generateNextPrefix() {
     stdx::lock_guard<stdx::mutex> lk(_nextValueMutex);
     return KVPrefix(_nextValue++);

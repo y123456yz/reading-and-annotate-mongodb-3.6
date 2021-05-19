@@ -56,7 +56,15 @@ public:
                    const OpTime& durable,
                    long long aCfgver,
                    long long aMemberId);
+        //参考https://mongoing.com/archives/77853
+        
+        //Secondary 在拉取到 Primary 上的这个写操作对应的 Oplog 并且 Apply 完成后，会更新自身的位点
+        //信息，并通知另外一个后台线程汇报自己的 appliedOpTime 和 durableOpTime 等信息给 upstream
+        //（主要的方式，还有其他一些特殊的汇报时机）。
 
+        //appliedOpTime：Secondary 上 Apply 完一批 Oplog 后，最新的 Oplog Entry 的时间戳。
+        //durableOpTime：Secondary 上 Apply 完成并在 Disk 上持久化的 Oplog Entry 最新的时间戳， 
+        //  Oplog 也是作为 WiredTiger 引擎的一个 Table 来实现的，但 WT 引擎的 WAL sync 策略默认是 100ms 一次，所以这个时间戳通常滞后于appliedOpTime。
         OpTime appliedOpTime;
         OpTime durableOpTime;
         long long cfgver;

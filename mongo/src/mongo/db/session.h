@@ -51,6 +51,17 @@ class UpdateRequest;
  * refresh' (in which case refreshFromStorageIfNeeded needs to be called in order to make it
  * up-to-date).
  */
+/*
+Session 是 MongoDB 3.6 版本引入的概念，引入这个特性主要就是为实现多文档事务做准备。Session 本质上就
+是一个「上下文」。
+
+在以前的版本，MongoDB 只管理单个操作的上下文，mongod 服务进程接收到一个请求，为该请求创建一个上下文 
+（源码里对应 OperationContext），然后在服务整个请求的过程中一直使用这个上下文，内容包括，请求耗时统
+计、请求占用的锁资源、请求使用的存储快照等信息。有了 Session 之后，就可以让多个请求共享一个上下文，
+让多个请求产生关联，从而有能力支持多文档事务。
+
+可以参考:https://mongoing.com/%3Fp%3D6084
+*/
 class Session {
     MONGO_DISALLOW_COPYING(Session);
 
@@ -188,7 +199,7 @@ private:
                                       TxnNumber newTxnNumber,
                                       std::vector<StmtId> stmtIdsWritten,
                                       const repl::OpTime& lastStmtIdWriteTs);
-
+    //lsid: 请求所在 Session 的 ID， 也称 logic session id
     const LogicalSessionId _sessionId;
 
     // Protects the member variables below.

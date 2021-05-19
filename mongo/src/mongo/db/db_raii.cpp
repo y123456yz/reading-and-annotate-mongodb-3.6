@@ -338,18 +338,22 @@ OldClientContext::OldClientContext(OperationContext* opCtx,
     : _justCreated(false),  // set for real in finishInit
       _doVersion(doVersion),
       _ns(ns),
+      //_finishInit()中赋值
       _db(NULL),
       _opCtx(opCtx) {
+     //如果该Db在内存中不存在，则调用DatabaseImpl::openDb创建对应DB信息
     _finishInit();
 }
 
+//获取对应的db信息，上面的OldClientContext::OldClientContext中调用
 void OldClientContext::_finishInit() {
     _db = dbHolder().get(_opCtx, _ns);
     if (_db) {
         _justCreated = false;
     } else {
         invariant(_opCtx->lockState()->isDbLockedForMode(nsToDatabaseSubstring(_ns), MODE_X));
-        _db = dbHolder().openDb(_opCtx, _ns, &_justCreated);
+		//调用DatabaseImpl::openDb创建对应DB信息
+		_db = dbHolder().openDb(_opCtx, _ns, &_justCreated);
         invariant(_db);
     }
 

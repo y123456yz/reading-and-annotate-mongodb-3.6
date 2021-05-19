@@ -179,6 +179,7 @@ public:
      */
     Status checkUnfinished() const override;
 
+    //迭代器
     class IndexIteratorImpl : public IndexCatalog::IndexIterator::Impl {
     public:
         IndexIteratorImpl(OperationContext* opCtx,
@@ -282,6 +283,9 @@ public:
      * 3) indexes entry in .ns file
      * 4) system.namespaces entry for index ns
      */
+    //IndexCatalogImpl::createIndexOnEmptyCollection中第一次使用空表的时候(第一次写数据或者手动建表)
+    //index_create_impl.cpp中的MultiIndexBlockImpl::init new该类
+    
     //MultiIndexBlockImpl.IndexToBuild.block为该类型
     class IndexBuildBlock {
         MONGO_DISALLOW_COPYING(IndexBuildBlock);
@@ -315,6 +319,7 @@ public:
         std::string _indexName;
         std::string _indexNamespace;
 
+        //对应IndexCatalogEntryImpl
         IndexCatalogEntry* _entry;
         bool _inProgress;
 
@@ -449,7 +454,7 @@ private:
     const int _maxNumIndexesAllowed;
 
     //可以参考IndexCatalogImpl::indexRecords  IndexCatalogImpl::numIndexesTotal
-    //记录所有的索引信息
+    //记录所有的索引信息，IndexCatalogImpl::_setupInMemoryStructures中赋值
     IndexCatalogEntryContainer _entries; 
 
     // These are the index specs of indexes that were "leftover".
@@ -477,3 +482,4 @@ private:
     }
 };
 }  // namespace mongo
+

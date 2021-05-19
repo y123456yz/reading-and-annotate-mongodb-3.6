@@ -164,6 +164,21 @@ StatusWith<RollBackLocalOperations::RollbackCommonPoint> RollBackLocalOperations
                                            "Need to process additional remote operations.");
 }
 
+//参考https://mongoing.com/archives/77853
+/*
+回滚的旧主，需要确认重新选主后，自己的 oplog 历史和新主的 oplog 历史发生“分叉”的时间点，在这个时
+间点之前，新主和旧主的 oplog 是一致的，所以这个点也被称之为「common point」。旧主上从「common point」
+开始到自己最新的时间点之间的 oplog 就是未来及复制到新主的“多余”部分，需要回滚掉。
+
+common point 的查找逻辑在 syncRollBackLocalOperations() 中实现，大致流程为，由新到老（反向）从
+同步源节点获取每条 oplog，然后和自己本地的 oplog 进行比对。本地 oplog 的扫描同样为反向，由于 oplog 的
+时间戳可以保证递增，扫描时可以通过保存中间位点的方式来减少重复扫描。如果最终在本地找到一条 oplog 的
+时间戳和 term 和同步源的完全一样，那么这条 oplog 即为 common point。由于在分布式环境下，不同节点的
+时钟不能做到完全实时同步，而 term 可以唯一标识一个主节点在任期间的修改（oplog）历史，所以需要把
+oplog ts 和 term 结合起来进行 common point 的查找。
+
+//3.6版本ts在主和从是完全一样的，所以比较ts即可
+*/
 StatusWith<RollBackLocalOperations::RollbackCommonPoint> syncRollBackLocalOperations(
     const OplogInterface& localOplog,
     const OplogInterface& remoteOplog,
@@ -175,6 +190,7 @@ StatusWith<RollBackLocalOperations::RollbackCommonPoint> syncRollBackLocalOperat
             ErrorCodes::InvalidSyncSource, "remote oplog empty or unreadable");
     }
 
+	//找到需要rollback的公共点
     RollBackLocalOperations finder(localOplog, rollbackOperation);
     Timestamp theirTime;
     while (remoteResult.isOK()) {

@@ -77,6 +77,12 @@ private:
 
     mutable stdx::mutex _minValidBoundariesMutex;
     OpTime _appliedThrough;
+    /*
+    对于回滚节点来说，导致状态被跳过的原因是进行了「refetch」，所以只需要记录每次「refetch」时同步源最新
+    的 oplog 时间戳，「reapply」时拉取到最后一次「refetch」对应的这个同步源时间戳就可以保证状态的正确补
+    齐，MongoDB 在实现中把这个时间戳称之为 minValid。
+    参考https://mongoing.com/archives/77853
+    */
     OpTime _minValid;
     Timestamp _oplogTruncateAfterPoint;
     Timestamp _checkpointTimestamp;

@@ -75,7 +75,9 @@ public:
         : _opCtx(opCtx), _cce(cce), _ident(ident.toString()) {}
 
     virtual void rollback() {}
-	
+	//IndexRemoveChange commit负责清除IndexCatalogImpl._entries[]数组中对应的索引IndexCatalogEntryImpl
+    //RemoveIndexChange commit负责真正的索引文件清除
+    
 	//KVDatabaseCatalogEntryBase::commit->WiredTigerKVEngine::dropIdent删表中调用，真正的表删除
 	//KVCollectionCatalogEntry::RemoveIndexChange::commit()->WiredTigerKVEngine::dropIdent 删索引，中调用，真正删除索引在这里
     virtual void commit() {
@@ -90,7 +92,11 @@ public:
     const std::string _ident;
 };
 
-//KVDatabaseCatalogEntryBase::createCollection创建集合的时候new对象
+//KVDatabaseCatalogEntryBase::createCollection和KVDatabaseCatalogEntryBase::initCollection的区别如下:
+// 1. KVDatabaseCatalogEntryBase::createCollection对应的是新键的表
+// 2. KVDatabaseCatalogEntryBase::initCollection对应的是mongod重启，从_mdb_catalog.wt元数据文件中加载的表
+
+//KVDatabaseCatalogEntryBase::createCollection和KVDatabaseCatalogEntryBase::initCollection创建集合的时候new对象
 KVCollectionCatalogEntry::KVCollectionCatalogEntry(KVEngine* engine,
                                                    KVCatalog* catalog,
                                                    StringData ns,
@@ -176,7 +182,7 @@ void KVCollectionCatalogEntry::setIndexHead(OperationContext* opCtx,
     _catalog->putMetaData(opCtx, ns().toString(), md);
 }
 
-//从该表MetaData元数据中清除该index
+//从该表MetaData元数据中清除该index，并清除索引文件
 //IndexCatalogImpl::_deleteIndexFromDisk调用
 Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData indexName) {
 	//获取元数据md
@@ -196,6 +202,7 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
 
     // Lazily remove to isolate underlying engine from rollback.
     //删除索引事件记录下来，真正的索引文件删除在这里
+    //RemoveIndexChange commit负责真正的索引文件清除
     opCtx->recoveryUnit()->registerChange(new RemoveIndexChange(opCtx, this, ident));
     return Status::OK();
 }
@@ -204,7 +211,7 @@ Status KVCollectionCatalogEntry::removeIndex(OperationContext* opCtx, StringData
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild
 
-//非backgroud阻塞方式创建索引的准备工作
+//非backgroud阻塞方式创建索引的准备工作，并创建存储引擎对应索引目录文件
 Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
                                                       const IndexDescriptor* spec) {
 	//BSONCollectionCatalogEntry::MetaData
@@ -235,7 +242,8 @@ Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
 	//KVCatalog::putMetaData
     _catalog->putMetaData(opCtx, ns().toString(), md);
 
-	//KVCatalog::getIndexIdent  从元数据中获取表索引信息
+	//KVCatalog::getIndexIdent  
+	//获取索引对应文件目录数据
     string ident = _catalog->getIndexIdent(opCtx, ns().ns(), spec->indexName());
 
 	//WiredTigerKVEngine::createGroupedSortedDataInterface
@@ -247,6 +255,8 @@ Status KVCollectionCatalogEntry::prepareForIndexBuild(OperationContext* opCtx,
     return status;
 }
 
+//IndexCatalogImpl::IndexBuildBlock::success()中调用
+//跟新元数据"_mdb_catalog.wt"信息中的索引
 void KVCollectionCatalogEntry::indexBuildSuccess(OperationContext* opCtx, StringData indexName) {
     MetaData md = _getMetaData(opCtx);
     int offset = md.findIndexOffset(indexName);
@@ -265,6 +275,7 @@ void KVCollectionCatalogEntry::updateTTLSetting(OperationContext* opCtx,
     _catalog->putMetaData(opCtx, ns().toString(), md);
 }
 
+//_collModInternal  syncFixUp调用
 void KVCollectionCatalogEntry::addUUID(OperationContext* opCtx,
                                        CollectionUUID uuid,
                                        Collection* coll) {
@@ -281,6 +292,7 @@ void KVCollectionCatalogEntry::addUUID(OperationContext* opCtx,
         fassert(40564, md.options.uuid.get() == uuid);
     }
 }
+
 
 void KVCollectionCatalogEntry::removeUUID(OperationContext* opCtx) {
     // Remove the UUID from CollectionOptions if a UUID exists.

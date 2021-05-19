@@ -44,6 +44,8 @@ namespace repl {
 const Client::Decoration<ReplClientInfo> ReplClientInfo::forClient =
     Client::declareDecoration<ReplClientInfo>();
 
+//每一个用户的写操作会开启 WiredTiger 引擎层的一个事务，这个事务在提交时会顺便记录本次写操作对应
+//的 Oplog Entry 的时间戳，也就是lastOpTime
 void ReplClientInfo::setLastOp(const OpTime& ot) {
     invariant(ot >= _lastOp);
     _lastOp = ot;

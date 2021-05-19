@@ -235,6 +235,7 @@ public:
 
     CmdRepairDatabase() : ErrmsgCommandDeprecated("repairDatabase") {}
 
+	//CmdRepairDatabase::errmsgRun
     bool errmsgRun(OperationContext* opCtx,
                    const string& dbname,
                    const BSONObj& cmdObj,
@@ -293,6 +294,7 @@ public:
    todo: how do we handle profiling information put in the db with replication?
          sensibly or not?
 */
+//db.setProfilingLevel(2)命令设置，参考
 class CmdProfile : public ErrmsgCommandDeprecated {
 public:
     virtual bool slaveOk() const {
@@ -902,6 +904,7 @@ public:
 
 } cmdDatasize;
 
+//db.collection.stats()或者
 class CollectionStats : public ErrmsgCommandDeprecated {
 public:
     CollectionStats() : ErrmsgCommandDeprecated("collStats", "collstats") {}

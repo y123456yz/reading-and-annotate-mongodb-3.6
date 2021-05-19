@@ -82,6 +82,7 @@ public:
         return isOwned() ? BSONObj(releaseBuffer()) : BSONObj(_data);
     }
 
+    //打印可以参考KVCatalog::_findEntry
     BSONObj toBson() && {
         return releaseToBson();
     }

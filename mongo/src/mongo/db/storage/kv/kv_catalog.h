@@ -222,9 +222,11 @@ private:
         std::string ident; //collection对应的文件名字（ident）   _newUniqueIdent生成
         RecordId storedLoc;
     };
+    //下面的_idents使用
     typedef std::map<std::string, Entry> NSToIdentMap;
     //所有集合信息存到这里面
     //更新_idents，记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
+    //内容可以参考KVCatalog::newCollection，_idents中只会记录表信息
     NSToIdentMap _idents;
     mutable stdx::mutex _identsLock;
 

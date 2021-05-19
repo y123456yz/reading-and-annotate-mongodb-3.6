@@ -366,7 +366,7 @@ public:
         // executing a findAndModify. This is done to ensure that we can always match, modify, and
         // return the document under concurrency, if a matching document exists.
         return writeConflictRetry(opCtx, "findAndModify", nsString.ns(), [&] {
-            if (args.isRemove()) {
+            if (args.isRemove()) { //携带remove条件
                 DeleteRequest request(nsString);
                 const bool isExplain = false;
                 makeDeleteRequest(args, isExplain, &request);
@@ -450,7 +450,7 @@ public:
 
                 appendCommandResponse(
                     exec.get(), args.isRemove(), advanceStatus.getValue(), &result);
-            } else {
+            } else {//没携带remove条件
                 UpdateRequest request(nsString);
                 UpdateLifecycleImpl updateLifecycle(nsString);
                 const bool isExplain = false;
@@ -467,6 +467,7 @@ public:
                     return false;
                 }
 
+				//库锁，表锁，都是意向写锁
                 AutoGetOrCreateDb autoDb(opCtx, dbName, MODE_IX);
                 Lock::CollectionLock collLock(opCtx->lockState(), nsString.ns(), MODE_IX);
 
@@ -486,6 +487,7 @@ public:
                     return false;
                 }
 
+				//表不存在，并且是ViewCatalog直接报错
                 Collection* collection = autoDb.getDb()->getCollection(opCtx, nsString.ns());
                 if (!collection && autoDb.getDb()->getViewCatalog()->lookup(opCtx, nsString.ns())) {
                     appendCommandStatus(result,
@@ -496,7 +498,7 @@ public:
 
                 // Create the collection if it does not exist when performing an upsert
                 // because the update stage does not create its own collection.
-                if (!collection && args.isUpsert()) {
+                if (!collection && args.isUpsert()) {//表不存在，但是携带有upsert true，则提前建表
                     // Release the collection lock and reacquire a lock on the database
                     // in exclusive mode in order to create the collection.
                     collLock.relockAsDatabaseExclusive(autoDb.lock());
@@ -537,6 +539,7 @@ public:
                     CurOp::get(opCtx)->setPlanSummary_inlock(Explain::getPlanSummary(exec.get()));
                 }
 
+				//exec执行
                 StatusWith<boost::optional<BSONObj>> advanceStatus =
                     advanceExecutor(opCtx, exec.get(), args.isRemove());
                 if (!advanceStatus.isOK()) {

@@ -95,7 +95,7 @@ Status dropCollection(OperationContext* opCtx,
             invariant(!view);
 			//获取该表有多少个索引
             int numIndexes = coll->getIndexCatalog()->numIndexesTotal(opCtx);
-
+			//该表当前真在后台添加索引，直接报错，不能删表
             BackgroundOperation::assertNoBgOpInProgForNs(collectionName.ns());
 
             Status s = systemCollectionMode ==

@@ -39,6 +39,7 @@ class OperationContext;
  * LogicalClock maintain the clusterTime for a clusterNode. Every cluster node in a replica set has
  * an instance of the LogicalClock installed as a ServiceContext decoration.
  */
+//可以参考https://mongoing.com/archives/77853
 class LogicalClock {
 public:
     // Decorate ServiceContext with LogicalClock instance.
@@ -93,6 +94,7 @@ private:
 
     // The mutex protects _clusterTime.
     stdx::mutex _mutex;
+    //参考https://mongoing.com/archives/77853
     LogicalTime _clusterTime;
 };
 

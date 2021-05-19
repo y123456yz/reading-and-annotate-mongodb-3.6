@@ -42,6 +42,7 @@ CollectionIndexUsageTracker::CollectionIndexUsageTracker(ClockSource* clockSourc
     invariant(_clockSource);
 }
 
+//CollectionInfoCacheImpl::notifyOfQuery调用
 void CollectionIndexUsageTracker::recordIndexAccess(StringData indexName) {
     invariant(!indexName.empty());
     dassert(_indexUsageMap.find(indexName) != _indexUsageMap.end());
@@ -64,6 +65,7 @@ void CollectionIndexUsageTracker::unregisterIndex(StringData indexName) {
     _indexUsageMap.erase(indexName);
 }
 
+//CollectionInfoCacheImpl::getIndexUsageStats()调用
 CollectionIndexUsageMap CollectionIndexUsageTracker::getUsageStats() const {
     return _indexUsageMap;
 }

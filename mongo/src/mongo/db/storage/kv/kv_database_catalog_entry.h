@@ -34,6 +34,10 @@ namespace mongo {
 //KVDatabaseCatalogEntry继承KVDatabaseCatalogEntryBase，后者又继承DatabaseCatalogEntry，这样
 //就把kv和catalog联系了起来
 
+//KVDatabaseCatalogEntry和KVCollectionCatalogEntry很类似，一个针对库下面所有表的元数据管理，一个针对表
+//的元数据管理
+
+
 //通过KVStorageEngine::getDatabaseCatalogEntry获取
 
 

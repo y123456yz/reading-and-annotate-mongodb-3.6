@@ -112,6 +112,6 @@ protected:
     //来源有两个地方：
     //1. mongod重启，通过KVStorageEngine::KVStorageEngine->KVDatabaseCatalogEntryBase::initCollection从元数据_mdb_catalog.wt中加载表信息
     //2. KVDatabaseCatalogEntryBase::createCollection创建实时表
-    CollectionMap _collections; //从_mdb_catalog.wt
+    CollectionMap _collections;  
 };
 }  // namespace mongo

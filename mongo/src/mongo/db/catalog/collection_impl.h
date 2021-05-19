@@ -448,20 +448,22 @@ private:
     //DatabaseImpl::_getOrCreateCollectionInstance->KVDatabaseCatalogEntryBase::getCollectionCatalogEntry获取nss对应KVCollectionCatalogEntry
     //表nss对应KVCollectionCatalogEntry，
     //该类主要完成对元数据"_mdb_catalog.wt"相关管理操作
-    CollectionCatalogEntry* const _details;
+    CollectionCatalogEntry* const _details;  //主要是辅助Validation使用
 
     //StandardWiredTigerRecordStore继承WiredTigerRecordStore，后者继承RecordStore
     //DatabaseImpl::_getOrCreateCollectionInstance-> new Collection()集合初始化构造的时候完成该类成员初始化赋值
     //对应StandardWiredTigerRecordStore 
-    RecordStore* const _recordStore; //_recordStore对应数据操作，_indexCatalog对应索引操作
+
+    //_recordStore对应数据操作，_indexCatalog对应索引操作 
+    RecordStore* const _recordStore; 
     //该collection对应的上层DatabaseCatalogEntry信息
     DatabaseCatalogEntry* const _dbce;
     const bool _needCappedLock;
-    //对应CollectionInfoCacheImpl
+    //对应CollectionInfoCacheImpl，缓存查询计划信息
     CollectionInfoCache _infoCache;
     //索引相关接口  
     //CollectionImpl::CollectionImpl构造及赋值，对应IndexCatalogImpl
-    IndexCatalog _indexCatalog; //_recordStore对应数据操作，_indexCatalog对应索引操作
+    IndexCatalog _indexCatalog; //_recordStore对应数据操作，_indexCatalog对应索引操作 
 
     mutable stdx::mutex _indexObserverMutex;
     mutable std::unique_ptr<IndexObserver> _indexObserver;
@@ -472,12 +474,11 @@ private:
     // If null, the default collation is simple binary compare.
     std::unique_ptr<CollatorInterface> _collator;
 
+    //文档验证相关，参考https://blog.csdn.net/u013066244/article/details/73799927
     // Empty means no filter.
     BSONObj _validatorDoc;
-
     // Points into _validatorDoc. Null means no filter.
     std::unique_ptr<MatchExpression> _validator;
-
     ValidationAction _validationAction;
     ValidationLevel _validationLevel;
 

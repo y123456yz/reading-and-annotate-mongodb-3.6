@@ -306,6 +306,7 @@ Status Balancer::moveSingleChunk(OperationContext* opCtx,
         return moveAllowedStatus;
     }
 
+	//MigrationManager::executeManualMigrationµ÷ÓÃ
     return _migrationManager.executeManualMigration(
         opCtx, MigrateInfo(newShardId, chunk), maxChunkSizeBytes, secondaryThrottle, waitForDelete);
 }

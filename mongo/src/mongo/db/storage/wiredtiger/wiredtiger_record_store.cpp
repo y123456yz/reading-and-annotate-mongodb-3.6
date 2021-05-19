@@ -765,7 +765,7 @@ int64_t WiredTigerRecordStore::cappedMaxSize() const {
     return _cappedMaxSize;
 }
 
-//获取WiredTigerRecordStore对应表的大小
+//获取WiredTigerRecordStore对应表的磁盘空间占用大小
 int64_t WiredTigerRecordStore::storageSize(OperationContext* opCtx,
                                            BSONObjBuilder* extraInfo,
                                            int infoLevel) const {
@@ -1243,6 +1243,8 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
         } else {
             ts = timestamps[i];
         }
+		//保障了ts和存储引擎层面的时间戳一致性
+		//MongoDB 在提交事务时，会将 oplog 时间戳跟事务关联，从而达到 MongoDB Server 层时序与 WiredTiger 层时序一致的目的。
         if (!ts.isNull()) {
             LOG(4) << "inserting record with timestamp " << ts;
             fassertStatusOK(39001, opCtx->recoveryUnit()->setTimestamp(ts));
@@ -1601,6 +1603,7 @@ void WiredTigerRecordStore::waitForAllEarlierOplogWritesToBeVisible(OperationCon
 }
 
 //oplogHack 优化 参考https://mongoing.com/archives/27285
+//从指定位置拉取oplog   getOplogStartHack  getExecutorFind中调用
 boost::optional<RecordId> WiredTigerRecordStore::oplogStartHack(
     OperationContext* opCtx, const RecordId& startingPosition) const {
     if (!_isOplog)

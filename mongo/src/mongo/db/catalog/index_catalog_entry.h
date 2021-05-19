@@ -328,7 +328,7 @@ public:
     }
 
 private:
-    
+    //对应IndexCatalogEntryImpl，也就是索引信息，一个索引对应一个IndexCatalogEntryImpl
     std::vector<std::unique_ptr<IndexCatalogEntry>> _entries;
 };
 }  // namespace mongo

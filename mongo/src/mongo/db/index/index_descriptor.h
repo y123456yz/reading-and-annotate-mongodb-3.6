@@ -53,6 +53,9 @@ class IndexCatalogEntryContainer;
  *
  * All synchronization is the responsibility of the caller.
  */
+
+//CollectionInfoCacheImpl::updatePlanCacheIndexEntries中完成IndexEntry和IndexDescriptor的转换
+
 //IndexCatalogImpl::init  IndexCatalogImpl::IndexBuildBlock::init()中构造使用
 
 //索引信息，获取所有所有信息可以参考fillOutPlannerParams

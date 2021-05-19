@@ -32,7 +32,8 @@
 
 namespace mongo {
 
-//_initAndListen会使用该类  oplog相关操作在该接口实现
+//_initAndListen会使用该类  oplog相关操作在该接口实现  
+//增 删 改 删库 删表 删索引 加索引等对应的oplog信息记录
 class OpObserverImpl : public OpObserver {
     MONGO_DISALLOW_COPYING(OpObserverImpl);
 

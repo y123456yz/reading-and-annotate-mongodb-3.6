@@ -42,8 +42,10 @@ namespace mongo {
 class KVCatalog;
 class KVEngine;
 
+//KVDatabaseCatalogEntry和KVCollectionCatalogEntry很类似，一个针对库下面所有表的元数据管理，一个针对表
+//的元数据管理
 
-//KVDatabaseCatalogEntryBase::createCollection中new改对象  
+//KVDatabaseCatalogEntryBase::createCollection和KVDatabaseCatalogEntryBase::initCollectio中new改对象  
 
 //该类主要完成对元数据"_mdb_catalog.wt"相关操作
 //KVDatabaseCatalogEntryBase(一个DB)._collections[](多个表)，也就是一个DB下包含多个表，每个表对应一个KVCollectionCatalogEntry
@@ -121,3 +123,4 @@ private:
     std::unique_ptr<RecordStore> _recordStore;  // owned
 };
 }
+

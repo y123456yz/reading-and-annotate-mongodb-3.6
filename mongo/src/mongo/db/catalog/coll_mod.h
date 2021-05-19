@@ -37,6 +37,15 @@ class Collection;
 class NamespaceString;
 class OperationContext;
 
+/*
+该方法给集合添加一个标识，来修改集合的行为。 标识包含usePowerOf2Sizes和index。
+
+命令格式为：
+
+db.runCommand({"collMod":<collection>,"<flag>":<value>})
+
+*/
+
 /**
  * If upgrade is true, adds UUIDs to all collections of all databases. If upgrade is false, removes
  * UUIDs from all collections of all databases. It updates non-replicated collections by indirectly

@@ -47,6 +47,18 @@ class OperationContext;
 /**
  * Registry of opened databases.
  */
+
+//DatabaseHolderImpl.dbs[]和KVStorageEngine._dbs[]的区别及联系：
+//1. DatabaseHolderImpl.dbs[]包含实例启动后使用过或者正在使用的DB信息
+//2. KVStorageEngine._dbs[]对应从_mdb_catalog.wt元数据文件加载的所有库及其下面表的元数据信息
+//3. mongodb启动后，当通过db.xx.collection对某库的某表操作的时候，会生成一个DatabaseImpl,然后调用
+//   DatabaseImpl::init()从该库对应KVDatabaseCatalogEntryBase中获取该表元数据信息
+//4. KVStorageEngine._dbs[]中存的是全量的元数据信息，而DatabaseHolderImpl.dbs[]中存的是自实例启动后
+//   到现在为止，通过db.xx.collection.insert()等使用过的库信息。例如有两个库DB1，DB2，当mongod实例重启后
+//   我们只访问了DB1，则KVStorageEngine._dbs[]包含有DB1和DB2两个库信息，而DatabaseHolderImpl.dbs[]只包含DB1信息
+
+
+ 
 //AutoGetDb::AutoGetDb或者AutoGetOrCreateDb::AutoGetOrCreateDb->DatabaseHolderImpl::get从DatabaseHolderImpl._dbs数组查找获取Database
 //DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
 //AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
@@ -105,6 +117,15 @@ private:
     //DatabaseImpl::createCollection创建collection的表全部添加到DatabaseImpl._collections数组中
     //AutoGetCollection::AutoGetCollection通过Database::getCollection或者UUIDCatalog::lookupCollectionByUUID(从UUIDCatalog._catalog数组通过查找uuid可以获取collection表信息)
     //注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
+
+    //DatabaseHolderImpl.dbs[]和KVStorageEngine._dbs[]的区别及联系：
+    //1. DatabaseHolderImpl.dbs[]包含实例启动后使用过或者正在使用的DB信息
+    //2. KVStorageEngine._dbs[]对应从_mdb_catalog.wt元数据文件加载的所有库及其下面表的元数据信息
+    //3. mongodb启动后，当通过db.xx.collection对某库的某表操作的时候，会生成一个DatabaseImpl,然后调用
+    //   DatabaseImpl::init()从该库对应KVDatabaseCatalogEntryBase中获取该表元数据信息
+    //4. KVStorageEngine._dbs[]中存的是全量的元数据信息，而DatabaseHolderImpl.dbs[]中存的是自实例启动后
+    //   到现在为止，通过db.xx.collection.insert()等使用过的库信息。例如有两个库DB1，DB2，当mongod实例重启后
+    //   我们只访问了DB1，则KVStorageEngine._dbs[]包含有DB1和DB2两个库信息，而DatabaseHolderImpl.dbs[]只包含DB1信息
     
     //保存到database_holder_impl.h中的全局变量_dbHolder
     //所有db保存到这里，通过DatabaseHolderImpl::openDb创建后保存到这里

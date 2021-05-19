@@ -66,6 +66,7 @@ struct InsertDeleteOptions;
 class IndexCatalog {
 public:
     //遍历所有索引信息可以参考fillOutPlannerParams
+    //IndexIteratorImpl集成该迭代器，迭代器使用参考IndexCatalogImpl::findIdIndex
     class IndexIterator {
     public:
         class Impl {
@@ -315,7 +316,8 @@ public:
         return this->_impl().numIndexesReady(opCtx);
     }
 
-    //当前正在创建的索引数目
+    //当前正在创建的索引数目  
+    //DatabaseImpl::dropCollectionEvenIfSystem  CollectionImpl::compact  CollectionImpl::cappedTruncateAfter调用
     inline int numIndexesInProgress(OperationContext* const opCtx) const {
         return numIndexesTotal(opCtx) - numIndexesReady(opCtx);
     }

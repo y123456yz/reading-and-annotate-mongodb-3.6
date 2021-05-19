@@ -99,6 +99,7 @@ public:
     inline Database* openDb(OperationContext* const opCtx,
                             const StringData ns,
                             bool* const justCreated = nullptr) {
+                            //DatabaseImpl::openDb
         return this->_impl().openDb(opCtx, ns, justCreated);
     }
 

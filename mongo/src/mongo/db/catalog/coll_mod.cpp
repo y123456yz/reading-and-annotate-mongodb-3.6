@@ -297,6 +297,14 @@ void setCollectionOptionFlag(OperationContext* opCtx,
     invariant(newOptions.flagsSet);
 }
 
+/*
+该方法给集合添加一个标识，来修改集合的行为。 标识包含usePowerOf2Sizes和index。
+
+命令格式为：
+
+db.runCommand({"collMod":<collection>,"<flag>":<value>})
+
+*/
 Status _collModInternal(OperationContext* opCtx,
                         const NamespaceString& nss,
                         const BSONObj& cmdObj,
@@ -690,3 +698,4 @@ Status updateUUIDSchemaVersionNonReplicated(OperationContext* opCtx, bool upgrad
     return Status::OK();
 }
 }  // namespace mongo
+

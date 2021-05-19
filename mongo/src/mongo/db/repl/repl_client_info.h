@@ -82,6 +82,8 @@ private:
     static const long long kUninitializedTerm = -1;
 
     //ReplClientInfo::setLastOpToSystemLastOpTime中赋值
+    //每一个用户的写操作会开启 WiredTiger 引擎层的一个事务，这个事务在提交时会顺便记录本次写操作对应
+    //的 Oplog Entry 的时间戳，也就是lastOpTime
     OpTime _lastOp = OpTime();
     Timestamp _lastSnapshot;
     OID _remoteId = OID();

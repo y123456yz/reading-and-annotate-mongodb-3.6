@@ -57,7 +57,8 @@ StorageEngine¶¨ÒåÁËÒ»ÏµÁĞMongdb´æ´¢ÒıÇæĞèÒªÊµÏÖµÄ½Ó¿Ú£¬ÊÇÒ»¸ö½Ó¿ÚÀà£¬ËùÓĞµÄ´æ´¢Ò
 
 //KVDatabaseCatalogEntry¼Ì³ĞKVDatabaseCatalogEntryBase£¬ºóÕßÓÖ¼Ì³ĞDatabaseCatalogEntry
 
-//StorageEngine::getDatabaseCatalogEntry»ñÈ¡¸ÃÀà
+//StorageEngine::getDatabaseCatalogEntry»ñÈ¡¸ÃÀà,
+//DatabaseImpl._dbEntryÎª¸ÃÀà£¬Í¨¹ıÕâÀïÈÃÄÚ´æÖĞµÄDatabaseImplºÍwtÎÄ¼şµÄÔªÊı¾İ¹ØÁªÆğÀ´
 class DatabaseCatalogEntry {
 public:
     DatabaseCatalogEntry(StringData name) : _name(name.toString()) {}

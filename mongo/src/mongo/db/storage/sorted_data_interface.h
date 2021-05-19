@@ -76,9 +76,12 @@ Wiredtiger_index.h (src\mongo\db\storage\wiredtiger):class WiredTigerIndex : pub
 //数据插入WiredTigerRecordStore::_insertRecords
 
 
+//WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+//WiredTigerRecordStore(表数据文件操作)
+
 
  
-////WiredTigerIndexUnique和WiredTigerIndexStandard继承WiredTigerIndex类，WiredTigerIndex继承该类WiredTigerIndex
+////WiredTigerIndexUnique和WiredTigerIndexStandard继承WiredTigerIndex类，WiredTigerIndex继承该类SortedDataInterface
 //IndexAccessMethod._newInterface成员为该类,  WiredTigerIndex继承该类
 class SortedDataInterface { //接口赋值可以参考KVDatabaseCatalogEntry::getIndex
 public:

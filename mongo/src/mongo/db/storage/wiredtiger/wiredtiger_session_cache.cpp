@@ -90,6 +90,7 @@ WiredTigerSession::WiredTigerSession(WT_CONNECTION* conn, uint64_t epoch, uint64
       _cursorGen(0),
       _cursorsCached(0),
       _cursorsOut(0) {
+     //每个session初始化为snapshot隔离级别
     invariantWTOK(conn->open_session(conn, NULL, "isolation=snapshot", &_session)); //默认隔离级别
 }
 

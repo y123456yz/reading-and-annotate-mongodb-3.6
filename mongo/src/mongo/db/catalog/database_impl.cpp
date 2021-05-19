@@ -103,6 +103,7 @@ using std::string;
 using std::stringstream;
 using std::vector;
 
+//表中带有$的，不能做caller操作
 void uassertNamespaceNotIndex(StringData ns, StringData caller) {
     uassert(17320,
             str::stream() << "cannot do " << caller << " on namespace with a $ in it: " << ns,
@@ -265,6 +266,7 @@ Collection* DatabaseImpl::_getOrCreateCollectionInstance(OperationContext* opCtx
     return coll;
 }
 
+//DatabaseHolderImpl::openDb中调用
 DatabaseImpl::DatabaseImpl(Database* const this_,
                            OperationContext* const opCtx,
                            const StringData name,
@@ -278,7 +280,7 @@ DatabaseImpl::DatabaseImpl(Database* const this_,
       _views(&_durableViews),
       _this(this_) {}
 
-//mongod启动的时候
+//初始化构造Database类的时候就会调用该init，参考database.h中的explicit inline Database
 void DatabaseImpl::init(OperationContext* const opCtx) {
     Status status = validateDBName(_name);
 
@@ -353,6 +355,7 @@ void DatabaseImpl::clearTmpCollections(OperationContext* opCtx) {
     }
 }
 
+//db.setProfilingLevel(2)命令设置，参考https://docs.mongodb.com/v3.6/reference/method/db.setProfilingLevel/
 //创建慢日志表system.profile并设置日志打印级别
 Status DatabaseImpl::setProfilingLevel(OperationContext* opCtx, int newLevel) {
     if (_profile == newLevel) {
@@ -479,6 +482,7 @@ Status DatabaseImpl::dropView(OperationContext* opCtx, StringData fullns) {
 Status DatabaseImpl::dropCollection(OperationContext* opCtx,
                                     StringData fullns,
                                     repl::OpTime dropOpTime) {
+    //删除一个不存在的表直接当成功处理
     if (!getCollection(opCtx, fullns)) {
         // Collection doesn't exist so don't bother validating if it can be dropped.
         return Status::OK();
@@ -486,9 +490,11 @@ Status DatabaseImpl::dropCollection(OperationContext* opCtx,
 
     NamespaceString nss(fullns);
     {
+		//确定要删除的表是否属于该db库
         verify(nss.db() == _name);
 
         if (nss.isSystem()) {
+			//system.profile日志表删除前必须关闭日志profile记录
             if (nss.isSystemDotProfile()) {
                 if (_profile != 0)
                     return Status(ErrorCodes::IllegalOperation,
@@ -496,6 +502,7 @@ Status DatabaseImpl::dropCollection(OperationContext* opCtx,
             } else if (!(nss.isSystemDotViews() || nss.isHealthlog() ||
                          nss == SessionsCollection::kSessionsNamespaceString ||
                          nss == NamespaceString::kSystemKeysCollectionName)) {
+                //这几个system.xx以外的系统表不允许删除
                 return Status(ErrorCodes::IllegalOperation,
                               str::stream() << "can't drop system collection " << fullns);
             }
@@ -525,6 +532,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
 	//获取表信息
     Collection* collection = getCollection(opCtx, fullns);
 
+	//表本来就不存在，直接返回OK
     if (!collection) {
         return Status::OK();  // Post condition already met.
     }
@@ -533,8 +541,9 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
     auto uuid = collection->uuid();
     auto uuidString = uuid ? uuid.get().toString() : "no UUID";
 
+	//$命名的表不能做删表操作
     uassertNamespaceNotIndex(fullns.toString(), "dropCollection");
-
+	//正在后台加索引的表不能删除
     BackgroundOperation::assertNoBgOpInProgForNs(fullns);
 
     // Make sure no indexes builds are in progress.
@@ -547,6 +556,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
                           << " index builds in progress.",
             numIndexesInProgress == 0);
 
+	//审计日志
     audit::logDropCollection(&cc(), fullns.toString());
 
 	//删表后，需要清空该表的统计信息，从usage中移除
@@ -563,7 +573,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
 	//不是复制集方式启动
     auto isMasterSlave =
         repl::ReplicationCoordinator::modeMasterSlave == replCoord->getReplicationMode();
-	//单机方式启动的节点
+	//master slave方式启动
     if ((dropOpTime.isNull() && isOplogDisabledForNamespace) || isMasterSlave) {
 		//真正的底层WT存储引擎相关表及其索引删除在这里
         auto status = _finishDropCollection(opCtx, fullns, collection);
@@ -589,14 +599,19 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
         // rename. In the case that this collection drop gets rolled back, this will incur a
         // performance hit, since those indexes will have to be rebuilt from scratch, but data
         // integrity is maintained.
+        //获取该集合对应的索引信息
         std::vector<IndexDescriptor*> indexesToDrop;
+		//索引迭代器
         auto indexIter = collection->getIndexCatalog()->getIndexIterator(opCtx, true);
 
         // Determine which index names are too long. Since we don't have the collection drop optime
         // at this time, use the maximum optime to check the index names.
         auto longDpns = fullns.makeDropPendingNamespace(repl::OpTime::max());
+		//获取该表下面的所有索引信息长度超标的索引，存入indexesToDrop数组容器
         while (indexIter.more()) {
             auto index = indexIter.next();
+			//只记录长度超限的索引，这类索引需要提前删除
+			//其他的没有超限的索引在_finishDropCollection中的IndexCatalogImpl::dropAllIndexes删除
             auto status = longDpns.checkLengthForRename(index->indexName().size());
             if (!status.isOK()) {
                 indexesToDrop.push_back(index);
@@ -608,15 +623,16 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
             log() << "dropCollection: " << fullns << " (" << uuidString << ") - index namespace '"
                   << index->indexNamespace()
                   << "' would be too long after drop-pending rename. Dropping index immediately.";
-            fassertStatusOK(40463, collection->getIndexCatalog()->dropIndex(opCtx, index));
-			//OpObserverImpl::onDropIndex
+			//IndexCatalogImpl::dropIndex 删除索引
+			fassertStatusOK(40463, collection->getIndexCatalog()->dropIndex(opCtx, index));
+			//OpObserverImpl::onDropIndex 该索引删除对应的oplog记录，用于主从同步
 			opObserver->onDropIndex(
                 opCtx, fullns, collection->uuid(), index->indexName(), index->infoObj());
         }
 
         // Log oplog entry for collection drop and proceed to complete rest of two phase drop
         // process.
-        //OpObserverImpl::onDropCollection
+        //OpObserverImpl::onDropCollection 删表对应的oplog记录，用于主从同步
         dropOpTime = opObserver->onDropCollection(opCtx, fullns, uuid);
 
         // Drop collection immediately if OpObserver did not write entry to oplog.
@@ -626,6 +642,7 @@ Status DatabaseImpl::dropCollectionEvenIfSystem(OperationContext* opCtx,
             log() << "dropCollection: " << fullns << " (" << uuidString
                   << ") - no drop optime available for pending-drop. "
                   << "Dropping collection immediately.";
+			//这里进行底层
             fassertStatusOK(40462, _finishDropCollection(opCtx, fullns, collection));
             return Status::OK();
         }
@@ -738,10 +755,12 @@ Collection* DatabaseImpl::getCollection(OperationContext* opCtx, const Namespace
     return NULL;
 }
 
+//集合重命名
 Status DatabaseImpl::renameCollection(OperationContext* opCtx,
                                       StringData fromNS,
                                       StringData toNS,
                                       bool stayTemp) {
+    //审计相关
     audit::logRenameCollection(&cc(), fromNS, toNS);
     invariant(opCtx->lockState()->isDbLockedForMode(name(), MODE_X));
     BackgroundOperation::assertNoBgOpInProgForNs(fromNS);
@@ -750,6 +769,7 @@ Status DatabaseImpl::renameCollection(OperationContext* opCtx,
     NamespaceString fromNSS(fromNS);
     NamespaceString toNSS(toNS);
     {  // remove anything cached
+    	//查找该db下面是否有该collection
         Collection* coll = getCollection(opCtx, fromNS);
 
         if (!coll)
@@ -765,15 +785,19 @@ Status DatabaseImpl::renameCollection(OperationContext* opCtx,
                 opCtx, desc->indexNamespace(), clearCacheReason, /*collectionGoingAway*/ true);
         }
 
+		//从db中清除from和to的collection信息
         _clearCollectionCache(opCtx, fromNS, clearCacheReason, /*collectionGoingAway*/ true);
         _clearCollectionCache(opCtx, toNS, clearCacheReason, /*collectionGoingAway*/ false);
 
+		//统计中清除from集合
         Top::get(opCtx->getServiceContext()).collectionDropped(fromNS.toString());
     }
 
+	//KVDatabaseCatalogEntry::renameCollection 存储引擎层从命名集合
     Status s = _dbEntry->renameCollection(opCtx, fromNS, toNS, stayTemp);
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, toNS));
-    _collections[toNS] = _getOrCreateCollectionInstance(opCtx, toNSS);
+	//新的集合名添加到_collections[]数组
+	_collections[toNS] = _getOrCreateCollectionInstance(opCtx, toNSS);
 
     return s;
 }
@@ -908,6 +932,7 @@ Collection* DatabaseImpl::createCollection(OperationContext* opCtx,
 	//通知wiredtiger创建collection对应的目录文件 
     massertStatusOK(
     //对应KVDatabaseCatalogEntryBase::createCollection
+    //调用KV层的元数据管理模块
         _dbEntry->createCollection(opCtx, ns, optionsWithUUID, true /*allocateDefaultSpace*/));
 
 	//wiredtiger对应WiredTigerRecoveryUnit::registerChange
@@ -969,6 +994,7 @@ void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
 
     invariant(opCtx->lockState()->isDbLockedForMode(name, MODE_X));
 
+	//检查是否有在创建后台索引等
     BackgroundOperation::assertNoBgOpInProgForDb(name);
 
     audit::logDropDatabase(opCtx->getClient(), name);
@@ -981,11 +1007,13 @@ void DatabaseImpl::dropDatabase(OperationContext* opCtx, Database* db) {
     }
 
 	//database_holder_impl::close
+	//从全局DatabaseHolder中清除该db
     dbHolder().close(opCtx, name, "database dropped");
 
     auto const storageEngine = serviceContext->getGlobalStorageEngine();
     writeConflictRetry(opCtx, "dropDatabase", name, [&] {
 		//KVStorageEngine::dropDatabase
+		//这里面先删除该db下面的索引表，然后再从全局engine中清除该db
         storageEngine->dropDatabase(opCtx, name).transitional_ignore();
     });
 }
@@ -1107,7 +1135,8 @@ void mongo::dropAllDatabasesExceptLocalImpl(OperationContext* opCtx) {
 
 
 //insertBatchAndHandleErrors->makeCollection->mongo::userCreateNS->mongo::userCreateNSImpl
-//mongo::userCreateNS中执行，创建集合
+//mongo::userCreateNS中执行，创建集合，这里主要是一些建集合相关的参数有效性检查，真正创建集合
+//通过调用DatabaseImpl::createCollection实现
 auto mongo::userCreateNSImpl(OperationContext* opCtx,
                              Database* db,
                              StringData ns,
@@ -1121,14 +1150,15 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
 
     if (!NamespaceString::validCollectionComponent(ns))
         return Status(ErrorCodes::InvalidNamespace, str::stream() << "invalid ns: " << ns);
-
-	//
-    Collection* collection = db->getCollection(opCtx, ns); //Database::getCollection
+	
+	//获取对应CollectionImpl  DatabaseImpl::getCollection
+    Collection* collection = db->getCollection(opCtx, ns); //DatabaseImpl::getCollection
 	//表已经存在
     if (collection)
         return Status(ErrorCodes::NamespaceExists,
                       str::stream() << "a collection '" << ns.toString() << "' already exists");
 
+	//ViewCatalog先跳过，以后分析
     if (db->getViewCatalog()->lookup(opCtx, ns))
         return Status(ErrorCodes::NamespaceExists,
                       str::stream() << "a view '" << ns.toString() << "' already exists");
@@ -1141,6 +1171,7 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
         return status;
 
     // Validate the collation, if there is one.
+    //collator先跳过，以后分析
     std::unique_ptr<CollatorInterface> collator;
     if (!collectionOptions.collation.isEmpty()) {
         auto collatorWithStatus = CollatorFactoryInterface::get(opCtx->getServiceContext())
@@ -1206,11 +1237,13 @@ auto mongo::userCreateNSImpl(OperationContext* opCtx,
                                           stdx::placeholders::_1,
                                           stdx::placeholders::_2));
 
+	//存储引擎相关参数不对，直接报错，建表的时候可以指定存储引擎参数信息
     if (!status.isOK())
         return status;
 
     if (auto indexOptions = collectionOptions.indexOptionDefaults["storageEngine"]) {
         status =
+			//存储引擎索引参数检测
             validateStorageOptions(indexOptions.Obj(),
                                    stdx::bind(&StorageEngine::Factory::validateIndexStorageOptions,
                                               stdx::placeholders::_1,

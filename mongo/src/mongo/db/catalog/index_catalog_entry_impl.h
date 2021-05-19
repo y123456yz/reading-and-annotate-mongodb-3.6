@@ -95,6 +95,7 @@ public:
         return _ordering;
     }
 
+    //基于age列创建大于25岁的部分索引 db.persons.createIndex({country:1},{partialFilterExpression: {age: {$gt:25}}})
     const MatchExpression* getFilterExpression() const final {
         return _filterExpression.get();
     }
@@ -187,7 +188,7 @@ private:
 
     //对应KVCollectionCatalogEntry
     CollectionCatalogEntry* _collection;  // not owned here
-    //索引描述信息全部存到这里
+    //索引描述信息全部存到这里,对应索引  
     std::unique_ptr<IndexDescriptor> _descriptor;  // owned here
 
     //CollectionInfoCacheImpl类型
@@ -201,6 +202,7 @@ private:
     // Owned here.
     std::unique_ptr<HeadManager> _headManager;
     std::unique_ptr<CollatorInterface> _collator;
+    //例如基于age列创建大于25岁的部分索引 db.persons.createIndex({country:1},{partialFilterExpression: {age: {$gt:25}}})
     std::unique_ptr<MatchExpression> _filterExpression;
 
     // cached stuff

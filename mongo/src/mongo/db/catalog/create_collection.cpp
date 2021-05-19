@@ -113,7 +113,9 @@ Status createCollection(OperationContext* opCtx,
     return writeConflictRetry(opCtx, "create", nss.ns(), [&] {
         Lock::DBLock dbXLock(opCtx, nss.db(), MODE_X);
         const bool shardVersionCheck = true;
+		////如果DB不存在，这里面会调用DatabaseImpl::openDb创建对应DB信息
         OldClientContext ctx(opCtx, nss.ns(), shardVersionCheck);
+		//建表必须要有主节点
         if (opCtx->writesAreReplicated() &&
             !repl::ReplicationCoordinator::get(opCtx)->canAcceptWritesFor(opCtx, nss)) {
             return Status(ErrorCodes::NotMaster,
@@ -125,6 +127,7 @@ Status createCollection(OperationContext* opCtx,
         // Create collection.
         const bool createDefaultIndexes = true;
         status =
+			//建表最终调用这里
             userCreateNS(opCtx, ctx.db(), nss.ns(), options, kind, createDefaultIndexes, idIndex);
 
         if (!status.isOK()) {

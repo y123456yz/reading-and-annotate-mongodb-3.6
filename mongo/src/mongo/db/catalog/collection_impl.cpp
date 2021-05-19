@@ -178,12 +178,13 @@ CollectionImpl::CollectionImpl(Collection* _this_init,
 
 void CollectionImpl::init(OperationContext* opCtx) {
     _magic = kMagicNumber;
-	//IndexCatalogImpl::init
+	//IndexCatalogImpl::init 获取该表下面的所有索引信息
     _indexCatalog.init(opCtx).transitional_ignore();
     if (isCapped())
         _recordStore->setCappedCallback(this);
 
 	//CollectionInfoCacheImpl::init
+	//初始化该集合的planCache IndexEntry
     _infoCache.init(opCtx);
 }
 
@@ -207,6 +208,7 @@ CollectionImpl::~CollectionImpl() {
     _magic = 0;
 }
 
+//除了system.indexes  system.namespaces   system.profile外的其他表都需要id索引
 bool CollectionImpl::requiresIdIndex() const {
     if (_ns.isVirtualized() || _ns.isOplog()) {
         // No indexes on virtual collections or the oplog.
@@ -223,6 +225,7 @@ bool CollectionImpl::requiresIdIndex() const {
     return true;
 }
 
+//获取SeekableRecordCursor游标
 std::unique_ptr<SeekableRecordCursor> CollectionImpl::getCursor(OperationContext* opCtx,
                                                                 bool forward) const {
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns().toString(), MODE_IS));
@@ -238,7 +241,7 @@ vector<std::unique_ptr<RecordCursor>> CollectionImpl::getManyCursors(
     return _recordStore->getManyCursors(opCtx);
 }
 
-
+//根据RecordId查找对应数据存入Snapshotted
 bool CollectionImpl::findDoc(OperationContext* opCtx,
                              const RecordId& loc,
                              Snapshotted<BSONObj>* out) const {
@@ -251,6 +254,7 @@ bool CollectionImpl::findDoc(OperationContext* opCtx,
     return true;
 }
 
+//有效性检查
 Status CollectionImpl::checkValidation(OperationContext* opCtx, const BSONObj& document) const {
     if (!_validator)
         return Status::OK();
@@ -595,6 +599,7 @@ Status CollectionImpl::aboutToDeleteCapped(OperationContext* opCtx,
     return Status::OK();
 }
 
+//删除loc数据
 void CollectionImpl::deleteDocument(OperationContext* opCtx,
                                     StmtId stmtId,
                                     const RecordId& loc,
@@ -621,6 +626,7 @@ void CollectionImpl::deleteDocument(OperationContext* opCtx,
     /* check if any cursors point to us.  if so, advance them. */
     _cursorManager.invalidateDocument(opCtx, loc, INVALIDATION_DELETION);
 
+	//删除对应索引KV
     int64_t keysDeleted;
     _indexCatalog.unindexRecord(opCtx, doc.value(), loc, noWarn, &keysDeleted);
     if (opDebug) {
@@ -636,6 +642,7 @@ void CollectionImpl::deleteDocument(OperationContext* opCtx,
 Counter64 moveCounter;
 ServerStatusMetricField<Counter64> moveCounterDisplay("record.moves", &moveCounter);
 
+//更新数据
 RecordId CollectionImpl::updateDocument(OperationContext* opCtx,
                                         const RecordId& oldLocation,
                                         const Snapshotted<BSONObj>& oldDoc,
@@ -723,6 +730,7 @@ RecordId CollectionImpl::updateDocument(OperationContext* opCtx,
     Status updateStatus = _recordStore->updateRecord(
         opCtx, oldLocation, newDoc.objdata(), newDoc.objsize(), _enforceQuota(enforceQuota), this);
 
+	//mmap才会有该错误状态码
     if (updateStatus == ErrorCodes::NeedsDocumentMove) {
         return uassertStatusOK(_updateDocumentWithMove(
             opCtx, oldLocation, oldDoc, newDoc, enforceQuota, opDebug, args, sid));
@@ -755,6 +763,7 @@ RecordId CollectionImpl::updateDocument(OperationContext* opCtx,
     return {oldLocation};
 }
 
+//mmap才会用到
 StatusWith<RecordId> CollectionImpl::_updateDocumentWithMove(OperationContext* opCtx,
                                                              const RecordId& oldLocation,
                                                              const Snapshotted<BSONObj>& oldDoc,
@@ -850,6 +859,7 @@ StatusWith<RecordData> CollectionImpl::updateDocumentWithDamages(
     return newRecStatus;
 }
 
+//针对mmapv1引擎，忽略
 bool CollectionImpl::_enforceQuota(bool userEnforeQuota) const {
     if (!userEnforeQuota)
         return false;
@@ -866,6 +876,7 @@ bool CollectionImpl::_enforceQuota(bool userEnforeQuota) const {
     return true;
 }
 
+//是否固定集合
 bool CollectionImpl::isCapped() const {
     return _cappedNotifier.get();
 }
@@ -915,7 +926,9 @@ uint64_t CollectionImpl::getIndexSize(OperationContext* opCtx, BSONObjBuilder* d
  * 2) drop indexes
  * 3) truncate record store
  * 4) re-write indexes
- */ //drop表数据，但是不drop索引
+ */ 
+//EmptyCapped::run->mongo::emptyCapped调用
+//drop表数据，但是不drop索引
 Status CollectionImpl::truncate(OperationContext* opCtx) {
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns().toString(), MODE_X));
     BackgroundOperation::assertNoBgOpInProgForNs(ns());
@@ -950,6 +963,7 @@ Status CollectionImpl::truncate(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//captrunc::run命令调用，测试使用
 void CollectionImpl::cappedTruncateAfter(OperationContext* opCtx, RecordId end, bool inclusive) {
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns().toString(), MODE_X));
     invariant(isCapped());
@@ -1132,6 +1146,7 @@ namespace {
 
 using ValidateResultsMap = std::map<std::string, ValidateResults>;
 
+//CollectionImpl::validate调用
 void _validateRecordStore(OperationContext* opCtx,
                           RecordStore* recordStore,
                           ValidateCmdLevel level,
@@ -1152,6 +1167,7 @@ void _validateRecordStore(OperationContext* opCtx,
     }
 }
 
+//CollectionImpl::validate调用
 void _validateIndexes(OperationContext* opCtx,
                       IndexCatalog* indexCatalog,
                       BSONObjBuilder* keysPerIndex,
@@ -1203,6 +1219,7 @@ void _validateIndexes(OperationContext* opCtx,
     }
 }
 
+//CollectionImpl::validate调用
 void _markIndexEntriesInvalid(ValidateResultsMap* indexNsResultsMap, ValidateResults* results) {
 
     // The error message can't be more specific because even though the index is
@@ -1218,6 +1235,7 @@ void _markIndexEntriesInvalid(ValidateResultsMap* indexNsResultsMap, ValidateRes
     results->valid = false;
 }
 
+//CollectionImpl::validate调用
 void _validateIndexKeyCount(OperationContext* opCtx,
                             IndexCatalog* indexCatalog,
                             RecordStore* recordStore,
@@ -1236,6 +1254,7 @@ void _validateIndexKeyCount(OperationContext* opCtx,
     }
 }
 
+//CollectionImpl::validate调用
 void _reportValidationResults(OperationContext* opCtx,
                               IndexCatalog* indexCatalog,
                               ValidateResultsMap* indexNsResultsMap,
@@ -1283,6 +1302,9 @@ void _reportValidationResults(OperationContext* opCtx,
 }
 }  // namespace
 
+//db.xx.validate()
+//https://docs.mongodb.com/v3.0/reference/command/validate/index.html
+//该命令验证表中数据结构是否符合要求，因为建表的时候可能指定了validator
 Status CollectionImpl::validate(OperationContext* opCtx,
                                 ValidateCmdLevel level,
                                 bool background,
@@ -1348,6 +1370,10 @@ Status CollectionImpl::validate(OperationContext* opCtx,
     return Status::OK();
 }
 
+//touch::run touch命令调用
+//db.runCommand({ touch: "records", data: true, index: true })
+//加载表的数据和索引到内存
+//参考https://docs.mongodb.com/v3.0/reference/command/touch/index.html
 Status CollectionImpl::touch(OperationContext* opCtx,
                              bool touchData,
                              bool touchIndexes,

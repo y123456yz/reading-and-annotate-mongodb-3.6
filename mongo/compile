@@ -1,5 +1,6 @@
 代码高亮网页转换：http://www.codeinword.com/
 
+mtools:分析mongodb日志等 https://github.com/rueckstiess/mtools
 
 c++17可以参考https://github.com/MeouSker77/Cpp17
 
@@ -28,7 +29,8 @@ https://www.alexbevi.com/blog/2020/01/26/what-is-mongodb-ftdc-aka-diagnostic-dot
 
 https://www.codercto.com/a/43773.html   链接分片 副本集 单实例等
 https://www.codercto.com/a/43773.html
-
+github使用详细https://www.infoq.cn/profile/FA4C907E54B9B1/publish
+mysql事务隔离级别/脏读/不可重复读/幻读详解概念：https://www.cnblogs.com/yjmyzz/p/mysql-transaction-isolation-level.html
 sql-mongodb协议转换  prestodb
 
 查看所有编译过程 scons mongos  VERBOSE=on -j 2

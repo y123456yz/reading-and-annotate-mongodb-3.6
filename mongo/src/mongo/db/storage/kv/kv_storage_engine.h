@@ -334,9 +334,19 @@ private:
     //对应数据目录的"_mdb_catalog.wt"相关操作  _mdb_catalog.wt存储元数据信息
     std::unique_ptr<KVCatalog> _catalog; 
 
+    //库名及其对应KVDatabaseCatalogEntryBase
     typedef std::map<std::string, KVDatabaseCatalogEntryBase*> DBMap;
+    //DatabaseHolderImpl.dbs[]和KVStorageEngine._dbs[]的区别及联系：
+    //1. DatabaseHolderImpl.dbs[]包含实例启动后使用过或者正在使用的DB信息
+    //2. KVStorageEngine._dbs[]对应从_mdb_catalog.wt元数据文件加载的所有库及其下面表的元数据信息
+    //3. mongodb启动后，当通过db.xx.collection对某库的某表操作的时候，会生成一个DatabaseImpl,然后调用
+    //   DatabaseImpl::init()从该库对应KVDatabaseCatalogEntryBase中获取该表元数据信息
+    //4. KVStorageEngine._dbs[]中存的是全量的元数据信息，而DatabaseHolderImpl.dbs[]中存的是自实例启动后
+    //   到现在为止，通过db.xx.collection.insert()等使用过的库信息。例如有两个库DB1，DB2，当mongod实例重启后
+    //   我们只访问了DB1，则KVStorageEngine._dbs[]包含有DB1和DB2两个库信息，而DatabaseHolderImpl.dbs[]只包含DB1信息
+    
     //来源再KVStorageEngine::KVStorageEngine，当mongod实例重启后，会从元数据_mdb_catalog.wt中获取db信息
-    DBMap _dbs;
+    DBMap _dbs; 
     mutable stdx::mutex _dbsLock;
 
     // Flag variable that states if the storage engine is in backup mode.

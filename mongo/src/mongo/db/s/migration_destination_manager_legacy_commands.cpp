@@ -162,6 +162,7 @@ public:
 
 } recvChunkStartCmd;
 
+//chunk迁移流程中目的shard收到的报文信息，参考https://blog.csdn.net/dreamdaye123/article/details/105278247
 class RecvChunkStatusCommand : public BasicCommand {
 public:
     RecvChunkStatusCommand() : BasicCommand("_recvChunkStatus") {}

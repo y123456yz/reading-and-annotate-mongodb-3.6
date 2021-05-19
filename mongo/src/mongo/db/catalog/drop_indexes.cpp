@@ -48,6 +48,7 @@
 
 namespace mongo {
 namespace {
+//CmdReIndex::run或者CmdDropIndexes::run->dropIndexes->wrappedRun删索引命令调用
 Status wrappedRun(OperationContext* opCtx,
                   Collection* collection,
                   const BSONObj& jsobj,
@@ -74,6 +75,7 @@ Status wrappedRun(OperationContext* opCtx,
             return Status::OK();
         }
 
+		//找到需要删除的索引
         IndexDescriptor* desc =
             collection->getIndexCatalog()->findIndexByName(opCtx, indexToDelete);
         if (desc == NULL) {
@@ -85,6 +87,8 @@ Status wrappedRun(OperationContext* opCtx,
             return Status(ErrorCodes::InvalidOptions, "cannot drop _id index");
         }
 
+		//indexCatalogImpl::dropIndex
+		//删索引文件
         Status s = indexCatalog->dropIndex(opCtx, desc);
         if (!s.isOK()) {
             return s;
@@ -144,7 +148,7 @@ Status wrappedRun(OperationContext* opCtx,
 }
 }  // namespace
 
-//CmdReIndex::run
+//CmdReIndex::run  CmdDropIndexes::run
 //删索引
 Status dropIndexes(OperationContext* opCtx,
                    const NamespaceString& nss,
@@ -188,6 +192,7 @@ Status dropIndexes(OperationContext* opCtx,
                 return status;
             }
 
+			//提交的时候做真正的索引删除
             wunit.commit();
             return Status::OK();
         });

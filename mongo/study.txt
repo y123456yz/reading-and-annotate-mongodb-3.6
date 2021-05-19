@@ -1,0 +1,3771 @@
+
+
+risk-face.faceRecord command: count { count: "faceRecord", query: { idCard: "432902198007147815", createTime: { $lte: 1533873134457, $gte: 1531367534457 } } } planSummary: IXSCAN { idCard: 1.0, productRole: 1.0, bizCode: 1.0 } keyUpdates:0 writeConflicts:0 numYields:6 reslen:62 locks:{ Global: { acquireCount: { r: 14 }, acquireWaitCount: { r: 7 }, timeAcquiringMicros: { r: 26944 } }, Database: { acquireCount: { r: 7 } }, Collection: { acquireCount: { r: 7 } } }
+
+db.faceRecord.find({"idCard" : "440682197711162817", "createTime" : { "$lte" : NumberLong("1533873134457"), "$gte" : NumberLong("1531367534457") }}).sort({"createTime" :-1}).explain()
+
+risk-face.faceRecord command: count { count: "faceRecord", query: { idCard: "440682197711162817", createTime: { $lte: 1533873488376, $gte: 1531367888376 } } } planSummary: IXSCAN { idCard: 1.0, productRole: 1.0, bizCode: 1.0 } keyUpdates:0 writeConflicts:0 numYields:8 reslen:62 locks:{ Global: { acquireCount: { r: 18 }, ac
+
+db.faceRecord.find({"idCard" : "440682197711162817", "createTime" : { "$lte" : NumberLong("1533873488376"), "$gte" : NumberLong("1531367888376") }}).sort({"createTime" :-1}).explain()
+
+use jserror
+db.createUser({user: "xxx",pwd: "xafdafdafda",roles: [ {role: 'readWrite', db: 'jserror'} ],authenticationRestrictions: [ {clientSource:["xx.xx.238.22","xx.xx.28.26"],serverAddress: ["xx.xx.50.25","xx.xx.x.47"]}]})
+
+use test5
+db.createUser({user: "test5",pwd: "test5",roles: [ {role: 'readWrite', db: 'test5'} ]}) read
+db.createUser({user: "video_r1",pwd: "xxx",roles: [ {role: 'read', db: 'video'} ]}) 
+
+
+数据模型使用建议:
+https://docs.mongodb.com/manual/core/data-modeling-introduction/
+https://blog.csdn.net/weixin_33861800/article/details/88728645
+
+
+只有访问db_xxxxxxproduction库的权限,注意如果对该账号新增白名单，必须用use admin
+use db_xxxxxxproduction
+ db.createUser(
+   {
+     user: "XXX",
+     pwd: "XXXX",
+     roles: [ {role: 'readWrite', db: 'db_xxxxxxproduction'} ],
+     authenticationRestrictions: [ {
+     clientSource:["1.2.x.13", "xx.2.x.52"],serverAddress: ["x.2.x.x", "x.3.x.x", "x.x.4.x","x.x.5.x","x.6.x.x"] } ]})  serverAddress包括mongos  mongod所有的  
+该user有访问所有库的权限
+use admin
+db.createUser( { user: "risk-xxx-rw", pwd: "afdadfa", roles: [ { role: "readWriteAnyDatabase", db: "admin"}] } )
+
+use admin
+db.createUser( {user: "root",pwd: "xxx",roles: [ { role: "root", db: "admin" } ]});
+db.updateUser('dbauser',{pwd:'sss',roles:[{role:'root',db:'admin'}]})  改密码
+
+system.indexes  674.00B (uncompressed), 32.00KB (compressed)
+system.version  1.02KB (uncompressed),  32.00KB (compressed)
+startup_log     1.12KB (uncompressed),  32.00KB (compressed)
+oplog.rs        291.48KB (uncompressed),        480.00KB (compressed)
+oplog.refs      0.00B (uncompressed),   32.00KB (compressed)
+replInfo        126.00B (uncompressed), 32.00KB (compressed)
+system.replset  236.00B (uncompressed), 32.00KB (compressed)
+
+scp后台
+screen -S copy-ip  创建子窗口
+screen -ls         查看子窗口
+screen -R copy-ip  进入子窗口
+ctrl + a + d       退回父窗口
+
+
+cfg = {
+...  '_id':'xxxc',
+...  'members':[
+...  {'_id':0, 'host': 'xx.23.240.29:28018'},
+...  {'_id':1, 'host': 'xx.23.240.29:28028'},
+...  {'_id':2, 'host': 'xx.23.240.29:28038'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_cfg',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:4441'},
+...  {'_id':1, 'host': '192.168.152.168:4442'},
+...  {'_id':2, 'host': '192.168.152.168:4443'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_1',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:3331'},
+...  {'_id':1, 'host': '192.168.152.168:3332'},
+...  {'_id':2, 'host': '192.168.152.168:3333'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_2',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:2221'},
+...  {'_id':1, 'host': '192.168.152.168:2222'},
+...  {'_id':2, 'host': '192.168.152.168:2223'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_1',
+...  'members':[
+...  {'_id':0, 'host': '127.0.0.1:3331'},
+...  {'_id':1, 'host': '127.0.0.1:3332'},
+...  {'_id':2, 'host': '127.0.0.1:3333'}
+...  ]
+... }
+
+
+
+db.createUser( {
+user: "xxxx_rw",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+
+
+
+config = {_id : "xxxc_1",   members : [{_id : 0, host : "127.0.0.1:27017" },{_id : 1, host : "127.0.0.1:27018" },{_id : 2, host : "127.0.0.1:27019"}]}
+config = {_id : "xxxc",   members : [{_id : 0, host : "127.0.0.1:8000" },{_id : 1, host : "127.0.0.1:8001" },{_id : 2, host : "127.0.0.1:8002"}]}
+
+config = {_id : "yyztest",   members : [{_id : 0, host : "xx.x.x.x:8010" },{_id : 1, host : "xx.x.x.x:8011" },{_id : 2, host : "xx.x.x.35:8012"}]}
+sh.addShard("xxxc_2/192.168.152.168:2221,192.168.152.168:2222,192.168.152.168:2223")
+
+use admin
+db.createUser({user: "root", pwd: "xxxxxxx", roles: [{role: "root", db: "admin"}]});
+db.createUser( { user: "admin", pwd: "xxxxxxx", roles: [{role: "userAdminAnyDatabase", db: "admin"}]});
+
+sh.addShard("xxxc/xx.x.x.29:28018,xx.xx.240.x:28028,xx.23.x.29:28038")
+
+db.runCommand( { removeshard: "yangyazhou_mongotest1_2" } )  多执行几次，sh.status()就不会看到这个shard了
+
+setParameter    https://docs.mongodb.com/v3.0/reference/command/setParameter/#dbcmd.setParameter
+db.runCommand( { getParameter: 1})  https://docs.mongodb.com/v3.0/reference/command/getParameter/
+db.runCommand( { setParameter: 1, cursorTimeoutMillis: 300 } )
+db.runCommand( { getParameter: 1, cursorTimeoutMillis:1} )
+
+mongod --setParameter=enableTestCommands 可以用sleep来延时
+
+config={_id:"risk_user",members:[ {_id:0, host:"xx.69.xx.20:27019"}, {_id:1, host:"xx.90.xx.61:27019"}, {_id:2, host:"xx.xx.xx.25:27019"}] } 
+sh.addShard("xxxc/127.0.0.1:8000,127.0.0.1:8001,127.0.0.1:8002")
+numactl --interleave=all        --bind_ip_all
+
+
+mongodb createUser 指定的用户role，及其操作权限可以参考:https://docs.mongodb.com/manual/reference/built-in-roles/  
+
+use admin
+db.createUser( {
+user: "xxx_rw",
+pwd: "xxxx",
+roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+});
+
+use admin
+db.createUser( {
+user: "root",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+use admin
+db.createUser( {
+user: "root2",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+use admindb.createUser( {user: "root",pwd: "xx",roles: [ { role: "__system", db: "admin" } ]});
+
+use admin
+db.createUser(
+        {
+            user  : "monitor",
+            pwd   : "xx",
+            roles : 
+            [
+                { role : "root", db : “test" },
+                { role : "readWrite", db : “test1" }
+            ]
+        }
+    )
+	
+
+	https://docs.mongodb.com/manual/reference/method/   mongo shell
+	
+db.createUser( { user: "risk-newton-rw", pwd: "xxx", roles: [ { role: "readWrite", db: "risk-newton"}] } )  #db是用户实际的db，role为可读可写
+登录方法/usr/local/mongodb363/bin/mongo --port 29018 -urisk-newton-rw -pxxx --authenticationDatabase=admin  注意authenticationDatabase为admin，不是risk-newton
+
+
+/usr/local/mongodb363/bin/mongostat -h xx.x.x.x:27019  -uroot -pxxx  --authenticationDatabase=admin
+db.grantRolesToUser ( "root", [ { role: "__system", db: "admin" } ] )
+
+echo "db.currentOp()" | /usr/local/mongodb-3.6.3/bin/mongo localhost:28017/admin -uroot -ptxafdajjsdfadfaafd8  | grep "brazil_order_info"
+rs.remove("localhost:27000")
+rs.add({host:"localhost:27000",arbiterOnly:true})
+
+ 
+echo "db.currentOp()" | /usr/local/mongodb-3.6.3/bin/mongo localhost:28017/admin -uroot -ptafdafdxjafdajzyzfadfafqbx018 | grep "430"
+
+查看指定时间段的oplog
+ /usr/local/mongodb363/bin/mongodump -h  127.0.0.1:27018 -uroot -pkafdadfa014 --authenticationDatabase=admin -d local -c oplog.rs -q '{ts:{$lt:Timestamp(1539353155, 1),$gt: Timestamp(1539342355, 1000)}}' -o  ./  
+  /usr/local/mongodb363/bin/bsondump local/oplog.rs.bson >optest
+  db.oplog.rs.find({"ts":{"$gt" : Timestamp(1539676922, 1),"$lt" : Timestamp(1539676930, 1)}}).count()
+  db.oplog.rs.find({"o.createTime": {$gte:new Date(2017,9,1),$lte:new Date(2017,10,31)}}).limit(3)
+db.system.profile.find({"ts":{$gte:ISODate("2018-10-17T02:39:35.888Z"),$lte:ISODate("2018-10-17T02:39:45.888Z")}}).count()
+db.oplog.rs.find({},{"ts":1}).sort({"ts":1}).limit(1)
+db.system.profile.find({"ts":{$gte:ISODate("2018-10-15T11:00:00.461Z"),$lte:ISODate("2018-10-16T11:00:00.461Z")}}).count()
+db.system.profile.find({"ts":{$gte:ISODate("2018-10-15T11:00:00.461Z"),$lte:ISODate("2018-10-16T11:00:00.461Z")}}, {"millis":1}).sort({"ts":1}).limit(1)
+
+db.system.profile.find().sort({$natrual: -1}).limit(3) 查看最近3条 慢请求，{$natrual: -1} 代表按插入数序逆序
+db.system.profile.find({"ts":{$gte:Timestamp(1539532913, 1),$lte:Timestamp(1539658913, 1)}}).count()
+/bin/sh -c sleep 15; /usr/local/mongodb3415/bin/mongo  --host 127.0.0.1 --port 27018 -uroot -pfdadfafdadf4 --authenticationDatabase=admin  --eval "db.currentOp().inprog.forEach(function(item){if(item.secs_running > 3 )db.killOp(item.opid)})"  >> /data2/mysql/0920.log
+1539532913
+3. 如何查看锁的状态
+
+查看连接数db.serverStatus().connections
+/usr/local/mongodb363/bin/mongostat -h x:27019  -uroot -pxxxxx  --authenticationDatabase=admin
+db.serverStatus()
+db.currentOp()
+mongotop # 类似top命令，每秒刷新
+mongostat
+the MongoDB Monitoring Service (MMS)
+ db.serverStatus().wiredTiger.lock
+ 
+ 过期索引一定加上bakgroud
+ db.push_filter_repeat.createIndex( { "expireTime": 1 }, { expireAfterSeconds: 0, background: true}) 
+ 
+ db.push_task.ensureIndex({"createTime":1},{expireAfterSeconds:2678400, background: true})
+ 
+To update the expiration value for a collection named sessions indexed on a lastAccess field from 30 minutes to 60 minutes, use the following operation:
+
+db.runCommand( { collMod: "push_filter_repeat",
+                 index: { keyPattern: { expireTime: 1 },
+                          expireAfterSeconds: 3600
+                        }
+})
+Which will return the document:
+{ "expireAfterSeconds_old" : 1800, "expireAfterSeconds_new" : 3600, "ok" : 1 } 
+ 
+ 
+ db.collection.ensureIndex({"key":1},{background: true}) 后台添加索引
+ db.persons.createIndex({name:1,email:1},{unique:true})  唯一索引，
+ 注意db.item_commit_info.createIndex({"tag":1},{background: true, unique:true})  
+ db.item_commit_info.createIndex({"tag2":1},{unique:true, name:"testindex"}) 索引重命名
+db.test.dropIndex("age_1") 删除一条   db.test.dropIndexes()删除所有索引
+for(var i = 0; i < 101100; i++) {db.test1.insert({a:"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" });}
+
+for(var i = 0; i < 10; i++) {db.uc_login_record.find({"ssoid" : "228177102"}, {"_id":1})}
+
+numactl --interleave=all /usr/local/mongodb3413/bin/mongod -f /data1/mongodb/daijia_dds/etc/mongodb.cnf  --bind_ip_all
+root@tmp-mongo-001.gz01:/home/xiaoju/download$ ls StarServerDB/
+abTest.bson                   category.bson                export-csv.bson  
+导数据命令/usr/local/mongodb3415/bin/mongorestore --host 127.0.0.1 --port 27018  -uroot -paafdafd@dfa2014  --authenticationDatabase=admin -d StarServerDB --drop  /home/xiaoju/download/StarServerDB/
+
+db.oplog.rs.find({},{"ts":1}).sort({"ts":1}).limit(1)   只输出ts字段，ts:1的1代表输出，0代表不输出
+
+执行计划查看 参考https://yq.aliyun.com/articles/74635   queryPlanner模式下并不会去真正进行query语句查询，而是针对query语句进行执行计划分析并选出winning plan。
+db.myColl.find({app:"my_app",requestTime:{$gte:1492502247000}}).sort({_id:-1}).limit(1).explain('executionStats')    .explain("allPlansExecution")  .explain('queryPlanner')
+db.myColl.find({app:"my_app",requestTime:{$gte:1492502247000,$lt:1492588800000}}).sort({_id:-1}).limit(1).hint({_id:1}) 强制走_id索引
+
+
+mongodb 多表关联处理 : 内嵌以及连接(手动引用、DBref) 、aggregate中$lookup
+https://www.cnblogs.com/GtShare/p/7736603.html
+
+
+db.getCollection('video_info').explain("executionStats").aggregate([
+{
+$lookup:
+{
+from: "user_info",
+localField: "soloop_id",
+foreignField: "soloop_id",
+as: "docs_userTab"
+}},
+{ $lookup:{
+from: "video_check",
+localField: "feed_id",
+foreignField: "_id",
+as: "docs_videoCheck"
+}},
+{ $lookup:{
+from: "video_tab_relation",
+localField: "feed_id",
+foreignField: "feed_id",
+as: "docs_videoTab"
+}} ,{
+$match:
+{
+
+"video_type" :2
+}
+}
+])
+
+
+db.表.getPlanCache().listQueryShapes()
+db.表.getPlanCache().clear()
+db.表.getPlanCache().getPlansByQuery(查询条件，也就是listQueryShapes返回的)
+
+db.serverStatus()
+
+me
+oplog.rs
+replset.election
+replset.minvalid
+startup_log
+system.replset
+system.rollback.id
+
+安全部:wiki http://wiki.intra.xiaojukeji.com/pages/viewpage.action?pageId=146781066
+https://blog.csdn.net/wngzhem/article/details/80097695   2d  2dsphere
+
+dirty：这个是Wried Tiger引擎所特有的参数，数值是缓存中无效数据所占的百分比.
+used:这个是WriedTiger引擎所特有的参数，数值是正在使用的缓存百分比。
+
+db.runCommand({setParameter: 1, wiredTigerEngineRuntimeConfig: "eviction_dirty_target=5,eviction_target=80"})
+db.sbtest1.find().pretty().limit(1)
+
+db.people.createIndex( { zipcode: 1}, {background: true} )
+
+
+db.createCollection(
+"sbtest4",
+{storageEngine: { wiredTiger: {configString: "type=lsm"}}}
+)
+db.createCollection(
+"sbtest10",
+{storageEngine: { wiredTiger: {configString: "type=lsm"}}}
+)
+
+
+
+热备份:
+> use admin
+switched to db admin
+> db.runCommand({createBackup: 1, backupDir: "/my/backup/data/path"})
+
+db.sbtest1.stats().wiredTiger
+
+
+
+mongodb查询排序最大内存限制：
+db.adminCommand({setParameter: 1, internalQueryExecMaxBlockingSortBytes: 104857600})
+Query failed with error code 96 and error message 'Encountered non-retryable error during query :: caused by :: Executor error during find command :: caused by :: Sort operation used more than the maximum 33554432 bytes of RAM
+排序32M内存限制，客户端加上{allowDiskUse:true})来解决改问题
+
+同一个集群的keyfile必须一样，包括mongos mongod mongo-cfg
+
+常见故障整理:
+一、主从延迟
+统计一段时间内的慢日志:tail /var/log/mongodb/10000/mongodb.log -n 1000000 | grep "2019-09-24T12:" | grep keysExamined | wc -l
+检查扫表的慢日志分析:tail  /var/mongodb/4001/log/mongod.log  -n 1000000 | grep ms |grep COLLSCAN |grep -v "getMore" | grep -v "oplog.rs"
+看主库是否有锁或者操作时间过长的sql
+
+慢日志是否有扫表：tail /var/log/mongodb/10000/mongodb.log -n 1000000 |grep ms | grep op_msg | grep COLLSCAN | grep find | grep -v "oplog.rs"
+tail -n 11000000  /var/log/mongodb/mongos_20001/mongos_20001.log | grep "2020-12-22T02:"  | egrep "time\(ms\):[1-9][0-9][0-9][0-9][0-9][0-9][0-9].*from"
+| egrep "op_msg [1-9][0-9][0-9][0-9][0-9]"
+
+tail mongos.log -n 100000 | grep ms | grep op_ > slow.log
+cat slow.log |awk '{print $NF}'
+tail mongos.log -n 100000 | grep 最大的时延
+
+把执行时间大于5s的请求记录下来：
+db.currentOp({"secs_running":{"$gt":5}, "op":"getMore"})
+把执行时间大于5ms的请求记录下来：
+db.currentOp({"microsecs_running":{"$gt":5}, "op":"getMore"})
+
+
+慢查询慢sql记录,cronPrintSlowop.js内容
+for(i = 0; i <= 100000; i=i+1){
+    sleep(5000);
+    print(new Date());
+    db.currentOp({"secs_running":{"$gt":7}}).inprog.forEach(function(item) {
+        printjson(item);
+    });
+}
+ 运行方式:
+mongo -u xxx -p xxx 127.0.0.1:20001/admin /root/slowop/cronPrintSlowop.js
+
+
+看是否有锁：
+db.currentOp().inprog.forEach(function(item){if(item.waitingForLock)print(JSON.stringify(item))})
+看查询超过5s的sql
+db.currentOp({"secs_running":{"$gt":1}, "op":"query"})
+db.currentOp({"secs_running":{"$gt":5}, "op":"getMore"})
+db.currentOp({"secs_running":{"$gt":5}})
+
+db.currentOp({"microsecs_running":{"$gt":200}, "op":"query"})
+看查询超过5ms的sql
+db.currentOp({"microsecs_running":{"$gt":5}})
+db.killOp("yangyazhou_mongotest1_2:22548939")
+kill查询时间超过5s的sql
+db.currentOp().inprog.forEach(function(item){if(item.secs_running > 5 )db.killOp(item.opid)})
+ db.killOp("shard0001:163415563")  注意，分片集群需要带上分片名，否则报错
+mongos> db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 100){print(item.opid);}})
+mongos> db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 5){db.killOp(item.opid);}}) command
+db.currentOp().inprog.forEach(function(item){if(item.op=="command" && item.secs_running > 150){print(item.opid);}})
+
+ db.currentOp().inprog.forEach(function(item){if(item.planSummary=="COLLSCAN" && item.secs_running > 50){db.killOp(item.opid);}}) 
+"planSummary" : "COLLSCAN"
+ db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 150){db.killOp(item.opid);}})
+查找所有查询的操作，insert、update、delete类似
+db.currentOp().inprog.forEach(function(item){if(item.op=="query"){print(item.opid);}})
+rs.printSlaveReplicationInfo() 来监控主备同步滞后的情况
+
+自动killop脚本
+#!/bin/bash
+while true
+do
+    echo "db.currentOp().inprog.forEach(function(item){if(item.op==\"query\" && item.secs_running > 60){db.killOp(item.opid);}})" | /usr/local/mongodb-3.2.11/bin/mongo xx.x:27030/admin -udbauser -p7b0bf01b320a12b3f76a55cccb5ed732
+    
+    sleep 60
+done
+
+/usr/local/mongodb363/bin/mongo  --host 127.0.0.1 --port 27025 -uroot -pxxx --authenticationDatabase=admin  --eval "db.currentOp().inprog.forEach(function(item){if(item.secs_running > 30 )db.killOp(item.opid)})"
+二、cpu、i/o、连接数暴增
+出现这种情况，先看数据库日志是否出现大量慢查，结合慢查看是否是索引没加，或者漏加。
+添加索引方法：
+1、表比较小(千万以下)，或者数据库压力较小（看监控或者mongostat），可以直接在后台添加索引db.dbname.ensureIndex({"column_1":1,"column_2":1},{"background":1})
+2、过亿表，或者数据库压力很大，可以选择低峰的时候通过后台加。
+3、特别大的表或者数据库压力持续很大，可以选择和业务沟通后，走如下流程，下线从库加上索引后再上线，切换主从，加老的主库索引，完成集群索引添加
+
+切换主从语法：
+cfg = rs.conf()
+cfg.members[0].priority = 1(0代表第一台，1代表第二台，后面类推)，将权重改成大于1，集群便会将此台机器升为主，记得主从切换完后权重归1，不然后续无法自动切主从
+rs.reconfig(cfg)
+
+ rs.reconfig(cfg, { force: true }) 强制执行，如果不加force则只能主节点执行, 加上force后可从节点执行
+
+主节点强制变从  rs.stepDown()
+
+cfg = rs.conf()
+cfg.settings.heartbeatIntervalMillis = 500
+cfg.settings.heartbeatTimeoutSecs=30
+cfg.settings.electionTimeoutMillis=30000
+rs.reconfig(cfg)
+
+如果没有慢查，考虑是业务那边增加流量了，通过监控看是否有流量激增，连续具体rd
+
+
+三、节点挂掉
+现有集群基本都是一主两从的结构，若有节点机器挂掉，需要尽快补上。
+1、如果数据量较小，直接用主库的配置搭建一个空库加入集群，等待数据自动追上就好,注意主库的认证文件也要拷贝一份过来。rs.add(‘ip:port’)
+2、若数据库较大，但oplog时间较长，可以用mongodump+oplog方式备份，mongorestore+relaylog还原。
+3、若数据库较大，且数据库库压力较大，oplog时间不够dump，可以考虑临时加上一个仲裁机器，然后加剩余的一台从下线，copy这台从的数据库目录到新机，完成后上线这两台从库，记得下线仲裁机器。
+
+例1：查询所有正在等待锁的写操作
+
+db.currentOp(
+   {
+     "waitingForLock" : true,
+     $or: [
+        { "op" : { "$in" : [ "insert", "update", "remove" ] } },
+        { "query.findandmodify": { $exists: true } }
+    ]
+   }
+)
+例2：查询所有操作db1并且执行时间已超过3s的请求
+
+db.currentOp(
+   {
+     "active" : true,
+     "secs_running" : { "$gt" : 3 },
+     "ns" : /^db1\./
+   }
+)
+
+集群搭建:
+搭建：https://blog.csdn.net/ilovemilk/article/details/79336951
+加认证：https://blog.csdn.net/ilovemilk/article/details/79341165
+
+
+https://yq.aliyun.com/articles/60553?spm=a2c4e.11155435.0.0.21623312JJZa8i
+readPreference 主要控制客户端 Driver 从复制集的哪个节点读取数据，这个特性可方便的实现读写分离、就近读取等策略。
+primary 只从 primary 节点读数据，这个是默认设置
+primaryPreferred 优先从 primary 读取，primary 不可服务，从 secondary 读
+secondary 只从 scondary 节点读数据
+secondaryPreferred 优先从 secondary 读取，没有 secondary 成员时，从 primary 读取
+nearest 根据网络距离就近读取
+readConcern 决定到某个读取数据时，能读到什么样的数据。
+local 能读取任意数据，这个是默认设置
+majority 只能读取到『成功写入到大多数节点的数据』
+
+MongoDB writeConcern原理解析
+
+
+
+
+
+
+
+
+复合索引的 限制
+符合索引的某个键可以是数组
+但是不能有两个键的值都是数组
+mongos> db.monitor_alarm_shield_prod.ensureIndex({"psa.business_name":1, "source":1},{background: true})
+{
+        "raw" : {
+                "shard_CED62085/xx.xx.xxx.144:10000,xxx.xx.11.157:10000,xx.xx.xx.94:10000" : {
+                        "ok" : 0,
+                        "errmsg" : "cannot index parallel arrays [source] [psa]",
+                        "code" : 171,
+                        "codeName" : "CannotIndexParallelArrays"
+                }
+        },
+        "code" : 171,
+        "codeName" : "CannotIndexParallelArrays",
+        "ok" : 0,
+        "errmsg" : "{ shard_CED62085/xx.xx.xx.xx:10000,xx.37.xx.157:10000,xx.xx.xx.xx:10000: \"cannot index parallel arrays [source] [psa]\" }",
+        "operationTime" : Timestamp(1614246234, 131),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1614246234, 131),
+                "signature" : {
+                        "hash" : BinData(0,"/FALaJrXWs4bYCPR7y9govVTOy8="),
+                        "keyId" : NumberLong("6912854737423434571")
+                }
+        }
+如果加索引字段里面有两个字段都是数组，则会报错，一个字段正常
+
+cat /sys/block/sda/queue/rotational进行查看，返回值0即为SSD；返回1即为HDD。
+
+认证方式 mongo_urls = mongodb://username:password@127.0.0.1:20040
+
+日志拆分 日志切割
+use admin  //切换到admin数据库
+db.runCommand({logRotate:1})
+
+
+sh.shardCollection("feeds_content.news_doc_profile",{"_id":1})
+
+分片片键设置前必须对片键创建索引，hash片键类型必须是hash索引，范围分片是范围索引
+ db.sbtest2.ensureIndex({"yangtest1":1},{background: true})    范围分片
+ sh.shardCollection("sbtest.sbtest2",{"yangtest1":1})
+ 
+db.sbtest2.ensureIndex({"yangtest1":"hashed"},{background: true})  hash分片
+sh.shardCollection("sbtest.sbtest2",{"yangtest1":"hashed"})
+
+还可以对分片打tag
+https://www.cnblogs.com/zhoujinyi/p/4668218.html
+
+
+mongodb 8小时问题：
+mongos> Date()
+Mon Aug 17 2020 15:26:08 GMT+0800 (CST)
+mongos> 
+mongos> 
+mongos> new Date()
+ISODate("2020-08-17T07:26:15.285Z")
+mongos> 
+mongos> 
+mongos> ISODate()
+ISODate("2020-08-17T07:26:23.167Z")
+mongos> 
+mongos>
+
+分片可以参考https://www.cnblogs.com/zhoujinyi/p/4635444.html  https://www.cnblogs.com/zhoujinyi/p/4668218.html
+sh.enableSharding("dba")  #首先对数据库启用分片
+sh.shardCollection("dba.account",{"name":1})  范围分片   #再对集合进行分片，name字段是片键。片键的选择：利于分块、分散写请求、查询数据。
+sh.shardCollection("dba.account",{"name":"hashed"})  hash分片   hash分片对应的片键必须创建hash索引  
+db.sbtest2.ensureIndex({"yangtest1":"hashed"},{background: true}) 
+sh.shardCollection("sbtest.sbtest2",{"yangtest1":"hashed"})
+sh.shardCollection('test.ttl',{date:1,node_id:1}) 可以指定联合片键  前提是索引也是联合索引  db.ttl.ensureIndex({date:1,node_id:1})
+ sh.status()
+ 判断是否为shard：db.runCommand({isdbgrid:1})
+ db.collection.stats()  查看是否分片
+  sh.setBalancerState(false)  #关闭自动均衡器，手动均衡，打开：sh.setBalancerState(true)  一定要先启用改功能，设置窗口才会生效，只设置窗口，不启用也不会生效
+  如您需要 balancer 始终处于运行状态，您可以使用如下命令去除活动窗口的设置。 db.settings.update({ _id : "balancer" }, { $unset : { activeWindow : true } })  
+ 可以为均衡器设置一个均衡时间窗口：activeWindow  
+ use config
+ db.settings.update({"_id":"balancer"},{"$set":{"activeWindow":{"start":"02:00","stop":"05:00"}}},true)  记住一定要use config
+ 上面说明：均衡只会在早上8点到凌晨2点进行均衡操作。均衡器是以块的数量作为迁移指标，而非数据大小，块的大小默认是64M，可以修改:(config.settings)
+ 清除activeWindow，恢复默认balancer
+ use config
+db.settings.update({ _id : "balancer" }, { $unset : { activeWindow : true } })
+集合启用balance功能 sh.enableBalancing("push_open.notification")
+
+通过均衡器自动迁移外，还可以手动迁移数据：sh.moveChunk("db.collection",{块地址},"新片名称")
+sh.moveChunk("abc.account",{"name" : "wPeFnJEvendSTbH"},"mablevi")  #把abc.account集合中包含name(片键)为""的快迁移到mablevi分片中
+
+db.chunks.find({jumbo:true})  jumbo巨块  大块查找
+
+use config
+db.settings.save( { _id:"chunksize", value: 64 } )
+
+查看每个分片块平均大小：
+dataSize命令获取某个chunk的数据大小，参考https://docs.mongodb.com/manual/reference/command/dataSize/
+db.runCommand({ dataSize: "database.collection", keyPattern: { field: 1 }, min: { field: 10 }, max: { field: 100 } })
+getShardDistribution计算方法可以参考：https://dba.stackexchange.com/questions/52416/how-to-determine-chunk-distribution-data-and-number-of-docs-in-a-sharded-mongo/52417#52417
+db.contact_item_info.getShardDistribution()
+mongos> db.contact_item_info.getShardDistribution()
+
+Shard ocloud_IjPgMRPr_shard_1 at ocloud_IjPgMRPr_shard_1/xxxxx
+ data : 8729.95GiB docs : 14548752231 chunks : 86458
+ estimated data per chunk : 103.39MiB
+ estimated docs per chunk : 168275
+
+Shard ocloud_IjPgMRPr_shard_UpEzZqNo at ocloud_IjPgMRPr_shard_UpEzZqNo/xxxx
+ data : 2319.25GiB docs : 3535749781 chunks : 93864
+ estimated data per chunk : 25.3MiB
+ estimated docs per chunk : 37668
+
+Shard ocloud_IjPgMRPr_shard_CjUcBpAM at ocloud_IjPgMRPr_shard_CjUcBpAM/xxxx
+ data : 1640.54GiB docs : 2456383148 chunks : 94902
+ estimated data per chunk : 17.7MiB
+ estimated docs per chunk : 25883
+
+Totals
+ data : 12689.75GiB docs : 20540885160 chunks : 275224
+ Shard ocloud_IjPgMRPr_shard_1 contains 68.79% data, 70.82% docs in cluster, avg obj size on shard : 644B
+ Shard ocloud_IjPgMRPr_shard_UpEzZqNo contains 18.27% data, 17.21% docs in cluster, avg obj size on shard : 704B
+ Shard ocloud_IjPgMRPr_shard_CjUcBpAM contains 12.92% data, 11.95% docs in cluster, avg obj size on shard : 717B
+ 
+ 
+
+设置块大小db.settings.save({"_id":"chunksize","value":64})
+
+刷新下配置服务器：db.adminCommand({"flushRouterConfig":1})
+最后来查看下分片成员：db.runCommand({ listshards : 1 })
+刷新下配置服务器：db.adminCommand({"flushRouterConfig":1})
+来查看下分片成员：db.runCommand({ listshards : 1 })
+网络连接数： db.adminCommand({"connPoolStats":1})
+手动拆分块：sh.splitAt('库.集合',{"name":"块值"})
+sh.shardCollection( "database.collection", { <field> : "hashed" } )
+db.runCommand({"ping":1}) { "ok" : 1 }
+
+ 
+ bson格式图解，很好理解https://www.jianshu.com/p/bd245529164a
+ 索引的重要性，很好理解:https://blog.csdn.net/defonds/article/details/51377815
+ MongoDB逻辑操作符$or, $and,$not,$nor，https://blog.csdn.net/yaomingyang/article/details/75103480
+ 
+
+ db.system.users.find()
+ 新建白名单 qa_jserror_rw账号名  jserror库名   给某个库下面的某个账号添加白名单
+创建账号不需要use admin， 应该在对应加账号的库中添加，如下面的应该use jserror
+use jserror
+db.createUser({user: "xxxx_rw",pwd: "xafdafdafda",roles: [ {role: 'readWrite', db: 'jserror'} ],authenticationRestrictions: [ {clientSource:["x.x.x.22","x.x.x.26"],serverAddress: ["x.x.x.25","x.x.x.47"]}]})
+删除数组某个字段
+db.system.users.update({"_id" : "admin.xx"},{$unset:{"authenticationRestrictions.0.serverAddress":""}},false,true)
+把clientSource更新为指定的值
+db.system.users.update({"_id" : "sc.xx_rw"},{$set:{"authenticationRestrictions" : [ { "clientSource" : ["x.3.x.67", "x.x.x.6"]} ]}})
+
+use test11
+db.createUser({user: "test11",pwd: "test11",roles: [ {role: 'readWrite', db: 'test11'} ]})
+
+注意: mongodb删除账号，如果这时候有对应的链接，链接是不会断开的。然后重新创建同样的账号，客户端通过之前已有链接的访问都会报错。必须重启mongos断开已有链接才能恢复
+
+
+删除某个字段
+//例如要把User表中address字段删除
+db.User.update({},{$unset:{'address':''}},false, true)
+
+
+增加白名单网段：
+先开启白名单，
+db.system.users.update({"user" : "test_rw"},{$set:{authenticationRestrictions:[{clientSource:["x.x.xxxx.0/24"]}]}})
+之后添加就用以下
+db.system.users.update({"user" : "test_rw"},{$addToSet:{'authenticationRestrictions.0.clientSource':"x.11.204.0/24"}})
+
+
+只有访问db_xxxxxxproduction库的权限,注意如果对该账号新增白名单，必须用use admin
+use db_xxxxxxproduction
+ db.createUser(
+   {
+     user: "XXX",
+     pwd: "XXX",
+     roles: [ {role: 'readWrite', db: 'XXX'} ],
+     authenticationRestrictions: [ {
+     clientSource:["1.2.x.x", "x.2.x.x"],serverAddress: ["x.x.x.x", "x.x.x.x"] } ]})  serverAddress包括mongos  mongod所有的  
+该user有访问所有库的权限
+use admin
+db.createUser( { user: "test6", pwd: "test6", roles: [ { role: "readWriteAnyDatabase", db: "admin"}] } )
+	 
+ use admin
+ 添加新的白名单db.system.users.update({"_id" : "jserror.qa_jserror_rw"},{$push:{"authenticationRestrictions.0.clientSource" : {$each:["130.1370.8.196","130.168.56.90"]}}})
+ db.system.users.update({"user" : "test_rw"},{$addToSet:{authenticationRestrictions:{clientSource:["1.1.1.2","1.1.1.1"]}}})
+
+
+ db.system.users.update({"_id" : "admin.qa_jserror_rw"},{$push:{"authenticationRestrictions.0.clientSource" : {$each:["x.x.x.x","x.x.x.x"]}}})
+db.system.users.update({"_id" : "xx.xx_rw"},{$push:{"authenticationRestrictions.0.serverAddress" : {$each:["x.x.x.x"]}}})
+mongotop实现原理:
+use admin
+db.runCommand( { top: 1 } )
+
+
+db.serverStatus().process可以获取当前是mongos还是mongod，注意，不要更改mongos进程名，更改后，mongostat就只会看到mongos的监控信息，因为func IsMongos(stat *ServerStatus)代码做判断的时候，只有确定是mongos才会去获取后端mongod地址
+
+
+
+
+问题:
+mongos> db.test.insert({})
+WriteResult({
+        "nInserted" : 0,
+        "writeError" : {
+                "code" : 193,
+                "errmsg" : "Cannot accept sharding commands if not started with --shardsvr"
+        }
+}) 
+原因是mongo-cfg复制集的名称和mongod复制集的名称一样了，路由错误引起
+解决办法:如果mongod复制集名称为xxxc,则mongo-cfg复制集名称改为xxxc_config，注意mongos配置文件也要改为xxxc_config，区分开来
+
+mongos读写分离:db.getMongo().setReadPref('secondaryPreferred')
+
+shard conn poll统计
+ db.runCommand({ shardConnPoolStats: 1 })
+ 
+权限，只允许指定操作
+db.createRole(
+   {
+     role: "new_role",
+     privileges: [
+       { resource: { cluster: true }, actions: [ "addShard" ] },
+       { resource: { db: "config", collection: "" }, actions: [ "find", "update", "insert", "remove" ] },
+       { resource: { db: "users", collection: "usersCollection" }, actions: [ "update", "insert", "remove" ] },
+       { resource: { db: "", collection: "" }, actions: [ "find" ] }
+     ],
+     roles: [
+       { role: "read", db: "admin" }
+     ]
+   },
+   { w: "majority" , wtimeout: 5000 })
+
+
+写大部分节点，writeConcern参考https://yq.aliyun.com/articles/268217
+db.products.insert({ item: "envelopes", qty : 100, type: "Clasp" }, { writeConcern: { w: 4, wtimeout: 5000 } })
+ db.products.insert({ item: "envelopes", qty : 100, type: "Clasp" }, { writeConcern: { w: "majority", wtimeout: 5000 } })
+ 
+ 如果w后跟的是数字，这个数字包括arbiter选举节点，选举节点默认不算  例如4mongod+1选举节点，w=5报错
+ 如果w是majority，则不包括选举节点， 例如4mongod+1选举节点，kill掉2个从节点，剩余2mongod+1arbiter，majority报错
+   
+聚合https://www.cnblogs.com/camilla/p/7908027.html
+https://www.cnblogs.com/liruihuan/p/6686570.html
+
+
+普通read，先读数据到内核空间，在从内核空间拷贝到用户空间，会有两次内存消耗
+mmap+read，先通过mmap映射对应的磁盘空间，然后read，这时候是直接从磁盘读取到用户空间，所以只消耗一份内存。
+
+
+
+db.order_status.remove({createTime: { $exists: false }}) 删除不存在某个字段的行
+
+
+
+
+mongodb各自操作符详见：查询操作符详见:https://docs.mongodb.com/manual/reference/operator/query/
+
+VIP接入空闲链接异常端口解决办法
+转至元数据结尾
+创建： 杨亚洲，最新修改于： 一月 23, 2019 转至元数据起始
+测试验证：
+maxConnectionLifeTime 这个千万不能配，该配置表示所有的链接超过这个时间都会断开
+maxConnectionIdleTime=3000 这个参数测试发现没用，官方说明是空闲链接的超时时间，实际上配置为3s，但是空闲链接并没有断开(Sets the maximum idle time for a pooled connection.) ?????
+
+ 
+maxConnectionIdleTime=55000 实际上该参数设置后没用
+heartbeatFrequency=10000 心跳频率
+测试发现mongo空闲链接60s会自动断开。因此只要把VIP的超时时间设置为大于60s即可，这样就可以规避。为了保险加上heartbeatFrequency=10000，进一步规避空闲链接
+
+
+模糊查询： db.sbtest1.find({'name':/adfa/}).count()  查询"name"字段包含"adfa"字符串的内容,name后面的值必须为字符串，如果是数字则不满足
+
+
+db.sbtest1.update({}, {$set:{"name":"yangyazhou"}}, false, true)  所有文档都添加name字段，只需要把第四个参数设置为true
+
+
+最终解决办法:
+
+调节VIP超时时间为180s, 该步骤业务方无需参与，mongo服务端操作
+ heartbeatFrequency=10000, 新增保活，避免空闲链接产生。业务方使用在JAVA客户端中添加该配置项
+ 
+ SQL与MongoDB的详细对比,mongodb mysql语法对比: http://blog.itpub.net/15498/viewspace-1984777/
+ 
+ 
+ 给机器添加Mysql分组: groupadd mysql; useradd -r -g mysql mysql
+ 
+ 
+ 哈希索引（Hashed Index）是指按照某个字段的hash值来建立索引，目前主要用于MongoDB Sharded Cluster的Hash分片，hash索引只能满足字段完全匹配的查询，不能满足范围查询等。
+ 分片，片键，参考https://www.cnblogs.com/cwane/p/5519830.html
+
+  printShardingStatus(db.getSisterDB("config"),1); 查看详细sharde信息
+  
+  mysql启动客户端mysql -umongo -pxxx -P3306 -D mongodb  --default-character-set=utf8 
+  /usr/bin/mysql -umongo -pkafdafda@20afd14 -P3306 -D mongodb  --default-character-set=utf8 -N -s -e 'insert into xxx'./build/opt/mongo/mongod
+  
+  
+  
+  ceph  优化方法，在内核中增加cache,如下：
+size=$num
+size=`expr $size \* 200 - 1` 
+echo $size 
+#lvcreate -L "$size"G -I 32K -n fio-lvm data
+vgextend data /dev/nvme0n1
+lvcreate -L "$size"G -n fio-lvm -i $num -I 32K data 
+lvcreate -n cache0 -L 200G data /dev/nvme0n1
+lvcreate -n cache0meta -L 240M data /dev/nvme0n1
+lvconvert --type cache-pool --poolmetadata data/cache0meta data/cache0
+lvconvert --type cache --cachepool data/cache0 --cachemode writeback data/fio-lvm
+mkfs.xfs /dev/data/fio-lvm
+mount -t xfs -o noatime /dev/data/fio-lvm /data_lvm/
+
+
+
+
+
+
+
+
+
+too many chunks to print, use verbose if you want to force print
+printShardingStatus(db.getSisterDB("config"),1);
+
+
+
+
+
+
+rsyslog升级到最新版本步骤:
+wget http://rpms.adiscon.com/v8-stable/rsyslog.repo -O /etc/yum.repos.d/rsyslog.repo
+cat /etc/yum.repos.d/rsyslog.repo
+yum install rsyslog
+service rsyslog restart
+
+log profile设置
+db.setProfilingLevel(0)
+db.getProfilingLevel()
+db.setProfilingLevel(1,1500)
+db.getProfilingStatus()
+
+
+事务超时时间timeout设置
+默认情况下， 一个事务从开始到事务提交的时间间隔要小于60秒， 如果大于60秒， 该事务就认为失败， 进行回滚。这个时间限制可以通过transactionLifetimeLimitSeconds来进行修改。
+db.adminCommand( { setParameter: 1, maxTransactionLockRequestTimeoutMillis: 200 } )
+默认情况下， 使用事务需要获取锁的等待时间为5毫秒， 超过这个时间事务就失败。我们可以通过修改参数maxTransactionLockRequestTimeoutMillis开改变这个设定。
+db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 40 } )
+
+日志级别调整:
+参考官网：https://docs.mongodb.com/manual/reference/method/db.setLogLevel/
+db.setLogLevel(0);
+db.setLogLevel(1, 'accessControl');
+db.setLogLevel(0, 'command');
+db.setLogLevel(1, 'control');
+db.setLogLevel(0, 'ftdc');
+db.setLogLevel(0, 'geo');
+db.setLogLevel(0, 'index');
+db.setLogLevel(1, 'network');
+db.setLogLevel(1, 'network.asio');
+db.setLogLevel(0, 'network.bridge');
+db.setLogLevel(0, 'query');
+db.setLogLevel(3, 'replication');
+db.setLogLevel(0, 'sharding');
+db.setLogLevel(0, 'storage');
+db.setLogLevel(0, 'storage.journal');
+db.setLogLevel(0, 'tracking');
+db.setLogLevel(0, 'write');
+db.setLogLevel(0, 'default');
+
+
+db.adminCommand( { setParameter: 1, notablescan: 1 } ) 加上这个配置，所有查询必须走索引，否则直接报错 
+setParameter    https://docs.mongodb.com/v3.0/reference/command/setParameter/#dbcmd.setParameter
+db.runCommand( { getParameter: 1})  https://docs.mongodb.com/v3.0/reference/command/getParameter/
+db.runCommand( { setParameter: 1, cursorTimeoutMillis: 300 } )
+db.runCommand( { getParameter: 1, cursorTimeoutMillis:1} )
+
+system.profile表访问需要加dbAdmin权限才行
+db.system.users.update({"_id" : "user_source.user_source_rw"}, {$addToSet:{roles:{ "role" : "dbAdmin", "db" : "user_source" }}});
+db.grantRolesToUser('admin',[ "root" ])  admin账号直接转root账号
+
+
+db.copyDatabase("monitor","monitor_bak") copyDatabase mongod上面执行，mongos不可以
+
+
+表重命名
+use admin
+db.runCommand( { renameCollection: "audit_platform.product_2014", to: "audit_platform.product_2014_20" })
+
+
+一、keyfile认证
+（1）通过密钥文件进行身份验证时，副本集中的每个mongo实例都使用密钥文件的内容作为与其他成员进行身份验证的共享密码。
+
+只有拥有正确密钥文件的Mongod实例才能加入副本集。
+
+（2）密钥文件的内容必须在6到1024个字符之间，并且对于副本集的所有成员必须是相同的。
+
+
+pidstat -p pid -d 1 -t 可以查看磁盘IO，容器磁盘IO
+
+
+percona不停机修改存储引擎
+https://www.percona.com/blog/2017/03/07/how-to-change-mongodb-storage-engines-without-downtime/
+
+
+
+mongos配置
+systemLog:
+  destination: file
+  logAppend: true
+  path: /home/mongodb/xxx_mongos/mongos/logs/mongod.log
+
+processManagement:
+  fork: true
+  pidFilePath: /home/mongodb/xxx
+net:
+  port: 27025
+  maxIncomingConnections: 20000
+
+sharding:
+  configDB: carbo_instance/122.89.1935.48:47025,130.839.196.48:47025,130.90.330.17:47025
+security:
+  keyFile: /home/mongodb/xxx_mongos/mongos/keys/keyfile
+  
+
+
+  
+mongo-cfg配置
+processManagement:
+  fork: true
+systemLog:
+  destination: file
+  path: /home/mongodb/xxx_cfg/logs/mongod.log
+  logAppend: true
+  logRotate: rename 
+storage:
+  journal:
+    enabled: true
+  dbPath: /home/mongodb/xxx_cfg/data/
+  directoryPerDB: true
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 5
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: snappy
+    indexConfig:
+      prefixCompression: true
+net:
+   port: 47025
+   maxIncomingConnections: 10000
+   bindIpAll: true
+
+replication:
+   oplogSizeMB: 10240
+   replSetName: carbo_instance
+
+operationProfiling:
+   slowOpThresholdMs: 100
+   mode: slowOp
+
+sharding:
+   clusterRole: configsvr
+   archiveMovedChunks: true
+
+security:
+   keyFile: /home/mongodb/xxx_cfg/keys/keyfile
+   clusterAuthMode: keyFile
+   authorization: enabled
+   
+
+mongod配置:
+processManagement:
+  fork: true
+systemLog:
+  destination: file
+  path: /data1/mongodb/XXX/logs/mongod.log
+  logAppend: true
+  logRotate: rename 
+storage:
+  journal:
+    enabled: true
+  dbPath: /data1/mongodb/XXX/data/
+  directoryPerDB: true
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 5
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: snappy
+    indexConfig:
+      prefixCompression: true
+net:
+   port: 27022
+   maxIncomingConnections: 10000
+   bindIpAll: true
+
+replication:
+   oplogSizeMB: 10240
+   replSetName: chunjun_prod_1
+
+operationProfiling:
+   slowOpThresholdMs: 100
+   mode: slowOp
+
+sharding:
+   clusterRole: shardsvr
+   archiveMovedChunks: true
+
+security:
+   keyFile: /data1/mongodb/XXX/keys/keyfile
+   clusterAuthMode: keyFile
+   authorization: enabled
+  
+  
+主从切换日志打印：
+transition to primary complete; database writes are now permitted
+I REPL     [replexec-120870] transition to SECONDARY from PRIMARY
+
+
+
+
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction=(threads_min=8, threads_max=20)"})
+
+
+cachesize调整，存储引擎调整
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction_dirty_target=5,eviction_target=80"})
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=2GB" })
+db.adminCommand( { getParameter : "1", wiredTigerEngineRuntimeConfig : 1  } )
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=55GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_target=97, eviction_dirty_trigger=30, checkpoint=(wait=16,log_size=2GB),eviction=(threads_min=8, threads_max=14)"})
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=45GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_trigger=25, checkpoint=(wait=45,log_size=2GB),eviction=(threads_max=8)"})
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=25GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_trigger=25"})
+参考http://www.mongoing.com/archives/3675
+ 
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction_dirty_trigger=7, checkpoint=(wait=16,log_size=1GB),eviction=(threads_min=12, threads_max=20)"})
+ 持续Insert上面得这个不知道为啥更好
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=45GB, eviction_dirty_trigger=10, checkpoint=(wait=16,log_size=1GB),eviction=(threads_min=12, threads_max=20)"})
+  db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=80GB, eviction=(threads_min=4, threads_max=12)"})
+ 
+ 写场景优化如下:真实
+2.db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "checkpoint=(wait=30,log_size=2GB),eviction=(threads_min=8, threads_max=20)"})
+ 
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction=(threads_min=4, threads_max=14)"})
+ 
+数组中所有成员添加一个KV： 3.6版本
+db.info.update({"channelList": {$exists: true}},{$set:{"channelList.$[].syncEnable": true}},{"multi":true})
+
+3.2版本只能支持
+db.info.update({"channelList": {$exists: true}},{$set:{"channelList.$.syncEnable444": true}},  {multi: true})
+这个只能更新第一条
+
+3.6版本可以一次性更新
+db.info.update({"channelList": {$exists: true}},{$set:{"channelList.$[].syncEnable444": true}},  {multi: true})
+
+3.2版本$[]识别不了，所以不行
+
+
+数组相关匹配查询参考:  Aggregation
+https://blog.csdn.net/bicheng4769/article/details/79579830
+
+mongodb->hadoop hive
+https://blog.csdn.net/z702143700/article/details/70213891
+https://blog.csdn.net/thriving_fcl/article/details/52503394
+
+mongodump --host=datatask01:29017 --db=test --collection=ldc_test --out=/tmp
+hdfs dfs -mkdir /dev_test/dli/bson_demo/
+hdfs dfs -put /tmp/test/ldc_test.bson /dev_test/dli/bson_demo/
+
+
+
+
+Unique index cursor seeing multiple records for key 解决办法，rebuild索引
+db.accounts.reIndex()  千万不要执行，他是前台执行，会阻塞。删索引的过程中，需要提前把该节点隐藏，因为删除索引后，查询可能全表扫描
+最好得办法是删除对应得索引，然后重新backup后台创建
+
+
+goland快捷键
+Ctrl+Shift+Alt+N 查找类中的方法或变量
+CTRL+SHIFT+N，可以快速打开文件。
+CTRL+N，可以快速打开struct结构体。
+
+
+删除分片:
+https://blog.csdn.net/q936889811/article/details/79704544
+
+RECOVERING表示从跟不上主的进度，oplog回滚了。STARTUP2表示从正在做全量同步，同步完后回变为secondary
+
+logApplicationMessage     
+db.adminCommand( { setParameter: 1, auditAuthorizationSuccess: false } )   db.adminCommand( { setParameter: 1, auditAuthorizationSuccess: ture } )
+https://www.percona.com/blog/2017/03/03/mongodb-audit-log-why-and-how/
+https://jira.percona.com/browse/PSMDB-473?focusedCommentId=243058&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-243058
+
+Unique index cursor seeing multiple records for key 
+索引重复，解决办法，重构索引 db.comments.reIndex() 
+
+db.adminCommand({getParameter:1, replSetResizeOplog:true}) 
+ db.adminCommand({replSetResizeOplog:1,size:102400})   #单位为MB，扩容至4G  设置oplog size大小
+ db.adminCommand可以执行的命令列表可以查看https://docs.mongodb.com/manual/reference/command/
+ db.adminCommand({getParameter:"*"}); 获取所有配置
+ 
+ 
+减小oplog的大小不会回收已经分配的磁盘空间，必须压缩oplog.rs来回收磁盘空间。
+compact回收磁盘资源   主要compact会阻塞整个表
+// compact somedb.somecollection
+ use somedb
+ db.runCommnd({compact: "somecollection"})
+ // compact oplog，在副本集primary上执行需要加 force 选项
+ use local
+ db.runCommnd({compact: "somecollection", force: true}) 
+compact 一个集合，会加集合所在DB的互斥写锁，会导致该DB上所有的读写请求都阻塞；
+因为 compact 执行的时间可能很长，跟集合的数据量相关，所以强烈建议在业务低峰期执行，避免影响业务。
+
+use admin
+db.createRole({role: "myCustomCompactRole",privileges: [{resource: { "db" : "" , "collection" : "" },actions: [ "compact" ]}],roles: []})
+
+db.grantRolesToUser("xxuser", [  "myCustomCompactRole" ] )
+
+然后登陆从节点执行：  注意只能在从节点执行，如果需要释放主节点的磁盘，可以先把主节点切为从节点，然后执行
+use local
+db.runCommand({"compact" : "oplog.rs"})
+
+db.runCommand({repairDatabase :1}) 才是真正的释放磁盘空间
+修复数据mongod --dbpath /var/ceilometer --repair
+ 
+ ps -T -p 573443   查看进程下面的所有线程及线程名
+ ps -T -p 573443 | grep -E 'worker|conn'  
+ 线程名来源  /proc/573522/task/573522/comm
+ 
+ replication:
+    enableMajorityReadConcern: false
+	
+从拉取速度慢问题解决 oplog线程数配置
+setParameter:
+  replWriterThreadCount: 32
+
+hhlshd2:SECONDARY> db.adminCommand({getParameter:1, replWriterThreadCount:true}) 
+	
+CRT中文乱码
+LANG=”zh_CN.UTF-8″ 
+
+环境遍历永远生效:source /etc/profile   修改改文件内容
+
+
+
+db.createUser(
+{
+user:"testuser",
+customData:{description:"superuser"},
+pwd:"xxxxxxx",
+roles:[
+{role:"readWrite",db:"db1234"},
+{role:"readWrite",db:"db6657"}
+]
+}
+)
+
+
+
+mongodb安装包下载:
+https://www.mongodb.org/dl/linux/x86_64-rhel62
+
+
+
+
+
+重复数据，加唯一索引会失败
+解决方案步骤如下：
+1. 从节点下线
+2. 修改配置文件，去掉副本集和角色配置
+3. 重启，这时候是单实例启动
+4. 跑去重语句
+5. 删除原来的非唯一索引
+6. 添加唯一索引
+7. 以副本集方式启动，追加新的oplog
+8. oplog追上后，把这个重节点切换为主节点
+9. 清空从节点数据，进行全量同步，一个从节点一个从节点的搞
+
+
+
+隐藏节点
+cfg = rs.conf()
+cfg.members[1].votes = 0
+rs.reconfig(cfg)
+
+ 
+
+ db.adminCommand({replSetResizeOplog:1,size:102400}) 
+一个账号多个库用
+use admin     
+db.createUser({user:"testuser",customData:{description:"superuser"},pwd:"xxxxxxx",roles:[{role:"readWrite",db:"db1234"},{role:"readWrite",db:"db6657"}]})
+
+db.user_info.aggregate([{$group:{_id:"$ssoid", dups:{$push:"$_id"}, count: {$sum: 1}}},
+{$match:{count: {$gt: 1}}}
+]).forEach(function(doc){
+  doc.dups.shift();
+  db.user_info.remove({_id : {$in: doc.dups}});
+});	
+删除user_info表中ssoid重复的数据
+
+db.ocloud_file_repeat.aggregate([{$group:{_id:"$ssoid, $", dups:{$push:"$_id"}, count: {$sum: 1}}},
+{$match:{count: {$gt: 1}}}
+]).forEach(function(doc){
+  doc.dups.shift();
+  db.user_info.remove({_id : {$in: doc.dups}});
+});	
+
+
+ 注意db.item_commit_info.createIndex({"tag":1},{background: true, unique:true}) 
+正确得方式db.item_commit_info.createIndex({"tag":1},{unique:true})
+
+
+
+cannot create unique index over { b: 1.0 } with shard key pattern { _id: 1.0 }",
+之所以出现这个错误是因为MongoDB无法保证集群中除了片键以外其他字段的唯一性，能保证片键的唯一性是因为文档根据片键进行切分，
+一个特定的文档只属于一个分片，MongoDB只要保证它在那个分片上唯一就在整个集群中唯一，
+实现分片集群上的文档唯一性一种方法是在创建片键的时候指定它的唯一性。
+
+
+去掉-d  -c就是导出所有库
+/home/service/mongodb/bin/mongodb-3.6.13/bin/mongodump -h x.x.x.x:port -uxxx -pxxxx -d ocloud-commit -c item_commit_info -o ./data --authenticationDatabase=admin
+nohup /home/service/mongodb/bin/mongodb-3.6.13/bin/mongorestore -h x.x.x.x:port -uxxx -pxxxx -d ocloud-commit  --authenticationDatabase=admin ./ocloud-commit &   
+ --noIndexRestore 参数可以不恢复索引          如果不想屏幕显示密码，可以通过 -p `cat xxx.file`,
+ --numInsertionWorkersPerCollection=20  提高欢迎速度
+ 
+ -d代表库名，恢复的时候可以改库名
+ 
+//回复Json文件到集群用mongoimport，恢复bson文件到集群用mongorestore   恢复到指定库 指定表
+/home/service/mongodb/bin/mongodb-3.6.13/bin/mongoimport  -h x.x.x.x -uxx -pxx -d 库 -c xx /home/xx.metadata.json --authenticationDatabase=admin
+/home/service/mongodb/bin/mongodb-3.6.13/bin/mongorestore -h x.x.x.x -uxx -pxx  -d 库 -c xx --authenticationDatabase=admin /home/xx.metadata.json   -d 库 -c 表
+
+mongodump mongorestore参考 https://cloud.tencent.com/developer/article/1429385
+
+rollback  https://docs.mongodb.com/v3.6/core/replica-set-rollbacks/
+rollbackTimeLimitSecs  设置rollback时间
+手动恢复rollback数据mongorestore --host <hostname:port> --db db1 --collection c2 -u admin_user -p"123456" --authenticationDatabase admin rollback/c2_rollback.BSON
+参考https://segmentfault.com/a/1190000011590674
+
+cfg = rs.conf()
+cfg.settings.heartbeatIntervalMillis = 500
+cfg.settings.heartbeatTimeoutSecs=60
+cfg.settings.electionTimeoutMillis=30000
+rs.reconfig(cfg)
+
+主从同步延迟过大，参考 https://blog.csdn.net/A_man_only/article/details/84553458
+
+
+getmore模拟过程
+首先切换数据库。
+mongos>use mydb;
+mongos>switched to db mydb;
+mydb为需要拉取数据的数据库；
+
+获取到游标并传入查询条件
+
+mongos>var cursor = db.xxx.find({""})
+其中xxx为表名,find中传入需要查询的条件。
+
+设置batchSize
+
+mongos> cursor.batchSize(n)
+n为batchsize
+
+使用while循环进行数据拉取
+
+mongos> while(cursor.hasNext()) { cursor.next() }
+cursor.objsLeftInBatch()可以获取当前batch还有多少数据。当完成一个batch之后，会getMore访问mongodb数据库拉取下一个batch的数据。
+
+mongos慢日志时延调整 db.adminCommand({setParameter: 1, mongosSlowLogLevelMs: 1500})
+
+
+mongodb链接分片集群  java客户端配置
+https://www.codercto.com/a/43773.html
+
+
+
+strace -fp pid 跟踪进程所有子线程系统调用
+
+strace -f -e trace=epoll_wait,recvmsg,sendmsg -p 527501  进程及其子进程
+strace -e trace=epoll_wait,recvmsg,sendmsg -p 527501  本线程
+
+
+性能测试工具CPU profiler(gperftools)的使用心得
+https://blog.csdn.net/10km/article/details/83820080
+
+
+递归修改目录的用户及用户组
+chown mongodb:mongodb test -R
+
+
+scp -P 18822 -r /A/B root@ip2:/C/D 
+
+mongo shell 读模式设置 db.getMongo().setReadPref('secondary')
+
+
+A single update on a sharded collection must contain an exact match on 
+分片集群跟新操作，如果只跟新满足条件的一条数据，则必须带上片建字段，否则数据分发到多个后端分片后，无法保证只跟新一条数据
+
+
+mongodb tag标签
+我们把用户分为三组，20 岁以下（junior)，20 到 40 岁（middle）和 40 岁以上（senior），为了节省篇幅，我在这里不过多的介绍
+如何使用 MongoDB 命令，按照下面的几条命令执行以后，我们的数据会按照用户年龄段拆分成若干个 chunk，并分发到不同的 shard cluster 中。
+如果对下面的命令不熟悉，可以查看 MongoDB 官方文档关于 Shard Zone/Chunk 的解释。
+db.getSiblingDB('test').getCollection('users').createIndex({'user.age':1})  //索引字段user.age，库名test，表明users
+sh.setBalancerState(false)
+sh.addShardTag('shard01', 'junior')
+sh.addShardTag('shard02', 'middle')
+sh.addShardTag('shard03', 'senior')
+sh.addTagRange('test.users', {'user.age': MinKey}, {'user.age':20}, 'junior')
+sh.addTagRange('test.users', {'user.age': 21}, {'user.age':40}, 'middle') 
+sh.addTagRange('test.users', {'user.age': 41}, {'user.age': MaxKey}, 'senior')
+sh.enableSharding('test')
+sh.shardCollection('test.users', {'user.age':1})切割
+
+
+
+sh.setBalancerState(true)
+
+
+use test
+db.user.ensureIndex({"indexkey":1})
+sh.enableSharding("db")   
+sh.shardCollection("db.collection",{"indexkey":1}) 
+
+sh.addShardTag('opush_ZSYUscWi_shard_1', 'junior')
+sh.addShardTag('opush_ZSYUscWi_shard_2', 'middle')
+sh.addTagRange('test.users', {'age': 1}, {'age':20}, 'junior')
+sh.addTagRange('test.users', {'age': 20}, {'age':40}, 'middle')
+
+移除某个tagrange 
+sh.removeTagRange('test.users', {'age': 20}, {'age':40}, 'middle')
+移除某个tag
+sh.removeShardTag("opush_ZSYUscWi_shard_1","junior")
+
+#26 0x000055a5be0f470f in asio::detail::reactive_socket_recv_op<asio::mutable_buffers_1, asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, asio::mutable_buffer const*, asio::detail::transfer_all_t, void mongo::transport::TransportLayerASIO::ASIOSession::xx<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}>(bool, asio::basic_stream_socket<asio::generic::stream_protocol>&, asio::mutable_buffers_1 const&, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}&&)::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
+
+mongos路由表不对，可以清除缓存解决：
+You should only need to run flushRouterConfig after movePrimary has been run or after manually clearing the jumbo chunk flag.
+db.adminCommand({"flushRouterConfig":1})   //movePrimary和清除jumbo标记后
+
+
+use admin
+db.runCommand({movePrimary:"User", to:"shard1"})
+mongos> db.adminCommand({"movePrimary":"test","to":"shard0001"}) #把test库的的主分片迁移到shard0001 
+db.runCommand("flushRouterConfig")
+ 
+如果添加一个分片到集群的时候分片中有数据则会添加失败，要把数据清除后再添加，此外记得提取再mongos敲flushRouterConfig清除路由信息
+
+WiredTigerIndex::insert: key too large to index,failing 
+db.adminCommand( { setParameter: 1, failIndexKeyTooLong: false } )
+mongosSlowLogTime
+mongos慢日志时延调整 db.adminCommand({setParameter: 1, mongosSlowLogLevelMs: 1500})
+手动迁移chunk块到其他分片
+db.adminCommand({moveChunk : "test.momo", find : {id:{$gt:82842}}, to : "shard0002"});  注意这里得find条件是数据条件，而不是config.chunk里面得块
+见https://blog.csdn.net/weixin_34278190/article/details/90654102
+//移动find条件满足得数据对应得chunk到目标shard
+ db.adminCommand({moveChunk : "ocloud-commit-1.dfadf", find :  { "userId" : "314069409", "tag.id" : NumberLong(759730) } , to : "shard2"});
+ sh.moveChunk("cloud_track.dailyCloudOperateInfo_17",{ "userId" : NumberLong("3074457345618258602") },"ocloud_oFEAkecX_shard_1")
+
+
+sh.getBalancerStat():获取sharding集群balancer是否开启。
+sh.status():可以在balancer信息下的Currently running中看到是否正在进行chunk迁移。
+ 
+sh.disableBalancing(“dbName.collectionName”)、sh.enableBalancing(“dbName.collectionName”):关闭/开启 dbName 库的 collectionName 集合的chunk迁移功能。
+sh.setBalancerState(false) 
+
+
+命令使用帮助help，例如
+db.runCommand({splitVector:"test.test", help:1})
+
+db.isMaster()
+ 
+too many chunks to print, use verbose if you want to force print
+sh.status({"verbose":1}) 
+
+如果balance异常，则把confg集群主从切换，重启来解决。同时要杀掉所有movechuank的操作  killop
+
+
+hash可以在启用表分片功能得时候提前预分片：  注意范围分片，在shardCollection得时候不支持
+sh.shardCollection("appdb.book", {bookId:"hashed"}, false, { numInitialChunks: 8192} )
+
+预分片记住一定要打开balance
+预分片：for(var i=1;i<=10;i++){sh.splitAt('shop.user',{user_id:i*1000})}
+for(var i=100000000;i<=1500000000;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:i*5000})}
+
+mergeChunks  chunk合并
+
+userId后面为字符串
+ for(var i=1;i<=120;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:(i*10).toString()})}
+ 
+预分片记住一定要打开balance
+for(var i=1;i<=100;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:i*10})}
+for(var i=1;i<=17;i++){db.adminCommand({moveChunk : "ocloud_file2.ocloud_file_item_t", find : {userId:{$gt:i*60}}, to : "shard0002"}); 
+
+ for(var i=0;i<=11000;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:(i*100000).toString(), md5:"ADB57000F7C0597A2EE504C4C4E5465E"})}
+ db.chunks.find()获取到的min包含，max不包含 
+ 
+ mongodb不同版本说明
+ https://docs.mongodb.com/manual/release-notes/3.6-changelog/
+ 
+ 
+ use admin
+ db.createUser( {user: "root",pwd: "xx",roles: [ { role: "__system", db: "admin" } ]});
+db.system.sessions.count()  必须用__system账号才可以查看
+logicalSessionRefreshMinutes  session跟新配置
+ 
+ readPrimary查看是否配置
+ db.serverStatus().storageEngine.supportsCommittedReads
+ 
+ 
+ 查看监控状态:
+  db.runCommand({ ping: 1 })
+ 
+ 
+一个账号访问指定的几个库
+use admin   注意这里是admin
+db.createUser({user: "test_rw",pwd: "xxxxxxx",roles: [ {role: 'readWrite', db: 'test11'}, {role: 'readWrite', db: 'test22'} ]})
+ 
+mongodb用户组方式启动进程：
+su -s /bin/bash -c "/x/xx/xx/bin/mongodb-3.6.13/bin/mongos -f /x/x/x/conf/mongos_200xx.conf" mongodb
+ 
+查看tcmalloc内存消耗:
+db.serverStatus().tcmalloc.tcmalloc.formattedString
+
+内存释放速度限制
+db.adminCommand( { setParameter: 1, tcmallocReleaseRate: 5.0 } )
+
+循环批量moveChunk:
+var cursor=db.user.find();
+cursor.forEach(function(x){print(x.min);})
+while(cursor.hasNext()) {sh.moveChunk("cloud_track.dailyCloudOperateInfo_17",{printjson(cursor.next().min)},"ocloud_oFEAkecX_shard_1")} 
+while(cursor.hasNext()) {printjson(cursor.next().min)} 
+
+
+chunk过大无法，拆分chunk脚本
+mongos> var cursor=db.chunks.find({"ns" : "push_open.app_device","shard" : "push-bjsm-app-1"})
+mongos>cursor.batchSize(1000)
+mongos> cursor.forEach(function(x){var result = sh.splitFind( "push_open.app_device", x.min ); printjson(result);})
+
+循环迁移对应分片chunk到其他分片
+var cursor=db.chunks.find({"ns" : "push_open.app_device", "shard" : "push-bjsm-app-2"}).skip(x).limit(15);
+mongos>cursor.batchSize(1000)
+while(cursor.hasNext()) {var result = sh.moveChunk("push_open.app_device",cursor.next().min,"push-bjsm-app-9");printjson(result);};
+
+
+use config
+sh.stopBalancer()
+var lower=ObjectId("58B60F00e4b03547ad945a8a");
+var upper=ObjectId("58BCA680e4b03547ad945a8a");
+var query={shard: "rs0", ns: "db.use", "max._id":{$gte: lower}, "min._id": {$lte: upper}};
+var cursor=db.chunks.find(query);
+
+cursor.forEach(function(d) {
+ print( "chunk: " + d.min._id ); 
+ sh.moveChunk("feedback.usage", { "_id" : d.min._id }, "rs1");
+});
+sh.setBalancerState(true)
+
+https://docs.mongodb.com/manual/tutorial/migrate-chunks-in-sharded-cluster/
+var shServer = [ "sh0.example.net", "sh1.example.net", "sh2.example.net", "sh3.example.net", "sh4.example.net" ];
+for ( var x=97; x<97+26; x++ ){
+  for( var y=97; y<97+26; y+=6 ) {
+    var prefix = String.fromCharCode(x) + String.fromCharCode(y);
+    db.adminCommand({moveChunk : "myapp.users", find : {email : prefix}, to : shServer[(y-97)/6]})
+  }
+}
+
+实例，一次迁移5个块，注意这里只会打印最后一次的moveChunk返回信息
+mongos> var cursor=db.chunks.find({"ns" : "ocloud-commit-1.item_commit_info", "shard" : "ocloud_WbUiXohI_shard_1"}).limit(5)
+mongos> while(cursor.hasNext()) {sh.moveChunk("ocloud-commit-1.item_commit_info",cursor.next().min,"ocloud_WbUiXohI_shard_6")}
+{
+        "millis" : 4876,
+        "ok" : 1,
+        "operationTime" : Timestamp(1592992016, 2600),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1592992016, 2600),
+                "signature" : {
+                        "hash" : BinData(0,"N86ePQ/qL0FpvpE4uYfGcBrLwoc="),
+                        "keyId" : NumberLong("6810307853451001882")
+                }
+        }
+}
+mongos> sh.status()
+
+
+
+var url = "mongodb://admin:xxx@xx.xx.x.2:3001/?authSource=admin";
+var db = connect(url);
+db = db.getSiblingDB("config");
+
+for ( var x=170; x<5800; x++ ){
+var cursor=db.chunks.find({"ns" : "push_open.app_device", "shard" : "push-bjsm-app-1"}).skip(200).limit(10);
+while(cursor.hasNext()) {var result = sh.moveChunk("push_open.app_device",cursor.next().min,"push-bjsm-app-9");printjson(result);};
+}
+
+
+查看每个分片的chunk大小信息，数据量信息mongos执行
+db.collection.getShardDistribution()
+
+
+一个复制集从节点+主节点个数总共不能超过7个节点，超过七个则必须把多余的节点设置为不能参与投票，如下：
+https://docs.mongodb.com/manual/tutorial/configure-a-non-voting-replica-set-member/
+思路是，先把前面的几个节点重部分节点设置为非投票节点，然后add新节点
+把节点设置为非投票节点：
+cfg = rs.conf();
+cfg.members[5].votes = 0;
+cfg.members[5].priority = 0;
+rs.reconfig(cfg);
+
+延迟节点添加步骤：
+设置延迟从节点，在primary节点执行以下步骤
+1、cfg=rs.conf()
+2、cfg.members[4].slaveDelay=3600 # 1小时
+3、cfg.members[4].votes=0 # 设置不参与投票
+4、rs.reconfig(cfg)
+
+
+nohup  top -b -n 21111111  > top.log &
+nohup iotop -botq --iter=333333 > iotop.log &
+top -Hp 43972 -b -n 21111111 | head -n 200
+
+mongoexport -h xxxx:20000 -uadmin -p0xxxe8  --authenticationDatabase=admin --db=video --collection=videos_verify_log --fields "_id,videoId" -q '{"categoryModifiedFlag":1}' --type=csv -o vidio.csv
+
+sh.splitFind( "push_open.app_device", {appId: "547352", deviceId: "5ebbad0e510d0a5edc2e381f"} )
+splite命令： 
+db.adminCommand( { split: <database>.<collection>,
+                   <find|middle|bounds> } )
+sh.splitFind() 实际上就是split middle，sh.splitFind( "test.foo", { x: 70 } ) 表示对foo表的x:70这个chunk从中间拆分
+sh.splitAt( "test.foo", { x: 70 } )  找到x:70这个对应的chunk，然后从70拆分
+
+SplitVector 命令在复制集上面执行，就是把复制集的数据按照指定方法拆分为多个块
+https://blog.csdn.net/weixin_33827731/article/details/90534750
+db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
+
+
+splitVector把一个chunk拆分为多个指定大小得chunk，例如一个表如果没有启用分片功能，当通过sh.shardCollection启用分片功能得时候，首先需要把表拆分为多个chunk。这个过程如果数据量
+很大，执行需要花费比较多得时间
+
+加快删除速度：deleteMany
+
+mongos链接池：
+ShardingTaskExecutorPoolMaxSize * taskExecutorPoolSize  
+//taskExecutorPoolSize代表一个mongos和后端mongod建立多少个链接，后续就会复用这些链接， ShardingTaskExecutorPoolMinSize表示一次创建多少个链接
+mongos -f /home/service/mongodb/conf/mongos_20017.conf --setParameter  --setParameter ShardingTaskExecutorPoolMinSize=20 --setParameter taskExecutorPoolSize=1
+
+ "codeName" : "LockBusy",  Lockbusy解决办法
+ 1. killop慢查询
+ 2. 关闭balance
+ 3. cfg集群切换主从或者重启
+ 
+ 
+opcounter.js
+运行方式：mongo xx.5x.x.90:xx opcounters.js    js文件内容如下
+var url = "mongodb://xxx:xxxx@a.b.c.d:20004/?authSource=admin";
+var db = connect(url);
+
+for ( var x=100; x<7022220; x++ ){
+ var result = db.serverStatus().opcounters;
+ printjson(result);
+ sleep(1000);
+} 
+
+killop脚本，定期kill  10s定期
+var url = "mongodb://Qxxx:xxx@ip:port/?authSource=admin";
+var db = connect(url);
+db = db.getSiblingDB("admin");
+
+for ( var x=0; x<2000; x++ ){
+ sleep(10000)  
+ db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 5){db.killOp(item.opid);}})
+  printjson("result");
+}
+
+mongodb命令大全地址:
+https://docs.mongodb.com/v3.6/reference/command
+
+
+
+var url = "mongodb://xx:afdfxxxxxxxxx@x.x.x.2:3001/?authSource=admin";
+var db = connect(url);
+db = db.getSiblingDB("config");
+
+for ( var x=100; x<700; x++ ){
+var cursor=db.chunks.find({"ns" : "xxxx.app_device", "shard" : "xxx-bjsm-app-1"}).skip(10+x).limit(15);
+while(cursor.hasNext()) {var result = sh.moveChunk("xxx.app_device",cursor.next().min,"xxx-bjsm-app-9");printjson(result);};
+}
+ 
+ 
+锁表
+db.adminCommand( { fsync: 1, lock: true } )
+解锁
+db.fsyncUnlock();或者
+ 
+nohup top -b  > top.log &
+
+获取所有命令:
+db.listCommands()
+ 
+ 
+机房多活，如果某个机房资源少，可以部署多个节点到资源充足的机房，同时把资源多的机房的部分节点设置为不参与投票选举，参与投票的节点：
+1+1+1， 实际节点1+5+1, 5节点重4节点不参与投票
+ 
+mongo java客户端链接复制集及分片mongos地址方法
+ https://www.codercto.com/a/43773.html
+ 官方地址https://mongodb.github.io/mongo-java-driver/3.4/driver/tutorials/connect-to-mongodb/
+ 
+ strace -f -e trace=read,write -p 17151
+strace  -e trace=epoll_wait,recvmsg,sendmsg -p 527501
+strace -f -e trace=epoll_wait,recvmsg,sendmsg -p 527501  进程及其子进程
+strace -e trace=epoll_wait,recvmsg,sendmsg -p 527501  本线程
+2020-02-03 20:22
+strace -o output.txt -T -tt -e trace=all -p 28979上面的含义是 跟踪28979进程的所有系统调用（-e trace=all），并统计系统调用的花费时间，以及开始时间（并以可视化的时分秒格式显示），最后将记录结果存在output.txt文件里面。
+
+
+mongos执行enableShard命令后，cfg会收到如下报文
+_configsvrEnableSharding
+
+
+mongod接手到splitevector后对应打印
+request split points lookup for chunk
+函数名：splitVector
+mongos通过如下命令发送命令给mongod获取分裂点
+//通过splitVector获取分裂点 selectChunkSplitPoints(分裂为多个块)
+//ShardingCatalogManager::shardCollection->createFirstChunks中调用
+//Balancer::_moveChunks->Balancer::_splitOrMarkJumbo中调用
+//updateChunkWriteStatsAndSplitIfNeeded中调用(FindAndModifyCmd::run和ClusterWriter::write->splitIfNeede调用)  
+SplitCollectionCmd->selectMedianKey(把块从中间分裂)
+
+
+问题？ 下面问题如何解答，空了分析下
+findAndModify upsert参数 设置为true的情况
+如果1、find失败，再2、insert，
+如果在这两步之间又insert了一个满足第一步的find条件的条件
+
+findOneAndReplace  findOneAndUpdate
+
+
+balance数据迁移过程图解:
+https://blog.csdn.net/dreamdaye123/article/details/105278247/
+
+
+获取所有表索引信息:
+var collectionList = db.getCollectionNames();
+for(var index in collectionList){
+    var collection = collectionList[index];
+	var cur = db.getCollection(collection).getIndexes();
+	if(cur.length == 1){
+		continue;
+	}
+	for(var index1 in cur){
+		var next = cur[index1];
+		if(next["key"]["_id"] == '1'){
+			continue;
+		}
+        print("try{ db.getCollection(\""+collection+"\").ensureIndex("+JSON.stringify(next.key)+",{background:1, unique:" + (next.unique || false) + " })}catch(e){print(e)}");	
+	}
+}
+
+
+
+排序计算: netstat -anp|grep xx.x.x.x:20000|awk -F ' ' '{print $5}'|awk -F ':' '{print $1}'|sort|uniq -c
+
+
+source insight快捷键冲突解决办法: fn+esc即可
+
+
+netstat -na | grep ESTABLISHED | grep "20000" | awk '{print $5}' | awk -F: '{print $1}' | sort | uniq -c | sort -nr
+
+
+查看表product_2014索引使用情况
+db.product_2014.aggregate({"$indexStats":{}})
+
+mongos> db.news_doc_profile.aggregate({"$indexStats":{}})
+{ "name" : "outId_1", "key" : { "outId" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(1292908), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "_id_", "key" : { "_id" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong("9656445014"), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "docId_1", "key" : { "docId" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(132015475), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "publishTime_1", "key" : { "publishTime" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(25), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+{ "name" : "updateTime_1", "key" : { "updateTime" : 1 }, "host" : "bj6535:10001", "accesses" : { "ops" : NumberLong(82756), "since" : ISODate("2020-05-28T10:51:19.683Z") } }
+mongos> 
+
+
+
+
+下面得mongos再某些机器起不来：
+systemLog:
+    destination: file
+    path: /var/log/mongodb/mongos_20011/mongos_20011.log
+    logAppend: true
+net:
+    bindIp: 0.0.0.0
+    port: 20011
+    serviceExecutor: adaptive
+    maxIncomingConnections: 35000
+    unixDomainSocket:
+        enabled: true
+        pathPrefix: /home/service/mongodb/sockfile
+        filePermissions: 0700
+processManagement:
+    fork: true
+sharding:
+    configDB: mix-cloud_ftHGsddN_configdb/xx.xx.xx.xx:20000,xx.xx.xxx.21:20000,xx.xx.xx.112:20000
+security:
+    keyFile: /home/service/mongodb/conf/.keyfile
+	
+	
+	
+替换为如下后可以:
+systemLog:
+  destination: file
+  path: /var/log/mongodb/mongos_20011/mongos_20011.log
+  logAppend: true
+
+processManagement:
+  fork: true
+  pidFilePath: /home/service/var/data/mongodb/20011/pid
+
+net:
+  bindIp: 127.0.0.1,x.x.x.170
+  port: 20011
+
+sharding:
+  configDB: mix-cloud_ftHGsddN_configdb/xx.xx.xx:20000,xx.xx.xx.21:20000,xx.xx.xx.112:20000
+
+security:
+  keyFile: /home/service/mongodb/conf/.keyfile
+  
+
+
+perf top --call-graph graph 获取调用栈，包括用户态和内核态 参考https://www.cnblogs.com/arnoldlu/p/6241297.html
+  
+ perf record -F 99 -p 13204 -g -- sleep 30
+上面的代码中，perf record表示记录，-F 99表示每秒99次，-p 13204是进程号，即对哪个进程进行分析，-g表示记录调用栈，sleep 30则是持续30秒。 
+  
+  
+火焰图使用方法：
+https://github.com/openresty/openresty-systemtap-toolkit
+  785  20200915-111353:  ./sample-bt -p 438733 -t 5 -u > a.bt   
+  786  20200915-111522: git clone https://github.com/brendangregg/FlameGraph
+  787  20200915-111641: ./FlameGraph/stackcollapse-stap.pl a.bt > a.cbt
+  788  20200915-111653: ./FlameGraph/flamegraph.pl a.cbt > a.svg
+  789  20200915-111712: sz a.svg  
+
+
+ 258  2020-09-18 19:14:19 :rz -bye
+  259  2020-09-18 19:15:14 :https://github.com/brendangregg/FlameGraph
+  260  2020-09-18 19:15:21 :git clone https://github.com/brendangregg/FlameGraph
+  261  2020-09-18 19:16:36 :ls
+  262  2020-09-18 19:17:04 :./FlameGraph/stackcollapse-perf.pl perf.unfold &> perf.folded
+  263  2020-09-18 19:17:17 :./FlameGraph/flamegraph.pl perf.folded > perf.svg
+  264  2020-09-18 19:18:12 :perf script | FlameGraph/stackcollapse-perf.pl |FlameGraph/flamegraph.pl >process.svg
+  265  2020-09-18 19:18:19 :LS
+  266  2020-09-18 19:18:20 :ls
+  267  2020-09-18 19:18:28 :sz perf.svg 
+  268  2020-09-18 19:18:37 :sz process.svg 
+  269  2020-09-18 19:21:53 :history 
+  
+  db.collection.update(query, update, options)
+  db.collection.updateOne(xx)  updateOne也就是update中multi=false  只更新一条
+  db.collection.updateMany(xx) updateMany也就是update中multi=true   更新所有满足条件的
+  
+  
+  WiredTigerIndex::insert: key too large to index   可以通过Hash索引解决
+  
+Mongodb $关键字 $修改器
+$字符，参考https://www.cnblogs.com/clbao/articles/10171140.html
+
+
+MongoDB的destinct命令是获取特定字段中不同值列表
+db.users.distinct('last_name'）
+
+
+mongodump拉数据，隐藏密码方法：
+
+/usr/local/mongodb3.6.14/bin/mongodump -h xxxx:20000 -uadmin -p`cat password_file`
+
+mongodump使用普通用户权限导指定库数据：
+mongodump -h zz.37.zzxx.197:20000 -uxx_rw2 -pxxxx --authenticationDatabase=useddevice -d useddevice
+
+copy collection方法： 
+将source_collection中的数据复制一份到target_collection，代码如下：
+db.source_collection.find().forEach(function(x){db.target_collection.insert(x)})
+
+
+通过db.serverCmdLineOpts()，可以查看实例启动命令，配置文件，配置参数。
+  
+  
+  namespace name generated from index name xxx is too long (127 byte max)
+  解决办法，索引重命名，索引名最长127字节，默认是各字段拼接。如果太长，可以重命名，例如
+  db.alarm_event.createIndex( { "xxx:1} , {name:"textindex_1"}))
+  
+ MongoDB全文索引用法 https://www.linuxidc.com/linux/2016-04/130007.htm
+  
+循环读取hosts ip列表，执行hosts   hosts中ip地址换行记录 passwd文件为密码字符串
+for host in `cat hosts`; do pass=`cat passwd`; echo $host; ./mongo $host/admin --username admin --password $pass "Create_user.js"; done
+
+Create_user.js内容
+printjson(db.getUsers())
+db.createUser( {user: "xxx",pwd: "xxxx",roles: [ { role: "root", db: "admin" } ]})
+printjson(db.getUsers())  
+  
+ 
+代理mongos config库的以下表功能:
+1. config.migrations 当前正在做movechunk的数据块
+  
+  
+  
+  新建一个用户让他可以访问oplog，oplog位于local库中。 
+但local库中不能添加用户。我们可以在admin库中添加 
+
+新建一个Agloplog用户使其能访问oplog。   使用change stream功能
+use admin 
+db.runCommand({ createRole: "oplogger", privileges: [{ resource: { db: 'local', collection: 'oplog.rs'}, actions: ['find']}, ], roles: [{role: 'read', db: 'local'}] })  //先创建角色 
+db.createUser({user:"Agloplog",pwd:"03a4b86sfafafadfafafadfafdafd8f1",roles:[{role:"oplogger",db:"admin"}]})  //创建可以访问oplog的用户 
+
+
+
+
+参考https://docs.mongodb.com/v3.6/tutorial/change-hostnames-in-a-replica-set/index.html
+use admin
+//给xxx账号添加一个oplogger权限
+db.grantRolesToUser( "xxx", [ { role: "oplogger", db: "xxxsfd" } ] );
+
+
+给普通用户授予system.profile访问权限
+use magazine-resource    ----注意库不是admin
+db.createUser({user: "xxx-resource_r3",pwd: "xxx",roles: [ {role: 'read', db: 'magazine-resource'} ]}) 
+use magazine-resource   -----注意库不是admin
+db.runCommand({ createRole: "slowlog_role2", privileges: [{ resource: { db: 'magazine-resource', collection: 'system.profile'}, actions: ['find']}, ], roles: [{role: 'read', db: 'magazine-resource'}]})
+use admin        ---注意这里是admin
+db.system.users.update({"_id" : "magazine-resource.magazine-resource_r3"}, {$addToSet:{roles:{"role" : "slowlog_role2", "db" : "magazine-resource" }}});
+ 
+访问oplog 
+mongo 
+use admin 
+db.auth('Agloplog','03a4b868f1') 
+use local 
+show collections 
+db.oplog.rs.find()           //查询oplog
+  
+  mongodb字段验证规则（schema validation）
+  创建表的适合限制字段格式，参考https://blog.csdn.net/u010205879/article/details/81359329
+  https://www.cnblogs.com/itxiaoqiang/p/5538287.html
+  在插入或者更新文档的时候,可以通过bypassDocumentValidation:属性来避开验证  db.runCommand()支持这个属性    但是db.collection.insert/update()方法不支持这个属性.而db.collection.mapReduce(),db.collection.aggretate()方法支持这个属性.
+  
+
+mongo shell官方控制台
+https://docs.mongodb.com/manual/tutorial/remove-documents/
+  
+  
+  #!/bin/bash
+
+i=1
+b=xx.0
+while true
+do
+    a=`cat /proc/loadavg | awk -F " " '{print "''"""$1}'`
+    if [ `echo "$a > $b"|bc` -eq 1 ] ; then
+       tcpdump -i eth4 port 20000 -c 200000 -w  tcpdump_$i.pcap
+    fi
+
+    ((i++));
+    date >> test.log;
+    echo "i:$i" >> test.log
+    sleep 5
+done
+
+
+
+
+
+
+
+
+risk-face.faceRecord command: count { count: "faceRecord", query: { idCard: "432902198007147815", createTime: { $lte: 1533873134457, $gte: 1531367534457 } } } planSummary: IXSCAN { idCard: 1.0, productRole: 1.0, bizCode: 1.0 } keyUpdates:0 writeConflicts:0 numYields:6 reslen:62 locks:{ Global: { acquireCount: { r: 14 }, acquireWaitCount: { r: 7 }, timeAcquiringMicros: { r: 26944 } }, Database: { acquireCount: { r: 7 } }, Collection: { acquireCount: { r: 7 } } }
+
+db.faceRecord.find({"idCard" : "440682197711162817", "createTime" : { "$lte" : NumberLong("1533873134457"), "$gte" : NumberLong("1531367534457") }}).sort({"createTime" :-1}).explain()
+
+risk-face.faceRecord command: count { count: "faceRecord", query: { idCard: "440682197711162817", createTime: { $lte: 1533873488376, $gte: 1531367888376 } } } planSummary: IXSCAN { idCard: 1.0, productRole: 1.0, bizCode: 1.0 } keyUpdates:0 writeConflicts:0 numYields:8 reslen:62 locks:{ Global: { acquireCount: { r: 18 }, ac
+
+db.faceRecord.find({"idCard" : "440682197711162817", "createTime" : { "$lte" : NumberLong("1533873488376"), "$gte" : NumberLong("1531367888376") }}).sort({"createTime" :-1}).explain()
+
+use jserror
+db.createUser({user: "qa_jserxxxxror_rw",pwd: "xafdafdafda",roles: [ {role: 'readWrite', db: 'jserror'} ],authenticationRestrictions: [ {clientSource:["xx.xx.238.22","xx.xx.28.26"],serverAddress: ["xx.xx.50.25","xx.xx.x.47"]}]})
+
+use test5
+db.createUser({user: "test5",pwd: "test5",roles: [ {role: 'readWrite', db: 'test5'} ]}) read
+db.createUser({user: "video_r1",pwd: "xxx",roles: [ {role: 'read', db: 'video'} ]}) 
+
+
+数据模型使用建议:
+https://docs.mongodb.com/manual/core/data-modeling-introduction/
+https://blog.csdn.net/weixin_33861800/article/details/88728645
+
+
+只有访问db_xxxxxxproduction库的权限,注意如果对该账号新增白名单，必须用use admin
+use db_xxxxxxxxxxxxxxxxxxxxck_production
+ db.createUser(
+   {
+     user: "ep_mockxxxxxxxxxxx",
+     pwd: "xx",
+     roles: [ {role: 'readWrite', db: 'db_xxxxxxproduction'} ],
+     authenticationRestrictions: [ {
+     clientSource:["1.2.x.13", "xx.2.x.52"],serverAddress: ["x.2.x.x", "x.3.x.x", "x.x.4.x","x.x.5.x","x.6.x.x"] } ]})  serverAddress包括mongos  mongod所有的  
+该user有访问所有库的权限
+use admin
+db.createUser( { user: "xxxxx-rw", pwd: "oFaF", { role: "readWriteAnyDatabase", db: "admin"}] } )
+
+use admin
+db.createUser( {user: "root",pwd: "xxx",roles: [ { role: "root", db: "admin" } ]});
+db.updateUser('dbauser',{pwd:'sss',roles:[{role:'root',db:'admin'}]})  改密码
+
+system.indexes  674.00B (uncompressed), 32.00KB (compressed)
+system.version  1.02KB (uncompressed),  32.00KB (compressed)
+startup_log     1.12KB (uncompressed),  32.00KB (compressed)
+oplog.rs        291.48KB (uncompressed),        480.00KB (compressed)
+oplog.refs      0.00B (uncompressed),   32.00KB (compressed)
+replInfo        126.00B (uncompressed), 32.00KB (compressed)
+system.replset  236.00B (uncompressed), 32.00KB (compressed)
+
+scp后台
+screen -S copy-ip  创建子窗口
+screen -ls         查看子窗口
+screen -R copy-ip  进入子窗口
+ctrl + a + d       退回父窗口
+
+
+cfg = {
+...  '_id':'xxxc',
+...  'members':[
+...  {'_id':0, 'host': 'xx.23.240.29:28018'},
+...  {'_id':1, 'host': 'xx.23.240.29:28028'},
+...  {'_id':2, 'host': 'xx.23.240.29:28038'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_cfg',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:4441'},
+...  {'_id':1, 'host': '192.168.152.168:4442'},
+...  {'_id':2, 'host': '192.168.152.168:4443'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_1',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:3331'},
+...  {'_id':1, 'host': '192.168.152.168:3332'},
+...  {'_id':2, 'host': '192.168.152.168:3333'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_2',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:2221'},
+...  {'_id':1, 'host': '192.168.152.168:2222'},
+...  {'_id':2, 'host': '192.168.152.168:2223'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_1',
+...  'members':[
+...  {'_id':0, 'host': '127.0.0.1:3331'},
+...  {'_id':1, 'host': '127.0.0.1:3332'},
+...  {'_id':2, 'host': '127.0.0.1:3333'}
+...  ]
+... }
+
+
+
+db.createUser( {
+user: "xxx",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+
+
+
+config = {_id : "xxxc_1",   members : [{_id : 0, host : "127.0.0.1:27017" },{_id : 1, host : "127.0.0.1:27018" },{_id : 2, host : "127.0.0.1:27019"}]}
+config = {_id : "xxxc",   members : [{_id : 0, host : "127.0.0.1:8000" },{_id : 1, host : "127.0.0.1:8001" },{_id : 2, host : "127.0.0.1:8002"}]}
+
+config = {_id : "yyztest",   members : [{_id : 0, host : "xx.x.x.x:8010" },{_id : 1, host : "xx.x.x.x:8011" },{_id : 2, host : "xx.x.x.35:8012"}]}
+sh.addShard("xxxc_2/192.168.152.168:2221,192.168.152.168:2222,192.168.152.168:2223")
+
+use admin
+db.createUser({user: "root", pwd: "xxxxxxx", roles: [{role: "root", db: "admin"}]});
+db.createUser( { user: "admin", pwd: "xxxxxxx", roles: [{role: "userAdminAnyDatabase", db: "admin"}]});
+
+sh.addShard("xxxc/xx.x.x.29:28018,xx.xx.240.x:28028,xx.23.x.29:28038")
+
+db.runCommand( { removeshard: "yangyazhou_mongotest1_2" } )  多执行几次，sh.status()就不会看到这个shard了
+
+setParameter    https://docs.mongodb.com/v3.0/reference/command/setParameter/#dbcmd.setParameter
+db.runCommand( { getParameter: 1})  https://docs.mongodb.com/v3.0/reference/command/getParameter/
+db.runCommand( { setParameter: 1, cursorTimeoutMillis: 300 } )
+db.runCommand( { getParameter: 1, cursorTimeoutMillis:1} )
+
+mongod --setParameter=enableTestCommands 可以用sleep来延时
+
+config={_id:"risk_user",members:[ {_id:0, host:"xx.69.xx.20:27019"}, {_id:1, host:"xx.90.xx.61:27019"}, {_id:2, host:"xx.xx.xx.25:27019"}] } 
+sh.addShard("xxxc/127.0.0.1:8000,127.0.0.1:8001,127.0.0.1:8002")
+numactl --interleave=all        --bind_ip_all
+
+
+mongodb createUser 指定的用户role，及其操作权限可以参考:https://docs.mongodb.com/manual/reference/built-in-roles/  
+
+use admin
+db.createUser( {
+user: "xxx",
+pwd: "xxxx",
+roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+});
+
+use admin
+db.createUser( {
+user: "root",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+use admin
+db.createUser( {
+user: "root2",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+use admindb.createUser( {user: "root",pwd: "xx",roles: [ { role: "__system", db: "admin" } ]});
+
+use admin
+db.createUser(
+        {
+            user  : "monitor",
+            pwd   : "xx",
+            roles : 
+            [
+                { role : "root", db : “test" },
+                { role : "readWrite", db : “test1" }
+            ]
+        }
+    )
+	
+
+	https://docs.mongodb.com/manual/reference/method/   mongo shell
+	
+db.createUser( { user: "xxx-rw", pwd: "xxx", roles: [ { role: "readWrite", db: "risk-newton"}] } )  #db是用户实际的db，role为可读可写
+登录方法/usr/local/mongodb363/bin/mongo --port 29018 -urisk-newton-rw -pxxx --authenticationDatabase=admin  注意authenticationDatabase为admin，不是risk-newton
+
+
+/usr/local/mongodb363/bin/mongostat -h xx.x.x.x:27019  -uroot -pxxx  --authenticationDatabase=admin
+db.grantRolesToUser ( "root", [ { role: "__system", db: "admin" } ] )
+
+echo "db.currentOp()" | /usr/local/mongodb-3.6.3/bin/mongo localhost:28017/admin -uroot -ptxafdajjsdfadfaafd8  | grep "brazil_order_info"
+rs.remove("localhost:27000")
+rs.add({host:"localhost:27000",arbiterOnly:true})
+
+ 
+echo "db.currentOp()" | /usr/local/mongodb-3.6.3/bin/mongo localhost:28017/admin -uroot -ptafdafdxjafdajzyzfadfafqbx018 | grep "430"
+
+查看指定时间段的oplog
+ /usr/local/mongodb363/bin/mongodump -h  127.0.0.1:27018 -uroot -pkafdadfa014 --authenticationDatabase=admin -d local -c oplog.rs -q '{ts:{$lt:Timestamp(1539353155, 1),$gt: Timestamp(1539342355, 1000)}}' -o  ./  
+  /usr/local/mongodb363/bin/bsondump local/oplog.rs.bson >optest
+  db.oplog.rs.find({"ts":{"$gt" : Timestamp(1539676922, 1),"$lt" : Timestamp(1539676930, 1)}}).count()
+  db.oplog.rs.find({"o.createTime": {$gte:new Date(2017,9,1),$lte:new Date(2017,10,31)}}).limit(3)
+db.system.profile.find({"ts":{$gte:ISODate("2018-10-17T02:39:35.888Z"),$lte:ISODate("2018-10-17T02:39:45.888Z")}}).count()
+db.oplog.rs.find({},{"ts":1}).sort({"ts":1}).limit(1)
+db.system.profile.find({"ts":{$gte:ISODate("2018-10-15T11:00:00.461Z"),$lte:ISODate("2018-10-16T11:00:00.461Z")}}).count()
+db.system.profile.find({"ts":{$gte:ISODate("2018-10-15T11:00:00.461Z"),$lte:ISODate("2018-10-16T11:00:00.461Z")}}, {"millis":1}).sort({"ts":1}).limit(1)
+
+db.system.profile.find().sort({$natrual: -1}).limit(3) 查看最近3条 慢请求，{$natrual: -1} 代表按插入数序逆序
+db.system.profile.find({"ts":{$gte:Timestamp(1539532913, 1),$lte:Timestamp(1539658913, 1)}}).count()
+/bin/sh -c sleep 15; /usr/local/mongodb3415/bin/mongo  --host 127.0.0.1 --port 27018 -uroot -pfdadfafdadf4 --authenticationDatabase=admin  --eval "db.currentOp().inprog.forEach(function(item){if(item.secs_running > 3 )db.killOp(item.opid)})"  >> /data2/mysql/0920.log
+1539532913
+3. 如何查看锁的状态
+
+查看连接数db.serverStatus().connections
+/usr/local/mongodb363/bin/mongostat -h x:27019  -uroot -pxxxxx  --authenticationDatabase=admin
+db.serverStatus()
+db.currentOp()
+mongotop # 类似top命令，每秒刷新
+mongostat
+the MongoDB Monitoring Service (MMS)
+ db.serverStatus().wiredTiger.lock
+ 
+ 过期索引一定加上bakgroud
+ db.push_filter_repeat.createIndex( { "expireTime": 1 }, { expireAfterSeconds: 0, background: true}) 
+ 
+ db.push_task.ensureIndex({"createTime":1},{expireAfterSeconds:2678400, background: true})
+ 
+To update the expiration value for a collection named sessions indexed on a lastAccess field from 30 minutes to 60 minutes, use the following operation:
+
+db.runCommand( { collMod: "push_filter_repeat",
+                 index: { keyPattern: { expireTime: 1 },
+                          expireAfterSeconds: 3600
+                        }
+})
+Which will return the document:
+{ "expireAfterSeconds_old" : 1800, "expireAfterSeconds_new" : 3600, "ok" : 1 } 
+ 
+ 
+ db.collection.ensureIndex({"key":1},{background: true}) 后台添加索引
+ db.persons.createIndex({name:1,email:1},{unique:true})  唯一索引，
+ 注意db.item_commit_info.createIndex({"tag":1},{background: true, unique:true})  
+ db.item_commit_info.createIndex({"tag2":1},{unique:true, name:"testindex"}) 索引重命名
+db.test.dropIndex("age_1") 删除一条   db.test.dropIndexes()删除所有索引
+for(var i = 0; i < 101100; i++) {db.test1.insert({a:"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" });}
+
+for(var i = 0; i < 10; i++) {db.uc_login_record.find({"ssoid" : "228177102"}, {"_id":1})}
+
+numactl --interleave=all /usr/local/mongodb3413/bin/mongod -f /data1/mongodb/daijia_dds/etc/mongodb.cnf  --bind_ip_all
+root@tmp-mongo-001.gz01:/home/xiaoju/download$ ls StarServerDB/
+abTest.bson                   category.bson                export-csv.bson  
+导数据命令/usr/local/mongodb3415/bin/mongorestore --host 127.0.0.1 --port 27018  -uroot -paafdafd@dfa2014  --authenticationDatabase=admin -d StarServerDB --drop  /home/xiaoju/download/StarServerDB/
+
+db.oplog.rs.find({},{"ts":1}).sort({"ts":1}).limit(1)   只输出ts字段，ts:1的1代表输出，0代表不输出
+
+执行计划查看 参考https://yq.aliyun.com/articles/74635   queryPlanner模式下并不会去真正进行query语句查询，而是针对query语句进行执行计划分析并选出winning plan。
+db.myColl.find({app:"my_app",requestTime:{$gte:1492502247000}}).sort({_id:-1}).limit(1).explain('executionStats')    .explain("allPlansExecution")  .explain('queryPlanner')
+db.myColl.find({app:"my_app",requestTime:{$gte:1492502247000,$lt:1492588800000}}).sort({_id:-1}).limit(1).hint({_id:1}) 强制走_id索引
+
+
+mongodb 多表关联处理 : 内嵌以及连接(手动引用、DBref) 、aggregate中$lookup
+https://www.cnblogs.com/GtShare/p/7736603.html
+
+
+db.getCollection('video_info').explain("executionStats").aggregate([
+{
+$lookup:
+{
+from: "user_info",
+localField: "soloop_id",
+foreignField: "soloop_id",
+as: "docs_userTab"
+}},
+{ $lookup:{
+from: "video_check",
+localField: "feed_id",
+foreignField: "_id",
+as: "docs_videoCheck"
+}},
+{ $lookup:{
+from: "video_tab_relation",
+localField: "feed_id",
+foreignField: "feed_id",
+as: "docs_videoTab"
+}} ,{
+$match:
+{
+
+"video_type" :2
+}
+}
+])
+
+
+db.表.getPlanCache().listQueryShapes()
+db.表.getPlanCache().clear()
+db.表.getPlanCache().getPlansByQuery(查询条件，也就是listQueryShapes返回的)
+
+db.serverStatus()
+
+me
+oplog.rs
+replset.election
+replset.minvalid
+startup_log
+system.replset
+system.rollback.id
+
+安全部:wiki http://wiki.intra.xiaojukeji.com/pages/viewpage.action?pageId=146781066
+https://blog.csdn.net/wngzhem/article/details/80097695   2d  2dsphere
+
+dirty：这个是Wried Tiger引擎所特有的参数，数值是缓存中无效数据所占的百分比.
+used:这个是WriedTiger引擎所特有的参数，数值是正在使用的缓存百分比。
+
+db.runCommand({setParameter: 1, wiredTigerEngineRuntimeConfig: "eviction_dirty_target=5,eviction_target=80"})
+db.sbtest1.find().pretty().limit(1)
+
+db.people.createIndex( { zipcode: 1}, {background: true} )
+
+
+db.createCollection(
+"sbtest4",
+{storageEngine: { wiredTiger: {configString: "type=lsm"}}}
+)
+db.createCollection(
+"sbtest10",
+{storageEngine: { wiredTiger: {configString: "type=lsm"}}}
+)
+
+
+
+热备份:
+> use admin
+switched to db admin
+> db.runCommand({createBackup: 1, backupDir: "/my/backup/data/path"})
+
+db.sbtest1.stats().wiredTiger
+
+
+
+mongodb查询排序最大内存限制：
+db.adminCommand({setParameter: 1, internalQueryExecMaxBlockingSortBytes: 104857600})
+Query failed with error code 96 and error message 'Encountered non-retryable error during query :: caused by :: Executor error during find command :: caused by :: Sort operation used more than the maximum 33554432 bytes of RAM
+排序32M内存限制，客户端加上{allowDiskUse:true})来解决改问题
+
+同一个集群的keyfile必须一样，包括mongos mongod mongo-cfg
+
+常见故障整理:
+一、主从延迟
+统计一段时间内的慢日志:tail /var/log/mongodb/10000/mongodb.log -n 1000000 | grep "2019-09-24T12:" | grep keysExamined | wc -l
+检查扫表的慢日志分析:tail  /var/mongodb/4001/log/mongod.log  -n 1000000 | grep ms |grep COLLSCAN |grep -v "getMore" | grep -v "oplog.rs"
+看主库是否有锁或者操作时间过长的sql
+
+慢日志是否有扫表：tail /var/log/mongodb/10000/mongodb.log -n 1000000 |grep ms | grep op_msg | grep COLLSCAN | grep find | grep -v "oplog.rs"
+tail -n 11000000  /var/log/mongodb/mongos_20001/mongos_20001.log | grep "2020-12-22T02:"  | egrep "time\(ms\):[1-9][0-9][0-9][0-9][0-9][0-9][0-9].*from"
+| egrep "op_msg [1-9][0-9][0-9][0-9][0-9]"
+
+tail mongos.log -n 100000 | grep ms | grep op_ > slow.log
+cat slow.log |awk '{print $NF}'
+tail mongos.log -n 100000 | grep 最大的时延
+
+把执行时间大于5s的请求记录下来：
+db.currentOp({"secs_running":{"$gt":5}, "op":"getMore"})
+把执行时间大于5ms的请求记录下来：
+db.currentOp({"microsecs_running":{"$gt":5}, "op":"getMore"})
+
+
+慢查询慢sql记录,cronPrintSlowop.js内容
+for(i = 0; i <= 100000; i=i+1){
+    sleep(5000);
+    print(new Date());
+    db.currentOp({"secs_running":{"$gt":7}}).inprog.forEach(function(item) {
+        printjson(item);
+    });
+}
+ 运行方式:
+mongo -u xxx -p xxx 127.0.0.1:20001/admin /root/slowop/cronPrintSlowop.js
+
+
+看是否有锁：
+db.currentOp().inprog.forEach(function(item){if(item.waitingForLock)print(JSON.stringify(item))})
+看查询超过5s的sql
+db.currentOp({"secs_running":{"$gt":1}, "op":"query"})
+db.currentOp({"secs_running":{"$gt":5}, "op":"getMore"})
+db.currentOp({"secs_running":{"$gt":5}})
+看查询超过5ms的sql
+db.currentOp({"microsecs_running":{"$gt":5}})
+db.killOp("yangyazhou_mongotest1_2:22548939")
+kill查询时间超过5s的sql
+db.currentOp().inprog.forEach(function(item){if(item.secs_running > 5 )db.killOp(item.opid)})
+ db.killOp("shard0001:163415563")  注意，分片集群需要带上分片名，否则报错
+mongos> db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 100){print(item.opid);}})
+mongos> db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 5){db.killOp(item.opid);}}) command
+db.currentOp().inprog.forEach(function(item){if(item.op=="command" && item.secs_running > 150){print(item.opid);}})
+
+ db.currentOp().inprog.forEach(function(item){if(item.op=="query" && item.secs_running > 150){db.killOp(item.opid);}})
+查找所有查询的操作，insert、update、delete类似
+db.currentOp().inprog.forEach(function(item){if(item.op=="query"){print(item.opid);}})
+rs.printSlaveReplicationInfo() 来监控主备同步滞后的情况
+
+自动killop脚本
+#!/bin/bash
+while true
+do
+    echo "db.currentOp().inprog.forEach(function(item){if(item.op==\"query\" && item.secs_running > 60){db.killOp(item.opid);}})" | /usr/local/mongodb-3.2.11/bin/mongo xx.x:27030/admin -udbauser -p7b0bf01b320a12b3f76a55cccb5ed732
+    
+    sleep 60
+done
+
+/usr/local/mongodb363/bin/mongo  --host 127.0.0.1 --port 27025 -uroot -pxxx --authenticationDatabase=admin  --eval "db.currentOp().inprog.forEach(function(item){if(item.secs_running > 30 )db.killOp(item.opid)})"
+二、cpu、i/o、连接数暴增
+出现这种情况，先看数据库日志是否出现大量慢查，结合慢查看是否是索引没加，或者漏加。
+添加索引方法：
+1、表比较小(千万以下)，或者数据库压力较小（看监控或者mongostat），可以直接在后台添加索引db.dbname.ensureIndex({"column_1":1,"column_2":1},{"background":1})
+2、过亿表，或者数据库压力很大，可以选择低峰的时候通过后台加。
+3、特别大的表或者数据库压力持续很大，可以选择和业务沟通后，走如下流程，下线从库加上索引后再上线，切换主从，加老的主库索引，完成集群索引添加
+
+切换主从语法：
+cfg = rs.conf()
+cfg.members[0].priority = 1(0代表第一台，1代表第二台，后面类推)，将权重改成大于1，集群便会将此台机器升为主，记得主从切换完后权重归1，不然后续无法自动切主从
+rs.reconfig(cfg)
+
+ rs.reconfig(cfg, { force: true }) 强制执行，如果不加force则只能主节点执行, 加上force后可从节点执行
+
+主节点强制变从  rs.stepDown()
+
+cfg = rs.conf()
+cfg.settings.heartbeatIntervalMillis = 500
+cfg.settings.heartbeatTimeoutSecs=30
+cfg.settings.electionTimeoutMillis=30000
+rs.reconfig(cfg)
+
+如果没有慢查，考虑是业务那边增加流量了，通过监控看是否有流量激增，连续具体rd
+
+
+三、节点挂掉
+现有集群基本都是一主两从的结构，若有节点机器挂掉，需要尽快补上。
+1、如果数据量较小，直接用主库的配置搭建一个空库加入集群，等待数据自动追上就好,注意主库的认证文件也要拷贝一份过来。rs.add(‘ip:port’)
+2、若数据库较大，但oplog时间较长，可以用mongodump+oplog方式备份，mongorestore+relaylog还原。
+3、若数据库较大，且数据库库压力较大，oplog时间不够dump，可以考虑临时加上一个仲裁机器，然后加剩余的一台从下线，copy这台从的数据库目录到新机，完成后上线这两台从库，记得下线仲裁机器。
+
+例1：查询所有正在等待锁的写操作
+
+db.currentOp(
+   {
+     "waitingForLock" : true,
+     $or: [
+        { "op" : { "$in" : [ "insert", "update", "remove" ] } },
+        { "query.findandmodify": { $exists: true } }
+    ]
+   }
+)
+例2：查询所有操作db1并且执行时间已超过3s的请求
+
+db.currentOp(
+   {
+     "active" : true,
+     "secs_running" : { "$gt" : 3 },
+     "ns" : /^db1\./
+   }
+)
+
+集群搭建:
+搭建：https://blog.csdn.net/ilovemilk/article/details/79336951
+加认证：https://blog.csdn.net/ilovemilk/article/details/79341165
+
+
+https://yq.aliyun.com/articles/60553?spm=a2c4e.11155435.0.0.21623312JJZa8i
+readPreference 主要控制客户端 Driver 从复制集的哪个节点读取数据，这个特性可方便的实现读写分离、就近读取等策略。
+primary 只从 primary 节点读数据，这个是默认设置
+primaryPreferred 优先从 primary 读取，primary 不可服务，从 secondary 读
+secondary 只从 scondary 节点读数据
+secondaryPreferred 优先从 secondary 读取，没有 secondary 成员时，从 primary 读取
+nearest 根据网络距离就近读取
+readConcern 决定到某个读取数据时，能读到什么样的数据。
+local 能读取任意数据，这个是默认设置
+majority 只能读取到『成功写入到大多数节点的数据』
+
+MongoDB writeConcern原理解析
+
+
+
+
+
+
+
+
+复合索引的 限制
+符合索引的某个键可以是数组
+但是不能有两个键的值都是数组
+mongos> db.monitor_alarm_shield_prod.ensureIndex({"psa.business_name":1, "source":1},{background: true})
+{
+        "raw" : {
+                "shard_CED62085/xx.xx.xxx.144:10000,xxx.xx.11.157:10000,xx.xx.xx.94:10000" : {
+                        "ok" : 0,
+                        "errmsg" : "cannot index parallel arrays [source] [psa]",
+                        "code" : 171,
+                        "codeName" : "CannotIndexParallelArrays"
+                }
+        },
+        "code" : 171,
+        "codeName" : "CannotIndexParallelArrays",
+        "ok" : 0,
+        "errmsg" : "{ shard_CED62085/xx.xx.xx.xx:10000,xx.37.xx.157:10000,xx.xx.xx.xx:10000: \"cannot index parallel arrays [source] [psa]\" }",
+        "operationTime" : Timestamp(1614246234, 131),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1614246234, 131),
+                "signature" : {
+                        "hash" : BinData(0,"/FALaJrXWs4bYCPR7y9govVTOy8="),
+                        "keyId" : NumberLong("6912854737423434571")
+                }
+        }
+如果加索引字段里面有两个字段都是数组，则会报错，一个字段正常
+
+cat /sys/block/sda/queue/rotational进行查看，返回值0即为SSD；返回1即为HDD。
+
+认证方式 mongo_urls = mongodb://username:password@127.0.0.1:20040
+
+日志拆分 日志切割
+use admin  //切换到admin数据库
+db.runCommand({logRotate:1})
+
+
+sh.shardCollection("feeds_content.news_doc_profile",{"_id":1})
+
+分片片键设置前必须对片键创建索引，hash片键类型必须是hash索引，范围分片是范围索引
+ db.sbtest2.ensureIndex({"yangtest1":1},{background: true})    范围分片
+ sh.shardCollection("sbtest.sbtest2",{"yangtest1":1})
+ 
+db.sbtest2.ensureIndex({"yangtest1":"hashed"},{background: true})  hash分片
+sh.shardCollection("sbtest.sbtest2",{"yangtest1":"hashed"})
+
+还可以对分片打tag
+https://www.cnblogs.com/zhoujinyi/p/4668218.html
+
+
+mongodb 8小时问题：
+mongos> Date()
+Mon Aug 17 2020 15:26:08 GMT+0800 (CST)
+mongos> 
+mongos> 
+mongos> new Date()
+ISODate("2020-08-17T07:26:15.285Z")
+mongos> 
+mongos> 
+mongos> ISODate()
+ISODate("2020-08-17T07:26:23.167Z")
+mongos> 
+mongos>
+
+分片可以参考https://www.cnblogs.com/zhoujinyi/p/4635444.html  https://www.cnblogs.com/zhoujinyi/p/4668218.html
+sh.enableSharding("dba")  #首先对数据库启用分片
+sh.shardCollection("dba.account",{"name":1})  范围分片   #再对集合进行分片，name字段是片键。片键的选择：利于分块、分散写请求、查询数据。
+sh.shardCollection("dba.account",{"name":"hashed"})  hash分片   hash分片对应的片键必须创建hash索引  
+db.sbtest2.ensureIndex({"yangtest1":"hashed"},{background: true}) 
+sh.shardCollection("sbtest.sbtest2",{"yangtest1":"hashed"})
+sh.shardCollection('test.ttl',{date:1,node_id:1}) 可以指定联合片键  前提是索引也是联合索引  db.ttl.ensureIndex({date:1,node_id:1})
+ sh.status()
+ 判断是否为shard：db.runCommand({isdbgrid:1})
+ db.collection.stats()  查看是否分片
+  sh.setBalancerState(false)  #关闭自动均衡器，手动均衡，打开：sh.setBalancerState(true)  一定要先启用改功能，设置窗口才会生效，只设置窗口，不启用也不会生效
+  如您需要 balancer 始终处于运行状态，您可以使用如下命令去除活动窗口的设置。 db.settings.update({ _id : "balancer" }, { $unset : { activeWindow : true } })  
+ 可以为均衡器设置一个均衡时间窗口：activeWindow  
+ use config
+ db.settings.update({"_id":"balancer"},{"$set":{"activeWindow":{"start":"02:00","stop":"05:00"}}},true)  记住一定要use config
+ 上面说明：均衡只会在早上8点到凌晨2点进行均衡操作。均衡器是以块的数量作为迁移指标，而非数据大小，块的大小默认是64M，可以修改:(config.settings)
+ 清除activeWindow，恢复默认balancer
+ use config
+db.settings.update({ _id : "balancer" }, { $unset : { activeWindow : true } })
+集合启用balance功能 sh.enableBalancing("push_open.notification")
+
+通过均衡器自动迁移外，还可以手动迁移数据：sh.moveChunk("db.collection",{块地址},"新片名称")
+sh.moveChunk("abc.account",{"name" : "wPeFnJEvendSTbH"},"mablevi")  #把abc.account集合中包含name(片键)为""的快迁移到mablevi分片中
+
+use config
+db.settings.save( { _id:"chunksize", value: 64 } )
+
+设置块大小db.settings.save({"_id":"chunksize","value":64})
+
+刷新下配置服务器：db.adminCommand({"flushRouterConfig":1})
+最后来查看下分片成员：db.runCommand({ listshards : 1 })
+刷新下配置服务器：db.adminCommand({"flushRouterConfig":1})
+来查看下分片成员：db.runCommand({ listshards : 1 })
+网络连接数： db.adminCommand({"connPoolStats":1})
+手动拆分块：sh.splitAt('库.集合',{"name":"块值"})
+sh.shardCollection( "database.collection", { <field> : "hashed" } )
+db.runCommand({"ping":1}) { "ok" : 1 }
+
+ 
+ bson格式图解，很好理解https://www.jianshu.com/p/bd245529164a
+ 索引的重要性，很好理解:https://blog.csdn.net/defonds/article/details/51377815
+ MongoDB逻辑操作符$or, $and,$not,$nor，https://blog.csdn.net/yaomingyang/article/details/75103480
+ 
+
+ db.system.users.find()
+ 新建白名单 qa_jserror_rw账号名  jserror库名   给某个库下面的某个账号添加白名单
+创建账号不需要use admin， 应该在对应加账号的库中添加，如下面的应该use jserror
+use jsessssssssrror
+db.createUser({user: "qa_jserrsssssssssr_rw",pwd: "xafdafdafda",roles: [ {role: 'readWrite', db: 'jserror'} ],authenticationRestrictions: [ {clientSource:["x.x.x.22","x.x.x.26"],serverAddress: ["x.x.x.25","x.x.x.47"]}]})
+删除数组某个字段
+db.system.users.update({"_id" : "admin.xx"},{$unset:{"authenticationRestrictions.0.serverAddress":""}},false,true)
+把clientSource更新为指定的值
+db.system.users.update({"_id" : "sc.xx_rw"},{$set:{"authenticationRestrictions" : [ { "clientSource" : ["x.3.x.67", "x.x.x.6"]} ]}})
+
+use test11
+db.createUser({user: "test11",pwd: "test11",roles: [ {role: 'readWrite', db: 'test11'} ]})
+
+注意: mongodb删除账号，如果这时候有对应的链接，链接是不会断开的。然后重新创建同样的账号，客户端通过之前已有链接的访问都会报错。必须重启mongos断开已有链接才能恢复
+
+
+删除某个字段
+//例如要把User表中address字段删除
+db.User.update({},{$unset:{'address':''}},false, true)
+
+
+增加白名单网段：
+先开启白名单，
+db.system.users.update({"user" : "test_rw"},{$set:{authenticationRestrictions:[{clientSource:["x.x.xxxx.0/24"]}]}})
+之后添加就用以下
+db.system.users.update({"user" : "test_rw"},{$addToSet:{'authenticationRestrictions.0.clientSource':"x.11.204.0/24"}})
+
+
+只有访问db_xxxxxxproduction库的权限,注意如果对该账号新增白名单，必须用use admin
+use db_xxxxxxproductssssssssssion
+ db.createUser(
+   {
+     user: "XXX",
+     pwd: "Xtw1xcssssssssssssss7g3H8v9Xr",
+     roles: [ {role: 'readWrite', db: 'db_xxxxxxproduction'} ],
+     authenticationRestrictions: [ {
+     clientSource:["1.2.x.x", "x.2.x.x"],serverAddress: ["x.x.x.x", "x.x.x.x"] } ]})  serverAddress包括mongos  mongod所有的  
+该user有访问所有库的权限
+use admin
+db.createUser( { user: "test6", pwd: "test6", roles: [ { role: "readWriteAnyDatabase", db: "admin"}] } )
+	 
+ use admin
+ 添加新的白名单db.system.users.update({"_id" : "jserror.qa_jserror_rw"},{$push:{"authenticationRestrictions.0.clientSource" : {$each:["130.1370.8.196","130.168.56.90"]}}})
+ db.system.users.update({"user" : "test_rw"},{$addToSet:{authenticationRestrictions:{clientSource:["1.1.1.2","1.1.1.1"]}}})
+
+
+ db.system.users.update({"_id" : "admin.qa_jserror_rw"},{$push:{"authenticationRestrictions.0.clientSource" : {$each:["x.x.x.x","x.x.x.x"]}}})
+db.system.users.update({"_id" : "xx.xx_rw"},{$push:{"authenticationRestrictions.0.serverAddress" : {$each:["x.x.x.x"]}}})
+mongotop实现原理:
+use admin
+db.runCommand( { top: 1 } )
+
+
+db.serverStatus().process可以获取当前是mongos还是mongod，注意，不要更改mongos进程名，更改后，mongostat就只会看到mongos的监控信息，因为func IsMongos(stat *ServerStatus)代码做判断的时候，只有确定是mongos才会去获取后端mongod地址
+
+
+
+
+问题:
+mongos> db.test.insert({})
+WriteResult({
+        "nInserted" : 0,
+        "writeError" : {
+                "code" : 193,
+                "errmsg" : "Cannot accept sharding commands if not started with --shardsvr"
+        }
+}) 
+原因是mongo-cfg复制集的名称和mongod复制集的名称一样了，路由错误引起
+解决办法:如果mongod复制集名称为xxxc,则mongo-cfg复制集名称改为xxxc_config，注意mongos配置文件也要改为xxxc_config，区分开来
+
+mongos读写分离:db.getMongo().setReadPref('secondaryPreferred')
+
+shard conn poll统计
+ db.runCommand({ shardConnPoolStats: 1 })
+ 
+权限，只允许指定操作
+db.createRole(
+   {
+     role: "new_role",
+     privileges: [
+       { resource: { cluster: true }, actions: [ "addShard" ] },
+       { resource: { db: "config", collection: "" }, actions: [ "find", "update", "insert", "remove" ] },
+       { resource: { db: "users", collection: "usersCollection" }, actions: [ "update", "insert", "remove" ] },
+       { resource: { db: "", collection: "" }, actions: [ "find" ] }
+     ],
+     roles: [
+       { role: "read", db: "admin" }
+     ]
+   },
+   { w: "majority" , wtimeout: 5000 })
+
+
+写大部分节点，writeConcern参考https://yq.aliyun.com/articles/268217
+db.products.insert({ item: "envelopes", qty : 100, type: "Clasp" }, { writeConcern: { w: 4, wtimeout: 5000 } })
+ db.products.insert({ item: "envelopes", qty : 100, type: "Clasp" }, { writeConcern: { w: "majority", wtimeout: 5000 } })
+ 
+ 如果w后跟的是数字，这个数字包括arbiter选举节点，选举节点默认不算  例如4mongod+1选举节点，w=5报错
+ 如果w是majority，则不包括选举节点， 例如4mongod+1选举节点，kill掉2个从节点，剩余2mongod+1arbiter，majority报错
+   
+聚合https://www.cnblogs.com/camilla/p/7908027.html
+https://www.cnblogs.com/liruihuan/p/6686570.html
+
+
+普通read，先读数据到内核空间，在从内核空间拷贝到用户空间，会有两次内存消耗
+mmap+read，先通过mmap映射对应的磁盘空间，然后read，这时候是直接从磁盘读取到用户空间，所以只消耗一份内存。
+
+
+
+db.order_status.remove({createTime: { $exists: false }}) 删除不存在某个字段的行
+
+
+
+
+mongodb各自操作符详见：查询操作符详见:https://docs.mongodb.com/manual/reference/operator/query/
+
+VIP接入空闲链接异常端口解决办法
+转至元数据结尾
+创建： 杨亚洲，最新修改于： 一月 23, 2019 转至元数据起始
+测试验证：
+maxConnectionLifeTime 这个千万不能配，该配置表示所有的链接超过这个时间都会断开
+maxConnectionIdleTime=3000 这个参数测试发现没用，官方说明是空闲链接的超时时间，实际上配置为3s，但是空闲链接并没有断开(Sets the maximum idle time for a pooled connection.) ?????
+
+ 
+maxConnectionIdleTime=55000 实际上该参数设置后没用
+heartbeatFrequency=10000 心跳频率
+测试发现mongo空闲链接60s会自动断开。因此只要把VIP的超时时间设置为大于60s即可，这样就可以规避。为了保险加上heartbeatFrequency=10000，进一步规避空闲链接
+
+
+模糊查询： db.sbtest1.find({'name':/adfa/}).count()  查询"name"字段包含"adfa"字符串的内容,name后面的值必须为字符串，如果是数字则不满足
+
+
+db.sbtest1.update({}, {$set:{"name":"yangyazhou"}}, false, true)  所有文档都添加name字段，只需要把第四个参数设置为true
+
+
+最终解决办法:
+
+调节VIP超时时间为180s, 该步骤业务方无需参与，mongo服务端操作
+ heartbeatFrequency=10000, 新增保活，避免空闲链接产生。业务方使用在JAVA客户端中添加该配置项
+ 
+ SQL与MongoDB的详细对比,mongodb mysql语法对比: http://blog.itpub.net/15498/viewspace-1984777/
+ 
+ 
+ 给机器添加Mysql分组: groupadd mysql; useradd -r -g mysql mysql
+ 
+ 
+ 哈希索引（Hashed Index）是指按照某个字段的hash值来建立索引，目前主要用于MongoDB Sharded Cluster的Hash分片，hash索引只能满足字段完全匹配的查询，不能满足范围查询等。
+ 分片，片键，参考https://www.cnblogs.com/cwane/p/5519830.html
+
+  printShardingStatus(db.getSisterDB("config"),1); 查看详细sharde信息
+  
+  mysql启动客户端mysql -umongo -pxxx -P3306 -D mongodb  --default-character-set=utf8 
+  /usr/bin/mysql -umongo -pkafdafda@20afd14 -P3306 -D mongodb  --default-character-set=utf8 -N -s -e 'insert into xxx'./build/opt/mongo/mongod
+  
+  
+  
+  ceph  优化方法，在内核中增加cache,如下：
+size=$num
+size=`expr $size \* 200 - 1` 
+echo $size 
+#lvcreate -L "$size"G -I 32K -n fio-lvm data
+vgextend data /dev/nvme0n1
+lvcreate -L "$size"G -n fio-lvm -i $num -I 32K data 
+lvcreate -n cache0 -L 200G data /dev/nvme0n1
+lvcreate -n cache0meta -L 240M data /dev/nvme0n1
+lvconvert --type cache-pool --poolmetadata data/cache0meta data/cache0
+lvconvert --type cache --cachepool data/cache0 --cachemode writeback data/fio-lvm
+mkfs.xfs /dev/data/fio-lvm
+mount -t xfs -o noatime /dev/data/fio-lvm /data_lvm/
+
+
+
+
+
+
+
+
+
+too many chunks to print, use verbose if you want to force print
+printShardingStatus(db.getSisterDB("config"),1);
+
+
+
+
+
+
+rsyslog升级到最新版本步骤:
+wget http://rpms.adiscon.com/v8-stable/rsyslog.repo -O /etc/yum.repos.d/rsyslog.repo
+cat /etc/yum.repos.d/rsyslog.repo
+yum install rsyslog
+service rsyslog restart
+
+log profile设置
+db.getProfilingLevel()
+db.setProfilingLevel(1,1500)
+db.getProfilingStatus()
+
+
+事务超时时间timeout设置
+默认情况下， 一个事务从开始到事务提交的时间间隔要小于60秒， 如果大于60秒， 该事务就认为失败， 进行回滚。这个时间限制可以通过transactionLifetimeLimitSeconds来进行修改。
+db.adminCommand( { setParameter: 1, maxTransactionLockRequestTimeoutMillis: 200 } )
+默认情况下， 使用事务需要获取锁的等待时间为5毫秒， 超过这个时间事务就失败。我们可以通过修改参数maxTransactionLockRequestTimeoutMillis开改变这个设定。
+db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 40 } )
+
+日志级别调整:
+参考官网：https://docs.mongodb.com/manual/reference/method/db.setLogLevel/
+db.setLogLevel(0);
+db.setLogLevel(1, 'accessControl');
+db.setLogLevel(0, 'command');
+db.setLogLevel(1, 'control');
+db.setLogLevel(0, 'ftdc');
+db.setLogLevel(0, 'geo');
+db.setLogLevel(0, 'index');
+db.setLogLevel(1, 'network');
+db.setLogLevel(1, 'network.asio');
+db.setLogLevel(0, 'network.bridge');
+db.setLogLevel(0, 'query');
+db.setLogLevel(3, 'replication');
+db.setLogLevel(0, 'sharding');
+db.setLogLevel(0, 'storage');
+db.setLogLevel(0, 'storage.journal');
+db.setLogLevel(0, 'tracking');
+db.setLogLevel(0, 'write');
+db.setLogLevel(0, '-');
+
+
+db.adminCommand( { setParameter: 1, notablescan: 1 } ) 加上这个配置，所有查询必须走索引，否则直接报错 
+setParameter    https://docs.mongodb.com/v3.0/reference/command/setParameter/#dbcmd.setParameter
+db.runCommand( { getParameter: 1})  https://docs.mongodb.com/v3.0/reference/command/getParameter/
+db.runCommand( { setParameter: 1, cursorTimeoutMillis: 300 } )
+db.runCommand( { getParameter: 1, cursorTimeoutMillis:1} )
+
+system.profile表访问需要加dbAdmin权限才行
+db.system.users.update({"_id" : "user_source.user_source_rw"}, {$addToSet:{roles:{ "role" : "dbAdmin", "db" : "user_source" }}});
+db.grantRolesToUser('admin',[ "root" ])  admin账号直接转root账号
+
+
+db.copyDatabase("monitor","monitor_bak") copyDatabase mongod上面执行，mongos不可以
+
+
+表重命名
+use admin
+db.runCommand( { renameCollection: "audit_platform.product_2014", to: "audit_platform.product_2014_20" })
+
+
+一、keyfile认证
+（1）通过密钥文件进行身份验证时，副本集中的每个mongo实例都使用密钥文件的内容作为与其他成员进行身份验证的共享密码。
+
+只有拥有正确密钥文件的Mongod实例才能加入副本集。
+
+（2）密钥文件的内容必须在6到1024个字符之间，并且对于副本集的所有成员必须是相同的。
+
+
+pidstat -p pid -d 1 -t 可以查看磁盘IO，容器磁盘IO
+
+
+percona不停机修改存储引擎
+https://www.percona.com/blog/2017/03/07/how-to-change-mongodb-storage-engines-without-downtime/
+
+
+
+mongos配置
+systemLog:
+  destination: file
+  logAppend: true
+  path: /home/mongodb/xxx_mongos/mongos/logs/mongod.log
+
+processManagement:
+  fork: true
+  pidFilePath: /home/mongodb/xxx
+net:
+  port: 27025
+  maxIncomingConnections: 20000
+
+sharding:
+  configDB: carbo_instance/122.89.1935.48:47025,130.839.196.48:47025,130.90.330.17:47025
+security:
+  keyFile: /home/mongodb/xxx_mongos/mongos/keys/keyfile
+  
+
+
+  
+mongo-cfg配置
+processManagement:
+  fork: true
+systemLog:
+  destination: file
+  path: /home/mongodb/xxx_cfg/logs/mongod.log
+  logAppend: true
+  logRotate: rename 
+storage:
+  journal:
+    enabled: true
+  dbPath: /home/mongodb/xxx_cfg/data/
+  directoryPerDB: true
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 5
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: snappy
+    indexConfig:
+      prefixCompression: true
+net:
+   port: 47025
+   maxIncomingConnections: 10000
+   bindIpAll: true
+
+replication:
+   oplogSizeMB: 10240
+   replSetName: carbo_instance
+
+operationProfiling:
+   slowOpThresholdMs: 100
+   mode: slowOp
+
+sharding:
+   clusterRole: configsvr
+   archiveMovedChunks: true
+
+security:
+   keyFile: /home/mongodb/xxx_cfg/keys/keyfile
+   clusterAuthMode: keyFile
+   authorization: enabled
+   
+
+mongod配置:
+processManagement:
+  fork: true
+systemLog:
+  destination: file
+  path: /data1/mongodb/XXX/logs/mongod.log
+  logAppend: true
+  logRotate: rename 
+storage:
+  journal:
+    enabled: true
+  dbPath: /data1/mongodb/XXX/data/
+  directoryPerDB: true
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 5
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: snappy
+    indexConfig:
+      prefixCompression: true
+net:
+   port: 27022
+   maxIncomingConnections: 10000
+   bindIpAll: true
+
+replication:
+   oplogSizeMB: 10240
+   replSetName: chunjun_prod_1
+
+operationProfiling:
+   slowOpThresholdMs: 100
+   mode: slowOp
+
+sharding:
+   clusterRole: shardsvr
+   archiveMovedChunks: true
+
+security:
+   keyFile: /data1/mongodb/XXX/keys/keyfile
+   clusterAuthMode: keyFile
+   authorization: enabled
+  
+  
+主从切换日志打印：
+transition to primary complete; database writes are now permitted
+I REPL     [replexec-120870] transition to SECONDARY from PRIMARY
+
+
+
+
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction=(threads_min=8, threads_max=20)"})
+
+
+cachesize调整，存储引擎调整
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction_dirty_target=5,eviction_target=80"})
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=2GB" })
+db.adminCommand( { getParameter : "1", wiredTigerEngineRuntimeConfig : 1  } )
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=55GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_target=97, eviction_dirty_trigger=30, checkpoint=(wait=16,log_size=2GB),eviction=(threads_min=8, threads_max=14)"})
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=45GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_trigger=25, checkpoint=(wait=45,log_size=2GB),eviction=(threads_max=8)"})
+db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=25GB, eviction_dirty_target=3,eviction_target=75, eviction_dirty_trigger=25"})
+参考http://www.mongoing.com/archives/3675
+ 
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction_dirty_trigger=7, checkpoint=(wait=16,log_size=1GB),eviction=(threads_min=12, threads_max=20)"})
+ 持续Insert上面得这个不知道为啥更好
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=45GB, eviction_dirty_trigger=10, checkpoint=(wait=16,log_size=1GB),eviction=(threads_min=12, threads_max=20)"})
+  db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=80GB, eviction=(threads_min=4, threads_max=12)"})
+ 
+ 写场景优化如下:真实
+2.db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "checkpoint=(wait=30,log_size=2GB),eviction=(threads_min=8, threads_max=20)"})
+ 
+ db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "eviction=(threads_min=4, threads_max=14)"})
+ 
+数组中所有成员添加一个KV： 3.6版本
+db.info.update({"channelList": {$exists: true}},{$set:{"channelList.$[].syncEnable": true}},{"multi":true})
+
+3.2版本只能支持
+db.info.update({"channelList": {$exists: true}},{$set:{"channelList.$.syncEnable444": true}},  {multi: true})
+这个只能更新第一条
+
+3.6版本可以一次性更新
+db.info.update({"channelList": {$exists: true}},{$set:{"channelList.$[].syncEnable444": true}},  {multi: true})
+
+3.2版本$[]识别不了，所以不行
+
+
+数组相关匹配查询参考:  Aggregation
+https://blog.csdn.net/bicheng4769/article/details/79579830
+
+mongodb->hadoop hive
+https://blog.csdn.net/z702143700/article/details/70213891
+https://blog.csdn.net/thriving_fcl/article/details/52503394
+
+mongodump --host=datatask01:29017 --db=test --collection=ldc_test --out=/tmp
+hdfs dfs -mkdir /dev_test/dli/bson_demo/
+hdfs dfs -put /tmp/test/ldc_test.bson /dev_test/dli/bson_demo/
+
+
+
+
+Unique index cursor seeing multiple records for key 解决办法，rebuild索引
+db.accounts.reIndex()  千万不要执行，他是前台执行，会阻塞。删索引的过程中，需要提前把该节点隐藏，因为删除索引后，查询可能全表扫描
+最好得办法是删除对应得索引，然后重新backup后台创建
+
+
+goland快捷键
+Ctrl+Shift+Alt+N 查找类中的方法或变量
+CTRL+SHIFT+N，可以快速打开文件。
+CTRL+N，可以快速打开struct结构体。
+
+
+删除分片:
+https://blog.csdn.net/q936889811/article/details/79704544
+
+RECOVERING表示从跟不上主的进度，oplog回滚了。STARTUP2表示从正在做全量同步，同步完后回变为secondary
+
+logApplicationMessage     
+db.adminCommand( { setParameter: 1, auditAuthorizationSuccess: false } )   db.adminCommand( { setParameter: 1, auditAuthorizationSuccess: ture } )
+https://www.percona.com/blog/2017/03/03/mongodb-audit-log-why-and-how/
+https://jira.percona.com/browse/PSMDB-473?focusedCommentId=243058&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-243058
+
+Unique index cursor seeing multiple records for key 
+索引重复，解决办法，重构索引 db.comments.reIndex() 
+
+db.adminCommand({getParameter:1, replSetResizeOplog:true}) 
+ db.adminCommand({replSetResizeOplog:1,size:102400})   #单位为MB，扩容至4G  设置oplog size大小
+ db.adminCommand可以执行的命令列表可以查看https://docs.mongodb.com/manual/reference/command/
+ db.adminCommand({getParameter:"*"}); 获取所有配置
+ 
+ 
+减小oplog的大小不会回收已经分配的磁盘空间，必须压缩oplog.rs来回收磁盘空间。
+
+
+use admin
+db.createRole({role: "myCustomCompactRole",privileges: [{resource: { "db" : "" , "collection" : "" },actions: [ "compact" ]}],roles: []})
+
+db.grantRolesToUser("xxuser", [  "myCustomCompactRole" ] )
+
+然后登陆从节点执行：  注意只能在从节点执行，如果需要释放主节点的磁盘，可以先把主节点切为从节点，然后执行
+use local
+db.runCommand({"compact" : "oplog.rs"})
+
+db.runCommand({repairDatabase :1}) 才是真正的释放磁盘空间
+修复数据mongod --dbpath /var/ceilometer --repair
+ 
+ ps -T -p 573443   查看进程下面的所有线程及线程名
+ ps -T -p 573443 | grep -E 'worker|conn'  
+ 线程名来源  /proc/573522/task/573522/comm
+ 
+ replication:
+    enableMajorityReadConcern: false
+	
+从拉取速度慢问题解决 oplog线程数配置
+setParameter:
+  replWriterThreadCount: 32
+
+hhlshd2:SECONDARY> db.adminCommand({getParameter:1, replWriterThreadCount:true}) 
+	
+CRT中文乱码
+LANG=”zh_CN.UTF-8″ 
+
+环境遍历永远生效:source /etc/profile   修改改文件内容
+
+
+
+db.createUser(
+{
+user:"testuser",
+customData:{description:"superuser"},
+pwd:"xxxxxxx",
+roles:[
+{role:"readWrite",db:"db1234"},
+{role:"readWrite",db:"db6657"}
+]
+}
+)
+
+
+
+mongodb安装包下载:
+https://www.mongodb.org/dl/linux/x86_64-rhel62
+
+
+
+
+
+重复数据，加唯一索引会失败
+解决方案步骤如下：
+1. 从节点下线
+2. 修改配置文件，去掉副本集和角色配置
+3. 重启，这时候是单实例启动
+4. 跑去重语句
+5. 删除原来的非唯一索引
+6. 添加唯一索引
+7. 以副本集方式启动，追加新的oplog
+8. oplog追上后，把这个重节点切换为主节点
+9. 清空从节点数据，进行全量同步，一个从节点一个从节点的搞
+
+
+
+隐藏节点
+cfg = rs.conf()
+cfg.members[1].votes = 0
+rs.reconfig(cfg)
+
+ 
+
+ db.adminCommand({replSetResizeOplog:1,size:102400}) 
+一个账号多个库用
+use admin     
+db.createUser({user:"testuser",customData:{description:"superuser"},pwd:"xxxxxxx",roles:[{role:"readWrite",db:"db1234"},{role:"readWrite",db:"db6657"}]})
+
+db.user_info.aggregate([{$group:{_id:"$ssoid", dups:{$push:"$_id"}, count: {$sum: 1}}},
+{$match:{count: {$gt: 1}}}
+]).forEach(function(doc){
+  doc.dups.shift();
+  db.user_info.remove({_id : {$in: doc.dups}});
+});	
+删除user_info表中ssoid重复的数据
+
+db.ocloud_file_repeat.aggregate([{$group:{_id:"$ssoid, $", dups:{$push:"$_id"}, count: {$sum: 1}}},
+{$match:{count: {$gt: 1}}}
+]).forEach(function(doc){
+  doc.dups.shift();
+  db.user_info.remove({_id : {$in: doc.dups}});
+});	
+
+
+ 注意db.item_commit_info.createIndex({"tag":1},{background: true, unique:true}) 
+正确得方式db.item_commit_info.createIndex({"tag":1},{unique:true})
+
+
+
+cannot create unique index over { b: 1.0 } with shard key pattern { _id: 1.0 }",
+之所以出现这个错误是因为MongoDB无法保证集群中除了片键以外其他字段的唯一性，能保证片键的唯一性是因为文档根据片键进行切分，
+一个特定的文档只属于一个分片，MongoDB只要保证它在那个分片上唯一就在整个集群中唯一，
+实现分片集群上的文档唯一性一种方法是在创建片键的时候指定它的唯一性。
+
+
+去掉-d  -c就是导出所有库
+/home/service/mongodb/bin/mongodb-3.6.13/bin/mongodump -h x.x.x.x:port -uxxx -pxxxx -d ocloud-commit -c item_commit_info -o ./data --authenticationDatabase=admin
+nohup /home/service/mongodb/bin/mongodb-3.6.13/bin/mongorestore -h x.x.x.x:port -uxxx -pxxxx -d ocloud-commit  --authenticationDatabase=admin ./ocloud-commit &   
+ --noIndexRestore 参数可以不恢复索引          如果不想屏幕显示密码，可以通过 -p `cat xxx.file`,
+ --numInsertionWorkersPerCollection=20  提高欢迎速度
+ 
+ -d代表库名，恢复的时候可以改库名
+ 
+//回复Json文件到集群用mongoimport，恢复bson文件到集群用mongorestore   恢复到指定库 指定表
+/home/service/mongodb/bin/mongodb-3.6.13/bin/mongoimport  -h x.x.x.x -uxx -pxx -d 库 -c xx /home/xx.metadata.json --authenticationDatabase=admin
+/home/service/mongodb/bin/mongodb-3.6.13/bin/mongorestore -h x.x.x.x -uxx -pxx  -d 库 -c xx --authenticationDatabase=admin /home/xx.metadata.json   -d 库 -c 表
+
+mongodump mongorestore参考 https://cloud.tencent.com/developer/article/1429385
+
+rollback  https://docs.mongodb.com/v3.6/core/replica-set-rollbacks/
+rollbackTimeLimitSecs  设置rollback时间
+手动恢复rollback数据mongorestore --host <hostname:port> --db db1 --collection c2 -u admin_user -p"123456" --authenticationDatabase admin rollback/c2_rollback.BSON
+参考https://segmentfault.com/a/1190000011590674
+
+cfg = rs.conf()
+cfg.settings.heartbeatIntervalMillis = 500
+cfg.settings.heartbeatTimeoutSecs=60
+cfg.settings.electionTimeoutMillis=30000
+rs.reconfig(cfg)
+
+主从同步延迟过大，参考 https://blog.csdn.net/A_man_only/article/details/84553458
+
+
+getmore模拟过程
+首先切换数据库。
+mongos>use mydb;
+mongos>switched to db mydb;
+mydb为需要拉取数据的数据库；
+
+获取到游标并传入查询条件
+
+mongos>var cursor = db.xxx.find({""})
+其中xxx为表名,find中传入需要查询的条件。
+
+设置batchSize
+
+mongos> cursor.batchSize(n)
+n为batchsize
+
+使用while循环进行数据拉取
+
+mongos> while(cursor.hasNext()) { cursor.next() }
+cursor.objsLeftInBatch()可以获取当前batch还有多少数据。当完成一个batch之后，会getMore访问mongodb数据库拉取下一个batch的数据。
+
+mongos慢日志时延调整 db.adminCommand({setParameter: 1, mongosSlowLogLevelMs: 1500})
+
+
+mongodb链接分片集群  java客户端配置
+https://www.codercto.com/a/43773.html
+
+
+
+strace -fp pid 跟踪进程所有子线程系统调用
+
+strace -f -e trace=epoll_wait,recvmsg,sendmsg -p 527501  进程及其子进程
+strace -e trace=epoll_wait,recvmsg,sendmsg -p 527501  本线程
+
+
+性能测试工具CPU profiler(gperftools)的使用心得
+https://blog.csdn.net/10km/article/details/83820080
+
+
+递归修改目录的用户及用户组
+chown mongodb:mongodb test -R
+
+
+scp -P 18822 -r /A/B root@ip2:/C/D 
+
+mongo shell 读模式设置 db.getMongo().setReadPref('secondary')
+
+
+A single update on a sharded collection must contain an exact match on 
+分片集群跟新操作，如果只跟新满足条件的一条数据，则必须带上片建字段，否则数据分发到多个后端分片后，无法保证只跟新一条数据
+
+
+mongodb tag标签
+我们把用户分为三组，20 岁以下（junior)，20 到 40 岁（middle）和 40 岁以上（senior），为了节省篇幅，我在这里不过多的介绍
+如何使用 MongoDB 命令，按照下面的几条命令执行以后，我们的数据会按照用户年龄段拆分成若干个 chunk，并分发到不同的 shard cluster 中。
+如果对下面的命令不熟悉，可以查看 MongoDB 官方文档关于 Shard Zone/Chunk 的解释。
+db.getSiblingDB('test').getCollection('users').createIndex({'user.age':1})  //索引字段user.age，库名test，表明users
+sh.setBalancerState(false)
+sh.addShardTag('shard01', 'junior')
+sh.addShardTag('shard02', 'middle')
+sh.addShardTag('shard03', 'senior')
+sh.addTagRange('test.users', {'user.age': MinKey}, {'user.age':20}, 'junior')
+sh.addTagRange('test.users', {'user.age': 21}, {'user.age':40}, 'middle') 
+sh.addTagRange('test.users', {'user.age': 41}, {'user.age': MaxKey}, 'senior')
+sh.enableSharding('test')
+sh.shardCollection('test.users', {'user.age':1})切割
+
+
+
+sh.setBalancerState(true)
+
+
+use test
+db.user.ensureIndex({"indexkey":1})
+sh.enableSharding("db")   
+sh.shardCollection("db.collection",{"indexkey":1}) 
+
+sh.addShardTag('opush_ZSYUscWi_shard_1', 'junior')
+sh.addShardTag('opush_ZSYUscWi_shard_2', 'middle')
+sh.addTagRange('test.users', {'age': 1}, {'age':20}, 'junior')
+sh.addTagRange('test.users', {'age': 20}, {'age':40}, 'middle')
+
+移除某个tagrange 
+sh.removeTagRange('test.users', {'age': 20}, {'age':40}, 'middle')
+移除某个tag
+sh.removeShardTag("opush_ZSYUscWi_shard_1","junior")
+
+#26 0x000055a5be0f470f in asio::detail::reactive_socket_recv_op<asio::mutable_buffers_1, asio::detail::read_op<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, asio::mutable_buffer const*, asio::detail::transfer_all_t, void mongo::transport::TransportLayerASIO::ASIOSession::xx<asio::basic_stream_socket<asio::generic::stream_protocol>, asio::mutable_buffers_1, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}>(bool, asio::basic_stream_socket<asio::generic::stream_protocol>&, asio::mutable_buffers_1 const&, mongo::transport::TransportLayerASIO::ASIOSourceTicket::fillImpl()::{lambda(mongo::Status const&, unsigned long)#1}&&)::{lambda(std::error_code const&, unsigned long)#1}> >::do_complete(void*, asio::detail::scheduler_operation*, std::error_code const, unsigned long) ()
+
+mongos路由表不对，可以清除缓存解决：
+You should only need to run flushRouterConfig after movePrimary has been run or after manually clearing the jumbo chunk flag.
+db.adminCommand({"flushRouterConfig":1})   //movePrimary和清除jumbo标记后
+
+
+use admin
+db.runCommand({movePrimary:"User", to:"shard1"})
+mongos> db.adminCommand({"movePrimary":"test","to":"shard0001"}) #把test库的的主分片迁移到shard0001 
+db.runCommand("flushRouterConfig")
+ 
+如果添加一个分片到集群的时候分片中有数据则会添加失败，要把数据清除后再添加，此外记得提取再mongos敲flushRouterConfig清除路由信息
+
+WiredTigerIndex::insert: key too large to index,failing 
+db.adminCommand( { setParameter: 1, failIndexKeyTooLong: false } )
+mongosSlowLogTime
+mongos慢日志时延调整 db.adminCommand({setParameter: 1, mongosSlowLogLevelMs: 1500})
+手动迁移chunk块到其他分片
+db.adminCommand({moveChunk : "test.momo", find : {id:{$gt:82842}}, to : "shard0002"});  注意这里得find条件是数据条件，而不是config.chunk里面得块
+见https://blog.csdn.net/weixin_34278190/article/details/90654102
+//移动find条件满足得数据对应得chunk到目标shard
+ db.adminCommand({moveChunk : "ocloud-commit-1.dfadf", find :  { "userId" : "314069409", "tag.id" : NumberLong(759730) } , to : "shard2"});
+ sh.moveChunk("cloud_track.dailyCloudOperateInfo_17",{ "userId" : NumberLong("3074457345618258602") },"ocloud_oFEAkecX_shard_1")
+
+
+sh.getBalancerStat():获取sharding集群balancer是否开启。
+sh.status():可以在balancer信息下的Currently running中看到是否正在进行chunk迁移。
+ 
+sh.disableBalancing(“dbName.collectionName”)、sh.enableBalancing(“dbName.collectionName”):关闭/开启 dbName 库的 collectionName 集合的chunk迁移功能。
+sh.setBalancerState(false) 
+
+
+命令使用帮助help，例如
+db.runCommand({splitVector:"test.test", help:1})
+
+db.isMaster()
+ 
+too many chunks to print, use verbose if you want to force print
+sh.status({"verbose":1}) 
+
+如果balance异常，则把confg集群主从切换，重启来解决。同时要杀掉所有movechuank的操作  killop
+
+
+hash可以在启用表分片功能得时候提前预分片：  注意范围分片，在shardCollection得时候不支持
+sh.shardCollection("appdb.book", {bookId:"hashed"}, false, { numInitialChunks: 8192} )
+
+预分片记住一定要打开balance
+预分片：for(var i=1;i<=10;i++){sh.splitAt('shop.user',{user_id:i*1000})}
+for(var i=100000000;i<=1500000000;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:i*5000})}
+
+mergeChunks  chunk合并
+
+userId后面为字符串
+ for(var i=1;i<=120;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:(i*10).toString()})}
+ 
+预分片记住一定要打开balance
+for(var i=1;i<=100;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:i*10})}
+for(var i=1;i<=17;i++){db.adminCommand({moveChunk : "ocloud_file2.ocloud_file_item_t", find : {userId:{$gt:i*60}}, to : "shard0002"}); 
+
+ for(var i=0;i<=11000;i++){sh.splitAt('ocloud_file2.ocloud_file_item_t',{userId:(i*100000).toString(), md5:"ADB57000F7C0597A2EE504C4C4E5465E"})}
+ db.chunks.find()获取到的min包含，max不包含 
+ 
+ mongodb不同版本说明
+ https://docs.mongodb.com/manual/release-notes/3.6-changelog/
+ 
+ 
+ use admin
+ db.createUser( {user: "root",pwd: "xx",roles: [ { role: "__system", db: "admin" } ]});
+db.system.sessions.count()  必须用__system账号才可以查看
+logicalSessionRefreshMinutes  session跟新配置
+ 
+ readPrimary查看是否配置
+ db.serverStatus().storageEngine.supportsCommittedReads
+ 
+ 
+ 查看监控状态:
+  db.runCommand({ ping: 1 })
+ 
+ 
+一个账号访问指定的几个库
+use admin   注意这里是admin
+db.createUser({user: "test_rw",pwd: "xxxxxxx",roles: [ {role: 'readWrite', db: 'test11'}, {role: 'readWrite', db: 'test22'} ]})
+ 
+mongodb用户组方式启动进程：
+su -s /bin/bash -c "/x/xx/xx/bin/mongodb-3.6.13/bin/mongos -f /x/x/x/conf/mongos_200xx.conf" mongodb
+ 
+查看tcmalloc内存消耗:
+db.serverStatus().tcmalloc.tcmalloc.formattedString
+
+内存释放速度限制
+db.adminCommand( { setParameter: 1, tcmallocReleaseRate: 5.0 } )
+
+循环批量moveChunk:
+var cursor=db.user.find();
+cursor.forEach(function(x){print(x.min);})
+while(cursor.hasNext()) {sh.moveChunk("cloud_track.dailyCloudOperateInfo_17",{printjson(cursor.next().min)},"ocloud_oFEAkecX_shard_1")} 
+while(cursor.hasNext()) {printjson(cursor.next().min)} 
+
+
+chunk过大无法，拆分chunk脚本
+mongos> var cursor=db.chunks.find({"ns" : "push_open.app_device","shard" : "push-bjsm-app-1"})
+mongos>cursor.batchSize(1000)
+mongos> cursor.forEach(function(x){var result = sh.splitFind( "push_open.app_device", x.min ); printjson(result);})
+
+循环迁移对应分片chunk到其他分片
+var cursor=db.chunks.find({"ns" : "push_open.app_device", "shard" : "push-bjsm-app-2"}).skip(x).limit(15);
+mongos>cursor.batchSize(1000)
+while(cursor.hasNext()) {var result = sh.moveChunk("push_open.app_device",cursor.next().min,"push-bjsm-app-9");printjson(result);};
+
+
+use config
+sh.stopBalancer()
+var lower=ObjectId("58B60F00e4b03547ad945a8a");
+var upper=ObjectId("58BCA680e4b03547ad945a8a");
+var query={shard: "rs0", ns: "db.use", "max._id":{$gte: lower}, "min._id": {$lte: upper}};
+var cursor=db.chunks.find(query);
+
+cursor.forEach(function(d) {
+ print( "chunk: " + d.min._id ); 
+ sh.moveChunk("feedback.usage", { "_id" : d.min._id }, "rs1");
+});
+sh.setBalancerState(true)
+
+https://docs.mongodb.com/manual/tutorial/migrate-chunks-in-sharded-cluster/
+var shServer = [ "sh0.example.net", "sh1.example.net", "sh2.example.net", "sh3.example.net", "sh4.example.net" ];
+for ( var x=97; x<97+26; x++ ){
+  for( var y=97; y<97+26; y+=6 ) {
+    var prefix = String.fromCharCode(x) + String.fromCharCode(y);
+    db.adminCommand({moveChunk : "myapp.users", find : {email : prefix}, to : shServer[(y-97)/6]})
+  }
+}
+
+实例，一次迁移5个块，注意这里只会打印最后一次的moveChunk返回信息
+mongos> var cursor=db.chunks.find({"ns" : "ocloud-commit-1.item_commit_info", "shard" : "ocloud_WbUiXohI_shard_1"}).limit(5)
+mongos> while(cursor.hasNext()) {sh.moveChunk("ocloud-commit-1.item_commit_info",cursor.next().min,"ocloud_WbUiXohI_shard_6")}
+{
+        "millis" : 4876,
+        "ok" : 1,
+        "operationTime" : Timestamp(1592992016, 2600),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1592992016, 2600),
+                "signature" : {
+                        "hash" : BinData(0,"N86ePQ/qL0FpvpE4uYfGcBrLwoc="),
+                        "keyId" : NumberLong("6810307853451001882")
+                }
+        }
+}
+mongos> sh.status()
+
+
+
+var url = "mongodb://admin:xxx@xx.xx.x.2:3001/?authSource=admin";
+var db = connect(url);
+db = db.getSiblingDB("config");
+
+for ( var x=170; x<5800; x++ ){
+var cursor=db.chunks.find({"ns" : "push_open.app_device", "shard" : "push-bjsm-app-1"}).skip(200).limit(10);
+while(cursor.hasNext()) {var result = sh.moveChunk("push_open.app_device",cursor.next().min,"push-bjsm-app-9");printjson(result);};
+}
+
+
+查看每个分片的chunk大小信息，数据量信息mongos执行
+db.ocloud_cold_data_t.getShardDistribution()
+
+
+一个复制集从节点+主节点个数总共不能超过7个节点，超过七个则必须把多余的节点设置为不能参与投票，如下：
+https://docs.mongodb.com/manual/tutorial/configure-a-non-voting-replica-set-member/
+思路是，先把前面的几个节点重部分节点设置为非投票节点，然后add新节点
+把节点设置为非投票节点：
+cfg = rs.conf();
+cfg.members[5].votes = 0;
+cfg.members[5].priority = 0;
+rs.reconfig(cfg);
+
+延迟节点添加步骤：
+设置延迟从节点，在primary节点执行以下步骤
+1、cfg=rs.conf()
+2、cfg.members[4].slaveDelay=3600 # 1小时
+3、cfg.members[4].votes=0 # 设置不参与投票
+4、rs.reconfig(cfg)
+
+
+nohup  top -b -n 21111111  > top.log &
+nohup iotop -botq --iter=333333 > iotop.log &
+top -Hp 43972 -b -n 21111111 | head -n 200
+
+mongoexport -h xxxx:20000 -uadmin -p0xxxe8  --authenticationDatabase=admin --db=video --collection=videos_verify_log --fields "_id,videoId,videoAddrUrl,title,computerTopCategoryId,computerTopCategory,computerSecondCategoryId,computerSecondCategory,originTopCategoryId,originTopCategory,originSecondCategoryId" -q '{"categoryModifiedFlag":1}' --type=csv -o vidio.csv
+
+sh.splitFind( "push_open.app_device", {appId: "547352", deviceId: "5ebbad0e510d0a5edc2e381f"} )
+splite命令： 
+db.adminCommand( { split: <database>.<collection>,
+                   <find|middle|bounds> } )
+sh.splitFind() 实际上就是split middle，sh.splitFind( "test.foo", { x: 70 } ) 表示对foo表的x:70这个chunk从中间拆分
+sh.splitAt( "test.foo", { x: 70 } )  找到x:70这个对应的chunk，然后从70拆分
+
+SplitVector 命令在复制集上面执行，就是把复制集的数据按照指定方法拆分为多个块
+https://blog.csdn.net/weixin_33827731/article/details/90534750
+db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
+
+
+splitVector把一个chunk拆分为多个指定大小得chunk，例如一个表如果没有启用分片功能，当通过sh.shardCollection启用分片功能得时候，首先需要把表拆分为多个chunk。这个过程如果数据量
+很大，执行需要花费比较多得时间
+
+加快删除速度：deleteMany
+
+mongos链接池：
+ShardingTaskExecutorPoolMaxSize * taskExecutorPoolSize  
+//taskExecutorPoolSize代表一个mongos和后端mongod建立多少个链接，后续就会复用这些链接， ShardingTaskExecutorPoolMinSize表示一次创建多少个链接
+mongos -f /home/service/mongodb/conf/mongos_20017.conf --setParameter  --setParameter ShardingTaskExecutorPoolMinSize=20 --setParameter taskExecutorPoolSize=1
+
+ "codeName" : "LockBusy",  Lockbusy解决办法
+ 1. killop慢查询
+ 2. 关闭balance
+ 3. cfg集群切换主从或者重启
+ 
+ 
+opcounter.js
+运行方式：mongo xx.5x.x.90:xx opcounters.js    js文件内容如下
+var url = "mongodb://xxx:xxxx@a.b.c.d:20004/?authSource=admin";
+var db = connect(url);
+
+for ( var x=100; x<7022220; x++ ){
+ var result = db.serverStatus().opcounters;
+ printjson(result);
+ sleep(1000);
+} 
+
+
+mongodb命令大全地址:
+https://docs.mongodb.com/v3.6/reference/command
+
+
+
+var url = "mongodb://xx:afdfxxxxxxxxx@x.x.x.2:3001/?authSource=admin";
+var db = connect(url);
+db = db.getSiblingDB("config");
+
+for ( var x=100; x<700; x++ ){
+var cursor=db.chunks.find({"ns" : "xxxx.app_device", "shard" : "xxx-bjsm-app-1"}).skip(10+x).limit(15);
+while(cursor.hasNext()) {var result = sh.moveChunk("xxx.app_device",cursor.next().min,"xxx-bjsm-app-9");printjson(result);};
+}
+ 
+ 
+锁表
+db.adminCommand( { fsync: 1, lock: true } )
+解锁
+db.fsyncUnlock();或者
+ 
+nohup top -b  > top.log &
+
+获取所有命令:
+db.listCommands()
+ 
+ 
+机房多活，如果某个机房资源少，可以部署多个节点到资源充足的机房，同时把资源多的机房的部分节点设置为不参与投票选举，参与投票的节点：
+1+1+1， 实际节点1+5+1, 5节点重4节点不参与投票
+ 
+mongo java客户端链接复制集及分片mongos地址方法
+ https://www.codercto.com/a/43773.html
+ 官方地址https://mongodb.github.io/mongo-java-driver/3.4/driver/tutorials/connect-to-mongodb/
+ 
+ strace -f -e trace=read,write -p 17151
+strace  -e trace=epoll_wait,recvmsg,sendmsg -p 527501
+strace -f -e trace=epoll_wait,recvmsg,sendmsg -p 527501  进程及其子进程
+strace -e trace=epoll_wait,recvmsg,sendmsg -p 527501  本线程
+2020-02-03 20:22
+strace -o output.txt -T -tt -e trace=all -p 28979上面的含义是 跟踪28979进程的所有系统调用（-e trace=all），并统计系统调用的花费时间，以及开始时间（并以可视化的时分秒格式显示），最后将记录结果存在output.txt文件里面。
+
+
+mongos执行enableShard命令后，cfg会收到如下报文
+_configsvrEnableSharding
+
+
+mongod接手到splitevector后对应打印
+request split points lookup for chunk
+函数名：splitVector
+mongos通过如下命令发送命令给mongod获取分裂点
+//通过splitVector获取分裂点 selectChunkSplitPoints(分裂为多个块)
+//ShardingCatalogManager::shardCollection->createFirstChunks中调用
+//Balancer::_moveChunks->Balancer::_splitOrMarkJumbo中调用
+//updateChunkWriteStatsAndSplitIfNeeded中调用(FindAndModifyCmd::run和ClusterWriter::write->splitIfNeede调用)  
+SplitCollectionCmd->selectMedianKey(把块从中间分裂)
+
+
+问题？ 下面问题如何解答，空了分析下
+findAndModify upsert参数 设置为true的情况
+如果1、find失败，再2、insert，
+如果在这两步之间又insert了一个满足第一步的find条件的条件
+
+findOneAndReplace  findOneAndUpdate
+
+
+balance数据迁移过程图解:
+https://blog.csdn.net/dreamdaye123/article/details/105278247/
+
+
+获取所有表索引信息:
+var collectionList = db.getCollectionNames();
+for(var index in collectionList){
+    var collection = collectionList[index];
+	var cur = db.getCollection(collection).getIndexes();
+	if(cur.length == 1){
+		continue;
+	}
+	for(var index1 in cur){
+		var next = cur[index1];
+		if(next["key"]["_id"] == '1'){
+			continue;
+		}
+        print("try{ db.getCollection(\""+collection+"\").ensureIndex("+JSON.stringify(next.key)+",{background:1, unique:" + (next.unique || false) + " })}catch(e){print(e)}");	
+	}
+}
+
+
+
+排序计算: netstat -anp|grep xx.x.x.x:20000|awk -F ' ' '{print $5}'|awk -F ':' '{print $1}'|sort|uniq -c
+
+
+source insight快捷键冲突解决办法: fn+esc即可
+
+
+netstat -na | grep ESTABLISHED | grep "20000" | awk '{print $5}' | awk -F: '{print $1}' | sort | uniq -c | sort -nr
+
+
+查看表product_2014索引使用情况
+db.product_2014.aggregate({"$indexStats":{}})
+
+
+
+
+
+
+下面得mongos再某些机器起不来：
+systemLog:
+    destination: file
+    path: /var/log/mongodb/mongos_20011/mongos_20011.log
+    logAppend: true
+net:
+    bindIp: 0.0.0.0
+    port: 20011
+    serviceExecutor: adaptive
+    maxIncomingConnections: 35000
+    unixDomainSocket:
+        enabled: true
+        pathPrefix: /home/service/mongodb/sockfile
+        filePermissions: 0700
+processManagement:
+    fork: true
+sharding:
+    configDB: mix-cloud_ftHGsddN_configdb/xx.xx.xx.xx:20000,xx.xx.xxx.21:20000,xx.xx.xx.112:20000
+security:
+    keyFile: /home/service/mongodb/conf/.keyfile
+	
+	
+	
+替换为如下后可以:
+systemLog:
+  destination: file
+  path: /var/log/mongodb/mongos_20011/mongos_20011.log
+  logAppend: true
+
+processManagement:
+  fork: true
+  pidFilePath: /home/service/var/data/mongodb/20011/pid
+
+net:
+  bindIp: 127.0.0.1,x.x.x.170
+  port: 20011
+
+sharding:
+  configDB: mix-cloud_ftHGsddN_configdb/xx.xx.xx:20000,xx.xx.xx.21:20000,xx.xx.xx.112:20000
+
+security:
+  keyFile: /home/service/mongodb/conf/.keyfile
+  
+
+
+perf top --call-graph graph 获取调用栈，包括用户态和内核态 参考https://www.cnblogs.com/arnoldlu/p/6241297.html
+  
+ perf record -F 99 -p 13204 -g -- sleep 30
+上面的代码中，perf record表示记录，-F 99表示每秒99次，-p 13204是进程号，即对哪个进程进行分析，-g表示记录调用栈，sleep 30则是持续30秒。 
+  
+  
+火焰图使用方法：
+https://github.com/openresty/openresty-systemtap-toolkit
+  785  20200915-111353:  ./sample-bt -p 438733 -t 5 -u > a.bt   
+  786  20200915-111522: git clone https://github.com/brendangregg/FlameGraph
+  787  20200915-111641: ./FlameGraph/stackcollapse-stap.pl a.bt > a.cbt
+  788  20200915-111653: ./FlameGraph/flamegraph.pl a.cbt > a.svg
+  789  20200915-111712: sz a.svg  
+
+
+ 258  2020-09-18 19:14:19 :rz -bye
+  259  2020-09-18 19:15:14 :https://github.com/brendangregg/FlameGraph
+  260  2020-09-18 19:15:21 :git clone https://github.com/brendangregg/FlameGraph
+  261  2020-09-18 19:16:36 :ls
+  262  2020-09-18 19:17:04 :./FlameGraph/stackcollapse-perf.pl perf.unfold &> perf.folded
+  263  2020-09-18 19:17:17 :./FlameGraph/flamegraph.pl perf.folded > perf.svg
+  264  2020-09-18 19:18:12 :perf script | FlameGraph/stackcollapse-perf.pl |FlameGraph/flamegraph.pl >process.svg
+  265  2020-09-18 19:18:19 :LS
+  266  2020-09-18 19:18:20 :ls
+  267  2020-09-18 19:18:28 :sz perf.svg 
+  268  2020-09-18 19:18:37 :sz process.svg 
+  269  2020-09-18 19:21:53 :history 
+  
+  db.collection.update(query, update, options)
+  db.collection.updateOne(xx)  updateOne也就是update中multi=false  只更新一条
+  db.collection.updateMany(xx) updateMany也就是update中multi=true   更新所有满足条件的
+  
+  
+  WiredTigerIndex::insert: key too large to index   可以通过Hash索引解决
+  
+Mongodb $关键字 $修改器
+$字符，参考https://www.cnblogs.com/clbao/articles/10171140.html
+
+
+MongoDB的destinct命令是获取特定字段中不同值列表
+db.users.distinct('last_name'）
+
+
+mongodump拉数据，隐藏密码方法：
+
+/usr/local/mongodb3.6.14/bin/mongodump -h xxxx:20000 -uadmin -p`cat password_file`
+
+mongodump使用普通用户权限导指定库数据：
+mongodump -h zz.37.zzxx.197:20000 -uxx_rw2 -pxxxx --authenticationDatabase=useddevice -d useddevice
+
+copy collection方法： 
+将source_collection中的数据复制一份到target_collection，代码如下：
+db.source_collection.find().forEach(function(x){db.target_collection.insert(x)})
+
+
+通过db.serverCmdLineOpts()，可以查看实例启动命令，配置文件，配置参数。
+  
+  
+  namespace name generated from index name xxx is too long (127 byte max)
+  解决办法，索引重命名，索引名最长127字节，默认是各字段拼接。如果太长，可以重命名，例如
+  db.alarm_event.createIndex( { "xxx:1} , {name:"textindex_1"}))
+  
+ MongoDB全文索引用法 https://www.linuxidc.com/linux/2016-04/130007.htm
+  
+循环读取hosts ip列表，执行hosts   hosts中ip地址换行记录 passwd文件为密码字符串
+for host in `cat hosts`; do pass=`cat passwd`; echo $host; ./mongo $host/admin --username admin --password $pass "Create_user.js"; done
+
+Create_user.js内容
+printjson(db.getUsers())
+db.createUser( {user: "xxx",pwd: "xxxx",roles: [ { role: "root", db: "admin" } ]})
+printjson(db.getUsers())  
+  
+ 
+代理mongos config库的以下表功能:
+1. config.migrations 当前正在做movechunk的数据块
+  
+  
+  
+  新建一个用户让他可以访问oplog，oplog位于local库中。 
+但local库中不能添加用户。我们可以在admin库中添加 
+
+新建一个Agloplog用户使其能访问oplog。   使用change stream功能
+use admin 
+db.runCommand({ createRole: "oplogger", privileges: [{ resource: { db: 'local', collection: 'oplog.rs'}, actions: ['find']}, ], roles: [{role: 'read', db: 'local'}] })  //先创建角色 
+db.createUser({user:"Agloplog",pwd:"03a4b868f1",roles:[{role:"oplogger",db:"admin"}]})  //创建可以访问oplog的用户 
+
+参考https://docs.mongodb.com/v3.6/tutorial/change-hostnames-in-a-replica-set/index.html
+use admin
+//给xxx账号添加一个oplogger权限
+db.grantRolesToUser( "xxx", [ { role: "oplogger", db: "xxxsfd" } ] );
+
+
+给普通用户授予system.profile访问权限
+use magazine-resource    ----注意库不是admin
+db.createUser({user: "xxxx-resource_r3",pwd: "xxx",roles: [ {role: 'read', db: 'magazine-resource'} ]}) 
+use magazine-resource   -----注意库不是admin
+db.runCommand({ createRole: "slowlog_role2", privileges: [{ resource: { db: 'magazine-resource', collection: 'system.profile'}, actions: ['find']}, ], roles: [{role: 'read', db: 'magazine-resource'}]})
+use admin        ---注意这里是admin
+
+ 
+访问oplog 
+mongo 
+use admin 
+db.auth('Agloplog','03a4b868f1') 
+use local 
+show collections 
+db.oplog.rs.find()           //查询oplog
+  
+  mongodb字段验证规则（schema validation）
+  创建表的适合限制字段格式，参考https://blog.csdn.net/u010205879/article/details/81359329
+  https://www.cnblogs.com/itxiaoqiang/p/5538287.html
+  在插入或者更新文档的时候,可以通过bypassDocumentValidation:属性来避开验证  db.runCommand()支持这个属性    但是db.collection.insert/update()方法不支持这个属性.而db.collection.mapReduce(),db.collection.aggretate()方法支持这个属性.
+  
+
+mongo shell官方控制台
+https://docs.mongodb.com/manual/tutorial/remove-documents/
+  
+  
+  #!/bin/bash
+
+i=1
+b=xx.0
+while true
+do
+    a=`cat /proc/loadavg | awk -F " " '{print "''"""$1}'`
+    if [ `echo "$a > $b"|bc` -eq 1 ] ; then
+       tcpdump -i eth4 port 20000 -c 200000 -w  tcpdump_$i.pcap
+    fi
+
+    ((i++));
+    date >> test.log;
+    echo "i:$i" >> test.log
+    sleep 5
+done
+
+
+
+
+risk-face.faceRecord command: count { count: "faceRecord", query: { idCard: "432902198007147815", createTime: { $lte: 1533873134457, $gte: 1531367534457 } } } planSummary: IXSCAN { idCard: 1.0, productRole: 1.0, bizCode: 1.0 } keyUpdates:0 writeConflicts:0 numYields:6 reslen:62 locks:{ Global: { acquireCount: { r: 14 }, acquireWaitCount: { r: 7 }, timeAcquiringMicros: { r: 26944 } }, Database: { acquireCount: { r: 7 } }, Collection: { acquireCount: { r: 7 } } }
+
+db.faceRecord.find({"idCard" : "440682197711162817", "createTime" : { "$lte" : NumberLong("1533873134457"), "$gte" : NumberLong("1531367534457") }}).sort({"createTime" :-1}).explain()
+
+risk-face.faceRecord command: count { count: "faceRecord", query: { idCard: "440682197711162817", createTime: { $lte: 1533873488376, $gte: 1531367888376 } } } planSummary: IXSCAN { idCard: 1.0, productRole: 1.0, bizCode: 1.0 } keyUpdates:0 writeConflicts:0 numYields:8 reslen:62 locks:{ Global: { acquireCount: { r: 18 }, ac
+
+db.faceRecord.find({"idCard" : "440682197711162817", "createTime" : { "$lte" : NumberLong("1533873488376"), "$gte" : NumberLong("1531367888376") }}).sort({"createTime" :-1}).explain()
+
+use jserror
+db.createUser({user: "xxx",pwd: "xafdafdafda",roles: [ {role: 'readWrite', db: 'jserror'} ],authenticationRestrictions: [ {clientSource:["xx.xx.238.22","xx.xx.28.26"],serverAddress: ["xx.xx.50.25","xx.xx.x.47"]}]})
+
+use test5
+db.createUser({user: "test5",pwd: "test5",roles: [ {role: 'readWrite', db: 'test5'} ]}) read
+db.createUser({user: "video_r1",pwd: "xxx",roles: [ {role: 'read', db: 'video'} ]}) 
+
+
+数据模型使用建议:
+https://docs.mongodb.com/manual/core/data-modeling-introduction/
+https://blog.csdn.net/weixin_33861800/article/details/88728645
+
+
+只有访问db_xxxxxxproduction库的权限,注意如果对该账号新增白名单，必须用use admin
+use db_xxxxxxproduction
+ db.createUser(
+   {
+     user: "XXX",
+     pwd: "XXXX",
+     roles: [ {role: 'readWrite', db: 'db_xxxxxxproduction'} ],
+     authenticationRestrictions: [ {
+     clientSource:["1.2.x.13", "xx.2.x.52"],serverAddress: ["x.2.x.x", "x.3.x.x", "x.x.4.x","x.x.5.x","x.6.x.x"] } ]})  serverAddress包括mongos  mongod所有的  
+该user有访问所有库的权限
+use admin
+db.createUser( { user: "risk-xxx-rw", pwd: "afdadfa", roles: [ { role: "readWriteAnyDatabase", db: "admin"}] } )
+
+use admin
+db.createUser( {user: "root",pwd: "xxx",roles: [ { role: "root", db: "admin" } ]});
+db.updateUser('dbauser',{pwd:'sss',roles:[{role:'root',db:'admin'}]})  改密码
+
+system.indexes  674.00B (uncompressed), 32.00KB (compressed)
+system.version  1.02KB (uncompressed),  32.00KB (compressed)
+startup_log     1.12KB (uncompressed),  32.00KB (compressed)
+oplog.rs        291.48KB (uncompressed),        480.00KB (compressed)
+oplog.refs      0.00B (uncompressed),   32.00KB (compressed)
+replInfo        126.00B (uncompressed), 32.00KB (compressed)
+system.replset  236.00B (uncompressed), 32.00KB (compressed)
+
+scp后台
+screen -S copy-ip  创建子窗口
+screen -ls         查看子窗口
+screen -R copy-ip  进入子窗口
+ctrl + a + d       退回父窗口
+
+
+cfg = {
+...  '_id':'xxxc',
+...  'members':[
+...  {'_id':0, 'host': 'xx.23.240.29:28018'},
+...  {'_id':1, 'host': 'xx.23.240.29:28028'},
+...  {'_id':2, 'host': 'xx.23.240.29:28038'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_cfg',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:4441'},
+...  {'_id':1, 'host': '192.168.152.168:4442'},
+...  {'_id':2, 'host': '192.168.152.168:4443'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_1',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:3331'},
+...  {'_id':1, 'host': '192.168.152.168:3332'},
+...  {'_id':2, 'host': '192.168.152.168:3333'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_2',
+...  'members':[
+...  {'_id':0, 'host': '192.168.152.168:2221'},
+...  {'_id':1, 'host': '192.168.152.168:2222'},
+...  {'_id':2, 'host': '192.168.152.168:2223'}
+...  ]
+... }
+
+cfg = {
+...  '_id':'xxxc_1',
+...  'members':[
+...  {'_id':0, 'host': '127.0.0.1:3331'},
+...  {'_id':1, 'host': '127.0.0.1:3332'},
+...  {'_id':2, 'host': '127.0.0.1:3333'}
+...  ]
+... }
+
+
+
+db.createUser( {
+user: "xxxx_rw",
+pwd: "xxx",
+roles: [ { role: "root", db: "admin" } ]
+});
+
+
+
+
+config = {_id : "xxxc_1",   members : [{_id : 0, host : "127.0.0.1:27017" },{_id : 1, host : "127.0.0.1:27018" },{_id : 2, host : "127.0.0.1:27019"}]}
+config = {_id : "xxxc",   members : [{_id : 0, host : "127.0.0.1:8000" },{_id : 1, host : "127.0.0.1:8001" },{_id : 2, host : "127.0.0.1:8002"}]}
+
+config = {_id : "yyztest",   members : [{_id : 0, host : "xx.x.x.x:8010" },{_id : 1, host : "xx.x.x.x:8011" },{_id : 2, host : "xx.x.x.35:8012"}]}
+sh.addShard("xxxc_2/192.168.152.168:2221,192.168.152.168:2222,192.168.152.168:2223")
+
+use admin
+db.createUser({user: "root", pwd: "xxxxxxx", roles: [{role: "root", db: "admin"}]});
+db.createUser( { user: "admin", pwd: "xxxxxxx", roles: [{role: "userAdminAnyDatabase", db: "admin"}]});
+
+sh.addShard("xxxc/xx.x.x.29:28018,xx.xx.240.x:28028,xx.23.x.29:28038")
+
+db.runCommand( { removeshard: "yangyazhou_mongotest1_2" } )  多执行几次，sh.status()就不会看到这个shard了
+
+setParameter    https://docs.mongodb.com/v3.0/reference/command/setParameter/#dbcmd.setParameter
+db.runCommand( { getParameter: 1})  https://docs.mongodb.com/v3.0/reference/command/getParameter/
+db.runCommand( { setParameter: 1, cursorTimeoutMillis: 300 } )
+db.runCommand( { getParameter: 1, cursorTimeoutMillis:1} )
+
+mongod --setParameter=enableTestCommands 可以用sleep来延时
+
+config={_id:"risk_user",members:[ {_id:0, host:"xx.69.xx.20:27019"}, {_id:1, host:"xx.90.xx.61:27019"}, {_id:2, host:"xx.xx.xx.25:27019"}] } 
+sh.addShard("xxxc/127.0.0.1:8000,127.0.0.1:8001,127.0.0.1:8002")
+numactl --interleave=all        --bind_ip_all
+
+

@@ -427,6 +427,7 @@ public:
     CurOp* parent() const {
         return _parent;
     }
+    //QueryYield::yieldAllLocks
     void yielded() {
         _numYields++;
     }  // Should be _inlock()?

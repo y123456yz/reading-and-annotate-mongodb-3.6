@@ -184,6 +184,7 @@ MigrationStatuses MigrationManager::executeMigrationsForAutoBalance(
 }
 
 //Balancer::moveSingleChunk  Balancer::rebalanceSingleChunk调用
+//手工movechunk会调用走到这里
 Status MigrationManager::executeManualMigration(
     OperationContext* opCtx,
     const MigrateInfo& migrateInfo,
@@ -194,12 +195,14 @@ Status MigrationManager::executeManualMigration(
 
     // Write a document to the config.migrations collection, in case this migration must be
     // recovered by the Balancer. Fail if the chunk is already moving.
+    //写需要迁移得chunk信息到config.migrations表，可以通过该表查看当前正在迁移的chunk信息
     auto statusWithScopedMigrationRequest =
         ScopedMigrationRequest::writeMigration(opCtx, migrateInfo, waitForDelete);
     if (!statusWithScopedMigrationRequest.isOK()) {
         return statusWithScopedMigrationRequest.getStatus();
     }
 
+	//一直等到源分片集群把对应数据迁移到目的分片成功后这里才会返回
     RemoteCommandResponse remoteCommandResponse =
         _schedule(opCtx, migrateInfo, maxChunkSizeBytes, secondaryThrottle, waitForDelete)->get();
 

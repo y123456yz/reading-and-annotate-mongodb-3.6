@@ -220,6 +220,81 @@ user空集合加索引：db.user.ensureIndex({name:1, "aihao.aa":1, "aihao.bb":-1, "aih
 	ns: "test.user",
 	ident: "test/collection/1--8777216180098127804"
 }
+
+
+
+ > db.user.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "test.user"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "name" : 1,
+                        "aihao.aa" : 1,
+                        "aihao.bb" : -1,
+                        "aihao.aa.cc" : 1,
+                        "aihao.bb.cc" : -1
+                },
+                "name" : "name_1_aihao.aa_1_aihao.bb_-1_aihao.aa.cc_1_aihao.bb.cc_-1",
+                "ns" : "test.user"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "yangtest1" : 1
+                },
+                "name" : "yangtest1_1",
+                "ns" : "test.user",
+                "background" : true
+        }
+]
+> 
+> db.user.find()
+{ "_id" : ObjectId("6051d0eadc66165aba0feb51"), "name" : "yangyazhou", "aihao" : [ { "aa" : "aaa", "bb" : "bbb" }, { "aa" : "aaa2", "bb" : "bbb2" }, { "aa" : "aaa3", "bb" : "bbb3" } ] }
+{ "_id" : ObjectId("6052cf588a685826f0daf714"), "name" : "yangyazhou", "aihao" : [ { "aa" : [ { "cc" : "ccc1" }, { "cc" : "ccc2" } ], "bb" : "bbb3" } ] }
+> 
+> 
+> db.user.find({"name" : "yangyazhou", "aihao.aa":"aaa"})
+{ "_id" : ObjectId("6051d0eadc66165aba0feb51"), "name" : "yangyazhou", "aihao" : [ { "aa" : "aaa", "bb" : "bbb" }, { "aa" : "aaa2", "bb" : "bbb2" }, { "aa" : "aaa3", "bb" : "bbb3" } ] }
+> 
+> 参考appendMultikeyPaths
+db.user.find({"name" : "yangyazhou", "aihao.aa":"aaa"})对应.explain("allPlansExecution")输出如下:
+
+ 
+                                 "keyPattern" : {
+                                        "name" : 1,
+                                        "aihao.aa" : 1,
+                                        "aihao.bb" : -1,
+                                        "aihao.aa.cc" : 1,
+                                        "aihao.bb.cc" : -1
+                                },
+                                "indexName" : "name_1_aihao.aa_1_aihao.bb_-1_aihao.aa.cc_1_aihao.bb.cc_-1",
+                                "isMultiKey" : true,
+                                "multiKeyPaths" : {
+                                        "name" : [ ],
+                                        "aihao.aa" : [
+                                                "aihao",
+                                                "aihao.aa"
+                                        ],
+                                        "aihao.bb" : [
+                                                "aihao"
+                                        ],
+                                        "aihao.aa.cc" : [
+                                                "aihao",
+                                                "aihao.aa"
+                                        ],
+                                        "aihao.bb.cc" : [
+                                                "aihao"
+                                        ]
+                                },
+
 */
 
 

@@ -107,10 +107,14 @@ extern AtomicBool internalQueryIgnoreUnknownJSONSchemaKeywords;
 extern AtomicInt32 internalQueryExecMaxBlockingSortBytes;
 
 // Yield after this many "should yield?" checks.
+//调用累积次数超过该配置值会主动 yield，默认为 128，本质上反映的是从索引或者表上获取
+//了多少条数据后主动 yield。yield 之后该累积次数清零。
 extern AtomicInt32 internalQueryExecYieldIterations;
 
 //internalQueryExecYieldPeriodMS 可以通过setParameter 命令配置，控制查询命令的AutoYield的间隔，默认10毫秒。
 // Yield if it's been at least this many milliseconds since we last yielded.
+//从上次 yield 到现在的时间间隔超过该配置值，主动 yield，默认为 10ms，
+//本质上反映的是当前线程获取数据的行为持续了多久需要 yield。
 extern AtomicInt32 internalQueryExecYieldPeriodMS;
 
 // Limit the size that we write without yielding to 16MB / 64 (max expected number of indexes)

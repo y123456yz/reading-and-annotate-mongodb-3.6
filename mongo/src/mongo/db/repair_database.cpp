@@ -230,6 +230,7 @@ Status rebuildIndexesOnCollection(OperationContext* opCtx,
     return Status::OK();
 }
 
+////CmdRepairDatabase::errmsgRun
 Status repairDatabase(OperationContext* opCtx,
                       StorageEngine* engine,
                       const std::string& dbName,

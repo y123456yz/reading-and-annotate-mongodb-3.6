@@ -45,7 +45,10 @@ struct WiredTigerItem;
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
 
-//WiredTigerIndexUnique和WiredTigerIndexStandard继承该类
+//WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+//WiredTigerRecordStore(表数据文件操作)
+
+//WiredTigerIndexUnique  WiredTigerIndexStandard继承该类，分布为唯一索引  普通索引
 class WiredTigerIndex : public SortedDataInterface { 
 public:
     /**
@@ -172,6 +175,9 @@ protected:
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
 
+//WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+//WiredTigerRecordStore(表数据文件操作)
+
 class WiredTigerIndexUnique : public WiredTigerIndex { 
 public:
     WiredTigerIndexUnique(OperationContext* ctx,
@@ -200,6 +206,9 @@ private:
 
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
+
+//WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+//WiredTigerRecordStore(表数据文件操作)
 
 class WiredTigerIndexStandard : public WiredTigerIndex {
 public:

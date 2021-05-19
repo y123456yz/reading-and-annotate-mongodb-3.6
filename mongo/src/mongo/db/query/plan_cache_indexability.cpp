@@ -124,6 +124,7 @@ const IndexToDiscriminatorMap& PlanCacheIndexabilityState::getDiscriminators(
     return it->second;
 }
 
+//PlanCache::notifyOfIndexEntriesÖÐµ÷ÓÃ
 void PlanCacheIndexabilityState::updateDiscriminators(const std::vector<IndexEntry>& indexEntries) {
     _pathDiscriminatorsMap = PathDiscriminatorsMap();
 

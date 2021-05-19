@@ -149,6 +149,11 @@ private:
 //WiredTigerKVEngine::WiredTigerKVEngine中调用执行
 //WiredTigerKVEngine._checkpointThread成员为该类
 //定期做checkpoint操作
+/*
+MongoDB 有一个后台线程（WTCheckpointThread）会定期（默认情况下每 60 秒，由 storage.syncPeriodSecs 配置
+决定）根据 stable timestamp 触发新的 checkpoint 创建，这个 checkpoint 在实现中被称为「stable checkpoint」。
+参考https://mongoing.com/archives/77853
+*/
 class WiredTigerKVEngine::WiredTigerCheckpointThread : public BackgroundJob {
 public:
     explicit WiredTigerCheckpointThread(WiredTigerSessionCache* sessionCache)
@@ -656,6 +661,8 @@ void WiredTigerKVEngine::cleanShutdown() {
     }
 }
 
+//KVDatabaseCatalogEntryBase::renameCollection 修改表名的时候走到这里
+//cache中记录的表数据大小，表重命名后，记录数元数据文件sizeStorer.wt也需要对应修改
 Status WiredTigerKVEngine::okToRename(OperationContext* opCtx,
                                       StringData fromNS,
                                       StringData toNS,
@@ -752,7 +759,7 @@ void WiredTigerKVEngine::endBackup(OperationContext* opCtx) {
 }
 
 //参考http://www.mongoing.com/archives/5476  同步内存中的size到磁盘
-//WiredTigerKVEngine::haveDropsQueued  WiredTigerKVEngine::flushAllFiles中调用
+//WiredTigerKVEngine::haveDropsQueued(定时检测执行)  WiredTigerKVEngine::flushAllFiles中调用
 void WiredTigerKVEngine::syncSizeInfo(bool sync) const {
     if (!_sizeStorer)
         return;
@@ -862,7 +869,8 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
     //ident是类似这种形式：6--4057196034770697536.wt，_uri(ident)返回的是string("table:") + ident.toString();
     string uri = _uri(ident); //uri加上table前缀
 
-	//对应open_session
+	//对应open_session   WiredTigerSessionCache::getSession
+	//这里session会和WiredTigerSessionCache._sessions关联起来
     WT_SESSION* s = session.getSession();
 	
 	// WiredTigerKVEngine::createRecordStore ns: test.test uri: table:test/collection/4--6382651395048738792 
@@ -876,7 +884,7 @@ Status WiredTigerKVEngine::createGroupedRecordStore(OperationContext* opCtx,
 
 //建表KVDatabaseCatalogEntryBase::createCollection->WiredTigerKVEngine::getGroupedRecordStore中调用
 //KVStorageEngine::KVStorageEngine调用
-//获取StandardWiredTigerRecordStore类
+//获取StandardWiredTigerRecordStore类，获取表对应的RecordStore，对该表的KV操作就通过该返回类实现
 std::unique_ptr<RecordStore> WiredTigerKVEngine::getGroupedRecordStore(
     OperationContext* opCtx,
     StringData ns,
@@ -993,7 +1001,7 @@ Breakpoint 2, mongo::WiredTigerKVEngine::createGroupedSortedDataInterface (this=
 //DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //->KVCollectionCatalogEntry::prepareForIndexBuild中执行
 
-//KVCollectionCatalogEntry::prepareForIndexBuild调用，创建索引对应wt session信息
+//KVCollectionCatalogEntry::prepareForIndexBuild调用，创建索引对应wt session信息，底层建索引表
 Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* opCtx,
                                                             StringData ident,
                                                             const IndexDescriptor* desc,
@@ -1040,7 +1048,7 @@ Status WiredTigerKVEngine::createGroupedSortedDataInterface(OperationContext* op
 	*/
     LOG(2) << "WiredTigerKVEngine::createSortedDataInterface ns: " << collection->ns()
            << " ident: " << ident << " config: " << config;
-	//调用存储引擎接口WiredTigerIndex::Create创建对应的索引文件session信息
+	//调用存储引擎接口WiredTigerIndex::Create创建对应的索引文件 
     return wtRCToStatus(WiredTigerIndex::Create(opCtx, _uri(ident), config));
 }
 
@@ -1126,9 +1134,10 @@ std::list<WiredTigerCachedCursor> WiredTigerKVEngine::filterCursorsWithQueuedDro
 bool WiredTigerKVEngine::haveDropsQueued() const {
     Date_t now = _clockSource->now();
     Milliseconds delta = now - _previousCheckedDropsQueued;
-
+	
     if (!_readOnly && _sizeStorerSyncTracker.intervalHasElapsed()) { //定时时间到
         _sizeStorerSyncTracker.resetLastTime();
+		//定时时间到，把sizeInfo写入WT
         syncSizeInfo(false);
     }
 
@@ -1212,13 +1221,23 @@ bool WiredTigerKVEngine::_hasUri(WT_SESSION* session, const std::string& uri) co
 对MongoDB层可见的所有数据表，在_mdb_catalog表中维护了MongoDB需要的元数据，同样在WiredTiger层中，
 会有一份对应的WiredTiger需要的元数据维护在WiredTiger.wt表中。因此，事实上这里有两份数据表的列表，
 并且在某些情况下可能会存在不一致，比如，异常宕机的场景。因此MongoDB在启动过程中，会对这两份数据
-进行一致性检查，如果是异常宕机启动过程，会以WiredTiger.wt表中的数据为准，对_mdb_catalog表中的记录进行修正。这个过程会需要遍历WiredTiger.wt表得到所有数据表的列表。
+进行一致性检查，如果是异常宕机启动过程，会以WiredTiger.wt表中的数据为准，对_mdb_catalog表中的记录
+进行修正。这个过程会需要遍历WiredTiger.wt表得到所有数据表的列表。 
 
 综上，可以看到，在MongoDB启动过程中，有多处涉及到需要从WiredTiger.wt表中读取数据表的元数据。
 对这种需求，WiredTiger专门提供了一类特殊的『metadata』类型的cursor。
 */
 //KVStorageEngine::reconcileCatalogAndIdents调用
 //KVStorageEngine::reconcileCatalogAndIdents中获取所有得ident，然后后元数据_mdb_catalog.wt中得内容做比较
+
+//从WiredTiger.wt元数据文件中读取库表信息等
+
+//WiredTigerKVEngine::getAllIdents和KVCatalog::getAllIdents区别：
+// 1. WiredTigerKVEngine::getAllIdents对应WiredTiger.wt元数据文件，由wiredtiger存储引擎自己维护
+// 2. KVCatalog::getAllIdents对应_mdb_catalog.wt，由mongodb server层storage模块维护
+// 3. 这两个元数据相比较，冲突的时候collection以_mdb_catalog.wt为准，该表下面的索引以WiredTiger.wt为准
+//	  参考KVStorageEngine::reconcileCatalogAndIdents
+
 std::vector<std::string> WiredTigerKVEngine::getAllIdents(OperationContext* opCtx) const {
     std::vector<std::string> all;
 	//也就是对WiredTiger.wt得操作
@@ -1300,6 +1319,22 @@ bool WiredTigerKVEngine::initRsOplogBackgroundThread(StringData ns) {
 //InitialSyncer::_setUp_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
 //ReplicationCoordinatorImpl::_setStableTimestampForStorage_inlock->KVStorageEngine::setStableTimestamp->WiredTigerKVEngine::setStableTimestamp
 //KVStorageEngine::setStableTimestamp
+/*
+引擎层 Rollback 与 stable timestamp
+在 3.x 版本里，MongoDB 复制集的回滚动作是在 Server 层面完成，但节点需要回滚时，会根据要回滚的 oplog 
+不断应用相反的操作，或从回滚源上读取最新的版本，整个回滚操作效率很低。
+
+4.0 版本实现了存储引擎层的回滚机制，当复制集节点需要回滚时，直接调用 WiredTiger 接口，将数据回滚到
+某个稳定版本（实际上就是一个 Checkpoint），这个稳定版本则依赖于 stable timestamp。WiredTiger 会确保 
+stable timestamp 之后的数据不会写到 Checkpoint里，MongoDB 根据复制集的同步状态，当数据已经同步到大
+多数节点时（Majority commited），会更新 stable timestamp，因为这些数据已经提交到大多数节点了，一定
+不会发生 ROLLBACK，这个时间戳之前的数据就都可以写到 Checkpoint 里了。
+
+MongoDB 需要确保频繁（及时）的更新 stable timestamp，否则影响 WT Checkpoint 行为，导致很多内存无法释放。
+例如主备延时很大，导致数据一直没有被同步到大多数节点，这时主上 stable timestamp 就无法更新，内存不断积
+累就可能把 cache 撑满。
+参考https://mongoing.com/%3Fp%3D6084
+*/
 void WiredTigerKVEngine::setStableTimestamp(Timestamp stableTimestamp) {
     const bool keepOldBehavior = true;
     // Communicate to WiredTiger what the "stable timestamp" is. Timestamp-aware checkpoints will

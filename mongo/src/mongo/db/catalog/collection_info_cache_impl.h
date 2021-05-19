@@ -45,6 +45,7 @@ class OperationContext;
  * this is for storing things that you want to cache about a single collection
  * life cycle is managed for you from inside Collection
  */
+
 class CollectionInfoCacheImpl : public CollectionInfoCache::Impl {
 public:
     explicit CollectionInfoCacheImpl(Collection* collection, const NamespaceString& ns);

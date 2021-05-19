@@ -25,7 +25,78 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+/*  _mdb_catalog.wt内容
+{
+	ns: "test.test1",
+	md: {
+		ns: "test.test1",
+		options: {
+			uuid: UUID("520904ec-0432-4c00-a15d-788e2f5d707b")
+		},
+		indexes: [{
+			spec: {
+				v: 2,
+				key: {
+					_id: 1
+				},
+				name: "_id_",
+				ns: "test.test1"
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				_id: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					name: 1.0,
+					age: 1.0
+				},
+				name: "name_1_age_1",
+				ns: "test.test1",
+				background: true
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				name: BinData(0, 00),
+				age: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}, {
+			spec: {
+				v: 2,
+				key: {
+					zipcode: 1.0
+				},
+				name: "zipcode_1",
+				ns: "test.test1",
+				background: true
+			},
+			ready: true,
+			multikey: false,
+			multikeyPaths: {
+				zipcode: BinData(0, 00)
+			},
+			head: 0,
+			prefix: -1
+		}],
+		prefix: -1
+	},
+	idxIdent: {
+		_id_: "test/index/8-380857198902467499",
+		name_1_age_1: "test/index/0--6948813758302814892",
+		zipcode_1: "test/index/3--6948813758302814892"
+	},
+	ident: "test/collection/7-380857198902467499"
+}
 
+*/
 #include "mongo/platform/basic.h"
 
 #include <memory>
@@ -149,6 +220,36 @@ bool KVDatabaseCatalogEntryBase::hasUserData() const {
     return !isEmpty();
 }
 
+//db.runCommand({ listDatabases : 1 })获取所有库的磁盘信息
+/*
+> db.runCommand({ listDatabases : 1 })
+{
+        "databases" : [
+                {
+                        "name" : "admin",
+                        "sizeOnDisk" : 32768,
+                        "empty" : false
+                },
+                {
+                        "name" : "config",
+                        "sizeOnDisk" : 73728,
+                        "empty" : false
+                },
+                {
+                        "name" : "local",
+                        "sizeOnDisk" : 77824,
+                        "empty" : false
+                },
+                {
+                        "name" : "test",
+                        "sizeOnDisk" : 90112,
+                        "empty" : false
+                }
+        ],
+        "totalSize" : 274432,
+        "ok" : 1
+}
+*/
 //磁盘数据大小=所有表的数据+所有表的索引总和
 int64_t KVDatabaseCatalogEntryBase::sizeOnDisk(OperationContext* opCtx) const {
     int64_t size = 0;
@@ -198,7 +299,11 @@ CollectionCatalogEntry* KVDatabaseCatalogEntryBase::getCollectionCatalogEntry(St
     return it->second;
 }
 
-//获取对该表进行底层KV操作的KVCollectionCatalogEntry
+
+//WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+//WiredTigerRecordStore(表数据文件操作)
+
+//获取对该表进行底层数据KV操作的WiredTigerRecordStore
 RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
     CollectionMap::const_iterator it = _collections.find(ns.toString());
     if (it == _collections.end()) {
@@ -217,6 +322,13 @@ RecordStore* KVDatabaseCatalogEntryBase::getRecordStore(StringData ns) const {
 //->DatabaseImpl::createCollection->KVDatabaseCatalogEntryBase::createCollection
 // Collection* createCollection调用
 //开始调用底层WT存储引擎相关接口建表，同时生成一个KVCollectionCatalogEntry存入_collections数组
+
+//KVDatabaseCatalogEntryBase::createCollection和KVDatabaseCatalogEntryBase::initCollection的区别如下:
+// 1. KVDatabaseCatalogEntryBase::createCollection对应的是新键的表
+// 2. KVDatabaseCatalogEntryBase::initCollection对应的是mongod重启，从_mdb_catalog.wt元数据文件中加载的表
+
+
+//注意，这里面只有空表对应数据KV ident操作，空表对应id索引对应索引文件idxident在外层DatabaseImpl::createCollection中实现
 Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
                                                     StringData ns,
                                                     const CollectionOptions& options,
@@ -237,17 +349,18 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 	//将collection的ns、ident存储到元数据文件_mdb_catalog中。
     // need to create it  调用KVCatalog::newCollection 创建wiredtiger 数据文件
     //更新_idents，记录下集合对应元数据信息，也就是集合路径  集合uuid 集合索引，以及在元数据_mdb_catalog.wt中的位置
-	//KVCatalog::newCollection
+	//KVCatalog::newCollection，跟新_mdb_catalog.wt文件元数据，有新表了
 	Status status = _engine->getCatalog()->newCollection(opCtx, ns, options, prefix);
     if (!status.isOK())
         return status;
 
 	//也就是newCollection中生成的集合ident，也就是元数据元数据_mdb_catalog.wt文件路径
-    string ident = _engine->getCatalog()->getCollectionIdent(ns); //获取文件名
+	//获取对应表的元数据信息
+    string ident = _engine->getCatalog()->getCollectionIdent(ns);  
 	
 	//WiredTigerKVEngine::createGroupedRecordStore(数据文件相关)  
 	//WiredTigerKVEngine::createGroupedSortedDataInterface(索引文件相关)
-	//调用WT存储引擎的create接口建表
+	//调用WT存储引擎的create接口建表，底层建索引表
     status = _engine->getEngine()->createGroupedRecordStore(opCtx, ns, ident, options, prefix);
     if (!status.isOK())
         return status;
@@ -267,7 +380,8 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     opCtx->recoveryUnit()->registerChange(new AddCollectionChange(opCtx, this, ns, ident, true));
 	//WiredTigerKVEngine::getGroupedRecordStore
 	//生成StandardWiredTigerRecordStore类,该类和表实际上关联起来，对该类的相关接口操作实际上就是对表的KV操作
-    auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
+	//一个表和一个StandardWiredTigerRecordStore对应，以后对该表的底层存储引擎KV操作将由该类实现
+	auto rs = _engine->getEngine()->getGroupedRecordStore(opCtx, ns, ident, options, prefix);
     invariant(rs);
 
 	//存到map表中，把WiredTigerKVEngine  
@@ -275,7 +389,8 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
     _collections[ns.toString()] = new KVCollectionCatalogEntry(
        //WiredTigerKVEngine--存储引擎    
        //     KVStorageEngine::getCatalog(KVStorageEngine._catalog(KVCatalog类型))---"_mdb_catalog.wt"元数据接口
-       //                                           StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
+       //                                                        ident-----表对应数据文件目录
+       //                                                            StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 
     return Status::OK();
@@ -283,6 +398,10 @@ Status KVDatabaseCatalogEntryBase::createCollection(OperationContext* opCtx,
 
 //KVStorageEngine::KVStorageEngine->KVDatabaseCatalogEntryBase::initCollection从元数据_mdb_catalog.wt中加载表信息
 //当mongod重启的时候会，会调用KVStorageEngine::KVStorageEngine调用本接口
+
+//KVDatabaseCatalogEntryBase::createCollection和KVDatabaseCatalogEntryBase::initCollection的区别如下:
+// 1. KVDatabaseCatalogEntryBase::createCollection对应的是新键的表
+// 2. KVDatabaseCatalogEntryBase::initCollection对应的是mongod重启，从_mdb_catalog.wt元数据文件中加载的表
 void KVDatabaseCatalogEntryBase::initCollection(OperationContext* opCtx,
                                                 const std::string& ns,
                                                 bool forRepair) {
@@ -310,6 +429,10 @@ void KVDatabaseCatalogEntryBase::initCollection(OperationContext* opCtx,
    //     KVStorageEngine::getCatalog(KVStorageEngine._catalog(KVCatalog类型))---"_mdb_catalog.wt"元数据接口
    //                                           StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
     _collections[ns] = new KVCollectionCatalogEntry(
+   //WiredTigerKVEngine--存储引擎    
+   //     KVStorageEngine::getCatalog(KVStorageEngine._catalog(KVCatalog类型))---"_mdb_catalog.wt"元数据接口
+   //                                                        ident-----表对应数据文件目录
+   //                                                            StandardWiredTigerRecordStore--底层WT存储引擎KV操作--类似表底层存储引擎KV接口
         _engine->getEngine(), _engine->getCatalog(), ns, ident, std::move(rs));
 }
 
@@ -325,6 +448,13 @@ void KVDatabaseCatalogEntryBase::reinitCollectionAfterRepair(OperationContext* o
     initCollection(opCtx, ns, false);
 }
 
+//DatabaseImpl::renameCollection调用，集合重命名
+//从该接口可以看出，一个表操作需要包含以下信息：
+// 1. 更新sizeStorer.wt size元数据文件中对应的表，因为表名已经改变了
+// 2. 表名修改后，_mdb_catalog.wt元数据也需要更新，包括表名和ident等，ident是通过表名生成的，表名改了，因此ident也需要修改
+// 3. 表名改了后，ident也变了，因此操作该表的WiredTigerRecordStore也需要改变，需要重新生成
+// 4. 在cache中根据上面新的表名、新的ident、新的WiredTigerRecordStore生成新的KVCollectionCatalogEntry，该entry在内存cache中缓存起来
+//  疑问？为何没有对idxIdent(name_1_age_1: "test/index/0--6948813758302814892")改名，原因是idxIdent中对应的test是库，没有表信息
 Status KVDatabaseCatalogEntryBase::renameCollection(OperationContext* opCtx,
                                                     StringData fromNS,
                                                     StringData toNS,
@@ -333,34 +463,45 @@ Status KVDatabaseCatalogEntryBase::renameCollection(OperationContext* opCtx,
 
     RecordStore* originalRS = NULL;
 
+	//获取表信息
     CollectionMap::const_iterator it = _collections.find(fromNS.toString());
     if (it == _collections.end()) {
         return Status(ErrorCodes::NamespaceNotFound, "rename cannot find collection");
     }
 
+	//获取操作该表的WiredTigerRecordStore
     originalRS = it->second->getRecordStore();
 
+	//目的表明是否已经存在，存在说明重复了，直接报错
     it = _collections.find(toNS.toString());
     if (it != _collections.end()) {
         return Status(ErrorCodes::NamespaceExists, "for rename to already exists");
     }
 
+	//原表对应ident
     const std::string identFrom = _engine->getCatalog()->getCollectionIdent(fromNS);
 
+	//WiredTigerKVEngine::okToRename
+	//cache中记录的表数据大小，表重命名后，记录数元数据文件sizeStorer.wt也需要对应修改
     Status status = _engine->getEngine()->okToRename(opCtx, fromNS, toNS, identFrom, originalRS);
     if (!status.isOK())
         return status;
 
-    status = _engine->getCatalog()->renameCollection(opCtx, fromNS, toNS, stayTemp);
+	//_mdb_catalog.wt元数据文件中的表名需要更新，元数据也需要更新，现在_mdb_catalog.wt中是新表的元数据信息了
+	//KVCatalog::renameCollection
+	status = _engine->getCatalog()->renameCollection(opCtx, fromNS, toNS, stayTemp);
     if (!status.isOK())
         return status;
 
+	//源表名对应的ident也需要改名，因为表名对应ident必须根据指定算法生成，表名改了，indent肯定也就不一样了
     const std::string identTo = _engine->getCatalog()->getCollectionIdent(toNS);
 
     invariant(identFrom == identTo);
 
+	//获取新表的元数据信息文件_mdb_catalog.wt中的元数据信息md
     BSONCollectionCatalogEntry::MetaData md = _engine->getCatalog()->getMetaData(opCtx, toNS);
 
+	//清除原表的内存cache信息
     const CollectionMap::iterator itFrom = _collections.find(fromNS.toString());
     invariant(itFrom != _collections.end());
     opCtx->recoveryUnit()->registerChange(
@@ -370,9 +511,11 @@ Status KVDatabaseCatalogEntryBase::renameCollection(OperationContext* opCtx,
     opCtx->recoveryUnit()->registerChange(
         new AddCollectionChange(opCtx, this, toNS, identTo, false));
 
+	//获取操作新表的WiredTigerRecordStore
     auto rs =
         _engine->getEngine()->getGroupedRecordStore(opCtx, toNS, identTo, md.options, md.prefix);
 
+	//新表生成对应新的KVCollectionCatalogEntry cache信息
     _collections[toNS.toString()] = new KVCollectionCatalogEntry(
         _engine->getEngine(), _engine->getCatalog(), toNS, identTo, std::move(rs));
 
@@ -393,12 +536,13 @@ Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, Strin
     KVCollectionCatalogEntry* const entry = it->second;
 
     invariant(entry->getTotalIndexCount(opCtx) == entry->getCompletedIndexCount(opCtx));
-
+	//先清除该表的所有索引
     {
         std::vector<std::string> indexNames;
         entry->getAllIndexes(opCtx, &indexNames);
         for (size_t i = 0; i < indexNames.size(); i++) {
 			//KVCollectionCatalogEntry::removeIndex
+			//从该表MetaData元数据中清除该index，并清除索引文件
             entry->removeIndex(opCtx, indexNames[i]).transitional_ignore();
         }
     }
@@ -408,7 +552,8 @@ Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, Strin
     const std::string ident = _engine->getCatalog()->getCollectionIdent(ns);
 
 	//KVStorageEngine::getCatalog获取KVDatabaseCatalogEntry   KVStorageEngine::getCatalog获取KVCatalog
-	//KVCatalog::dropCollection
+	//KVCatalog::dropCollection 
+	//删除表后需要从元数据中删除该表
     Status status = _engine->getCatalog()->dropCollection(opCtx, ns);
     if (!status.isOK()) {
         return status;
@@ -421,6 +566,7 @@ Status KVDatabaseCatalogEntryBase::dropCollection(OperationContext* opCtx, Strin
     //最终外层调用触发RemoveCollectionChange::commit真正进行删除
         new RemoveCollectionChange(opCtx, this, ns, ident, it->second, true));
 
+	//从cache中清除该表
     _collections.erase(ns.toString());
 
     return Status::OK();

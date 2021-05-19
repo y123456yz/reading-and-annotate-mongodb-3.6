@@ -1196,6 +1196,13 @@ private:
     OID _myRID;  // (M)
 
     // list of information about clients waiting on replication.  Does *not* own the WaiterInfos.
+    //当 w > 1 时就需要等待足够多的 Secondary 节点也确认写操作执行成功，这个时候 MongoDB 
+    //会通过执行 ReplicationCoordinatorImpl::_awaitReplication_inlock 阻塞在一个条件变量上，
+    //等待被唤醒，被阻塞的用户线程会被加入到 _replicationWaiterList 中
+
+    //从节点通过给 upstream 发送 replSetUpdatePosition 命令来完成的，upstream 在收到该命令后，通过
+    //比较如果发现某个副本集成员汇报过来的时间戳信息比上次新，就会触发，唤醒等待 writeConcern 的用
+    //户线程的逻辑。
     WaiterList _replicationWaiterList;  // (M)
 
     // list of information about clients waiting for a particular opTime.

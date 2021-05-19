@@ -533,6 +533,7 @@ bool WiredTigerIndex::isDup(WT_CURSOR* c, const BSONObj& key, const RecordId& id
     return true;
 }
 
+//IndexAccessMethod::initializeAsEmptyµ÷ÓÃ
 Status WiredTigerIndex::initAsEmpty(OperationContext* opCtx) {
     // No-op
     return Status::OK();

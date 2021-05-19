@@ -133,6 +133,7 @@ IndexCatalogImpl::~IndexCatalogImpl() {
 
 //CollectionImpl::init中调用
 //例如mongod实例重启得时候会调用
+//从元数据文件"_mdb_catalog.wt"中获取索引信息,并构造索引对应的IndexCatalogEntryImpl
 Status IndexCatalogImpl::init(OperationContext* opCtx) {
     vector<string> indexNames;
 	//BSONCollectionCatalogEntry::getAllIndexes 
@@ -161,7 +162,7 @@ Status IndexCatalogImpl::init(OperationContext* opCtx) {
         auto descriptor = stdx::make_unique<IndexDescriptor>(
             _collection, _getAccessMethodName(opCtx, keyPattern), spec);
         const bool initFromDisk = true;
-		//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
+		//获取descriptor该索引对应的IndexCatalogEntryImpl添加到IndexCatalogImpl._entries数组
 		//一个索引对应一个IndexCatalogEntry
         IndexCatalogEntry* entry =
             _setupInMemoryStructures(opCtx, std::move(descriptor), initFromDisk);
@@ -252,6 +253,7 @@ Status IndexCatalogImpl::checkUnfinished() const {
                                 << _collection->ns().ns());
 }
 
+//版本兼容相关，IndexCatalogImpl::_getAccessMethodName中调用，先忽略
 bool IndexCatalogImpl::_shouldOverridePlugin(OperationContext* opCtx,
                                              const BSONObj& keyPattern) const {
     string pluginName = IndexNames::findPluginName(keyPattern);
@@ -298,6 +300,7 @@ string IndexCatalogImpl::_getAccessMethodName(OperationContext* opCtx,
 
 // ---------------------------
 
+//忽略，版本兼容性相关的
 Status IndexCatalogImpl::_upgradeDatabaseMinorVersionIfNeeded(OperationContext* opCtx,
                                                               const string& newPluginName) {
     // first check if requested index requires pdfile minor version to be bumped
@@ -307,6 +310,7 @@ Status IndexCatalogImpl::_upgradeDatabaseMinorVersionIfNeeded(OperationContext* 
 
     DatabaseCatalogEntry* dbce = _collection->dbce();
 
+	//
     if (!dbce->isOlderThan24(opCtx)) {
         return Status::OK();  // these checks have already been done
     }
@@ -373,7 +377,7 @@ db/catalog/database_impl.cpp:                fullIdIndexSpec = uassertStatusOK(i
 
 */ 
 //DatabaseImpl::createCollection   createSystemIndexes  CollectionImpl::truncate中调用执行
-//空表上面建索引
+//空表上面建索引,一般是手动创建索引或者第一次给某个表写数据的时候调用
 StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationContext* opCtx,
                                                                    BSONObj spec) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().toString(), MODE_X));
@@ -386,6 +390,7 @@ StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationCont
         return status;
 
 	//索引个数 索引冲突 索引名冲突等检查失败，例如索引名有冲突  索引达到上限等
+	//然后返回对应的索引spec
     StatusWith<BSONObj> statusWithSpec = prepareSpecForCreate(opCtx, spec);
     status = statusWithSpec.getStatus();
     if (!status.isOK())
@@ -403,20 +408,26 @@ StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationCont
     // now going to touch disk
     IndexBuildBlock indexBuildBlock(opCtx, _collection, spec);
 	//IndexCatalogImpl::IndexBuildBlock::init
-	status = indexBuildBlock.init(); //建索引
+	//对IndexBuildBlock对应的索引进行初始化，创建索引对应的存储引擎底层索引文件
+	status = indexBuildBlock.init();  
     if (!status.isOK())
         return status;
 
     // sanity checks, etc...
+    //获取该索引对应IndexCatalogEntryImpl
     IndexCatalogEntry* entry = indexBuildBlock.getEntry();
     invariant(entry);
+	//获取该索引descriptor
     IndexDescriptor* descriptor = entry->descriptor();
     invariant(descriptor);
     invariant(entry == _entries.find(descriptor));
 
+	//啥也没做IndexAccessMethod::initializeAsEmpty->WiredTigerIndex::initAsEmpty
     status = entry->accessMethod()->initializeAsEmpty(opCtx);
     if (!status.isOK())
         return status;
+
+	//IndexBuildBlock::success
     indexBuildBlock.success();
 
     // sanity check
@@ -425,7 +436,8 @@ StatusWith<BSONObj> IndexCatalogImpl::createIndexOnEmptyCollection(OperationCont
     return spec;
 }
 
-//index_create_impl.cpp中的MultiIndexBlockImpl::init new该类
+//IndexCatalogImpl::createIndexOnEmptyCollection中第一次使用空表的时候(第一次写数据或者手动建表)
+//index_create_impl.cpp中的MultiIndexBlockImpl::init new该类,也就是建索引的时候
 IndexCatalogImpl::IndexBuildBlock::IndexBuildBlock(OperationContext* opCtx,
                                                    Collection* collection,
                                                    const BSONObj& spec)
@@ -433,6 +445,8 @@ IndexCatalogImpl::IndexBuildBlock::IndexBuildBlock(OperationContext* opCtx,
       _catalog(collection->getIndexCatalog()),
       _ns(_catalog->_getCollection()->ns().ns()),
       _spec(spec.getOwned()),
+      //真正赋值见IndexCatalogImpl::_setupInMemoryStructures
+      //对应IndexCatalogEntryImpl
       _entry(nullptr),
       _opCtx(opCtx) {
     invariant(collection);
@@ -442,10 +456,11 @@ IndexCatalogImpl::IndexBuildBlock::IndexBuildBlock(OperationContext* opCtx,
 //创建集合的时候或者程序重启的时候建索引:DatabaseImpl::createCollection->IndexCatalogImpl::createIndexOnEmptyCollection->IndexCatalogImpl::IndexBuildBlock::init
 //MultiIndexBlockImpl::init->IndexCatalogImpl::IndexBuildBlock::init  程序运行过程中，并且集合已经存在的时候建索引
 
-//IndexCatalogImpl::createIndexOnEmptyCollection 调用
-//CmdCreateIndex::errmsgRun->MultiIndexBlockImpl::init调用
+//IndexCatalogImpl::createIndexOnEmptyCollection 调用(第一次创建空表或者第一次往空表写入数据)
+//CmdCreateIndex::errmsgRun->MultiIndexBlockImpl::init调用(收到createIndex建索引)
 
 ////获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
+//对IndexBuildBlock对应的索引进行初始化，创建索引对应的存储引擎底层索引文件
 Status IndexCatalogImpl::IndexBuildBlock::init() {
     // need this first for names, etc...
     //获取所有信息的key，可以db.collection.getIndexes()获取
@@ -464,7 +479,7 @@ Status IndexCatalogImpl::IndexBuildBlock::init() {
     /// ----------   setup on disk structures ----------------
 
 	//KVCollectionCatalogEntry::prepareForIndexBuild
-	//准备工作
+	//创建索引的准备工作，并创建存储引擎对应索引目录文件
     Status status = _collection->getCatalogEntry()->prepareForIndexBuild(_opCtx, descriptor.get());
     if (!status.isOK())
         return status;
@@ -474,7 +489,7 @@ Status IndexCatalogImpl::IndexBuildBlock::init() {
     /// ----------   setup in memory structures  ----------------
     const bool initFromDisk = false;
 	//获取descriptor该索引对应的IndexCatalogEntryImpl添加到_entries数组
-	//一个索引对应一个IndexCatalogImpl
+	//一个索引对应一个IndexCatalogEntryImpl
     _entry = IndexCatalogImpl::_setupInMemoryStructures(
         _catalog, _opCtx, std::move(descriptor), initFromDisk);
 
@@ -491,13 +506,16 @@ IndexCatalogImpl::IndexBuildBlock::~IndexBuildBlock() {
     // Don't need to call fail() here, as rollback will clean everything up for us.
 }
 
+//MultiIndexBlockImpl::~MultiIndexBlockImpl()调用
 void IndexCatalogImpl::IndexBuildBlock::fail() {
     fassert(17204, _catalog->_getCollection()->ok());  // defensive
 
+	
     IndexCatalogEntry* entry = IndexCatalog::_getEntries(_catalog).find(_indexName);
     invariant(entry == _entry);
 
     if (entry) {
+		//同时删除内存缓存的entry，并从磁盘删除
         IndexCatalogImpl::_dropIndex(_catalog, _opCtx, entry).transitional_ignore();
     } else {
         IndexCatalog::_deleteIndexFromDisk(_catalog, _opCtx, _indexName, _indexNamespace);
@@ -506,19 +524,26 @@ void IndexCatalogImpl::IndexBuildBlock::fail() {
 
 //IndexCatalogImpl::createIndexOnEmptyCollection调用  检查索引是否创建成功
 void IndexCatalogImpl::IndexBuildBlock::success() {
+	//获取该索引对应的表信息
     Collection* collection = _catalog->_getCollection();
     fassert(17207, collection->ok());
     NamespaceString ns(_indexNamespace);
     invariant(_opCtx->lockState()->isDbLockedForMode(ns.db(), MODE_X));
 
+	//KVCollectionCatalogEntry::indexBuildSuccess
+	//更新元数据"_mdb_catalog.wt"信息中的索引
     collection->getCatalogEntry()->indexBuildSuccess(_opCtx, _indexName);
 
+	//IndexCatalogImpl::findIndexByName
+	//查找该索引desc
     IndexDescriptor* desc = _catalog->findIndexByName(_opCtx, _indexName, true);
     fassert(17330, desc);
+	//IndexCatalogImpl::_getEntries从数组中查找内存中是否有该索引desc
     IndexCatalogEntry* entry = _catalog->_getEntries().find(desc);
     fassert(17331, entry && entry == _entry);
 
     OperationContext* opCtx = _opCtx;
+	//例如id索引对应打印marking index _id_ as ready in snapshot id 85053
     LOG(2) << "marking index " << _indexName << " as ready in snapshot id "
            << opCtx->recoveryUnit()->getSnapshotId();
     _opCtx->recoveryUnit()->onCommit([opCtx, entry, collection] {
@@ -535,6 +560,7 @@ void IndexCatalogImpl::IndexBuildBlock::success() {
         collection->setMinimumVisibleSnapshot(snapshotName);
     });
 
+	//索引创建成功，标记一下
     entry->setIsReady(true);
 }
 
@@ -936,6 +962,7 @@ Status IndexCatalogImpl::_doesSpecConflictWithExisting(OperationContext* opCtx,
     return Status::OK();
 }
 
+//
 BSONObj IndexCatalogImpl::getDefaultIdIndexSpec(
     ServerGlobalParams::FeatureCompatibility::Version featureCompatibilityVersion) const {
     dassert(_idObj["_id"].type() == NumberInt);
@@ -958,6 +985,8 @@ BSONObj IndexCatalogImpl::getDefaultIdIndexSpec(
 //删除表下面的所有索引，只是清除内存中缓存的
 void IndexCatalogImpl::dropAllIndexes(OperationContext* opCtx,
                                       bool includingIdIndex,
+                                      //是否需要清除id索引，如果是删表，则需要清除
+                                      //如果是删除所有的索引信息db.collection.dropIndexes()则需要留下id索引
                                       std::map<std::string, BSONObj>* droppedIndexes) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().toString(), MODE_X));
 
@@ -983,6 +1012,9 @@ void IndexCatalogImpl::dropAllIndexes(OperationContext* opCtx,
             seen++;
             IndexDescriptor* desc = ii.next();
             if (desc->isIdIndex() && includingIdIndex == false) {
+				//如果includingIdIndex为false，ID索引不用清理
+				//是否需要清除id索引，如果是删表，则需要清除
+                //如果是删除所有的索引信息db.collection.dropIndexes()则需要留下id索引
                 haveIdIndex = true;
                 continue;
             }
@@ -998,6 +1030,7 @@ void IndexCatalogImpl::dropAllIndexes(OperationContext* opCtx,
         LOG(1) << "\t dropAllIndexes dropping: " << desc->toString();
         IndexCatalogEntry* entry = _entries.find(desc);
         invariant(entry);
+		//删除底层索引，包括该索引对应缓存 CatalogEntry等
         _dropIndex(opCtx, entry).transitional_ignore();
 
         if (droppedIndexes != nullptr) {
@@ -1006,16 +1039,19 @@ void IndexCatalogImpl::dropAllIndexes(OperationContext* opCtx,
     }
 
     // verify state is sane post cleaning
-
+	//获取当前内存中还有多少索引信息
     long long numIndexesInCollectionCatalogEntry =
         _collection->getCatalogEntry()->getTotalIndexCount(opCtx);
 
+	//如果id索引不用清理，则_entries只会剩下id索引一个
     if (haveIdIndex) {
         fassert(17324, numIndexesTotal(opCtx) == 1);
         fassert(17325, numIndexesReady(opCtx) == 1);
         fassert(17326, numIndexesInCollectionCatalogEntry == 1);
         fassert(17336, _entries.size() == 1);
     } else {
+    	//如果id索引也删除了，理论上就不应该剩下任何一个可用索引了
+    	//如果还剩下由entries索引，则说明异常了
         if (numIndexesTotal(opCtx) || numIndexesInCollectionCatalogEntry || _entries.size()) {
             error() << "About to fassert - "
                     << " numIndexesTotal(): " << numIndexesTotal(opCtx)
@@ -1030,6 +1066,8 @@ void IndexCatalogImpl::dropAllIndexes(OperationContext* opCtx,
     }
 }
 
+//DatabaseImpl::dropCollectionEvenIfSystem调用
+//CmdDropIndexes::run->dropIndexes->wrappedRun->IndexCatalogImpl::dropIndex删索引命令调用
 Status IndexCatalogImpl::dropIndex(OperationContext* opCtx, IndexDescriptor* desc) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().toString(), MODE_X));
     IndexCatalogEntry* entry = _entries.find(desc);
@@ -1042,6 +1080,7 @@ Status IndexCatalogImpl::dropIndex(OperationContext* opCtx, IndexDescriptor* des
 
     BackgroundOperation::assertNoBgOpInProgForNs(_collection->ns().ns());
 
+	//下面的接口做真正的索引删除
     return _dropIndex(opCtx, entry);
 }
 
@@ -1054,7 +1093,13 @@ public:
                       IndexCatalogEntry* entry)
         : _opCtx(opCtx), _collection(collection), _entries(entries), _entry(entry) {}
 
-    void commit() final {
+	//IndexRemoveChange commit负责清除IndexCatalogImpl._entries[]数组中对应的索引IndexCatalogEntryImpl
+    //RemoveIndexChange commit负责真正的索引文件清除
+
+
+	//例如删除索引CmdDropIndexes::run->dropIndexes->wrappedRun->IndexCatalogImpl::dropIndex删索引命令调用
+	//commit最终在CmdDropIndexes::run中的wunit.commit()调用
+	void commit() final {
         // Ban reading from this collection on committed reads on snapshots before now.
         auto replCoord = repl::ReplicationCoordinator::get(_opCtx);
         auto snapshotName = replCoord->reserveSnapshotName(_opCtx);
@@ -1076,6 +1121,10 @@ private:
 };
 }  // namespace
 
+//CmdDropIndexes::run->dropIndexes->wrappedRun->IndexCatalogImpl::dropIndex->IndexCatalogImpl::_dropIndex删索引命令调用
+
+//IndexCatalogImpl::dropAllIndexes IndexCatalogImpl::dropIndex  IndexCatalogImpl::IndexBuildBlock::fail()调用
+//真正的索引删除，包括内存缓存的索引和磁盘索引文件
 Status IndexCatalogImpl::_dropIndex(OperationContext* opCtx, IndexCatalogEntry* entry) {
     /**
      * IndexState in order
@@ -1108,11 +1157,15 @@ Status IndexCatalogImpl::_dropIndex(OperationContext* opCtx, IndexCatalogEntry* 
     }
 
     // --------- START REAL WORK ----------
+    //审计日志
     audit::logDropIndex(&cc(), indexName, _collection->ns().ns());
 
+	//从缓存_entries数组中清除该entry，删除该entry
     invariant(_entries.release(entry->descriptor()) == entry);
     opCtx->recoveryUnit()->registerChange(
+		//IndexRemoveChange commit负责清除IndexCatalogImpl._entries[]数组中对应的索引IndexCatalogEntryImpl
         new IndexRemoveChange(opCtx, _collection, &_entries, entry));
+	//从内存中清除该表对应的indexName索引
     _collection->infoCache()->droppedIndex(opCtx, indexName);
     entry = nullptr;
     _deleteIndexFromDisk(opCtx, indexName, indexNamespace);
@@ -1123,6 +1176,9 @@ Status IndexCatalogImpl::_dropIndex(OperationContext* opCtx, IndexCatalogEntry* 
     return Status::OK();
 }
 
+//CmdDropIndexes::run->dropIndexes->wrappedRun->IndexCatalogImpl::dropIndex->IndexCatalogImpl::_dropIndex删索引命令调用
+
+//删除磁盘索引文件信息,并从wt元数据中清除
 void IndexCatalogImpl::_deleteIndexFromDisk(OperationContext* opCtx,
                                             const string& indexName,
                                             const string& indexNamespace) {
@@ -1141,6 +1197,9 @@ void IndexCatalogImpl::_deleteIndexFromDisk(OperationContext* opCtx,
 // "Leftover" means they were unfinished when a mongod shut down.
 // Certain operations are prohibited until someone fixes.
 // Retrieve by calling getAndClearUnfinishedIndexes().
+
+//restartInProgressIndexesFromLastShutdown->checkNS调用
+//当真正运行添加某个索引得时候，如果这时候实例挂掉，当实例重启后需要调用该接口先删除索引,然后再checkNS重构索引
 vector<BSONObj> IndexCatalogImpl::getAndClearUnfinishedIndexes(OperationContext* opCtx) {
     vector<BSONObj> toReturn = _unfinishedIndexes;
     _unfinishedIndexes.clear();
@@ -1155,12 +1214,14 @@ vector<BSONObj> IndexCatalogImpl::getAndClearUnfinishedIndexes(OperationContext*
     return toReturn;
 }
 
+//判断指定索引是否是Multikey类型
 bool IndexCatalogImpl::isMultikey(OperationContext* opCtx, const IndexDescriptor* idx) {
     IndexCatalogEntry* entry = _entries.find(idx);
     invariant(entry);
     return entry->isMultikey();
 }
 
+//获取指定索引对应的MultikeyPaths
 MultikeyPaths IndexCatalogImpl::getMultikeyPaths(OperationContext* opCtx,
                                                  const IndexDescriptor* idx) {
     IndexCatalogEntry* entry = _entries.find(idx);
@@ -1169,7 +1230,7 @@ MultikeyPaths IndexCatalogImpl::getMultikeyPaths(OperationContext* opCtx,
 }
 
 // ---------------------------
-
+//该表是否有至少有一个索引
 bool IndexCatalogImpl::haveAnyIndexes() const {
     return _entries.size() != 0;
 }
@@ -1181,6 +1242,8 @@ int IndexCatalogImpl::numIndexesTotal(OperationContext* opCtx) const {
     return count;
 }
 
+//当前已经执行完成的索引
+//numIndexesInProgress中调用
 int IndexCatalogImpl::numIndexesReady(OperationContext* opCtx) const {
     int count = 0;
     IndexIterator ii = _this->getIndexIterator(opCtx, /*includeUnfinished*/ false);
@@ -1422,7 +1485,15 @@ const IndexCatalogEntry* IndexCatalogImpl::getEntry(const IndexDescriptor* desc)
     return entry;
 }
 
+/*
+该方法给集合添加一个标识，来修改集合的行为。 标识包含usePowerOf2Sizes和index。
 
+命令格式为：
+
+db.runCommand({"collMod":<collection>,"<flag>":<value>})
+
+*/
+//_collModInternal中调用， 先跳过
 const IndexDescriptor* IndexCatalogImpl::refreshEntry(OperationContext* opCtx,
                                                       const IndexDescriptor* oldDesc) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_X));
@@ -1440,6 +1511,7 @@ const IndexDescriptor* IndexCatalogImpl::refreshEntry(OperationContext* opCtx,
 
     // Delete the IndexCatalogEntry that owns this descriptor.  After deletion, 'oldDesc' is
     // invalid and should not be dereferenced.
+    //从_entries数组清除oldDesc
     IndexCatalogEntry* oldEntry = _entries.release(oldDesc);
     opCtx->recoveryUnit()->registerChange(
         new IndexRemoveChange(opCtx, _collection, &_entries, oldEntry));
@@ -1461,7 +1533,8 @@ const IndexDescriptor* IndexCatalogImpl::refreshEntry(OperationContext* opCtx,
 }
 
 // ---------------------------
-//IndexCatalogImpl::_indexRecords
+//IndexCatalogImpl::_indexRecords调用，
+//把bsonRecords对应的索引KV数据写入存储引擎
 Status IndexCatalogImpl::_indexFilteredRecords(OperationContext* opCtx,
                                                IndexCatalogEntry* index,
                                                const std::vector<BsonRecord>& bsonRecords,
@@ -1487,16 +1560,20 @@ Status IndexCatalogImpl::_indexFilteredRecords(OperationContext* opCtx,
 }
 
 //IndexCatalogImpl::indexRecords
+//把bsonRecords对应的索引KV(如果需要过滤，则提前过滤)数据写入存储引擎
 Status IndexCatalogImpl::_indexRecords(OperationContext* opCtx,
                                        IndexCatalogEntry* index,
                                        const std::vector<BsonRecord>& bsonRecords,
                                        int64_t* keysInsertedOut) {
-    const MatchExpression* filter = index->getFilterExpression();
-    if (!filter)
+    //基于age列创建大于25岁的部分索引 db.persons.createIndex({country:1},{partialFilterExpression: {age: {$gt:25}}})                                   
+	const MatchExpression* filter = index->getFilterExpression();
+    if (!filter)  //普通索引，也就是不带partialFilterExpression
         return _indexFilteredRecords(opCtx, index, bsonRecords, keysInsertedOut);
 
+	//携带有partialFilterExpression参数的索引
     std::vector<BsonRecord> filteredBsonRecords;
     for (auto bsonRecord : bsonRecords) {
+		//只把满足partialFilterExpression条件的doc添加到filteredBsonRecords，然后写入存储引擎
         if (filter->matchesBSON(*(bsonRecord.docPtr)))
             filteredBsonRecords.push_back(bsonRecord);
     }
@@ -1504,6 +1581,8 @@ Status IndexCatalogImpl::_indexRecords(OperationContext* opCtx,
     return _indexFilteredRecords(opCtx, index, filteredBsonRecords, keysInsertedOut);
 }
 
+//删除loc对应的index索引数据
+//IndexCatalogImpl::unindexRecord调用
 Status IndexCatalogImpl::_unindexRecord(OperationContext* opCtx,
                                         IndexCatalogEntry* index,
                                         const BSONObj& obj,
@@ -1539,6 +1618,7 @@ Status IndexCatalogImpl::_unindexRecord(OperationContext* opCtx,
 
 //CollectionImpl::_insertDocuments中调用执行
 //WiredTigerRecordStore::insertRecords 普通插入   IndexCatalogImpl::indexRecords 索引插入
+//写索引数据
 Status IndexCatalogImpl::indexRecords(OperationContext* opCtx,
                                       const std::vector<BsonRecord>& bsonRecords,
                                       int64_t* keysInsertedOut) {
@@ -1556,6 +1636,7 @@ Status IndexCatalogImpl::indexRecords(OperationContext* opCtx,
     return Status::OK();
 }
 
+//CollectionImpl::deleteDocument调用，删除数据loc对应的索引KV数据
 void IndexCatalogImpl::unindexRecord(OperationContext* opCtx,
                                      const BSONObj& obj,
                                      const RecordId& loc,
@@ -1565,16 +1646,19 @@ void IndexCatalogImpl::unindexRecord(OperationContext* opCtx,
         *keysDeletedOut = 0;
     }
 
+	//删除该数据对应的所有索引KV
     for (IndexCatalogEntryContainer::const_iterator i = _entries.begin(); i != _entries.end();
          ++i) {
         IndexCatalogEntry* entry = i->get();
 
         // If it's a background index, we DO NOT want to log anything.
         bool logIfError = entry->isReady(opCtx) ? !noWarn : false;
+		//删除loc对应的index索引数据
         _unindexRecord(opCtx, entry, obj, loc, logIfError, keysDeletedOut).transitional_ignore();
     }
 }
 
+//IndexCatalogImpl::_fixIndexSpec中调用
 BSONObj IndexCatalogImpl::fixIndexKey(const BSONObj& key) {
     if (IndexDescriptor::isIdIndexPattern(key)) {
         return _idObj;
@@ -1607,7 +1691,7 @@ void IndexCatalogImpl::prepareInsertDeleteOptions(OperationContext* opCtx,
     }
 }
 
-//
+//从spec中获取索引信息,然后以bson格式返回
 StatusWith<BSONObj> IndexCatalogImpl::_fixIndexSpec(OperationContext* opCtx,
                                                     Collection* collection,
                                                     const BSONObj& spec) {

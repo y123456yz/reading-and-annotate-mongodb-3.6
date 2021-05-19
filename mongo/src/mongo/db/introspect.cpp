@@ -172,6 +172,7 @@ Status createProfileCollection(OperationContext* opCtx, Database* db) {
 
     const std::string dbProfilingNS(db->getProfilingNS());
 
+	//慢日志表已存在，直接返回
     Collection* const collection = db->getCollection(opCtx, dbProfilingNS);
     if (collection) {
         if (!collection->isCapped()) {
@@ -185,10 +186,16 @@ Status createProfileCollection(OperationContext* opCtx, Database* db) {
     // system.profile namespace doesn't exist; create it
     log() << "Creating profile collection: " << dbProfilingNS;
 
+	//创建固定集合，集合大小1M
+	//可以通过如下方式重新创建system.profile慢日志表:
+	//> db.system.profile.drop()
+	//> db.createCollection("system.profile",{capped:true, size: 1000000})
+	//
     CollectionOptions collectionOptions;
     collectionOptions.capped = true;
     collectionOptions.cappedSize = 1024 * 1024;
 
+	//
     WriteUnitOfWork wunit(opCtx);
     repl::UnreplicatedWritesBlock uwb(opCtx);
     invariant(db->createCollection(opCtx, dbProfilingNS, collectionOptions));

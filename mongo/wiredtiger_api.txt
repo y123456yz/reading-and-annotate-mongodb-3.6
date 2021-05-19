@@ -16,7 +16,7 @@ wiredtiger/wiredtiger_session_cache.cpp
 invariantWTOK(conn->open_session(conn, NULL, "isolation=snapshot", &_session));
 
 
-步骤3：session和指定表或者索引关联
+步骤3：session和指定表或者索引关联,建表或者建索引
 s->create:
 第一个地方
 wiredtiger/wiredtiger_kv_engine.cpp

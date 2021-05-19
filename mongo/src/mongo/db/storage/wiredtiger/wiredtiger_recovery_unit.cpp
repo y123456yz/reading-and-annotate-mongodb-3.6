@@ -274,6 +274,7 @@ void WiredTigerRecoveryUnit::_txnClose(bool commit) {
 
 SnapshotId WiredTigerRecoveryUnit::getSnapshotId() const {
     // TODO: use actual wiredtiger txn id
+    //WiredTigerRecoveryUnit::WiredTigerRecoveryUnit和WiredTigerRecoveryUnit::_txnClose完成ID自增
     return SnapshotId(_mySnapshotId);
 }
 
@@ -329,6 +330,19 @@ void WiredTigerRecoveryUnit::_txnOpen() { //begin_transaction在该函数中
     _active = true;
 }
 
+/*
+当 Server 层收到一条 insert 操作后，会提前调用 LocalOplogInfo::getNextOpTimes() 来给其即将要写的 
+oplog entry 生成 ts 值，获取这个 ts 是需要加锁的，避免并发的写操作产生同样的 ts。然后， Server 层
+会调用 WiredTigerRecoveryUnit::setTimestamp 开启 WiredTiger 引擎层的事务，并且把这个事务中后续写操
+作的 commit_ts 都设置为 oplog entry 的 ts，insert 操作在引擎层执行完成后，会把其对应的 oplog entry 
+也通过同一事务写到 WiredTiger Table 中，之后事务才提交。
+
+也就是说 MongoDB 是通过把写 oplog 和写操作放到同一个事务中，来保证复制日志和实际数据之间的一致性，
+同时也确保了，oplog entry ts 和写操作本身所产生修改的版本号是一致的。
+参考: https://mongoing.com/archives/77853
+*/
+
+//commit_timestamp，指的是被大多数节点应用到的日志的timestamp
 //WiredTigerRecordStore::_insertRecords  oplogDiskLocRegister中调用执行
 Status WiredTigerRecoveryUnit::setTimestamp(Timestamp timestamp) {
     _ensureSession();
@@ -347,6 +361,8 @@ Status WiredTigerRecoveryUnit::setTimestamp(Timestamp timestamp) {
     return wtRCToStatus(rc, "timestamp_transaction");
 }
 
+//配合WiredTigerRecoveryUnit::_txnOpen   WiredTigerRecoveryUnit::setTimestamp阅读
+//waitForReadConcern中调用
 Status WiredTigerRecoveryUnit::selectSnapshot(Timestamp timestamp) {
     _readAtTimestamp = timestamp;
     return Status::OK();

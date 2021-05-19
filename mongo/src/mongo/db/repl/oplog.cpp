@@ -672,6 +672,8 @@ OplogSlot getNextOpTime(OperationContext* opCtx) {
     return os;
 }
 
+//参考https://mongoing.com/archives/77853
+//当 Server 层收到一条 insert 操作后，会提前调用 LocalOplogInfo::getNextOpTimes() 来给其即将要写的 oplog entry 生成 ts 值，获取这个 ts 是需要加锁的，避免并发的写操作产生同样的 ts。
 std::vector<OplogSlot> getNextOpTimes(OperationContext* opCtx, std::size_t count) {
     // The local oplog collection pointer must already be established by this point.
     // We can't establish it here because that would require locking the local database, which would

@@ -100,6 +100,7 @@ bool isMMAPV1() {
 }
 
 //mongo::userCreateNSImpl中调用，建表的时候存储引擎相关检查
+//存储引擎相关参数检测
 Status validateStorageOptions(
     const BSONObj& storageEngineOptions,
     stdx::function<Status(const StorageEngine::Factory* const, const BSONObj&)> validateFunc) {

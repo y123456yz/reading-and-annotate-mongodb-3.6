@@ -159,6 +159,22 @@ void CollectionInfoCacheImpl::computeIndexKeys(OperationContext* opCtx) {
     _keysComputed = true;
 }
 
+/*
+调用的地方比较多:
+Count_cmd.cpp (mongo\src\mongo\db\commands):            collection->infoCache()->notifyOfQuery(opCtx, summaryStats.indexesUsed);
+Distinct.cpp (mongo\src\mongo\db\commands):            collection->infoCache()->notifyOfQuery(opCtx, stats.indexesUsed);
+Document_source_cursor.cpp (mongo\src\mongo\db\pipeline):        collection->infoCache()->notifyOfQuery(pExpCtx->opCtx, _planSummaryStats.indexesUsed);
+Find.cpp (mongo\src\mongo\db\query):        collection->infoCache()->notifyOfQuery(opCtx, summaryStats.indexesUsed);
+Find_and_modify.cpp (mongo\src\mongo\db\commands):                    collection->infoCache()->notifyOfQuery(opCtx, summaryStats.indexesUsed);
+Find_and_modify.cpp (mongo\src\mongo\db\commands):                    collection->infoCache()->notifyOfQuery(opCtx, summaryStats.indexesUsed);
+Geo_near_cmd.cpp (mongo\src\mongo\db\commands):        collection->infoCache()->notifyOfQuery(opCtx, summary.indexesUsed);
+Group_cmd.cpp (mongo\src\mongo\db\commands):            coll->infoCache()->notifyOfQuery(opCtx, summaryStats.indexesUsed);
+Mr.cpp (mongo\src\mongo\db\commands):                coll->infoCache()->notifyOfQuery(opCtx, stats.indexesUsed);
+Write_ops_exec.cpp (mongo\src\mongo\db\ops):        collection->getCollection()->infoCache()->notifyOfQuery(opCtx, summary.indexesUsed);
+Write_ops_exec.cpp (mongo\src\mongo\db\ops):        collection.getCollection()->infoCache()->notifyOfQuery(opCtx, summary.indexesUsed);
+*/
+//db.collection.aggregate({"$indexStats":{}})里面有对索引的统计
+//当前真在使用的索引统计
 void CollectionInfoCacheImpl::notifyOfQuery(OperationContext* opCtx,
                                             const std::set<std::string>& indexesUsed) {
     // Record indexes used to fulfill query.
@@ -167,11 +183,12 @@ void CollectionInfoCacheImpl::notifyOfQuery(OperationContext* opCtx,
         // index was dropped (and we would not get here).
         dassert(NULL != _collection->getIndexCatalog()->findIndexByName(opCtx, *it));
 
+		//CollectionIndexUsageTracker::recordIndexAccess
         _indexUsageTracker.recordIndexAccess(*it);
     }
 }
 
-//清除缓存的_planCache
+//清除缓存的_planCache  CollectionInfoCacheImpl::rebuildIndexData调用
 void CollectionInfoCacheImpl::clearQueryCache() {
     LOG(1) << _collection->ns().ns() << ": clearing plan cache - collection info cache reset";
     if (NULL != _planCache.get()) {
@@ -187,6 +204,8 @@ QuerySettings* CollectionInfoCacheImpl::getQuerySettings() const {
     return _querySettings.get();
 }
 
+//CollectionInfoCacheImpl::rebuildIndexData中调用
+//CollectionInfoCacheImpl::updatePlanCacheIndexEntries中完成IndexEntry和IndexDescriptor的转换
 void CollectionInfoCacheImpl::updatePlanCacheIndexEntries(OperationContext* opCtx) {
     std::vector<IndexEntry> indexEntries;
 
@@ -196,8 +215,10 @@ void CollectionInfoCacheImpl::updatePlanCacheIndexEntries(OperationContext* opCt
     IndexCatalog::IndexIterator ii =
         _collection->getIndexCatalog()->getIndexIterator(opCtx, includeUnfinishedIndexes);
     while (ii.more()) {
+		//获取索引信息
         const IndexDescriptor* desc = ii.next();
         const IndexCatalogEntry* ice = ii.catalogEntry(desc);
+		//完成IndexEntry和IndexDescriptor的转换
         indexEntries.emplace_back(desc->keyPattern(),
                                   desc->getAccessMethodName(),
                                   desc->isMultikey(opCtx),
@@ -210,10 +231,12 @@ void CollectionInfoCacheImpl::updatePlanCacheIndexEntries(OperationContext* opCt
                                   ice->getCollator());
     }
 
+	//PlanCache::notifyOfIndexEntries
     _planCache->notifyOfIndexEntries(indexEntries);
 }
 
 //CollectionImpl::init中调用
+//初始化该集合的planCache IndexEntry
 void CollectionInfoCacheImpl::init(OperationContext* opCtx) {
     // Requires exclusive collection lock.
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_X));
@@ -221,16 +244,19 @@ void CollectionInfoCacheImpl::init(OperationContext* opCtx) {
     const bool includeUnfinishedIndexes = false;
     IndexCatalog::IndexIterator ii =
         _collection->getIndexCatalog()->getIndexIterator(opCtx, includeUnfinishedIndexes);
-    while (ii.more()) {
+	//遍历该表的所有索引信息注册到_indexUsageTracker
+	while (ii.more()) {
         const IndexDescriptor* desc = ii.next();
         _indexUsageTracker.registerIndex(desc->indexName(), desc->keyPattern());
     }
 
+	//重新生产索引data 重新生成planCache的IndexEntry
     rebuildIndexData(opCtx);
 }
 
 //通过类似_collection->infoCache()->addedIndex(_opCtx, descriptorPtr);方式调用，参考IndexCatalogImpl::IndexBuildBlock::init()
 //IndexCatalogImpl::IndexBuildBlock::init()调用
+//新索引注册到_indexUsageTracker，表示该表新增了索引信息
 void CollectionInfoCacheImpl::addedIndex(OperationContext* opCtx, const IndexDescriptor* desc) {
     // Requires exclusive collection lock.
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_X));
@@ -241,6 +267,8 @@ void CollectionInfoCacheImpl::addedIndex(OperationContext* opCtx, const IndexDes
     _indexUsageTracker.registerIndex(desc->indexName(), desc->keyPattern());
 }
 
+//IndexCatalogImpl::_dropIndex调用
+//从_indexUsageTracker中注销索引
 void CollectionInfoCacheImpl::droppedIndex(OperationContext* opCtx, StringData indexName) {
     // Requires exclusive collection lock.
     invariant(opCtx->lockState()->isCollectionLockedForMode(_collection->ns().ns(), MODE_X));
@@ -249,6 +277,9 @@ void CollectionInfoCacheImpl::droppedIndex(OperationContext* opCtx, StringData i
     _indexUsageTracker.unregisterIndex(indexName);
 }
 
+//CollectionInfoCacheImpl::init   CollectionInfoCacheImpl::addedIndex   
+//CollectionInfoCacheImpl::droppedIndex调用
+//重新生成planCache的IndexEntry
 void CollectionInfoCacheImpl::rebuildIndexData(OperationContext* opCtx) {
 	//清除缓存的querycache
     clearQueryCache();
@@ -258,7 +289,10 @@ void CollectionInfoCacheImpl::rebuildIndexData(OperationContext* opCtx) {
     updatePlanCacheIndexEntries(opCtx);
 }
 
+//db.collection.aggregate({"$indexStats":{}})会用到
+//getIndexStats调用
 CollectionIndexUsageMap CollectionInfoCacheImpl::getIndexUsageStats() const {
+	//CollectionIndexUsageTracker::getUsageStats()
     return _indexUsageTracker.getUsageStats();
 }
 }  // namespace mongo

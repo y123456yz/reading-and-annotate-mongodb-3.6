@@ -77,6 +77,8 @@ S2_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, bt
 //参考http://www.mongoing.com/archives/1462，注意3.6代码结构有很大的变化
 //btree_key_generator.h[cpp] 该对象封装了一套解析解析算法，目的是解析出obj中的索引key
 
+//KVDatabasekv_database_catalog_entryCatalogEntry::getIndex中new对应method使用
+
 ////IndexCatalogEntryImpl._accessMethod为该类型
 //IndexCatalogImpl::_setupInMemoryStructures->KVDatabaseCatalogEntry::getIndex中确定使用那种method
 class IndexAccessMethod { //最终初始化赋值在IndexAccessMethod* KVDatabaseCatalogEntry::getIndex
@@ -349,6 +351,7 @@ private:
                       bool dupsAllowed);
 
     //IndexAccessMethod::IndexAccessMethod中初始化赋值，
+    //KVDatabasekv_database_catalog_entryCatalogEntry::getIndex中new对象
     //wiredtiger存储引擎对应WiredTigerIndexUnique
     //唯一索引WiredTigerIndexUnique    普通索引WiredTigerIndexStandard
     const std::unique_ptr<SortedDataInterface> _newInterface;

@@ -133,7 +133,7 @@ std::set<std::string> DatabaseHolderImpl::getNamesWithConflictingCasing(StringDa
     return _getNamesWithConflictingCasing_inlock(name);
 }
 
-//AutoGetOrCreateDb::AutoGetOrCreateDb调用，生成Database
+//AutoGetOrCreateDb::AutoGetOrCreateDb  OldClientContext::OldClientContext->OldClientContext::_finishInit()调用，生成Database
 //DatabaseHolderImpl::openDb创建DB，每个DB对应一个DatabaseImpl，
 //使用某个库的时候才会openDb，如果不使用么某个DB，即使存在也不会构造对应DatabaseImpl
 Database* DatabaseHolderImpl::openDb(OperationContext* opCtx, StringData ns, bool* justCreated) {

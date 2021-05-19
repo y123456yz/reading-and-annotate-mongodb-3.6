@@ -82,6 +82,9 @@ extern const std::string kWiredTigerEngineName;
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
 
+//WiredTigerIndexUnique(唯一索引文件操作)、WiredTigerIndexStandard(普通索引文件操作)
+//WiredTigerRecordStore(表数据文件操作)
+
 
 //默认使用StandardWiredTigerRecordStore，参考WiredTigerKVEngine::getGroupedRecordStore
 class WiredTigerRecordStore : public RecordStore { //代表一个表的统计
@@ -114,7 +117,7 @@ public:
                                                         const CollectionOptions& options,
                                                         StringData extraStrings,
                                                         bool prefixed);
-
+    //该RecordStore操作的表信息
     struct Params {
         StringData ns;
         std::string uri;

@@ -49,6 +49,8 @@ struct StorageGlobalParams;
 class StorageEngineLockFile;
 class StorageEngineMetadata;
 
+
+
 /**
  * The StorageEngine class is the top level interface for creating a new storage
  * engine.  All StorageEngine(s) must be registered by calling registerFactory in order
@@ -69,7 +71,7 @@ StorageEngine¶¨ÒåÁËÒ»ÏµÁĞMongdb´æ´¢ÒıÇæĞèÒªÊµÏÖµÄ½Ó¿Ú£¬ÊÇÒ»¸ö½Ó¿ÚÀà£¬ËùÓĞµÄ´æ´¢Ò
 //ServiceContextMongoD::initializeGlobalStorageEngine()ÖĞ¸ù¾İ²»Í¬ÅäÖÃÑ¡Ôñ²»Í¬storageEngine
 
 //ServiceContextMongoD._storageEngine³ÉÔ±ÀàĞÍÎª¸ÃÀàĞÍ£¬
-//KVStorageEngine MMAPV1Engine DevNullStorageEngineFactory¼Ì³Ğ¸ÃÀà£¬ÀıÈçWTÔòÔÚWiredTigerFactory::createÖĞnew¸ÃÀà 
+//KVStorageEngine MMAPV1Engine ÀıÈçWTÔòÔÚWiredTigerFactory::createÖĞnew¸ÃÀà 
 class StorageEngine {
 public:
     /**
@@ -362,6 +364,7 @@ public:
     virtual void replicationBatchIsComplete() const {};
 
     // (CollectionName, IndexName)
+    //KVStorageEngine::reconcileCatalogAndIdentsÖĞÊ¹ÓÃ
     typedef std::pair<std::string, std::string> CollectionIndexNamePair;
 
     /**
