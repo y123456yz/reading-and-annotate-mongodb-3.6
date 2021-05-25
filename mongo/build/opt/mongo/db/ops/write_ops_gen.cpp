@@ -14,19 +14,6 @@
 
 namespace mongo {
 namespace write_ops {
-/*
-//参考 mongodb字段验证规则（schema validation）
-//https://www.cnblogs.com/itxiaoqiang/p/5538287.html   是否验证schema
-static constexpr auto kBypassDocumentValidationFieldName = "bypassDocumentValidation"_sd;
-//ordered一般针对insert_many bulk_write  这个参数为True时，迫使MongoDB按顺序同步插入数据；
-//而如果为False，则MongoDB会并发的不按固定顺序进行批量插入。显然当我们对性能有要求时，
-//将该参数设为False是非常必要的。
-static constexpr auto kOrderedFieldName = "ordered"_sd;
-//对应请求里每个操作（以insert为例，一个insert命令可以插入多个文档）操作ID
-static constexpr auto kStmtIdsFieldName = "stmtIds"_sd;
-*/
-
-//该文件主要实现从OpMsgRequest中解析出write_ops::Insert write_ops::Update write_ops::Delete类相关成员信息
 
 constexpr StringData WriteCommandBase::kBypassDocumentValidationFieldName;
 constexpr StringData WriteCommandBase::kOrderedFieldName;
@@ -49,22 +36,17 @@ void WriteCommandBase::parseProtected(const IDLParserErrorContext& ctxt, const B
         const auto fieldName = element.fieldNameStringData();
 
         auto push_result = usedFields.insert(fieldName);
-		//有重复的elem
         if (MONGO_unlikely(push_result.second == false)) {
             ctxt.throwDuplicateField(fieldName);
         }
 
         if (fieldName == kBypassDocumentValidationFieldName) {
             if (MONGO_likely(ctxt.checkAndAssertTypes(element, {Bool, NumberLong, NumberInt, NumberDecimal, NumberDouble}))) {
-				//https://www.cnblogs.com/itxiaoqiang/p/5538287.html   是否验证schema
-				_bypassDocumentValidation = element.trueValue();
+                _bypassDocumentValidation = element.trueValue();
             }
         }
         else if (fieldName == kOrderedFieldName) {
             if (MONGO_likely(ctxt.checkAndAssertType(element, Bool))) {
-				//ordered一般针对insert_many bulk_write  这个参数为True时，迫使MongoDB按顺序同步插入数据；
-				//而如果为False，则MongoDB会并发的不按固定顺序进行批量插入。显然当我们对性能有要求时，
-				//将该参数设为False是非常必要的。
                 _ordered = element.boolean();
             }
         }
@@ -93,7 +75,6 @@ void WriteCommandBase::parseProtected(const IDLParserErrorContext& ctxt, const B
                 }
                 ++expectedFieldNumber;
             }
-			//对应请求里每个操作（以insert为例，一个insert命令可以插入多个文档）操作ID
             _stmtIds = std::move(values);
         }
     }
@@ -108,7 +89,7 @@ void WriteCommandBase::parseProtected(const IDLParserErrorContext& ctxt, const B
 
 }
 
-//序列化
+
 void WriteCommandBase::serialize(BSONObjBuilder* builder) const {
     builder->append(kBypassDocumentValidationFieldName, _bypassDocumentValidation);
 
@@ -120,7 +101,7 @@ void WriteCommandBase::serialize(BSONObjBuilder* builder) const {
 
 }
 
-//转换为bson
+
 BSONObj WriteCommandBase::toBSON() const {
     BSONObjBuilder builder;
     serialize(&builder);
@@ -144,21 +125,6 @@ UpdateOpEntry UpdateOpEntry::parse(const IDLParserErrorContext& ctxt, const BSON
     object.parseProtected(ctxt, bsonObject);
     return object;
 }
-
-/*
- db.collection.update(
-   <query>,
-   <update>,
-   {
-     upsert: <boolean>,
-     multi: <boolean>,
-     writeConcern: <document>,
-     collation: <document>,
-     arrayFilters: [ <filterdocument1>, ... ]
-   }
-)
-*/
-//UpdateOpEntry::parse中调用，从obj中解析除UpdateOpEntry
 void UpdateOpEntry::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     std::bitset<6> usedFields;
     const size_t kQBit = 0;
@@ -285,7 +251,7 @@ void UpdateOpEntry::parseProtected(const IDLParserErrorContext& ctxt, const BSON
 
 }
 
-//序列化UpdateOpEntry到builder
+
 void UpdateOpEntry::serialize(BSONObjBuilder* builder) const {
     invariant(_hasQ && _hasU);
 
@@ -307,7 +273,7 @@ void UpdateOpEntry::serialize(BSONObjBuilder* builder) const {
 
 }
 
-//UpdateOpEntry转换为bson
+
 BSONObj UpdateOpEntry::toBSON() const {
     BSONObjBuilder builder;
     serialize(&builder);
@@ -439,11 +405,8 @@ Insert Insert::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObjec
     object.parseProtected(ctxt, bsonObject);
     return object;
 }
-
-//从bsonObject中解析出Insert类成员信息 3.6以下低版本用这个，新版本用opMsg，参考后面的类接口实现
 void Insert::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
-	//重复性检查
-	std::bitset<6> usedFields;
+    std::bitset<6> usedFields;
     const size_t kBypassDocumentValidationBit = 0;
     const size_t kOrderedBit = 1;
     const size_t kStmtIdsBit = 2;
@@ -452,17 +415,15 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bs
     BSONElement commandElement;
     bool firstFieldFound = false;
 
-	//解析出insert类的对应成员信息
     for (const auto& element :bsonObject) {
         const auto fieldName = element.fieldNameStringData();
-       
+
         if (firstFieldFound == false) {
             commandElement = element;
             firstFieldFound = true;
             continue;
         }
 
-		//insert参数列表
         if (fieldName == kBypassDocumentValidationFieldName) {
             if (MONGO_unlikely(usedFields[kBypassDocumentValidationBit])) {
                 ctxt.throwDuplicateField(element);
@@ -490,7 +451,6 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bs
 
             // ignore field
         }
-		//真正的文档内容
         else if (fieldName == kDocumentsFieldName) {
             if (MONGO_unlikely(usedFields[kDocumentsBit])) {
                 ctxt.throwDuplicateField(element);
@@ -543,11 +503,9 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bs
             }
         }
     }
-
-	//从bsonObject中解析出_writeCommandBase成员内容
     _writeCommandBase = WriteCommandBase::parse(ctxt, bsonObject);
 
-	//判断是否有重复的
+
     if (MONGO_unlikely(!usedFields.all())) {
         if (!usedFields[kDocumentsBit]) {
             ctxt.throwMissingField(kDocumentsFieldName);
@@ -558,19 +516,15 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bs
     }
 
     invariant(_nss.isEmpty());
-	//根据db+collection构造出db.collection字符串
     _nss = ctxt.parseNSCollectionRequired(_dbName, commandElement);
 }
 
-//从request中解析出Insert类成员信息,3.6版本开始使用opMsg
 Insert Insert::parse(const IDLParserErrorContext& ctxt, const OpMsgRequest& request) {
     NamespaceString localNS;
     Insert object(localNS);
     object.parseProtected(ctxt, request);
     return object;
 }
-
-//从request中解析出Insert类成员信息,3.6版本开始使用opMsg
 void Insert::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgRequest& request) {
     std::bitset<6> usedFields;
     const size_t kBypassDocumentValidationBit = 0;
@@ -581,7 +535,6 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgReques
     BSONElement commandElement;
     bool firstFieldFound = false;
 
-	//文档内容以外的选项解析
     for (const auto& element :request.body) {
         const auto fieldName = element.fieldNameStringData();
 
@@ -670,10 +623,9 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgReques
             }
         }
     }
-	//从request中解析出_writeCommandBase成员内容
     _writeCommandBase = WriteCommandBase::parse(ctxt, request.body);
 
-	//sequences信息解析
+
     for (auto&& sequence : request.sequences) {
 
         if (sequence.name == kDocumentsFieldName) {
@@ -696,7 +648,6 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgReques
         }
     }
 
-	//去重判断
     if (MONGO_unlikely(!usedFields.all())) {
         if (!usedFields[kDocumentsBit]) {
             ctxt.throwMissingField(kDocumentsFieldName);
@@ -707,7 +658,6 @@ void Insert::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgReques
     }
 
     invariant(_nss.isEmpty());
-	//根据db+collection构造出db.collection字符串
     _nss = ctxt.parseNSCollectionRequired(_dbName, commandElement);
 }
 
@@ -785,22 +735,16 @@ const std::vector<StringData> Update::_knownFields {
     Update::kCommandName,
 };
 
-//Update构造初始化
 Update::Update(const NamespaceString nss) : _nss(std::move(nss)), _dbName(nss.db().toString()), _hasUpdates(false), _hasDbName(true) {
     // Used for initialization only
 }
 
-//从bsonObject中解析除Update成员信息
 Update Update::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     NamespaceString localNS;
     Update object(localNS);
-	//Update::parseProtected
     object.parseProtected(ctxt, bsonObject);
     return object;
 }
-
-//上面的Update::parse调用解析
-//从bsonObject中解析除Update成员信息
 void Update::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     std::bitset<6> usedFields;
     const size_t kBypassDocumentValidationBit = 0;
@@ -923,8 +867,6 @@ Update Update::parse(const IDLParserErrorContext& ctxt, const OpMsgRequest& requ
     object.parseProtected(ctxt, request);
     return object;
 }
-
-//从OpMsgRequest中解析除Update信息
 void Update::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgRequest& request) {
     std::bitset<6> usedFields;
     const size_t kBypassDocumentValidationBit = 0;
@@ -1064,7 +1006,6 @@ void Update::parseProtected(const IDLParserErrorContext& ctxt, const OpMsgReques
     _nss = ctxt.parseNSCollectionRequired(_dbName, commandElement);
 }
 
-//把update和commandPassthroughFields序列号到
 void Update::serialize(const BSONObj& commandPassthroughFields, BSONObjBuilder* builder) const {
     invariant(_hasUpdates && _hasDbName);
 
@@ -1072,20 +1013,17 @@ void Update::serialize(const BSONObj& commandPassthroughFields, BSONObjBuilder* 
     builder->append("update", _nss.coll());
 
     {
-		//_writeCommandBase序列化
         _writeCommandBase.serialize(builder);
     }
 
-    {	
-		//_updates序列化
+    {
         BSONArrayBuilder arrayBuilder(builder->subarrayStart(kUpdatesFieldName));
         for (const auto& item : _updates) {
             BSONObjBuilder subObjBuilder(arrayBuilder.subobjStart());
             item.serialize(&subObjBuilder);
         }
     }
-	
-	//commandPassthroughFields序列化到builder
+
     IDLParserErrorContext::appendGenericCommandArguments(commandPassthroughFields, _knownFields, builder);
 
 }

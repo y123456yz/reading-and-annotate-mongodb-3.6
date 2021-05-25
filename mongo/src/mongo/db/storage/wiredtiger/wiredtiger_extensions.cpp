@@ -63,6 +63,7 @@ WiredTigerExtensions* WiredTigerExtensions::get(ServiceContext* service) {
 }
 
 std::string WiredTigerExtensions::getOpenExtensionsConfig() const {
+	//只有extensionConfigStr配置后才有效
     if (_wtExtensions.size() == 0) {
         return "";
     }

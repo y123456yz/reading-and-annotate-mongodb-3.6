@@ -228,7 +228,11 @@ void WiredTigerSizeStorer::fillCache() {
             invariantWTOK(_cursor->get_value(_cursor, &value));
             std::string uriKey(reinterpret_cast<const char*>(key.data), key.size);
             BSONObj data(reinterpret_cast<const char*>(value.data));
-
+//2021-03-21T15:49:40.241+0800 D STORAGE  [initandlisten] WiredTigerSizeStorer::loadFrom table:test1/collection/10-6892114551408726769 -> { numRecords: 4, dataSize: 261 }
+//2021-03-21T15:49:40.241+0800 D STORAGE  [initandlisten] WiredTigerSizeStorer::loadFrom table:test1/collection/2-6892114551408726769 -> { numRecords: 2, dataSize: 137 }
+//2021-03-21T15:49:40.241+0800 D STORAGE  [initandlisten] WiredTigerSizeStorer::loadFrom table:test1/collection/4-6892114551408726769 -> { numRecords: 1, dataSize: 68 }
+//2021-03-21T15:49:40.241+0800 D STORAGE  [initandlisten] WiredTigerSizeStorer::loadFrom table:test1/collection/6-6892114551408726769 -> { numRecords: 1, dataSize: 69 }
+//2021-03-21T15:49:40.241+0800 D STORAGE  [initandlisten] WiredTigerSizeStorer::loadFrom table:test1/collection/8-6892114551408726769 -> { numRecords: 2, dataSize: 306 }
             LOG(2) << "WiredTigerSizeStorer::loadFrom " << uriKey << " -> " << redact(data);
 
             Entry& e = m[uriKey];

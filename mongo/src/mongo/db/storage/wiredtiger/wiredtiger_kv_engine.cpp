@@ -527,6 +527,21 @@ WiredTigerKVEngine::~WiredTigerKVEngine() {
     _sessionCache.reset(NULL);
 }
 
+/*
+opush_gQmJGvRW_shard_1:PRIMARY> db.serverStatus().wiredTiger.concurrentTransactions
+{
+        "write" : {
+                "out" : 0,
+                "available" : 128,
+                "totalTickets" : 128
+        },
+        "read" : {
+                "out" : 1,
+                "available" : 127,
+                "totalTickets" : 128
+        }
+}
+*/
 //db.serverStatus().wiredTiger.concurrentTransactions√¸¡ÓªÒ»°
 void WiredTigerKVEngine::appendGlobalStats(BSONObjBuilder& b) {
     BSONObjBuilder bb(b.subobjStart("concurrentTransactions"));

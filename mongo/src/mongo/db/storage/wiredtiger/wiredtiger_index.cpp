@@ -1488,8 +1488,10 @@ SortedDataBuilderInterface* WiredTigerIndexStandard::getBulkBuilder(OperationCon
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
 //数据插入WiredTigerRecordStore::_insertRecords
 
-//WiredTigerIndex::insert中执行
+
 //唯一索引WiredTigerIndexUnique::_insert   普通索引WiredTigerIndexStandard::_insert
+
+//WiredTigerIndex::insert中调用执行
 Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
                                         const BSONObj& keyBson,
                                         const RecordId& id,
@@ -1501,8 +1503,8 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
 	//log(1) << "yang test WiredTigerIndexStandard::_insert key: " << redact(&keyBson);
 
 
-	//auto& keyBson1 = keyBson;
-	//log() << "yang test WiredTigerIndexStandard::_insert" << " value:" << redact(keyBson1);
+	auto& keyBson1 = keyBson;
+	log() << "yang test WiredTigerIndexStandard::_insert"  << "index key:" << redact(keyBson1) <<"index value:" << id.repr();
 	
     KeyString key(keyStringVersion(), keyBson, _ordering, id);
     WiredTigerItem keyItem(key.getBuffer(), key.getSize());
@@ -1513,6 +1515,7 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
 
     setKey(c, keyItem.Get());
     c->set_value(c, valueItem.Get());
+	//log() << "yang test ...WiredTigerIndexStandard::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
     int ret = WT_OP_CHECK(c->insert(c));
 
     if (ret != WT_DUPLICATE_KEY)

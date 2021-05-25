@@ -115,6 +115,7 @@ KVCollectionCatalogEntry::KVCollectionCatalogEntry(KVEngine* engine,
 KVCollectionCatalogEntry::~KVCollectionCatalogEntry() {}
 
 //IndexCatalogEntryImpl::setMultikey中调用，对indexname对应索引的multikey字段赋值
+//是否为Multikey Indexes索引类型，如果是则更新元数据
 bool KVCollectionCatalogEntry::setIndexIsMultikey(OperationContext* opCtx,
                                                   StringData indexName,
                                                   const MultikeyPaths& multikeyPaths) {

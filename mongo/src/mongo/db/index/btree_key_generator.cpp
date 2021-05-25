@@ -341,6 +341,7 @@ void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
                                       const BSONObj& obj,
                                       BSONObjSet* keys,
                                       MultikeyPaths* multikeyPaths) const {
+    //idË÷Òý
     if (_isIdIndex) {
         // we special case for speed
         BSONElement e = obj["_id"];

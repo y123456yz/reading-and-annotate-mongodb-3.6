@@ -77,6 +77,8 @@ Status WiredTigerEngineRuntimeConfigParameter::setFromString(const std::string& 
                        << pos));
     }
 
+	//db.adminCommand( { setParameter : 1, "wiredTigerEngineRuntimeConfig" : "cache_size=2GB" })
+	//Reconfiguring WiredTiger storage engine with config string: "cache_size=2GB"
     log() << "Reconfiguring WiredTiger storage engine with config string: \"" << str << "\"";
 
     int ret = _engine->reconfigure(str.c_str());

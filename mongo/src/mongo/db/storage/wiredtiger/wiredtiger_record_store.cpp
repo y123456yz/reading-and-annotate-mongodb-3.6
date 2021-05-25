@@ -1254,7 +1254,7 @@ Status WiredTigerRecordStore::_insertRecords(OperationContext* opCtx,
         setKey(c, record.id);
         WiredTigerItem value(record.data.data(), record.data.size());
 		//2021-03-24T10:58:46.762+0800 I STORAGE  [conn-1] yang test ...WiredTigerRecordStore::_insertRecords . _uri:table:test/collection/7-380857198902467499 key:RecordId(15) value:{ _id: ObjectId('605aaae6cd83d63c5a6bb264'), name1: 2223.0 }
-		//log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
+		log() << "yang test ...WiredTigerRecordStore::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
         c->set_value(c, value.Get());
         int ret = WT_OP_CHECK(c->insert(c));
         if (ret)

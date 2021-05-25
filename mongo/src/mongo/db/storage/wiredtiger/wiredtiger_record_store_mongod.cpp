@@ -73,7 +73,7 @@ public:
     /**
      * Returns true iff there was an oplog to delete from.
      */
-    
+    //WiredTigerRecordStoreThread::_deleteExcessDocuments
     //下面的WiredTigerRecordStoreThread::run线程循环体中运行
     bool _deleteExcessDocuments() {
         if (!getGlobalServiceContext()->getGlobalStorageEngine()) {
