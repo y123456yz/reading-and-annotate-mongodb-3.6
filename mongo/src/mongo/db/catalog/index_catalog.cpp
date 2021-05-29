@@ -93,6 +93,7 @@ BSONObj IndexCatalog::fixIndexKey(const BSONObj& key) {
 }
 
 namespace {
+	//对应impl为IndexCatalogImpl::prepareInsertDeleteOptions
 stdx::function<decltype(IndexCatalog::prepareInsertDeleteOptions)> prepareInsertDeleteOptionsImpl;
 }  // namespace
 
@@ -115,6 +116,7 @@ void IndexCatalog::prepareInsertDeleteOptions(OperationContext* const opCtx,
 
 void IndexCatalog::registerPrepareInsertDeleteOptionsImpl(
     stdx::function<decltype(prepareInsertDeleteOptions)> impl) {
+    //对应impl为IndexCatalogImpl::prepareInsertDeleteOptions
     prepareInsertDeleteOptionsImpl = std::move(impl);
 }
 }  // namespace mongo

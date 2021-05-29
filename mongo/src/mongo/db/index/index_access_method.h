@@ -81,6 +81,8 @@ S2_access_method.cpp (src\mongo\db\index):    : IndexAccessMethod(btreeState, bt
 
 ////IndexCatalogEntryImpl._accessMethod为该类型
 //IndexCatalogImpl::_setupInMemoryStructures->KVDatabaseCatalogEntry::getIndex中确定使用那种method
+
+//Btree_access_method等类继承该类
 class IndexAccessMethod { //最终初始化赋值在IndexAccessMethod* KVDatabaseCatalogEntry::getIndex
     MONGO_DISALLOW_COPYING(IndexAccessMethod);
 
@@ -291,6 +293,7 @@ public:
     /**
      * Specifies whether getKeys should relax the index constraints or not.
      */
+    //参考IndexCatalogImpl::prepareInsertDeleteOptions
     enum class GetKeysMode { kRelaxConstraints, kEnforceConstraints };
 
     /**
@@ -389,6 +392,7 @@ private:
 /**
  * Flags we can set for inserts and deletes (and updates, which are kind of both).
  */
+//结构成员赋值参考IndexCatalogImpl::prepareInsertDeleteOptions
 struct InsertDeleteOptions {
     // If there's an error, log() it.
     bool logIfError = false;

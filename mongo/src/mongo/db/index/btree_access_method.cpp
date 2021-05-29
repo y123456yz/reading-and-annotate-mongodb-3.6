@@ -61,6 +61,7 @@ BtreeAccessMethod::BtreeAccessMethod(IndexCatalogEntry* btreeState, SortedDataIn
         fixed.push_back(BSONElement());
     }
 
+	//一个索引对应一个BtreeKeyGenerator
     _keyGenerator = BtreeKeyGenerator::make(_descriptor->version(),
                                             fieldNames,
                                             fixed,
@@ -75,13 +76,15 @@ BtreeAccessMethod::BtreeAccessMethod(IndexCatalogEntry* btreeState, SortedDataIn
 //则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
 
 //IndexAccessMethod::getKeys->IndexAccessMethod::getKeys
-void BtreeAccessMethod::doGetKeys(const BSONObj& obj,
+void BtreeAccessMethod::doGetKeys(const BSONObj& obj,  //数据value
                                   BSONObjSet* keys,
                                   MultikeyPaths* multikeyPaths) const {
-    //BtreeKeyGenerator::getKeys
+    
     
 	//IndexAccessMethod::getKeys->IndexAccessMethod::getKeys->BtreeKeyGenerator::getKeys->BtreeKeyGeneratorV1::getKeysImpl
-    _keyGenerator->getKeys(obj, keys, multikeyPaths);
+
+	//BtreeKeyGenerator::getKeys
+	_keyGenerator->getKeys(obj, keys, multikeyPaths);
 }
 
 }  // namespace mongo

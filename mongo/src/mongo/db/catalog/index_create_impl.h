@@ -113,6 +113,7 @@ public:
      * Call this before init() to allow the index build to be interrupted.
      * This only affects builds using the insertAllDocumentsInCollection helper.
      */
+    //CmdCreateIndex::errmsgRun中调用
     void allowInterruption() override {
         _allowInterruption = true;
     }
@@ -226,11 +227,13 @@ private:
 
         //索引方法  btree  text 2d等，btree对应Btree_access_method
         //MultiIndexBlockImpl::insert中真正使用，索引数据对应KV写入存储引擎
-        //非阻塞加索引用这个
+        //非阻塞加索引用这个   
+        //MultiIndexBlockImpl::init中赋值,MultiIndexBlockImpl::insert中使用该real
         IndexAccessMethod* real = NULL;           // owned elsewhere
+        //createindex中的partialFilterExpression参数信息
         const MatchExpression* filterExpression;  // might be NULL, owned elsewhere
         //MultiIndexBlockImpl::insert中真正使用，建索引不带backgroud阻塞加索引会使用这个
-        //对应BulkBuilder
+        //对应BulkBuilder,
         std::unique_ptr<IndexAccessMethod::BulkBuilder> bulk;
 
         InsertDeleteOptions options;
@@ -248,8 +251,10 @@ private:
     OperationContext* _opCtx;
 
     //上面的allowBackgroundBuilding()赋值为true
+    //MultiIndexBlockImpl::init中根据建索引是否指定了backgroud参数进行赋值
     bool _buildInBackground; //后台建索引
-    //allowInterruption()赋值为true
+    //默认false,allowInterruption()赋值为true 
+    //代表加索引过程释放可以被killop干掉
     bool _allowInterruption;
     bool _ignoreUnique;
 

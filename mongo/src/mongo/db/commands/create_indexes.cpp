@@ -215,7 +215,8 @@ StatusWith<std::vector<BSONObj>>
  * any missing attributes were filled in; however, the returned index specifications will match the
  * form stored in the IndexCatalog should any of these indexes already exist.
  */
-StatusWith<std::vector<BSONObj>> resolveCollectionDefaultProperties(
+StatusWith<std::vector<BSONObj>> 
+ resolveCollectionDefaultProperties(
     OperationContext* opCtx, const Collection* collection, std::vector<BSONObj> indexSpecs) {
     std::vector<BSONObj> indexSpecsWithDefaults = std::move(indexSpecs);
 
@@ -320,7 +321,7 @@ public:
                            string& errmsg,
                            BSONObjBuilder& result) {
         const NamespaceString ns(parseNsCollectionRequired(dbname, cmdObj));
-
+		//检查是否可以对ns进行写操作，有些内部ns是不能写的
         Status status = userAllowedWriteNS(ns);
         if (!status.isOK())
             return appendCommandStatus(result, status);
@@ -344,6 +345,7 @@ public:
 
         // now we know we have to create index(es)
         // Note: createIndexes command does not currently respect shard versioning.
+        //注意这里是排他锁X
         Lock::DBLock dbLock(opCtx, ns.db(), MODE_X);
 		//只能在主节点加索引命令
         if (!repl::getGlobalReplicationCoordinator()->canAcceptWritesFor(opCtx, ns)) {
@@ -379,6 +381,7 @@ public:
                 invariant(collection);
                 wunit.commit();
             });
+			//集合不存在自动创建集合提示
             result.appendBool("createdCollectionAutomatically", true);
         }
 
@@ -399,7 +402,7 @@ public:
         MultiIndexBlock indexer(opCtx, collection);
 		//MultiIndexBlockImpl::allowBackgroundBuilding, 后台添加索引
         indexer.allowBackgroundBuilding();
-		//MultiIndexBlockImpl::allowInterruption 
+		//MultiIndexBlockImpl::allowInterruption ,代表加索引过程释放可以被killop干掉
         indexer.allowInterruption();
 
         const size_t origSpecsSize = specs.size();
@@ -409,7 +412,7 @@ public:
 		//注意这里不是真正的删除表的索引，而是剔除已有索引字符信息
         indexer.removeExistingIndexes(&specs);
 
-		//说明索引已经存在
+		//说明索引已经存在，本次加的索引都已经存在
         if (specs.size() == 0) {
             result.append("numIndexesAfter", numIndexesBefore);
             result.append("note", "all indexes already exist");
@@ -420,7 +423,7 @@ public:
 		/*
 		例如已经有db.test.createIndex({name:1})索引，然后再添加db.test.createIndex({name:1},{background: true, unique:true}) 
 		*/
-
+		//说明有部分索引以前已经添加过
         if (specs.size() != origSpecsSize) {
             result.append("note", "index already exists");
         }
@@ -428,7 +431,9 @@ public:
         for (size_t i = 0; i < specs.size(); i++) {
             const BSONObj& spec = specs[i];
             if (spec["unique"].trueValue()) {
-				//不能给片建加唯一索引
+				//已经被shard的collection 唯一索引的前缀必须是分片健
+				//已建立唯一索引的collect 去shard 。分片字段必须是唯一索引的前缀
+				//参考https://blog.csdn.net/cml2016/article/details/100211000
                 status = checkUniqueIndexConstraints(opCtx, ns.ns(), spec["key"].Obj());
 
                 if (!status.isOK()) {
@@ -449,7 +454,9 @@ public:
         // other readers and writers can proceed during this phase.
         if (indexer.getBuildInBackground()) {
             opCtx->recoveryUnit()->abandonSnapshot();
+			//如果是后台索引，则修改X锁为IX锁
             dbLock.relockWithMode(MODE_IX);
+			//只有主节点才能加后台索引
             if (!repl::getGlobalReplicationCoordinator()->canAcceptWritesFor(opCtx, ns)) {
                 return appendCommandStatus(
                     result,
@@ -460,6 +467,7 @@ public:
         }
 
         try {
+			//加表级意向写索
             Lock::CollectionLock colLock(opCtx->lockState(), ns.ns(), MODE_IX);
 			//MultiIndexBlockImpl::insertAllDocumentsInCollection 
             uassertStatusOK(indexer.insertAllDocumentsInCollection());
@@ -534,6 +542,9 @@ private:
         if (metadata) {
             ShardKeyPattern shardKeyPattern(metadata->getKeyPattern());
             if (!shardKeyPattern.isUniqueIndexCompatible(newIdxKey)) {
+				//已经被shard的collection 唯一索引的前缀必须是分片健
+				//已建立唯一索引的collect 去shard 。分片字段必须是唯一索引的前缀
+				//参考https://blog.csdn.net/cml2016/article/details/100211000
                 return Status(ErrorCodes::CannotCreateIndex,
                               str::stream() << "cannot create unique index over " << newIdxKey
                                             << " with shard key pattern "

@@ -367,6 +367,7 @@ void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
         // The {_id: 1} index can never be multikey because the _id field isn't allowed to be an
         // array value. We therefore always set 'multikeyPaths' as [ [ ] ].
         if (multikeyPaths) {
+			//MultikeyPaths::resize
             multikeyPaths->resize(1);
         }
         return;

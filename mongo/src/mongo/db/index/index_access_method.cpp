@@ -145,8 +145,8 @@ bool IndexAccessMethod::ignoreKeyTooLong(OperationContext* opCtx) {
 //IndexCatalogImpl::_indexFilteredRecords  MultiIndexBlockImpl::insert中调用
 //每条数据对应索引会产生一个索引KV，索引KV写入存储引擎
 Status IndexAccessMethod::insert(OperationContext* opCtx,
-                                 const BSONObj& obj,
-                                 const RecordId& loc,
+                                 const BSONObj& obj, //数据的value
+                                 const RecordId& loc, //数据的key
                                  const InsertDeleteOptions& options,
                                  int64_t* numInserted) {
     invariant(numInserted);
@@ -641,7 +641,7 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
 //如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
 //则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
 
-void IndexAccessMethod::getKeys(const BSONObj& obj,
+void IndexAccessMethod::getKeys(const BSONObj& obj, //数据的value
                                 GetKeysMode mode,
                                 BSONObjSet* keys,
                                 MultikeyPaths* multikeyPaths) const {

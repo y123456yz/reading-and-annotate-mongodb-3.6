@@ -26,7 +26,7 @@ namespace mongo {
 
 /**
  * A struct representing a LogicalSessionId
- */
+ */ //initializeOperationSessionInfo中构造使用  OperationContext._lsid为该类型，每一op都对应一个lsid
 class LogicalSessionId {
 public:
     static constexpr auto kIdFieldName = "id"_sd;

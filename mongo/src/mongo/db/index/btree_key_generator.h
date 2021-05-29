@@ -81,6 +81,10 @@ PATTERN	OBJ	V0	V1
 
 参考http://www.mongoing.com/archives/1462
 */
+//SortKeyGenerator::SortKeyGenerator中构造使用 
+//BtreeKeyGenerator::make选择使用那个版本
+
+//BtreeKeyGeneratorV1继承该类， //一个索引对应一个BtreeKeyGenerator
 class BtreeKeyGenerator {
 public:
     BtreeKeyGenerator(std::vector<const char*> fieldNames,

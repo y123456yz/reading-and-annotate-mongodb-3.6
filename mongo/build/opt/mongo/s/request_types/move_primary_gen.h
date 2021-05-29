@@ -25,7 +25,11 @@ namespace mongo {
 
 /**
  * The public movePrimary command on mongos
- */
+ *///mongos收到movePrimary命令后，发送_configsvrMovePrimary给cfg，cfg收到后处理
+////MoveDatabasePrimaryCommand::run中构造使用，cfg收到后在ConfigSvrMovePrimaryCommand::run中处理
+//db.adminCommand( { movePrimary : "test", to : "shard00 01" } )
+//构造movePrimary命令，早期可能是moveprimary，所以需要做兼容
+
 class MovePrimary {
 public:
     static constexpr auto kMovePrimaryFieldName = "movePrimary"_sd;
@@ -63,6 +67,7 @@ protected:
     void parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject);
 
 private:
+    //
     boost::optional<mongo::NamespaceString> _movePrimary;
     boost::optional<mongo::NamespaceString> _moveprimary;
     std::string _to;
@@ -72,6 +77,8 @@ private:
 /**
  * The internal movePrimary command on the config server
  */
+//mongos收到movePrimary命令后，发送_configsvrMovePrimary给cfg，cfg收到后处理
+////MoveDatabasePrimaryCommand::run中构造使用，cfg收到后在ConfigSvrMovePrimaryCommand::run中处理
 class ConfigsvrMovePrimary {
 public:
     static constexpr auto k_configsvrMovePrimaryFieldName = "_configsvrMovePrimary"_sd;

@@ -35,6 +35,7 @@
 
 namespace mongo {
 
+//ProgressMeterHolder._pm成员为该类型
 class ProgressMeter {
     MONGO_DISALLOW_COPYING(ProgressMeter);
 
@@ -164,6 +165,7 @@ public:
     }
 
 private:
+
     ProgressMeter& _pm;
 };
 }

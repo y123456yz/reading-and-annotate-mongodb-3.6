@@ -211,7 +211,7 @@ void MultiIndexBlockImpl::removeExistingIndexes(std::vector<BSONObj>* specs) con
 }
 
 /*
- build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
+ build index on: xx.xxx properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
 2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
 2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
 。。。。。。
@@ -375,6 +375,7 @@ db.things.ensureIndex({name:1}, {background:true});
 		//获取索引对应IndexDescriptor
         const IndexDescriptor* descriptor = index.block->getEntry()->descriptor();
 
+		//从descriptor获取index.options信息
         IndexCatalog::prepareInsertDeleteOptions(_opCtx, descriptor, &index.options);
         index.options.dupsAllowed = index.options.dupsAllowed || _ignoreUnique;
         if (_ignoreUnique) {
@@ -417,7 +418,7 @@ db.things.ensureIndex({name:1}, {background:true});
 }
 
 /*
- build index on: push_stat.opush_message_report properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
+ build index on: xx.xx properties: { v: 2, key: { messageId: 1.0, pushNoShow: 1.0 }, name: "messageId_1_pushNoShow_1", ns: "push_stat.opush_message_report", background: true }
 2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
 2021-03-10T17:32:21.001+0800 I -        [conn1366036]   Index Build (background): 343800/53092096 0%
 。。。。。。
@@ -443,6 +444,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
 	//该表数据大小 CollectionImpl::numRecords
 	const auto numRecords = _collection->numRecords(_opCtx);
     stdx::unique_lock<Client> lk(*_opCtx->getClient());
+	//定期打印相关
     ProgressMeterHolder progress(
         CurOp::get(_opCtx)->setMessage_inlock(curopMessage, curopMessage, numRecords));
     lk.unlock();
@@ -456,7 +458,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     if (_buildInBackground) {
         invariant(_allowInterruption);
         yieldPolicy = PlanExecutor::YIELD_AUTO;
-    } else {//见PlanYieldPolicy::yield，不会是否锁资源，执行plan的时候
+    } else {//见PlanYieldPolicy::yield，不会释放锁资源，执行plan的时候
         yieldPolicy = PlanExecutor::WRITE_CONFLICT_RETRY_ONLY;
     }
 
@@ -474,6 +476,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
            (PlanExecutor::ADVANCED == (state = exec->getNextSnapshotted(&objToIndex, &loc))) ||
            MONGO_FAIL_POINT(hangAfterStartingIndexBuild)) {
         try {
+			//构建索引过程中是否可以被killop干掉
             if (_allowInterruption)
                 _opCtx->checkForInterrupt();
 
@@ -575,7 +578,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
     return Status::OK();
 }
 
-//MultiIndexBlockImpl::insertAllDocumentsInCollection中调用
+//CmdCreateIndex::errmsgRun->MultiIndexBlockImpl::insertAllDocumentsInCollection中调用
 //每条数据对应索引会产生一个索引KV，索引KV写入存储引擎
 Status MultiIndexBlockImpl::insert(const BSONObj& doc, const RecordId& loc) {
 	//遍历所有的索引

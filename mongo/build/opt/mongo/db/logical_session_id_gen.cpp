@@ -503,6 +503,7 @@ OperationSessionInfoFromClient::OperationSessionInfoFromClient()  {
     // Used for initialization only
 }
 
+//initializeOperationSessionInfoµ÷ÓÃ
 OperationSessionInfoFromClient OperationSessionInfoFromClient::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     OperationSessionInfoFromClient object;
     object.parseProtected(ctxt, bsonObject);
