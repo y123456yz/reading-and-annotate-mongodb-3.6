@@ -3769,3 +3769,16 @@ sh.addShard("xxxc/127.0.0.1:8000,127.0.0.1:8001,127.0.0.1:8002")
 numactl --interleave=all        --bind_ip_all
 
 
+
+
+
+
+
+
+WiredTigerIndex::insert: key too large to index, failing
+解决办法()：
+1. 直接登陆后台敲命令：db.getSiblingDB('admin').runCommand( { setParameter: 1, failIndexKeyTooLong: false} )
+2. 修改mongodb配置文件，加上配置setParameter: failIndexKeyTooLong: false
+
+如果是单字段索引过程，可以用hashed索引
+db.logcollection.ensureIndex({"Module":"hashed"})

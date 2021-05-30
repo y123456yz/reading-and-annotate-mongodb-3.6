@@ -568,7 +568,7 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
 
     progress->finished();
 
-	//MultiIndexBlockImpl::insertAllDocumentsInCollection调用
+	
     Status ret = doneInserting(dupsOut);
     if (!ret.isOK())
         return ret;
@@ -577,6 +577,23 @@ Status MultiIndexBlockImpl::insertAllDocumentsInCollection(std::set<RecordId>* d
 
     return Status::OK();
 }
+
+
+/*
+												  	    \		 (第一步，先再server层对所有索引KV排序)
+												 --------     MultiIndexBlockImpl::insert
+											     |        /
+	   (非backgroud阻塞方式加索引注意执行不走)	     |
+MultiIndexBlockImpl::insertAllDocumentsInCollection---> |
+												|	   
+												|		 
+												|       \       (第二部，通过wt bulk写入存储引擎)
+												---------    MultiIndexBlockImpl::doneInserting->IndexAccessMethod::commitBulk
+													    /
+
+
+*/
+
 
 //CmdCreateIndex::errmsgRun->MultiIndexBlockImpl::insertAllDocumentsInCollection中调用
 //每条数据对应索引会产生一个索引KV，索引KV写入存储引擎
@@ -605,10 +622,26 @@ Status MultiIndexBlockImpl::insert(const BSONObj& doc, const RecordId& loc) {
     return Status::OK();
 }
 
-//
+/*
+												  	    \		 (第一步，先再server层对所有索引KV排序)
+												 --------     MultiIndexBlockImpl::insert
+											     |        /
+	   (非backgroud阻塞方式加索引注意执行不走)	     |
+MultiIndexBlockImpl::insertAllDocumentsInCollection---> |
+												|	   
+												|		 
+												|       \       (第二部，通过wt bulk写入存储引擎)
+												---------    MultiIndexBlockImpl::doneInserting->IndexAccessMethod::commitBulk
+													    /
+
+
+*/
+
+
+////MultiIndexBlockImpl::insertAllDocumentsInCollection调用
 Status MultiIndexBlockImpl::doneInserting(std::set<RecordId>* dupsOut) {
     for (size_t i = 0; i < _indexes.size(); i++) {
-        if (_indexes[i].bulk == NULL)
+        if (_indexes[i].bulk == NULL) //针对非backgroud索引
             continue;
         LOG(1) << "\t bulk commit starting for index: "
                << _indexes[i].block->getEntry()->descriptor()->indexName();

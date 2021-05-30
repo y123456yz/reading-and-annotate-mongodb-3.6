@@ -95,21 +95,27 @@ std::unique_ptr<BtreeKeyGenerator> BtreeKeyGenerator::make(IndexVersion indexVer
 //如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
 //则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
 
+//IndexAccessMethod::getKeys
 void BtreeKeyGenerator::getKeys(const BSONObj& obj,
                                 BSONObjSet* keys,
                                 MultikeyPaths* multikeyPaths) const {
     // '_fieldNames' and '_fixed' are passed by value so that they can be mutated as part of the
     // getKeys call.  :|
-    //BtreeKeyGeneratorV1::getKeysImpl
+    
     //_fieldNames存储索引的各个字段   fixed为从doc中解析出的对应索引字段内容存到该fixed[i]数组
     //最后把doc数据对应索引数据key拼接到一起
     //例如{aa:1, bb:1}索引，doc数据:{aa:xx1, bb:xx2}，则keys为xx1_xx2
+
+	//BtreeKeyGeneratorV1::getKeysImpl
     getKeysImpl(_fieldNames, _fixed, obj, keys, multikeyPaths);
     if (keys->empty() && !_isSparse) {
         keys->insert(_nullKey);
     }
 }
 
+//{ _id: 1, a: [ 1, 2 ], b: [ 1, 2 ], category: "AB - both arrays" }
+//You cannot create a compound multikey index { a: 1, b: 1 } on the collection since both the a and b fields are arrays.
+//不能同时对多个数组加索引，参考https://docs.mongodb.com/manual/core/index-multikey/
 static void assertParallelArrays(const char* first, const char* second) {
     std::stringstream ss;
     ss << "cannot index parallel arrays [" << first << "] [" << second << "]";
@@ -251,7 +257,7 @@ void BtreeKeyGeneratorV0::getKeysImpl(std::vector<const char*> fieldNames,
     }
 }
 
-//BtreeKeyGenerator::make中构造使用
+//BtreeAccessMethod::BtreeAccessMethod->BtreeKeyGenerator::make中构造使用
 BtreeKeyGeneratorV1::BtreeKeyGeneratorV1(std::vector<const char*> fieldNames,
                                          std::vector<BSONElement> fixed,
                                          bool isSparse,
@@ -298,6 +304,7 @@ BSONElement BtreeKeyGeneratorV1::extractNextElement(const BSONObj& obj,
     return BSONElement();
 }
 
+//这里面是递归调用
 void BtreeKeyGeneratorV1::_getKeysArrEltFixed(std::vector<const char*>* fieldNames,
                                               std::vector<BSONElement>* fixed,
                                               const BSONElement& arrEntry,
@@ -336,6 +343,8 @@ void BtreeKeyGeneratorV1::_getKeysArrEltFixed(std::vector<const char*>* fieldNam
 
 //obj为数据doc内容
 //从doc数据obj中解析出索引字段内容，每个索引字段内容存入fixed[i]数组中，然后拼接到一起存入到keys中
+
+//BtreeKeyGenerator::getKeys调用
 void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
                                       std::vector<BSONElement> fixed,
                                       const BSONObj& obj,
@@ -390,8 +399,8 @@ void BtreeKeyGeneratorV1::getKeysImpl(std::vector<const char*> fieldNames,
 //则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
 
 void BtreeKeyGeneratorV1::getKeysImplWithArray(
-    std::vector<const char*> fieldNames,
-    std::vector<BSONElement> fixed,
+    std::vector<const char*> fieldNames, //索引字段
+    std::vector<BSONElement> fixed, 
     const BSONObj& obj,
     BSONObjSet* keys,
     unsigned numNotFound,
@@ -453,6 +462,7 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
                 arrElt = e;
             } else if (e.rawdata() != arrElt.rawdata()) {
                 // enforce single array path here
+                //不能同时对多个数组加索引
                 assertParallelArrays(e.fieldName(), arrElt.fieldName());
             }
             if (arrayNestedArray) {
@@ -480,7 +490,9 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
 		//把字符串拼接在一起，例如{aa:xx1, bb:xx2}，对应{aa:1,bb:1}索引，最后keys中的值为xx1_xx2
         keys->insert(b.obj());
     } else if (arrElt.embeddedObject().firstElement().eoo()) {
+    //数组为空
         // We've encountered an empty array.
+        //空数组
         if (multikeyPaths && mayExpandArrayUnembedded) {
             // Any indexed path which traverses through the empty array must be recorded as an array
             // component.
@@ -508,7 +520,7 @@ void BtreeKeyGeneratorV1::getKeysImplWithArray(
                             _emptyPositionalInfo,
                             multikeyPaths);
     } else {
-    //数组
+    //数组不为空
         BSONObj arrObj = arrElt.embeddedObject();
 
         // For positional key patterns, e.g. {'a.1.b': 1}, we lookup the indexed array element

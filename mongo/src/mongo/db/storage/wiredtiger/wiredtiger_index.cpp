@@ -665,6 +665,8 @@ private:
  * duplicate ids and insert them all together. This is necessary since bulk cursors can only
  * append data.
  */ //WiredTigerIndexUnique::getBulkBuilder中new该类
+
+//非backgroud方式，阻塞方式加索引使用，参考IndexAccessMethod::commitBulk
 class WiredTigerIndex::UniqueBulkBuilder : public BulkBuilder {
 public:
     UniqueBulkBuilder(WiredTigerIndex* idx,
@@ -683,6 +685,7 @@ public:
                 return s;
         }
 
+		//确保本次写入的key，比上次的大，bulk方式必须有序写入
         const int cmp = newKey.woCompare(_key, _ordering);
         if (cmp != 0) {
             if (!_key.isEmpty()) {   // _key.isEmpty() is only true on the first call to addKey().
@@ -1515,7 +1518,7 @@ Status WiredTigerIndexStandard::_insert(WT_CURSOR* c,
 
     setKey(c, keyItem.Get());
     c->set_value(c, valueItem.Get());
-	//log() << "yang test ...WiredTigerIndexStandard::_insertRecords . _uri:" << _uri <<" key:" << record.id << " value:" << redact(record.data.toBson());
+	//log() << "yang test ...WiredTigerIndexStandard::_insert . index key:" << redact((const char*)(keyItem.Get()->data)) << " value:" << redact((const char*)(valueItem.Get()->data));
     int ret = WT_OP_CHECK(c->insert(c));
 
     if (ret != WT_DUPLICATE_KEY)

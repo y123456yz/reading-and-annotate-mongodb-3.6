@@ -532,6 +532,21 @@ Status IndexAccessMethod::BulkBuilder::insert(OperationContext* opCtx,
     return Status::OK();
 }
 
+/*
+												  	    \		 (第一步，先再server层对所有索引KV排序)
+												 --------     MultiIndexBlockImpl::insert
+											     |        /
+	   (非backgroud阻塞方式加索引注意执行不走)	     |
+MultiIndexBlockImpl::insertAllDocumentsInCollection---> |
+												|	   
+												|		 
+												|       \       (第二部，通过wt bulk写入存储引擎)
+												---------    MultiIndexBlockImpl::doneInserting->IndexAccessMethod::commitBulk
+													    /
+
+
+*/
+
 
 /*
 非backgroud阻塞方式加索引有两个进度：
@@ -628,6 +643,7 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
 
     LOG(timer.seconds() > 10 ? 0 : 1) << "\t done building bottom layer, going to commit";
 
+	//WiredTigerIndex::BulkBuilder::commit
     builder->commit(mayInterrupt);
     return Status::OK();
 }
@@ -641,6 +657,7 @@ Status IndexAccessMethod::commitBulk(OperationContext* opCtx,
 //如果是数组索引，例如{a.b : 1, c:1}，数据为{c:xxc, a:[{b:xxb1},{b:xxb2}]},
 //则keys会生成两条数据[xxb1_xxc、xxb2_xxc]
 
+//IndexAccessMethod::insert中调用,获取索引KV数据的K
 void IndexAccessMethod::getKeys(const BSONObj& obj, //数据的value
                                 GetKeysMode mode,
                                 BSONObjSet* keys,
