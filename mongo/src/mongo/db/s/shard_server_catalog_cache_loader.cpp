@@ -243,6 +243,12 @@ StatusWith<CollectionAndChangedChunks> getIncompletePersistedMetadataSinceVersio
  * Sends _flushRoutingTableCacheUpdates to the primary to force it to refresh its routing table for
  * collection 'nss' and then waits for the refresh to replicate to this node.
  */
+//forcePrimaryRefreshAndWaitForReplication：
+//  mongos向mongod shard server主节点发送forceRoutingTableRefresh命令，shard server主节点收到后，
+//  在FlushRoutingTableCacheUpdates::run中处理，注意这个是内部命令
+//还有一个外部强制路由刷新db.adminCommand({"flushRouterConfig":1})
+
+//ShardServerCatalogCacheLoader::getChunksSince->ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince调用
 void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const NamespaceString& nss) {
     auto const shardingState = ShardingState::get(opCtx);
     invariant(shardingState->enabled());
@@ -302,6 +308,7 @@ void ShardServerCatalogCacheLoader::notifyOfCollectionVersionUpdate(const Namesp
     _namespaceNotifications.notifyChange(nss);
 }
 
+//ShardingState::initializeFromShardIdentity中调用
 void ShardServerCatalogCacheLoader::initializeReplicaSetRole(bool isPrimary) {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     invariant(_role == ReplicaSetRole::None);
@@ -433,6 +440,8 @@ void ShardServerCatalogCacheLoader::waitForCollectionFlush(OperationContext* opC
     }
 }
 
+//primary调用_schedulePrimaryGetChunksSince，secondary调用_runSecondaryGetChunksSince
+//ShardServerCatalogCacheLoader::getChunksSince调用
 void ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince(
     OperationContext* opCtx,
     const NamespaceString& nss,
@@ -446,6 +455,7 @@ void ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince(
     callbackFn(opCtx, std::move(swCollAndChunks));
 }
 
+//primary调用_schedulePrimaryGetChunksSince，secondary调用_runSecondaryGetChunksSince
 void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
     OperationContext* opCtx,
     const NamespaceString& nss,
@@ -489,7 +499,7 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
                 notify->set();
                 return;
             }
-
+			
             log() << "Cache loader remotely refreshed for collection " << nss << " from version "
                   << maxLoaderVersion << " and no metadata was found.";
         } else if (swCollectionAndChangedChunks.isOK()) {

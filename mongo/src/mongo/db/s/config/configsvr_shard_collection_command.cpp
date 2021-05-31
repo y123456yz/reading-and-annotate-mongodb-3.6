@@ -526,6 +526,7 @@ void determinePresplittingPoints(OperationContext* opCtx,
  * If 'allSplits' is not empty, additionally splits each "big chunk" into smaller chunks using the
  * points in 'allSplits.'
  */
+//ConfigSvrShardCollectionCommand::runµ÷ÓÃ
 void migrateAndFurtherSplitInitialChunks(OperationContext* opCtx,
                                          const NamespaceString& nss,
                                          int numShards,

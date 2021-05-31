@@ -69,7 +69,7 @@ const int kMaxInconsistentRoutingInfoRefreshAttempts = 3;
  */
 //CatalogCache::_scheduleCollectionRefresh调用
 //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
-//返回nss对应的ChunkManager
+//返回nss对应的ChunkManager   
 std::shared_ptr<ChunkManager> 
  refreshCollectionRoutingInfo(
     OperationContext* opCtx,
@@ -141,6 +141,13 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
     }
 }
 
+//可以参考https://mongoing.com/archives/75945
+//https://mongoing.com/archives/77370
+
+//CatalogCache::getShardedCollectionRoutingInfoWithRefresh   checkShardVersion
+//moveChunk   ChunkSplitter::_runAutosplit splitIfNeeded  
+//DropCmd::run RenameCollectionCmd  ClusterFind::runQuery  FindAndModifyCmd::run  CollectionStats::run
+//ClusterAggregate::runAggregate    getExecutionNsRoutingInfo  dispatchShardPipeline
 //ChunkManagerTargeter::init调用，获取集合路由缓存信息
 StatusWith<CachedCollectionRoutingInfo> 
   CatalogCache::getCollectionRoutingInfo(
@@ -376,7 +383,7 @@ std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(Oper
                dbDesc.getPrimary(), dbDesc.getSharded(), std::move(collectionEntries)});
 }
 
-//获取dbEntry库下对应的nss集合的chunks路由信息
+//获取dbEntry库下对应的nss集合的chunks路由信息 
 //CatalogCache::getCollectionRoutingInfo中调用
 void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
                                               std::shared_ptr<DatabaseInfoEntry> dbEntry,
@@ -405,6 +412,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         //cfg中元数据发生了变化，递归调用最多kMaxInconsistentRoutingInfoRefreshAttempts次
         if (status == ErrorCodes::ConflictingOperationInProgress &&
             refreshAttempt < kMaxInconsistentRoutingInfoRefreshAttempts) {
+            //CatalogCache::_scheduleCollectionRefresh
             _scheduleCollectionRefresh(lk, dbEntry, nullptr, nss, refreshAttempt + 1);
         } else {
             // Leave needsRefresh to true so that any subsequent get attempts will kick off
@@ -445,6 +453,22 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
 
             collections.erase(it);
         } else {
+        /*
+        新版本对应日志2021-05-31T12:00:39.106+0800 I SH_REFR  [ConfigServerCatalogCacheLoader-27703] Refresh for collection sporthealth.stepsDetail from version 33477|350351||5f9aa6ec3af7fbacfbc99a27 to version 33477|350426||5f9aa6ec3af7fbacfbc99a27 took 364 ms
+		新版本这里对应代码如下：
+		            const int logLevel = (!existingRoutingInfo || (existingRoutingInfo &&
+                                                           routingInfoAfterRefresh->getVersion() !=
+                                                               existingRoutingInfo->getVersion()))
+                ? 0
+                : 1;
+            LOG_CATALOG_REFRESH(logLevel)
+                << "Refresh for collection " << nss.toString()
+                << (existingRoutingInfo
+                        ? (" from version " + existingRoutingInfo->getVersion().toString())
+                        : "")
+                << " to version " << routingInfoAfterRefresh->getVersion().toString() << " took "
+                << t.millis() << " ms";
+		*/
             log() << "Refresh for collection " << nss << " took " << t.millis()
                   << " ms and found version " << newRoutingInfo->getVersion();
 

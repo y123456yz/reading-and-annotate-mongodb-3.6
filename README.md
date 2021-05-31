@@ -66,6 +66,7 @@ mongodb-3.6源码注释分析，持续更新
 |16|[盘点 2020 - 我要为分布式数据库 mongodb 在国内影响力提升及推广做点事](https://xie.infoq.cn/article/372320c6bb93ddc5b7ecd0b6b)|
 |17|[300 条数据变更引发的血案 - 记某十亿级核心 mongodb 集群部分请求不可用故障踩坑记](https://xie.infoq.cn/article/5932858d57db13d43a8b8d62a)|  
 |18|[记十亿级Es数据迁移mongodb成本节省及性能优化实践](https://zhuanlan.zhihu.com/p/373351625)|  
+|19|[千亿级数据迁移mongodb成本节省及性能优化实践](https://zhuanlan.zhihu.com/p/376679225)|  
 |27|[mongodb内核源码实现、性能调优、最佳运维实践系列-数百万行mongodb内核源码阅读经验分享](https://my.oschina.net/u/4087916/blog/4696104)|  
 |28|[mongodb内核源码实现、性能调优、最佳运维实践系列-mongodb网络传输层模块源码实现一](https://my.oschina.net/u/4087916/blog/4295038)|
 |29|[mongodb内核源码实现、性能调优、最佳运维实践系列-mongodb网络传输层模块源码实现二](https://my.oschina.net/u/4087916/blog/4674521)|

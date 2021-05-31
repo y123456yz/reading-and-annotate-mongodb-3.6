@@ -83,7 +83,7 @@ public:
 
     //ComparisonMatchExpression::init调用
     //path也就是{ aa : 0.99 }或者{ aa: { $lt: "0.99" } } 
-    Status setPath(StringData path) {//
+    Status setPath(StringData path) {//PathMatchExpression::setPath
         _path = path;
         //ElementPath::init
         auto status = _elementPath.init(_path);

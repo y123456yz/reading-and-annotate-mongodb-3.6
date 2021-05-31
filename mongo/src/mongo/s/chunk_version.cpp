@@ -65,12 +65,35 @@ afterOpTime 参数，以确保不会从备节点读到过期的路由表。
 
 */
 
-//一个(majorVersion, minorVersion)的二元组)
+
 const char kVersion[] = "version";
+/*
+mongos> db.chunks.find({ns:"xx.xx"}).limit(1).pretty()
+{
+        "_id" : "sporthealth.stepsDetail-ssoid_811088201705515807",
+        //Lastmod:第一部分是major version，一次movechunk命令操作（Chunk从一个Shard迁移到另一个Shard）会加1；
+        //第二个数字是Minor Version，一次split命令操作会加1。
+        "lastmod" : Timestamp(143, 61),
+        //lastmodEpoch: epoch : objectID，标识集合的唯一实例，用于辨识集合是否发生了变化。只有当 collection 被 drop 或者 collection的shardKey发生refined时 会重新生成
+        "lastmodEpoch" : ObjectId("5f9aa6ec3af7fbacfbc99a27"),
+        "ns" : "sporthealth.stepsDetail",
+        "min" : {
+                "ssoid" : NumberLong("811088201705515807")
+        },
+        "max" : {
+                "ssoid" : NumberLong("811127732696226936")
+        },
+        "shard" : "sport-health_xyKKIMeg_shard_1"
+}
+mongos> 
+*/
+//一个(majorVersion, minorVersion)的二元组)
 const char kLastmod[] = "lastmod";
 
 }  // namespace
 
+//2021-05-31T19:29:33.775+0800 I COMMAND  [conn3479863] command sporthealth.stepsDetail command: insert { insert: "stepsDetail", bypassDocumentValidation: false, ordered: true, documents: [ { _id: ObjectId('60b4c89dbba026408eaa55ec'), id: 559306090572558338, clientDataId: "0f015c36e44b4559a2a0e5baa4998d58", ssoid: "212848537", deviceUniqueId: "2794906347db42dd", deviceType: "Phone", startTimestamp: 1622460300000, endTimestamp: 1622460360000, sportMode: 6, steps: 62, distance: 41, calories: 1499, altitudeOffset: 0, display: 1, syncStatus: 0, workout: 0, modifiedTime: 1622460573621, createTime: new Date(1622460573625), updateTime: new Date(1622460573625), _class: "com.oppo.sporthealthdataprocess.po.StepsDetail" } ], shardVersion: [ Timestamp(33477, 353588), ObjectId('5f9aa6ec3af7fbacfbc99a27') ], lsid: { id: UUID("e8a1985f-c3ff-4b2e-8d6c-5136818c3ba7"), uid: BinData(0, 64A61BF5764A1A00129F0CBAC3D8D4C51E4EAA3B877BF0F06A946E40E9EA172E) }, $clusterTime: { clusterTime: Timestamp(1622460573, 5482), signature: { hash: BinData(0, 4CF2584792D377D057BADF6FE58DE436A017BD13), keyId: 6920984255816273035 } }, $client: { driver: { name: "mongo-java-driver", version: "3.8.2" }, os: { type: "Linux", name: "Linux", architecture: "amd64", version: "3.10.0-957.27.2.el7.x86_64" }, platform: "Java/heytap/1.8.0_252-b09", mongos: { host: "10-85-65-0.mongodb-fatpod-sport-health.bjht:20000", client: "10.86.202.231:38476", version: "3.6.10" } }, $configServerState: { opTime: { ts: Timestamp(1622460570, 3548), t: 5 } }, $db: "sporthealth" } ninserted:1 keysInserted:6 numYields:0 reslen:355 locks:{ Global: { acquireCount: { r: 2, w: 2 } }, Database: { acquireCount: { w: 2 } }, Collection: { acquireCount: { w: 1 } }, oplog: { acquireCount: { w: 1 } } } protocol:op_msg 108ms
+//mongos发送到mongod的请求中会携带shardVersion: shardVersion: [ Timestamp(33477, 353588), ObjectId('5f9aa6ec3af7fbacfbc99a27') ]
 const char ChunkVersion::kShardVersionField[] = "shardVersion";
 
 StatusWith<ChunkVersion> ChunkVersion::parseFromBSONForCommands(const BSONObj& obj) {

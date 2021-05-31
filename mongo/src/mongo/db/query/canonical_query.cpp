@@ -79,7 +79,8 @@ int matchExpressionComparator(const MatchExpression* lhs, const MatchExpression*
         return lhsMatchType < rhsMatchType ? -1 : 1;
     }
 
-	//其次比较path
+	//其次比较path，对应PathMatchExpression::setPath  
+	//path也就是类似{ aa : 0.99 }或者{ aa: { $lt: "0.99" } } 
     StringData lhsPath = lhs->path();
     StringData rhsPath = rhs->path();
     int pathsCompare = lhsPath.compare(rhsPath);

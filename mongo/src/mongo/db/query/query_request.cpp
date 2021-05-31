@@ -766,9 +766,12 @@ bool QueryRequest::isQueryIsolated(const BSONObj& query) {
 //
 
 // static
-StatusWith<unique_ptr<QueryRequest>> QueryRequest::fromLegacyQueryMessage(const QueryMessage& qm) {
+//CanonicalQuery::canonicalizeµ÷ÓÃ
+StatusWith<unique_ptr<QueryRequest>> 
+   QueryRequest::fromLegacyQueryMessage(const QueryMessage& qm) {
     auto qr = stdx::make_unique<QueryRequest>(NamespaceString(qm.ns));
 
+	//QueryRequest::init
     Status status = qr->init(qm.ntoskip, qm.ntoreturn, qm.queryOptions, qm.query, qm.fields, true);
     if (!status.isOK()) {
         return status;
