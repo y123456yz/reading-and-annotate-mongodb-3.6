@@ -90,14 +90,12 @@ StatusWith<long long> retrieveTotalShardSize(OperationContext* opCtx, const Shar
 /*
 https://blog.csdn.net/weixin_33827731/article/details/90534750
 db.runCommand({splitVector:"blog.post", keyPattern:{x:1}, min{x:10}, max:{x:20}, maxChunkSize:200}) 把 10-20这个范围的数据拆分为200个子块
-*/ //splite命令中得selectMedianKey为强制获取中间分裂点
-
-//通过splitVector获取分裂点
-//ShardingCatalogManager::shardCollection->createFirstChunks中调用
-//Balancer::_moveChunks->Balancer::_splitOrMarkJumbo中调用
-//updateChunkWriteStatsAndSplitIfNeeded中调用(FindAndModifyCmd::run和ClusterWriter::write->splitIfNeede调用)  
-
+*/ 
+//splite命令中得selectMedianKey为强制获取中间分裂点
+//发送splitVector命令给指定shard,从对应shard server获取某个chunk的分裂点
+//updateChunkWriteStatsAndSplitIfNeeded中调用
 StatusWith<std::vector<BSONObj>> 
+//返回分裂点
 selectChunkSplitPoints(OperationContext* opCtx,
                                                         const ShardId& shardId,
                                                         const NamespaceString& nss,
@@ -114,6 +112,7 @@ selectChunkSplitPoints(OperationContext* opCtx,
         cmd.append("maxChunkObjects", *maxObjs);
     }
 
+	//发送splitVector命令给指定shard server
     auto shardStatus = Grid::get(opCtx)->shardRegistry()->getShard(opCtx, shardId);
     if (!shardStatus.isOK()) {
         return shardStatus.getStatus();
@@ -144,7 +143,21 @@ selectChunkSplitPoints(OperationContext* opCtx,
     return std::move(splitPoints);
 }
 
-StatusWith<boost::optional<ChunkRange>> splitChunkAtMultiplePoints(
+//通过splitVector获取分裂点
+//ShardingCatalogManager::shardCollection->createFirstChunks中调用
+//Balancer::_moveChunks->Balancer::_splitOrMarkJumbo中调用
+//updateChunkWriteStatsAndSplitIfNeeded中调用(FindAndModifyCmd::run和ClusterWriter::write->splitIfNeede调用)  
+
+//1. balance的时候进行movechunk前需要判断是否为jumbo chunk，如果是则进行splitchunk拆分，参考Balancer::_moveChunks->Balancer::_splitOrMarkJumbo
+//2. SplitCollectionCmd::errmsgRun  手动跑splitchunk命令
+//3. 写数据流程，ClusterWriter::write->splitIfNeeded->updateChunkWriteStatsAndSplitIfNeeded    
+//4. ConfigSvrShardCollectionCommand::run->migrateAndFurtherSplitInitialChunks调用
+
+//该接口也就是shardutil::splitChunkAtMultiplePoints，其他地方通过调用shardutil::splitChunkAtMultiplePoints走到这里
+
+////ClusterWriter::write->splitIfNeeded->updateChunkWriteStatsAndSplitIfNeeded调用
+StatusWith<boost::optional<ChunkRange>> 
+	splitChunkAtMultiplePoints(
     OperationContext* opCtx,
     const ShardId& shardId,
     const NamespaceString& nss,
@@ -199,6 +212,7 @@ StatusWith<boost::optional<ChunkRange>> splitChunkAtMultiplePoints(
     if (!shardStatus.isOK()) {
         status = shardStatus.getStatus();
     } else {
+    	//mongos发送splitChunk命令给shard server
         auto cmdStatus = shardStatus.getValue()->runCommandWithFixedRetryAttempts(
             opCtx,
             ReadPreferenceSetting{ReadPreference::PrimaryOnly},

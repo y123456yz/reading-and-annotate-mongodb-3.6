@@ -110,7 +110,9 @@ ConnectionString ShardRegistry::getConfigServerConnectionString() const {
     return getConfigShard()->getConnString();
 }
 
-//根据shardId获取对应Shard信息
+//ShardRegistry::getConfigShard()和ShardRegistry::getShard区别：
+//  一个对应shard server，一个对应config server
+//根据shardId获取对应Shard信息   
 StatusWith<shared_ptr<Shard>>
 	ShardRegistry::getShard(OperationContext* opCtx,
                                                       const ShardId& shardId) {
@@ -158,6 +160,8 @@ shared_ptr<Shard> ShardRegistry::getShardForHostNoReload(const HostAndPort& host
     return _data.findByHostAndPort(host);
 }
 
+//ShardRegistry::getConfigShard()和ShardRegistry::getShard区别：
+//  一个对应shard server，一个对应config server
 shared_ptr<Shard> ShardRegistry::getConfigShard() const {
     auto shard = _data.getConfigShard();
     invariant(shard);

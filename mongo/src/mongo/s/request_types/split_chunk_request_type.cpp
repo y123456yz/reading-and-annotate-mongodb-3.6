@@ -47,6 +47,7 @@ const char kShardName[] = "shard";
 
 }  // unnamed namespace
 
+//splitChunk中构造使用
 SplitChunkRequest::SplitChunkRequest(NamespaceString nss,
                                      string shardName,
                                      OID epoch,
@@ -114,6 +115,7 @@ StatusWith<SplitChunkRequest> SplitChunkRequest::parseFromConfigCommand(const BS
     return request;
 }
 
+//splitChunk调用
 BSONObj SplitChunkRequest::toConfigCommandBSON(const BSONObj& writeConcern) {
     BSONObjBuilder cmdBuilder;
     appendAsConfigCommand(&cmdBuilder);

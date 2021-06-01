@@ -124,7 +124,10 @@ bool checkMetadataForSuccessfulSplitChunk(OperationContext* opCtx,
 
 }  // anonymous namespace
 
-StatusWith<boost::optional<ChunkRange>> splitChunk(OperationContext* opCtx,
+//mongod shard server收到mongos发送来的splitChunk命令的处理流程
+//SplitChunkCommand::errmsgRun调用
+StatusWith<boost::optional<ChunkRange>> 
+	splitChunk(OperationContext* opCtx,
                                                    const NamespaceString& nss,
                                                    const BSONObj& keyPatternObj,
                                                    const ChunkRange& chunkRange,
@@ -141,7 +144,8 @@ StatusWith<boost::optional<ChunkRange>> splitChunk(OperationContext* opCtx,
     //
     const std::string whyMessage(
         str::stream() << "splitting chunk " << chunkRange.toString() << " in " << nss.toString());
-    auto scopedDistLock = Grid::get(opCtx)->catalogClient()->getDistLockManager()->lock(
+	//获取分布式锁
+	auto scopedDistLock = Grid::get(opCtx)->catalogClient()->getDistLockManager()->lock(
         opCtx, nss.ns(), whyMessage, DistLockManager::kSingleLockAttemptTimeout);
     if (!scopedDistLock.isOK()) {
         errmsg = str::stream() << "could not acquire collection lock for " << nss.toString()
@@ -152,6 +156,7 @@ StatusWith<boost::optional<ChunkRange>> splitChunk(OperationContext* opCtx,
 
     // If the shard key is hashed, then we must make sure that the split points are of type
     // NumberLong.
+    //hashed类型片建集群，分割点必须是NumberLong类型
     if (KeyPattern::isHashedKeyPattern(keyPatternObj)) {
         for (BSONObj splitKey : splitKeys) {
             BSONObjIterator it(splitKey);
@@ -170,12 +175,16 @@ StatusWith<boost::optional<ChunkRange>> splitChunk(OperationContext* opCtx,
     }
 
     // Commit the split to the config server.
+    //
     auto request =
         SplitChunkRequest(nss, shardName, expectedCollectionEpoch, chunkRange, splitKeys);
 
+	//转换为对应bson结构
     auto configCmdObj =
+    	//SplitChunkRequest::toConfigCommandBSON
         request.toConfigCommandBSON(ShardingCatalogClient::kMajorityWriteConcern.toBSON());
 
+	//给cfg server发送请求
     auto cmdResponseStatus =
         Grid::get(opCtx)->shardRegistry()->getConfigShard()->runCommandWithFixedRetryAttempts(
             opCtx,
@@ -204,7 +213,7 @@ StatusWith<boost::optional<ChunkRange>> splitChunk(OperationContext* opCtx,
     // determine if the split actually did happen. This can happen if there's a network error
     // getting the response from the first call to _configsvrCommitChunkSplit, but it actually
     // succeeds, thus the automatic retry fails with a precondition violation, for example.
-    //
+    //异常处理
     if (!commandStatus.isOK() || !writeConcernStatus.isOK()) {
         {
             ChunkVersion unusedShardVersion;

@@ -42,6 +42,7 @@ namespace mongo {
  * Provides support for parsing and serialization of arguments to the config server splitChunk
  * command.
  */
+//splitChunk中构造使用
 class SplitChunkRequest {
 public:
     SplitChunkRequest(NamespaceString nss,

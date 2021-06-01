@@ -71,6 +71,9 @@ splitChunk执行过程：
 4) 向configSvr中写入变更日志
 5) 通知mongos操作完成，mongos修改自身元数据
 */
+
+//mongos通过updateChunkWriteStatsAndSplitIfNeeded->selectChunkSplitPoints发送splitChunk命令给shard server
+//sheard server收到splitChunk后通过SplitChunkCommand::run处理
 class SplitChunkCommand : public ErrmsgCommandDeprecated {
 public:
     SplitChunkCommand() : ErrmsgCommandDeprecated("splitChunk") {}
@@ -108,12 +111,13 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
+	
     bool errmsgRun(OperationContext* opCtx,
                    const std::string& dbname,
                    const BSONObj& cmdObj,
                    std::string& errmsg,
                    BSONObjBuilder& result) override {
-
+		//检查是否为primary
         uassertStatusOK(ShardingState::get(opCtx)->canAcceptShardedCommands());
 
         //
@@ -126,6 +130,7 @@ public:
             return false;
         }
 
+		//检查keyPattern
         BSONObj keyPatternObj;
         {
             BSONElement keyPatternElem;
@@ -139,6 +144,7 @@ public:
             keyPatternObj = keyPatternElem.Obj();
         }
 
+		//
         auto chunkRange = uassertStatusOK(ChunkRange::fromBSON(cmdObj));
 
         string shardName;
@@ -146,9 +152,23 @@ public:
         if (!parseShardNameStatus.isOK())
             return appendCommandStatus(result, parseShardNameStatus);
 
+		//2021-06-01T19:21:34.771+0800 I SHARDING [conn1327532] received splitChunk request: 
+		//{ splitChunk: "xx.xxx", from: "xx-health_xyKKIMeg_shard_1", keyPattern: { ssoid: "hashed" }, 
+		//epoch: ObjectId('5f9aa6ec3af7fbacfbc99a27'), shardVersion: [ Timestamp(33477, 360678), 
+		//ObjectId('5f9aa6ec3af7fbacfbc99a27') ], min: { ssoid: -5962517471745203263 }, 
+		//max: { ssoid: -5962474513134817833 }, splitKeys: [ { ssoid: -5962516934538529707 }, 
+		//{ ssoid: -5962510586313188800 } ], lsid: { id: UUID("eac603aa-5928-445a-83f2-2c08ebb74d61"), 
+		//uid: BinData(0, 64A61BF5764A1A00129F0CBAC3D8D4C51E4EAA3B877BF0F06A946E40E9EA172E) }, 
+		//$clusterTime: { clusterTime: Timestamp(1622546494, 8538), signature: { hash: BinData(0, B54A8016731B06E8CE42080404F1E2F47BE16682), keyId: 6920984255816273035 } }, 
+		//$client: { driver: { name: "mongo-java-driver", version: "3.8.2" }, os: { type: "Linux", name: "Linux", 
+		//architecture: "amd64", version: "3.10.0-957.27.2.el7.x86_64" }, platform: "Java/heytap/1.8.0_252-b09", 
+		//mongos: { host: "10-85-65-0.mongodb-fatpod-sport-health.bjht:20000", client: "10.85.84.90:49982", version: "3.6.10" } }, 
+		//$configServerState: { opTime: { ts: Timestamp(1622546494, 4091), t: 5 } }, $db: "admin" }
         log() << "received splitChunk request: " << redact(cmdObj);
 
+		//splitKeys也就是分裂点
         vector<BSONObj> splitKeys;
+		//解析出分裂点信息
         {
             BSONElement splitKeysElem;
             auto splitKeysElemStatus =
@@ -165,6 +185,7 @@ public:
         }
 
         OID expectedCollectionEpoch;
+		//同一个表的epoch不能变，需要检查
         if (cmdObj.hasField("epoch")) {
             auto epochStatus = bsonExtractOIDField(cmdObj, "epoch", &expectedCollectionEpoch);
             uassert(

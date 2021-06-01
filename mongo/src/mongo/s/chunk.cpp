@@ -62,6 +62,8 @@ void Chunk::clearBytesWritten() {
     _dataWritten = 0;
 }
 
+//写入的数据量超过一定值就需要分裂
+//updateChunkWriteStatsAndSplitIfNeeded调用
 bool Chunk::shouldSplit(uint64_t desiredChunkSize, bool minIsInf, bool maxIsInf) const {
     // If this chunk is at either end of the range, trigger auto-split at 10% less data written in
     // order to trigger the top-chunk optimization.

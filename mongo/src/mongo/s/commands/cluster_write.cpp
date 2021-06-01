@@ -148,13 +148,14 @@ BSONObj findExtremeKeyForShard(OperationContext* opCtx,
 void splitIfNeeded(OperationContext* opCtx,
                    const NamespaceString& nss,
                    const TargeterStats& stats) {
+    //获取CachedCollectionRoutingInfo信息，chunk信息在该结构中
     auto routingInfoStatus = Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfo(opCtx, nss);
     if (!routingInfoStatus.isOK()) {
         log() << "failed to get collection information for " << nss
               << " while checking for auto-split" << causedBy(routingInfoStatus.getStatus());
         return;
     }
-
+	//CachedCollectionRoutingInfo类型
     auto& routingInfo = routingInfoStatus.getValue();
 
     if (!routingInfo.cm()) {
@@ -249,7 +250,7 @@ void ClusterWriter::write(OperationContext* opCtx,
 
 //以下接口调用
 //FindAndModifyCmd::run                 
-//ClusterWriter::write->splitIfNeeded    
+//ClusterWriter::write->splitIfNeeded->updateChunkWriteStatsAndSplitIfNeeded    
 void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
                                            ChunkManager* manager,
                                            Chunk* chunk,
@@ -265,10 +266,13 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
     const bool maxIsInf =
         (0 == manager->getShardKeyPattern().getKeyPattern().globalMax().woCompare(chunk->getMax()));
 
+	//写入的字节数
     const uint64_t chunkBytesWritten = chunk->addBytesWritten(dataWritten);
 
+	//chunk最大字节数
     const uint64_t desiredChunkSize = balancerConfig->getMaxChunkSizeBytes();
 
+	//写入的数据量超过一定值就需要分裂
     if (!chunk->shouldSplit(desiredChunkSize, minIsInf, maxIsInf)) {
         return;
     }
@@ -287,7 +291,7 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
     try {
         // Ensure we have the most up-to-date balancer configuration
         uassertStatusOK(balancerConfig->refreshAndCheck(opCtx));
-
+		//必须启用auto splite配置
         if (!balancerConfig->getShouldAutoSplit()) {
             return;
         }
@@ -310,6 +314,8 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
         }();
 
         auto splitPoints =
+			//第一步：发送splitVector命令给指定shard,从对应shard server获取某个chunk的分裂点
+			//返回分裂点存入splitPoints
             uassertStatusOK(shardutil::selectChunkSplitPoints(opCtx,
                                                               chunk->getShardId(),
                                                               nss,
@@ -355,6 +361,7 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
             }
         }
 
+		//第二步: 发送splitChunk给shard server
         const auto suggestedMigrateChunk =
             uassertStatusOK(shardutil::splitChunkAtMultiplePoints(opCtx,
                                                                   chunk->getShardId(),

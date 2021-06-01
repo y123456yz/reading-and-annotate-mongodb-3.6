@@ -74,6 +74,10 @@ ThreadPool::Options makeDefaultThreadPoolOptions() {
 /**
  * Attempts to split the chunk described by min/maxKey at the split points provided.
  */
+
+
+//ChunkSplitter::trySplitting->ChunkSplitter::_runAutosplit中调用，实际上没用
+//实际上用的是shardutil::splitChunkAtMultiplePoints，注意这里和shardutil::splitChunkAtMultiplePoints的区别
 Status splitChunkAtMultiplePoints(OperationContext* opCtx,
                                   const ShardId& shardId,
                                   const NamespaceString& nss,
@@ -255,6 +259,7 @@ void ChunkSplitter::interruptChunkSplitter() {
     // TODO: Re-enable this log when auto split is actively running on shards.
 }
 
+//实际上没用，没地方使用
 void ChunkSplitter::trySplitting(const NamespaceString& nss,
                                  const BSONObj& min,
                                  const BSONObj& max,
@@ -271,6 +276,7 @@ void ChunkSplitter::trySplitting(const NamespaceString& nss,
 /*系统会调度一个自动split的任务，而任务会调用下述接口。该接口会确定是否应该分割指定的块，然后执行
 任何必要的分割。它还可以执行“top chunk”优化，其中包含MaxKey或MinKey的结果块将被移到另一个碎片上，
 以减轻原始所有者的负载*/
+//上面的ChunkSplitter::trySplitting调用，实际上该接口没有使用
 void ChunkSplitter::_runAutosplit(const NamespaceString& nss,
                                   const BSONObj& min,
                                   const BSONObj& max,

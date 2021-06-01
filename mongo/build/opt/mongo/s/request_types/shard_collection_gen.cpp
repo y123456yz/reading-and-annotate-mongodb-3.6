@@ -303,7 +303,6 @@ void ConfigsvrShardCollectionResponse::serialize(BSONObjBuilder* builder) const 
 
 }
 
-
 BSONObj ConfigsvrShardCollectionResponse::toBSON() const {
     BSONObjBuilder builder;
     serialize(&builder);
