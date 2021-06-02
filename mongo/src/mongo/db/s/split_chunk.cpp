@@ -55,7 +55,7 @@ namespace mongo {
 namespace {
 
 const ReadPreferenceSetting kPrimaryOnlyReadPreference{ReadPreference::PrimaryOnly};
-
+//splitChunk调用
 bool checkIfSingleDoc(OperationContext* opCtx,
                       Collection* collection,
                       const IndexDescriptor* idx,
@@ -124,8 +124,11 @@ bool checkMetadataForSuccessfulSplitChunk(OperationContext* opCtx,
 
 }  // anonymous namespace
 
+//An internal administrative command. To split chunks, use the sh.splitFind() and sh.splitAt() functions in the mongo shell.
+//splitChunk为mongodb内部命令，不对外
+
 //mongod shard server收到mongos发送来的splitChunk命令的处理流程
-//SplitChunkCommand::errmsgRun调用
+//SplitChunkCommand::errmsgRun->SplitChunkCommand::errmsgRun调用
 StatusWith<boost::optional<ChunkRange>> 
 	splitChunk(OperationContext* opCtx,
                                                    const NamespaceString& nss,
@@ -184,7 +187,7 @@ StatusWith<boost::optional<ChunkRange>>
     	//SplitChunkRequest::toConfigCommandBSON
         request.toConfigCommandBSON(ShardingCatalogClient::kMajorityWriteConcern.toBSON());
 
-	//给cfg server发送请求
+	//给cfg server发送_configsvrCommitChunkSplit请求，对应在ConfigSvrSplitChunkCommand::run中处理
     auto cmdResponseStatus =
         Grid::get(opCtx)->shardRegistry()->getConfigShard()->runCommandWithFixedRetryAttempts(
             opCtx,
@@ -204,6 +207,7 @@ StatusWith<boost::optional<ChunkRange>>
     auto writeConcernStatus = cmdResponseStatus.getValue().writeConcernStatus;
 
     // Send stale epoch if epoch of request did not match epoch of collection
+    //epoch不一致直接返回
     if (commandStatus == ErrorCodes::StaleEpoch) {
         return commandStatus;
     }
@@ -254,6 +258,7 @@ StatusWith<boost::optional<ChunkRange>>
     // Allow multiKey based on the invariant that shard keys must be single-valued. Therefore,
     // any multi-key index prefixed by shard key cannot be multikey over the shard key fields.
     IndexDescriptor* idx =
+    	//查找shardkey开头的索引，获取一个最优索引
         collection->getIndexCatalog()->findShardKeyPrefixedIndex(opCtx, keyPatternObj, false);
     if (!idx) {
         return boost::optional<ChunkRange>(boost::none);

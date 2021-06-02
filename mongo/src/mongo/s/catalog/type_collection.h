@@ -134,7 +134,7 @@ public:
         return _fullNs.get();
     }
     void setNs(const NamespaceString& fullNs);
-
+    //标识集合的唯一实例，用于辨识集合是否发生了变化。只有当 collection 被 drop 或者 collection的shardKey发生refined时 会重新生成
     OID getEpoch() const {
         return _epoch.get();
     }
@@ -191,7 +191,8 @@ private:
     boost::optional<NamespaceString> _fullNs;
 
     // Required to disambiguate collection namespace incarnations.
-    //版本纪元
+    //版本纪元 
+    //标识集合的唯一实例，用于辨识集合是否发生了变化。只有当 collection 被 drop 或者 collection的shardKey发生refined时 会重新生成
     boost::optional<OID> _epoch;
 
     // Required last updated time.

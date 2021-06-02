@@ -47,6 +47,7 @@ class StatusWith;
  * Contains the minimum representation of a chunk - its bounds in the format [min, max) along with
  * utilities for parsing and persistence.
  */
+//可以参考splitChunk接口使用
 class ChunkRange {
 public:
     ChunkRange(BSONObj minKey, BSONObj maxKey);

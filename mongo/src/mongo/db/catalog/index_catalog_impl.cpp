@@ -1430,6 +1430,7 @@ void IndexCatalogImpl::findIndexesByKeyPattern(OperationContext* opCtx,
     }
 }
 
+//查找shardkey开头的索引，获取一个最优索引
 IndexDescriptor* IndexCatalogImpl::findShardKeyPrefixedIndex(OperationContext* opCtx,
                                                              const BSONObj& shardKey,
                                                              bool requireSingleKey) const {

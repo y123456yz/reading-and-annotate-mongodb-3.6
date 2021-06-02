@@ -388,12 +388,14 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
             return collStatus.getValue().value.getAllowBalance();
         }();
 
+		//2021-06-02T15:28:55.157+0800 I SHARDING [conn8439388] autosplitted xx.xx chunk: shard: sport-xx, lastmod: 32843|1398||5f9aa6ec3af7fbacfbc99a27, [{ ssoid: -1120598876804581673 }, { ssoid: -1120540371032347957 }) into 3 parts (desiredChunkSize 67108864) (migrate suggested, but no migrations allowed)
         log() << "autosplitted " << nss << " chunk: " << redact(chunk->toString()) << " into "
               << (splitPoints.size() + 1) << " parts (desiredChunkSize " << desiredChunkSize << ")"
               << (suggestedMigrateChunk ? "" : (std::string) " (migrate suggested" +
                           (shouldBalance ? ")" : ", but no migrations allowed)"));
 
         // Reload the chunk manager after the split
+        //mongos刷新路由信息
         auto routingInfo = uassertStatusOK(
             Grid::get(opCtx)->catalogCache()->getShardedCollectionRoutingInfoWithRefresh(opCtx,
                                                                                          nss));

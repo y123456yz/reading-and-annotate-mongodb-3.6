@@ -59,6 +59,8 @@ using ShardVersionMap = std::map<ShardId, ChunkVersion>;
 //ChunkManager chunk管理     balance负载均衡管理    
 //CachedCollectionRoutingInfo._cm成员为该类型，通过CatalogCache::getCollectionRoutingInfo获取CachedCollectionRoutingInfo，然后得到_cm
 //分片chunk块相关 mongoDB 的chunk分裂只会发生在 mongos 写入数据时， 当写入的数据超过一定量时， 就会触发 chunk 的分裂
+
+//一个表对应一个ChunkManager
 class ChunkManager : public std::enable_shared_from_this<ChunkManager> {
     MONGO_DISALLOW_COPYING(ChunkManager);
 
@@ -276,6 +278,8 @@ private:
 
         // Map from shard id to the maximum chunk version for that shard. If a shard contains no
         // chunks, it won't be present in this map.
+        //每个shard的版本信息，取值为该shard最大的chunk版本信息
+        //ChunkManager::getVersion中获取
         const ShardVersionMap shardVersions;
     };
 
@@ -320,6 +324,7 @@ private:
     const ChunkMapViews _chunkMapViews;
 
     // Max version across all chunks
+    //collection version 为 sharded collection 在所有shard上最高的 chunk version
     const ChunkVersion _collectionVersion;
 
     // Auto-split throttling state (state mutable by write commands)

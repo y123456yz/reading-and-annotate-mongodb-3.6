@@ -115,6 +115,7 @@ public:
     }
     void setUUID(UUID uuid);
 
+    //标识集合的唯一实例，用于辨识集合是否发生了变化。只有当 collection 被 drop 或者 collection的shardKey发生refined时 会重新生成
     const OID& getEpoch() const {
         return _epoch;
     }

@@ -78,13 +78,15 @@ struct QueryAndSort {
  * recent and also in order to handle cursor yields between chunks being migrated/split/merged. This
  * ensures that changes to chunk version (which will always be higher) will always come *after* our
  * current position in the chunk cursor.
- 从config节点拉取权威的路由信息，并进行CatalogCache路由信息刷新。实际最终是通过 ConfigServerCatalogCacheLoader 线程来进行的，构造一个
+ 从config节点拉取权威的路由信息，并进行CatalogCache路由信息刷新。
+ 实际最终是通过 ConfigServerCatalogCacheLoader 线程来进行的，构造一个
 
 {
     "ns": namespace,
   "lastmod": { $gte: sinceVersion}
 }
  */
+//只拉取版本号超过本地缓存lastmod版本的所有chunk信息
 QueryAndSort createConfigDiffQuery(const NamespaceString& nss, ChunkVersion collectionVersion) {
     return {BSON(ChunkType::ns() << nss.ns() << ChunkType::lastmod() << GTE
                                  << Timestamp(collectionVersion.toLong())),
@@ -94,6 +96,8 @@ QueryAndSort createConfigDiffQuery(const NamespaceString& nss, ChunkVersion coll
 /**
  * Blocking method, which returns the chunks which changed since the specified version.
  */
+//ConfigServerCatalogCacheLoader::getChunksSince中调用
+//拉取cfg中config.chunks表对应版本大于本地缓存lastmod的所有增量变化的chunk
 CollectionAndChangedChunks getChangedChunks(OperationContext* opCtx,
                                             const NamespaceString& nss,
                                             ChunkVersion sinceVersion) {
@@ -106,11 +110,14 @@ CollectionAndChangedChunks getChangedChunks(OperationContext* opCtx,
             !coll.getDropped());
 
     // If the collection's epoch has changed, do a full refresh
+    //如果表的epoll发生表和，说明 collection 被 drop 或者 collection的shardKey发生refined等
     const ChunkVersion startingCollectionVersion = (sinceVersion.epoch() == coll.getEpoch())
         ? sinceVersion
         : ChunkVersion(0, 0, coll.getEpoch());
 
     // Diff tracker should *always* find at least one chunk if collection exists
+    ////只拉取版本号超过本地缓存lastmod版本的所有chunk信息
+    //CollectionAndChangedChunks getChangedChunks调用，只拉取增量chunk,也就是变化了的chunk信息
     const auto diffQuery = createConfigDiffQuery(nss, startingCollectionVersion);
 
     // Query the chunks which have changed
@@ -128,7 +135,7 @@ CollectionAndChangedChunks getChangedChunks(OperationContext* opCtx,
     uassert(ErrorCodes::ConflictingOperationInProgress,
             "No chunks were found for the collection",
             !changedChunks.empty());
-
+	//
     return CollectionAndChangedChunks(coll.getUUID(),
                                       coll.getEpoch(),
                                       coll.getKeyPattern().toBSON(),
@@ -170,6 +177,7 @@ void ConfigServerCatalogCacheLoader::waitForCollectionFlush(OperationContext* op
     MONGO_UNREACHABLE;
 }
 
+//CatalogCache::_scheduleCollectionRefresh中调用，利用线程池异步处理function
 std::shared_ptr<Notification<void>> 
 	ConfigServerCatalogCacheLoader::getChunksSince(
     const NamespaceString& nss,

@@ -50,6 +50,10 @@ class StatusWith;
  * expected from types.
  //ShardingState::_refreshMetadata中返回获取
  */
+//可以参考https://mongoing.com/archives/75945  MongoDB 路由表刷新导致响应慢场景解读
+//https://mongoing.com/archives/77370  万亿级MongoDB集群的路由优化之路
+
+ 
 //chunk 版本信息 https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 //chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
 //MigrateInfo.version成员为该类型        getCollVersion和getShardVersion都是该类型，参考MigrationSourceManager::MigrationSourceManager

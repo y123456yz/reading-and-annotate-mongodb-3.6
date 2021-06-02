@@ -335,6 +335,8 @@ bool ChunkManager::compatibleWith(const ChunkManager& other, const ShardId& shar
     return other.getVersion(shardName).equals(getVersion(shardName));
 }
 
+//ChunkManager::makeUpdated调用
+//获取指定shard的版本信息
 ChunkVersion ChunkManager::getVersion(const ShardId& shardName) const {
     auto it = _chunkMapViews.shardVersions.find(shardName);
     if (it == _chunkMapViews.shardVersions.end()) {
@@ -464,11 +466,14 @@ std::shared_ptr<ChunkManager> ChunkManager::makeNew(
 //refreshCollectionRoutingInfo调用
 std::shared_ptr<ChunkManager> ChunkManager::makeUpdated(
     const std::vector<ChunkType>& changedChunks) {
+    //获取_collectionVersion，也就是所有shard最大chunk信息
     const auto startingCollectionVersion = getVersion();
+	//本地缓存的所有chunk信息
     auto chunkMap = _chunkMap;
 
     ChunkVersion collectionVersion = startingCollectionVersion;
     for (const auto& chunk : changedChunks) {
+		//ChunkType::getVersion
         const auto& chunkVersion = chunk.getVersion();
 
         uassert(ErrorCodes::ConflictingOperationInProgress,
@@ -503,6 +508,7 @@ std::shared_ptr<ChunkManager> ChunkManager::makeUpdated(
     // manager object, because the write commands' code relies on changes of the chunk manager's
     // sequence number to detect batch writes not making progress because of chunks moving across
     // shards too frequently.
+    //说明版本没有变化，则无需任何操作
     if (collectionVersion == startingCollectionVersion) {
         return shared_from_this();
     }

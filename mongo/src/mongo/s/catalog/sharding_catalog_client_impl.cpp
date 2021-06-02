@@ -974,6 +974,7 @@ bool ShardingCatalogClientImpl::runUserManagementReadCommand(OperationContext* o
     return Command::appendCommandStatus(*result, resultStatus.getStatus());
 }
 
+//ShardingCatalogManager::commitChunkSplitµ÷ÓÃ
 Status ShardingCatalogClientImpl::applyChunkOpsDeprecated(OperationContext* opCtx,
                                                           const BSONArray& updateOps,
                                                           const BSONArray& preCondition,
@@ -984,6 +985,9 @@ Status ShardingCatalogClientImpl::applyChunkOpsDeprecated(OperationContext* opCt
     invariant(serverGlobalParams.clusterRole == ClusterRole::ConfigServer ||
               (readConcern == repl::ReadConcernLevel::kMajorityReadConcern &&
                writeConcern.wMode == WriteConcernOptions::kMajority));
+	//Applies specified oplog entries to a mongod instance. The applyOps command is an internal command.
+	//This command obtains a global write lock and will block other operations until it has completed.
+	//²Î¿¼https://docs.mongodb.com/manual/reference/command/applyOps/
     BSONObj cmd = BSON("applyOps" << updateOps << "preCondition" << preCondition
                                   << WriteConcernOptions::kWriteConcernField
                                   << writeConcern.toBSON());

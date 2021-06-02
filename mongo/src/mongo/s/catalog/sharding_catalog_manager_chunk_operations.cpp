@@ -228,6 +228,7 @@ BSONObj makeCommitChunkApplyOpsCommand(const NamespaceString& nss,
 
 }  // namespace
 
+//ConfigSvrSplitChunkCommand::run中调用
 Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
                                                 const NamespaceString& nss,
                                                 const OID& requestEpoch,
@@ -243,6 +244,12 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
     std::string errmsg;
 
     // Get the max chunk version for this namespace.
+    //switched to db config
+	//mongos> db.chunks.find({"ns" : "cloud_track.xx"}).sort({"lastmod":-1}).limit(1)
+	//{ "_id" : "cloud_track.dailyCloudOperateInfo_01-userId_-8799279245254197987", "lastmod" : Timestamp(2269, 1), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8"), "ns" : "cloud_track.dailyCloudOperateInfo_01", "min" : { "userId" : NumberLong("-8799279245254197987") }, "max" : { "userId" : NumberLong("-8795846687425704091") }, "shard" : "ocloud_oFEAkecX_shard_MrFIjpKf" }
+	//mongos> 
+
+	//ShardLocal::_exhaustiveFindOnConfig
     auto findStatus = Grid::get(opCtx)->shardRegistry()->getConfigShard()->exhaustiveFindOnConfig(
         opCtx,
         ReadPreferenceSetting{ReadPreference::PrimaryOnly},
@@ -250,12 +257,14 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
         NamespaceString(ChunkType::ConfigNS),
         BSON("ns" << nss.ns()),
         BSON(ChunkType::lastmod << -1),
-        1);
+        1); //获取config.chunk中lastmod字段最大的一条数据
 
     if (!findStatus.isOK()) {
         return findStatus.getStatus();
     }
 
+	//db.chunks.find({"ns" : "cloud_track.xx"}).sort({"lastmod":-1}).limit(1)
+	//获取命令返回的数据
     const auto& chunksVector = findStatus.getValue().docs;
     if (chunksVector.empty()) {
         errmsg = str::stream() << "splitChunk cannot split chunk " << range.toString()
@@ -264,9 +273,11 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
         return {ErrorCodes::IllegalOperation, errmsg};
     }
 
+	//按照lastmod，"lastmod" : Timestamp(2269, 1)解析出整调数据存入ChunkVersion相应字段
     ChunkVersion collVersion = ChunkVersion::fromBSON(chunksVector.front(), ChunkType::lastmod());
 
     // Return an error if collection epoch does not match epoch of request.
+    //shard server发送过来的epoll和cfg中记录的不一致，直接报错
     if (collVersion.epoch() != requestEpoch) {
         errmsg = str::stream() << "splitChunk cannot split chunk " << range.toString()
                                << ". Collection '" << nss.ns() << "' was dropped and re-created."
@@ -283,8 +294,40 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
     auto newChunkBounds(splitPoints);
     newChunkBounds.push_back(range.getMax());
 
-    BSONArrayBuilder updates;
+    
+	
 
+	//把一个chunk从中间拆分为多个chunk，则需要在更新config.chunks表，一条表为多条，每条的版本minor自增
+	//该拆分chunk后的ChunkVersion取该表版本最大的一条，然后minor下版本按照拆分的条数递增
+	//注意只是这个指定的拆分chunk的lastmod才会变，其他的chunk的lastmode不会变，如下：
+	/*
+	mongos> db.chunks.find({"ns" : "cloud_track.dailyCloudOperateInfo_01", "shard" : "ocloud_oFEAkecX_shard_3"}, {lastmod:1, lastmodEpoch:1}).sort({"lastmod":-1}).limit(44)
+	{ "_id" : "cloud_track.xx-userId_-9162413882254975667", "lastmod" : Timestamp(2267, 1), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1471557197776300291", "lastmod" : Timestamp(2259, 25), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1473163376515744185", "lastmod" : Timestamp(2259, 24), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1474756339512334207", "lastmod" : Timestamp(2259, 23), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1476389563485460429", "lastmod" : Timestamp(2259, 22), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1478013688926177289", "lastmod" : Timestamp(2259, 21), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1479635589959175514", "lastmod" : Timestamp(2259, 20), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1481180083839929633", "lastmod" : Timestamp(2259, 19), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1482768361464343623", "lastmod" : Timestamp(2259, 18), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1484418967151675848", "lastmod" : Timestamp(2259, 17), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1486049861433680287", "lastmod" : Timestamp(2259, 16), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-1487635543913662499", "lastmod" : Timestamp(2259, 15), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-8623635608235383019", "lastmod" : Timestamp(2240, 1), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-8486473701912544949", "lastmod" : Timestamp(2232, 6), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-8488087652520488732", "lastmod" : Timestamp(2232, 5), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-8489664254966506173", "lastmod" : Timestamp(2232, 4), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-8491251519298231089", "lastmod" : Timestamp(2232, 3), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-8492910962204222674", "lastmod" : Timestamp(2232, 2), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-7571123874431886469", "lastmod" : Timestamp(2226, 4), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	{ "_id" : "cloud_track.xx-userId_-7572758537799358327", "lastmod" : Timestamp(2226, 3), "lastmodEpoch" : ObjectId("60942092465698e8e2a03ed8") }
+	Type "it" for more
+	mongos> 
+	*/
+
+	//拆分后的chunk信息组装到updates中
+	BSONArrayBuilder updates;
     for (const auto& endKey : newChunkBounds) {
         // Verify the split points are all within the chunk
         if (endKey.woCompare(range.getMax()) != 0 && !range.containsKey(endKey)) {
@@ -319,10 +362,11 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
         }
 
         // splits only update the 'minor' portion of version
+        //split chunk增加minor
         currentMaxVersion.incMinor();
 
         // build an update operation against the chunks collection of the config database
-        // with upsert true
+        // with upsert true  upsert true，没用则写入
         BSONObjBuilder op;
         op.append("op", "u");
         op.appendBool("b", true);
@@ -375,6 +419,8 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
     }
 
     // apply the batch of updates to local metadata.
+    //ShardingCatalogClientImpl::applyChunkOpsDeprecated
+    //拆分后的chunk update到config.chunk表中
     Status applyOpsStatus = Grid::get(opCtx)->catalogClient()->applyChunkOpsDeprecated(
         opCtx,
         updates.arr(),
@@ -387,6 +433,7 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
         return applyOpsStatus;
     }
 
+	//splite相关日志记录
     // log changes
     BSONObjBuilder logDetail;
     {
@@ -395,8 +442,12 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
         b.append(ChunkType::max(), range.getMax());
         collVersion.addToBSON(b, ChunkType::lastmod());
     }
-
+	
     if (newChunks.size() == 2) {
+	//如果是一个chunk拆分为2个chunk，则记录split log日志，如下：
+	//mongos> db.changelog.find({what:"split"}).limit(1)
+	//{ "_id" : "bjcp3642-2021-05-09T01:00:02.337+0800-6096c392465698e8e2f5cd0b", "server" : "bjcp3642", "clientAddr" : "10.130.148.84:57482", "time" : ISODate("2021-05-08T17:00:02.337Z"), "what" : "split", "ns" : "cloud_track.dailyCloudOperateInfo_03", "details" : { "before" : { "min" : { "userId" : { "$minKey" : 1 } }, "max" : { "userId" : NumberLong("-6148914691236517200") }, "lastmod" : Timestamp(2, 1), "lastmodEpoch" : ObjectId("6096c391465698e8e2f5cb65") }, "left" : { "min" : { "userId" : { "$minKey" : 1 } }, "max" : { "userId" : NumberLong("-7686143364045646500") }, "lastmod" : Timestamp(2, 2), "lastmodEpoch" : ObjectId("6096c391465698e8e2f5cb65") }, "right" : { "min" : { "userId" : NumberLong("-7686143364045646500") }, "max" : { "userId" : NumberLong("-6148914691236517200") }, "lastmod" : Timestamp(2, 3), "lastmodEpoch" : ObjectId("6096c391465698e8e2f5cb65") } } }
+
         appendShortVersion(&logDetail.subobjStart("left"), newChunks[0]);
         appendShortVersion(&logDetail.subobjStart("right"), newChunks[1]);
 
@@ -405,7 +456,10 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
             ->logChange(opCtx, "split", nss.ns(), logDetail.obj(), WriteConcernOptions())
             .transitional_ignore();
     } else {
-        BSONObj beforeDetailObj = logDetail.obj();
+    
+	//如果是一个chunk拆分为多个(超过2个)chunk，则记录split log日志，如下：
+	//mongos> db.changelog.find({what:"multi-split"}).limit(1)
+	//{ "_id" : "bjcp3642-2021-05-08T23:18:47.593+0800-6096abd7465698e8e2f2bc91", "server" : "bjcp3642", "clientAddr" : "10.130.148.84:34880", "time" : ISODate("2021-05-08T15:18:47.593Z"), "what" : "multi-split", "ns" : "cloud_track.dailyCloudOperateInfo_08", "details" : { "before" : { "min" : { "userId" : NumberLong("-6100234755828683737") }, "max" : { "userId" : NumberLong("-6093498987149518800") }, "lastmod" : Timestamp(2237, 1), "lastmodEpoch" : ObjectId("6075ce13465698e8e2bddd8e") }, "number" : 1, "of" : 5, "chunk" : { "min" : { "userId" : NumberLong("-6100234755828683737") }, "max" : { "userId" : NumberLong("-6098626556525707060") }, "lastmod" : Timestamp(2237, 2), "lastmodEpoch" : ObjectId("6075ce13465698e8e2bddd8e") } } }  BSONObj beforeDetailObj = logDetail.obj();
         BSONObj firstDetailObj = beforeDetailObj.getOwned();
         const int newChunksSize = newChunks.size();
 

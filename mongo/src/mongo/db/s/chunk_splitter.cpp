@@ -78,6 +78,7 @@ ThreadPool::Options makeDefaultThreadPoolOptions() {
 
 //ChunkSplitter::trySplitting->ChunkSplitter::_runAutosplit中调用，实际上没用
 //实际上用的是shardutil::splitChunkAtMultiplePoints，注意这里和shardutil::splitChunkAtMultiplePoints的区别
+//这里的接口实际上没用，请转向shardutil::splitChunkAtMultiplePoints
 Status splitChunkAtMultiplePoints(OperationContext* opCtx,
                                   const ShardId& shardId,
                                   const NamespaceString& nss,

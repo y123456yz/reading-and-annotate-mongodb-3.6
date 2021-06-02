@@ -71,8 +71,14 @@ splitChunk执行过程：
 4) 向configSvr中写入变更日志
 5) 通知mongos操作完成，mongos修改自身元数据
 */
+//可以参考https://mongoing.com/archives/75945  MongoDB 路由表刷新导致响应慢场景解读
+//https://mongoing.com/archives/77370  万亿级MongoDB集群的路由优化之路
 
-//mongos通过updateChunkWriteStatsAndSplitIfNeeded->selectChunkSplitPoints发送splitChunk命令给shard server
+
+//An internal administrative command. To split chunks, use the sh.splitFind() and sh.splitAt() functions in the mongo shell.
+//splitChunk为mongodb内部命令，不对外
+
+//mongos通过updateChunkWriteStatsAndSplitIfNeeded->splitChunkAtMultiplePoints发送splitChunk命令给shard server
 //sheard server收到splitChunk后通过SplitChunkCommand::run处理
 class SplitChunkCommand : public ErrmsgCommandDeprecated {
 public:
@@ -185,7 +191,7 @@ public:
         }
 
         OID expectedCollectionEpoch;
-		//同一个表的epoch不能变，需要检查
+		//同一个表的epoch不能变，需要检查，真正检查在cfg server中的ShardingCatalogManager::commitChunkSplit
         if (cmdObj.hasField("epoch")) {
             auto epochStatus = bsonExtractOIDField(cmdObj, "epoch", &expectedCollectionEpoch);
             uassert(

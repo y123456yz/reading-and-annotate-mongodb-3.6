@@ -66,36 +66,45 @@ const int kMaxInconsistentRoutingInfoRefreshAttempts = 3;
  * as that of the collection). Since this situation may be transient, due to the collection being
  * dropped or recreated concurrently, the caller must retry the reload up to some configurable
  * number of attempts.
- */
-//CatalogCache::_scheduleCollectionRefresh调用
+ */ 
+
 //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
 //返回nss对应的ChunkManager   
+
+//CatalogCache::_scheduleCollectionRefresh调用
 std::shared_ptr<ChunkManager> 
  refreshCollectionRoutingInfo(
     OperationContext* opCtx,
     const NamespaceString& nss,
     //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
     std::shared_ptr<ChunkManager> existingRoutingInfo,
+    //swCollectionAndChangedChunks参考赋值ConfigServerCatalogCacheLoader::getChunksSince
     StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollectionAndChangedChunks) {
     if (swCollectionAndChangedChunks == ErrorCodes::NamespaceNotFound) {
         return nullptr;
     }
 
+	//对应ConfigServerCatalogCacheLoader::getChunksSince中的swCollAndChunks
+	//cfg中config.chunks表对应版本大于本地缓存lastmod的所有增量变化的chunk
     const auto collectionAndChunks = uassertStatusOK(std::move(swCollectionAndChangedChunks));
 
-	//函数指针
+	
     auto chunkManager = [&] {
         // If we have routing info already and it's for the same collection epoch, we're updating.
         // Otherwise, we're making a whole new routing table.
-        //如果existingRoutingInfo为ture，也就是路由信息已经存在，并且集合的epoch相同，则直接使用collectionAndChunks.changedChunks
+        //配合CatalogCache::_scheduleCollectionRefresh->ConfigServerCatalogCacheLoader::getChunksSince  
+        //阅读，如果启动后有获取过表路由信息，则满足该条件
+        //做更新操作
         if (existingRoutingInfo &&
             existingRoutingInfo->getVersion().epoch() == collectionAndChunks.epoch) {
 			 //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
+			 //ChunkManager::makeUpdated,collectionAndChunks.changedChunks代表变化的chunks信息，也就是cfg中版本比本地缓存高的
+
 			 //ChunkManager::makeUpdated
-            return existingRoutingInfo->makeUpdated(collectionAndChunks.changedChunks);
+			 return existingRoutingInfo->makeUpdated(collectionAndChunks.changedChunks);
         }
 
-		//函数指针
+		
         auto defaultCollator = [&]() -> std::unique_ptr<CollatorInterface> {
             if (!collectionAndChunks.defaultCollation.isEmpty()) {
                 // The collation should have been validated upon collection creation
@@ -171,6 +180,7 @@ StatusWith<CachedCollectionRoutingInfo>
         if (it == collections.end()) { 
             auto shardStatus =
 				//获取primaryShardId这个分片对应的shard信息   ShardRegistry::getShard返回Shard类型
+				//，直接从本地缓存中获取shard信息
                 Grid::get(opCtx)->shardRegistry()->getShard(opCtx, dbEntry->primaryShardId);
             if (!shardStatus.isOK()) {
                 return {ErrorCodes::Error(40371),
@@ -183,6 +193,8 @@ StatusWith<CachedCollectionRoutingInfo>
             return {CachedCollectionRoutingInfo(
                 dbEntry->primaryShardId, nss, std::move(shardStatus.getValue()))};
         }
+		
+		//本地缓存中有该表信息
 
 		//获取nss对应的CollectionRoutingInfoEntry，也就是该集合对应的chunk分布
         auto& collEntry = it->second;
@@ -232,6 +244,8 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWi
     return getCollectionRoutingInfo(opCtx, nss);
 }
 
+
+//updateChunkWriteStatsAndSplitIfNeeded中调用
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getShardedCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
     invalidateShardedCollection(nss);
@@ -333,12 +347,12 @@ void CatalogCache::purgeAllDatabases() {
 }
 
 //CatalogCache::getCollectionRoutingInfo  CatalogCache::getDatabase调用
-//从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
+//首先从cachez中获取，如果cache没有则从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
 std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(OperationContext* opCtx,
                                                                             StringData dbName) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
 
-	//如果该db的路由表已经存在，则直接返回
+	//如果该db的信息缓存中已经存在，则直接返回
     auto it = _databases.find(dbName);
     if (it != _databases.end()) {
         return it->second;
@@ -392,6 +406,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
                                               int refreshAttempt) {
     Timer t;
 
+	//本地缓存的ChunkVersion信息
     const ChunkVersion startingCollectionVersion =
         (existingRoutingInfo ? existingRoutingInfo->getVersion() : ChunkVersion::UNSHARDED());
 
@@ -423,12 +438,14 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
     };
 
 	//下面的_cacheLoader.getChunksSince接口对应的回调处理
+	//真正在下面的getChunksSince异步执行
     const auto refreshCallback = [ this, t, dbEntry, nss, existingRoutingInfo, refreshFailed ](
         OperationContext * opCtx,
+        //swCollAndChunks参考赋值ConfigServerCatalogCacheLoader::getChunksSince
         StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollAndChunks) noexcept {
         std::shared_ptr<ChunkManager> newRoutingInfo;
         try {
-			//
+			//从cfg获取最小的路由信息
             newRoutingInfo = refreshCollectionRoutingInfo(
                 opCtx, nss, std::move(existingRoutingInfo), std::move(swCollAndChunks));
         } catch (const DBException& ex) {
@@ -472,7 +489,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
             log() << "Refresh for collection " << nss << " took " << t.millis()
                   << " ms and found version " << newRoutingInfo->getVersion();
 
-			//刷新该集合得路由信息
+			//刷新该集合得路由信息，routingInfo指向新的路由newRoutingInfo
             collEntry.routingInfo = std::move(newRoutingInfo);
         }
     };

@@ -61,6 +61,8 @@ using std::string;
  *   writeConcern: <BSONObj>
  * }
  */
+//shard server主节点收到mongos的splitchunk命令后，会发送_configsvrCommitChunkSplit给cfg server
+//见SplitChunkCommand::errmsgRun->SplitChunkCommand::errmsgRun
 class ConfigSvrSplitChunkCommand : public BasicCommand {
 public:
     ConfigSvrSplitChunkCommand() : BasicCommand("_configsvrCommitChunkSplit") {}
@@ -96,6 +98,7 @@ public:
         return parseNsFullyQualified(dbname, cmdObj);
     }
 
+	//ConfigSvrSplitChunkCommand::run
     bool run(OperationContext* opCtx,
              const std::string& dbName,
              const BSONObj& cmdObj,
@@ -108,6 +111,7 @@ public:
         auto parsedRequest = uassertStatusOK(SplitChunkRequest::parseFromConfigCommand(cmdObj));
 
         Status splitChunkResult =
+			//ShardingCatalogManager::commitChunkSplit
             ShardingCatalogManager::get(opCtx)->commitChunkSplit(opCtx,
                                                                  parsedRequest.getNamespace(),
                                                                  parsedRequest.getEpoch(),
