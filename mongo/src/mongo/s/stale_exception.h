@@ -38,6 +38,7 @@ namespace mongo {
 /**
  * Thrown whenever the config info for a given shard/chunk is out of date.
  */
+//可以参考例子checkShardVersionOrThrow
 class StaleConfigException final : public AssertionException {
 public:
     StaleConfigException(const std::string& ns,

@@ -104,7 +104,7 @@ std::shared_ptr<ChunkManager>
 			 return existingRoutingInfo->makeUpdated(collectionAndChunks.changedChunks);
         }
 
-		
+		//表对应epoll发生了变化，说明rename了表名，则需要重新构造一个ChunkManager类
         auto defaultCollator = [&]() -> std::unique_ptr<CollatorInterface> {
             if (!collectionAndChunks.defaultCollation.isEmpty()) {
                 // The collation should have been validated upon collection creation
@@ -445,7 +445,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollAndChunks) noexcept {
         std::shared_ptr<ChunkManager> newRoutingInfo;
         try {
-			//从cfg获取最小的路由信息
+			//从cfg获取最新的路由信息
             newRoutingInfo = refreshCollectionRoutingInfo(
                 opCtx, nss, std::move(existingRoutingInfo), std::move(swCollAndChunks));
         } catch (const DBException& ex) {
@@ -454,16 +454,19 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
             return;
         }
 
+		//注意这里有加锁
         stdx::lock_guard<stdx::mutex> lg(_mutex);
         auto& collections = dbEntry->collections;
         auto it = collections.find(nss.ns());
         invariant(it != collections.end());
         auto& collEntry = it->second;
 
+		//刷新到最新路由信息了，needsRefresh置为false，例如多个请求过来，则第一个请求刷新路由后，后面的请求就无需刷路由了
         collEntry.needsRefresh = false;
         collEntry.refreshCompletionNotification->set(Status::OK());
         collEntry.refreshCompletionNotification = nullptr;
 
+		//路由信息只会再分片集群有效
         if (!newRoutingInfo) {
             log() << "Refresh for collection " << nss << " took " << t.millis()
                   << " and found the collection is not sharded";

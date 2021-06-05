@@ -465,10 +465,11 @@ std::shared_ptr<ChunkManager> ChunkManager::makeNew(
 
 //refreshCollectionRoutingInfo调用
 std::shared_ptr<ChunkManager> ChunkManager::makeUpdated(
+	//changedChunks代表变化的chunks信息，也就是cfg中版本比本地缓存高的
     const std::vector<ChunkType>& changedChunks) {
     //获取_collectionVersion，也就是所有shard最大chunk信息
     const auto startingCollectionVersion = getVersion();
-	//本地缓存的所有chunk信息
+	//本地缓存的所有chunk信息，这里有遍历过程
     auto chunkMap = _chunkMap;
 
     ChunkVersion collectionVersion = startingCollectionVersion;
@@ -498,6 +499,7 @@ std::shared_ptr<ChunkManager> ChunkManager::makeUpdated(
         chunkMap.erase(low, high);
 
         // Insert only the chunk itself
+        //map表的 key为chunk.getMax()，value为chunk
         chunkMap.insert(std::make_pair(chunk.getMax(), std::make_shared<Chunk>(chunk)));
     }
 

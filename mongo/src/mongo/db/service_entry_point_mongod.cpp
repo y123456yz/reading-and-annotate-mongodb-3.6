@@ -755,6 +755,7 @@ void execCommandDatabase(OperationContext* opCtx,
                                        shardVersionFieldIdx);
 
             auto const shardingState = ShardingState::get(opCtx);
+			//只有分片模式复制集才能接受来自mongos的shardversion
             if (oss.hasShardVersion()) {
                 uassertStatusOK(shardingState->canAcceptShardedCommands());
             }

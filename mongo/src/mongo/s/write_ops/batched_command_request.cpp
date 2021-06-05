@@ -44,6 +44,7 @@ BatchedCommandRequest constructBatchedCommandRequest(const OpMsgRequest& request
 
     auto chunkVersion = ChunkVersion::parseFromBSONForCommands(request.body);
     if (chunkVersion != ErrorCodes::NoSuchKey) {
+		//BatchedCommandRequest::setShardVersion
         batchRequest.setShardVersion(uassertStatusOK(std::move(chunkVersion)));
     }
 

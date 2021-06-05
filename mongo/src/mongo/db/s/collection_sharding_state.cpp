@@ -210,6 +210,25 @@ void CollectionShardingState::clearMigrationSourceManager(OperationContext* opCt
     _sourceMgr = nullptr;
 }
 
+//
+
+//Collection_sharding_state.cpp (src\mongo\db\s):void CollectionShardingState::checkShardVersionOrThrow(OperationContext* opCtx) {
+//Collection_sharding_state.cpp (src\mongo\db\s):    checkShardVersionOrThrow(opCtx);
+//Collection_sharding_state.cpp (src\mongo\db\s):    checkShardVersionOrThrow(opCtx);
+//Collection_sharding_state.cpp (src\mongo\db\s):    checkShardVersionOrThrow(opCtx);
+//Collection_sharding_state.h (src\mongo\db\s):    void checkShardVersionOrThrow(OperationContext* opCtx);
+//Db_raii.cpp (src\mongo\db):    css->checkShardVersionOrThrow(opCtx);
+//Db_raii.cpp (src\mongo\db):        css->checkShardVersionOrThrow(opCtx);
+//Db_raii.cpp (src\mongo\db):            css->checkShardVersionOrThrow(_opCtx);
+//Find.cpp (src\mongo\db\query):    css->checkShardVersionOrThrow(opCtx);
+//Find_and_modify.cpp (src\mongo\db\commands):            css->checkShardVersionOrThrow(opCtx);
+//Find_and_modify.cpp (src\mongo\db\commands):            css->checkShardVersionOrThrow(opCtx);
+//Find_and_modify.cpp (src\mongo\db\commands):                css->checkShardVersionOrThrow(opCtx);
+//Find_and_modify.cpp (src\mongo\db\commands):                css->checkShardVersionOrThrow(opCtx);
+//Find_cmd.cpp (src\mongo\db\commands):        css->checkShardVersionOrThrow(opCtx);
+//Write_ops_exec.cpp (src\mongo\db\ops):    CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
+
+//shard version版本检查，如果mongos发送过来的shard version和期望的不一样，则返回mongos错误
 void CollectionShardingState::checkShardVersionOrThrow(OperationContext* opCtx) {
     std::string errmsg;
     ChunkVersion received;
@@ -490,6 +509,7 @@ void CollectionShardingState::_onConfigDeleteInvalidateCachedMetadataAndNotify(
     opCtx->recoveryUnit()->registerChange(new CollectionVersionLogOpHandler(opCtx, deletedNss));
 }
 
+//checkShardVersionOrThrow调用
 bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
                                                    std::string* errmsg,
                                                    ChunkVersion* expectedShardVersion,

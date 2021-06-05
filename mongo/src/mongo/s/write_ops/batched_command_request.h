@@ -114,6 +114,7 @@ public:
 
     bool isVerboseWC() const;
 
+    //constructBatchedCommandRequest调用，获取shardVersion信息
     void setShardVersion(ChunkVersion shardVersion) {
         _shardVersion = std::move(shardVersion);
     }
@@ -149,6 +150,7 @@ private:
     std::unique_ptr<write_ops::Update> _updateReq; //BatchedCommandRequest._updateReq
     std::unique_ptr<write_ops::Delete> _deleteReq; //BatchedCommandRequest._deleteReq
 
+    //获取到的mongos转发过来的shardVersion信息: shardVersion: [ Timestamp(33477, 353588), ObjectId('5f9aa6ec3af7fbacfbc99a27') ]
     boost::optional<ChunkVersion> _shardVersion;
 
     boost::optional<BSONObj> _writeConcern;

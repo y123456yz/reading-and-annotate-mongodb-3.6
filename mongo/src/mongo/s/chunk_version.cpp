@@ -96,6 +96,7 @@ const char kLastmod[] = "lastmod";
 //mongos发送到mongod的请求中会携带shardVersion: shardVersion: [ Timestamp(33477, 353588), ObjectId('5f9aa6ec3af7fbacfbc99a27') ]
 const char ChunkVersion::kShardVersionField[] = "shardVersion";
 
+//constructBatchedCommandRequest中调用，解析shardVersion内容
 StatusWith<ChunkVersion> ChunkVersion::parseFromBSONForCommands(const BSONObj& obj) {
     return parseFromBSONWithFieldForCommands(obj, kShardVersionField);
 }

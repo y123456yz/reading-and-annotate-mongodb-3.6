@@ -148,6 +148,7 @@ private:
         //CatalogCache::onStaleConfigError， invalidateShardedCollection CatalogCache::_getDatabase中设置为true
         // CatalogCache::_scheduleCollectionRefresh设置为false
         //如果为Ture则通过CatalogCache::getCollectionRoutingInfo获取最新路由信息
+        //例如多个请求过来，则第一个请求刷新路由后，后面的请求就无需刷路由了
         bool needsRefresh{true};
 
         // Contains a notification to be waited on for the refresh to complete (only available if
@@ -156,6 +157,7 @@ private:
         std::shared_ptr<Notification<Status>> refreshCompletionNotification;
 
         // Contains the cached routing information (only available if needsRefresh is false)
+        //该表的路由信息
         std::shared_ptr<ChunkManager> routingInfo;
     };
 

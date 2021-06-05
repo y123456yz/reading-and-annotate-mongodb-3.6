@@ -45,7 +45,7 @@ const Milliseconds kMaxWaitForMigrationCriticalSection = Minutes(5);
 }  // namespace
 
 OperationShardingState::OperationShardingState() = default;
-
+//可以参考OperationShardingState::get
 OperationShardingState& OperationShardingState::get(OperationContext* opCtx) {
     return shardingMetadataDecoration(opCtx);
 }
@@ -88,6 +88,7 @@ void OperationShardingState::initializeShardVersion(NamespaceString nss,
     setShardVersion(std::move(nss), std::move(newVersion));
 }
 
+//execCommandDatabase调用
 bool OperationShardingState::hasShardVersion() const {
     return _hasVersion;
 }
