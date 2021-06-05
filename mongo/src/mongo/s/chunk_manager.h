@@ -61,6 +61,13 @@ using ShardVersionMap = std::map<ShardId, ChunkVersion>;
 //CachedCollectionRoutingInfo._cm成员为该类型，通过CatalogCache::getCollectionRoutingInfo获取CachedCollectionRoutingInfo，然后得到_cm
 //分片chunk块相关 mongoDB 的chunk分裂只会发生在 mongos 写入数据时， 当写入的数据超过一定量时， 就会触发 chunk 的分裂
 
+//CollectionMetadata._cm为该类型
+
+//注意ChunkManager和CollectionMetadata的关系，参考ShardingState::_refreshMetadata
+
+//CollectionMetadata._cm为该类型，该表chunk信息存在集合元数据CollectionMetadata._cm中
+
+
 //一个表对应一个ChunkManager，也就是该表的routingInfo(参考CatalogCache::_scheduleCollectionRefresh)
 //每个表的路由信息存储再CatalogCache::CollectionRoutingInfoEntry.routingInfo成员中
 class ChunkManager : public std::enable_shared_from_this<ChunkManager> {

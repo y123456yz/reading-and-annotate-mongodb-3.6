@@ -858,7 +858,7 @@ void curOpCommandSetup(OperationContext* opCtx, const OpMsgRequest& request) {
 //mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
 //mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
 
-//mongodb语句解析  ServiceEntryPointMongod::handleRequest中执行
+//mongodb语句解析  ServiceEntryPointMongod::handleRequest中执行  
 DbResponse runCommands(OperationContext* opCtx, const Message& message) {
 	//获取message对应的ReplyBuilder，3.6默认对应OpMsgReplyBuilder
     auto replyBuilder = rpc::makeReplyBuilder(rpc::protocolForMessage(message));

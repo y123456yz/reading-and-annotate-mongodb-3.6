@@ -156,6 +156,7 @@ private:
      * Represents an instance of what the filtering metadata for this collection was at a particular
      * point in time along with a counter of how many queries are still using it.
      */
+    //ScopedCollectionMetadata._metadataTracker成员为该类型
     struct CollectionMetadataTracker {
         MONGO_DISALLOW_COPYING(CollectionMetadataTracker);
 
@@ -166,6 +167,7 @@ private:
             invariant(!usageCounter);
         }
 
+        //集合元数据信息
         CollectionMetadata metadata;
 
         std::list<Deletion> orphans;
@@ -328,9 +330,10 @@ private:
      * Disconnect from the CollectionMetadata, possibly triggering GC of unused CollectionMetadata.
      */
     void _clear();
-    
+  
     std::shared_ptr<MetadataManager> _metadataManager;
 
+    //集合对应的元数据都存在该结构中
     std::shared_ptr<MetadataManager::CollectionMetadataTracker> _metadataTracker;
 };
 

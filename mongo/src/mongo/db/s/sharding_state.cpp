@@ -511,7 +511,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     const auto routingInfo = uassertStatusOK(
         Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfoWithRefresh(opCtx, nss));
 
-	//获取ChunkManager
+	//获取ChunkManager   从cfg获取的新路由信息
 	const auto cm = routingInfo.cm();//CachedCollectionRoutingInfo::cm
 
 	//没有ChunkManager，说明没有启用分片功能
@@ -530,10 +530,12 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 
     {
         AutoGetCollection autoColl(opCtx, nss, MODE_IS);
-		//获取CollectionShardingState
+		//获取CollectionShardingState，对应当前mongos缓存的路由相关信息
         auto css = CollectionShardingState::get(opCtx, nss);
 
-        // We already have newer version    
+        // We already have newer version  
+        
+        //css对应本地的，cm对应从cfg刚获取的最新的路由信息
 
 		//ChunkVersion如果没有发生变化，则不用更新元数据，直接返回
         //CollectionShardingState::getMetadata
@@ -563,10 +565,16 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
         return css->getMetadata()->getShardVersion();
     }
 
+
+	//注意ChunkManager和CollectionMetadata的关系，参考ShardingState::_refreshMetadata
+
+	
+	//把最新获取到的路由信息cm和shardId构造对应CollectionMetadata
     std::unique_ptr<CollectionMetadata> newCollectionMetadata =
         stdx::make_unique<CollectionMetadata>(cm, shardId);
 
 	//跟新元数据版本信息  CollectionShardingState::refreshMetadata
+	//把最新获取到的
     css->refreshMetadata(opCtx, std::move(newCollectionMetadata));
 
 	//返回新的版本信息
