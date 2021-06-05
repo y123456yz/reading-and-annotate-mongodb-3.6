@@ -505,6 +505,9 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
             shardId.isValid());
 
 	//获取集合chunks路由信息  routingInfo为CachedCollectionRoutingInfo类型
+	//通过这里把chunks路由信息和metadata元数据信息关联起来
+	//(元数据刷新，通过这里把chunks路由信息和metadata元数据信息关联起来)流程： 
+	//    ShardingState::_refreshMetadata->CatalogCache::getShardedCollectionRoutingInfoWithRefresh
     const auto routingInfo = uassertStatusOK(
         Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfoWithRefresh(opCtx, nss));
 

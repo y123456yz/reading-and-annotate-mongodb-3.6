@@ -201,7 +201,7 @@ size_t MetadataManager::numberOfMetadataSnapshots() const {
     return _metadata.size() - 1;
 }
 
-//跟新元数据
+//跟新元数据  CollectionShardingState::refreshMetadata调用
 void MetadataManager::refreshActiveMetadata(std::unique_ptr<CollectionMetadata> remoteMetadata) {
     stdx::lock_guard<stdx::mutex> lg(_managerLock);
 

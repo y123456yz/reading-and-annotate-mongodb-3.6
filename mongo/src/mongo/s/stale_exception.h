@@ -38,7 +38,8 @@ namespace mongo {
 /**
  * Thrown whenever the config info for a given shard/chunk is out of date.
  */
-//可以参考例子checkShardVersionOrThrow
+//可以参考例子checkShardVersionOrThrow,
+//例如版本不匹配会走到这里
 class StaleConfigException final : public AssertionException {
 public:
     StaleConfigException(const std::string& ns,
@@ -89,6 +90,8 @@ public:
         return _received;
     }
 
+    //generateLegacyQueryErrorResponse
+    //serializeReply  generateLegacyQueryErrorResponse  _generateErrorResponse
     ChunkVersion getVersionWanted() const {
         return _wanted;
     }

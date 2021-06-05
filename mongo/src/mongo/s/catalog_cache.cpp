@@ -153,8 +153,11 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
 //可以参考https://mongoing.com/archives/75945
 //https://mongoing.com/archives/77370
 
-//CatalogCache::getShardedCollectionRoutingInfoWithRefresh   checkShardVersion
-//moveChunk   ChunkSplitter::_runAutosplit splitIfNeeded  
+//(元数据刷新，通过这里把chunks路由信息和metadata元数据信息关联起来)流程： 
+//    ShardingState::_refreshMetadata->CatalogCache::getShardedCollectionRoutingInfoWithRefresh
+
+//其他调用接口如下:
+//moveChunk  checkShardVersion   ChunkSplitter::_runAutosplit splitIfNeeded  
 //DropCmd::run RenameCollectionCmd  ClusterFind::runQuery  FindAndModifyCmd::run  CollectionStats::run
 //ClusterAggregate::runAggregate    getExecutionNsRoutingInfo  dispatchShardPipeline
 //ChunkManagerTargeter::init调用，获取集合路由缓存信息
@@ -245,7 +248,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWi
 }
 
 
-//updateChunkWriteStatsAndSplitIfNeeded中调用
+//updateChunkWriteStatsAndSplitIfNeeded   ShardingState::_refreshMetadata中调用
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getShardedCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
     invalidateShardedCollection(nss);
@@ -427,7 +430,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         //cfg中元数据发生了变化，递归调用最多kMaxInconsistentRoutingInfoRefreshAttempts次
         if (status == ErrorCodes::ConflictingOperationInProgress &&
             refreshAttempt < kMaxInconsistentRoutingInfoRefreshAttempts) {
-            //CatalogCache::_scheduleCollectionRefresh
+            //CatalogCache::_scheduleCollectionRefresh 递归调用
             _scheduleCollectionRefresh(lk, dbEntry, nullptr, nss, refreshAttempt + 1);
         } else {
             // Leave needsRefresh to true so that any subsequent get attempts will kick off

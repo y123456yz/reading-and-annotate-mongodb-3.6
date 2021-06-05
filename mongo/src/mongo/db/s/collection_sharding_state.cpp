@@ -157,7 +157,8 @@ ScopedCollectionMetadata CollectionShardingState::getMetadata() {
     return _metadataManager->getActiveMetadata(_metadataManager);
 }
 
-//ShardingState::_refreshMetadatad调用
+
+//ShardingState::_refreshMetadata  MigrationSourceManager::commitChunkMetadataOnConfig调用
 void CollectionShardingState::refreshMetadata(OperationContext* opCtx,
                                               std::unique_ptr<CollectionMetadata> newMetadata) {
     invariant(opCtx->lockState()->isCollectionLockedForMode(_nss.ns(), MODE_X));
@@ -229,6 +230,7 @@ void CollectionShardingState::clearMigrationSourceManager(OperationContext* opCt
 //Write_ops_exec.cpp (src\mongo\db\ops):    CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
 
 //shard version版本检查，如果mongos发送过来的shard version和期望的不一样，则返回mongos错误
+//再外层的execCommandDatabase  runCommands捕获版本异常返回给mongos
 void CollectionShardingState::checkShardVersionOrThrow(OperationContext* opCtx) {
     std::string errmsg;
     ChunkVersion received;
