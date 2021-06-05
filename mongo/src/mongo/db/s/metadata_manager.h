@@ -156,7 +156,9 @@ private:
      * Represents an instance of what the filtering metadata for this collection was at a particular
      * point in time along with a counter of how many queries are still using it.
      */
+    //MetadataManager._metadata链表成员为该类型
     //ScopedCollectionMetadata._metadataTracker成员为该类型
+    //最终最新的集合元数据信息添加到MetadataManager._metadata列表中,参考MetadataManager::refreshActiveMetadata->MetadataManager::_setActiveMetadata
     struct CollectionMetadataTracker {
         MONGO_DISALLOW_COPYING(CollectionMetadataTracker);
 

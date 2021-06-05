@@ -490,7 +490,8 @@ StatusWith<bool> ShardingState::initializeShardingAwarenessIfNeeded(OperationCon
     }
 }
 
-//ShardingState::refreshMetadataNow调用  更新元数据信息，返回chunk版本信息
+//ShardingState::refreshMetadataNow  ShardingState::onStaleShardVersion调用  
+//更新元数据信息，返回chunk版本信息
 ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const NamespaceString& nss) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(enabled());
@@ -556,6 +557,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
     auto css = CollectionShardingState::get(opCtx, nss);
 
     // We already have newer version
+    //css对应本地的，cm对应从cfg刚获取的最新的路由信息，比较本地版本信息和从cfg获取到的cm最新版本信息是否一致
     if (css->getMetadata() && //CollectionShardingState::getMetadata
     	//ScopedCollectionMetadata::getMetadata  CollectionMetadata::getCollVersion
         css->getMetadata()->getCollVersion().epoch() == cm->getVersion().epoch() &&

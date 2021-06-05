@@ -53,6 +53,7 @@ class ChunkType;
 //CollectionMetadataTracker.metadata为该类型
 //参考ShardingState::_refreshMetadata使用方式
 //注意ChunkManager和CollectionMetadata的关系，参考ShardingState::_refreshMetadata
+//最终最新的集合元数据信息添加到MetadataManager._metadata列表中,参考MetadataManager::refreshActiveMetadata->MetadataManager::_setActiveMetadata
 class CollectionMetadata {
 public:
     /**
@@ -185,7 +186,7 @@ private:
     void _buildRangesMap();
 
     // The full routing table for the collection. 
-    
+    //集合chunk路由信息
     std::shared_ptr<ChunkManager> _cm;
 
     // The identity of this shard, for the purpose of answering "key belongs to me" queries.

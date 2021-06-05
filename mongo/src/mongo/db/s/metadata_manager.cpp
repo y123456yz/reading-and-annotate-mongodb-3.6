@@ -202,6 +202,7 @@ size_t MetadataManager::numberOfMetadataSnapshots() const {
 }
 
 //跟新元数据  CollectionShardingState::refreshMetadata调用
+//最终最新的集合元数据信息添加到MetadataManager._metadata列表中
 void MetadataManager::refreshActiveMetadata(std::unique_ptr<CollectionMetadata> remoteMetadata) {
     stdx::lock_guard<stdx::mutex> lg(_managerLock);
 
@@ -226,6 +227,7 @@ void MetadataManager::refreshActiveMetadata(std::unique_ptr<CollectionMetadata> 
     }
 
     // Collection is becoming sharded
+    //第一次获取元数据信息，也就是启用分片功能的时候
     if (_metadata.empty()) {
         log() << "Marking collection " << _nss.ns() << " as sharded with "
               << remoteMetadata->toStringBasic();
@@ -284,6 +286,7 @@ void MetadataManager::refreshActiveMetadata(std::unique_ptr<CollectionMetadata> 
     _setActiveMetadata(lg, std::move(*remoteMetadata));
 }
 
+//上面的MetadataManager::refreshActiveMetadata->MetadataManager::_setActiveMetadata调用
 void MetadataManager::_setActiveMetadata(WithLock wl, CollectionMetadata newMetadata) {
     _metadata.emplace_back(std::make_shared<CollectionMetadataTracker>(std::move(newMetadata)));
     _retireExpiredMetadata(wl);
