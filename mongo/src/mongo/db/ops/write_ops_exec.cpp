@@ -183,6 +183,10 @@ private:
     repl::OpTime _opTimeAtLastOpStart;
 };
 
+//增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
+//读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+
+
 //写必须走主节点判断及版本判断  performSingleUpdateOp中调用
 void assertCanWrite_inlock(OperationContext* opCtx, const NamespaceString& ns) {
     uassert(ErrorCodes::PrimarySteppedDown,
@@ -247,9 +251,11 @@ bool handleError(OperationContext* opCtx,
 
         if (!opCtx->getClient()->isInDirectClient()) {
             ShardingState::get(opCtx)
+				//更新元数据路由信息
                 ->onStaleShardVersion(opCtx, nss, staleConfigException->getVersionReceived())
                 .transitional_ignore();
         }
+		//这个错误直接返回给客户端
         out->staleConfigException = stdx::make_unique<StaleConfigException>(*staleConfigException);
         return false;
     }
@@ -711,7 +717,9 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
     if (collection->getDb()) {
         curOp.raiseDbProfileLevel(collection->getDb()->getProfilingLevel());
     }
-
+	//增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
+	//读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+	// execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
 	//写必须走主节点判断及版本判断
     assertCanWrite_inlock(opCtx, ns);
 

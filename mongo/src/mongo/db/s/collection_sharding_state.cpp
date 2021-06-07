@@ -229,8 +229,15 @@ void CollectionShardingState::clearMigrationSourceManager(OperationContext* opCt
 //Find_cmd.cpp (src\mongo\db\commands):        css->checkShardVersionOrThrow(opCtx);
 //Write_ops_exec.cpp (src\mongo\db\ops):    CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
 
+//增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
+//读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+
+//如果mongos发送过来的版本号和本地元数据不一致，则抛出异常，然后再
+//  execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
+
+
 //shard version版本检查，如果mongos发送过来的shard version和期望的不一样，则返回mongos错误
-//再外层的execCommandDatabase  runCommands捕获版本异常返回给mongos
+//再外层的execCommandDatabase  runCommands捕获版本异常返回给mongos，和ChunkManagerTargeter::noteStaleResponse对应
 void CollectionShardingState::checkShardVersionOrThrow(OperationContext* opCtx) {
     std::string errmsg;
     ChunkVersion received;
@@ -512,6 +519,7 @@ void CollectionShardingState::_onConfigDeleteInvalidateCachedMetadataAndNotify(
 }
 
 //checkShardVersionOrThrow调用
+//mongos发送过来的版本信息和本地版本信息做比较
 bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
                                                    std::string* errmsg,
                                                    ChunkVersion* expectedShardVersion,
@@ -523,6 +531,7 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
     // If there is a version attached to the OperationContext, use it as the received version.
     // Otherwise, get the received version from the ShardedConnectionInfo.
     if (oss.hasShardVersion()) {
+		//OperationShardingState::getShardVersion
         *expectedShardVersion = oss.getShardVersion(_nss);
     } else {
         ShardedConnectionInfo* info = ShardedConnectionInfo::get(client, false);
@@ -546,6 +555,7 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
 
     // Set this for error messaging purposes before potentially returning false.
     auto metadata = getMetadata();
+	//本地缓存的元数据版本信息
     *actualShardVersion = metadata ? metadata->getShardVersion() : ChunkVersion::UNSHARDED();
 
     if (_sourceMgr) {

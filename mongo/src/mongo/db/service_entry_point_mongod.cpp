@@ -166,6 +166,8 @@ void registerError(OperationContext* opCtx, const DBException& exception) {
     CurOp::get(opCtx)->debug().exceptionInfo = exception.toStatus();
 }
 
+//execCommandDatabase中调用
+//返回StaleConfigException相关异常信息给客户端 
 void _generateErrorResponse(OperationContext* opCtx,
                             rpc::ReplyBuilderInterface* replyBuilder,
                             const DBException& exception,
@@ -751,7 +753,9 @@ void execCommandDatabase(OperationContext* opCtx,
              ((serverGlobalParams.featureCompatibility.getVersion() ==
                ServerGlobalParams::FeatureCompatibility::Version::kFullyUpgradedTo36) &&
               (readConcernArgs.hasLevel() || readConcernArgs.getArgsClusterTime())))) {
-            oss.initializeShardVersion(NamespaceString(command->parseNs(dbname, request.body)),
+			//解析出shardversion信息：shardVersion: [ Timestamp(21301, 0), ObjectId('605d4d753af7fbacfbf5544c') ]
+			//OperationShardingState::initializeShardVersion
+			oss.initializeShardVersion(NamespaceString(command->parseNs(dbname, request.body)),
                                        shardVersionFieldIdx);
 
             auto const shardingState = ShardingState::get(opCtx);
@@ -795,9 +799,11 @@ void execCommandDatabase(OperationContext* opCtx,
         if (e.code() == ErrorCodes::StaleConfig) {
             auto sce = dynamic_cast<const StaleConfigException*>(&e);
             invariant(sce);  // do not upcasts from DBException created by uassert variants.
-
+			//如果是mongos连得mongod则为true，客户端直接连mongod，则为false
             if (!opCtx->getClient()->isInDirectClient()) {
+				//mongos发送过来得版本信息较低，则说明版本不匹配，这时候需要刷新路由信息
                 ShardingState::get(opCtx)
+					//获取最新路由元数据信息
                     ->onStaleShardVersion(
                         opCtx, NamespaceString(sce->getns()), sce->getVersionReceived())
                     .transitional_ignore();
@@ -826,14 +832,14 @@ void execCommandDatabase(OperationContext* opCtx,
                    << "on database '" << request.getDatabase() << "' "
                    << "with arguments '" << command->getRedactedCopyForLogging(request.body)
                    << "' and operationTime '" << operationTime.toString() << "': " << e.toString();
-
+			//返回StaleConfigException相关异常信息给客户端 
             _generateErrorResponse(opCtx, replyBuilder, e, metadataBob.obj(), operationTime);
         } else {
             LOG(1) << "assertion while executing command '" << request.getCommandName() << "' "
                    << "on database '" << request.getDatabase() << "' "
                    << "with arguments '" << command->getRedactedCopyForLogging(request.body)
                    << "': " << e.toString();
-
+			//返回StaleConfigException相关异常信息给客户端 
             _generateErrorResponse(opCtx, replyBuilder, e, metadataBob.obj());
         }
     }

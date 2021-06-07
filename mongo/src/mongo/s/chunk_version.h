@@ -149,10 +149,14 @@ public:
             version.epoch() == IGNORED().epoch();
     }
 
+    //ChunkManagerTargeter::noteStaleResponse调用
     void incMajor() {
         _combined = static_cast<uint64_t>(majorVersion() + 1) << 32;
     }
 
+    //ShardingCatalogManager::commitChunkSplit(splitchunk的时候)
+    //ShardingCatalogManager::commitChunkMerge
+    //createFirstChunks
     void incMinor() {
         _combined++;
     }
@@ -282,7 +286,7 @@ public:
     //
     // { version : <TS> } and { version : [<TS>,<OID>] } format
     //
-
+    
     static ChunkVersion fromBSON(const BSONElement& el, const std::string& prefix, bool* canParse) {
         *canParse = true;
 
@@ -314,6 +318,7 @@ public:
         return fromBSON(obj, prefix, &canParse);
     }
 
+    //OperationShardingState::initializeShardVersion调用
     static ChunkVersion fromBSON(const BSONObj& obj, const std::string& prefixIn, bool* canParse) {
         *canParse = true;
 

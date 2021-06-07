@@ -147,6 +147,9 @@ private:
         //是否需要刷新集合路由信息，
         //CatalogCache::onStaleConfigError， invalidateShardedCollection CatalogCache::_getDatabase中设置为true
         // CatalogCache::_scheduleCollectionRefresh设置为false
+
+        //CatalogCache::onStaleConfigError和CatalogCache::invalidateShardedCollection进行强制路由刷新，
+        //  通过CatalogCache::_scheduleCollectionRefresh获取最新路由后设置为为false
         //如果为Ture则通过CatalogCache::getCollectionRoutingInfo获取最新路由信息
         //例如多个请求过来，则第一个请求刷新路由后，后面的请求就无需刷路由了
         bool needsRefresh{true};
@@ -231,7 +234,7 @@ private:
 //CatalogCache::getCollectionRoutingInfo中构造使用 CatalogCache::getCollectionRoutingInfo
 //ChunkManagerTargeter._routingInfo成员为该类型，
 //CollectionRoutingInfoEntry存储表的chunk信息，CachedCollectionRoutingInfo存储表的主分片信息
-class CachedCollectionRoutingInfo {
+class CachedCollectionRoutingInfo { //getShardedCollection
 public:
     /**
      * Returns the ID of the primary shard for the database owining this collection, regardless of

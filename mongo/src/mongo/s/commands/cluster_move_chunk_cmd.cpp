@@ -234,6 +234,7 @@ public:
                                                     cmdObj["_waitForDelete"].trueValue() ||
                                                         cmdObj["waitForDelete"].trueValue()));
 
+		//需要刷新路由
         Grid::get(opCtx)->catalogCache()->onStaleConfigError(std::move(routingInfo));
 
         result.append("millis", t.millis());

@@ -641,6 +641,10 @@ Status ChunkManagerTargeter::targetAllShards(
     return Status::OK();
 }
 
+//配合shard server中的CollectionShardingState::checkShardVersionOrThrow阅读
+
+//noteStaleResponses中调用
+//更新_remoteShardVersions，也就是远端分片shard version
 void ChunkManagerTargeter::noteStaleResponse(const ShardEndpoint& endpoint,
                                              const BSONObj& staleInfo) {
     dassert(!_needsTargetingRefresh);
@@ -650,6 +654,7 @@ void ChunkManagerTargeter::noteStaleResponse(const ShardEndpoint& endpoint,
         // If we don't have a vWanted sent, assume the version is higher than our current
         // version.
         remoteShardVersion = getShardVersion(*_routingInfo, endpoint.shardName);
+		//增加主版本号
         remoteShardVersion.incMajor();
     } else {
         remoteShardVersion = ChunkVersion::fromBSON(staleInfo, "vWanted");
@@ -657,6 +662,7 @@ void ChunkManagerTargeter::noteStaleResponse(const ShardEndpoint& endpoint,
 
     ShardVersionMap::iterator it = _remoteShardVersions.find(endpoint.shardName);
     if (it == _remoteShardVersions.end()) {
+		//<分片名，shardversion>
         _remoteShardVersions.insert(std::make_pair(endpoint.shardName, remoteShardVersion));
     } else {
         ChunkVersion& previouslyNotedVersion = it->second;

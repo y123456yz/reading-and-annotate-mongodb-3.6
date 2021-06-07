@@ -533,6 +533,7 @@ Status MigrationSourceManager::commitChunkMetadataOnConfig(OperationContext* opC
     // section. It is okay if the refresh fails because that will cause the metadata to be cleared
     // and subsequent callers will try to do a full refresh.
     ChunkVersion unusedShardVersion;
+	//从cfg获取元数据信息
     Status refreshStatus =
         ShardingState::get(opCtx)->refreshMetadataNow(opCtx, getNss(), &unusedShardVersion);
 

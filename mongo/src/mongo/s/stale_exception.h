@@ -38,7 +38,11 @@ namespace mongo {
 /**
  * Thrown whenever the config info for a given shard/chunk is out of date.
  */
-//可以参考例子checkShardVersionOrThrow,
+//可以参考例子checkShardVersionOrThrow, shard mongod如果发现版本不匹配，则会通过
+// execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
+//mongod通过handleError也会返回StaleConfigException错误
+
+//代理收到该应答后，在ChunkManagerTargeter::noteStaleResponse中解析
 //例如版本不匹配会走到这里
 class StaleConfigException final : public AssertionException {
 public:

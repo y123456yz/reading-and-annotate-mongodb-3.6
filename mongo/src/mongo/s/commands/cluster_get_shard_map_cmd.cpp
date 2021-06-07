@@ -38,6 +38,71 @@
 namespace mongo {
 namespace {
 
+/*
+xxxxxx_oFEAkecX_xxx_1:PRIMARY> db.runCommand({"getShardMap":1})
+{
+        "map" : {
+                "xx.128.22.211xx.0" : "xxxxxx_oFEAkecX_xxx_ImGeDQnU/xx.128.22.211xx.0,xx.xxxxxx.209.54xx.0,xx.13xxxxxx.159.194xx.0",
+                "xx.xxxxxx.155.189xx.0" : "xxxxxx_oFEAkecX_xxx_UeRnftkj/xx.xxxxxx.155.189xx.0,xx.13xxxxxx.159.247xx.0,xx.13xxxxxx.159.248xx.0",
+                "xx.xxxxxx.209.54xx.0" : "xxxxxx_oFEAkecX_xxx_ImGeDQnU/xx.128.22.211xx.0,xx.xxxxxx.209.54xx.0,xx.13xxxxxx.159.194xx.0",
+                "xx.13xxxxxx.148.84xx.0" : "xxxxxx_oFEAkecX_xxx_1/xx.13xxxxxx.148.84xx.0,xx.xx.46.2:20015,xx.xx.xx.xx1:20015",
+                "xx.13xxxxxx.148.85xx.0" : "xxxxxx_oFEAkecX_xxx_3/xx.13xxxxxx.148.85xx.0,xx.131.18.40xx.0,xx.xx.xxxxxxxx.84:20010",
+                "xx.13xxxxxx.148.86xx.0" : "xxxxxx_oFEAkecX_xxx_2/xx.13xxxxxx.148.86xx.0,xx.xx.56.238:20013,xx.xx.56.44xx.7",
+                "xx.13xxxxxx.159.188xx.0" : "xxxxxx_oFEAkecX_xxx_MrFIjpKf/xx.13xxxxxx.159.188xx.0,xx.13xxxxxx.159.189xx.0,xx.13xxxxxx.159.190xx.0",
+                "xx.13xxxxxx.159.189xx.0" : "xxxxxx_oFEAkecX_xxx_MrFIjpKf/xx.13xxxxxx.159.188xx.0,xx.13xxxxxx.159.189xx.0,xx.13xxxxxx.159.190xx.0",
+                "xx.13xxxxxx.159.190xx.0" : "xxxxxx_oFEAkecX_xxx_MrFIjpKf/xx.13xxxxxx.159.188xx.0,xx.13xxxxxx.159.189xx.0,xx.13xxxxxx.159.190xx.0",
+                "xx.13xxxxxx.159.194xx.0" : "xxxxxx_oFEAkecX_xxx_ImGeDQnU/xx.128.22.211xx.0,xx.xxxxxx.209.54xx.0,xx.13xxxxxx.159.194xx.0",
+                "xx.13xxxxxx.159.247xx.0" : "xxxxxx_oFEAkecX_xxx_UeRnftkj/xx.xxxxxx.155.189xx.0,xx.13xxxxxx.159.247xx.0,xx.13xxxxxx.159.248xx.0",
+                "xx.13xxxxxx.159.248xx.0" : "xxxxxx_oFEAkecX_xxx_UeRnftkj/xx.xxxxxx.155.189xx.0,xx.13xxxxxx.159.247xx.0,xx.13xxxxxx.159.248xx.0",
+                "xx.131.18.40xx.0" : "xxxxxx_oFEAkecX_xxx_3/xx.13xxxxxx.148.85xx.0,xx.131.18.40xx.0,xx.xx.xxxxxxxx.84:20010",
+                "xx.xx.46.2:20015" : "xxxxxx_oFEAkecX_xxx_1/xx.13xxxxxx.148.84xx.0,xx.xx.46.2:20015,xx.xx.xx.xx1:20015",
+                "xx.xx.56.238:20013" : "xxxxxx_oFEAkecX_xxx_2/xx.13xxxxxx.148.86xx.0,xx.xx.56.238:20013,xx.xx.56.44xx.7",
+                "xx.xx.56.238:20014" : "xxxxxx_oFEAkecX_configdb/xx.xx.56.238:20014,xx.xx.78.234xx.xx,xx.xx.xx.xx1:20016",
+                "xx.xx.56.44xx.7" : "xxxxxx_oFEAkecX_xxx_2/xx.13xxxxxx.148.86xx.0,xx.xx.56.238:20013,xx.xx.56.44xx.7",
+                "xx.xx.78.234xx.xx" : "xxxxxx_oFEAkecX_configdb/xx.xx.56.238:20014,xx.xx.78.234xx.xx,xx.xx.xx.xx1:20016",
+                "xx.xx.xx.xx1:20015" : "xxxxxx_oFEAkecX_xxx_1/xx.13xxxxxx.148.84xx.0,xx.xx.46.2:20015,xx.xx.xx.xx1:20015",
+                "xx.xx.xx.xx1:20016" : "xxxxxx_oFEAkecX_configdb/xx.xx.56.238:20014,xx.xx.78.234xx.xx,xx.xx.xx.xx1:20016",
+                "xx.xx.xxxxxxxx.84:20010" : "xxxxxx_oFEAkecX_xxx_3/xx.13xxxxxx.148.85xx.0,xx.131.18.40xx.0,xx.xx.xxxxxxxx.84:20010",
+                "config" : "xxxxxx_oFEAkecX_configdb/xx.xx.56.238:20014,xx.xx.78.234xx.xx,xx.xx.xx.xx1:20016",
+                "xxxxxx_oFEAkecX_configdb/xx.xx.56.238:20014,xx.xx.78.234xx.xx,xx.xx.xx.xx1:20016" : "xxxxxx_oFEAkecX_configdb/xx.xx.56.238:20014,xx.xx.78.234xx.xx,xx.xx.xx.xx1:20016",
+                "xxxxxx_oFEAkecX_xxx_1" : "xxxxxx_oFEAkecX_xxx_1/xx.13xxxxxx.148.84xx.0,xx.xx.46.2:20015,xx.xx.xx.xx1:20015",
+                "xxxxxx_oFEAkecX_xxx_1/xx.13xxxxxx.148.84xx.0,xx.xx.46.2:20015,xx.xx.xx.xx1:20015" : "xxxxxx_oFEAkecX_xxx_1/xx.13xxxxxx.148.84xx.0,xx.xx.46.2:20015,xx.xx.xx.xx1:20015",
+                "xxxxxx_oFEAkecX_xxx_2" : "xxxxxx_oFEAkecX_xxx_2/xx.13xxxxxx.148.86xx.0,xx.xx.56.238:20013,xx.xx.56.44xx.7",
+                "xxxxxx_oFEAkecX_xxx_2/xx.13xxxxxx.148.86xx.0,xx.xx.56.238:20013,xx.xx.56.44xx.7" : "xxxxxx_oFEAkecX_xxx_2/xx.13xxxxxx.148.86xx.0,xx.xx.56.238:20013,xx.xx.56.44xx.7",
+                "xxxxxx_oFEAkecX_xxx_3" : "xxxxxx_oFEAkecX_xxx_3/xx.13xxxxxx.148.85xx.0,xx.131.18.40xx.0,xx.xx.xxxxxxxx.84:20010",
+                "xxxxxx_oFEAkecX_xxx_3/xx.13xxxxxx.148.85xx.0,xx.131.18.40xx.0,xx.xx.xxxxxxxx.84:20010" : "xxxxxx_oFEAkecX_xxx_3/xx.13xxxxxx.148.85xx.0,xx.131.18.40xx.0,xx.xx.xxxxxxxx.84:20010",
+                "xxxxxx_oFEAkecX_xxx_ImGeDQnU" : "xxxxxx_oFEAkecX_xxx_ImGeDQnU/xx.128.22.211xx.0,xx.xxxxxx.209.54xx.0,xx.13xxxxxx.159.194xx.0",
+                "xxxxxx_oFEAkecX_xxx_ImGeDQnU/xx.128.22.211xx.0,xx.xxxxxx.209.54xx.0,xx.13xxxxxx.159.194xx.0" : "xxxxxx_oFEAkecX_xxx_ImGeDQnU/xx.128.22.211xx.0,xx.xxxxxx.209.54xx.0,xx.13xxxxxx.159.194xx.0",
+                "xxxxxx_oFEAkecX_xxx_MrFIjpKf" : "xxxxxx_oFEAkecX_xxx_MrFIjpKf/xx.13xxxxxx.159.188xx.0,xx.13xxxxxx.159.189xx.0,xx.13xxxxxx.159.190xx.0",
+                "xxxxxx_oFEAkecX_xxx_MrFIjpKf/xx.13xxxxxx.159.188xx.0,xx.13xxxxxx.159.189xx.0,xx.13xxxxxx.159.190xx.0" : "xxxxxx_oFEAkecX_xxx_MrFIjpKf/xx.13xxxxxx.159.188xx.0,xx.13xxxxxx.159.189xx.0,xx.13xxxxxx.159.190xx.0",
+                "xxxxxx_oFEAkecX_xxx_UeRnftkj" : "xxxxxx_oFEAkecX_xxx_UeRnftkj/xx.xxxxxx.155.189xx.0,xx.13xxxxxx.159.247xx.0,xx.13xxxxxx.159.248xx.0",
+                "xxxxxx_oFEAkecX_xxx_UeRnftkj/xx.xxxxxx.155.189xx.0,xx.13xxxxxx.159.247xx.0,xx.13xxxxxx.159.248xx.0" : "xxxxxx_oFEAkecX_xxx_UeRnftkj/xx.xxxxxx.155.189xx.0,xx.13xxxxxx.159.247xx.0,xx.13xxxxxx.159.248xx.0"
+        },
+        "ok" : 1,
+        "operationTime" : Timestamp(1623043296, 10134),
+        "$gleStats" : {
+                "lastOpTime" : Timestamp(0, 0),
+                "electionId" : ObjectId("7fffffff0000000000000012")
+        },
+        "$configServerState" : {
+                "opTime" : {
+                        "ts" : Timestamp(1623043294, 5344),
+                        "t" : NumberLong(12)
+                }
+        },
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1623043296, 10134),
+                "signature" : {
+                        "hash" : BinData(0,"YTFMjq4M2d9I2wkcjIDcX1wCzds="),
+                        "keyId" : NumberLong("6933088392779399171")
+                }
+        }
+}
+xxxxxx_oFEAkecX_xxx_1:PRIMARY> 
+//mongod和mongos获取集群所有得节点信息，包括其他分片得，以及config得，不包括mongos的
+//注意这里mongod和mongos用的同一个代码，比较特殊
+*/
+
 class CmdGetShardMap : public BasicCommand {
 public:
     CmdGetShardMap() : BasicCommand("getShardMap") {}

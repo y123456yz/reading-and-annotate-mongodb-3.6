@@ -389,6 +389,7 @@ Status ChunkType::validate() const {
     return Status::OK();
 }
 
+//ø…“‘≤ŒøºGetShardVersion::run
 std::string ChunkType::toString() const {
     // toConfigBSON will include all the set fields, whereas toShardBSON includes only a subset and
     // requires them to be set.

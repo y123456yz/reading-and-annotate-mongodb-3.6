@@ -38,6 +38,19 @@
 namespace mongo {
 namespace {
 
+/*
+mongos> db.serverStatus().sharding
+{
+        "configsvrConnectionString" : "xxxxconfigdb/10.xx.xx.238:20014,10.xx.xx.234:20009,10.xx.xx.91:20016",
+        "lastSeenConfigServerOpTime" : {
+                "ts" : Timestamp(1623044905, 3622),
+                "t" : NumberLong(12)
+        },
+        "maxChunkSizeInBytes" : NumberLong(67108864)
+}
+mongos> 
+*/
+//db.serverstatus.sharding
 class ShardingServerStatus final : public ServerStatusSection {
 public:
     ShardingServerStatus() : ServerStatusSection("sharding") {}

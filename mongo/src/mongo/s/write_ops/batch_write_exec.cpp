@@ -68,6 +68,7 @@ WriteErrorDetail errorFromStatus(const Status& status) {
 }
 
 // Helper to note several stale errors from a response
+//BatchWriteExec::executeBatch中调用
 void noteStaleResponses(const std::vector<ShardError*>& staleErrors, NSTargeter* targeter) {
     for (const auto error : staleErrors) {
         targeter->noteStaleResponse(
@@ -285,6 +286,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                     const auto& staleErrors =
                         trackedErrors.getErrors(ErrorCodes::StaleShardVersion);
                     if (staleErrors.size() > 0) {
+						//注意errorCode为ErrorCodes::StaleShardVersion
                         noteStaleResponses(staleErrors, &targeter);
                         ++stats->numStaleBatches;
                     }

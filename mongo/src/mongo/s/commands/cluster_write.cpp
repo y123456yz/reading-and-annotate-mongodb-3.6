@@ -395,7 +395,7 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
                           (shouldBalance ? ")" : ", but no migrations allowed)"));
 
         // Reload the chunk manager after the split
-        //mongos刷新路由信息
+        //mongos刷新路由信息，强制获取路由信息
         auto routingInfo = uassertStatusOK(
             Grid::get(opCtx)->catalogCache()->getShardedCollectionRoutingInfoWithRefresh(opCtx,
                                                                                          nss));
@@ -420,9 +420,11 @@ void updateChunkWriteStatsAndSplitIfNeeded(OperationContext* opCtx,
         chunkToMove.setMax(suggestedChunk->getMax());
         chunkToMove.setVersion(suggestedChunk->getLastmod());
 
+		//做balance操作
         uassertStatusOK(configsvr_client::rebalanceChunk(opCtx, chunkToMove));
 
         // Ensure the collection gets reloaded because of the move
+        //强制路由刷新
         Grid::get(opCtx)->catalogCache()->invalidateShardedCollection(nss);
     } catch (const DBException& ex) {
         chunk->clearBytesWritten();

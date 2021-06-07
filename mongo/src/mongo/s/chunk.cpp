@@ -75,6 +75,7 @@ bool Chunk::shouldSplit(uint64_t desiredChunkSize, bool minIsInf, bool maxIsInf)
     return _dataWritten >= splitThreshold / kSplitTestFactor;
 }
 
+//可以参考updateChunkWriteStatsAndSplitIfNeeded使用
 std::string Chunk::toString() const {
     return str::stream() << ChunkType::shard() << ": " << _shardId << ", " << ChunkType::lastmod()
                          << ": " << _lastmod.toString() << ", " << _range.toString();

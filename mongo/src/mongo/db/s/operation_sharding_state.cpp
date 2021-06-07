@@ -64,6 +64,7 @@ bool OperationShardingState::allowImplicitCollectionCreation() const {
     return _allowImplicitCollectionCreation;
 }
 
+//execCommandDatabase调用，解析出mongos发送过来的shardVersion信息shardVersion: [ Timestamp(21301, 0), ObjectId('605d4d753af7fbacfbf5544c') ]
 void OperationShardingState::initializeShardVersion(NamespaceString nss,
                                                     const BSONElement& shardVersionElt) {
     invariant(!hasShardVersion());
@@ -74,6 +75,7 @@ void OperationShardingState::initializeShardVersion(NamespaceString nss,
 
     const BSONArray versionArr(shardVersionElt.Obj());
     bool hasVersion = false;
+	//获取shardversion信息
     ChunkVersion newVersion = ChunkVersion::fromBSON(versionArr, &hasVersion);
 
     if (!hasVersion) {
@@ -85,6 +87,7 @@ void OperationShardingState::initializeShardVersion(NamespaceString nss,
         return;
     }
 
+	//下面的OperationShardingState::setShardVersion
     setShardVersion(std::move(nss), std::move(newVersion));
 }
 
@@ -93,6 +96,8 @@ bool OperationShardingState::hasShardVersion() const {
     return _hasVersion;
 }
 
+//CollectionShardingState::_checkShardVersionOk中调用，获取从mongos获取到shardversion信息，然后
+//在CollectionShardingState::_checkShardVersionOk与本地元数据version做比较
 ChunkVersion OperationShardingState::getShardVersion(const NamespaceString& nss) const {
     if (_ns != nss) {
         return ChunkVersion::UNSHARDED();
@@ -101,6 +106,7 @@ ChunkVersion OperationShardingState::getShardVersion(const NamespaceString& nss)
     return _shardVersion;
 }
 
+//OperationShardingState::initializeShardVersion调用，解析出从mongos获取到的shardVersion信息存储到_shardVersion
 void OperationShardingState::setShardVersion(NamespaceString nss, ChunkVersion newVersion) {
     // This currently supports only setting the shard version for one namespace.
     invariant(!_hasVersion || _ns == nss);

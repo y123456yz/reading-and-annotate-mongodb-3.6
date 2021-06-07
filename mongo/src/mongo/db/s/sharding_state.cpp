@@ -230,6 +230,14 @@ void ShardingState::setGlobalInitMethodForTest(GlobalInitFunc func) {
     _globalInit = func;
 }
 
+//shard mongod增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
+//shard mongod读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+
+
+//SetShardVersion::run   execCommandDatabase(shard server mongod)
+//(insertBatchAndHandleErrors performUpdates)->handleError中调用，也就是shard server
+//
+//刷新元数据信息，例如表对应chunk路由信息等
 Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
                                           const NamespaceString& nss,
                                           const ChunkVersion& expectedVersion) {
@@ -256,6 +264,8 @@ Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
         return ChunkVersion::UNSHARDED();
     }();
 
+	//本地的shardversion和代理mongos发送过来的做比较，如果本地缓存的版本号比mongos的高，则啥也不做
+	//不用刷新元数据
     if (collectionShardVersion.epoch() == expectedVersion.epoch() &&
         collectionShardVersion >= expectedVersion) {
         // Don't need to remotely reload if we're in the same epoch and the requested version is
@@ -264,6 +274,7 @@ Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
     }
 
     try {
+		//否则更新本地元数据信息
         _refreshMetadata(opCtx, nss);
         return Status::OK();
     } catch (const DBException& ex) {
@@ -273,6 +284,9 @@ Status ShardingState::onStaleShardVersion(OperationContext* opCtx,
 }
 
 //MigrationSourceManager::MigrationSourceManager调用
+//MigrationSourceManager::commitChunkMetadataOnConfig
+//RecvChunkStartCommand::errmsgRun
+//FlushRoutingTableCacheUpdates::run
 //获取nss对应的最新ChunkVersion
 Status ShardingState::refreshMetadataNow(OperationContext* opCtx,
                                          const NamespaceString& nss,
@@ -606,6 +620,28 @@ BSONObj ShardingState::getActiveMigrationStatusReport(OperationContext* opCtx) {
     return _activeMigrationsRegistry.getActiveMigrationStatusReport(opCtx);
 }
 
+//ShardingStateCmd::run调用
+/*
+xx:PRIMARY> db.runCommand({ shardingState: 1 })
+"enabled" : true,
+"configServer" : "xx/10.xx.xx.238:20014,10.xx.xx.234:20009,10.xx.xx.91:20016",
+"shardName" : "xx_shard_1",
+"clusterId" : ObjectId("5e4acb7a658f0a4a5029f452"),
+"versions" : {
+		"cloud_track.system.drop.1622998800i482t18.dailyCloudOperateInfo_01" : Timestamp(0, 0),
+		"config.system.drop.1622826001i6304t18.cache.chunks.cloud_track.dailyCloudOperateInfo_30" : Timestamp(0, 0),
+		"cloud_track.system.drop.1622826000i5598t18.dailyCloudOperateInfo_30" : Timestamp(0, 0),
+		"config.system.drop.1622653201i5382t18.cache.chunks.cloud_track.dailyCloudOperateInfo_28" : Timestamp(0, 0),
+		"config.system.drop.1622566801i4563t18.cache.chunks.cloud_track.dailyCloudOperateInfo_27" : Timestamp(0, 0),
+		"config.system.drop.1622480401i6387t18.cache.chunks.cloud_track.dailyCloudOperateInfo_26" : Timestamp(0, 0),
+		"cloud_track.system.drop.1622480400i723t18.dailyCloudOperateInfo_26" : Timestamp(0, 0),
+		"cloud_track.system.drop.1622307600i100t18.dailyCloudOperateInfo_24" : Timestamp(0, 0),
+		"cloud_track.system.drop.1622221200i533t18.dailyCloudOperateInfo_23" : Timestamp(0, 0),
+		"config.system.drop.1621789201i5341t18.cache.chunks.cloud_track.dailyCloudOperateInfo_18" : Timestamp(0, 0),
+		"config.system.drop.1621702801i5647t18.cache.chunks.cloud_track.dailyCloudOperateInfo_17" : Timestamp(0, 0),
+		"config.system.drop.1621616401i7264t18.cache.chunks.cloud_track.dailyCloudOperateInfo_16" : Timestamp(0, 0),
+
+*/ //只有mongod支持，获取某个分片上的表版本信息
 void ShardingState::appendInfo(OperationContext* opCtx, BSONObjBuilder& builder) {
     const bool isEnabled = enabled();
     builder.appendBool("enabled", isEnabled);

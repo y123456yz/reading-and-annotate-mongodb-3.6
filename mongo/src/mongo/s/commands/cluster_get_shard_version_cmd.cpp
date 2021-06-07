@@ -42,7 +42,25 @@
 
 namespace mongo {
 namespace {
-
+//GetShardVersion::run
+//mongos¶ÔÓ¦getshardversion´òÓ¡:
+/*
+mongos> db.runCommand({getShardVersion :"xx.xx"})
+{
+        "version" : Timestamp(8, 1),
+        "versionEpoch" : ObjectId("60a54411465698e8e2cfc526"),
+        "ok" : 1,
+        "operationTime" : Timestamp(1623041936, 11641),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1623041936, 11641),
+                "signature" : {
+                        "hash" : BinData(0,"/L1J9J+1uV1ltc0SYjJD0TFC9ik="),
+                        "keyId" : NumberLong("6933088392779399171")
+                }
+        }
+}
+mongos> 
+*/
 class GetShardVersion : public BasicCommand {
 public:
     GetShardVersion() : BasicCommand("getShardVersion", "getshardversion") {}
@@ -89,6 +107,12 @@ public:
         const auto cm = routingInfo.cm();
 
         for (const auto& chunk : cm->chunks()) {
+//2021-06-07T13:12:23.221+0800 I SHARDING [conn2978379] shard: ocloud_oFEAkecX_shard_ImGeDQnU, lastmod: 2297|0||6096c391465698e8e2f5cb65, [{ userId: MinKey }, { userId: -9221177729864509767 })
+//2021-06-07T13:12:23.221+0800 I SHARDING [conn2978379] shard: ocloud_oFEAkecX_shard_ImGeDQnU, lastmod: 2298|0||6096c391465698e8e2f5cb65, [{ userId: -9221177729864509767 }, { userId: -9218993915059435151 })
+//2021-06-07T13:12:23.221+0800 I SHARDING [conn2978379] shard: ocloud_oFEAkecX_shard_2, lastmod: 2299|0||6096c391465698e8e2f5cb65, [{ userId: -9218993915059435151 }, { userId: -9217500997357642837 })
+//2021-06-07T13:12:23.221+0800 I SHARDING [conn2978379] shard: ocloud_oFEAkecX_shard_ImGeDQnU, lastmod: 2312|0||6096c391465698e8e2f5cb65, [{ userId: -9217500997357642837 }, { userId: -9215415726037377072 })
+//2021-06-07T13:12:23.221+0800 I SHARDING [conn2978379] shard: ocloud_oFEAkecX_shard_ImGeDQnU, lastmod: 2302|0||6096c391465698e8e2f5cb65, [{ userId: -9215415726037377072 }, { userId: -9213289395663766669 })
+//2021-06-07T13:12:23.221+0800 I SHARDING [conn2978379] shard: ocloud_oFEAkecX_shard_2, lastmod: 2291|0||6096c391465698e8e2f5cb65, [{ userId: -9213289395663766669 }, { userId: -9211743986421468420 })
             log() << redact(chunk->toString());
         }
 

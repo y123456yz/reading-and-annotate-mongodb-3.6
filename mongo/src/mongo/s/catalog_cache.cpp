@@ -162,7 +162,9 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
 //ClusterAggregate::runAggregate    getExecutionNsRoutingInfo  dispatchShardPipeline
 //ChunkManagerTargeter::init调用，获取集合路由缓存信息
 StatusWith<CachedCollectionRoutingInfo> 
-  CatalogCache::getCollectionRoutingInfo(
+//CatalogCache::onStaleConfigError和CatalogCache::invalidateShardedCollection对needsRefresh设置为true
+//这时候才会从cfg获取最新路由信息
+  CatalogCache::getCollectionRoutingInfo(//注意这里只有needsRefresh为true的才需要路由刷新
     OperationContext* opCtx, const NamespaceString& nss) {
     while (true) {
         std::shared_ptr<DatabaseInfoEntry> dbEntry;
@@ -173,6 +175,7 @@ StatusWith<CachedCollectionRoutingInfo>
             return ex.toStatus();
         }
 
+		//注意这里有加锁
         stdx::unique_lock<stdx::mutex> ul(_mutex);
 
         auto& collections = dbEntry->collections;
@@ -202,6 +205,7 @@ StatusWith<CachedCollectionRoutingInfo>
 		//获取nss对应的CollectionRoutingInfoEntry，也就是该集合对应的chunk分布
         auto& collEntry = it->second;
 
+		//注意这里只有needsRefresh为true的才需要路由刷新
         if (collEntry.needsRefresh) { //该集合的路由信息需要重新刷新
             auto refreshNotification = collEntry.refreshCompletionNotification;
             if (!refreshNotification) {
@@ -243,6 +247,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
 
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
+    //设置needsRefresh为true，这样getCollectionRoutingInfo就需要路由刷新
     invalidateShardedCollection(nss);
     return getCollectionRoutingInfo(opCtx, nss);
 }
@@ -251,6 +256,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWi
 //updateChunkWriteStatsAndSplitIfNeeded   ShardingState::_refreshMetadata中调用
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getShardedCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
+    //设置needsRefresh为true，这样getCollectionRoutingInfo就需要路由刷新
     invalidateShardedCollection(nss);
 
     auto routingInfoStatus = getCollectionRoutingInfo(opCtx, nss);
@@ -267,6 +273,15 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getShardedCollectionRoutin
     return getShardedCollectionRoutingInfoWithRefresh(opCtx, NamespaceString(ns));
 }
 
+//CatalogCache::onStaleConfigError和CatalogCache::invalidateShardedCollection对needsRefresh设置为true
+//这时候才会从cfg获取最新路由信息
+
+
+//ClusterFind::runQuery  
+//MoveChunkCmd::errmsgRun
+//SplitCollectionCmd::errmsgRun
+//ChunkManagerTargeter::refreshNow
+//强制ccriToInvalidate这对于的表进行路由刷新
 void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvalidate) {
     // Ensure the move constructor of CachedCollectionRoutingInfo is invoked in order to clear the
     // input argument so it can't be used anymore
@@ -276,6 +291,7 @@ void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvali
     if (!ccri._cm) {
         // Here we received a stale config error for a collection which we previously thought was
         // unsharded.
+        //设置needsRefresh为true，这样getCollectionRoutingInfo就需要路由刷新
         invalidateShardedCollection(ccri._nss);
         return;
     }
@@ -313,8 +329,15 @@ void CatalogCache::onStaleConfigError(CachedCollectionRoutingInfo&& ccriToInvali
     }
 }
 
-//CatalogCache::invalidateShardedCollection调用
+
+//CatalogCache::onStaleConfigError和CatalogCache::invalidateShardedCollection对needsRefresh设置为true
+//这时候才会从cfg获取最新路由信息
+
+//updateChunkWriteStatsAndSplitIfNeeded CatalogCache::getShardedCollectionRoutingInfoWithRefresh调用
+//getCollectionRoutingInfoWithRefresh   CatalogCache::onStaleConfigError
+//updateChunkWriteStatsAndSplitIfNeeded
 //检查缓存中是否有该collection对应得库，如果没有，则说明没有该collection路由信息，需要从新从cfg获取
+//强制刷新路由
 void CatalogCache::invalidateShardedCollection(const NamespaceString& nss) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
 

@@ -147,6 +147,7 @@ public:
         if (request.getSyncFromConfig()) {
             LOG(1) << "Forcing remote routing table refresh for " << nss;
             ChunkVersion unusedShardVersion;
+			//元数据刷新
             uassertStatusOK(shardingState->refreshMetadataNow(opCtx, nss, &unusedShardVersion));
         }
 

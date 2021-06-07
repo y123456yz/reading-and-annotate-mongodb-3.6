@@ -241,6 +241,8 @@ bool initShardVersionEmptyNS(OperationContext* opCtx, DBClientBase* conn_in) {
  *
  * @return true if we contacted the remote host
  */
+//ShardConnection::checkMyConnectionVersions->checkVersions
+//  ->VersionManager::checkShardVersionCB->checkShardVersion
 bool checkShardVersion(OperationContext* opCtx,
                        DBClientBase* conn_in,
                        const string& ns,
@@ -375,6 +377,7 @@ bool checkShardVersion(OperationContext* opCtx,
     if (!authoritative) {
         // use the original connection and get a fresh versionable connection
         // since conn can be invalidated (or worse, freed) after the failure
+        //ตÝน้
         checkShardVersion(opCtx, conn_in, ns, refManager, 1, tryNumber + 1);
         return true;
     }
@@ -388,6 +391,7 @@ bool checkShardVersion(OperationContext* opCtx,
         sleepmillis(10 * tryNumber);
         // use the original connection and get a fresh versionable connection
         // since conn can be invalidated (or worse, freed) after the failure
+        //ตÝน้
         checkShardVersion(opCtx, conn_in, ns, refManager, true, tryNumber + 1);
         return true;
     }
@@ -417,6 +421,7 @@ bool VersionManager::isVersionableCB(DBClientBase* conn) {
     return conn->type() == ConnectionString::MASTER || conn->type() == ConnectionString::SET;
 }
 
+//ShardConnection::checkMyConnectionVersions->checkVersions->VersionManager::checkShardVersionCB
 bool VersionManager::checkShardVersionCB(OperationContext* opCtx,
                                          DBClientBase* conn_in,
                                          const string& ns,

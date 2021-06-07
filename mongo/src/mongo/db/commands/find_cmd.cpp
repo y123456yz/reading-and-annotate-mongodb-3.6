@@ -417,6 +417,10 @@ pad: "	  13080577566-76793693218-00011035587-01443926745-80818518372", yangtest1
         // Before saving the cursor, ensure that whatever plan we established happened with the
         // expected collection version
         auto css = CollectionShardingState::get(opCtx, nss);
+		//增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
+		//读对应version版本检测：FindCmd::run->assertCanWrite_inlock、
+		// execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
+		
 		//shard version版本检查，如果mongos发送过来的shard version和期望的不一样，则返回mongos错误
 		//再外层的execCommandDatabase  runCommands捕获版本异常返回给mongos
         css->checkShardVersionOrThrow(opCtx);

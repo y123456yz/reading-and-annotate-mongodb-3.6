@@ -60,6 +60,7 @@ using str::stream;
 
 namespace {
 
+//ÄÚ²¿ÃüÁî
 class SetShardVersion : public ErrmsgCommandDeprecated {
 public:
     SetShardVersion() : ErrmsgCommandDeprecated("setShardVersion") {}

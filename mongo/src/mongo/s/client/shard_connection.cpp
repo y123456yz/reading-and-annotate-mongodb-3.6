@@ -271,6 +271,7 @@ public:
         s->avail = conn;
     }
 
+	//ShardConnection::checkMyConnectionVersions->checkVersions
     void checkVersions(OperationContext* opCtx, const string& ns) {
         vector<ShardId> all;
         grid.shardRegistry()->getAllShardIds(&all);

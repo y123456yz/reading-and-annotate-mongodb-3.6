@@ -47,6 +47,36 @@
 namespace mongo {
 namespace {
 
+/*
+xxx:PRIMARY> db.runCommand({getShardVersion :"xx.xx"})
+{
+        "configServer" : "xxx/10.xx.xx.238:20014,10.xx.xx.234:20009,10.64.xx.xx:20016",
+        "inShardedMode" : false,
+        "mine" : Timestamp(0, 0),
+        "global" : Timestamp(2351, 1),
+        "ok" : 1,
+        "operationTime" : Timestamp(1623043712, 6161),
+        "$gleStats" : {
+                "lastOpTime" : Timestamp(0, 0),
+                "electionId" : ObjectId("7fffffff0000000000000012")
+        },
+        "$configServerState" : {
+                "opTime" : {
+                        "ts" : Timestamp(1623043704, 7827),
+                        "t" : NumberLong(12)
+                }
+        },
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1623043712, 6161),
+                "signature" : {
+                        "hash" : BinData(0,"+T1JcTm5tqc4n6CKpufGZLslGdo="),
+                        "keyId" : NumberLong("6933088392779399171")
+                }
+        }
+}
+xxx:PRIMARY> 
+
+*/
 class GetShardVersion : public BasicCommand {
 public:
     GetShardVersion() : BasicCommand("getShardVersion") {}

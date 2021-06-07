@@ -46,6 +46,7 @@ namespace {
  * Constructs the default options for the thread pool used by the cache loader.
  */
 //路由刷新过程由该现成实现，参考https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
+//获取路由信息，mongos是异步调用实现的，因此用专门的线程池
 ThreadPool::Options makeDefaultThreadPoolOptions() {
     ThreadPool::Options options;
     options.poolName = "ConfigServerCatalogCacheLoader";

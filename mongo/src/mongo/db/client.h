@@ -204,6 +204,7 @@ public:
 
     // TODO(spencer): SERVER-10228 SERVER-14779 Remove this/move it fully into OperationContext.
     bool isInDirectClient() const {
+        //如果是mongos连得mongod则为true，客户端直接连mongod，则为false
         return _inDirectClient;
     }
     //DirectClientScope
@@ -245,6 +246,7 @@ private:
 
     // Whether this client is running as DBDirectClient
     //客户端是否直接链接mongod实例,mongos如果做为mongod的客户端则不需要认证
+    //如果是mongos连得mongod则为true，客户端直接连mongod，则为false
     bool _inDirectClient = false;
 
     // If != NULL, then contains the currently active OperationContext

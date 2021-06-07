@@ -222,6 +222,7 @@ StatusWith<boost::optional<ChunkRange>>
         {
             ChunkVersion unusedShardVersion;
             Status refreshStatus =
+				//立刻刷新路由信息
                 shardingState->refreshMetadataNow(opCtx, nss, &unusedShardVersion);
 
             if (!refreshStatus.isOK()) {
