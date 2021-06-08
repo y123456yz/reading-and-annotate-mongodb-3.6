@@ -145,7 +145,7 @@ bool ShardKeyPattern::isValid() const {
     return !_keyPattern.toBSON().isEmpty();
 }
 
-//是否hash索引
+//是否hash索引分片
 bool ShardKeyPattern::isHashedPattern() const {
     return isHashedPatternEl(_keyPattern.toBSON().firstElement());
 }

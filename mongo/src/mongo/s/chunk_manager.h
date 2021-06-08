@@ -274,15 +274,18 @@ private:
         ShardId shardId;
     };
 
+    //²Î¿¼ChunkManager::_constructChunkMapViews
     using ChunkRangeMap = BSONObjIndexedMap<ShardAndChunkRange>;
 
     /**
      * Contains different transformations of the chunk map for efficient querying
      */
+    //ChunkManager::_constructChunkMapViews
     struct ChunkMapViews {
         // Transformation of the chunk map containing what range of keys reside on which shard. The
         // index is the max key of the respective range and the union of all ranges in a such
         // constructed map must cover the complete space from [MinKey, MaxKey).
+         
         const ChunkRangeMap chunkRangeMap;
 
         // Map from shard id to the maximum chunk version for that shard. If a shard contains no

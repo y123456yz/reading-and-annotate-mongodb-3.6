@@ -362,7 +362,8 @@ std::string ChunkManager::toString() const {
 ChunkManager::ChunkMapViews ChunkManager::_constructChunkMapViews(const OID& epoch,
                                                                   const ChunkMap& chunkMap) {
 
-    ChunkRangeMap chunkRangeMap =
+	//记录某个shard  max版本的变化过程
+	ChunkRangeMap chunkRangeMap =
         SimpleBSONObjComparator::kInstance.makeBSONObjIndexedMap<ShardAndChunkRange>();
 
     ShardVersionMap shardVersions;
@@ -376,12 +377,15 @@ ChunkManager::ChunkMapViews ChunkManager::_constructChunkMapViews(const OID& epo
         auto shardVersionIt = shardVersions.find(firstChunkInRange->getShardId());
         if (shardVersionIt == shardVersions.end()) {
             shardVersionIt =
+				//这里可以看出ShardVersionMap中记录的KV类型为: <shardid, ChunkVersion>
                 shardVersions.emplace(firstChunkInRange->getShardId(), ChunkVersion(0, 0, epoch))
                     .first;
         }
 
+		//也就是ChunkVersion
         auto& maxShardVersion = shardVersionIt->second;
 
+		//该shardid对应得chunkversion为该shard下所有chunk中版本最大得那个lastmode，也就是config.chunks表中
         current = std::find_if(
             current,
             chunkMap.cend(),
@@ -405,6 +409,7 @@ ChunkManager::ChunkMapViews ChunkManager::_constructChunkMapViews(const OID& epo
         const auto oldSize = chunkRangeMap.size();
         const auto insertIterator = chunkRangeMap.insert(
             chunkRangeMap.end(),
+            //ChunkRangeMap中对应得KV为<max版本, ShardAndChunkRange>
             std::make_pair(
                 rangeMax,
                 ShardAndChunkRange{{rangeMin, rangeMax}, firstChunkInRange->getShardId()}));

@@ -112,7 +112,7 @@ selectChunkSplitPoints(OperationContext* opCtx,
         cmd.append("maxChunkObjects", *maxObjs);
     }
 
-	//发送splitVector命令给指定shard server
+	//发送splitVector命令给指定shard server, shard server得主节点
     auto shardStatus = Grid::get(opCtx)->shardRegistry()->getShard(opCtx, shardId);
     if (!shardStatus.isOK()) {
         return shardStatus.getStatus();
@@ -212,7 +212,8 @@ StatusWith<boost::optional<ChunkRange>>
     if (!shardStatus.isOK()) {
         status = shardStatus.getStatus();
     } else {
-    	//mongos发送splitChunk命令给shard server
+    	//mongos发送splitChunk命令给shard server, shard server收到后在SplitChunkCommand::run->splitChunk中
+    	// 想cfg获取分布式锁更新cfg server元数据，这时候获取分布式锁可能会失败
         auto cmdStatus = shardStatus.getValue()->runCommandWithFixedRetryAttempts(
             opCtx,
             ReadPreferenceSetting{ReadPreference::PrimaryOnly},
@@ -227,6 +228,7 @@ StatusWith<boost::optional<ChunkRange>>
         }
     }
 
+	//这里有可能失败，因为cfg收到splitChunk命令后，需要获取分布式表锁,详见SplitChunkCommand::run
     if (!status.isOK()) {
         log() << "Split chunk " << redact(cmdObj) << " failed" << causedBy(redact(status));
         return {status.code(), str::stream() << "split failed due to " << status.toString()};
