@@ -79,6 +79,7 @@ StatusWith<ConfigServerMetadata> ConfigServerMetadata::readFromMetadata(
     return ConfigServerMetadata(std::move(opTime));
 }
 
+//appendReplyMetadataÖÐµ÷ÓÃ
 void ConfigServerMetadata::writeToMetadata(BSONObjBuilder* builder) const {
     invariant(_opTime);
     BSONObjBuilder configMetadataBuilder(builder->subobjStart(fieldName()));

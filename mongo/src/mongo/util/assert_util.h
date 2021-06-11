@@ -64,6 +64,7 @@ std::string causedBy(const DBException& e);
 std::string causedBy(const std::string& e);
 
 /** Most mongo exceptions inherit from this; this is commonly caught in most threads */
+//AssertionException继承该类
 class DBException : public std::exception {
 public:
     const char* what() const throw() final {
@@ -128,6 +129,7 @@ private:
     Status _status;
 };
 
+//StaleConfigException继承该类
 class AssertionException : public DBException {
 public:
     AssertionException(const Status& status) : DBException(status) {}

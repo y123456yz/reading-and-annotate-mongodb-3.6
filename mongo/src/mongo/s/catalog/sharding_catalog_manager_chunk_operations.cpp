@@ -460,7 +460,8 @@ Status ShardingCatalogManager::commitChunkSplit(OperationContext* opCtx,
 	//如果是一个chunk拆分为多个(超过2个)chunk，则记录split log日志，如下：
 	//mongos> db.changelog.find({what:"multi-split"}).limit(1)
 	//{ "_id" : "bjcp3642-2021-05-08T23:18:47.593+0800-6096abd7465698e8e2f2bc91", "server" : "bjcp3642", "clientAddr" : "10.130.148.84:34880", "time" : ISODate("2021-05-08T15:18:47.593Z"), "what" : "multi-split", "ns" : "cloud_track.dailyCloudOperateInfo_08", "details" : { "before" : { "min" : { "userId" : NumberLong("-6100234755828683737") }, "max" : { "userId" : NumberLong("-6093498987149518800") }, "lastmod" : Timestamp(2237, 1), "lastmodEpoch" : ObjectId("6075ce13465698e8e2bddd8e") }, "number" : 1, "of" : 5, "chunk" : { "min" : { "userId" : NumberLong("-6100234755828683737") }, "max" : { "userId" : NumberLong("-6098626556525707060") }, "lastmod" : Timestamp(2237, 2), "lastmodEpoch" : ObjectId("6075ce13465698e8e2bddd8e") } } }  BSONObj beforeDetailObj = logDetail.obj();
-        BSONObj firstDetailObj = beforeDetailObj.getOwned();
+		BSONObj beforeDetailObj = logDetail.obj();
+		BSONObj firstDetailObj = beforeDetailObj.getOwned();
         const int newChunksSize = newChunks.size();
 
         for (int i = 0; i < newChunksSize; i++) {

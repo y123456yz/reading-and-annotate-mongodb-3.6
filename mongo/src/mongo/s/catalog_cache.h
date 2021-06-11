@@ -233,7 +233,9 @@ private:
  */
 //CatalogCache::getCollectionRoutingInfo中构造使用 CatalogCache::getCollectionRoutingInfo
 //ChunkManagerTargeter._routingInfo成员为该类型，
-//CollectionRoutingInfoEntry存储表的chunk信息，CachedCollectionRoutingInfo存储表的主分片信息
+//CollectionRoutingInfoEntry存储表的chunk信息，CachedCollectionRoutingInfo存储表的主分片及chunk路由信息
+
+//注意CollectionMetadata和CachedCollectionRoutingInfo区别
 class CachedCollectionRoutingInfo { //getShardedCollection
 public:
     /**

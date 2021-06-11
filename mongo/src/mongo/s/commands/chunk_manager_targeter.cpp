@@ -587,9 +587,10 @@ std::unique_ptr<ShardEndpoint> ChunkManagerTargeter::targetShardKey(const BSONOb
     // Track autosplit stats for sharded collections
     // Note: this is only best effort accounting and is not accurate.
     if (estDataSize > 0) {
+		//map对应的KV为：<chunk min, datasize>
         _stats->chunkSizeDelta[chunk->getMin()] += estDataSize;
     }
-
+	
     return stdx::make_unique<ShardEndpoint>(chunk->getShardId(),
                                             _routingInfo->cm()->getVersion(chunk->getShardId()));
 }

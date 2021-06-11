@@ -50,6 +50,10 @@ class ChunkType;
  *
  * This class's chunk mapping is immutable once constructed.
  */
+
+//注意CollectionMetadata和CachedCollectionRoutingInfo区别
+
+ 
 //CollectionMetadataTracker.metadata为该类型
 //参考ShardingState::_refreshMetadata使用方式
 //注意ChunkManager和CollectionMetadata的关系，参考ShardingState::_refreshMetadata
@@ -186,7 +190,7 @@ private:
     void _buildRangesMap();
 
     // The full routing table for the collection. 
-    //集合chunk路由信息
+    //集合chunk路由信息  
     std::shared_ptr<ChunkManager> _cm;
 
     // The identity of this shard, for the purpose of answering "key belongs to me" queries.

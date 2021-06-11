@@ -50,7 +50,7 @@ public:
                          const std::string& raw,
                          ChunkVersion received,
                          ChunkVersion wanted)
-        : AssertionException(ErrorCodes::StaleConfig,
+        : AssertionException(ErrorCodes::StaleConfig, //´íÎóÂëÎªErrorCodes::StaleConfig
                              str::stream() << raw << " ( ns : " << ns << ", received : "
                                            << received.toString()
                                            << ", wanted : "

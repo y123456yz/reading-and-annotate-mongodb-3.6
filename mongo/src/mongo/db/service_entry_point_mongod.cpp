@@ -179,9 +179,11 @@ void _generateErrorResponse(OperationContext* opCtx,
     replyBuilder->reset();
 
     // We need to include some extra information for StaleConfig.
+    //可配置信息陈旧
     if (exception.code() == ErrorCodes::StaleConfig) {
         const StaleConfigException& scex = checked_cast<const StaleConfigException&>(exception);
-        replyBuilder->setCommandReply(scex.toStatus(),
+		//对应exception为ErrorCodes::StaleConfig
+		replyBuilder->setCommandReply(scex.toStatus(),
                                       BSON("ns" << scex.getns() << "vReceived"
                                                 << BSONArray(scex.getVersionReceived().toBSON())
                                                 << "vWanted"
@@ -290,7 +292,7 @@ void appendReplyMetadata(OperationContext* opCtx,
     const bool isReplSet =
         replCoord->getReplicationMode() == repl::ReplicationCoordinator::modeReplSet;
 
-    if (isReplSet) {
+    if (isReplSet) { //复制集模式，分片集群一般模式都是该模式
         // Attach our own last opTime.
         repl::OpTime lastOpTimeFromClient =
             repl::ReplClientInfo::forClient(opCtx->getClient()).getLastOp();
@@ -796,6 +798,9 @@ void execCommandDatabase(OperationContext* opCtx,
         }
     } catch (const DBException& e) {
         // If we got a stale config, wait in case the operation is stuck in a critical section
+        //增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
+		//读对应version版本检测：FindCmd::run->assertCanWrite_inlock、
+		//这两个地方版本异常返回的错误码都是ErrorCodes::StaleConfig
         if (e.code() == ErrorCodes::StaleConfig) {
             auto sce = dynamic_cast<const StaleConfigException*>(&e);
             invariant(sce);  // do not upcasts from DBException created by uassert variants.
@@ -833,6 +838,7 @@ void execCommandDatabase(OperationContext* opCtx,
                    << "with arguments '" << command->getRedactedCopyForLogging(request.body)
                    << "' and operationTime '" << operationTime.toString() << "': " << e.toString();
 			//返回StaleConfigException相关异常信息给客户端 
+			//这里面重新生成返回内容信息
             _generateErrorResponse(opCtx, replyBuilder, e, metadataBob.obj(), operationTime);
         } else {
             LOG(1) << "assertion while executing command '" << request.getCommandName() << "' "
@@ -840,6 +846,7 @@ void execCommandDatabase(OperationContext* opCtx,
                    << "with arguments '" << command->getRedactedCopyForLogging(request.body)
                    << "': " << e.toString();
 			//返回StaleConfigException相关异常信息给客户端 
+			//这里面重新生成返回内容信息
             _generateErrorResponse(opCtx, replyBuilder, e, metadataBob.obj());
         }
     }

@@ -3379,6 +3379,7 @@ Status ReplicationCoordinatorImpl::processReplSetRequestVotes(
     return Status::OK();
 }
 
+//appendReplyMetadataÖÐµ÷ÓÃ
 void ReplicationCoordinatorImpl::prepareReplMetadata(OperationContext* opCtx,
                                                      const BSONObj& metadataRequestObj,
                                                      const OpTime& lastOpTimeFromClient,

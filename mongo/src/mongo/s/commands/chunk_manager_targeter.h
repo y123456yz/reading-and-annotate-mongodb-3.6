@@ -46,12 +46,15 @@ class OperationContext;
 class Shard;
 struct ChunkVersion;
 
+//ClusterWriter::write使用
 struct TargeterStats {
     TargeterStats()
         : chunkSizeDelta(SimpleBSONObjComparator::kInstance.makeBSONObjIndexedMap<int>()) {}
 
     // Map of chunk shard minKey -> approximate delta. This is used for deciding
     // whether a chunk might need splitting or not.
+    //ChunkManagerTargeter::targetShardKey中增加
+    //map对应的KV为：<chunk min, datasize>
     BSONObjIndexedMap<int> chunkSizeDelta;
 };
 
@@ -161,6 +164,7 @@ private:
     bool _needsTargetingRefresh;
 
     // Represents only the view and not really part of the targeter state. This is not owned here.
+    //记录某个chunk在该代理流量写入的字节数信息
     TargeterStats* _stats;
 
     // The latest loaded routing cache entry
