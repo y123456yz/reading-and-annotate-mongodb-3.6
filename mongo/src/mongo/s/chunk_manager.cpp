@@ -78,6 +78,8 @@ ChunkManager::ChunkManager(NamespaceString nss,
       _chunkMapViews(_constructChunkMapViews(collectionVersion.epoch(), _chunkMap)),
       _collectionVersion(collectionVersion) {}
 
+//通过shardkey找到对应的chunk信息
+//根据请求中解析出的shardkey信息，获取对应chunk信息
 std::shared_ptr<Chunk> ChunkManager::findIntersectingChunk(const BSONObj& shardKey,
                                                            const BSONObj& collation) const {
     const bool hasSimpleCollation = (collation.isEmpty() && !_defaultCollator) ||
@@ -104,6 +106,8 @@ std::shared_ptr<Chunk> ChunkManager::findIntersectingChunkWithSimpleCollation(
     return findIntersectingChunk(shardKey, CollationSpec::kSimpleSpec);
 }
 
+//ChunkManagerTargeter::targetQuery中调用
+//根据请求，获取请求对应的分片shard
 void ChunkManager::getShardIdsForQuery(OperationContext* opCtx,
                                        const BSONObj& query,
                                        const BSONObj& collation,
@@ -131,16 +135,21 @@ void ChunkManager::getShardIdsForQuery(OperationContext* opCtx,
     }
 
     // Fast path for targeting equalities on the shard key.
+    //从basicQuery中提取shard key信息
     auto shardKeyToFind = _shardKeyPattern.extractShardKeyFromQuery(*cq);
     if (!shardKeyToFind.isEmpty()) {
         try {
+			//根据请求中解析出的shardkey信息，获取对应chunk信息
             auto chunk = findIntersectingChunk(shardKeyToFind, collation);
+			//从chunk中获取shardid
             shardIds->insert(chunk->getShardId());
             return;
         } catch (const DBException&) {
             // The query uses multiple shards
         }
     }
+
+	//请求没有shardkey信息
 
     // Transforms query into bounds for each field in the shard key
     // for example :
@@ -202,6 +211,7 @@ void ChunkManager::getShardIdsForRange(const BSONObj& min,
 
 //Returns the ids of all shards on which the collection has any chunks.
 //返回所有包含chunk块的分片id列表
+//ChunkManagerTargeter::targetCollection调用
 void ChunkManager::getAllShardIds(std::set<ShardId>* all) const {
     std::transform(_chunkMapViews.shardVersions.begin(),
                    _chunkMapViews.shardVersions.end(),
@@ -336,7 +346,7 @@ bool ChunkManager::compatibleWith(const ChunkManager& other, const ShardId& shar
 }
 
 //ChunkManager::makeUpdated调用
-//获取指定shard的版本信息
+//获取指定shard的版本信息，
 ChunkVersion ChunkManager::getVersion(const ShardId& shardName) const {
     auto it = _chunkMapViews.shardVersions.find(shardName);
     if (it == _chunkMapViews.shardVersions.end()) {

@@ -25,7 +25,8 @@ namespace mongo {
 
 /**
  * The internal createDatabase command on the config server
- */
+ */ 
+//mongos构造_configsvrCreateDatabase命令发送给cfg，对应cfg中的ConfigSvrCreateDatabaseCommand
 class ConfigsvrCreateDatabase {
 public:
     static constexpr auto k_configsvrCreateDatabaseFieldName = "_configsvrCreateDatabase"_sd;

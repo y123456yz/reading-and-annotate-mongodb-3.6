@@ -40,7 +40,9 @@ namespace mongo {
 /**
  * This class wraps the different kinds of command requests into a generically usable write command
  * request that can be passed around.
- */ //constructBatchedCommandRequest中构造使用   BatchItemRef._request为该成员类型
+ */ 
+//constructBatchedCommandRequest中构造使用   BatchItemRef._request为该成员类型
+//代理收到客户端的增删改请求，会解析到该结构
 class BatchedCommandRequest {
 public:
     //赋值可以参考ClusterCmdInsert  ClusterCmdUpdate   ClusterCmdDelete继承该类
@@ -114,7 +116,7 @@ public:
 
     bool isVerboseWC() const;
 
-    //constructBatchedCommandRequest调用，获取shardVersion信息
+    //constructBatchedCommandRequest BatchWriteOp::buildBatchRequest调用，设置shardVersion信息
     void setShardVersion(ChunkVersion shardVersion) {
         _shardVersion = std::move(shardVersion);
     }
@@ -150,7 +152,9 @@ private:
     std::unique_ptr<write_ops::Update> _updateReq; //BatchedCommandRequest._updateReq
     std::unique_ptr<write_ops::Delete> _deleteReq; //BatchedCommandRequest._deleteReq
 
+    //constructBatchedCommandRequest BatchWriteOp::buildBatchRequest调用，设置shardVersion信息
     //获取到的mongos转发过来的shardVersion信息: shardVersion: [ Timestamp(33477, 353588), ObjectId('5f9aa6ec3af7fbacfbc99a27') ]
+    //setShardVersion中赋值
     boost::optional<ChunkVersion> _shardVersion;
 
     boost::optional<BSONObj> _writeConcern;
@@ -162,6 +166,8 @@ private:
  *
  * TODO: Use in BatchedCommandRequest above
  */
+//赋值参考BatchWriteOp::BatchWriteOp
+//批量操作中的一个写操作对应一个ref
 class BatchItemRef {
 public:
     BatchItemRef(const BatchedCommandRequest* request, int itemIndex)

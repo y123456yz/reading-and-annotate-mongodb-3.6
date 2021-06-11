@@ -447,6 +447,7 @@ CachedCollectionRoutingInfo getShardedCollection(OperationContext* opCtx,
 StatusWith<CachedDatabaseInfo> createShardDatabase(OperationContext* opCtx, StringData dbName) {
 	//CatalogCache::getDatabase
 	//先从mongos本地缓存中查找，没找到说明没有这个库，则需要记录到cfg中
+	//mongos构造_configsvrCreateDatabase命令发送给cfg，对应cfg中的ConfigSvrCreateDatabaseCommand
     auto dbStatus = Grid::get(opCtx)->catalogCache()->getDatabase(opCtx, dbName);
     if (dbStatus == ErrorCodes::NamespaceNotFound) {
         ConfigsvrCreateDatabase configCreateDatabaseRequest;

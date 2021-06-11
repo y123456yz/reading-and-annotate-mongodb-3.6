@@ -271,10 +271,12 @@ private:
 
     // The id of the primary shard containing the database
     //下面的_nss集合对应主分片ID
+    //如果没有启用分片，则表只有主分片信息，这时候下面的_cm也没意义
     ShardId _primaryId;
 
     // Reference to the corresponding chunk manager (if sharded) or null
     //该集合的chunk分布信息，和CollectionRoutingInfoEntry.routingInfo一致
+    //有cm信息，说明有chunk信息，也就代表该集合启用了分片功能，否则没有启用分片功能，只有主分片信息，可以参考ChunkManagerTargeter::targetCollection
     std::shared_ptr<ChunkManager> _cm;
 
     // Reference to the primary of the database (if not sharded) or null

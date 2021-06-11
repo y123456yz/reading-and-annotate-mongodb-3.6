@@ -45,10 +45,12 @@ enum WriteOpState {
 
     // Item is targeted and we're waiting for outstanding shard requests to populate
     // responses
+    //WriteOp::targetWrites中赋值
     WriteOpState_Pending,
 
     // Op was successful, write completed
     // We assume all states higher than this one are *final*
+    //一批数据全部转发到后端成功 BatchWriteOp::isFinished()中获取该状态信息
     WriteOpState_Completed, //赋值见BatchWriteOp::noteBatchResponse
 
     // Op failed with some error
@@ -85,7 +87,10 @@ enum WriteOpState {
  *   3c. If there are no errors, the state is changed to _Completed.
  *
  * WriteOps finish in a _Completed or _Error state.
- */ //可以参考BatchWriteOp::targetBatch
+ */ 
+//可以参考BatchWriteOp::targetBatch
+////批量写操作解析出的多个write存储到BatchWriteOp._writeOps数组，参考BatchWriteOp::BatchWriteOp  
+//一个WriteOp对应一批写操作中的一个操作
 class WriteOp {
 public:
     WriteOp(BatchItemRef itemRef) : _itemRef(std::move(itemRef)) {}
@@ -165,12 +170,14 @@ private:
     void _updateOpState();
 
     // Owned elsewhere, reference to a batch with a write item
+    //参考BatchWriteOp::BatchWriteOp，这个和具体的单个操作关联
     const BatchItemRef _itemRef;
 
     // What stage of the operation we are at
     WriteOpState _state{WriteOpState_Ready};
 
     // filled when state == _Pending
+    //该操作应该被转发到那些分片shard,这里为数组就是为了记录所有的分片shard转发过程的状态记录
     std::vector<ChildWriteOp> _childOps;
 
     // filled when state == _Error
@@ -184,6 +191,8 @@ private:
  * As above, the write op may finish in either a successful (_Completed) or unsuccessful
  * (_Error) state.
  */
+//上面的WriteOp._childOps为该类型
+//一个增删改操作可能会转发到多个shard，需要记录这些shard 信息和状态信息
 struct ChildWriteOp {
     ChildWriteOp(WriteOp* const parent) : parentOp(parent) {}
 
@@ -196,6 +205,7 @@ struct ChildWriteOp {
     TargetedWrite* pendingWrite{nullptr};
 
     // filled when state > _Pending
+    //该
     std::unique_ptr<ShardEndpoint> endpoint;
 
     // filled when state == _Error or (optionally) when state == _Cancelled
@@ -211,12 +221,16 @@ typedef std::pair<int, int> WriteOpRef;
  *
  * TargetedWrites are the link between the RPC layer and the in-progress write
  * operation.
- */ //参考WriteOp::targetWrites
+ */ 
+//参考WriteOp::targetWrites
+//TargetedWriteBatch._writes成员为该类型
 struct TargetedWrite {
     TargetedWrite(const ShardEndpoint& endpoint, WriteOpRef writeOpRef)
         : endpoint(endpoint), writeOpRef(writeOpRef) {}
 
     // Where to send the write
+    //请求对应的shard和shardVersion信息存入ShardEndpoint
+    //参考WriteOp::targetWrites
     ShardEndpoint endpoint;
 
     // Where to find the write item and put the response

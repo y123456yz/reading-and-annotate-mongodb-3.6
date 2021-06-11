@@ -220,11 +220,13 @@ void trackErrors(const ShardEndpoint& endpoint,
 }  // namespace
 
 //BatchWriteExec::executeBatch
+//ClusterWriter::write->BatchWriteExec::executeBatch
 BatchWriteOp::BatchWriteOp(OperationContext* opCtx, const BatchedCommandRequest& clientRequest)
     : _opCtx(opCtx), _clientRequest(clientRequest), _batchTxnNum(_opCtx->getTxnNumber()) {
     _writeOps.reserve(_clientRequest.sizeWriteOps());
 
     for (size_t i = 0; i < _clientRequest.sizeWriteOps(); ++i) {
+		//代表这个批量操作中的具体第几个写操作
         _writeOps.emplace_back(BatchItemRef(&_clientRequest, i));
     }
 }
@@ -271,13 +273,17 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
     //  [{ skey : y }, { skey : z }]
     //
 
+	//获取ordered参数，也就是一批数据中间写入成功，后续数据是否需要继续写入
     const bool ordered = _clientRequest.getWriteCommandBase().getOrdered();
 
+	//using TargetedBatchMap = std::map<const ShardEndpoint*, TargetedWriteBatch*, EndpointComp>;
     TargetedBatchMap batchMap;
     TargetedBatchSizeMap batchSizes;
 
     int numTargetErrors = 0;
 
+	//BatchedCommandRequest::sizeWriteOps
+	//总文档数
     const size_t numWriteOps = _clientRequest.sizeWriteOps(); //总文档数
 
     for (size_t i = 0; i < numWriteOps; ++i) { 
@@ -298,8 +304,12 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
 
 		//获取该op对应的后端mongod节点TargetedWrite   应该发送该op对应的文档到后端那些mongod
 		//WriteOp::targetWrites也就是对应目标后端mongod实例信息
-        Status targetStatus = writeOp.targetWrites(_opCtx, targeter, &writes);
 
+		//WriteOp::targetWrites
+		
+		//根据请求中解析出的shardkey信息，获取对应ShardEndpoint信息，也就是应该转发到那个chunk和那个shard信息
+        Status targetStatus = writeOp.targetWrites(_opCtx, targeter, &writes);
+		//异常处理
         if (!targetStatus.isOK()) {
             WriteErrorDetail targetError;
             buildTargetError(targetStatus, &targetError);
@@ -503,6 +513,8 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
         return wcb;
     }());
 
+	//设置shardVersion信息
+	//BatchedCommandRequest::setShardVersion
     request.setShardVersion(targetedBatch.getEndpoint().shardVersion);
 
     if (_clientRequest.hasWriteConcern()) {
@@ -669,7 +681,7 @@ void BatchWriteOp::abortBatch(const WriteErrorDetail& error) {
     dassert(isFinished());
 }
 
-//
+//写相关的一批数据是否转发到后端全部完成
 bool BatchWriteOp::isFinished() {
     const size_t numWriteOps = _clientRequest.sizeWriteOps();
     const bool orderedOps = _clientRequest.getWriteCommandBase().getOrdered();
@@ -677,6 +689,7 @@ bool BatchWriteOp::isFinished() {
         WriteOp& writeOp = _writeOps[i];
         if (writeOp.getWriteState() < WriteOpState_Completed) //该文档写入到后端成功，赋值见BatchWriteOp::noteBatchResponse
             return false;
+		//如果order参数为ture，则一批数据中间任何一条写入失败，都不进行后续数据写入
         else if (orderedOps && writeOp.getWriteState() == WriteOpState_Error)
             return true;
     }

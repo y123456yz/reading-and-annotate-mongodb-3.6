@@ -56,7 +56,7 @@ class StatusWith;
  
 //chunk 版本信息 https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 //chunk版本信息，也就是ShardVersion 可以参考https://developer.aliyun.com/article/58689
-//MigrateInfo.version成员为该类型        getCollVersion和getShardVersion都是该类型，参考MigrationSourceManager::MigrationSourceManager
+//MigrateInfo.version  BatchedCommandRequest._shardVersion成员为该类型        getCollVersion和getShardVersion都是该类型，参考MigrationSourceManager::MigrationSourceManager
 struct ChunkVersion {
 public:
     /**

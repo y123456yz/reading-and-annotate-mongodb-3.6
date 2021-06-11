@@ -25,7 +25,12 @@ namespace mongo {
 
 /**
  * A document used for storing session transaction states.
- */
+ */ 
+/*
+mongos> db.test1.update({"name":"yangyazhou"}, {$set:{"name":"yangyazhou1", "age":2}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+*/
+//performSingleUpdateOp中使用，记录update的更新结果统计
 class SingleWriteResult {
 public:
     static constexpr auto kNFieldName = "n"_sd;

@@ -46,6 +46,7 @@
 namespace mongo {
 namespace {
 
+//getUpdateExprType update的方式
 enum UpdateType { UpdateType_Replacement, UpdateType_OpStyle, UpdateType_Unknown };
 
 enum CompareResult { CompareResult_Unknown, CompareResult_GTE, CompareResult_LT };
@@ -58,6 +59,7 @@ const ShardKeyPattern virtualIdShardKey(BSON("_id" << 1));
  * Replacement style: coll.update({ x : 1 }, { y : 2 })
  * OpStyle: coll.update({ x : 1 }, { $set : { y : 2 } })
  */
+//update有两种方式
 UpdateType getUpdateExprType(const BSONObj& updateExpr) {
     // Empty update is replacement-style, by default
     if (updateExpr.isEmpty()) {
@@ -278,12 +280,13 @@ const NamespaceString& ChunkManagerTargeter::getNS() const {
 }
 
 //WriteOp::targetWrites
+//根据请求中解析出的shardkey信息，获取对应ShardEndpoint信息，也就是应该转发到那个chunk和那个shard信息
 Status ChunkManagerTargeter::targetInsert(OperationContext* opCtx,
                                           const BSONObj& doc,
                                           ShardEndpoint** endpoint) const {
     BSONObj shardKey;
 
-	//CachedCollectionRoutingInfo::cm
+	//CachedCollectionRoutingInfo::cm，说明对应集合启用了分片
     if (_routingInfo->cm()) {
         //
         // Sharded collections have the following requirements for targeting:
@@ -309,14 +312,17 @@ Status ChunkManagerTargeter::targetInsert(OperationContext* opCtx,
 
     // Target the shard key or database primary
     if (!shardKey.isEmpty()) {
+		//根据请求中解析出的shardkey信息，获取对应chunk和shard信息
         *endpoint = targetShardKey(shardKey, CollationSpec::kSimpleSpec, doc.objsize()).release();
-    } else { //如果没有设置shardKey，则直接转发到primary 分片
+    } else { //如果表没有启用分片功能，则不会有shardkey，走这个分支
+    //如果没有设置shardKey，则直接转发到primary，
         if (!_routingInfo->primary()) { //CachedCollectionRoutingInfo::primary
             return Status(ErrorCodes::NamespaceNotFound,
                           str::stream() << "could not target insert in collection " << getNS().ns()
                                         << "; no metadata found");
         }
 
+		//获取主分片信息
         *endpoint = new ShardEndpoint(_routingInfo->primary()->getId(), ChunkVersion::UNSHARDED());
     }
 
@@ -344,7 +350,9 @@ Status ChunkManagerTargeter::targetUpdate(
     // that extracted key.
     //
 
+	//获取更新条件
     BSONObj query = updateDoc.getQ();
+	//获取更新内容  write_ops::UpdateOpEntry::getU
     BSONObj updateExpr = updateDoc.getU();
 
     UpdateType updateType = getUpdateExprType(updateExpr);
@@ -357,6 +365,7 @@ Status ChunkManagerTargeter::targetUpdate(
 
     BSONObj shardKey;
 
+	//获取分片路由信息
     if (_routingInfo->cm()) {
         //
         // Sharded collections have the following futher requirements for targeting:
@@ -364,10 +373,17 @@ Status ChunkManagerTargeter::targetUpdate(
         // Upserts must be targeted exactly by shard key.
         // Non-multi updates must be targeted exactly by shard key *or* exact _id.
         //
-
+		/**
+		 * There are two styles of update expressions:
+		 *
+		 * Replacement style: coll.update({ x : 1 }, { y : 2 })
+		 * OpStyle: coll.update({ x : 1 }, { $set : { y : 2 } })
+		 */
         // Get the shard key
+        //coll.update({ x : 1 }, { $set : { y : 2 } })
         if (updateType == UpdateType_OpStyle) {
             // Target using the query
+            //从请求中获取shard key信息
             StatusWith<BSONObj> status =
                 _routingInfo->cm()->getShardKeyPattern().extractShardKeyFromQuery(opCtx, query);
 
@@ -376,12 +392,13 @@ Status ChunkManagerTargeter::targetUpdate(
                 return status.getStatus();
 
             shardKey = status.getValue();
-        } else {
+        } else {//coll.update({ x : 1 }, { y : 2 })
             // Target using the replacement document
             shardKey = _routingInfo->cm()->getShardKeyPattern().extractShardKeyFromDoc(updateExpr);
         }
 
         // Check shard key size on upsert.
+        //upsert为ture,则会转换为insert，这时候需要检查shardkey长度
         if (updateDoc.getUpsert()) {
             Status status = ShardKeyPattern::checkShardKeySize(shardKey);
             if (!status.isOK())
@@ -395,6 +412,7 @@ Status ChunkManagerTargeter::targetUpdate(
     if (!shardKey.isEmpty()) {
         try {
             endpoints->push_back(
+				//根据请求中解析出的shardkey信息，获取对应chunk和shard信息
                 targetShardKey(shardKey, collation, (query.objsize() + updateExpr.objsize())));
             return Status::OK();
         } catch (const DBException&) {
@@ -405,6 +423,7 @@ Status ChunkManagerTargeter::targetUpdate(
     // We failed to target a single shard.
 
     // Upserts are required to target a single shard.
+    //update同时upserts为ture，则说明可能有insert操作，这时候请求必须携带shard key
     if (_routingInfo->cm() && updateDoc.getUpsert()) {
         return Status(ErrorCodes::ShardKeyNotFound,
                       str::stream() << "An upsert on a sharded collection must contain the shard "
@@ -415,6 +434,7 @@ Status ChunkManagerTargeter::targetUpdate(
     }
 
     // Parse update query.
+    //根据请求Q,设置QueryRequest
     auto qr = stdx::make_unique<QueryRequest>(getNS());
     qr->setFilter(updateDoc.getQ());
     if (!collation.isEmpty()) {
@@ -427,6 +447,7 @@ Status ChunkManagerTargeter::targetUpdate(
         allowedMatcherFeatures &= ~MatchExpressionParser::AllowedFeatures::kExpr;
     }
     const boost::intrusive_ptr<ExpressionContext> expCtx;
+	//根据qr请求获取对应的CanonicalQuery
     auto cq = CanonicalQuery::canonicalize(
         opCtx, std::move(qr), expCtx, ExtensionsCallbackNoop(), allowedMatcherFeatures);
     if (!cq.isOK() && cq.getStatus().code() == ErrorCodes::QueryFeatureNotAllowed) {
@@ -442,6 +463,8 @@ Status ChunkManagerTargeter::targetUpdate(
     }
 
     // Single (non-multi) updates must target a single shard or be exact-ID.
+    //write_ops::UpdateOpEntry::getMulti()
+    //如果update请求中带有multi:false参数，则必须携带片建，因为只更新一个文档，只有到一个分片才能满足只更新一个文档
     if (_routingInfo->cm() && !updateDoc.getMulti() &&
         !isExactIdQuery(opCtx, *cq.getValue(), _routingInfo->cm().get())) {
         return Status(ErrorCodes::ShardKeyNotFound,
@@ -455,14 +478,15 @@ Status ChunkManagerTargeter::targetUpdate(
                           << _routingInfo->cm()->getShardKeyPattern().toString());
     }
 
-    if (updateType == UpdateType_OpStyle) {
+    if (updateType == UpdateType_OpStyle) {//coll.update({ x : 1 }, { $set : { y : 2 } })
         return targetQuery(opCtx, query, collation, endpoints);
-    } else {
+    } else {//coll.update({ x : 1 }, { y : 2 })
         return targetDoc(opCtx, updateExpr, collation, endpoints);
     }
 }
 
 //WriteOp::targetWrites
+//获取delete请求对应的shard和shardVersion信息存入ShardEndpoint
 Status ChunkManagerTargeter::targetDelete(
     OperationContext* opCtx,
     const write_ops::DeleteOpEntry& deleteDoc,
@@ -547,6 +571,8 @@ Status ChunkManagerTargeter::targetDoc(
     return targetQuery(opCtx, doc, collation, endpoints);
 }
 
+//ChunkManagerTargeter::targetUpdate调用
+//获取请求对应的shard和shardVersion信息存入ShardEndpoint
 Status ChunkManagerTargeter::targetQuery(
     OperationContext* opCtx,
     const BSONObj& query,
@@ -559,16 +585,19 @@ Status ChunkManagerTargeter::targetQuery(
     }
 
     std::set<ShardId> shardIds;
+	//有cm，说明有chunk信息，也就代表该集合启用了分片功能，否则没有启用分片功能，只有主分片信息
     if (_routingInfo->cm()) {
         try {
+			//根据请求，获取请求对应的分片shard
             _routingInfo->cm()->getShardIdsForQuery(opCtx, query, collation, &shardIds);
         } catch (const DBException& ex) {
             return ex.toStatus();
         }
-    } else {
+    } else { //没有启用分片
         shardIds.insert(_routingInfo->primary()->getId());
     }
 
+	//获取请求对应的shard和shardVersion信息存入ShardEndpoint
     for (const ShardId& shardId : shardIds) {
         endpoints->push_back(stdx::make_unique<ShardEndpoint>(
             shardId,
@@ -579,14 +608,18 @@ Status ChunkManagerTargeter::targetQuery(
     return Status::OK();
 }
 
+//ChunkManagerTargeter::targetUpdate中调用
+////根据请求中解析出的shardkey信息，获取对应chunk和shard信息
 std::unique_ptr<ShardEndpoint> ChunkManagerTargeter::targetShardKey(const BSONObj& shardKey,
                                                                     const BSONObj& collation,
                                                                     long long estDataSize) const {
-    auto chunk = _routingInfo->cm()->findIntersectingChunk(shardKey, collation);
+	//根据请求中解析出的shardkey信息，获取对应chunk信息
+	auto chunk = _routingInfo->cm()->findIntersectingChunk(shardKey, collation);
 
     // Track autosplit stats for sharded collections
     // Note: this is only best effort accounting and is not accurate.
-    if (estDataSize > 0) {
+    if (estDataSize > 0) { 
+		//代理对经过代理的流量对应的chunk进行计数，当代理识别到对应chunk文档数达到一定量则进行split
 		//map对应的KV为：<chunk min, datasize>
         _stats->chunkSizeDelta[chunk->getMin()] += estDataSize;
     }
@@ -596,6 +629,7 @@ std::unique_ptr<ShardEndpoint> ChunkManagerTargeter::targetShardKey(const BSONOb
 }
 
 //ClusterWriter::write
+//获取指定表的分片信息(如果没有启用分片功能就是主分片信息，如果启用分片则是所有的分片信息)和分片版本信息
 Status ChunkManagerTargeter::targetCollection(
     std::vector<std::unique_ptr<ShardEndpoint>>* endpoints) const {
     if (!_routingInfo->primary() && !_routingInfo->cm()) {
@@ -605,7 +639,9 @@ Status ChunkManagerTargeter::targetCollection(
     }
 
     std::set<ShardId> shardIds;
+	//有cm，说明有chunk信息，也就代表该集合启用了分片功能，否则没有启用分片功能，只有主分片信息
     if (_routingInfo->cm()) { //参考ChunkManagerTargeter::init  _routingInfo代表路由信息
+    	//ChunkManager::getAllShardIds
         _routingInfo->cm()->getAllShardIds(&shardIds);
     } else {
         shardIds.insert(_routingInfo->primary()->getId());
@@ -614,6 +650,7 @@ Status ChunkManagerTargeter::targetCollection(
     for (const ShardId& shardId : shardIds) {
         endpoints->push_back(stdx::make_unique<ShardEndpoint>(
             shardId,
+            //ChunkManager::getVersion 获取shard最大版本信息
             _routingInfo->cm() ? _routingInfo->cm()->getVersion(shardId)
                                : ChunkVersion::UNSHARDED()));
     }
@@ -621,6 +658,7 @@ Status ChunkManagerTargeter::targetCollection(
     return Status::OK();
 }
 
+//获取所有的分片信息添加到endpoints数组
 Status ChunkManagerTargeter::targetAllShards(
     std::vector<std::unique_ptr<ShardEndpoint>>* endpoints) const {
     if (!_routingInfo->primary() && !_routingInfo->cm()) {

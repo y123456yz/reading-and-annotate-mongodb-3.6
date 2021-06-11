@@ -103,6 +103,8 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
     int numCompletedOps = 0;
     int numRoundsWithoutProgress = 0;
 
+	//BatchWriteOp::isFinished
+	//写相关的一批数据是否转发到后端全部完成
     while (!batchOp.isFinished()) {//是否有消息需要发送到后端mongod,如果有进入循环
         //
         // Get child batches to send using the targeter

@@ -216,6 +216,7 @@ void ClusterWriter::write(OperationContext* opCtx,
 
             std::vector<std::unique_ptr<ShardEndpoint>> endpoints;
 			//ChunkManagerTargeter::targetCollection
+			//获取指定表的分片信息(如果没有启用分片功能就是主分片信息，如果启用分片则是所有的分片信息)和分片版本信息
             auto targetStatus = targeter.targetCollection(&endpoints); //获取ShardEndpoint信息
             if (!targetStatus.isOK()) {
                 toBatchError({targetStatus.code(),
@@ -229,6 +230,7 @@ void ClusterWriter::write(OperationContext* opCtx,
             }
 
             // Handle sharded config server writes differently.
+            //遍历该表所有分片，如果是config server，则直接写config server
             if (std::any_of(endpoints.begin(), endpoints.end(), [](const auto& it) {
                     return it->shardName == ShardRegistry::kConfigServerShardId;
                 })) {
@@ -244,6 +246,7 @@ void ClusterWriter::write(OperationContext* opCtx,
             BatchWriteExec::executeBatch(opCtx, targeter, request, response, stats);
         }
 
+		//是否需要splite
         splitIfNeeded(opCtx, request.getNS(), targeterStats);
     }
 }

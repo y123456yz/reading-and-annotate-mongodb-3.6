@@ -207,6 +207,7 @@ private:
     boost::optional<TxnNumber> _batchTxnNum;
 
     // Array of ops being processed from the client request
+    //批量写操作解析出的多个write存储到该数组，参考BatchWriteOp::BatchWriteOp
     std::vector<WriteOp> _writeOps;
 
     // Current outstanding batch op write requests
@@ -234,7 +235,7 @@ private:
  * Internal support for storage as a doubly-linked list, to allow the TargetedWriteBatch to
  * efficiently be registered for reporting.
  */ //参考TargetedBatchMap   
-//BatchWriteOp::targetBatch中构造使用
+//BatchWriteOp::targetBatch中构造使用， BatchWriteExec::executeBatch
 class TargetedWriteBatch {
     MONGO_DISALLOW_COPYING(TargetedWriteBatch);
 
@@ -259,10 +260,11 @@ public:
 
 private:
     // Where to send the batch
+    //对应指定分片shard
     const ShardEndpoint _endpoint;
 
     // Where the responses go
-    // TargetedWrite*s are owned by the TargetedWriteBatch
+    // TargetedWrite*s are owned by the TargetedWriteBatch 
     OwnedPointerVector<TargetedWrite> _writes; //赋值见BatchWriteOp::targetBatch->addWrite
 };
 

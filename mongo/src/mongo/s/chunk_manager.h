@@ -334,6 +334,7 @@ private:
     const ChunkMap _chunkMap;
 
     // Different transformations of the chunk map for efficient querying
+    ////每个shard的版本信息，取值为该shard最大的chunk版本信息
     const ChunkMapViews _chunkMapViews;
 
     // Max version across all chunks

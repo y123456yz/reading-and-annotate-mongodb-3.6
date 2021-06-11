@@ -51,7 +51,7 @@ const WriteErrorDetail& WriteOp::getOpError() const {
 }
 
 //BatchWriteOp::targetBatch
-//获取该op对应的后端mongod节点TargetedWrite  应该发送到后端那些mongod
+//获取该op对应的后端mongod节点TargetedWrite，也就是发送到后端那个分片  应该发送到后端那些mongod
 Status WriteOp::targetWrites(OperationContext* opCtx,
                              const NSTargeter& targeter, //ChunkManagerTargeter
                              std::vector<TargetedWrite*>* targetedWrites) {
@@ -64,8 +64,10 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
 
     if (isUpdate) { 
 		//ChunkManagerTargeter::targetUpdate
+		//获取请求对应的shard和shardVersion信息存入ShardEndpoint
         targetStatus = targeter.targetUpdate(opCtx, _itemRef.getUpdate(), &endpoints);
-    } else if (isDelete) { ////ChunkManagerTargeter::targetDelete
+    } else if (isDelete) { 
+    	//ChunkManagerTargeter::targetDelete
         targetStatus = targeter.targetDelete(opCtx, _itemRef.getDelete(), &endpoints);
     } else { //insert
         dassert(_itemRef.getOpType() == BatchedCommandRequest::BatchType_Insert);
@@ -73,9 +75,10 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
         ShardEndpoint* endpoint = NULL;
         // TODO: Remove the index targeting stuff once there is a command for it
         if (!isIndexInsert) {   
-			//ChunkManagerTargeter::targetInsert   
+			//ChunkManagerTargeter::targetInsert  
+			////获取insert请求对应的shard和shardVersion信息存入ShardEndpoint
             targetStatus = targeter.targetInsert(opCtx, _itemRef.getDocument(), &endpoint);
-        } else {
+        } else {//这个分支已经无用了
             // TODO: Retry index writes with stale version?
             //ChunkManagerTargeter::targetCollection
             targetStatus = targeter.targetCollection(&endpoints);
@@ -93,11 +96,16 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
 
     // If we're targeting more than one endpoint with an update/delete, we have to target
     // everywhere since we cannot currently retry partial results.
+   // 如果我们使用更新/删除的目标是多个端点，那么我们必须将目标放在所有地方，
+   //因为目前我们不能重试部分结果。
+   
     // NOTE: Index inserts are currently specially targeted only at the current collection to
     // avoid creating collections everywhere.
+    //如果通过请求中的片建信息确定需要发送到多个分片，则清理endpoints信息，把target改为所有分片
     if (targetStatus.isOK() && endpoints.size() > 1u && !isIndexInsert) {
         endpoints.clear();
         invariant(endpoints.empty());
+		//获取所有的分片信息添加到endpoints数组
         targetStatus = targeter.targetAllShards(&endpoints); //需要发送给所有shard分片
     }
 
@@ -105,9 +113,11 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
     if (!targetStatus.isOK())
         return targetStatus;
 
+	//把增删改操作可能转发到多个shard，需要记录
     for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
         ShardEndpoint* endpoint = it->get();
 
+		//该update insert 或者delete操作对应的ShardEndpoint记录到_childOps数组
         _childOps.emplace_back(this);
 
         WriteOpRef ref(_itemRef.getItemIndex(), _childOps.size() - 1);
@@ -169,6 +179,7 @@ static void combineOpErrors(const vector<ChildWriteOp const*>& errOps, WriteErro
  * This is the core function which aggregates all the results of a write operation on multiple
  * shards and updates the write operation's state.
  */
+//一批数据到代理后，代理转发过程的状态变化过程
 void WriteOp::_updateOpState() {
     std::vector<ChildWriteOp const*> childErrors;
 

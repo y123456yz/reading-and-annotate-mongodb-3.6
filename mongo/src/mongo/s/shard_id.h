@@ -41,8 +41,10 @@ class NamespaceString;
 
 /**
  *  Representation of a shard identifier.
- */ //参考ShardEndpoint，包含该类
-class ShardId {
+ */ 
+//参考ShardEndpoint，包含该类
+//获取ShardId信息，参考ChunkManagerTargeter::targetCollection
+class ShardId {//shard名
 public:
     friend std::ostream& operator<<(std::ostream&, const ShardId&);
 

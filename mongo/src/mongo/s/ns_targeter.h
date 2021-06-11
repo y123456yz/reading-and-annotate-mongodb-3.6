@@ -158,7 +158,7 @@ public:
  * the logical target (shard name/version/broadcast) and the physical target (host name).
  */
 //在ChunkManagerTargeter::targetCollection中使用
-//ShardEndpoint代表一个后端mongod节点，TargetedWrite.endpoint
+//ShardEndpoint代表一个后端mongo分片shard，TargetedWrite.endpoint
 struct ShardEndpoint { //insert可以参考ChunkManagerTargeter::targetInsert
     ShardEndpoint(const ShardEndpoint& other)
         : shardName(other.shardName), shardVersion(other.shardVersion) {}
@@ -166,6 +166,7 @@ struct ShardEndpoint { //insert可以参考ChunkManagerTargeter::targetInsert
     ShardEndpoint(const ShardId& shardName, const ChunkVersion& shardVersion)
         : shardName(shardName), shardVersion(shardVersion) {}
 
+    //记录分片名和该分片最大版本信息
     ShardId shardName;
     ChunkVersion shardVersion;
 };
