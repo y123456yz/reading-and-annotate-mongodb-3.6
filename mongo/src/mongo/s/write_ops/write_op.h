@@ -227,7 +227,8 @@ typedef std::pair<int, int> WriteOpRef;
  * TargetedWrites are the link between the RPC layer and the in-progress write
  * operation.
  */ 
-//参考WriteOp::targetWrites
+//BatchWriteOp::buildBatchRequest中展示遍历获取方法
+//参考WriteOp::targetWrites   
 //TargetedWriteBatch._writes成员为该类型
 struct TargetedWrite {
     TargetedWrite(const ShardEndpoint& endpoint, WriteOpRef writeOpRef)
@@ -241,6 +242,7 @@ struct TargetedWrite {
     // Where to find the write item and put the response
     // TODO: Could be a more complex handle, shared between write state and networking code if
     // we need to be able to cancel ops.
+    //对应批量请求中指定的数据
     WriteOpRef writeOpRef; //该TargetedWrite和WriteOp通过这里关联,参考WriteOp::targetWrites
 };
 

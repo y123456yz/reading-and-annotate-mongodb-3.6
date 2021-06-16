@@ -146,7 +146,7 @@ void BatchedCommandRequest::setWriteCommandBase(write_ops::WriteCommandBase writ
     INVOKE(setWriteCommandBase, std::move(writeCommandBase));
 }
 
-//BatchedCommandRequest::toBSON
+//BatchedCommandRequest::toBSON  BatchWriteExec::executeBatch
 void BatchedCommandRequest::serialize(BSONObjBuilder* builder) const {
     switch (_batchType) {
         case BatchedCommandRequest::BatchType_Insert:

@@ -723,6 +723,8 @@ void ChunkManagerTargeter::noteCouldNotTarget() {
     _needsTargetingRefresh = true;
 }
 
+//BatchWriteExec::executeBatch中调用
+//如果有必要，则刷新最新元数据路由信息
 Status ChunkManagerTargeter::refreshIfNeeded(OperationContext* opCtx, bool* wasChanged) {
     bool dummy;
     if (!wasChanged) {
@@ -800,6 +802,8 @@ Status ChunkManagerTargeter::refreshIfNeeded(OperationContext* opCtx, bool* wasC
     MONGO_UNREACHABLE;
 }
 
+//ChunkManagerTargeter::refreshIfNeeded
+//刷新路由信息
 Status ChunkManagerTargeter::refreshNow(OperationContext* opCtx) {
     Grid::get(opCtx)->catalogCache()->onStaleConfigError(std::move(*_routingInfo));
 

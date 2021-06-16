@@ -475,7 +475,7 @@ void OperationSessionInfo::parseProtected(const IDLParserErrorContext& ctxt, con
 
 }
 
-
+////BatchWriteExec::executeBatch
 void OperationSessionInfo::serialize(BSONObjBuilder* builder) const {
     if (_sessionId.is_initialized()) {
         BSONObjBuilder subObjBuilder(builder->subobjStart(kSessionIdFieldName));

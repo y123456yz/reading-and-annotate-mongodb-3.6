@@ -138,6 +138,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         bool recordTargetErrors = refreshedTargeter;
 		//BatchWriteOp::targetBatch 获取该BatchWriteOp对应的childBatches
 		//也就是确定BatchWriteOp对应的文档应该发送到后端那些mongod分片(路由记录到childBatches中)
+		//批量写入，把需要写入到同一个shard的数据组装到一起，通过childBatches返回
         Status targetStatus = batchOp.targetBatch(targeter, recordTargetErrors, &childBatches);
         if (!targetStatus.isOK()) {
             // Don't do anything until a targeter refresh
@@ -162,6 +163,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
             // Construct the requests.
             //
 
+			//把需要转发到同一个shard的数据添加到该数组，数组中每个成员对应一个分片及其需要转发到该分片的数据
             std::vector<AsyncRequestsSender::Request> requests;
 
             // Get as many batches as we can at once
@@ -180,22 +182,28 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 if (pendingIt != pendingBatches.end()) //跳过重复的
                     continue;
 
-				
+				//序列化转发到后端的写内容
                 const auto request = [&] {
 					//构造BatchedCommandRequest
+					////根据targetedBatch生成到后端shard的BatchedCommandRequest
                     const auto shardBatchRequest(batchOp.buildBatchRequest(*nextBatch));
 
                     BSONObjBuilder requestBuilder;
+					//BatchedCommandRequest::serialize
+					//序列化封装
                     shardBatchRequest.serialize(&requestBuilder);
 
                     {
                         OperationSessionInfo sessionInfo;
-
+						//设置sessionID 
                         if (opCtx->getLogicalSessionId()) {
+							//OperationSessionInfo::setSessionId
                             sessionInfo.setSessionId(*opCtx->getLogicalSessionId());
                         }
 
+						//OperationSessionInfo::setTxnNumber
                         sessionInfo.setTxnNumber(opCtx->getTxnNumber());
+						//OperationSessionInfo::serialize
                         sessionInfo.serialize(&requestBuilder);
                     }
 
@@ -203,8 +211,8 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 }();
 
                 LOG(4) << "Sending write batch to " << targetShardId << ": " << redact(request);
-
-                requests.emplace_back(targetShardId, request); //该request对应targetShardId这个shard
+				//该reques需要转发到targetShardId这个分片
+                requests.emplace_back(targetShardId, request);  
 
                 // Indicate we're done by setting the batch to nullptr. We'll only get duplicate
                 // hostEndpoints if we have broadcast and non-broadcast endpoints for the same host,
@@ -212,10 +220,12 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 childBatch.second = nullptr;
 
                 // Recv-side is responsible for cleaning up the nextBatch when used
+                //把这
                 pendingBatches.insert(std::make_pair(targetShardId, nextBatch));
             }
 
 			//这里面会调用AsyncRequestsSender::AsyncRequestsSender
+			//把需要发送到后端的所有requests请求转发到后端指定分片
             AsyncRequestsSender ars(opCtx,
                                     Grid::get(opCtx)->getExecutorPool()->getArbitraryExecutor(), //轮询Grid::_executorPool
                                     clientRequest.getTargetingNS().db().toString(),
@@ -228,7 +238,9 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
             //
             // Receive the responses.
             //
-			
+
+
+			//等待后端所有分片返回
             while (!ars.done()) { //AsyncRequestsSender::done
                 // Block until a response is available.
                 auto response = ars.next();//AsyncRequestsSender::next
@@ -261,6 +273,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 const auto shardHost(std::move(*response.shardHostAndPort)); //AsyncRequestsSender::Response::shardHostAndPort
 
                 // Then check if we successfully got a response.
+                //获取返回信息
                 Status responseStatus = response.swResponse.getStatus();
                 BatchedCommandResponse batchedCommandResponse;
                 if (responseStatus.isOK()) {
@@ -271,7 +284,8 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                         responseStatus = {ErrorCodes::FailedToParse, errMsg};
                     }
                 }
-				
+
+				//后端返回成功
                 if (responseStatus.isOK()) {
 					
                     TrackedErrors trackedErrors;
@@ -305,6 +319,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                                            : OID());
 					
                 } else {
+                //后端返回异常
                     // Error occurred dispatching, note it
                     const Status status(responseStatus.code(),
                                         str::stream() << "Write results unavailable from "
@@ -324,6 +339,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         ++stats->numRounds;
 
         // If we're done, get out
+        //BatchWriteOp::isFinished() 所有后端都应答了，则直接退出该while (!ars.done())循环
         if (batchOp.isFinished())
             break;
 
@@ -334,6 +350,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         //
 
         bool targeterChanged = false;
+		//必要时刷新路由信息
         Status refreshStatus = targeter.refreshIfNeeded(opCtx, &targeterChanged);
 
         if (!refreshStatus.isOK()) {

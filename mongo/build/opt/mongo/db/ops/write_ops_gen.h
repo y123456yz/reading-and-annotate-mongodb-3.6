@@ -320,7 +320,10 @@ private:
    writeConcern: { <write concern> },
    bypassDocumentValidation: <boolean>
 }
- */ //也就是对应write_ops::Insert
+ */ 
+
+//代理收到客户端批量写入，在BatchWriteOp::buildBatchRequest中构造使用
+//也就是对应write_ops::Insert
 class Insert {  //BatchedCommandRequest._insertReq为该类型
 public:
     //参考 mongodb字段验证规则（schema validation）
@@ -425,7 +428,10 @@ https://docs.mongodb.com/v3.6/reference/command/update/
  db.collection.updateOne(xx)  updateOne也就是update中multi=false  只更新一条
  db.collection.updateMany(xx) updateOne也就是update中multi=true   更新所有满足条件的
 
- */ //也就是对应write_ops::Update
+ */ 
+//代理收到客户端批量写入，在BatchWriteOp::buildBatchRequest中构造使用
+
+//也就是对应write_ops::Update
 class Update { //BatchedCommandRequest._updateReq为该类型
 public:
     static constexpr auto kBypassDocumentValidationFieldName = "bypassDocumentValidation"_sd;
@@ -500,7 +506,10 @@ private:
  }
 
  * Parser for the 'delete' command.
- */  //也就是对应write_ops::Delete
+ */  
+//代理收到客户端批量写入，在BatchWriteOp::buildBatchRequest中构造使用
+
+//也就是对应write_ops::Delete
 class Delete {  //BatchedCommandRequest._deleteReq为该类型
 public:
     static constexpr auto kBypassDocumentValidationFieldName = "bypassDocumentValidation"_sd;

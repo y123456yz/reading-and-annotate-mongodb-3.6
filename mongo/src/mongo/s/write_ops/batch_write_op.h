@@ -212,6 +212,8 @@ private:
 
     // Current outstanding batch op write requests
     // Not owned here but tracked for reporting
+
+    //一批数据中需要转发到同一个shard的所有数据添加到这里，参考BatchWriteOp::targetBatch
     std::set<const TargetedWriteBatch*> _targeted;
 
     // Write concern responses from all write batches so far
@@ -265,6 +267,7 @@ private:
 
     // Where the responses go
     // TargetedWrite*s are owned by the TargetedWriteBatch 
+    //批量写操作，需要转发到同一个shard分片的数据记录在该数组
     OwnedPointerVector<TargetedWrite> _writes; //赋值见BatchWriteOp::targetBatch->addWrite
 };
 

@@ -41,6 +41,7 @@ namespace mongo {
  * This class wraps the different kinds of command requests into a generically usable write command
  * request that can be passed around.
  */ 
+//参考BatchWriteOp::buildBatchRequest使用
 //constructBatchedCommandRequest中构造使用   BatchItemRef._request为该成员类型
 //代理收到客户端的增删改请求，会解析到该结构
 class BatchedCommandRequest {

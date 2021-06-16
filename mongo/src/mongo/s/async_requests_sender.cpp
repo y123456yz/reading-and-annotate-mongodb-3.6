@@ -122,6 +122,7 @@ void AsyncRequestsSender::stopRetrying() {
     _stopRetrying = true;
 }
 
+//遍历_remotes，是否所有_remotes成员都done完成
 bool AsyncRequestsSender::done() {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     return std::all_of(

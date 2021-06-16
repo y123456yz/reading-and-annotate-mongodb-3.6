@@ -314,6 +314,7 @@ public:
     /**
      * Returns the session ID associated with this operation, if there is one.
      */
+    //BatchWriteExec::executeBatch
     boost::optional<LogicalSessionId> getLogicalSessionId() const {
         return _lsid;
     }

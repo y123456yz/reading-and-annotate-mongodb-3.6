@@ -240,6 +240,7 @@ BatchWriteOp::~BatchWriteOp() {
 }
 
 //BatchWriteExec::executeBatch  获取该BatchWriteOp对应的targetedBatches，也就是确定BatchWriteOp对应的文档应该发送到后端那些mongod分片
+//批量写入，把需要写入到同一个shard的数据组装到一起，通过targetedBatches返回
 Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTargeter
                                  bool recordTargetErrors,
                                  std::map<ShardId, TargetedWriteBatch*>* targetedBatches) {
@@ -280,7 +281,9 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
     const bool ordered = _clientRequest.getWriteCommandBase().getOrdered();
 
 	//using TargetedBatchMap = std::map<const ShardEndpoint*, TargetedWriteBatch*, EndpointComp>;
+	//批量写入，把需要写入到同一个shard的数据组装到同一个TargetedWriteBatch中，map格式: <endpoint: TargetedWriteBatch>
     TargetedBatchMap batchMap;
+	//批量写入，把需要写入到同一个shard的数据进行计数，map格式: <endpoint: BatchSize()>
     TargetedBatchSizeMap batchSizes;
 
     int numTargetErrors = 0;
@@ -371,7 +374,8 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
         //
         // Targeting went ok, add to appropriate TargetedBatch
         //
-		
+		//把需要转发到同一个shard的TargetedWrite组装到同一个TargetedWriteBatch
+		//同时按照shard 转发纬度，进行内容计数
         for (vector<TargetedWrite*>::iterator it = writes.begin(); it != writes.end(); ++it) {
             TargetedWrite* write = *it;
 
@@ -389,7 +393,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
                     batchSizes.insert(make_pair(&newBatch->getEndpoint(), BatchSize())).first;
             }
 
-			//对
+			//
             TargetedWriteBatch* batch = batchIt->second;
             BatchSize& batchSize = batchSizeIt->second;
 
@@ -410,6 +414,9 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
         // enforced as ordered across multiple shard endpoints.
         //
 
+		//如果请求中ordered为ture，并且这批数据会写入到多个分片，这时候则无法保证有序，
+		//因为以下原因: 假设一批数据100条，insert操作，2个分片，如果一个分片中间数据写入异常，
+		//  这时候另一个分片无法回滚，保证数据一定会全部成功写入
         if (ordered && batchMap.size() > 1u)
             break;
     }
@@ -437,8 +444,11 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
 }
 
 //BatchWriteExec::executeBatch
+//根据targetedBatch生成到后端的BatchedCommandRequest
 BatchedCommandRequest BatchWriteOp::buildBatchRequest(
+	//记录需要转发到指定分片的数据
     const TargetedWriteBatch& targetedBatch) const {
+    //是增删改中的那种操作类型
     const auto batchType = _clientRequest.getBatchType();
 
     boost::optional<std::vector<int32_t>> stmtIdsForOp;
@@ -450,6 +460,7 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
     boost::optional<std::vector<write_ops::UpdateOpEntry>> updates;
     boost::optional<std::vector<write_ops::DeleteOpEntry>> deletes;
 
+	//遍历targetedBatch，把所有增、删、改操作添加到对应容器中
     for (const auto& targetedWrite : targetedBatch.getWrites()) {
         const WriteOpRef& writeOpRef = targetedWrite->writeOpRef;
 
@@ -476,12 +487,15 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
                 MONGO_UNREACHABLE;
         }
 
+		//为每个操作生成一个stmid
         if (stmtIdsForOp) {
             stmtIdsForOp->push_back(write_ops::getStmtIdForWriteAt(
                 _clientRequest.getWriteCommandBase(), writeOpRef.first));
         }
     }
 
+	//根据上面获取的增删改操作，生成对应的BatchedCommandRequest
+	//到同一个shard的多条操作都封装到该BatchedCommandRequest中
     BatchedCommandRequest request([&] {
         switch (batchType) {
             case BatchedCommandRequest::BatchType_Insert:
@@ -506,6 +520,7 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
         MONGO_UNREACHABLE;
     }());
 
+	//设置bypass  order参数  TxnNum等
     request.setWriteCommandBase([&] {
         write_ops::WriteCommandBase wcb;
 
@@ -524,6 +539,7 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
 	//BatchedCommandRequest::setShardVersion
     request.setShardVersion(targetedBatch.getEndpoint().shardVersion);
 
+	//WriteConcern设置
     if (_clientRequest.hasWriteConcern()) {
         if (_clientRequest.isVerboseWC()) {
             request.setWriteConcern(_clientRequest.getWriteConcern());
@@ -537,7 +553,7 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
     return request;
 }
 
-//BatchWriteOp::noteBatchError  BatchWriteExec::executeBatch执行
+//BatchWriteExec::executeBatch  BatchWriteOp::noteBatchError  BatchWriteExec::executeBatch执行
 void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
                                      const BatchedCommandResponse& response,
                                      TrackedErrors* trackedErrors) {
@@ -652,7 +668,7 @@ void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
     }
 }
 
-//BatchWriteOp::noteBatchResponse
+//BatchWriteOp::noteBatchResponse  BatchWriteExec::executeBatch
 void BatchWriteOp::noteBatchError(const TargetedWriteBatch& targetedBatch,
                                   const WriteErrorDetail& error) {
     // Treat errors to get a batch response as failures of the contained writes
@@ -688,6 +704,7 @@ void BatchWriteOp::abortBatch(const WriteErrorDetail& error) {
     dassert(isFinished());
 }
 
+//BatchWriteExec::executeBatch中调用
 //写相关的一批数据是否转发到后端全部完成
 bool BatchWriteOp::isFinished() {
     const size_t numWriteOps = _clientRequest.sizeWriteOps();
