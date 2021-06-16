@@ -90,7 +90,7 @@ enum WriteOpState {
  */ 
 //可以参考BatchWriteOp::targetBatch
 ////批量写操作解析出的多个write存储到BatchWriteOp._writeOps数组，参考BatchWriteOp::BatchWriteOp  
-//一个WriteOp对应一批写操作中的一个操作
+//一个WriteOp对应一批写操作中的一个操作,参考BatchWriteOp::targetBatch
 class WriteOp {
 public:
     WriteOp(BatchItemRef itemRef) : _itemRef(std::move(itemRef)) {}
@@ -171,6 +171,7 @@ private:
 
     // Owned elsewhere, reference to a batch with a write item
     //参考BatchWriteOp::BatchWriteOp，这个和具体的单个操作关联
+    //代表这个批量操作中的具体第几个写操作
     const BatchItemRef _itemRef;
 
     // What stage of the operation we are at
@@ -178,6 +179,7 @@ private:
 
     // filled when state == _Pending
     //该操作应该被转发到那些分片shard,这里为数组就是为了记录所有的分片shard转发过程的状态记录
+    //可能同一个writeOp需要转发到多个shard，所以这里需要一个数组记录，每个shard都对应同一个writeOp数据
     std::vector<ChildWriteOp> _childOps;
 
     // filled when state == _Error
@@ -205,7 +207,7 @@ struct ChildWriteOp {
     TargetedWrite* pendingWrite{nullptr};
 
     // filled when state > _Pending
-    //该
+    //该writeOp应该转发到那个shard
     std::unique_ptr<ShardEndpoint> endpoint;
 
     // filled when state == _Error or (optionally) when state == _Cancelled
@@ -213,6 +215,9 @@ struct ChildWriteOp {
 };
 
 // First value is write item index in the batch, second value is child write op index
+//代表这是该批量操作的第几个操作，并且该操作需要转发到_childOps中记录的第几个分片(_childOps[i]对应一个shard)
+//遇意：批量请求中的第i个操作需要转发到后端第j个shard
+//参考WriteOp::targetWrites
 typedef std::pair<int, int> WriteOpRef;
 
 /**

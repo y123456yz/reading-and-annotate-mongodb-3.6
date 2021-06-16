@@ -51,6 +51,7 @@ namespace {
 // maximum key is 99999) + 1 byte (zero terminator) = 7 bytes
 const int kBSONArrayPerElementOverheadBytes = 7;
 
+//BatchWriteOp::targetBatch中使用
 struct BatchSize {
     int numOps{0};
     int sizeBytes{0};
@@ -151,6 +152,8 @@ bool wouldMakeBatchesTooBig(const std::vector<TargetedWrite*>& writes,
  * Gets an estimated size of how much the particular write operation would add to the size of the
  * batch.
  */
+//BatchWriteOp::targetBatch调用
+//增删改流量经过代理，需要记录对应流量大小，这个计算过程就是该函数
 int getWriteSizeBytes(const WriteOp& writeOp) {
     const BatchItemRef& item = writeOp.getWriteItem();
     const BatchedCommandRequest::BatchType batchType = item.getOpType();
@@ -287,6 +290,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
     const size_t numWriteOps = _clientRequest.sizeWriteOps(); //总文档数
 
     for (size_t i = 0; i < numWriteOps; ++i) { 
+		//获取批量写入的第i个操作
         WriteOp& writeOp = _writeOps[i];
 
         // Only target _Ready ops
@@ -299,7 +303,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
 
         // TargetedWrites need to be owned once returned
         OwnedPointerVector<TargetedWrite> writesOwned;
-		//对应目标
+		//对应目标,该操作应该被转发到那些shard，一个TargetedWrite实际上对应一个shard
         vector<TargetedWrite*>& writes = writesOwned.mutableVector();
 
 		//获取该op对应的后端mongod节点TargetedWrite   应该发送该op对应的文档到后端那些mongod
@@ -308,7 +312,8 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
 		//WriteOp::targetWrites
 		
 		//根据请求中解析出的shardkey信息，获取对应ShardEndpoint信息，也就是应该转发到那个chunk和那个shard信息
-        Status targetStatus = writeOp.targetWrites(_opCtx, targeter, &writes);
+		//该批量写操作中的一个writeOp应该转发到指定的targetedWrites对应shard中，这里为数组原因是删除 更新可能对应多个shard
+		Status targetStatus = writeOp.targetWrites(_opCtx, targeter, &writes);
 		//异常处理
         if (!targetStatus.isOK()) {
             WriteErrorDetail targetError;
@@ -366,7 +371,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
         //
         // Targeting went ok, add to appropriate TargetedBatch
         //
-
+		
         for (vector<TargetedWrite*>::iterator it = writes.begin(); it != writes.end(); ++it) {
             TargetedWrite* write = *it;
 
@@ -384,6 +389,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
                     batchSizes.insert(make_pair(&newBatch->getEndpoint(), BatchSize())).first;
             }
 
+			//对
             TargetedWriteBatch* batch = batchIt->second;
             BatchSize& batchSize = batchSizeIt->second;
 
@@ -392,7 +398,8 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
             // If the request contains transaction number, this means the end result will contain a
             // statement ids array, so we need to account for that overhead.
             batchSize.sizeBytes += writeSizeBytes;
-            batch->addWrite(write); //TargetedWriteBatch::addWrite
+			//TargetedWriteBatch::addWrite
+            batch->addWrite(write); 
         }
 
         // Relinquish ownership of TargetedWrites, now the TargetedBatches own them

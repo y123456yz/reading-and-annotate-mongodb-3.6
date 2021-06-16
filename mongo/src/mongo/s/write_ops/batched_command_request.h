@@ -167,7 +167,7 @@ private:
  * TODO: Use in BatchedCommandRequest above
  */
 //赋值参考BatchWriteOp::BatchWriteOp
-//批量操作中的一个写操作对应一个ref
+//批量操作中的一个写操作对应一个ref，代表这是该批量操作的第几个操作请求
 class BatchItemRef {
 public:
     BatchItemRef(const BatchedCommandRequest* request, int itemIndex)

@@ -52,6 +52,7 @@ const WriteErrorDetail& WriteOp::getOpError() const {
 
 //BatchWriteOp::targetBatch
 //获取该op对应的后端mongod节点TargetedWrite，也就是发送到后端那个分片  应该发送到后端那些mongod
+//该批量写操作中的一个writeOp应该转发到指定的targetedWrites对应shard中，这里为数组原因是删除 更新可能对应多个shard
 Status WriteOp::targetWrites(OperationContext* opCtx,
                              const NSTargeter& targeter, //ChunkManagerTargeter
                              std::vector<TargetedWrite*>* targetedWrites) {
@@ -65,9 +66,11 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
     if (isUpdate) { 
 		//ChunkManagerTargeter::targetUpdate
 		//获取请求对应的shard和shardVersion信息存入ShardEndpoint
+		//批量更新操作中的单个update请求，可能需要转发到多个shard
         targetStatus = targeter.targetUpdate(opCtx, _itemRef.getUpdate(), &endpoints);
     } else if (isDelete) { 
     	//ChunkManagerTargeter::targetDelete
+    	//批量删除操作中的单个delete请求，可能需要转发到多个shard
         targetStatus = targeter.targetDelete(opCtx, _itemRef.getDelete(), &endpoints);
     } else { //insert
         dassert(_itemRef.getOpType() == BatchedCommandRequest::BatchType_Insert);
@@ -90,6 +93,7 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
         }
 
         // Store single endpoint result if we targeted a single endpoint
+        //批量insert操作，单个insert只会到一个shard，不会到多个
         if (endpoint)
             endpoints.push_back(std::unique_ptr<ShardEndpoint>{endpoint});
     }
@@ -114,18 +118,24 @@ Status WriteOp::targetWrites(OperationContext* opCtx,
         return targetStatus;
 
 	//把增删改操作可能转发到多个shard，需要记录
+	//insert只会到一个shard, update delete可能到多个shard
     for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
         ShardEndpoint* endpoint = it->get();
 
 		//该update insert 或者delete操作对应的ShardEndpoint记录到_childOps数组
+		//可能同一个writeOp需要转发到多个shard，所以这里需要一个数组记录，每个shard都对应同一个writeOp数据
         _childOps.emplace_back(this);
 
-        WriteOpRef ref(_itemRef.getItemIndex(), _childOps.size() - 1);
+		//代表这是该批量操作的第几个操作，并且该操作需要转发到_childOps中记录的第几个分片(_childOps[i]对应一个shard)
+		//遇意：批量请求中的第i个操作需要转发到后端第j个shard
+		WriteOpRef ref(_itemRef.getItemIndex(), _childOps.size() - 1);
 
         // For now, multiple endpoints imply no versioning - we can't retry half a multi-write
         if (endpoints.size() == 1u) {
+			//该操作只需要转发到一个shard
             targetedWrites->push_back(new TargetedWrite(*endpoint, ref)); //这样要操作的文档WriteOp就和targetedWrites关联起来
         } else {
+        	//该操作需要转发到多个shard
             ShardEndpoint broadcastEndpoint(endpoint->shardName, ChunkVersion::IGNORED());
             targetedWrites->push_back(new TargetedWrite(broadcastEndpoint, ref));
         }
