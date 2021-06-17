@@ -102,6 +102,7 @@ AsyncRequestsSender::Response AsyncRequestsSender::next() {
         // Otherwise, wait for some response to be received.
         if (_interruptStatus.isOK()) {
             try {
+				//配合AsyncRequestsSender::_handleResponse阅读
                 _notification->get(_opCtx);
             } catch (const AssertionException& ex) {
                 // If the operation is interrupted, we cancel outstanding requests and switch to
@@ -114,6 +115,8 @@ AsyncRequestsSender::Response AsyncRequestsSender::next() {
             _notification->get();
         }
     }
+
+	//返回后端应答
     return *readyResponse;
 }
 
@@ -122,7 +125,7 @@ void AsyncRequestsSender::stopRetrying() {
     _stopRetrying = true;
 }
 
-//遍历_remotes，是否所有_remotes成员都done完成
+//遍历_remotes，是否所有_remotes成员都done完成，配合AsyncRequestsSender::_ready()阅读
 bool AsyncRequestsSender::done() {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     return std::all_of(
@@ -142,19 +145,24 @@ void AsyncRequestsSender::_cancelPendingRequests() {
 }
 
 //AsyncRequestsSender::next
+//获取后端Response应答构造Response返回，配合AsyncRequestsSender::_handleResponse阅读
 boost::optional<AsyncRequestsSender::Response> AsyncRequestsSender::_ready() {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
 
     _notification.emplace();
 
     if (!_stopRetrying) {
+		//继续重试
         _scheduleRequests(lk);
     }
 
     // Check if any remote is ready.
     invariant(!_remotes.empty());
     for (auto& remote : _remotes) {
+		//AsyncRequestsSender::_handleResponse中获取到了应答消息存储在swResponse中
+		//取出swResponse信息，构造对应的Response
         if (remote.swResponse && !remote.done) {
+			//到该后端的请求收到应答，记录done标记
             remote.done = true;
             if (remote.swResponse->isOK()) {
                 invariant(remote.shardHostAndPort);
@@ -167,6 +175,7 @@ boost::optional<AsyncRequestsSender::Response> AsyncRequestsSender::_ready() {
                     ErrorCodes::CallbackCanceled == remote.swResponse->getStatus().code()) {
                     remote.swResponse = _interruptStatus;
                 }
+				//如果后端应答异常，则记录异常到Response
                 return Response(std::move(remote.shardId),
                                 std::move(remote.swResponse->getStatus()),
                                 std::move(remote.shardHostAndPort));
@@ -178,6 +187,7 @@ boost::optional<AsyncRequestsSender::Response> AsyncRequestsSender::_ready() {
 }
 
 //BatchWriteExec::executeBatch->AsyncRequestsSender::AsyncRequestsSender中调用
+//AsyncRequestsSender::_ready()中进行重试调用
 void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
     invariant(!_stopRetrying);
     // Schedule remote work on hosts for which we have not sent a request or need to retry.
@@ -220,8 +230,10 @@ void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
         // If the remote does not have a response or pending request, schedule remote work for it.
         if (!remote.swResponse && !remote.cbHandle.isValid()) {
 			//AsyncRequestsSender::_scheduleRequest
+			//发送请求到后端
             auto scheduleStatus = _scheduleRequest(lk, i); //发送走这里
             if (!scheduleStatus.isOK()) {
+				//后端如果没主节点，则swResponse为对应异常
                 remote.swResponse = std::move(scheduleStatus);
                 // Signal the notification indicating the remote had an error (we need to do this
                 // because no request was scheduled, so no callback for this remote will run and
@@ -235,13 +247,14 @@ void AsyncRequestsSender::_scheduleRequests(WithLock lk) {
 }
 
 //AsyncRequestsSender::_scheduleRequests中调用
+//发送请求到后端_remotes[remoteIndex]对应节点
 Status AsyncRequestsSender::_scheduleRequest(WithLock, size_t remoteIndex) {
     auto& remote = _remotes[remoteIndex];
 
     invariant(!remote.cbHandle.isValid());
     invariant(!remote.swResponse);
 
-	//获取shardHostAndPort
+	//获取分片主节点shardHostAndPort信息
     Status resolveStatus = remote.resolveShardIdToHostAndPort(_readPreference);
     if (!resolveStatus.isOK()) {
         return resolveStatus;
@@ -254,7 +267,9 @@ Status AsyncRequestsSender::_scheduleRequest(WithLock, size_t remoteIndex) {
     auto callbackStatus = _executor->scheduleRemoteCommand(
         request,
         stdx::bind(
-            &AsyncRequestsSender::_handleResponse, this, stdx::placeholders::_1, remoteIndex));
+        	//收到应答的回调在这里
+            &AsyncRequestsSender::_handleResponse, 
+            	this, stdx::placeholders::_1, remoteIndex));
     if (!callbackStatus.isOK()) {
         return callbackStatus.getStatus();
     }
@@ -263,6 +278,8 @@ Status AsyncRequestsSender::_scheduleRequest(WithLock, size_t remoteIndex) {
     return Status::OK();
 }
 
+//AsyncRequestsSender::_scheduleRequest
+//接收到后端应答的回调函数
 void AsyncRequestsSender::_handleResponse(
     const executor::TaskExecutor::RemoteCommandCallbackArgs& cbData, size_t remoteIndex) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
@@ -282,6 +299,8 @@ void AsyncRequestsSender::_handleResponse(
     }
 
     // Signal the notification indicating that a remote received a response.
+    //接收到后端应答信息后，置位_notification通知
+    //AsyncRequestsSender::next()中接收该通知
     if (!*_notification) {
         _notification->set();
     }
@@ -305,7 +324,10 @@ AsyncRequestsSender::Response::Response(ShardId shardId,
 AsyncRequestsSender::RemoteData::RemoteData(ShardId shardId, BSONObj cmdObj)
     : shardId(std::move(shardId)), cmdObj(std::move(cmdObj)) {}
 
-//获取shardHostAndPort
+
+//AsyncRequestsSender::_scheduleRequest中调用
+//获取shardHostAndPort 
+//获取后端分片主节点，如果没有主节点则走异常流程
 Status AsyncRequestsSender::RemoteData::resolveShardIdToHostAndPort(
     const ReadPreferenceSetting& readPref) {
     const auto shard = getShard();
@@ -314,16 +336,20 @@ Status AsyncRequestsSender::RemoteData::resolveShardIdToHostAndPort(
                       str::stream() << "Could not find shard " << shardId);
     }
 
+	//RemoteCommandTargeterRS::findHostWithMaxWait
+	//获取后端分片主节点，如果没有主节点则走异常流程
     auto findHostStatus = shard->getTargeter()->findHostWithMaxWait(readPref, Seconds{20});
     if (!findHostStatus.isOK()) {
         return findHostStatus.getStatus();
     }
 
+	//如果没主节点，这里可能
     shardHostAndPort = std::move(findHostStatus.getValue());
 
     return Status::OK();
 }
 
+//获取shardId对应的Shard
 std::shared_ptr<Shard> AsyncRequestsSender::RemoteData::getShard() {
     // TODO: Pass down an OperationContext* to use here.
     return grid.shardRegistry()->getShardNoReload(shardId);

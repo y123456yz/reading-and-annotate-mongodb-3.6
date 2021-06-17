@@ -189,6 +189,7 @@ static void combineOpErrors(const vector<ChildWriteOp const*>& errOps, WriteErro
  * This is the core function which aggregates all the results of a write operation on multiple
  * shards and updates the write operation's state.
  */
+//WriteOp::noteWriteComplete  WriteOp::noteWriteError中调用
 //一批数据到代理后，代理转发过程的状态变化过程
 void WriteOp::_updateOpState() {
     std::vector<ChildWriteOp const*> childErrors;
@@ -245,6 +246,7 @@ void WriteOp::cancelWrites(const WriteErrorDetail* why) {
     _childOps.clear();
 }
 
+//BatchWriteOp::noteBatchResponse中调用
 void WriteOp::noteWriteComplete(const TargetedWrite& targetedWrite) {
     const WriteOpRef& ref = targetedWrite.writeOpRef;
     auto& childOp = _childOps[ref.second];
@@ -255,6 +257,7 @@ void WriteOp::noteWriteComplete(const TargetedWrite& targetedWrite) {
     _updateOpState();
 }
 
+//BatchWriteOp::noteBatchResponse中调用
 void WriteOp::noteWriteError(const TargetedWrite& targetedWrite, const WriteErrorDetail& error) {
     const WriteOpRef& ref = targetedWrite.writeOpRef;
     auto& childOp = _childOps[ref.second];

@@ -554,9 +554,11 @@ BatchedCommandRequest BatchWriteOp::buildBatchRequest(
 }
 
 //BatchWriteExec::executeBatch  BatchWriteOp::noteBatchError  BatchWriteExec::executeBatch执行
+//写后端的状态记录，如果后端应答路由版本比本地缓存高，则从新刷新路由获取最新路由后，重定向到新的分片
 void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
                                      const BatchedCommandResponse& response,
                                      TrackedErrors* trackedErrors) {
+    //BatchedCommandResponse::getOk
     if (!response.getOk()) {
         WriteErrorDetail error;
         cloneCommandErrorTo(response, &error);
@@ -629,13 +631,16 @@ void BatchWriteOp::noteBatchResponse(const TargetedWriteBatch& targetedBatch,
         // Finish the response (with error, if needed)
         if (NULL == writeError) {
             if (!ordered || !lastError) {
+				//转发完成状态记录
                 writeOp.noteWriteComplete(*write);
             } else {
                 // We didn't actually apply this write - cancel so we can retarget
+                //例如mongos路由信息版本过低，后端应答高版本信息，代理刷新路由后重试回走这里
                 dassert(writeOp.getNumTargeted() == 1u);
                 writeOp.cancelWrites(lastError);
             }
         } else {
+        	//后端返回异常，说明到该后端的一批数据转发异常了，无需重试
             writeOp.noteWriteError(*write, *writeError);
             lastError = writeError;
         }
@@ -711,9 +716,11 @@ bool BatchWriteOp::isFinished() {
     const bool orderedOps = _clientRequest.getWriteCommandBase().getOrdered();
     for (size_t i = 0; i < numWriteOps; ++i) {
         WriteOp& writeOp = _writeOps[i];
+		//例如后端返回版本不匹配，这时候不算完成，获取最新路由后重新执行
         if (writeOp.getWriteState() < WriteOpState_Completed) //该文档写入到后端成功，赋值见BatchWriteOp::noteBatchResponse
             return false;
 		//如果order参数为ture，则一批数据中间任何一条写入失败，都不进行后续数据写入
+		//
         else if (orderedOps && writeOp.getWriteState() == WriteOpState_Error)
             return true;
     }

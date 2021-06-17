@@ -68,9 +68,10 @@ WriteErrorDetail errorFromStatus(const Status& status) {
 }
 
 // Helper to note several stale errors from a response
-//BatchWriteExec::executeBatch中调用
+//mongos批量写数据BatchWriteExec::executeBatch中调用
 void noteStaleResponses(const std::vector<ShardError*>& staleErrors, NSTargeter* targeter) {
     for (const auto error : staleErrors) {
+		//更新_remoteShardVersions，也就是远端分片shard version
         targeter->noteStaleResponse(
             error->endpoint, error->error.isErrInfoSet() ? error->error.getErrInfo() : BSONObj());
     }
@@ -142,6 +143,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         Status targetStatus = batchOp.targetBatch(targeter, recordTargetErrors, &childBatches);
         if (!targetStatus.isOK()) {
             // Don't do anything until a targeter refresh
+            //设置刷新路由的标记
             targeter.noteCouldNotTarget();
             refreshedTargeter = true;
             ++stats->numTargetErrors;
@@ -250,6 +252,9 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 TargetedWriteBatch* batch = pendingBatches.find(response.shardId)->second;
 
                 // First check if we were able to target a shard host.
+                //AsyncRequestsSender::Response
+                //response.shardHostAndPort来源参考AsyncRequestsSender::_ready()
+                //例如后端分片没主节点，会进入这里
                 if (!response.shardHostAndPort) {
                     invariant(!response.swResponse.isOK());
 
@@ -278,6 +283,7 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                 BatchedCommandResponse batchedCommandResponse;
                 if (responseStatus.isOK()) {
                     std::string errMsg;
+					//解析应答信息或者err信息
                     if (!batchedCommandResponse.parseBSON(response.swResponse.getValue().data,
                                                           &errMsg) ||
                         !batchedCommandResponse.isValid(&errMsg)) {
@@ -285,9 +291,8 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
                     }
                 }
 
-				//后端返回成功
+				//解析应答信息成功
                 if (responseStatus.isOK()) {
-					
                     TrackedErrors trackedErrors;
                     trackedErrors.startTracking(ErrorCodes::StaleShardVersion);
 					//D SHARDING [conn----yangtest1] Write results received from 172.23.240.29:28018: { ok: 1, n: 1, opTime: { ts: Timestamp(1552560582, 2), t: 12 }, electionId: ObjectId('7fffffff000000000000000c') }
@@ -296,13 +301,19 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
 
                     // Dispatch was ok, note response
                     //BatchWriteOp::noteBatchResponse  这里面有一些统计信息
+                    //写后端的状态记录，如果后端应答路由版本比本地缓存高，则从新刷新路由获取最新路由后，重定向到新的分片
+                    
                     batchOp.noteBatchResponse(*batch, batchedCommandResponse, &trackedErrors);
 
                     // Note if anything was stale
                     const auto& staleErrors =
                         trackedErrors.getErrors(ErrorCodes::StaleShardVersion);
+					//增删改操作CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl调用serializeReply,然后
+					//  追加ErrorCodes::StaleShardVersion版本异常信息返回给客户端。代理收到改错误码信息后，在BatchWriteExec::executeBatch
+					//  中处理
                     if (staleErrors.size() > 0) {
 						//注意errorCode为ErrorCodes::StaleShardVersion
+						//这里更新shard version，真正版本检查刷新路由在后面的refreshIfNeeded
                         noteStaleResponses(staleErrors, &targeter);
                         ++stats->numStaleBatches;
                     }
@@ -350,7 +361,9 @@ void BatchWriteExec::executeBatch(OperationContext* opCtx,
         //
 
         bool targeterChanged = false;
-		//必要时刷新路由信息
+		//如果有必要，则刷新最新元数据路由信息，版本比较更新，路由刷新
+		//如果版本不匹配，刷新路由后回重新转发到新的分片，配合BatchWriteOp::isFinished()和
+		// BatchWriteOp::noteBatchResponse阅读
         Status refreshStatus = targeter.refreshIfNeeded(opCtx, &targeterChanged);
 
         if (!refreshStatus.isOK()) {

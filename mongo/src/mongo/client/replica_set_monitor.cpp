@@ -866,6 +866,7 @@ HostAndPort Refresher::_refreshUntilMatches(const ReadPreferenceSetting* criteri
                 if (_scan != _set->currentScan)
                     return criteria ? _set->getMatchingHost(*criteria) : HostAndPort();
 
+				//master
                 if (isMasterReplyStatus.isOK())
                     receivedIsMaster(ns.host, pingMicros, isMasterReplyStatus.getValue());
                 else

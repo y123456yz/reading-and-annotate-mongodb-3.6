@@ -172,6 +172,8 @@ private:
     boost::optional<CachedCollectionRoutingInfo> _routingInfo;
 
     // Map of shard->remote shard version reported from stale errors
+    //ChunkManagerTargeter::noteStaleResponse 更新shard版本号
+    //ChunkManagerTargeter::refreshIfNeeded中做版本检查，判断是否需要路由刷新
     ShardVersionMap _remoteShardVersions;
 };
 

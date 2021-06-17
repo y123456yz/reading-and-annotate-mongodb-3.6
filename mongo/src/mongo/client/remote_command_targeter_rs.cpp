@@ -60,8 +60,10 @@ ConnectionString RemoteCommandTargeterRS::connectionString() {
     return uassertStatusOK(ConnectionString::parse(_rsMonitor->getServerAddress()));
 }
 
+//AsyncRequestsSender::RemoteData::resolveShardIdToHostAndPortÖÐµ÷ÓÃ
 StatusWith<HostAndPort> RemoteCommandTargeterRS::findHostWithMaxWait(
     const ReadPreferenceSetting& readPref, Milliseconds maxWait) {
+    //ReplicaSetMonitor::getHostOrRefresh
     return _rsMonitor->getHostOrRefresh(readPref, maxWait);
 }
 

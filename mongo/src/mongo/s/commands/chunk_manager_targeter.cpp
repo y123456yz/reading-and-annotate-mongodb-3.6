@@ -174,6 +174,8 @@ ChunkVersion getShardVersion(const CachedCollectionRoutingInfo& routingInfo,
  * Note that the signature here is weird since our cached map of chunk versions is stored in a
  * ChunkManager or is implicit in the primary shard of the collection.
  */
+//ChunkManagerTargeter::refreshIfNeeded中调用
+//比较本地缓存的版本号和后端分片返回期望的版本号那个更高
 CompareResult compareAllShardVersions(const CachedCollectionRoutingInfo& routingInfo,
                                       const ShardVersionMap& remoteShardVersions) {
     CompareResult finalResult = CompareResult_GTE;
@@ -682,7 +684,7 @@ Status ChunkManagerTargeter::targetAllShards(
 
 //配合shard server中的CollectionShardingState::checkShardVersionOrThrow阅读
 
-//noteStaleResponses中调用
+//BatchWriteExec::executeBatch->noteStaleResponses中调用
 //更新_remoteShardVersions，也就是远端分片shard version
 void ChunkManagerTargeter::noteStaleResponse(const ShardEndpoint& endpoint,
                                              const BSONObj& staleInfo) {
@@ -695,15 +697,16 @@ void ChunkManagerTargeter::noteStaleResponse(const ShardEndpoint& endpoint,
         remoteShardVersion = getShardVersion(*_routingInfo, endpoint.shardName);
 		//增加主版本号
         remoteShardVersion.incMajor();
-    } else {
+    } else { //更新后端分片发送过来的期望的版本号，
         remoteShardVersion = ChunkVersion::fromBSON(staleInfo, "vWanted");
     }
 
     ShardVersionMap::iterator it = _remoteShardVersions.find(endpoint.shardName);
     if (it == _remoteShardVersions.end()) {
-		//<分片名，shardversion>
+		//<分片名，shardversion>  没用则增加该shard版本信息
         _remoteShardVersions.insert(std::make_pair(endpoint.shardName, remoteShardVersion));
     } else {
+    	//更新版本号为后端分片返回的版本号
         ChunkVersion& previouslyNotedVersion = it->second;
         if (previouslyNotedVersion.hasEqualEpoch(remoteShardVersion)) {
             if (previouslyNotedVersion.isOlderThan(remoteShardVersion)) {
@@ -718,13 +721,14 @@ void ChunkManagerTargeter::noteStaleResponse(const ShardEndpoint& endpoint,
     }
 }
 
+//BatchWriteExec::executeBatch中调用
 void ChunkManagerTargeter::noteCouldNotTarget() {
     dassert(_remoteShardVersions.empty());
     _needsTargetingRefresh = true;
 }
 
 //BatchWriteExec::executeBatch中调用
-//如果有必要，则刷新最新元数据路由信息
+//如果有必要，则刷新最新元数据路由信息，版本比较更新，路由刷新
 Status ChunkManagerTargeter::refreshIfNeeded(OperationContext* opCtx, bool* wasChanged) {
     bool dummy;
     if (!wasChanged) {
@@ -759,7 +763,7 @@ Status ChunkManagerTargeter::refreshIfNeeded(OperationContext* opCtx, bool* wasC
     // See if and how we need to do a remote refresh.
     // Either we couldn't target at all, or we have stale versions, but not both.
     //
-
+	//需要刷新路由
     if (_needsTargetingRefresh) {
         // Reset the field
         _needsTargetingRefresh = false;
@@ -789,9 +793,10 @@ Status ChunkManagerTargeter::refreshIfNeeded(OperationContext* opCtx, bool* wasC
         // Reset the versions
         _remoteShardVersions.clear();
 
+		//本地缓存的版本号更低，说明需要从cfg获取最新的路由信息
         if (result == CompareResult_Unknown || result == CompareResult_LT) {
             // Our current shard versions aren't all comparable to the old versions, maybe drop
-            return refreshNow(opCtx);
+            return refreshNow(opCtx);//刷新路由信息
         }
 
         *wasChanged = isMetadataDifferent(

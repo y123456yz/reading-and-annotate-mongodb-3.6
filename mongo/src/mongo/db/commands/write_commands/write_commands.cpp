@@ -90,6 +90,12 @@ bool shouldSkipOutput(OperationContext* opCtx) {
 }
 
 enum class ReplyStyle { kUpdate, kNotUpdate };  // update has extra fields.
+//增删改操作CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl调用
+
+//增删改操作CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl调用serializeReply,然后
+//  追加ErrorCodes::StaleShardVersion版本异常信息返回给客户端。代理收到改错误码信息后，在BatchWriteExec::executeBatch
+//  中处理
+
 void serializeReply(OperationContext* opCtx,
                     ReplyStyle replyStyle,
                     bool continueOnError,
@@ -142,7 +148,7 @@ void serializeReply(OperationContext* opCtx,
         errors.push_back(error.obj());
     }
 
-	//写入有异常
+	//写入有异常，从新构造错误码信息，增加版本错误码返回给客户端
     if (result.staleConfigException) {
         // For ordered:false commands we need to duplicate the StaleConfig result for all ops
         // after we stopped. result.results doesn't include the staleConfigException.

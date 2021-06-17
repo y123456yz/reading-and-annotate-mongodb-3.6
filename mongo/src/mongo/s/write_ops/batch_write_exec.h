@@ -100,6 +100,8 @@ public:
     // Number of times host resolution failed
     int numResolveErrors;
     // Number of stale batches
+    //代理路由信息版本过低，转发到后端分片，分片告诉代理需要更新路由
+    //版本不匹配需要刷新路由，版本不匹配的计数统计
     int numStaleBatches;
 
 private:

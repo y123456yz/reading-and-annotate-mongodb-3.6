@@ -53,6 +53,7 @@ typedef std::shared_ptr<ReplicaSetMonitor> ReplicaSetMonitorPtr;
  * Holds state about a replica set and provides a means to refresh the local view.
  * All methods perform the required synchronization to allow callers from multiple threads.
  */
+//监控复制集信息
 class ReplicaSetMonitor : public std::enable_shared_from_this<ReplicaSetMonitor> {
     MONGO_DISALLOW_COPYING(ReplicaSetMonitor);
 

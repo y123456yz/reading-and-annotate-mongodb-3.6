@@ -42,6 +42,11 @@ namespace mongo {
 // execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
 //mongod通过handleError也会返回StaleConfigException错误
 
+//增删改操作CmdInsert::runImpl CmdUpdate::runImpl CmdDelete::runImpl调用serializeReply,然后
+//  追加ErrorCodes::StaleShardVersion版本异常信息返回给客户端。代理收到改错误码信息后，在BatchWriteExec::executeBatch
+//  中处理
+
+
 //代理收到该应答后，在ChunkManagerTargeter::noteStaleResponse中解析
 //例如版本不匹配会走到这里
 class StaleConfigException final : public AssertionException {
