@@ -78,6 +78,7 @@ LogicalSessionId makeLogicalSessionId(const LogicalSessionFromClient& fromClient
 
     lsid.setId(fromClient.getId());
 
+	//LogicalSessionFromClient::getUid
     if (fromClient.getUid()) {
         auto authSession = AuthorizationSession::get(opCtx->getClient());
 
@@ -91,7 +92,7 @@ LogicalSessionId makeLogicalSessionId(const LogicalSessionFromClient& fromClient
                     authSession->isAuthorizedForPrivilege(Privilege(
                         ResourcePattern::forClusterResource(), ActionType::impersonate)) ||
                     getLogicalSessionUserDigestForLoggedInUser(opCtx) == fromClient.getUid());
-
+		//LogicalSessionFromClient::getUid
         lsid.setUid(*fromClient.getUid());
     } else {
         lsid.setUid(getLogicalSessionUserDigestForLoggedInUser(opCtx));
@@ -133,6 +134,7 @@ LogicalSessionRecord makeLogicalSessionRecord(OperationContext* opCtx, Date_t la
     return lsr;
 }
 
+//下面的makeLogicalSessionRecord调用
 LogicalSessionRecord makeLogicalSessionRecord(const LogicalSessionId& lsid, Date_t lastUse) {
     LogicalSessionRecord lsr{};
 
@@ -142,6 +144,7 @@ LogicalSessionRecord makeLogicalSessionRecord(const LogicalSessionId& lsid, Date
     return lsr;
 }
 
+//LogicalSessionCacheImpl::vivify中调用
 LogicalSessionRecord makeLogicalSessionRecord(OperationContext* opCtx,
                                               const LogicalSessionId& lsid,
                                               Date_t lastUse) {

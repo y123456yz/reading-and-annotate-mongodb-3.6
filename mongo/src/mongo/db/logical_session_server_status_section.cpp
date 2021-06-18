@@ -37,6 +37,25 @@ namespace mongo {
 
 namespace {
 
+/*
+ocloud_DydTikPP_shard_1:SECONDARY> db.serverStatus().logicalSessionRecordCache
+{
+        "activeSessionsCount" : 383,
+        "sessionsCollectionJobCount" : 30,
+        "lastSessionsCollectionJobDurationMillis" : 31,
+        "lastSessionsCollectionJobTimestamp" : ISODate("2021-06-18T10:54:19.065Z"),
+        "lastSessionsCollectionJobEntriesRefreshed" : 285,
+        "lastSessionsCollectionJobEntriesEnded" : 0,
+        "lastSessionsCollectionJobCursorsClosed" : 0,
+        "transactionReaperJobCount" : 30,
+        "lastTransactionReaperJobDurationMillis" : 4,
+        "lastTransactionReaperJobTimestamp" : ISODate("2021-06-18T10:54:19.065Z"),
+        "lastTransactionReaperJobEntriesCleanedUp" : 0,
+        "sessionCatalogSize" : 0
+}
+ocloud_DydTikPP_shard_1:SECONDARY> 
+
+*/ //db.serverStatus().logicalSessionRecordCacheÃüÁî
 class LogicalSessionSSS : public ServerStatusSection {
 public:
     LogicalSessionSSS() : ServerStatusSection("logicalSessionRecordCache") {}
@@ -47,9 +66,12 @@ public:
         return true;
     }
 
+	//db.serverStatus().logicalSessionRecordCacheÃüÁî
+	//LogicalSessionSSS::generateSection
     virtual BSONObj generateSection(OperationContext* opCtx,
                                     const BSONElement& configElement) const {
         auto lsCache = LogicalSessionCache::get(opCtx);
+		//LogicalSessionCacheImpl::getStats
         return lsCache ? lsCache->getStats().toBSON() : BSONObj();
     }
 

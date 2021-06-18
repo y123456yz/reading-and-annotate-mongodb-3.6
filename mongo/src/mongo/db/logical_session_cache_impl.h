@@ -163,6 +163,7 @@ private:
 
     mutable stdx::mutex _cacheMutex;
 
+    
     LogicalSessionIdMap<LogicalSessionRecord> _activeSessions;
 
     LogicalSessionIdSet _endingSessions;

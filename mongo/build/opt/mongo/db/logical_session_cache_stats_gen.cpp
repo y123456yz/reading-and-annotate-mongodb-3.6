@@ -14,6 +14,7 @@
 
 namespace mongo {
 
+//////db.serverStatus().logicalSessionRecordCache√¸¡Ó
 constexpr StringData LogicalSessionCacheStats::kActiveSessionsCountFieldName;
 constexpr StringData LogicalSessionCacheStats::kLastSessionsCollectionJobCursorsClosedFieldName;
 constexpr StringData LogicalSessionCacheStats::kLastSessionsCollectionJobDurationMillisFieldName;
@@ -221,7 +222,7 @@ void LogicalSessionCacheStats::parseProtected(const IDLParserErrorContext& ctxt,
 
 }
 
-
+////db.serverStatus().logicalSessionRecordCache√¸¡Ó
 void LogicalSessionCacheStats::serialize(BSONObjBuilder* builder) const {
     invariant(_hasLastSessionsCollectionJobTimestamp && _hasLastTransactionReaperJobTimestamp);
 

@@ -85,6 +85,7 @@ LogicalSessionCacheImpl::~LogicalSessionCacheImpl() {
     }
 }
 
+//查找_activeSessions中是否有该lsid
 Status LogicalSessionCacheImpl::promote(LogicalSessionId lsid) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
     auto it = _activeSessions.find(lsid);
@@ -95,6 +96,8 @@ Status LogicalSessionCacheImpl::promote(LogicalSessionId lsid) {
     return Status::OK();
 }
 
+//LogicalSessionCacheImpl::vivify调用
+//把record添加到_activeSessions map表中
 void LogicalSessionCacheImpl::startSession(OperationContext* opCtx, LogicalSessionRecord record) {
     // Add the new record to our local cache. We will insert it into the sessions collection
     // the next time _refresh is called. If there is already a record in the cache for this
@@ -130,9 +133,10 @@ Status LogicalSessionCacheImpl::refreshSessions(OperationContext* opCtx,
     return Status::OK();
 }
 
-//initializeOperationSessionInfo调用
+//execCommandDatabase->initializeOperationSessionInfo调用
 void LogicalSessionCacheImpl::vivify(OperationContext* opCtx, const LogicalSessionId& lsid) {
     if (!promote(lsid).isOK()) {
+		//没找到，则把该lsid添加到
         startSession(opCtx, makeLogicalSessionRecord(opCtx, lsid, now()));
     }
 }
@@ -379,17 +383,45 @@ void LogicalSessionCacheImpl::endSessions(const LogicalSessionIdSet& sessions) {
     _endingSessions.insert(begin(sessions), end(sessions));
 }
 
+/*
+ocloud_DydTikPP_shard_1:SECONDARY> db.serverStatus().logicalSessionRecordCache
+{
+        "activeSessionsCount" : 383,
+        "sessionsCollectionJobCount" : 30,
+        "lastSessionsCollectionJobDurationMillis" : 31,
+        "lastSessionsCollectionJobTimestamp" : ISODate("2021-06-18T10:54:19.065Z"),
+        "lastSessionsCollectionJobEntriesRefreshed" : 285,
+        "lastSessionsCollectionJobEntriesEnded" : 0,
+        "lastSessionsCollectionJobCursorsClosed" : 0,
+        "transactionReaperJobCount" : 30,
+        "lastTransactionReaperJobDurationMillis" : 4,
+        "lastTransactionReaperJobTimestamp" : ISODate("2021-06-18T10:54:19.065Z"),
+        "lastTransactionReaperJobEntriesCleanedUp" : 0,
+        "sessionCatalogSize" : 0
+}
+ocloud_DydTikPP_shard_1:SECONDARY> 
+
+*/
+//db.serverStatus().logicalSessionRecordCache命令
+//LogicalSessionSSS::generateSection中调用
 LogicalSessionCacheStats LogicalSessionCacheImpl::getStats() {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
     _stats.setActiveSessionsCount(_activeSessions.size());
     return _stats;
 }
 
+//LogicalSessionCacheImpl::startSession  LogicalSessionCacheImpl::refreshSessions
 void LogicalSessionCacheImpl::_addToCache(LogicalSessionRecord record) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+
+	/*
+	if (_activeSessions.size() >= static_cast<size_t>(maxSessions)) {
+        return {ErrorCodes::TooManyLogicalSessions, "cannot add session into the cache"};
+    }*/
     _activeSessions.insert(std::make_pair(record.getId(), record));
 }
 
+//获取所有的LogicalSessionId
 std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds() const {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
     std::vector<LogicalSessionId> ret;
@@ -399,7 +431,7 @@ std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds() const {
     }
     return ret;
 }
-
+//找出_activeSessions表中有，但是userDigests数组中没有的LogicalSessionId
 std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds(
     const std::vector<SHA256Block>& userDigests) const {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);

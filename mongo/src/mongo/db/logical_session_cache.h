@@ -45,6 +45,7 @@ class ServiceContext;
 /**
  * The interface for the logical session cache
  */
+//LogicalSessionCacheImplºÃ≥–∏√¿‡
 class LogicalSessionCache {
 public:
     /**

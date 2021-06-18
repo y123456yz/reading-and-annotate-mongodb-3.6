@@ -94,6 +94,7 @@ void initializeOperationSessionInfo(OperationContext* opCtx,
         opCtx->setLogicalSessionId(makeLogicalSessionId(osi.getSessionId().get(), opCtx));
 
         LogicalSessionCache* lsc = LogicalSessionCache::get(opCtx->getServiceContext());
+		//LogicalSessionCacheImpl::vivify
         lsc->vivify(opCtx, opCtx->getLogicalSessionId().get());
     }
 

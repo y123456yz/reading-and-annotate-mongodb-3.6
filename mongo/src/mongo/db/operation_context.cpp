@@ -392,6 +392,7 @@ void OperationContext::markKilled(ErrorCodes::Error killCode) {
 }
 
 //initializeOperationSessionInfo
+//从客户端请求中解析出
 void OperationContext::setLogicalSessionId(LogicalSessionId lsid) {
     invariant(!_lsid);
     _lsid = std::move(lsid);
