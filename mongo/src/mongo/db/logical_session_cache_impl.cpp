@@ -378,6 +378,8 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     }
 }
 
+//EndSessionsCommand::run调用
+//_endingSessions专门记录end session信息
 void LogicalSessionCacheImpl::endSessions(const LogicalSessionIdSet& sessions) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
     _endingSessions.insert(begin(sessions), end(sessions));
@@ -445,6 +447,7 @@ std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds(
     return ret;
 }
 
+//查找
 boost::optional<LogicalSessionRecord> LogicalSessionCacheImpl::peekCached(
     const LogicalSessionId& id) const {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
