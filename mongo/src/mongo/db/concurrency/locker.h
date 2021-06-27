@@ -48,6 +48,9 @@ namespace mongo {
 //LockerImpl  locker_noop继承该类
 //LockRequest.locker为该类型
 
+//ServiceContextMongoD::_newOpCtx中构造使用，每个请求对应一个DefaultLockerImpl(也就是一个LockerImpl)
+
+//LockerImpl继承该类
 //struct LockRequest{Locker* locker}  LockRequest.locker  OperationContext._locker为该类
 class Locker {
     MONGO_DISALLOW_COPYING(Locker);

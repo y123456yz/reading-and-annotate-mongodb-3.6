@@ -107,7 +107,9 @@ featdoc:PRIMARY> db.serverStatus().globalLock
 featdoc:PRIMARY> 
 featdoc:PRIMARY> 
 */
-//PartitionedInstanceWideLockStats globalStats;   
+//单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
+
+//PartitionedInstanceWideLockStats globalStats;    全局锁统计
 //LockStats<>::_report(db.serverStatus().locks查看)中获取相关信息,这里面是总的锁相关的统计
 class PartitionedInstanceWideLockStats {
     MONGO_DISALLOW_COPYING(PartitionedInstanceWideLockStats);
@@ -191,6 +193,9 @@ const Milliseconds DeadlockTimeout = Milliseconds(500);
 AtomicUInt64 idCounter(0);
 
 // Partitioned global lock statistics, so we don't hit the same bucket
+//单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
+
+//单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
 PartitionedInstanceWideLockStats globalStats; //全局lock统计
 
 
@@ -309,6 +314,10 @@ void CondVarLockGrantNotification::notify(ResourceId resId, LockResult result) {
     _cond.notify_all();
 }
 
+
+//ServiceContextMongoD::_newOpCtx中构造LockerImpl使用，每个请求对应一个DefaultLockerImpl(也就是一个LockerImpl)
+//注意全局锁并发控制实际由全局变量ticketHolders[]负责维护，对每个请求的locker处理前需要判断全局锁是否需要等待
+
 //每一种mode对应一个TicketHolder，依赖linux的sem信号量实现
 namespace { //赋值见setGlobalThrottling //WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
 TicketHolder* ticketHolders[LockModesCount] = {}; 
@@ -379,6 +388,9 @@ Locker::ClientState LockerImpl<IsForMMAPV1>::getClientState() const {
 
 //LockerImpl<>::restoreLockState
 //全局锁获取实际上不是走的这里，而是Lock::GlobalLock::_enqueue->lock_state.h中的lockGlobalBegin->LockerImpl<>::_lockGlobalBegin
+
+
+//全局锁加锁过程：Lock::GlobalLock::GlobalLock->Lock::GlobalLock::_enqueue->LockerImpl::lockGlobal
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockGlobal(LockMode mode) {
     LockResult result = _lockGlobalBegin(mode, Milliseconds::max());
@@ -407,7 +419,8 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RE
 //全局锁上锁过程LockerImpl<>::_lockGlobalBegin   
 //RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<>::lock
 
-//Lock::GlobalLock::_enqueue->lock_state.h中的lockGlobalBegin调用
+//全局锁加锁过程：Lock::GlobalLock::GlobalLock->Lock::GlobalLock::_enqueue->LockerImpl::lockGlobal
+
 //LockerImpl<>::lockGlobal中调用  
 template <bool IsForMMAPV1>  //等待获取全局锁成功见Lock::GlobalLock::GlobalLock->Lock::GlobalLock::waitForLock->LockerImpl<>::lockGlobalComplete
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {

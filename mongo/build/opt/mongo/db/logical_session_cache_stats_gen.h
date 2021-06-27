@@ -26,6 +26,7 @@ namespace mongo {
 /**
  * A struct representing the section of the server status command with information about the logical session cache
  */
+//LogicalSessionCacheImpl._stats为该类型
 class LogicalSessionCacheStats {
 public:
     static constexpr auto kActiveSessionsCountFieldName = "activeSessionsCount"_sd;
@@ -83,13 +84,78 @@ protected:
     void parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject);
 
 private:
+/*
+logicalSessionRecordCache?
+Provides metrics around the caching of server sessions.
+
+logicalSessionRecordCache.activeSessionsCount
+The number of all active local sessions cached in memory by the mongod or mongos instance since the last refresh period.
+
+TIP
+See also:
+$listLocalSessions
+logicalSessionRefreshMillis
+logicalSessionRecordCache.sessionsCollectionJobCount
+The number that tracks the number of times the refresh process has run on the config.system.sessions collection.
+
+TIP
+See also:
+logicalSessionRefreshMillis
+
+logicalSessionRecordCache.lastSessionsCollectionJobDurationMillis
+The length in milliseconds of the last refresh.
+
+logicalSessionRecordCache.lastSessionsCollectionJobTimestamp
+The time at which the last refresh occurred.
+
+logicalSessionRecordCache.lastSessionsCollectionJobEntriesRefreshed
+The number of sessions that were refreshed during the last refresh.
+
+logicalSessionRecordCache.lastSessionsCollectionJobEntriesEnded
+The number of sessions that ended during the last refresh.
+
+logicalSessionRecordCache.lastSessionsCollectionJobCursorsClosed
+The number of cursors that were closed during the last config.system.sessions collection refresh.
+
+logicalSessionRecordCache.transactionReaperJobCount
+The number that tracks the number of times the transaction record cleanup process has run on the config.transactions collection.
+
+logicalSessionRecordCache.lastTransactionReaperJobDurationMillis
+The length (in milliseconds) of the last transaction record cleanup.
+
+logicalSessionRecordCache.lastTransactionReaperJobTimestamp
+The time of the last transaction record cleanup.
+
+logicalSessionRecordCache.lastTransactionReaperJobEntriesCleanedUp
+The number of entries in the config.transactions collection that were deleted during the last transaction record cleanup.
+
+logicalSessionRecordCache.sessionCatalogSize
+For a mongod instance,
+The size of its in-memory cache of the config.transactions entries. This corresponds to retryable writes or transactions whose sessions have not expired within the localLogicalSessionTimeoutMinutes.
+For a mongos instance,
+The number of the in-memory cache of its sessions that have had transactions within the most recent localLogicalSessionTimeoutMinutes interval.
+New in version 4.2.
+
+*/
+    //当前session数
     std::int32_t _activeSessionsCount{0};
+    
+    //以下统计详见：LogicalSessionCacheImpl::_refresh
+    //刷新次数统计
     std::int32_t _sessionsCollectionJobCount{0};
+    //统计间隔
     std::int32_t _lastSessionsCollectionJobDurationMillis{0};
+    //上一次做统计的时间
     mongo::Date_t _lastSessionsCollectionJobTimestamp;
+    //两次refres刷新周期新增的session会话统计
     std::int32_t _lastSessionsCollectionJobEntriesRefreshed{0};
+    //两次refres刷新周期新增的 end session统计
     std::int32_t _lastSessionsCollectionJobEntriesEnded{0};
+    //两次刷新周期内cursor游标回收处理消耗的时间
     std::int32_t _lastSessionsCollectionJobCursorsClosed{0};
+
+
+    //以下统计详见：LogicalSessionCacheImpl::_reap
     std::int32_t _transactionReaperJobCount{0};
     std::int32_t _lastTransactionReaperJobDurationMillis{0};
     mongo::Date_t _lastTransactionReaperJobTimestamp;

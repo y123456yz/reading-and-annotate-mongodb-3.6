@@ -76,6 +76,7 @@ ServiceContext* ServiceLiasonMongos::_context() {
     return getGlobalServiceContext();
 }
 
+//LogicalSessionCacheImpl::_refresh中调用，session回收处理 
 std::pair<Status, int> ServiceLiasonMongos::killCursorsWithMatchingSessions(
     OperationContext* opCtx, const SessionKiller::Matcher& matcher) {
     auto cursorManager = Grid::get(getGlobalServiceContext())->getCursorManager();

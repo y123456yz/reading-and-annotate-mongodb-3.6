@@ -72,9 +72,16 @@ struct CounterOps {
 
 /**
  * Bundle of locking statistics values.
- */ //
+ */ 
+//LockStats
+
+
+//统计分为两层，第一层代表资源类型：数组全局锁  库锁  表锁等，对应统计类型PerModeLockStatCounters
+//  第二层代表锁模式：读锁、写锁、意向读锁、意向写锁，也就是MODE_X  MODE_S MODE_IX等，对应统计类型
+//     第二层对应统计类型: LockStatCountersType(PerModeLockStatCounters.modeStats成员)
+
 //LockStats._stats  
-//LockStats._stats统计展示在LockStats<>::_report
+//LockStats._stats统计展示在LockStats<>::_report  慢日志中锁相关计数就在这里
 template <typename CounterType>
 struct LockStatCounters { 
     template <typename OtherType>
@@ -92,6 +99,10 @@ struct LockStatCounters {
         CounterOps::set(combinedWaitTimeMicros, 0);
         CounterOps::set(numDeadlocks, 0);
     }
+
+//慢日志中的:
+//locks:{ Global: { acquireCount: { r: 11814 }, acquireWaitCount: { r: 18 }, timeAcquiringMicros: { r: 12365 } }, 
+// Database: { acquireCount: { r: 5907 } }, Collection: { acquireCount: { r: 5907 } } }
 
     //LockerImpl<>::lockBegin->PartitionedInstanceWideLockStats::recordAcquisition->LockStats::recordAcquisition
     CounterType numAcquisitions;
@@ -112,11 +123,21 @@ struct LockStatCounters {
 参考
 typedef LockStats<int64_t> SingleThreadedLockStats;
 typedef LockStats<AtomicInt64> AtomicLockStats;
-*/ //计数在PartitionedInstanceWideLockStats中实现
+*/ 
+//慢日志打印会用到，见OpDebug::report
+
+//计数在PartitionedInstanceWideLockStats中实现
 template <typename CounterType>
 class LockStats {
 public:
     // Declare the type for the lock counters bundle
+    
+//统计分为两层，第一层代表资源类型：数组全局锁  库锁  表锁等，对应统计类型PerModeLockStatCounters
+//  第二层代表锁模式：读锁、写锁、意向读锁、意向写锁，也就是MODE_X  MODE_S MODE_IX等，对应统计类型
+//     第二层对应统计类型: LockStatCountersType(PerModeLockStatCounters.modeStats成员)
+
+
+    //真正的计数操作就是在LockStatCounters中实现
     typedef LockStatCounters<CounterType> LockStatCountersType;
 
     /**
@@ -151,7 +172,7 @@ public:
         if (resId == resourceIdOplog) {
             return _oplogStats.modeStats[mode];
         }
-
+        //资源类型(全局、库、表等).锁模式(读锁、写锁、意向读锁、意向写锁等)
         return _stats[resId.getType()].modeStats[mode];
     }
 
@@ -189,7 +210,7 @@ private:
     // Keep the per-mode lock stats next to each other in case we want to do fancy operations
     // such as atomic operations on 128-bit values.
     struct PerModeLockStatCounters { //下面的_stats和_oplogStats为该类型
-        LockStatCountersType modeStats[LockModesCount]; //对应不同类型的锁
+        LockStatCountersType modeStats[LockModesCount]; //对应不同类型的锁 MODE_X IX S IS等
     };
 
 
@@ -200,13 +221,21 @@ private:
 
     // Split the lock stats per resource type and special-case the oplog so we can collect
     // more detailed stats for it.
-    //数组全局锁  库锁  表锁   LockStats<CounterType>::report中打印输出
+
+//统计分为两层，第一层代表资源类型：数组全局锁  库锁  表锁等，对应统计类型PerModeLockStatCounters
+//  第二层代表锁模式：读锁、写锁、意向读锁、意向写锁，也就是MODE_X  MODE_S MODE_IX等，对应统计类型
+//     第二层对应统计类型: LockStatCountersType(PerModeLockStatCounters.modeStats成员)
+
+    //资源类型：数组全局锁  库锁  表锁   LockStats<CounterType>::report中打印输出
     PerModeLockStatCounters _stats[ResourceTypesCount]; 
     //polog相关统计   LockStats<CounterType>::report中打印输出
     PerModeLockStatCounters _oplogStats;
 };
 
+//单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
+
 //LockerImpl._stats为该类型  代表的是本次请求相关的锁统计  慢日志中体现 (ServiceEntryPointMongod::handleRequest)
+//慢日志打印会用到，见OpDebug::report
 typedef LockStats<int64_t> SingleThreadedLockStats;
 //PartitionedInstanceWideLockStats._partitions[]数组为该类型  
 //LockStats<>::_report(db.serverStatus().locks查看)中获取相关信息,这里面是总的锁相关的统计

@@ -46,6 +46,9 @@ class RemoteCommandTargeter;
 /**
  * Accesses the sessions collection for replica set members.
  */
+//makeSessionsCollection中构造使用，
+// 和SessionsCollectionSharded  SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
+
 class SessionsCollectionRS : public SessionsCollection {
 public:
     /**

@@ -55,6 +55,7 @@ LogicalSessionCache* LogicalSessionCache::get(OperationContext* ctx) {
     return get(ctx->getClient()->getServiceContext());
 }
 
+//runMongosServer  _initAndListen
 void LogicalSessionCache::set(ServiceContext* service,
                               std::unique_ptr<LogicalSessionCache> sessionCache) {
     auto& cache = getLogicalSessionCache(service);

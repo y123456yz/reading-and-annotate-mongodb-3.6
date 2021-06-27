@@ -45,7 +45,9 @@ class ServiceContext;
 /**
  * The interface for the logical session cache
  */
-//LogicalSessionCacheImpl继承该类
+// makeLogicalSessionCacheD(mongod)  makeLogicalSessionCacheS(mongos)中生成使用
+
+//LogicalSessionCacheImpl继承该类 makeLogicalSessionCacheD中生成使用
 class LogicalSessionCache {
 public:
     /**

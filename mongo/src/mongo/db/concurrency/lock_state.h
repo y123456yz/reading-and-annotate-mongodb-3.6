@@ -87,7 +87,10 @@ private:
 typedef LockerImpl<false> DefaultLockerImpl;
 typedef LockerImpl<true> MMAPV1LockerImpl;
 */ 
-//wiredtiger对应DefaultLockerImpl 
+//ServiceContextMongoD::_newOpCtx中构造LockerImpl使用，每个请求对应一个DefaultLockerImpl(也就是一个LockerImpl)
+//注意全局锁并发控制实际由全局变量ticketHolders[]负责维护，对每个请求的locker处理前需要判断全局锁是否需要等待
+
+
 //该结构是OperationContext._locker成员
 template <bool IsForMMAPV1>   
 class LockerImpl : public Locker {
@@ -229,9 +232,11 @@ private:
 
     // Per-locker locking statistics. Reported in the slow-query log message and through
     // db.currentOp. Complementary to the per-instance locking statistics.
+    //单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
+    
     //LockerImpl._stats  SingleThreadedLockStats类型  代表的是本次请求相关的锁统计  慢日志中体现
     //慢日志打印见(ServiceEntryPointMongod::handleRequest)
-    SingleThreadedLockStats _stats;
+    SingleThreadedLockStats _stats; 
 
     // Delays release of exclusive/intent-exclusive locked resources until the write unit of
     // work completes. Value of 0 means we are not inside a write unit of work.
@@ -272,6 +277,8 @@ public:
 };
 
 //该结构是OperationContext._locker成员
+
+//ServiceContextMongoD::_newOpCtx中构造使用，每个请求对应一个DefaultLockerImpl(也就是一个LockerImpl)
 typedef LockerImpl<false> DefaultLockerImpl;
 typedef LockerImpl<true> MMAPV1LockerImpl;
 

@@ -565,6 +565,7 @@ SessionsCollectionFetchResultIndividualResult::SessionsCollectionFetchResultIndi
     // Used for initialization only
 }
 
+//TransactionReaperImplÖÐµ÷ÓÃ
 SessionsCollectionFetchResultIndividualResult SessionsCollectionFetchResultIndividualResult::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     SessionsCollectionFetchResultIndividualResult object;
     object.parseProtected(ctxt, bsonObject);

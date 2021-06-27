@@ -42,6 +42,9 @@ class OperationContext;
 /**
  * Accesses the sessions collection for config servers.
  */
+//makeSessionsCollection中构造使用，
+// 和SessionsCollectionSharded  SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
+
 class SessionsCollectionConfigServer : public SessionsCollectionSharded {
 public:
     /**

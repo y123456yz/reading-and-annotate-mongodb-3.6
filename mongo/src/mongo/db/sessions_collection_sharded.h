@@ -41,6 +41,8 @@ class OperationContext;
 /**
  * Accesses the sessions collection for mongos and shard servers.
  */
+//makeSessionsCollection中构造使用，
+// 和SessionsCollectionSharded  SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
 class SessionsCollectionSharded : public SessionsCollection {
 public:
     /**

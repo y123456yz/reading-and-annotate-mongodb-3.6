@@ -91,6 +91,7 @@ public:
     }
 
 private:
+	//生成RESOURCE_MUTEX类型的ResourceId
     ResourceId _newResourceIdForMutex(std::string resourceLabel) {
         stdx::lock_guard<stdx::mutex> lk(labelsMutex);
         invariant(nextId == labels.size());

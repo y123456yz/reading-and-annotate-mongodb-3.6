@@ -153,6 +153,7 @@ public:
     /**
      * Obtains a ResourceMutex for exclusive use.
      */
+    //排他锁，MODE_X封装
     class ExclusiveLock : public ResourceLock {
     public:
         ExclusiveLock(Locker* locker, ResourceMutex mutex)
@@ -164,6 +165,7 @@ public:
      * to take advantage of optimizations in the lock manager for intent modes. This is OK as
      * this just has to conflict with exclusive locks.
      */
+    //共享锁，MODE_IS封装
     class SharedLock : public ResourceLock {
     public:
         SharedLock(Locker* locker, ResourceMutex mutex)
@@ -180,7 +182,9 @@ public:
      * scopes, so write conflicts cannot happen when releasing the GlobalLock.
      *
      * NOTE: Does not acquire flush lock.
-     */  //GlobalWrite  GlobalrRead全局读锁和全局写锁继承该类
+     */  
+    //全局锁使用可以参考 lock_stat_test.cpp中的测试用例
+     //GlobalWrite  GlobalrRead全局读锁和全局写锁继承该类
     class GlobalLock { //DBLock._globalLock
     public:
         class EnqueueOnly {};
@@ -409,3 +413,4 @@ storageEngine.writeOplog(...);
     };
 };
 }
+

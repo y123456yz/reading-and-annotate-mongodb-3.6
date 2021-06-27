@@ -187,6 +187,7 @@ public:
      * Returns an owned BSONObj representing the original command. Used only by the getMore
      * command.
      */
+    //客户端原始请求打印可以参考OpDebug::report
     BSONObj originatingCommand() const {
         return _originatingCommand;
     }
@@ -447,6 +448,7 @@ public:
      */
     void setNS_inlock(StringData ns);
 
+    //可以参考OpDebug::report使用方法打印
     StringData getPlanSummary() const {
         return _planSummary;
     }

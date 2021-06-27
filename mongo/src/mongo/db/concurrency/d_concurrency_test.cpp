@@ -235,6 +235,7 @@ TEST_F(DConcurrencyTestFixture, ResourceMutex) {
         // Step 0: Single thread acquires shared lock
         state.waitFor(0);
         Lock::SharedLock lk(&locker1, mtx);
+		//Lock::SharedLock::isLocked
         ASSERT(lk.isLocked());
         state.finish(0);
 
@@ -293,6 +294,7 @@ TEST_F(DConcurrencyTestFixture, GlobalRead) {
     auto opCtx = makeOpCtx();
     opCtx->setLockState(stdx::make_unique<MMAPV1LockerImpl>());
     Lock::GlobalRead globalRead(opCtx.get());
+	//lockState::isR
     ASSERT(opCtx->lockState()->isR());
 }
 

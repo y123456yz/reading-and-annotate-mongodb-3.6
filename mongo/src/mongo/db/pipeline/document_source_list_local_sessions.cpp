@@ -40,6 +40,8 @@ REGISTER_DOCUMENT_SOURCE(listLocalSessions,
                          DocumentSourceListLocalSessions::LiteParsed::parse,
                          DocumentSourceListLocalSessions::createFromBson);
 
+//db.aggregate( [  { $listLocalSessions: { allUsers: true } } ] )获取缓存中的
+//db.system.sessions.find()获取库中的，库中可能是关闭掉的链接，等待localLogicalSessionTimeoutMinutes配置过期
 const char* DocumentSourceListLocalSessions::kStageName = "$listLocalSessions";
 
 DocumentSource::GetNextResult DocumentSourceListLocalSessions::getNext() {
@@ -71,6 +73,9 @@ boost::intrusive_ptr<DocumentSource> DocumentSourceListLocalSessions::createFrom
 
     return new DocumentSourceListLocalSessions(pExpCtx, listSessionsParseSpec(kStageName, spec));
 }
+
+//db.aggregate( [  { $listLocalSessions: { allUsers: true } } ] )获取缓存中的
+//db.system.sessions.find()获取库中的，库中可能是关闭掉的链接，等待localLogicalSessionTimeoutMinutes配置过期
 
 DocumentSourceListLocalSessions::DocumentSourceListLocalSessions(
     const boost::intrusive_ptr<ExpressionContext>& pExpCtx, const ListSessionsSpec& spec)

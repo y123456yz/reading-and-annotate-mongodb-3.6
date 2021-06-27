@@ -102,6 +102,7 @@ TEST(LockerImpl, ConflictUpgradeWithTimeout) {
     const ResourceId resId(RESOURCE_COLLECTION, "TestDB.collection"_sd);
 
     DefaultLockerImpl locker1;
+	//LockerImpl::lockGlobal
     ASSERT(LOCK_OK == locker1.lockGlobal(MODE_IS));
     ASSERT(LOCK_OK == locker1.lock(resId, MODE_S));
 
@@ -120,6 +121,7 @@ TEST(LockerImpl, ConflictUpgradeWithTimeout) {
 TEST(LockerImpl, ReadTransaction) {
     DefaultLockerImpl locker;
 
+	//LockerImpl::lockGlobal
     locker.lockGlobal(MODE_IS);
     locker.unlockGlobal();
 

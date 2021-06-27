@@ -427,6 +427,7 @@ StringData getProtoString(int op) {
 }
 }  // namespace
 
+//可以参考OpDebug::report   
 #define OPDEBUG_TOSTRING_HELP(x) \
     if (x >= 0)                  \
     s << " " #x ":" << (x)
@@ -544,6 +545,7 @@ string OpDebug::report(Client* client,
 
     {
         BSONObjBuilder locks;
+		//LockStats::report  锁相关统计打印
         lockStats.report(&locks);
         s << " locks:" << locks.obj().toString();
     }

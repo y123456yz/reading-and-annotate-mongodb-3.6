@@ -48,6 +48,7 @@ namespace mongo {
 
 namespace {
 
+//makeLogicalSessionCacheD中调用
 std::shared_ptr<SessionsCollection> makeSessionsCollection(LogicalSessionCacheServer state) {
     switch (state) {
         case LogicalSessionCacheServer::kSharded:
@@ -65,6 +66,17 @@ std::shared_ptr<SessionsCollection> makeSessionsCollection(LogicalSessionCacheSe
 
 }  // namespace
 
+/*
+LogicalSessionCacheServer kind = LogicalSessionCacheServer::kStandalone;
+if (serverGlobalParams.clusterRole == ClusterRole::ShardServer) {
+	kind = LogicalSessionCacheServer::kSharded;
+} else if (serverGlobalParams.clusterRole == ClusterRole::ConfigServer) {
+	kind = LogicalSessionCacheServer::kConfigServer;
+} else if (replSettings.usingReplSets()) {
+	kind = LogicalSessionCacheServer::kReplicaSet;
+}
+*/
+//_initAndListen调用
 std::unique_ptr<LogicalSessionCache> makeLogicalSessionCacheD(ServiceContext* svc,
                                                               LogicalSessionCacheServer state) {
     auto liason = stdx::make_unique<ServiceLiasonMongod>();

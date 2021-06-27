@@ -120,6 +120,7 @@ KillAllSessionsByPattern makeKillAllSessionsByPattern(OperationContext* opCtx,
     return kasbp;
 }
 
+//LogicalSessionCacheImpl::_refreshÖÐµ÷ÓÃ
 KillAllSessionsByPattern makeKillAllSessionsByPattern(OperationContext* opCtx,
                                                       const LogicalSessionId& lsid) {
     KillAllSessionsByPattern kasbp = makeKillAllSessionsByPattern(opCtx);

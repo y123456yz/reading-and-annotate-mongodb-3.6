@@ -526,6 +526,7 @@ std::vector<GenericCursor> ClusterCursorManager::getAllCursors() const {
     return cursors;
 }
 
+//ServiceLiasonMongos::killCursorsWithMatchingSessions  ServiceLiasonMongod::killCursorsWithMatchingSessionsÖÐµ÷ÓÃ
 std::pair<Status, int> ClusterCursorManager::killCursorsWithMatchingSessions(
     OperationContext* opCtx, const SessionKiller::Matcher& matcher) {
     auto eraser = [&](ClusterCursorManager& mgr, CursorId id) {

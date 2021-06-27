@@ -40,6 +40,8 @@
 
 namespace mongo {
 
+//RefreshSessionsCommand::run   RefreshSessionsCommandInternal::run 
+
 class RefreshSessionsCommandInternal final : public BasicCommand {
     MONGO_DISALLOW_COPYING(RefreshSessionsCommandInternal);
 

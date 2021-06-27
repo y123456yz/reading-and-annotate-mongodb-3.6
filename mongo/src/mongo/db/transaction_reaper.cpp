@@ -72,6 +72,7 @@ constexpr Minutes kTransactionRecordMinimumLifetime(30);
  * requiring synchronized clocks all the way out to the client.  In lieu of that we provide a weaker
  * guarantee after the minimum transaction lifetime.
  */
+//makeQuery中使用
 MONGO_EXPORT_STARTUP_SERVER_PARAMETER(TransactionRecordMinimumLifetimeMinutes,
                                       int,
                                       kTransactionRecordMinimumLifetime.count());
@@ -86,6 +87,7 @@ const auto kLastWriteDateFieldName = SessionTxnRecord::kLastWriteDateFieldName;
  * Scans for records older than the minimum lifetime and uses a sort to walk the index and attempt
  * to pull records likely to be on the same chunks (because they sort near each other).
  */
+//查询某时间范围内的所有数据，并排序
 Query makeQuery(Date_t now) {
     const Date_t possiblyExpired(now - Minutes(TransactionRecordMinimumLifetimeMinutes));
     Query query(BSON(kLastWriteDateFieldName << LT << possiblyExpired));
@@ -102,12 +104,15 @@ Query makeQuery(Date_t now) {
  * have a lifetime associated with a single call to reap.
  */
 template <typename Handler>
+//TransactionReaper::make中使用
 class TransactionReaperImpl final : public TransactionReaper {
 public:
     TransactionReaperImpl(std::shared_ptr<SessionsCollection> collection)
         : _collection(std::move(collection)) {}
 
+	//LogicalSessionCacheImpl::_reap调用
     int reap(OperationContext* opCtx) override {
+    	//handler赋值参考TransactionReaper::make中使用
         Handler handler(opCtx, _collection.get());
 
         Lock::DBLock lk(opCtx, NamespaceString::kSessionTransactionsTableNamespace.db(), MODE_IS);
@@ -118,7 +123,7 @@ public:
         if (coord->canAcceptWritesForDatabase(
                 opCtx, NamespaceString::kSessionTransactionsTableNamespace.db())) {
             DBDirectClient client(opCtx);
-
+			//查询transactions表TransactionRecordMinimumLifetimeMinutes时间范围内的所有数据，并排序
             auto query = makeQuery(opCtx->getServiceContext()->getFastClockSource()->now());
             auto cursor = client.query(NamespaceString::kSessionTransactionsTableNamespace.ns(),
                                        query,
@@ -127,9 +132,12 @@ public:
                                        &kIdProjection);
 
             while (cursor->more()) {
+				//从transaction表获取id信息
                 auto transactionSession = SessionsCollectionFetchResultIndividualResult::parse(
                     "TransactionSession"_sd, cursor->next());
 
+				//mongod如果为副本集模式对应ReplHandler::handleLsid
+				//分片模式对应ShardedHandler::handleLsid
                 handler.handleLsid(transactionSession.get_id());
             }
         }
@@ -142,6 +150,8 @@ private:
     std::shared_ptr<SessionsCollection> _collection;
 };
 
+////ShardedHandler::handleLsid(mongod分片模式)  ReplHandler::handleLsid(普通副本集)中调用，清理transaction表中的某些数据
+//清理config.system.session表中的某些数据
 int handleBatchHelper(SessionsCollection* sessionsCollection,
                       OperationContext* opCtx,
                       const LogicalSessionIdSet& batch) {
@@ -181,6 +191,7 @@ public:
         invariant(_finalized.load());
     }
 
+	//TransactionReaperImpl类接口中调用
     void handleLsid(const LogicalSessionId& lsid) {
         _batch.insert(lsid);
         if (_batch.size() > write_ops::kMaxWriteBatchSize) {
@@ -219,6 +230,8 @@ public:
         invariant(_finalized.load());
     }
 
+	
+	//TransactionReaperImpl类接口中调用
     void handleLsid(const LogicalSessionId& lsid) {
         // There are some lifetime issues with when the reaper starts up versus when the grid is
         // available.  Moving routing info fetching until after we have a transaction moves us past
@@ -226,6 +239,7 @@ public:
         //
         // Also, we should only need the chunk case, but that'll wait until the sessions table is
         // actually sharded.
+        //获取最新主分片和chunk路由信息
         if (!(_cm || _primary)) {
             auto routingInfo =
                 uassertStatusOK(Grid::get(_opCtx)->catalogCache()->getCollectionRoutingInfo(
@@ -234,20 +248,27 @@ public:
             _primary = routingInfo.primary();
         }
         ShardId shardId;
+		//启用了分片
         if (_cm) {
+			//根据lsid查找对应chunk信息
             auto chunk = _cm->findIntersectingChunkWithSimpleCollation(lsid.toBSON());
             shardId = chunk->getShardId();
-        } else {
+        } else { //美元启用分片
             shardId = _primary->getId();
         }
+
+		//lsid写入对应hash桶中
         auto& lsids = _shards[shardId];
         lsids.insert(lsid);
+		//如果桶中超限，则进行处理
         if (lsids.size() > write_ops::kMaxWriteBatchSize) {
+			////ShardedHandler::handleLsid中调用，清理session表中的某些数据
             _numReaped += handleBatchHelper(_sessionsCollection, _opCtx, lsids);
             _shards.erase(shardId);
         }
     }
 
+	//TransactionReaperImpl的reap接口调用
     int finalize() {
         invariant(!_finalized.swap(true));
         for (const auto& pair : _shards) {
@@ -272,6 +293,7 @@ private:
 
 }  // namespace
 
+//makeLogicalSessionCacheD
 std::unique_ptr<TransactionReaper> TransactionReaper::make(
     Type type, std::shared_ptr<SessionsCollection> collection) {
     switch (type) {

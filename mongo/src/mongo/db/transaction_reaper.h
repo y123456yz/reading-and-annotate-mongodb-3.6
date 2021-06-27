@@ -40,6 +40,7 @@ class OperationContext;
  * TransactionReaper is responsible for scanning the transaction table, checking if sessions are
  * still alive and deleting the transaction records if their sessions have expired.
  */
+//²Î¿¼makeLogicalSessionCacheDÊ¹ÓÃ
 class TransactionReaper {
 public:
     enum class Type {

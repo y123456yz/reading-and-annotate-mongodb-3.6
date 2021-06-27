@@ -39,7 +39,9 @@
 #include "mongo/stdx/memory.h"
 
 namespace mongo {
+//// makeLogicalSessionCacheD(mongod)  makeLogicalSessionCacheS(mongos)中生成使用
 
+//runMongosServer调用
 std::unique_ptr<LogicalSessionCache> makeLogicalSessionCacheS() {
     auto liason = stdx::make_unique<ServiceLiasonMongos>();
     auto sessionsColl = stdx::make_unique<SessionsCollectionSharded>();

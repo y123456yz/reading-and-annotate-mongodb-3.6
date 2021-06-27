@@ -53,21 +53,32 @@ MONGO_EXPORT_STARTUP_SERVER_PARAMETER(
 
 MONGO_EXPORT_STARTUP_SERVER_PARAMETER(disableLogicalSessionCacheRefresh, bool, false);
 
+//默认5分钟 static constexpr Minutes kLogicalSessionDefaultRefresh = Minutes(5);
+//可以通过 --setParameter logicalSessionRefreshMinutes=X设置
 constexpr Minutes LogicalSessionCacheImpl::kLogicalSessionDefaultRefresh;
 
+//makeLogicalSessionCacheS  makeLogicalSessionCacheD调用
 LogicalSessionCacheImpl::LogicalSessionCacheImpl(
     std::unique_ptr<ServiceLiason> service,
     std::shared_ptr<SessionsCollection> collection,
     std::shared_ptr<TransactionReaper> transactionReaper,
     Options options)
+    //默认5分钟 static constexpr Minutes kLogicalSessionDefaultRefresh = Minutes(5);
+	//可以通过 --setParameter logicalSessionRefreshMinutes=X设置
     : _refreshInterval(options.refreshInterval),
+      //可以通过--setParameter localLogicalSessionTimeoutMinutes=X.
+      //或者localLogicalSessionTimeoutMinutes命令行调整，默认30分钟
+      //该参数真正生效见SessionsCollection::generateCreateIndexesCmd()
       _sessionTimeout(options.sessionTimeout),
       _service(std::move(service)),
       _sessionsColl(std::move(collection)),
+      //mongos对应null, mongod对应TransactionReaperImpl
       _transactionReaper(std::move(transactionReaper)) {
     if (!disableLogicalSessionCacheRefresh) {
+		//定期refresh
         _service->scheduleJob(
             {[this](Client* client) { _periodicRefresh(client); }, _refreshInterval});
+		//定期reap
         _service->scheduleJob(
             {[this](Client* client) { _periodicReap(client); }, _refreshInterval});
     }
@@ -110,6 +121,7 @@ Status LogicalSessionCacheImpl::refreshSessions(OperationContext* opCtx,
     // Update the timestamps of all these records in our cache.
     auto sessions = makeLogicalSessionIds(cmd.getRefreshSessions(), opCtx);
     for (const auto& lsid : sessions) {
+		//查找_activeSessions中是否有该lsid，如果没用则insert
         if (!promote(lsid).isOK()) {
             // This is a new record, insert it.
             _addToCache(makeLogicalSessionRecord(opCtx, lsid, now()));
@@ -119,6 +131,7 @@ Status LogicalSessionCacheImpl::refreshSessions(OperationContext* opCtx,
     return Status::OK();
 }
 
+//RefreshSessionsCommand::run   RefreshSessionsCommandInternal::run 
 Status LogicalSessionCacheImpl::refreshSessions(OperationContext* opCtx,
                                                 const RefreshSessionsCmdFromClusterMember& cmd) {
     // Update the timestamps of all these records in our cache.
@@ -141,6 +154,7 @@ void LogicalSessionCacheImpl::vivify(OperationContext* opCtx, const LogicalSessi
     }
 }
 
+//RefreshLogicalSessionCacheNowCommand::run(测试命令)
 Status LogicalSessionCacheImpl::refreshNow(Client* client) {
     try {
         _refresh(client);
@@ -163,6 +177,7 @@ size_t LogicalSessionCacheImpl::size() {
     return _activeSessions.size();
 }
 
+//LogicalSessionCacheImpl::LogicalSessionCacheImpl中启动一个线程专门做定期refresh
 void LogicalSessionCacheImpl::_periodicRefresh(Client* client) {
     try {
         _refresh(client);
@@ -171,6 +186,7 @@ void LogicalSessionCacheImpl::_periodicRefresh(Client* client) {
     }
 }
 
+//LogicalSessionCacheImpl::LogicalSessionCacheImpl中启动一个线程专门做定期reap
 void LogicalSessionCacheImpl::_periodicReap(Client* client) {
     auto res = _reap(client);
     if (!res.isOK()) {
@@ -180,7 +196,9 @@ void LogicalSessionCacheImpl::_periodicReap(Client* client) {
     return;
 }
 
+//LogicalSessionCacheImpl::reapNow调用
 Status LogicalSessionCacheImpl::_reap(Client* client) {
+	//mongos为null直接返回，mongod对应TransactionReaperImpl，继续
     if (!_transactionReaper) {
         return Status::OK();
     }
@@ -212,6 +230,7 @@ Status LogicalSessionCacheImpl::_reap(Client* client) {
         }();
 
         stdx::lock_guard<stdx::mutex> lk(_reaperMutex);
+		//TransactionReaperImpl::reap
         numReaped = _transactionReaper->reap(opCtx);
     } catch (...) {
         {
@@ -233,6 +252,13 @@ Status LogicalSessionCacheImpl::_reap(Client* client) {
     return Status::OK();
 }
 
+//LogicalSessionCacheImpl::refreshNow(测试命令)  
+//LogicalSessionCacheImpl::_periodicRefresh 调用
+
+//mongos> db.system.sessions.find();
+//{ "_id" : { "id" : UUID("14c31e1f-c245-46ea-a229-7c31a4b042db"), "uid" : BinData(0,"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=") }, "lastUse" : ISODate("2021-05-13T19:17:23.232Z") }
+
+//向config server中的system.sessions发送update，同时upsert:true，没有则添加。也就是更新session内容
 void LogicalSessionCacheImpl::_refresh(Client* client) {
     // Do not run this job if we are not in FCV 3.6
     if (serverGlobalParams.featureCompatibility.getVersion() !=
@@ -242,6 +268,7 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     }
 
     // Stats for serverStatus:
+    //本轮统计先初始化为0
     {
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
 
@@ -259,7 +286,9 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     // This will finish timing _refresh for our stats no matter when we return.
     const auto timeRefreshJob = MakeGuard([this] {
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+		//上一次做统计的时间
         auto millis = now() - _stats.getLastSessionsCollectionJobTimestamp();
+		//也就是统计间隔
         _stats.setLastSessionsCollectionJobDurationMillis(millis.count());
     });
 
@@ -274,7 +303,14 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
         return uniqueCtx->get();
     }();
 
-    auto res = _sessionsColl->setupSessionsCollection(opCtx);
+	
+	//1. mongod对应makeSessionsCollection中构造使用，
+	// 和SessionsCollectionSharded	SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
+	// mongos对应SessionsCollectionSharded，见makeLogicalSessionCacheS
+	//2. mongos对应SessionsCollectionSharded::setupSessionsCollection
+
+	//获取指定config.system.sessions表对应得路由信息
+	auto res = _sessionsColl->setupSessionsCollection(opCtx);
     if (!res.isOK()) {
         log() << "Sessions collection is not set up; "
               << "waiting until next sessions refresh interval: " << res.reason();
@@ -303,6 +339,8 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     {
         using std::swap;
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+		//注意这里交换后，_endingSessions _activeSessions都为空了，也就是者两个变量中
+		//只会记录两个刷新周期的相应session信息
         swap(explicitlyEndingSessions, _endingSessions);
         swap(activeSessions, _activeSessions);
     }
@@ -310,6 +348,7 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     auto explicitlyEndingBackSwaper = backSwapper(_endingSessions, explicitlyEndingSessions);
 
     // remove all explicitlyEndingSessions from activeSessions
+    //先从_activeSessions中移除_endingSessions
     for (const auto& lsid : explicitlyEndingSessions) {
         activeSessions.erase(lsid);
     }
@@ -332,18 +371,32 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     }
 
     // Refresh the active sessions in the sessions collection.
-    uassertStatusOK(_sessionsColl->refreshSessions(opCtx, activeSessionRecords));
+    //1. mongod对应makeSessionsCollection中构造使用，
+	// 和SessionsCollectionSharded	SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
+	// mongos对应SessionsCollectionSharded，见makeLogicalSessionCacheS
+	//2. mongos对应SessionsCollectionSharded::refreshSessions
+
+	
+	//mongos> db.system.sessions.find();
+	//{ "_id" : { "id" : UUID("14c31e1f-c245-46ea-a229-7c31a4b042db"), "uid" : BinData(0,"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=") }, "lastUse" : ISODate("2021-05-13T19:17:23.232Z") }
+	//向config server中的system.sessions发送update，同时upsert:true，没有则添加。也就是更新session内容
+	uassertStatusOK(_sessionsColl->refreshSessions(opCtx, activeSessionRecords));
     activeSessionsBackSwapper.Dismiss();
     {
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+		//The number of sessions that were refreshed during the last refresh.
+		//也就是两次刷新期间内的新session
         _stats.setLastSessionsCollectionJobEntriesRefreshed(activeSessionRecords.size());
     }
 
     // Remove the ending sessions from the sessions collection.
+    //SessionsCollectionSharded::removeRecords
+    //删除system.session表中的指定shession
     uassertStatusOK(_sessionsColl->removeRecords(opCtx, explicitlyEndingSessions));
     explicitlyEndingBackSwaper.Dismiss();
     {
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+		//也就是两次刷新期间内的新session
         _stats.setLastSessionsCollectionJobEntriesEnded(explicitlyEndingSessions.size());
     }
 
@@ -356,6 +409,8 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     auto openCursorSessions = _service->getOpenCursorSessions();
 
     // think about pruning ending and active out of openCursorSessions
+    //SessionsCollectionSharded::findRemovedSessions
+    //先查找，然后删除
     auto statusAndRemovedSessions = _sessionsColl->findRemovedSessions(opCtx, openCursorSessions);
 
     if (statusAndRemovedSessions.isOK()) {
@@ -366,14 +421,18 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     }
 
     // Add all of the explicitly ended sessions to the list of sessions to kill cursors for.
+    //将所有显式结束的会话添加到要杀死其游标的会话列表中。
+    //也就是讲客户端end session的session全部添加到patterns中，后面进行回收处理
     for (const auto& lsid : explicitlyEndingSessions) {
         patterns.emplace(makeKillAllSessionsByPattern(opCtx, lsid));
     }
 
+	//cursor游标回收处理
     SessionKiller::Matcher matcher(std::move(patterns));
     auto killRes = _service->killCursorsWithMatchingSessions(opCtx, std::move(matcher));
     {
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+		//cursor游标回收处理
         _stats.setLastSessionsCollectionJobCursorsClosed(killRes.second);
     }
 }
@@ -424,6 +483,7 @@ void LogicalSessionCacheImpl::_addToCache(LogicalSessionRecord record) {
 }
 
 //获取所有的LogicalSessionId
+//DocumentSourceListLocalSessions::DocumentSourceListLocalSessions
 std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds() const {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
     std::vector<LogicalSessionId> ret;
@@ -433,7 +493,12 @@ std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds() const {
     }
     return ret;
 }
+
+//db.aggregate( [  { $listLocalSessions: { allUsers: true } } ] )获取缓存中的
+//db.system.sessions.find()获取库中的，库中可能是关闭掉的链接，等待localLogicalSessionTimeoutMinutes配置过期
+
 //找出_activeSessions表中有，但是userDigests数组中没有的LogicalSessionId
+//DocumentSourceListLocalSessions::DocumentSourceListLocalSessions
 std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds(
     const std::vector<SHA256Block>& userDigests) const {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
@@ -447,6 +512,7 @@ std::vector<LogicalSessionId> LogicalSessionCacheImpl::listIds(
     return ret;
 }
 
+//DocumentSourceListLocalSessions::getNext()
 //查找
 boost::optional<LogicalSessionRecord> LogicalSessionCacheImpl::peekCached(
     const LogicalSessionId& id) const {

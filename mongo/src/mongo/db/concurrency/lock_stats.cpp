@@ -40,7 +40,9 @@ LockStats<CounterType>::LockStats() {
     reset();
 }
 
-//总的锁统计打印
+//locks:{ Global: { acquireCount: { r: 11814 }, acquireWaitCount: { r: 18 }, timeAcquiringMicros: { r: 12365 } }, 
+// Database: { acquireCount: { r: 5907 } }, Collection: { acquireCount: { r: 5907 } } }
+//总的锁统计打印 //OpDebug::report调用
 template <typename CounterType>
 void LockStats<CounterType>::report(BSONObjBuilder* builder) const {
     // All indexing below starts from offset 1, because we do not want to report/account
@@ -137,6 +139,10 @@ daijia_intelligent:PRIMARY> db.serverStatus().globalLock
 daijia_intelligent:PRIMARY> 
 
 */
+
+//慢日志中的:
+//locks:{ Global: { acquireCount: { r: 11814 }, acquireWaitCount: { r: 18 }, timeAcquiringMicros: { r: 12365 } }, 
+// Database: { acquireCount: { r: 5907 } }, Collection: { acquireCount: { r: 5907 } } }
 
 //上面的LockStats<>::report
 template <typename CounterType>

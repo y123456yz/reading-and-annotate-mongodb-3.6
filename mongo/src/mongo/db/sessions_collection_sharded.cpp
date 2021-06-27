@@ -56,8 +56,11 @@ BSONObj lsidQuery(const LogicalSessionId& lsid) {
 }  // namespace
 
 //SessionsCollectionSharded::setupSessionsCollection调用
+//获取指定config.system.sessions表对应得路由信息
 Status SessionsCollectionSharded::_checkCacheForSessionsCollection(OperationContext* opCtx) {
     // If the collection doesn't exist, fail. Only the config servers generate it.
+    //获取最新得路由信息
+    //获取指定config.system.sessions表对应得路由信息
     auto res = Grid::get(opCtx)->catalogCache()->getShardedCollectionRoutingInfoWithRefresh(
         opCtx, NamespaceString(SessionsCollection::kSessionsFullNS.toString()));
     if (!res.isOK()) {
@@ -69,16 +72,22 @@ Status SessionsCollectionSharded::_checkCacheForSessionsCollection(OperationCont
         return Status::OK();
     }
 
+	//说明该表没有启用分片功能
     return {ErrorCodes::NamespaceNotFound, "config.system.sessions is not yet sharded"};
 }
 
+//LogicalSessionCacheImpl::_refresh
+//获取指定config.system.sessions表对应得路由信息
 Status SessionsCollectionSharded::setupSessionsCollection(OperationContext* opCtx) {
     return _checkCacheForSessionsCollection(opCtx);
 }
 
+//LogicalSessionCacheImpl::_refresh中调用
+//向ns对应db.collection发送update，同时upsert:true，没有则添加。也就是更新session内容
 Status SessionsCollectionSharded::refreshSessions(OperationContext* opCtx,
                                                   const LogicalSessionRecordSet& sessions) {
-    auto send = [&](BSONObj toSend) {
+	//向shard发送tosend信息
+	auto send = [&](BSONObj toSend) {
         auto opMsg = OpMsgRequest::fromDBAndBody(SessionsCollection::kSessionsDb, toSend);
         auto request = BatchedCommandRequest::parseUpdate(opMsg);
 
@@ -95,9 +104,16 @@ Status SessionsCollectionSharded::refreshSessions(OperationContext* opCtx,
         return Status(error, response.getErrMessage());
     };
 
+	//向"config.system.sessions"
+	//SessionsCollection::doRefresh
+	//向ns对应db.collection发送update，同时upsert:true，没有则添加。也就是更新session内容
     return doRefresh(kSessionsNamespaceString, sessions, send);
 }
 
+
+//LogicalSessionCacheImpl::_refresh中调用
+
+//删除system.session表中的指定session
 Status SessionsCollectionSharded::removeRecords(OperationContext* opCtx,
                                                 const LogicalSessionIdSet& sessions) {
     auto send = [&](BSONObj toSend) {
@@ -121,6 +137,7 @@ Status SessionsCollectionSharded::removeRecords(OperationContext* opCtx,
     return doRemove(kSessionsNamespaceString, sessions, send);
 }
 
+//找到指定的session，然后删除，先找，找到然后删除
 StatusWith<LogicalSessionIdSet> SessionsCollectionSharded::findRemovedSessions(
     OperationContext* opCtx, const LogicalSessionIdSet& sessions) {
 

@@ -121,7 +121,7 @@ uint64_t hashStringData(StringData str) {
 
 /**
  * Maps the resource id to a human-readable string.
- */
+ */ //resourceTypeName获取
 //ResourceId资源类型,参考ResourceId
 static const char* ResourceTypeNames[] = {
     "Invalid", "Global", "MMAPV1Journal", "Database", "Collection", "Metadata", "Mutex"};

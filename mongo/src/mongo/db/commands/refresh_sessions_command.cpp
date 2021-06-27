@@ -40,6 +40,7 @@
 
 namespace mongo {
 
+//²Î¿¼https://jira.mongodb.org/browse/SERVER-34810
 class RefreshSessionsCommand final : public BasicCommand {
     MONGO_DISALLOW_COPYING(RefreshSessionsCommand);
 

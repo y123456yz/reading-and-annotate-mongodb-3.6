@@ -44,6 +44,7 @@ class OperationContext;
  * Different server deployments (standalone, replica set, sharded cluster) should
  * implement their own classes that fulfill this interface.
  */
+//makeSessionsCollection中构造使用
 class SessionsCollection {
 
 public:

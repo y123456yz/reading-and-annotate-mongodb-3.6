@@ -51,7 +51,7 @@ namespace mongo {
  * instead go through the Locker interface.
  */ 
 //文章参考 https://yq.aliyun.com/articles/655101 浅析MongoDB中的意向锁
-//LockManager globalLockManager;
+//LockManager globalLockManager; 定义全局变量
 //DeadlockDetector._lockMgr为该类型
 
 //主要完成锁的冲突检测等，实现并发控制

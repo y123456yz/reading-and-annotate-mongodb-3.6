@@ -141,7 +141,9 @@ Status runBulkCmd(StringData label,
 
 }  // namespace
 
-
+//static constexpr StringData kSessionsDb = "config"_sd;
+//static constexpr StringData kSessionsCollection = "system.sessions"_sd;
+//static constexpr StringData kSessionsFullNS = "config.system.sessions"_sd;
 constexpr StringData SessionsCollection::kSessionsDb;
 constexpr StringData SessionsCollection::kSessionsCollection;
 constexpr StringData SessionsCollection::kSessionsFullNS;
@@ -199,6 +201,11 @@ SessionsCollection::FindBatchFn SessionsCollection::makeFindFnForCommand(const N
     return send;
 }
 
+//
+//mongos> db.system.sessions.find();
+//{ "_id" : { "id" : UUID("14c31e1f-c245-46ea-a229-7c31a4b042db"), "uid" : BinData(0,"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=") }, "lastUse" : ISODate("2021-05-13T19:17:23.232Z") }
+//SessionsCollectionSharded::refreshSessions中调用
+//向ns对应db.collection发送update，同时upsert:true，没有则添加。也就是更新session内容
 Status SessionsCollection::doRefresh(const NamespaceString& ns,
                                      const LogicalSessionRecordSet& sessions,
                                      SendBatchFn send) {

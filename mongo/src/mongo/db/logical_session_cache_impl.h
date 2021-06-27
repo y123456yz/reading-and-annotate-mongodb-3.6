@@ -53,6 +53,15 @@ extern int logicalSessionRefreshMinutes;
  * The cache takes ownership of the passed-in ServiceLiason and
  * SessionsCollection helper types.
  */
+ 
+//db.aggregate( [  { $listLocalSessions: { allUsers: true } } ] )获取缓存中的
+//db.system.sessions.find()获取库中的，库中可能是关闭掉的链接，等待localLogicalSessionTimeoutMinutes配置过期
+
+
+//session和事务的绑定使用例子，可以参考https://mongoing.com/%3Fp%3D6084
+//session相关命令查看https://docs.mongodb.com/manual/reference/method/Session/
+//也可以参考https://www.percona.com/blog/2021/06/03/mongodb-message-cannot-add-session-into-the-cache-toomanylogicalsessions/
+// makeLogicalSessionCacheD(mongod)  makeLogicalSessionCacheS(mongos)中生成使用
 class LogicalSessionCacheImpl final : public LogicalSessionCache {
 public:
     static constexpr Minutes kLogicalSessionDefaultRefresh = Minutes(5);
@@ -70,6 +79,32 @@ public:
          *
          * May be set with --setParameter localLogicalSessionTimeoutMinutes=X.
          */
+        /*
+        > db.system.sessions.getIndexes() 过期索引
+        [
+                {
+                        "v" : 2,
+                        "key" : {
+                                "_id" : 1
+                        },
+                        "name" : "_id_",
+                        "ns" : "config.system.sessions"
+                },
+                {
+                        "v" : 2,
+                        "key" : {
+                                "lastUse" : 1
+                        },
+                        "name" : "lsidTTLIndex",
+                        "ns" : "config.system.sessions",
+                        "expireAfterSeconds" : 1800
+                }
+        ]
+        > 
+          */
+         //可以通过--setParameter localLogicalSessionTimeoutMinutes=X.
+         //或者localLogicalSessionTimeoutMinutes命令行调整，默认30分钟
+         //真正生效见SessionsCollection::generateCreateIndexesCmd()
         Minutes sessionTimeout = Minutes(localLogicalSessionTimeoutMinutes);
 
         /**
@@ -155,17 +190,23 @@ private:
     // automatically by the background jobs.
     LogicalSessionCacheStats _stats;
 
+    //mongod也就是ServiceLiasonMongod  mongos对应ServiceLiasonMongos  
     std::unique_ptr<ServiceLiason> _service;
+    //参考makeSessionsCollection 分片模式mongos和mongod都对应SessionsCollectionSharded
     std::shared_ptr<SessionsCollection> _sessionsColl;
 
     mutable stdx::mutex _reaperMutex;
+    //mongod对应TransactionReaperImpl  mongos对应null
     std::shared_ptr<TransactionReaper> _transactionReaper;
 
     mutable stdx::mutex _cacheMutex;
 
-    
+    //参考LogicalSessionCacheImpl::_refresh，注意这里交换后，_endingSessions _activeSessions都为空了，
+    //也就是者两个变量中只会记录两个刷新周期的相应session信息
+    //LogicalSessionCacheImpl::_addToCache中新增session
+    //LogicalSessionCacheImpl::_refresh中剔除end session存入system.sessions表中
     LogicalSessionIdMap<LogicalSessionRecord> _activeSessions;
-
+    //LogicalSessionCacheImpl::endSessions中新增end session
     LogicalSessionIdSet _endingSessions;
 
     Date_t lastRefreshTime;

@@ -78,6 +78,7 @@ KillAllSessionsByPatternSet patternsForLoggedInUser(OperationContext* opCtx) {
 
 }  // namespace
 
+//如果一个session被kill，在该回话session继续其他事务提交等，会报认证错误
 class KillSessionsCommand final : public BasicCommand {
     MONGO_DISALLOW_COPYING(KillSessionsCommand);
 

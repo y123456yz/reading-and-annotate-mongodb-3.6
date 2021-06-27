@@ -40,6 +40,9 @@ class OperationContext;
 /**
  * Accesses the sessions collection directly for standalone servers.
  */
+//makeSessionsCollection中构造使用，
+// 和SessionsCollectionSharded  SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
+
 class SessionsCollectionStandalone : public SessionsCollection {
 public:
     /**

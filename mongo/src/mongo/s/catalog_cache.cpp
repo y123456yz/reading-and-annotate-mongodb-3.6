@@ -254,6 +254,8 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWi
 
 
 //updateChunkWriteStatsAndSplitIfNeeded   ShardingState::_refreshMetadata中调用
+//SessionsCollectionSharded::_checkCacheForSessionsCollection
+//获取指定nss表对应得路由信息
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getShardedCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
     //设置needsRefresh为true，这样getCollectionRoutingInfo就需要路由刷新
