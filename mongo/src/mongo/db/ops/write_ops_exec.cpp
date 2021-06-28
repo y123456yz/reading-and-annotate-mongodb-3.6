@@ -374,6 +374,7 @@ void insertDocuments(OperationContext* opCtx,
 /**
  * Returns true if caller should try to insert more documents. Does nothing else if batch is empty.
  */ 
+
 //performInserts中调用  performInserts->insertBatchAndHandleErrors->insertDocuments
 bool insertBatchAndHandleErrors(OperationContext* opCtx,
                                 const write_ops::Insert& wholeOp,
@@ -643,7 +644,8 @@ db.test1.update(
    $set:{"age":"31"}
 }
 )
-*/
+*/ 
+
 //performUpdates中调用
 static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
                                                const NamespaceString& ns,

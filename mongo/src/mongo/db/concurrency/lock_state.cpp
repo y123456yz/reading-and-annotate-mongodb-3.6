@@ -570,6 +570,7 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
 
 //LockerImpl<>::lock和LockerImpl<>::unlock对应
 
+//Lock::ResourceLock::lock
 //Lock::DBLock::DBLock  Lock::DBLock::relockWithMode
 //Lock::CollectionLock::CollectionLock
 //Lock::OplogIntentWriteLock::OplogIntentWriteLock
@@ -622,6 +623,8 @@ LockMode LockerImpl<IsForMMAPV1>::getLockMode(ResourceId resId) const {
 }
 
 template <bool IsForMMAPV1>
+//也就是LockConflictsTable的mode是否包含resId对应的mode，也就是_rid对应
+//的mode是否和mode不相容
 bool LockerImpl<IsForMMAPV1>::isLockHeldForMode(ResourceId resId, LockMode mode) const {
     return isModeCovered(mode, getLockMode(resId));
 }

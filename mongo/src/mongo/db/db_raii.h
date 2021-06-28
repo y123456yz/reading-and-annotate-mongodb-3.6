@@ -156,7 +156,7 @@ private:
     //库信息   
     const AutoGetDb _autoDb;
     //表锁
-    const Lock::CollectionLock _collLock;
+    const Lock::CollectionLock _collLock;  
     //集合信息 
     Collection* const _coll; 
 

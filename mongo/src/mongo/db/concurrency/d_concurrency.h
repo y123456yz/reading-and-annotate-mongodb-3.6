@@ -83,6 +83,7 @@ public:
 
         ResourceLock(Locker* locker, ResourceId rid, LockMode mode)
             : _rid(rid), _locker(locker), _result(LOCK_INVALID) {
+            //Lock::ResourceLock::lock
             lock(mode);
         }
 
@@ -122,6 +123,9 @@ public:
      * semantics inside WUOWs. Lock with ResourceLock, SharedLock or ExclusiveLock. Uses same
      * fairness as other LockManager locks.
      */
+    //该类主要就是通过Lock::ResourceMutex::ResourceMutex构造函数中调用
+    // ResourceIdFactory::newResourceIdForMutex自动生成一个RESOURCE_MUTEX类型的
+    // ResourceId，其hashid值单调递增
     class ResourceMutex {
     public:
         ResourceMutex(std::string resourceLabel);
@@ -154,6 +158,7 @@ public:
      * Obtains a ResourceMutex for exclusive use.
      */
     //排他锁，MODE_X封装
+    //用的比较少
     class ExclusiveLock : public ResourceLock {
     public:
         ExclusiveLock(Locker* locker, ResourceMutex mutex)
@@ -166,6 +171,7 @@ public:
      * this just has to conflict with exclusive locks.
      */
     //共享锁，MODE_IS封装
+    //用的比较少
     class SharedLock : public ResourceLock {
     public:
         SharedLock(Locker* locker, ResourceMutex mutex)
@@ -228,6 +234,7 @@ public:
         void _enqueue(LockMode lockMode, unsigned timeoutMs);
         void _unlock();
 
+        //其中操作_opCtx的_locker就是locker类型
         OperationContext* const _opCtx;
         LockResult _result; //lock是否成功等
         //赋值见Lock::GlobalLock::GlobalLock
@@ -296,6 +303,9 @@ DBLock("local", MODEX_IX);
 CollectionLock("oplog.rs", MODEX_IX);
 storageEngine.writeOplog(...);
     */
+//AutoGetDb._dbLock为该类型，
+//AutoGetOrCreateDb::AutoGetOrCreateDb  AutoGetCollection::AutoGetCollection 
+// 及AutoGetDb::AutoGetDb中构造使用
     class DBLock {
     public:
         DBLock(OperationContext* opCtx, StringData db, LockMode mode);
@@ -349,7 +359,8 @@ DBLock("local", MODEX_IX);
 CollectionLock("oplog.rs", MODEX_IX);
 storageEngine.writeOplog(...);
 */  
-    //AutoGetCollection._collLock
+    //AutoGetCollection._collLock为该类型
+    //AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead调用
     class CollectionLock {
         MONGO_DISALLOW_COPYING(CollectionLock);
 

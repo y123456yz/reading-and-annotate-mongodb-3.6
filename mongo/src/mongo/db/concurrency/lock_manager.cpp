@@ -53,6 +53,8 @@ namespace {
  * Map of conflicts. 'LockConflictsTable[newMode] & existingMode != 0' means that a new request
  * with the given 'newMode' conflicts with an existing request with mode 'existingMode'.
  */
+
+//互斥不相容对应的判断方法isModeCovered
 static const int LockConflictsTable[] = {
     // MODE_NONE
     0,
@@ -1323,7 +1325,7 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RE
 */ //全局锁 库锁 表锁分别会对应一个该类结构，和ResourceType配合
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
 
-//对type hashID做  前面的64 - resourceTypeBits位存type，后面的resourceTypeBits位和hashId相关
+//对type hashID做  前面的resourceTypeBits位存type，后面的64 - resourceTypeBits位存放hashId
 uint64_t ResourceId::fullHash(ResourceType type, uint64_t hashId) {
     return (static_cast<uint64_t>(type) << (64 - resourceTypeBits)) +
         (hashId & (std::numeric_limits<uint64_t>::max() >> resourceTypeBits));
@@ -1402,6 +1404,13 @@ const char* legacyModeName(LockMode mode) {
     return LegacyLockModeNames[mode];
 }
 
+//也就是LockConflictsTable的coveringMode是否包含coveringMode
+//也就是mode是否和mode不相容
+
+//例如isModeCovered(MODE_IS, MODE_X)不相容，因为LockConflictsTable[MODE_X]包含LockConflictsTable[MODE_IS]
+//LockConflictsTable[MODE_X]包含所有的其他几种类型，所以和其他几个mode都不相容
+
+//两种锁是否相容，如果不可以相容，返回true
 bool isModeCovered(LockMode mode, LockMode coveringMode) {
     return (LockConflictsTable[coveringMode] | LockConflictsTable[mode]) ==
         LockConflictsTable[coveringMode];

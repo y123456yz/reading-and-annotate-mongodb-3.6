@@ -372,6 +372,12 @@ https://www.jianshu.com/p/d838a5905303
 //https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
 
+
+//ResourceId和LockMode通过LockerImpl._requests查找联系，参考getLockMode
+
+//不同锁互斥不相容对应的判断方法isModeCovered
+
+
 //每个模式对应一个TicketHolder，参考ticketHolders
 enum LockMode { //不同锁的统计在LockStats中实现
     MODE_NONE = 0,
@@ -523,6 +529,11 @@ const ResourceId resourceIdParallelBatchWriterMode =
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
 
 //LockerImpl._requests map表为该类型, ResourceId存入到该map表中
+
+//该类就一个成员_fullHash，其前面3位保存ResourceType，后面63位保存一个id，通过
+//该id区分同一个ResourceType类型得不同锁
+
+//ResourceId和LockMode通过LockerImpl._requests查找联系，参考getLockMode
 class ResourceId {
     // We only use 3 bits for the resource type in the ResourceId hash
     enum { resourceTypeBits = 3 };
@@ -538,6 +549,7 @@ public:
     const ResourceId resourceIdParallelBatchWriterMode =
         ResourceId(RESOURCE_GLOBAL, ResourceId::SINGLETON_PARALLEL_BATCH_WRITER_MODE);
     */
+    //这是几个特殊得ResourceId，其hashid取这几个值
     enum SingletonHashIds {
         SINGLETON_INVALID = 0,
         //和同步相关，参考Lock::ParallelBatchWriterMode::ParallelBatchWriterMode
@@ -581,6 +593,7 @@ private:
      * while the remaining bits contain the bottom bits of the hashId. This avoids false
      * conflicts between resources of different types, which is necessary to prevent deadlocks.
      */ //算法见ResourceId::ResourceId(ResourceType type, uint64_t hashId)
+     //对type hashID做  前面的resourceTypeBits位存type，后面的64 - resourceTypeBits位存放hashId
     uint64_t _fullHash;
 
     static uint64_t fullHash(ResourceType type, uint64_t hashId);

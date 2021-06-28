@@ -101,7 +101,7 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
 //注意AutoGetCollection::AutoGetCollection构造函数可以是uuid，也有一个构造函数是nss，也就是可以通过uuid查找，也可以通过nss查找
 
 //上面的AutoGetCollection::AutoGetCollection调用
-//库表的初始化赋值都在这里
+//库表的初始化赋值都在这里  
 AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const NamespaceString& nss,
                                      LockMode modeColl,
@@ -285,7 +285,7 @@ AutoGetCollectionForReadCommand::AutoGetCollectionForReadCommand(
     : AutoGetCollectionForReadCommand(
           opCtx, nss, viewMode, Lock::DBLock(opCtx, nss.db(), MODE_IS)) {}
 
-//FindCmd::run中构造使用
+//FindCmd::run中构造使用  
 AutoGetCollectionOrViewForReadCommand::AutoGetCollectionOrViewForReadCommand(
     OperationContext* opCtx, const NamespaceString& nss)
     : AutoGetCollectionForReadCommand(opCtx, nss, AutoGetCollection::ViewMode::kViewsPermitted),

@@ -91,19 +91,24 @@ public:
     }
 
 private:
-	//生成RESOURCE_MUTEX类型的ResourceId
+	//生成RESOURCE_MUTEX类型的ResourceId，其hashid值单调递增
     ResourceId _newResourceIdForMutex(std::string resourceLabel) {
         stdx::lock_guard<stdx::mutex> lk(labelsMutex);
         invariant(nextId == labels.size());
         labels.push_back(std::move(resourceLabel));
 
+		//该ResourceId对应得hashid以nextId自增
         return ResourceId(RESOURCE_MUTEX, nextId++);
     }
 
     static ResourceIdFactory* resourceIdFactory;
 
+	//每个锁名称对应一个id，默认递增
     std::uint64_t nextId = 0;
+	//每个成员代表一个锁名称，例如Lock::ResourceMutex mtx("testMutex");，代表"testMutex"
     std::vector<std::string> labels;
+
+	//这里是为了对nextId进行递增时候加锁用
     stdx::mutex labelsMutex;
 };
 
@@ -121,6 +126,7 @@ struct ResourceIdFactoryInitializer {
 }  // namespace
 
 
+//获取一个标签互斥锁
 Lock::ResourceMutex::ResourceMutex(std::string resourceLabel)
     : _rid(ResourceIdFactory::newResourceIdForMutex(std::move(resourceLabel))) {}
 
@@ -129,10 +135,15 @@ std::string Lock::ResourceMutex::getName(ResourceId resourceId) {
     return ResourceIdFactory::nameForId(resourceId);
 }
 
+//也就是LockConflictsTable的MODE_X是否包含resId对应的mode,也就是_rid对应
+//的mode是否和MODE_X不相容
+
+//MODE_X和所有锁互斥，所以这里一般返回true
 bool Lock::ResourceMutex::isExclusivelyLocked(Locker* locker) {
     return locker->isLockHeldForMode(_rid, MODE_X);
 }
 
+//判断locker对应的mode是否和MODE_IS相容，只要locker对应类型不是X锁，则都是相容的
 bool Lock::ResourceMutex::isAtLeastReadLocked(Locker* locker) {
     return locker->isLockHeldForMode(_rid, MODE_IS);
 }
@@ -197,6 +208,8 @@ void Lock::GlobalLock::_unlock() {
     }
 }
 //insertBatchAndHandleErrors->AutoGetCollection::AutoGetCollection
+AutoGetDb._dbLock
+
 Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
     : _id(RESOURCE_DATABASE, db),
       _opCtx(opCtx),
@@ -317,8 +330,10 @@ Lock::ParallelBatchWriterMode::~ParallelBatchWriterMode() {
     _lockState->setShouldConflictWithSecondaryBatchApplication(_orginalShouldConflict);
 }
 
+//ResourceLock构造函数调用
 void Lock::ResourceLock::lock(LockMode mode) {
     invariant(_result == LOCK_INVALID);
+	//LockerImpl::lock
     _result = _locker->lock(_rid, mode);
     invariant(_result == LOCK_OK);
 }
