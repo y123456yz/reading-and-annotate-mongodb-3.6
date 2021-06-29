@@ -272,7 +272,10 @@ public:
      * support the db.currentOp view. This structure is not thread-safe and ideally should
      * be used only for obtaining the necessary information and then discarded instead of
      * reused.
-     */ //可以参考ServiceEntryPointMongod::handleRequest
+     */ 
+
+     //可以参考ServiceEntryPointMongod::handleRequest
+     //LockerImpl<>::getLockerInfo
     struct LockerInfo {
         // List of high-level locks held by this locker, sorted by ResourceId
         std::vector<OneLock> locks;

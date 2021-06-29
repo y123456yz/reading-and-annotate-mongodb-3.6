@@ -208,13 +208,15 @@ void Lock::GlobalLock::_unlock() {
     }
 }
 //insertBatchAndHandleErrors->AutoGetCollection::AutoGetCollection
-AutoGetDb._dbLock
+//AutoGetDb._dbLock
 
 Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
+	//库锁对应的资源类型为RESOURCE_DATABASE+db，注意这里，如果是对同一个库上DB锁，则对应同一个资源信息
     : _id(RESOURCE_DATABASE, db),
       _opCtx(opCtx),
       _mode(mode),
       //全局锁初始化构造  Lock::GlobalLock::GlobalLock
+      //全局锁对应的资源类型为resourceIdGlobal，注意这个是个全局的资源
       _globalLock(opCtx, isSharedLockMode(_mode) ? MODE_IS : MODE_IX, UINT_MAX) {
     massert(28539, "need a valid database name", !db.empty() && nsIsDbOnly(db));
 
@@ -228,6 +230,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
     }
 
 	//LockerImpl<>::lock
+	//对该库加mode锁
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode)); //OperationContext::lockState->LockerImpl<>::lock
 }
 
@@ -267,14 +270,16 @@ void Lock::DBLock::relockWithMode(LockMode newMode) {
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode));
 }
 
-//AutoGetCollection::AutoGetCollection构造
+//AutoGetCollection::AutoGetCollection构造  
 Lock::CollectionLock::CollectionLock(Locker* lockState, StringData ns, LockMode mode)
+	//表锁对应的资源类型为RESOURCE_COLLECTION+ns，注意这里，如果是对同一个库上表锁，则对应同一个资源信息
     : _id(RESOURCE_COLLECTION, ns), _lockState(lockState) {
     massert(28538, "need a non-empty collection name", nsIsFull(ns));
 
     dassert(_lockState->isDbLockedForMode(nsToDatabaseSubstring(ns),
                                           isSharedLockMode(mode) ? MODE_IS : MODE_IX));
     if (supportsDocLocking()) {
+		//LockerImpl<>::lock
         _lockState->lock(_id, mode);
     } else {
         _lockState->lock(_id, isSharedLockMode(mode) ? MODE_S : MODE_X);

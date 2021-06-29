@@ -76,7 +76,9 @@ AutoGetCollection::AutoGetCollection(OperationContext* opCtx,
                                      const UUID& uuid,
                                      LockMode modeAll)
     : _viewMode(ViewMode::kViewsForbidden),
+      //库锁会在这里面实现
       _autoDb(opCtx, nss.db(), Lock::DBLock(opCtx, nss.db(), modeAll)),
+      //表锁会在这里面实现
       _collLock(opCtx->lockState(), nss.ns(), modeAll),
       //通过UUIDCatalog::lookupCollectionByUUID判断uuid是否存在，可能返回为NULL，表示该uuid不存在
       _coll(UUIDCatalog::get(opCtx).lookupCollectionByUUID(uuid)) {

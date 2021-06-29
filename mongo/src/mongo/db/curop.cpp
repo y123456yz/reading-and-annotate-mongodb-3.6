@@ -545,7 +545,11 @@ string OpDebug::report(Client* client,
 
     {
         BSONObjBuilder locks;
-		//LockStats::report  锁相关统计打印
+		
+		//lockStats来自于外层的LockerImpl<>::getLockerInfo，
+		//通过外层opCtx->lockState()->getLockerInfo(&lockerInfo); 获取
+
+		//LockStats<>::report  锁相关统计打印
         lockStats.report(&locks);
         s << " locks:" << locks.obj().toString();
     }

@@ -140,8 +140,11 @@ public:
         _get(resId).recordDeadlock(resId, mode);
     }
 
-    void report(SingleThreadedLockStats* outStats) const {
+	//全局监控打印db.serverstats().locks  reportGlobalLockingStats->PartitionedInstanceWideLockStats::report
+	//用户请求线程，例如写一条数据对应线程，会记录慢日志，OpDebug::report中打印到慢日志中
+	void report(SingleThreadedLockStats* outStats) const {
         for (int i = 0; i < NumPartitions; i++) {
+			//LockStats::append
             outStats->append(_partitions[i].stats);
         }
     }
@@ -168,7 +171,7 @@ private:
         return _partitions[id % NumPartitions].stats;
     }
 
-	//也就是AtomicLockStats结构
+	//也就是AtomicLockStats结构 
     AlignedLockStats _partitions[NumPartitions];
 };
 
@@ -421,7 +424,7 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RE
 
 //全局锁加锁过程：Lock::GlobalLock::GlobalLock->Lock::GlobalLock::_enqueue->LockerImpl::lockGlobal
 
-//LockerImpl<>::lockGlobal中调用  
+//LockerImpl<>::lockGlobal  Lock::GlobalLock::_enqueue中调用  
 template <bool IsForMMAPV1>  //等待获取全局锁成功见Lock::GlobalLock::GlobalLock->Lock::GlobalLock::waitForLock->LockerImpl<>::lockGlobalComplete
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
@@ -432,6 +435,9 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
         auto holder = ticketHolders[mode]; 
 		//该循环中等锁
         if (holder) { //如果mode为MODE_X， 这里ticketHolders[MODE_X]为NULL，见setGlobalThrottling
+		//这里体现了S  IS  IX三种锁每种锁都需要受全局128信号量并发控制，也就是最多只有128个线程同时操作
+		//这几种类型的锁
+		
             _clientState.store(reader ? kQueuedReader : kQueuedWriter); 
 			//等待锁期间为Queued状态，获取到锁后变为Active状态，获取超时变为inactive
             if (timeout == Milliseconds::max()) {
@@ -439,7 +445,7 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
                 holder->waitForTicket();  
 
 
-			//最大等待锁时间，超过这个时间直接返回可用
+			//最大等待锁时间，超过这个时间直接进入inactive
             } else if (!holder->waitForTicketUntil(Date_t::now() + timeout)) {
             	//没获取到锁，也就是信号量用完了，状态变为inactive
                 _clientState.store(kInactive); 
@@ -452,6 +458,8 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
         _clientState.store(reader ? kActiveReader : kActiveWriter);
         _modeForTicket = mode;
     }
+
+	//注意这里全都用的同一个资源resourceIdGlobal
     const LockResult result = lockBegin(resourceIdGlobal, mode);
     if (result == LOCK_OK)
         return LOCK_OK;
@@ -679,6 +687,7 @@ bool LockerImpl<IsForMMAPV1>::isCollectionLockedForMode(StringData ns, LockMode 
 }
 
 template <bool IsForMMAPV1>
+//慢日志打印的时候调用LockerImpl<>::getLockerInfo，然后调用该接口
 ResourceId LockerImpl<IsForMMAPV1>::getWaitingResource() const {
     scoped_spinlock scopedLock(_lock);
 
@@ -695,7 +704,7 @@ ResourceId LockerImpl<IsForMMAPV1>::getWaitingResource() const {
     return ResourceId();
 }
 
-//慢日志记录参考ServiceEntryPointMongod::handleRequest
+//慢日志记录参考ServiceEntryPointMongod::handleRequest   OpDebug::report中使用该lockerInfo打印到日志
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::getLockerInfo(LockerInfo* lockerInfo) const {
     invariant(lockerInfo);
@@ -722,8 +731,9 @@ void LockerImpl<IsForMMAPV1>::getLockerInfo(LockerInfo* lockerInfo) const {
 
     std::sort(lockerInfo->locks.begin(), lockerInfo->locks.end());
 
+	// OpDebug::report中使用该lockerInfo打印到日志
     lockerInfo->waitingResource = getWaitingResource();
-	//LockStatCounters::append
+	//LockStats::append
     lockerInfo->stats.append(_stats);
 }
 
@@ -846,8 +856,9 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     //_id为标识本LockerImpl类的唯一ID
     //_id标识为LockerImpl的类，其记录的mode类型锁ResourceId resId, LockMode mode对应的计数增加
 	//全局计数
-	globalStats.recordAcquisition(_id, resId, mode); //PartitionedInstanceWideLockStats::recordAcquisition;
-	//LockStats::recordAcquisition;
+	//PartitionedInstanceWideLockStats::recordAcquisition;
+	globalStats.recordAcquisition(_id, resId, mode); 
+	//LockStats::recordAcquisition;  
     _stats.recordAcquisition(resId, mode); //对本LockerImpl._stats做统计
 
     // Give priority to the full modes for global, parallel batch writer mode,
@@ -1127,7 +1138,10 @@ LockManager* getGlobalLockManager() {
     return &globalLockManager;
 }
 
+//db.serverstats().locks
+//LockStatsServerStatusSection中调用
 void reportGlobalLockingStats(SingleThreadedLockStats* outStats) {
+	//PartitionedInstanceWideLockStats::report
     globalStats.report(outStats);
 }
 

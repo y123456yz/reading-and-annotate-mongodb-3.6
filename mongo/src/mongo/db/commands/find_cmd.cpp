@@ -314,7 +314,7 @@ at src/mongo/db/commands/find_cmd.cpp:311
 		//获取赋值后的CanonicalQuery，从请求QueryRequest中解析构造CanonicalQuery
         std::unique_ptr<CanonicalQuery> cq = std::move(statusWithCQ.getValue());
 
-		//std::move(dbSLock)会调用DBLock::~DBLock
+		//std::move(dbSLock)会调用DBLock::~DBLock   
         AutoGetCollectionOrViewForReadCommand ctx(opCtx, nss, std::move(dbSLock));
 		//AutoGetCollectionOrViewForReadCommand::getCollection
         Collection* collection = ctx.getCollection();

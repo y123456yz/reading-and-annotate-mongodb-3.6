@@ -112,6 +112,7 @@ private:
 } globalLockServerStatusSection;
 
 
+//db.serverstats().locks
 class LockStatsServerStatusSection : public ServerStatusSection {
 public:
     LockStatsServerStatusSection() : ServerStatusSection("locks") {}

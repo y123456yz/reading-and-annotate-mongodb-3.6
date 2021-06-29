@@ -42,7 +42,8 @@ LockStats<CounterType>::LockStats() {
 
 //locks:{ Global: { acquireCount: { r: 11814 }, acquireWaitCount: { r: 18 }, timeAcquiringMicros: { r: 12365 } }, 
 // Database: { acquireCount: { r: 5907 } }, Collection: { acquireCount: { r: 5907 } } }
-//总的锁统计打印 //OpDebug::report调用
+//总的锁统计打印 
+//OpDebug::report调用
 template <typename CounterType>
 void LockStats<CounterType>::report(BSONObjBuilder* builder) const {
     // All indexing below starts from offset 1, because we do not want to report/account

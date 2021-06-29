@@ -214,7 +214,7 @@ private:
     LockMode _getModeForMMAPV1FlushLock() const;
 
     // Used to disambiguate different lockers
-    //每构造一个LockerImpl类，该id就自增，见LockerImpl<IsForMMAPV1>::LockerImpl()，用来标识不同的LockerImpl类
+    //每构造一个LockerImpl类，该id就自增，见LockerImpl<>::LockerImpl()，用来标识不同的LockerImpl类
     const LockerId _id; 
 
     // The only reason we have this spin lock here is for the diagnostic tools, which could

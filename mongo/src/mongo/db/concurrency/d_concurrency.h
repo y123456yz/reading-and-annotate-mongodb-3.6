@@ -306,6 +306,12 @@ storageEngine.writeOplog(...);
 //AutoGetDb._dbLock为该类型，
 //AutoGetOrCreateDb::AutoGetOrCreateDb  AutoGetCollection::AutoGetCollection 
 // 及AutoGetDb::AutoGetDb中构造使用
+
+    //读: FindCmd::run中实现查询的库锁、表锁加锁过程
+    //增：insertBatchAndHandleErrors中实现查询的库锁、表锁加锁过程
+    //删：performSingleDeleteOp中实现查询的库锁、表锁加锁过程
+    //改：performSingleUpdateOp中实现查询的库锁、表锁加锁过程
+
     class DBLock {
     public:
         DBLock(OperationContext* opCtx, StringData db, LockMode mode);
@@ -359,6 +365,13 @@ DBLock("local", MODEX_IX);
 CollectionLock("oplog.rs", MODEX_IX);
 storageEngine.writeOplog(...);
 */  
+
+    //读: FindCmd::run中实现查询的库锁、表锁加锁过程
+    //增：insertBatchAndHandleErrors中实现查询的库锁、表锁加锁过程
+    //删：performSingleDeleteOp中实现查询的库锁、表锁加锁过程
+    //改：performSingleUpdateOp中实现查询的库锁、表锁加锁过程
+
+
     //AutoGetCollection._collLock为该类型
     //AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead调用
     class CollectionLock {

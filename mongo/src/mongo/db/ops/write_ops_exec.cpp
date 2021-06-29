@@ -375,6 +375,7 @@ void insertDocuments(OperationContext* opCtx,
  * Returns true if caller should try to insert more documents. Does nothing else if batch is empty.
  */ 
 
+
 //performInsertsÖÐµ÷ÓÃ  performInserts->insertBatchAndHandleErrors->insertDocuments
 bool insertBatchAndHandleErrors(OperationContext* opCtx,
                                 const write_ops::Insert& wholeOp,
@@ -841,6 +842,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
 
     return out;
 }
+
 
 static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
                                                const NamespaceString& ns,

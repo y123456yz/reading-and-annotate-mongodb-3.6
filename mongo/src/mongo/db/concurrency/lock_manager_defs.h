@@ -614,6 +614,7 @@ MONGO_STATIC_ASSERT(sizeof(ResourceId) == sizeof(uint64_t));
 
 // Type to uniquely identify a given locker object
 //LockerImpl._id为该类  每个LockerImpl类会有一个唯一的id标识
+//一个LockerId对应一个锁LockerImpl
 typedef uint64_t LockerId;
 
 // Hardcoded resource id for the oplog collection, which is special-cased both for resource
