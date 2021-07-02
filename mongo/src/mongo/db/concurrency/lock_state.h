@@ -222,6 +222,7 @@ private:
     // Apart from that, all accesses to the LockerImpl are always from a single thread.
     //
     // This has to be locked inside const methods, hence the mutable.
+    //主要用于对下面的_requests加锁
     mutable SpinLock _lock;
     //往map表添加赋值见LockerImpl<>::lockBegin  所有Locker都记录在该map表中
     LockRequestsMap _requests;

@@ -495,6 +495,7 @@ CollectionImpl::_insertDocuments(OperationContext* opCtx,
                 "Can't batch inserts into indexed capped collections"}; //固定集合
     }
 
+	//固定集合使用
     if (_needCappedLock) {
         // X-lock the metadata resource for this capped collection until the end of the WUOW. This
         // prevents the primary from executing with more concurrency than secondaries.

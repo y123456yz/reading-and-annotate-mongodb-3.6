@@ -80,7 +80,7 @@ public:
     public:
         ResourceLock(Locker* locker, ResourceId rid)
             : _rid(rid), _locker(locker), _result(LOCK_INVALID) {}
-
+        
         ResourceLock(Locker* locker, ResourceId rid, LockMode mode)
             : _rid(rid), _locker(locker), _result(LOCK_INVALID) {
             //Lock::ResourceLock::lock
@@ -158,7 +158,7 @@ public:
      * Obtains a ResourceMutex for exclusive use.
      */
     //排他锁，MODE_X封装
-    //用的比较少
+    //用的比较少，独占锁
     class ExclusiveLock : public ResourceLock {
     public:
         ExclusiveLock(Locker* locker, ResourceMutex mutex)
@@ -307,6 +307,15 @@ storageEngine.writeOplog(...);
 //AutoGetOrCreateDb::AutoGetOrCreateDb  AutoGetCollection::AutoGetCollection 
 // 及AutoGetDb::AutoGetDb中构造使用
 
+//库锁封装过程有两种：
+//  第一种: 
+//    DBLock("db1", MODE_IX); //其中库锁中先对全局资源类型RESOURCE_GLOBAL加锁，然后对RESOURCE_DATABASE加锁
+//    CollectionLock("collection1", MODE_IX);
+//
+//  第二种:
+//    AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead这两个类
+//      初始化构造会同时封装库锁和表锁
+
     //读: FindCmd::run中实现查询的库锁、表锁加锁过程
     //增：insertBatchAndHandleErrors中实现查询的库锁、表锁加锁过程
     //删：performSingleDeleteOp中实现查询的库锁、表锁加锁过程
@@ -371,9 +380,19 @@ storageEngine.writeOplog(...);
     //删：performSingleDeleteOp中实现查询的库锁、表锁加锁过程
     //改：performSingleUpdateOp中实现查询的库锁、表锁加锁过程
 
+    //库锁封装过程有两种：
+    //  第一种: 
+    //    DBLock("db1", MODE_IX); //其中库锁中先对全局资源类型RESOURCE_GLOBAL加锁，然后对RESOURCE_DATABASE加锁
+    //    CollectionLock("collection1", MODE_IX);
+    //
+    //  第二种:
+    //    AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead这两个类
+    //      初始化构造会同时封装库锁和表锁
+
 
     //AutoGetCollection._collLock为该类型
-    //AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead调用
+    //AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead这两个类
+    // 初始化构造会同时封装库锁和表锁
     class CollectionLock {
         MONGO_DISALLOW_COPYING(CollectionLock);
 

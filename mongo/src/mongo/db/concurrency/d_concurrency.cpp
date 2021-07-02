@@ -147,6 +147,16 @@ bool Lock::ResourceMutex::isExclusivelyLocked(Locker* locker) {
 bool Lock::ResourceMutex::isAtLeastReadLocked(Locker* locker) {
     return locker->isLockHeldForMode(_rid, MODE_IS);
 }
+
+//库锁封装过程有两种：
+//	第一种: 
+//	  DBLock("db1", MODE_IX); //其中库锁中先对全局资源类型RESOURCE_GLOBAL加锁，然后对RESOURCE_DATABASE加锁
+//	  CollectionLock("collection1", MODE_IX);
+//
+//	第二种:
+//	  AutoGetCollection::AutoGetCollection	AutoGetCollectionForRead::AutoGetCollectionForRead这两个类
+//		初始化构造会同时封装库锁和表锁
+
 //Lock::DBLock::DBLock中构造使用，每个DBLock都有一个对应的全局锁_globalLock
 Lock::GlobalLock::GlobalLock(OperationContext* opCtx, LockMode lockMode, unsigned timeoutMs)
     : GlobalLock(opCtx, lockMode, timeoutMs, EnqueueOnly()) //这里构造函数中调用Lock::GlobalLock::_enqueue获取全局锁
@@ -160,6 +170,7 @@ Lock::GlobalLock::GlobalLock(OperationContext* opCtx,
                              EnqueueOnly enqueueOnly)
     : _opCtx(opCtx),
       _result(LOCK_INVALID),
+      //下面的Lock::GlobalLock::_enqueue会对resourceIdParallelBatchWriterMode资源类型信息进行锁
       _pbwm(opCtx->lockState(), resourceIdParallelBatchWriterMode),
       _isOutermostLock(!opCtx->lockState()->isLocked()) {
     _enqueue(lockMode, timeoutMs);
@@ -176,11 +187,14 @@ Lock::GlobalLock::GlobalLock(GlobalLock&& otherLock)
 
 //Lock::GlobalLock::GlobalLock中调用
 void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
-    if (_opCtx->lockState()->shouldConflictWithSecondaryBatchApplication()) { //和同步相关
+	//默认为true
+    if (_opCtx->lockState()->shouldConflictWithSecondaryBatchApplication()) {  
+		//对resourceIdParallelBatchWriterMode全局资源信息，加IS意向锁
         _pbwm.lock(MODE_IS);
     }
 
 	//LockerImpl:lockGlobalBegin->LockerImpl<>::_lockGlobalBegin
+	log() << "yang test.... global lock, lock mode:" << modeName(lockMode);
     _result = _opCtx->lockState()->lockGlobalBegin(lockMode, Milliseconds(timeoutMs));
 }
 
@@ -231,6 +245,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
 
 	//LockerImpl<>::lock
 	//对该库加mode锁
+	log() << "yang test.... DB lock, db: " << db.toString()<< " lock mode:" << modeName(mode);
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode)); //OperationContext::lockState->LockerImpl<>::lock
 }
 
@@ -257,6 +272,7 @@ Lock::DBLock::~DBLock() {
     }
 }
 
+//下面的Lock::CollectionLock::relockAsDatabaseExclusive调用
 void Lock::DBLock::relockWithMode(LockMode newMode) {
     // 2PL would delay the unlocking
     invariant(!_opCtx->lockState()->inAWriteUnitOfWork());
@@ -267,6 +283,7 @@ void Lock::DBLock::relockWithMode(LockMode newMode) {
     _opCtx->lockState()->unlock(_id);
     _mode = newMode;
 
+	log() << "yang test..relockWithMode.. DB lock,  lock mode:" << modeName(newMode);
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode));
 }
 
@@ -278,7 +295,8 @@ Lock::CollectionLock::CollectionLock(Locker* lockState, StringData ns, LockMode 
 
     dassert(_lockState->isDbLockedForMode(nsToDatabaseSubstring(ns),
                                           isSharedLockMode(mode) ? MODE_IS : MODE_IX));
-    if (supportsDocLocking()) {
+	log() << "yang test.... collection lock, ns: " << ns.toString()<< " lock mode:" << modeName(mode);
+	if (supportsDocLocking()) { //这里体现了表级别X锁和普通表文档级别锁的区别
 		//LockerImpl<>::lock
         _lockState->lock(_id, mode);
     } else {
@@ -296,6 +314,7 @@ void Lock::CollectionLock::relockAsDatabaseExclusive(Lock::DBLock& dbLock) {
     dbLock.relockWithMode(MODE_X);
 
     // don't need the lock, but need something to unlock in the destructor
+    log() << "yang test..relockAsDatabaseExclusive.. lock,  lock mode:" << modeName(MODE_X);
     _lockState->lock(_id, MODE_IX);
 }
 
@@ -335,10 +354,11 @@ Lock::ParallelBatchWriterMode::~ParallelBatchWriterMode() {
     _lockState->setShouldConflictWithSecondaryBatchApplication(_orginalShouldConflict);
 }
 
-//ResourceLock构造函数调用
+//ResourceLock构造函数调用， Lock::GlobalLock::_enqueue中也会调用
 void Lock::ResourceLock::lock(LockMode mode) {
     invariant(_result == LOCK_INVALID);
 	//LockerImpl::lock
+	log() << "yang test.... ResourceLock lock, " << " lock mode:" << modeName(mode);
     _result = _locker->lock(_rid, mode);
     invariant(_result == LOCK_OK);
 }

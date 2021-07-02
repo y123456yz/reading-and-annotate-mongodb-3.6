@@ -466,6 +466,8 @@ Status ChunkManagerTargeter::targetUpdate(
 
     // Single (non-multi) updates must target a single shard or be exact-ID.
     //write_ops::UpdateOpEntry::getMulti()
+    // db.test3.update({name:"yyz"}, {$set:{"dd":"cc"}, {multi:false}}) 报错，默认multi为false
+    //db.test3.update({name:"test"}, {$set:{"dd":"cc"}},{multi:true})没问题
     //如果update请求中带有multi:false参数，则必须携带片建，因为只更新一个文档，只有到一个分片才能满足只更新一个文档
     if (_routingInfo->cm() && !updateDoc.getMulti() &&
         !isExactIdQuery(opCtx, *cq.getValue(), _routingInfo->cm().get())) {

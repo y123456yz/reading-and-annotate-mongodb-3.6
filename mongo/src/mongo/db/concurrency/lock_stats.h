@@ -128,6 +128,8 @@ typedef LockStats<AtomicInt64> AtomicLockStats;
 
 //单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
 
+//注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
+
 //PartitionedInstanceWideLockStats._partitions[]为该类型
 template <typename CounterType>
 class LockStats {

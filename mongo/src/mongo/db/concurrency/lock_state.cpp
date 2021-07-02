@@ -50,6 +50,9 @@ namespace {
 /**
  * Partitioned global lock statistics, so we don't hit the same bucket.
  */ 
+
+//注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
+
 /*  LockStats<>::_report 中获取相关信息
 featdoc:PRIMARY> 
 featdoc:PRIMARY> db.serverStatus().locks
@@ -107,6 +110,9 @@ featdoc:PRIMARY> db.serverStatus().globalLock
 featdoc:PRIMARY> 
 featdoc:PRIMARY> 
 */
+
+//注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
+
 //单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
 
 //PartitionedInstanceWideLockStats globalStats;    全局锁统计
@@ -243,12 +249,14 @@ bool shouldDelayUnlock(ResourceId resId, LockMode mode) {
 
 //写锁   //LockerImpl结构是OperationContext._locker成员, wiredtiger对应DefaultLockerImpl
 template <bool IsForMMAPV1>
+//当前resourceIdGlobal加的是MODE_X类型的锁
 bool LockerImpl<IsForMMAPV1>::isW() const {
     return getLockMode(resourceIdGlobal) == MODE_X;
 }
 
 //读锁
 template <bool IsForMMAPV1>
+//当前resourceIdGlobal加的是MODE_S类型的锁
 bool LockerImpl<IsForMMAPV1>::isR() const {
     return getLockMode(resourceIdGlobal) == MODE_S;
 }
@@ -259,12 +267,14 @@ bool LockerImpl<IsForMMAPV1>::isLocked() const {
 }
 
 template <bool IsForMMAPV1>
+//当前resourceIdGlobal加的是MODE_IX类型的锁  写意向锁
 bool LockerImpl<IsForMMAPV1>::isWriteLocked() const {
     return isLockHeldForMode(resourceIdGlobal, MODE_IX);
 }
 
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::isReadLocked() const {
+//当前resourceIdGlobal加的是MODE_IS类型的锁   读意向锁
     return isLockHeldForMode(resourceIdGlobal, MODE_IS);
 }
 
@@ -321,7 +331,13 @@ void CondVarLockGrantNotification::notify(ResourceId resId, LockResult result) {
 //ServiceContextMongoD::_newOpCtx中构造LockerImpl使用，每个请求对应一个DefaultLockerImpl(也就是一个LockerImpl)
 //注意全局锁并发控制实际由全局变量ticketHolders[]负责维护，对每个请求的locker处理前需要判断全局锁是否需要等待
 
+
+
+//注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
+
+
 //每一种mode对应一个TicketHolder，依赖linux的sem信号量实现
+//通过db.serverStatus().globalLock获取
 namespace { //赋值见setGlobalThrottling //WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
 TicketHolder* ticketHolders[LockModesCount] = {}; 
 }  // namespace
@@ -378,6 +394,8 @@ LockerImpl<IsForMMAPV1>::~LockerImpl() {
 
 //获取 Client 状态时，已经获取到wiredtiger ticket 的 Reader/Writer 如果在等锁，也会认为是 Queued 状态，这个之前忽略了。
 //http://www.mongoing.com/archives/4768
+//db.serverStatus().globalLock获取，
+//注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
 template <bool IsForMMAPV1>
 Locker::ClientState LockerImpl<IsForMMAPV1>::getClientState() const {
     auto state = _clientState.load();
@@ -428,6 +446,8 @@ db/concurrency/lock_state.cpp:const ResourceId resourceIdAdminDB = ResourceId(RE
 template <bool IsForMMAPV1>  //等待获取全局锁成功见Lock::GlobalLock::GlobalLock->Lock::GlobalLock::waitForLock->LockerImpl<>::lockGlobalComplete
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
+
+	//全局锁队列并发控制在这里
     if (_modeForTicket == MODE_NONE) {
 		//判断是否读锁或者读意向锁
         const bool reader = isSharedLockMode(mode);
@@ -454,11 +474,13 @@ LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds
             }
         }
 
-		//获取到锁后状态变为active
+		//获取到锁后状态变为active, 通过db.serverStatus().globalLock获取
+		//注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
         _clientState.store(reader ? kActiveReader : kActiveWriter);
         _modeForTicket = mode;
     }
 
+	//下面是意向锁相关
 	//注意这里全都用的同一个资源resourceIdGlobal
     const LockResult result = lockBegin(resourceIdGlobal, mode);
     if (result == LOCK_OK)
@@ -582,6 +604,9 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
 //Lock::DBLock::DBLock  Lock::DBLock::relockWithMode
 //Lock::CollectionLock::CollectionLock
 //Lock::OplogIntentWriteLock::OplogIntentWriteLock
+
+//LockerImpl<>::lockComplete
+//LockerImpl<>::restoreLockState
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lock(ResourceId resId,
                                          LockMode mode,
@@ -828,13 +853,19 @@ void LockerImpl<IsForMMAPV1>::restoreLockState(const Locker::LockSnapshot& state
 //全局锁上锁过程LockerImpl<>::_lockGlobalBegin   
 //RESOURCE_DATABASE RESOURCE_COLLECTION对应的上锁过程见LockResult LockerImpl<>::lock
 
-//全局锁_lockGlobalBegin    库锁 写锁 LockResult LockerImpl<>::lock 都会执行该函数
+//全局锁_lockGlobalBegin     库锁 表锁 LockResult LockerImpl<>::lock 都会执行该函数
 template <bool IsForMMAPV1>  ////wiredtiger存储引擎LockerImpl对应DefaultLockerImpl
 LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     dassert(!getWaitingResource().isValid());
 
     LockRequest* request;
     bool isNew = true; //说明request是最新构造的，false说明是之前_requests已经存在的
+
+	log() << "yang test lockBegin, lockinfo: " << resId.toString();
+	
+//#include "mongo/util/stacktrace.h"
+	//mallocFreeOStream << "lock test :" << ".\n";
+    //printStackTrace(mallocFreeOStream);
 
 
     LockRequestsMap::Iterator it = _requests.find(resId); 
@@ -977,12 +1008,14 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
     // Cleanup the state, since this is an unused lock now
     if (result != LOCK_OK) {
         LockRequestsMap::Iterator it = _requests.find(resId);
+		//释放锁，下面重新上锁重试
         _unlockImpl(&it);
     }
 
     if (yieldFlushLock) {
         // We cannot obey the timeout here, because it is not correct to return from the lock
         // request with the flush lock released.
+        //注意这里重新上锁
         invariant(LOCK_OK == lock(resourceIdMMAPV1Flush, _getModeForMMAPV1FlushLock()));
     }
 

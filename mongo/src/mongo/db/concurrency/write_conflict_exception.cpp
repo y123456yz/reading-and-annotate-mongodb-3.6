@@ -35,6 +35,7 @@
 #include "mongo/util/log.h"
 #include "mongo/util/stacktrace.h"
 
+
 namespace mongo {
 
 AtomicBool WriteConflictException::trace(false);

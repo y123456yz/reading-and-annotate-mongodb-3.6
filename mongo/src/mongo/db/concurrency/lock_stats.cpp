@@ -141,6 +141,8 @@ daijia_intelligent:PRIMARY>
 
 */
 
+//注意db.serverStatus().globalLock	 db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
+
 //慢日志中的:
 //locks:{ Global: { acquireCount: { r: 11814 }, acquireWaitCount: { r: 18 }, timeAcquiringMicros: { r: 12365 } }, 
 // Database: { acquireCount: { r: 5907 } }, Collection: { acquireCount: { r: 5907 } } }

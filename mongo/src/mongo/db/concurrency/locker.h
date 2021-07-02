@@ -366,6 +366,7 @@ protected:
 
 private:
     //和同步相关，参考Lock::ParallelBatchWriterMode::ParallelBatchWriterMode
+    //配合ParallelBatchWriterMode类阅读
     bool _shouldConflictWithSecondaryBatchApplication = true;
 };
 

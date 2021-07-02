@@ -217,7 +217,7 @@ struct LockHead { //LockHead::newRequest
      * Finish creation of request and put it on the lockhead's conflict or granted queues. Returns
      * LOCK_WAITING for conflict case and LOCK_OK otherwise.
      */
-    /* https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
+    /* 浅析MongoDB中的意向锁 https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
 	一个锁请求，如果和GrantList无冲突，就将其添加到GrantList中，并加锁成功，否则就加到ConflictList中，并
 	等待grantedModes变更时，从ConflictList中选择一批与grantedModes兼容的加锁请求进入GrantList。 这是很显然
 	的调度策略。不过这个调度策略无法避免一个问题，如果ConflictList中有X锁在等待，而GrantedList中的IS/IX锁
@@ -287,7 +287,7 @@ struct LockHead { //LockHead::newRequest
      */
     void migratePartitionedLockHeads();
 
-	/* https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
+	/*浅析MongoDB中的意向锁 https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
 	思考与尝试
 	我们分析了MongoDB中意向锁的结构图，假设我们现在对db1加了大量的IS锁，现在我们要对db1加IX锁，为了检
 	查IX锁是否和GrantList冲突，需要对GrantList进行遍历进行冲突检测，这样做是不高效的。
@@ -369,7 +369,7 @@ struct LockHead { //LockHead::newRequest
     // are high-priorty locks, such as the MMAP V1 flush lock.
     //对应LockRequest的双向链表，同一ResourceId的所有conflict状态的LockRequest通过该链表链接起来
     //LockHead由ConflictList和GrantList组成。ConflictList是该锁的等待队列， GrantList是持有锁的对象链表。
-    //参考https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
+    //参考 浅析MongoDB中的意向锁 https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
     LockRequestList conflictList;
 
     // Counts the conflicting requests for each of the lock modes. These counts should exactly

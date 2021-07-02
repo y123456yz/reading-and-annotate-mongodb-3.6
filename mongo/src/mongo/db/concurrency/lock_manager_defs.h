@@ -369,7 +369,7 @@ https://www.jianshu.com/p/d838a5905303
 
 //文章参考 https://yq.aliyun.com/articles/655101 浅析MongoDB中的意向锁
 //https://mongoing.com/archives/4768
-//https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
+//浅析MongoDB中的意向锁  https://mp.weixin.qq.com/s/aD6AySeHX8uqMlg9NgvppA?spm=a2c4e.11153940.blogcont655101.6.6fca281cYe2TH0
 //ResourceId锁(包含全局锁 库锁 表锁)，每个ResourceId锁可以细分为不同类型的MODE_IS MODE_IX MODE_S MODE_X锁
 
 

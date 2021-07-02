@@ -458,6 +458,7 @@ private:
     RecordStore* const _recordStore; 
     //该collection对应的上层DatabaseCatalogEntry信息
     DatabaseCatalogEntry* const _dbce;
+    //固定集合使用
     const bool _needCappedLock;
     //对应CollectionInfoCacheImpl，缓存查询计划信息
     CollectionInfoCache _infoCache;

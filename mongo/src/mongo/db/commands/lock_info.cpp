@@ -79,7 +79,7 @@ featdoc:PRIMARY> db.runCommand({lockInfo: 1})
                                         "compatibleFirst" : false,
                                         "desc" : "conn60",
                                         "connectionId" : 60,
-                                        "client" : "172.23.240.29:43066",
+                                        "client" : "172.xx.xx.29:43066",
                                         "opid" : 1412163
                                 },
                                 {
@@ -89,7 +89,7 @@ featdoc:PRIMARY> db.runCommand({lockInfo: 1})
                                         "compatibleFirst" : false,
                                         "desc" : "conn59",
                                         "connectionId" : 59,
-                                        "client" : "172.23.240.29:43019",
+                                        "client" : "172.xx.xx.29:43019",
                                         "opid" : 1412143
                                 }
                         ],
@@ -105,7 +105,7 @@ featdoc:PRIMARY> db.runCommand({lockInfo: 1})
                                         "compatibleFirst" : false,
                                         "desc" : "conn60",
                                         "connectionId" : 60,
-                                        "client" : "172.23.240.29:43066",
+                                        "client" : "172.xx.xx.29:43066",
                                         "opid" : 1412163
                                 },
                                 {
@@ -115,7 +115,7 @@ featdoc:PRIMARY> db.runCommand({lockInfo: 1})
                                         "compatibleFirst" : false,
                                         "desc" : "conn59",
                                         "connectionId" : 59,
-                                        "client" : "172.23.240.29:43019",
+                                        "client" : "172.xx.xx.29:43019",
                                         "opid" : 1412143
                                 }
                         ],
