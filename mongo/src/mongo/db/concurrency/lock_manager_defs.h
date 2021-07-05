@@ -414,7 +414,7 @@ bool isModeCovered(LockMode mode, LockMode coveringMode);
 /**
  * Returns whether the passed in mode is S or IS. Used for validation checks.
  */ 
-//判断是否读锁或者读意向锁
+//判断是否读锁或者读意向锁(这里说明IS  S为共享锁)
 inline bool isSharedLockMode(LockMode mode) {
     return (mode == MODE_IS || mode == MODE_S);
 }

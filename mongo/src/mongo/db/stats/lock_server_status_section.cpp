@@ -49,6 +49,7 @@ public:
         return true;
     }
 
+	//GlobalLockServerStatusSection::generateSection
 	//客户端链接对应的锁状态，配合LockerImpl<IsForMMAPV1>::_lockGlobalBegin阅读
     virtual BSONObj generateSection(OperationContext* opCtx,
                                     const BSONElement& configElement) const {

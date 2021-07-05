@@ -232,6 +232,7 @@ bool shouldDelayUnlock(ResourceId resId, LockMode mode) {
     }
 
     switch (mode) {
+		//写锁不应被释放，这样可以确保写事务正确提交
         case MODE_X:
         case MODE_IX:
             return true;
@@ -396,6 +397,8 @@ LockerImpl<IsForMMAPV1>::~LockerImpl() {
 //http://www.mongoing.com/archives/4768
 //db.serverStatus().globalLock获取，
 //注意db.serverStatus().globalLock   db.serverStatus().locks   db.runCommand({lockInfo: 1}) 三个的区别
+
+////GlobalLockServerStatusSection::generateSection中调用
 template <bool IsForMMAPV1>
 Locker::ClientState LockerImpl<IsForMMAPV1>::getClientState() const {
     auto state = _clientState.load();
@@ -447,11 +450,11 @@ template <bool IsForMMAPV1>  //等待获取全局锁成功见Lock::GlobalLock::GlobalLock-
 LockResult LockerImpl<IsForMMAPV1>::_lockGlobalBegin(LockMode mode, Milliseconds timeout) {
     dassert(isLocked() == (_modeForTicket != MODE_NONE));
 
-	//全局锁队列并发控制在这里
+	//全局锁队列并发控制在这里，这是实例级别的锁
     if (_modeForTicket == MODE_NONE) {
 		//判断是否读锁或者读意向锁
         const bool reader = isSharedLockMode(mode);
-		//该mode对应的ticketHolders
+		//该mode对应的ticketHolders，这是实例级别的锁
         auto holder = ticketHolders[mode]; 
 		//该循环中等锁
         if (holder) { //如果mode为MODE_X， 这里ticketHolders[MODE_X]为NULL，见setGlobalThrottling

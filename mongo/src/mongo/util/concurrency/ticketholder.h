@@ -40,7 +40,7 @@ namespace mongo {
 
 //listener类包含该成员  //Listener.globalTicketHolder   TicketHolder openWriteTransaction(128);  TicketHolder openReadTransaction(128);
 //信号量锁封装
-class TicketHolder {
+class TicketHolder { //ticketHolders全局并发锁控制
     MONGO_DISALLOW_COPYING(TicketHolder);
 
 public:

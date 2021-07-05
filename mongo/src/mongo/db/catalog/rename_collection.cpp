@@ -84,6 +84,7 @@ Status renameCollectionCommon(OperationContext* opCtx,
     boost::optional<Lock::GlobalWrite> globalWriteLock;
     boost::optional<Lock::DBLock> dbWriteLock;
 
+	//如果已知该重命名不是跨数据库重命名，则只需使用数据库锁即可。
     // If the rename is known not to be a cross-database rename, just a database lock suffices.
     auto lockState = opCtx->lockState();
     if (source.db() == target.db())
