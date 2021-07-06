@@ -663,8 +663,8 @@ LockMode LockerImpl<IsForMMAPV1>::getLockMode(ResourceId resId) const {
 }
 
 template <bool IsForMMAPV1>
-//也就是LockConflictsTable的mode是否包含resId对应的mode，也就是_rid对应
-//的mode是否和mode不相容
+
+//也就是LockConflictsTable的coveringMode是否包含coveringMode
 bool LockerImpl<IsForMMAPV1>::isLockHeldForMode(ResourceId resId, LockMode mode) const {
     return isModeCovered(mode, getLockMode(resId));
 }
@@ -887,6 +887,8 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
 		//获取LockRequest 上面的LockRequest::initNew生成
         request = itNew.objAddr();//FastMapNoAlloc::IteratorImpl::objAddr
     } else { //resId已经存在于_requests，则获取该resId对应的LockRequest
+    	//一般表示获取锁超时，然后递归重新获取，配合LockerImpl<>::lockComplete阅读
+    	//只有MMAP引擎才会走到这个流程?
         request = it.objAddr();
         isNew = false;
     }
@@ -927,7 +929,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     // otherwise we might reset state if the lock becomes granted very fast.
     _notify.clear();
 
-	//是一个新的资源类型锁，则LockManager::lock，如果是_requests已有的则是LockManager::lock
+	//是一个新的资源类型锁，则LockManager::lock，如果是_requests已有的则是LockManager::convert
     LockResult result = isNew ? globalLockManager.lock(resId, request, mode)  //LockManager::lock
                               : globalLockManager.convert(resId, request, mode); //LockManager::convert
 
@@ -953,6 +955,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
     // Under MMAP V1 engine a deadlock can occur if a thread goes to sleep waiting on
     // DB lock, while holding the flush lock, so it has to be released. This is only
     // correct to do if not in a write unit of work.
+    //yieldFlushLock只针对MMAP引擎
     const bool yieldFlushLock = IsForMMAPV1 && !inAWriteUnitOfWork() &&
         resId.getType() != RESOURCE_GLOBAL && resId.getType() != RESOURCE_MUTEX &&
         resId != resourceIdMMAPV1Flush;
@@ -1009,6 +1012,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
         waitTime = (totalBlockTime < timeout) ? std::min(timeout - totalBlockTime, DeadlockTimeout)
                                               : Milliseconds(0);
 
+		//获取锁超时
         if (waitTime == Milliseconds(0)) {
             break;
         }
@@ -1021,6 +1025,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
         _unlockImpl(&it);
     }
 
+	//只针对MMAP引擎
     if (yieldFlushLock) {
         // We cannot obey the timeout here, because it is not correct to return from the lock
         // request with the flush lock released.
@@ -1033,6 +1038,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
 
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::_unlockImpl(LockRequestsMap::Iterator* it) {
+	//LockManager::unlock
     if (globalLockManager.unlock(it->objAddr())) {
         if (it->key() == resourceIdGlobal) {
             invariant(_modeForTicket != MODE_NONE);

@@ -688,7 +688,7 @@ public:
 struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
     enum Status { //status的字符串转换见LockRequestStatusNames
         STATUS_NEW, //初始状态
-        STATUS_GRANTED, //授权状态，赋值见newRequest
+        STATUS_GRANTED, //授权状态，赋值见newRequest，进入授权列表
         STATUS_WAITING, //冲突，需要等待，赋值见newRequest
         STATUS_CONVERTING,
         
@@ -767,7 +767,7 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
 	
     //LockManager::convert中自增
 	//LockManager::unlock自减
-    unsigned recursiveCount;
+    unsigned recursiveCount; //感觉只会对MMAP有效, WT引擎初始化为1，unlock的适合释放锁减为0
 
     // Pointer to the lock to which this request belongs, or null if this request has not yet been
     // assigned to a lock or if it belongs to the PartitionedLockHead for locker (in which case

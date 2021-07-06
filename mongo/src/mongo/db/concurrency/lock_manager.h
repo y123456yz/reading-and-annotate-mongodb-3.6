@@ -249,6 +249,8 @@ private:
         PartitionedLockHead* findOrInsert(ResourceId resId);
         typedef unordered_map<ResourceId, PartitionedLockHead*> Map;
         SimpleMutex mutex;
+
+        //遍历过程可以参考LockHead::migratePartitionedLockHeads()
         //查找LockManager::Partition::find  插入查找LockManager::Partition::findOrInsert
         Map data; //data类型为<ResourceId, PartitionedLockHead>  
     };
@@ -322,6 +324,10 @@ private:
     //_partitions = new Partition[_numPartitions]; //32
     static const unsigned _numPartitions;
     //每个resId对应一个PartitionedLockHead结构，存放在LockManager._partitions[]
+    
+    //如果以前全是意向锁，也就是以前全是由partitions分区管理，现在该资源类型有其他锁进来，例如MODE_X MODE_S
+    // 则需要改为_lockBuckets统一管理，因此以前由_partitions管理的意向锁需要全部合并到_lockBuckets管理
+    //参考LockManager::lock
     Partition* _partitions; //数组类型
 };
 

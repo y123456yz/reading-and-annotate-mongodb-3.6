@@ -136,7 +136,8 @@ namespace {
  * with the given 'newMode' conflicts with an existing request with mode 'existingMode'.
  */
 
-//互斥不相容对应的判断方法isModeCovered
+//isModeCovered    conflicts
+//注意isModeCovered和conflicts的区别
 static const int LockConflictsTable[] = {
     // MODE_NONE
     0,
@@ -187,7 +188,10 @@ MONGO_STATIC_ASSERT((sizeof(LegacyLockModeNames) / sizeof(LegacyLockModeNames[0]
                     LockModesCount);
 
 // Helper functions for the lock modes
-//判断newMode类型锁和existingModesMask类型锁是否想容
+
+//注意isModeCovered和conflicts的区别
+
+//判断newMode类型锁和existingModesMask类型锁是否想容    conflicts
 bool conflicts(LockMode newMode, uint32_t existingModesMask) {
     return (LockConflictsTable[newMode] & existingModesMask) != 0;
 }
@@ -218,6 +222,7 @@ MONGO_STATIC_ASSERT((sizeof(ResourceTypeNames) / sizeof(ResourceTypeNames[0])) =
 /**
  * Maps the LockRequest status to a human-readable string.
  */
+//lockRequestStatusName调用
 static const char* LockRequestStatusNames[] = {
     "new", "granted", "waiting", "converting",
 };
@@ -307,7 +312,7 @@ struct LockHead { //LockHead::newRequest
 	
 	为了解决这个问题，MongoDB中为加锁操作增加了compatibleFirst参数。 
 	*/ 
-	//LockManager::lock
+	//LockManager::lock  LockHead::migratePartitionedLockHeads()
     LockResult newRequest(LockRequest* request) {
         invariant(!request->partitionedLock);
         request->lock = this;
@@ -329,6 +334,8 @@ struct LockHead { //LockHead::newRequest
 		//和grantedMode不冲突，但和conflictModes冲突，依然进入等待,这样可以避免如果只判断grantedMode，则新进来的IX IS等就会加入
 		//grantedMode,这样就会有大量IX IS锁加入到grantedMode，conflictModes就很难等到从conflictList移动到grantedLIST中，conflictList
 		//中的请求就很可能会饿死
+
+		//compatibleFirstCount为0说明grantedList队列中没有全局的MODE_X和MODE_S两种锁
 			(!compatibleFirstCount && conflicts(request->mode, conflictModes))) {
             //状态置位STATUS_WAITING
             request->status = LockRequest::STATUS_WAITING;
@@ -357,7 +364,7 @@ struct LockHead { //LockHead::newRequest
         incGrantedModeCount(request->mode);
 
 		//如果这个锁类型为MODE_S或者MODE_X，则compatibleFirstCount自增
-		//也就是grantedList列表中锁类型为MODE_S或者MODE_X的数量总和
+		//也就是grantedList列表中资源类型为RESOURCE_GLOBAL全局类型，并且锁类型为MODE_S或者MODE_X的数量总和
         if (request->compatibleFirst) {
             compatibleFirstCount++;
         }
@@ -470,6 +477,7 @@ struct LockHead { //LockHead::newRequest
     // Non-empty implies the lock has no conflicts and only has intent modes as grantedModes.
     // TODO: Remove this vector and make LockHead a POD
     //LockManager::lock中push  migratePartitionedLockHeads中pop
+    //映射到LockHead.partitions中，_partitions管理的所有锁资源信息(IX IS)通过这里关联起来，见LockManager::lock
     std::vector<LockManager::Partition*> partitions;
 
     //
@@ -488,7 +496,9 @@ struct LockHead { //LockHead::newRequest
     // compatible-first.
     //newRequest自增，LockManager::unlock中自减 
     //锁资源的GrantList中compatibleFirst=true的属性的锁请求的元素的个数。
-    //也就是grantedList列表中锁类型为MODE_S或者MODE_X的数量总和，参考newRequest
+    
+    //也就是grantedList列表中资源类型为RESOURCE_GLOBAL全局类型，并且锁类型
+    // 为MODE_S或者MODE_X的数量总数，参考newRequest
     uint32_t compatibleFirstCount;
 };
 
@@ -537,6 +547,12 @@ struct PartitionedLockHead {  //LockManager::Partition::findOrInsert中new
     LockRequestList grantedList; //实际上是一个LockRequest类型的双向链表
 };
 
+//例如:如果以前全是意向锁，也就是以前全是由partitions分区管理，现在该资源类型有其他锁进来，例如MODE_X MODE_S
+// 则需要改为_lockBuckets统一管理，因此以前由_partitions管理的意向锁需要全部合并到_lockBuckets管理
+
+
+//LockManager::lock  LockManager::convert
+//把该资源类型的对应partitions管理的锁信息通过newRequest合并到grantedList或者conflictList管理，参考
 void LockHead::migratePartitionedLockHeads() {
     invariant(partitioned());
 
@@ -558,6 +574,8 @@ void LockHead::migratePartitionedLockHeads() {
                 request->partitionedLock = nullptr;
                 // Ordering is important here, as the next/prev fields are shared.
                 // Note that newRequest() will preserve the recursiveCount in this case
+
+				//是否partitionedLock锁，交由grantedList或者conflictList管理
                 LockResult res = newRequest(request);
                 invariant(res == LOCK_OK);  // Lock must still be granted
             }
@@ -645,18 +663,24 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     LockHead* lock = bucket->findOrInsert(resId);
 
     // Start a partitioned lock if possible
-    //该request对应锁为意向锁、该
+    //该request对应锁为意向锁 并且 该资源类型锁对应grantedList列表上面没有MODE_X和MODE_S锁类型，
+    // 并且conflictList冲突列表不为空
+
+	//如果该资源信息对应的锁类型全是意向锁IX IS,则统一由_partitions分区统一管理
     if (request->partitioned && !(lock->grantedModes & (~intentModes)) && !lock->conflictModes) {
         Partition* partition = _getPartition(request);
         stdx::lock_guard<SimpleMutex> scopedLock(partition->mutex);
         PartitionedLockHead* partitionedLock = partition->findOrInsert(resId);
         invariant(partitionedLock);
+		//映射到LockHead.partitions中，_partitions管理的所有锁资源信息(IX IS)通过这里关联起来
         lock->partitions.push_back(partition);
         partitionedLock->newRequest(request);
         return LOCK_OK;
     }
 
     // For the first lock with a non-intent mode, migrate requests from partitioned lock heads
+    //如果以前全是意向锁，也就是以前全是由partitions分区管理，现在该资源类型有其他锁进来，例如MODE_X MODE_S
+    // 则需要改为_lockBuckets统一管理，因此以前由_partitions管理的意向锁需要全部合并到_lockBuckets管理
     if (lock->partitioned()) {
         lock->migratePartitionedLockHeads();
     }
@@ -666,6 +690,9 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     return lock->newRequest(request);
 }
 
+
+//说明第一次获取ResourceId资源的某种锁信息未成功，然后等待超时后，释放锁信息，重新获取锁，
+// 配合LockerImpl<>::lockComplete阅读(感觉只可能MMAP引擎会走到这里面来)
 //LockerImpl<>::lockBegin
 LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode newMode) {
     // If we are here, we already hold the lock in some mode. In order to keep it simple, we do
@@ -680,6 +707,7 @@ LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode
     // by the current mode. It is safe to do this without locking, because 1) all calls for the
     // same lock request must be done on the same thread and 2) if there are lock requests
     // hanging off a given LockHead, then this lock will never disappear.
+    //
     if ((LockConflictsTable[request->mode] | LockConflictsTable[newMode]) ==
         LockConflictsTable[request->mode]) {
         return LOCK_OK;
@@ -743,17 +771,21 @@ LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode
     }
 }
 
+//LockerImpl<>::_unlockImpl调用
 bool LockManager::unlock(LockRequest* request) {
     // Fast path for decrementing multiple references of the same lock. It is safe to do this
     // without locking, because 1) all calls for the same lock request must be done on the same
     // thread and 2) if there are lock requests hanging of a given LockHead, then this lock
     // will never disappear.
     invariant(request->recursiveCount > 0);
+	//
     request->recursiveCount--;
     if ((request->status == LockRequest::STATUS_GRANTED) && (request->recursiveCount > 0)) {
         return false;
     }
 
+	//如果是_partitions方式管理着意向锁信息，该资源信息对应的锁只有意向锁，这种方式比较简单
+	//  直接从partitionedLock->grantedList剔除该request即可
     if (request->partitioned) {
         // Unlocking a lock that was acquired as partitioned. The lock request may since have
         // moved to the lock head, but there is no safe way to find out without synchronizing
@@ -763,6 +795,7 @@ bool LockManager::unlock(LockRequest* request) {
         Partition* partition = _getPartition(request);
         stdx::lock_guard<SimpleMutex> scopedLock(partition->mutex);
         //  Fast path: still partitioned.
+        //直接从partitionedLock列表中剔除该request
         if (request->partitionedLock) {
             request->partitionedLock->grantedList.remove(request);
             return true;
@@ -1502,13 +1535,12 @@ const char* legacyModeName(LockMode mode) {
     return LegacyLockModeNames[mode];
 }
 
+
+
+
+//注意isModeCovered和conflicts的区别
+
 //也就是LockConflictsTable的coveringMode是否包含coveringMode
-//也就是mode是否和mode不相容
-
-//例如isModeCovered(MODE_IS, MODE_X)不相容，因为LockConflictsTable[MODE_X]包含LockConflictsTable[MODE_IS]
-//LockConflictsTable[MODE_X]包含所有的其他几种类型，所以和其他几个mode都不相容
-
-//两种锁是否相容，如果不可以相容，返回true
 bool isModeCovered(LockMode mode, LockMode coveringMode) {
     return (LockConflictsTable[coveringMode] | LockConflictsTable[mode]) ==
         LockConflictsTable[coveringMode];
