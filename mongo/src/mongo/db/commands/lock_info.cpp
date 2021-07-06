@@ -113,6 +113,8 @@ featdoc:PRIMARY> db.runCommand({lockInfo: 1})
                                         "convertMode" : "NONE",
                                         "enqueueAtFront" : false,
                                         "compatibleFirst" : false,
+
+                                        //client::reportState 
                                         "desc" : "conn59",
                                         "connectionId" : 59,
                                         "client" : "172.xx.xx.29:43019",
@@ -165,6 +167,7 @@ public:
              BSONObjBuilder& result) {
         std::map<LockerId, BSONObj> lockToClientMap;
 
+		//遍历获取当前所有的client信息
         for (ServiceContext::LockedClientsCursor cursor(opCtx->getClient()->getServiceContext());
              Client* client = cursor.next();) {
             invariant(client);
@@ -173,10 +176,11 @@ public:
             const OperationContext* clientOpCtx = client->getOperationContext();
 
             // Operation context specific information
+            //获取客户端信息
             if (clientOpCtx) {
                 BSONObjBuilder infoBuilder;
                 // The client information   
-                //CurOp::reportState
+                //client::reportState  
                 client->reportState(infoBuilder);
 
                 infoBuilder.append("opid", clientOpCtx->getOpID());

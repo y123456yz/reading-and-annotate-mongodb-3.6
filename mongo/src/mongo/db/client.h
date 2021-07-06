@@ -117,6 +117,7 @@ public:
     /**
      * Returns the ServiceContext that owns this client session context.
      */
+    //参考CmdLockInfo::run，遍历获取所有的client信息
     ServiceContext* getServiceContext() const {
         return _serviceContext;
     }

@@ -26,6 +26,88 @@
  *    it in the license file.
  */
 
+/*
+featdoc:PRIMARY> use admin
+switched to db admin
+featdoc:PRIMARY> db.runCommand({lockInfo: 1})
+{
+        "lockInfo" : [
+                {
+                        "resourceId" : "{2305843009213693953: Global, 1}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn65",
+                                        "connectionId" : 65,
+                                        "client" : "127.0.0.1:52223",
+                                        "opid" : 1414386
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{9695931499680953263: Collection, 472559462826177455}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn60",
+                                        "connectionId" : 60,
+                                        "client" : "172.xx.xx.29:43066",
+                                        "opid" : 1412163
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn59",
+                                        "connectionId" : 59,
+                                        "client" : "172.xx.xx.29:43019",
+                                        "opid" : 1412143
+                                }
+                        ],
+                        "pending" : [ ]
+                },
+                {
+                        "resourceId" : "{8576409733318454219: Database, 1658880705677372363}",
+                        "granted" : [
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn60",
+                                        "connectionId" : 60,
+                                        "client" : "172.xx.xx.29:43066",
+                                        "opid" : 1412163
+                                },
+                                {
+                                        "mode" : "IS",
+                                        "convertMode" : "NONE",
+                                        "enqueueAtFront" : false,
+                                        "compatibleFirst" : false,
+                                        "desc" : "conn59",
+                                        "connectionId" : 59,
+                                        "client" : "172.xx.xx.29:43019",
+                                        "opid" : 1412143
+                                }
+                        ],
+                        "pending" : [ ]
+                }
+        ],
+        "ok" : 1
+}
+featdoc:PRIMARY>
+//要有流量的时候才会有输出，才会有锁信息
+*/
+
+
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
 
 #include "mongo/platform/basic.h"
@@ -240,13 +322,13 @@ struct LockHead { //LockHead::newRequest
         
         //如果锁请求与该锁目前的grantModes冲突，则进入等待
         if (conflicts(request->mode, grantedModes) ||
-			//检验锁资源上的compatibleFirstCount, 该变量可以解释为：锁资源的GrantList中compatibleFirst=true的
-			//属性的锁请求的元素的个数。如果GrantList中无compatibleFirst的锁请求，且conflictList非空
-			//（有等待的锁请求），则将请求加入到conflictList中。
+		//检验锁资源上的compatibleFirstCount, 该变量可以解释为：锁资源的GrantList中compatibleFirst=true的
+		//属性的锁请求的元素的个数。如果GrantList中无compatibleFirst的锁请求，且conflictList非空
+		//（有等待的锁请求），则将请求加入到conflictList中。
 
-			//和grantedMode不冲突，但和conflictModes冲突，依然进入等待,这样可以避免如果只判断grantedMode，则新进来的IX IS等就会加入
-			//grantedMode,这样就会有大量IX IS锁加入到grantedMode，conflictModes就很难等到从conflictList移动到grantedLIST中，conflictList
-			//中的请求就很可能会饿死
+		//和grantedMode不冲突，但和conflictModes冲突，依然进入等待,这样可以避免如果只判断grantedMode，则新进来的IX IS等就会加入
+		//grantedMode,这样就会有大量IX IS锁加入到grantedMode，conflictModes就很难等到从conflictList移动到grantedLIST中，conflictList
+		//中的请求就很可能会饿死
 			(!compatibleFirstCount && conflicts(request->mode, conflictModes))) {
             //状态置位STATUS_WAITING
             request->status = LockRequest::STATUS_WAITING;
@@ -274,6 +356,8 @@ struct LockHead { //LockHead::newRequest
 		//授权模式置位
         incGrantedModeCount(request->mode);
 
+		//如果这个锁类型为MODE_S或者MODE_X，则compatibleFirstCount自增
+		//也就是grantedList列表中锁类型为MODE_S或者MODE_X的数量总和
         if (request->compatibleFirst) {
             compatibleFirstCount++;
         }
@@ -357,6 +441,7 @@ struct LockHead { //LockHead::newRequest
     // Bit-mask of the granted + converting modes on the granted queue. Maintained in lock-step
     // with the grantedCounts array.
     //默认为0， 赋值见incGrantedModeCount  decGrantedModeCount
+    //位图，每位对应一个mode，为1说明链表中至少有一个该mode锁存在
     uint32_t grantedModes;
 
     //
@@ -403,6 +488,7 @@ struct LockHead { //LockHead::newRequest
     // compatible-first.
     //newRequest自增，LockManager::unlock中自减 
     //锁资源的GrantList中compatibleFirst=true的属性的锁请求的元素的个数。
+    //也就是grantedList列表中锁类型为MODE_S或者MODE_X的数量总和，参考newRequest
     uint32_t compatibleFirstCount;
 };
 
@@ -434,6 +520,7 @@ struct PartitionedLockHead {  //LockManager::Partition::findOrInsert中new
     }
 
 	//把LockRequest对应的锁添加到grantedList
+	//LockManager::lock调用
     void newRequest(LockRequest* request) {
         invariant(request->partitioned);
         invariant(!request->lock);
@@ -528,17 +615,20 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     // For intent modes, try the PartitionedLockHead
     if (request->partitioned) { //如果是意向锁
     	//根据lock id求余，该lock应该存入那个_partitions分区槽
+    	//在该函数后面的逻辑中添加PartitionedLockHead到分区槽中
         Partition* partition = _getPartition(request); //查找对应分区槽
         stdx::lock_guard<SimpleMutex> scopedLock(partition->mutex);
 
         // Fast path for intent locks   
-        //Partition::find  该resID对应ResourceType类型的锁是否在partition分区槽中存在，如果存在，在返回对应的PartitionedLockHead
+        //该resID对应ResourceType类型的锁是否在partition分区槽中存在，如果存在，在返回对应的PartitionedLockHead
+        //LockManager::Partition::find
         PartitionedLockHead* partitionedLock = partition->find(resId);
 
         if (partitionedLock) { //说明该ResourceId类型在对应的partition分区中
         	//把request添加到PartitionedLockHead.grantedList链表
         	//一个锁请求，如果和GrantList无冲突，就将其添加到GrantList中，并加锁成功，否则就加到ConflictList中
-            partitionedLock->newRequest(request); //PartitionedLockHead::newRequest
+			//PartitionedLockHead::newRequest
+			partitionedLock->newRequest(request); //PartitionedLockHead::newRequest
             return LOCK_OK;
         }
         // Unsuccessful: there was no PartitionedLockHead yet, so use regular LockHead.
@@ -551,9 +641,11 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
     stdx::lock_guard<SimpleMutex> scopedLock(bucket->mutex);
 
 	//LockBucket::findOrInsert
+	//找到直接返回，没找到则insert一条LockHead
     LockHead* lock = bucket->findOrInsert(resId);
 
     // Start a partitioned lock if possible
+    //该request对应锁为意向锁、该
     if (request->partitioned && !(lock->grantedModes & (~intentModes)) && !lock->conflictModes) {
         Partition* partition = _getPartition(request);
         stdx::lock_guard<SimpleMutex> scopedLock(partition->mutex);
@@ -581,6 +673,7 @@ LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode
     invariant(request->status == LockRequest::STATUS_GRANTED);
     invariant(request->recursiveCount > 0);
 
+	
     request->recursiveCount++;
 
     // Fast path for acquiring the same lock multiple times in modes, which are already covered
@@ -634,6 +727,7 @@ LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode
     // T1 in S mode, instead of block, which would otherwise cause deadlock.
     if (conflicts(newMode, grantedModesWithoutCurrentRequest)) {
         request->status = LockRequest::STATUS_CONVERTING;
+		//把引起该mode冲突的
         request->convertMode = newMode;
 
         lock->conversionsCount++;
@@ -727,6 +821,7 @@ bool LockManager::unlock(LockRequest* request) {
     return (request->recursiveCount == 0);
 }
 
+//LockerImpl<>::downgrade中调用
 void LockManager::downgrade(LockRequest* request, LockMode newMode) {
     invariant(request->lock);
     invariant(request->status == LockRequest::STATUS_GRANTED);
@@ -928,6 +1023,7 @@ void LockManager::dump() const {
     }
 }
 
+//把该桶中对应map表中的所有锁信息打印出来
 //LockManager::getLockInfoBSON    db.runCommand({lockInfo: 1})触发打印
 void LockManager::_dumpBucketToBSON(const std::map<LockerId, BSONObj>& lockToClientMap,
                                     const LockBucket* bucket,
@@ -961,6 +1057,7 @@ void LockManager::_dumpBucketToBSON(const std::map<LockerId, BSONObj>& lockToCli
     }
 }
 
+//上面的LockManager::_dumpBucketToBSON调用
 void LockManager::_buildBucketBSON(const LockRequest* iter,
                                    const std::map<LockerId, BSONObj>& lockToClientMap,
                                    const LockBucket* bucket,
@@ -1071,6 +1168,7 @@ void LockManager::getLockInfoBSON(const std::map<LockerId, BSONObj>& lockToClien
         _cleanupUnusedLocksInBucket(bucket);
         if (!bucket->data.empty()) { //输出该bucket上拥有mode信息的节点信息
             BSONObjBuilder b;
+			//把该桶中对应map表中的所有锁信息打印出来
             _dumpBucketToBSON(lockToClientMap, bucket, &b);
             lockInfo.append(b.obj());
         }
@@ -1148,7 +1246,7 @@ PartitionedLockHead* LockManager::Partition::findOrInsert(ResourceId resId) {
 }
 
 //LockManager._lockBuckets[]为该类型
-//LockManager::lock
+//LockManager::lock  找到直接返回，没找到则insert一条LockHead
 LockHead* LockManager::LockBucket::findOrInsert(ResourceId resId) {
     LockHead* lock;
     Map::iterator it = data.find(resId);

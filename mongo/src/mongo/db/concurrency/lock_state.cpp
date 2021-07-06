@@ -360,6 +360,10 @@ TicketHolder* ticketHolders[LockModesCount] = {};
  *     MODE_X       |      +        -         -        -        -    |  加了MODE_X锁后，读写都不相容
  * 官方文档https://docs.mongodb.com/manual/faq/concurrency/
  */
+
+//TicketHolder openWriteTransaction(128); 
+//TicketHolder openReadTransaction(128);
+
 //WiredTigerKVEngine::WiredTigerKVEngine->Locker::setGlobalThrottling
 /* static */  //读写锁默认由128的信号量实现，获取锁信号量-1，释放锁信号量加1
 void Locker::setGlobalThrottling(class TicketHolder* reading, class TicketHolder* writing) {
@@ -872,11 +876,12 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
 
 
     LockRequestsMap::Iterator it = _requests.find(resId); 
-    if (!it) { //如果resId不在_requests map表中，则添加进去
+    if (!it) { //如果resId不在_requests map表中，则生成一个LockRequest添加进去
         scoped_spinlock scopedLock(_lock);
+		//每个resId锁资源对应生成一个LockRequest，添加到_requests中
         LockRequestsMap::Iterator itNew = _requests.insert(resId);
 		
-		//初始化一个struct LockRequest结构	 一个locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
+		//初始化一个struct LockRequest结构	 一个ResourceId对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
         itNew->initNew(this, &_notify); //LockRequest::initNew
 		
 		//获取LockRequest 上面的LockRequest::initNew生成
@@ -898,7 +903,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     // Give priority to the full modes for global, parallel batch writer mode,
     // and flush lock so we don't stall global operations such as shutdown or flush.
     const ResourceType resType = resId.getType();
-	//全局锁
+	//全局资源类型并且锁类型为非意向锁(MODE_S  MODE_X)则compatibleFirst为true
     if (resType == RESOURCE_GLOBAL || (IsForMMAPV1 && resId == resourceIdMMAPV1Flush)) {
         if (mode == MODE_S || mode == MODE_X) {
             request->enqueueAtFront = true;
@@ -922,6 +927,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     // otherwise we might reset state if the lock becomes granted very fast.
     _notify.clear();
 
+	//是一个新的资源类型锁，则LockManager::lock，如果是_requests已有的则是LockManager::lock
     LockResult result = isNew ? globalLockManager.lock(resId, request, mode)  //LockManager::lock
                               : globalLockManager.convert(resId, request, mode); //LockManager::convert
 
@@ -1018,7 +1024,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
     if (yieldFlushLock) {
         // We cannot obey the timeout here, because it is not correct to return from the lock
         // request with the flush lock released.
-        //注意这里重新上锁
+        //注意这里重新上锁，类似递归过程
         invariant(LOCK_OK == lock(resourceIdMMAPV1Flush, _getModeForMMAPV1FlushLock()));
     }
 
@@ -1067,7 +1073,11 @@ LockMode LockerImpl<IsForMMAPV1>::_getModeForMMAPV1FlushLock() const {
 
 template <bool IsForMMAPV1>
 bool LockerImpl<IsForMMAPV1>::isGlobalLockedRecursively() {
+	//获取resourceIdGlobal对应的LockRequest
     auto globalLockRequest = _requests.find(resourceIdGlobal);
+
+	//配合LockerImpl<>::lockComplete阅读
+	//找到对应的LockRequest，并且recursiveCount引用计数大于1，说明存在递归上锁过程，例如lock等待超时
     return !globalLockRequest.finished() && globalLockRequest->recursiveCount > 1;
 }
 

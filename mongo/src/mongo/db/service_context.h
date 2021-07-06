@@ -177,6 +177,7 @@ public:
      *
      * Lifetimes of this type are synchronized with client creation and destruction.
      */ //记录属于某个ServiceContext的在线客户端的游标信息，这种类型的生命周期与客户端创建和销毁同步
+     //参考CmdLockInfo::run，遍历获取所有的client信息
     class LockedClientsCursor {
     public:
         /**

@@ -68,6 +68,8 @@ mongodb-3.6源码注释分析，持续更新
 |17|[300 条数据变更引发的血案 - 记某十亿级核心 mongodb 集群部分请求不可用故障踩坑记](https://xie.infoq.cn/article/5932858d57db13d43a8b8d62a)|  
 |18|[记十亿级Es数据迁移mongodb成本节省及性能优化实践](https://zhuanlan.zhihu.com/p/373351625)|  
 |19|[千亿级数据迁移mongodb成本节省及性能优化实践](https://zhuanlan.zhihu.com/p/376679225)|  
+|20|[千亿级数据迁移 mongodb 成本节省及性能优化实践 (附性能对比质疑解答)](https://xie.infoq.cn/article/2bc78d36adef6832ada8ea7c5)|  
+|21|[记某百亿级 mongodb 集群数据过期性能优化实践](https://xie.infoq.cn/article/98daf7330a3107fa0bf1edc9c)|  
 |27|[mongodb内核源码实现、性能调优、最佳运维实践系列-数百万行mongodb内核源码阅读经验分享](https://my.oschina.net/u/4087916/blog/4696104)|  
 |28|[mongodb内核源码实现、性能调优、最佳运维实践系列-mongodb网络传输层模块源码实现一](https://my.oschina.net/u/4087916/blog/4295038)|
 |29|[mongodb内核源码实现、性能调优、最佳运维实践系列-mongodb网络传输层模块源码实现二](https://my.oschina.net/u/4087916/blog/4674521)|

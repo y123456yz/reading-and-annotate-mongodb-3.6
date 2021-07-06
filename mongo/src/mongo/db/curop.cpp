@@ -354,8 +354,7 @@ void appendAsObjOrString(StringData name,
 }
 }  // namespace
 
-////use admin;  db.runCommand({lockInfo: 1})
-//CmdLockInfo::run
+
 void CurOp::reportState(BSONObjBuilder* builder, bool truncateOps) {
     if (_start) {
         builder->append("secs_running", durationCount<Seconds>(elapsedTimeTotal()));

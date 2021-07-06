@@ -115,6 +115,7 @@ Client::Client(std::string desc, ServiceContext* serviceContext, transport::Sess
       _connectionId(_session ? _session->id() : 0),
       _prng(generateSeed(_desc)) {}
 
+//client信息    CmdLockInfo::run调用
 void Client::reportState(BSONObjBuilder& builder) {
     builder.append("desc", desc());
 

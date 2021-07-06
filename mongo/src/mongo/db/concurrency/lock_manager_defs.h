@@ -683,7 +683,8 @@ public:
  * LockRequest属于Locker类，它控制它们的生存期。但是，在LockManager上不应该删除它们(请参阅lock/unlock方法)。
  */ 
  //LockerImpl._requests map表为该类型, ResourceId存入到该map表中  
-//LockRequest::initNew中构造该类
+//LockRequest::initNew中构造该类 
+//每个resId锁资源对应生成一个LockRequest，添加到LockerImpl._requests中，参考LockerImpl<>::lockBegin    
 struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
     enum Status { //status的字符串转换见LockRequestStatusNames
         STATUS_NEW, //初始状态
@@ -725,6 +726,8 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Written at construction time by Locker
     // Read by LockManager on any thread
     // No synchronization
+    //LockRequest::initNew中初始化为false，LockerImpl<>::lockBegin中赋值为true
+    //LockerImpl<>::lockBegin中全局资源类型并且锁类型为非意向锁(MODE_S  MODE_X)则enqueueAtFront为true
     bool enqueueAtFront; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When this request is granted and as long as it is on the granted queue, the particular
@@ -736,6 +739,8 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Read by LockManager on any thread
     // No synchronization 
     //全局锁，并且锁类型为mode == MODE_S || mode == MODE_X
+    //LockRequest::initNew中初始化为false，LockerImpl<>::lockBegin中赋值为true
+    //LockerImpl<>::lockBegin中全局资源类型并且锁类型为非意向锁(MODE_S  MODE_X)则compatibleFirst为true
     bool compatibleFirst; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When set, an attempt is made to execute this request using partitioned lockheads. This speeds
@@ -756,6 +761,12 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Read by LockManager on Locker thread
     // Read by Locker on Locker thread
     // No synchronization
+
+    //LockRequest::initNew初始化为1,如果大于1说明该类型资源锁存在递归调用情况，
+    //配合LockerImpl<>::lockComplete阅读
+	
+    //LockManager::convert中自增
+	//LockManager::unlock自减
     unsigned recursiveCount;
 
     // Pointer to the lock to which this request belongs, or null if this request has not yet been

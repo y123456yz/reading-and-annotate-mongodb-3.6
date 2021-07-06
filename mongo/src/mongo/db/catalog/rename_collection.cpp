@@ -88,8 +88,10 @@ Status renameCollectionCommon(OperationContext* opCtx,
     // If the rename is known not to be a cross-database rename, just a database lock suffices.
     auto lockState = opCtx->lockState();
     if (source.db() == target.db())
+		//库X锁，全局MODE_IX锁
         dbWriteLock.emplace(opCtx, source.db(), MODE_X);
     else if (!lockState->isW())
+		//全局X锁
         globalWriteLock.emplace(opCtx);
 
     // We stay in source context the whole time. This is mostly to set the CurOp namespace.
@@ -344,6 +346,8 @@ Status renameCollectionCommon(OperationContext* opCtx,
         // collection locks.
         // Collection locks must be obtained while holding the global lock to avoid any possibility
         // of a deadlock.
+
+		//表锁
         AutoGetCollectionForRead autoSourceColl(opCtx, source);
         AutoGetCollection autoTmpColl(opCtx, tmpName, MODE_IX);
         ctx.reset();

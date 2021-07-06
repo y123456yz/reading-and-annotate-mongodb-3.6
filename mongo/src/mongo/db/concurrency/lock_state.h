@@ -225,6 +225,7 @@ private:
     //主要用于对下面的_requests加锁
     mutable SpinLock _lock;
     //往map表添加赋值见LockerImpl<>::lockBegin  所有Locker都记录在该map表中
+    //每个resId锁资源对应生成一个LockRequest，添加到_requests中
     LockRequestsMap _requests;
 
     // Reuse the notification object across requests so we don't have to create a new mutex
