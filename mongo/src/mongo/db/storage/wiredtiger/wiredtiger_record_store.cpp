@@ -1042,6 +1042,7 @@ int64_t WiredTigerRecordStore::cappedDeleteAsNeeded_inlock(OperationContext* opC
     return docsRemoved;
 }
 
+//_deleteExcessDocumentsÖÐµ÷ÓÃ
 bool WiredTigerRecordStore::yieldAndAwaitOplogDeletionRequest(OperationContext* opCtx) {
     // Create another reference to the oplog stones while holding a lock on the collection to
     // prevent it from being destructed.

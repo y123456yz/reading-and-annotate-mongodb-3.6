@@ -234,6 +234,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
       //全局锁初始化构造  Lock::GlobalLock::GlobalLock
       //全局锁对应的资源类型为resourceIdGlobal，注意这个是个全局的资源
       //注意库锁对应的全局锁类型这里会做转换，如果库锁不是共享锁，则全局锁上排他锁IX
+      //注意这里超时时间为UINT_MAX
       _globalLock(opCtx, isSharedLockMode(_mode) ? MODE_IS : MODE_IX, UINT_MAX) {
     massert(28539, "need a valid database name", !db.empty() && nsIsDbOnly(db));
 

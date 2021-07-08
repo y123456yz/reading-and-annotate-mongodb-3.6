@@ -688,9 +688,9 @@ public:
 struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结构可以让所有locker链接起来
     enum Status { //status的字符串转换见LockRequestStatusNames
         STATUS_NEW, //初始状态
-        STATUS_GRANTED, //授权状态，赋值见newRequest，进入授权列表
-        STATUS_WAITING, //冲突，需要等待，赋值见newRequest
-        STATUS_CONVERTING,
+        STATUS_GRANTED, //授权状态，赋值见newRequest，进入grantedCounts授权列表
+        STATUS_WAITING, //冲突，需要等待，赋值见newRequest，进入conflictList队列
+        STATUS_CONVERTING, //锁模式发生转换，见LockManager::convert，还是进入授权队列
         
         // Counts the rest. Always insert new status types above this entry.
         //见LockRequestStatusNames
@@ -728,6 +728,7 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // No synchronization
     //LockRequest::initNew中初始化为false，LockerImpl<>::lockBegin中赋值为true
     //LockerImpl<>::lockBegin中全局资源类型并且锁类型为非意向锁(MODE_S  MODE_X)则enqueueAtFront为true
+    //生效见LockHead::newRequest，如果满足上面的条件，则添加到conflictList冲突队列头部，这样可以优先处理
     bool enqueueAtFront; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When this request is granted and as long as it is on the granted queue, the particular
@@ -740,7 +741,11 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // No synchronization 
     //全局锁，并且锁类型为mode == MODE_S || mode == MODE_X
     //LockRequest::initNew中初始化为false，LockerImpl<>::lockBegin中赋值为true
+    //真正生效见LockHead::newRequest，进行compatibleFirstCount计数
     //LockerImpl<>::lockBegin中全局资源类型并且锁类型为非意向锁(MODE_S  MODE_X)则compatibleFirst为true
+
+    //compatibleFirstCount为0说明grantedList队列中没有全局的MODE_X和MODE_S两种锁，这种情况即使和grantedList
+	// 不冲突也不是进入grantedList队列，而是进入conflictList冲突队列
     bool compatibleFirst; //LockerImpl<IsForMMAPV1>::lockBegin中置为true
 
     // When set, an attempt is made to execute this request using partitioned lockheads. This speeds
@@ -824,7 +829,7 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Read by LockManager on any thread
     // Protected by LockHead bucket's mutex
 
-    //只会在LockManager::convert中置为ture
+    //只会在LockManager::convert中置为ture，锁类型发生了转换，转换后的新mode
     LockMode convertMode;
 };
 

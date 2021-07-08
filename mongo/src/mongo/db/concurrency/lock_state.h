@@ -244,7 +244,9 @@ private:
     // work completes. Value of 0 means we are not inside a write unit of work.
     //LockerImpl<>::beginWriteUnitOfWork()中自增，LockerImpl<>::endWriteUnitOfWork()自减，
     //该类初始化的适合赋值为0
+    //LockerImpl<>::beginWriteUnitOfWork()自增，表示事务引用计数，大于0说明当前线程对应请求处于事务处理中
     int _wuowNestingLevel;
+    //LockerImpl<>::unlock 需要延迟unlock的锁添加到_resourcesToUnlockAtEndOfUnitOfWork队列
     std::queue<ResourceId> _resourcesToUnlockAtEndOfUnitOfWork;
 
     // Mode for which the Locker acquired a ticket, or MODE_NONE if no ticket was acquired.

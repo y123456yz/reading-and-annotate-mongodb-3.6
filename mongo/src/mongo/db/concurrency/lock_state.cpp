@@ -212,9 +212,11 @@ PartitionedInstanceWideLockStats globalStats; //全局lock统计
  * delay release of exclusive locks (locks that are for write operations) in order to ensure
  * that the data they protect is committed successfully.
  */
+//LockerImpl<>::unlock中调用
 bool shouldDelayUnlock(ResourceId resId, LockMode mode) {
     // Global and flush lock are not used to protect transactional resources and as such, they
     // need to be acquired and released when requested.
+    //全局锁和刷新锁不用于保护事务资源，因此需要在请求时获取和释放这些资源。
     switch (resId.getType()) {
         case RESOURCE_GLOBAL:
         case RESOURCE_MMAPV1_FLUSH:
@@ -569,6 +571,7 @@ bool LockerImpl<IsForMMAPV1>::unlockGlobal() {
     return true;
 }
 
+//配合参考insertDocuments  makeCollection    事务封装
 //WriteUnitOfWork中调用
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::beginWriteUnitOfWork() {
@@ -579,6 +582,7 @@ void LockerImpl<IsForMMAPV1>::beginWriteUnitOfWork() {
     _wuowNestingLevel++;
 }
 
+//配合参考insertDocuments  makeCollection    事务封装
 //~WriteUnitOfWork()  WriteUnitOfWork::commit调用
 template <bool IsForMMAPV1>
 void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
@@ -588,7 +592,7 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
         // Don't do anything unless leaving outermost WUOW.
         return;
     }
-
+	
     while (!_resourcesToUnlockAtEndOfUnitOfWork.empty()) {
         unlock(_resourcesToUnlockAtEndOfUnitOfWork.front());
         _resourcesToUnlockAtEndOfUnitOfWork.pop();
@@ -616,6 +620,7 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lock(ResourceId resId,
                                          LockMode mode,
+                                         //Locker类中默认赋值为Milliseconds::max()，不超时
                                          Milliseconds timeout,
                                          bool checkDeadlock) {
     const LockResult result = lockBegin(resId, mode);
@@ -638,15 +643,24 @@ void LockerImpl<IsForMMAPV1>::downgrade(ResourceId resId, LockMode newMode) {
     globalLockManager.downgrade(it.objAddr(), newMode);
 }
 
-//LockerImpl<IsForMMAPV1>::lock和LockerImpl<IsForMMAPV1>::unlock对应
+//LockerImpl<>::lock和LockerImpl<>::unlock对应
 template <bool IsForMMAPV1>
+//注意LockerImpl<>::unlock 和 LockerImpl<>::_unlockImpl的区别
+//	LockerImpl<>::unlock相比_unlockImpl增加了锁释放前的事务处理判断，判断释放需要延迟等到事务
+//	提交后释放，确认事务提交完成后释放锁，从而起一个保护作用
 bool LockerImpl<IsForMMAPV1>::unlock(ResourceId resId) {
     LockRequestsMap::Iterator it = _requests.find(resId);
-    if (inAWriteUnitOfWork() && shouldDelayUnlock(it.key(), (it->mode))) {
+	//Lock_state.h中_wuowNestingLevel>0说明在事务处理中，这时候需要进一步确定是否需要延迟解锁
+	//如果当前请求在事务处理中并且资源类型为库锁、表锁，并且对应的锁类型为X或者IX，
+	//例如insert场景 insertDocuments中事务写，这类资源信息的unlock需要延迟到LockerImpl<>::endWriteUnitOfWork()
+	// 事务提交后进行锁资源unlock释放
+	if (inAWriteUnitOfWork() && shouldDelayUnlock(it.key(), (it->mode))) {
+		//需要延迟unlock的锁添加到_resourcesToUnlockAtEndOfUnitOfWork队列
         _resourcesToUnlockAtEndOfUnitOfWork.push(it.key());
         return false;
     }
 
+	
     return _unlockImpl(&it);
 }
 
@@ -1039,9 +1053,13 @@ LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
 }
 
 template <bool IsForMMAPV1>
+//注意LockerImpl<>::unlock 和 LockerImpl<>::_unlockImpl的区别
+//  LockerImpl<>::unlock相比_unlockImpl增加了锁释放前的事务处理判断，判断释放需要延迟等到事务
+//  提交后释放，确认事务提交完成后释放锁，从而起一个保护作用
 bool LockerImpl<IsForMMAPV1>::_unlockImpl(LockRequestsMap::Iterator* it) {
-	//LockManager::unlock
+	//LockManager::unlock释放该资源信息对应的LockRequest
     if (globalLockManager.unlock(it->objAddr())) {
+		//如果是全局资源信息锁，则需要做全局并发活跃性统计
         if (it->key() == resourceIdGlobal) {
             invariant(_modeForTicket != MODE_NONE);
             auto holder = ticketHolders[_modeForTicket];

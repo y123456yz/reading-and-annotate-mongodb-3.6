@@ -37,8 +37,12 @@ featdoc:PRIMARY> db.runCommand({lockInfo: 1})
                         "granted" : [
                                 {
                                         "mode" : "IS",
+                                        //说明锁类型发生过转换
                                         "convertMode" : "NONE",
-                                        "enqueueAtFront" : false,
+                                        //添加到conflictList冲突队列头部，这样可以优先处理，后面当grantedList中的锁执行完毕，然后调度conflictList执行
+                                        "enqueueAtFront" : false,  
+								  //compatibleFirstCount为0说明grantedList队列中没有全局的MODE_X和MODE_S两种锁，这种情况即使和grantedList
+								  // 不冲突也不是进入grantedList队列，而是进入conflictList冲突队列
                                         "compatibleFirst" : false,
                                         "desc" : "conn65",
                                         "connectionId" : 65,
@@ -312,7 +316,7 @@ struct LockHead { //LockHead::newRequest
 	
 	为了解决这个问题，MongoDB中为加锁操作增加了compatibleFirst参数。 
 	*/ 
-	//LockManager::lock  LockHead::migratePartitionedLockHeads()
+	//LockManager::lock  LockHead::migratePartitionedLockHeads()  
     LockResult newRequest(LockRequest* request) {
         invariant(!request->partitionedLock);
         request->lock = this;
@@ -335,7 +339,8 @@ struct LockHead { //LockHead::newRequest
 		//grantedMode,这样就会有大量IX IS锁加入到grantedMode，conflictModes就很难等到从conflictList移动到grantedLIST中，conflictList
 		//中的请求就很可能会饿死
 
-		//compatibleFirstCount为0说明grantedList队列中没有全局的MODE_X和MODE_S两种锁
+		//compatibleFirstCount为0说明grantedList队列中没有全局的MODE_X和MODE_S两种锁，这种情况即使和grantedList
+		// 不冲突也不是进入grantedList队列，而是进入conflictList冲突队列
 			(!compatibleFirstCount && conflicts(request->mode, conflictModes))) {
             //状态置位STATUS_WAITING
             request->status = LockRequest::STATUS_WAITING;
@@ -358,13 +363,13 @@ struct LockHead { //LockHead::newRequest
         // No conflict, new request
         request->status = LockRequest::STATUS_GRANTED;
 
-		//添加到授权链表
+		//添加到授权链表尾部
         grantedList.push_back(request);
 		//授权模式置位
         incGrantedModeCount(request->mode);
 
-		//如果这个锁类型为MODE_S或者MODE_X，则compatibleFirstCount自增
-		//也就是grantedList列表中资源类型为RESOURCE_GLOBAL全局类型，并且锁类型为MODE_S或者MODE_X的数量总和
+		//如果资源类型为RESOURCE_GLOBAL全局资源类型并且锁类型为MODE_S或者MODE_X，则compatibleFirst为ture
+		//compatibleFirstCount也就是grantedList列表中资源类型为RESOURCE_GLOBAL全局类型，并且锁类型为MODE_S或者MODE_X的数量总和
         if (request->compatibleFirst) {
             compatibleFirstCount++;
         }
@@ -489,6 +494,7 @@ struct LockHead { //LockHead::newRequest
     // STATUS_CONVERTING). This is an optimization for unlocking in that we do not need to
     // check the granted queue for requests in STATUS_CONVERTING if this count is zero. This
     // saves cycles in the regular case and only burdens the less-frequent lock upgrade case.
+    //锁释放发生转换，这里进行计数，生效见LockManager::_onLockModeChanged
     uint32_t conversionsCount;
 
     // Counts the number of requests on the granted queue, which have requested that the policy
@@ -691,7 +697,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
 }
 
 
-//说明第一次获取ResourceId资源的某种锁信息未成功，然后等待超时后，释放锁信息，重新获取锁，
+
 // 配合LockerImpl<>::lockComplete阅读(LockerImpl<>::restoreLockState中可能会形成递归调用)
 //LockerImpl<>::lockBegin
 LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode newMode) {
@@ -845,6 +851,7 @@ bool LockManager::unlock(LockRequest* request) {
 
         request->convertMode = MODE_NONE;
 
+		//从冲突队列选择新的锁类型加入候选队列
         _onLockModeChanged(lock, lock->grantedCounts[request->convertMode] == 0);
     } else {
         // Invalid request status
@@ -916,9 +923,12 @@ void LockManager::_cleanupUnusedLocksInBucket(LockBucket* bucket) {
 }
 
 //LockManager::unlock  LockManager::downgrade调用  唤醒之前LOCK_WAIT的部分等待线程
+//从冲突队列选择新的锁类型加入候选队列
 void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
     // Unblock any converting requests (because conversions are still counted as granted and
     // are on the granted queue).
+
+	//convert相关锁处理，配合LockManager::convert
     for (LockRequest* iter = lock->grantedList._front;
          (iter != nullptr) && (lock->conversionsCount > 0);
          iter = iter->next) {
@@ -979,6 +989,7 @@ void LockManager::_onLockModeChanged(LockHead* lock, bool checkConflictQueue) {
     LockRequest* iterNext = nullptr;
 
     bool newlyCompatibleFirst = false;  // Set on enabling compatibleFirst mode.
+    //从冲突队列选择新的锁类型加入候选队列
     for (LockRequest* iter = lock->conflictList._front; (iter != nullptr) && checkConflictQueue;
          iter = iterNext) {
         invariant(iter->status == LockRequest::STATUS_WAITING);
@@ -1209,7 +1220,7 @@ void LockManager::getLockInfoBSON(const std::map<LockerId, BSONObj>& lockToClien
     result->append("lockInfo", lockInfo.arr());
 }
 
-//mmap存储引擎才会用这个
+
 void LockManager::_dumpBucket(const LockBucket* bucket) const {
     for (LockBucket::Map::const_iterator it = bucket->data.begin(); it != bucket->data.end();
          it++) {
