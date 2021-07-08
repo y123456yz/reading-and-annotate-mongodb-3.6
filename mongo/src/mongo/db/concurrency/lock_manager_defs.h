@@ -767,7 +767,7 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
 	
     //LockManager::convert中自增
 	//LockManager::unlock自减
-    unsigned recursiveCount; //感觉只会对MMAP有效, WT引擎初始化为1，unlock的适合释放锁减为0
+    unsigned recursiveCount;   
 
     // Pointer to the lock to which this request belongs, or null if this request has not yet been
     // assigned to a lock or if it belongs to the PartitionedLockHead for locker (in which case
@@ -823,6 +823,8 @@ struct LockRequest { // 一个Locker对应一个LockRequest类，LockRequest类有个链表结
     // Written by LockManager on any thread
     // Read by LockManager on any thread
     // Protected by LockHead bucket's mutex
+
+    //只会在LockManager::convert中置为ture
     LockMode convertMode;
 };
 

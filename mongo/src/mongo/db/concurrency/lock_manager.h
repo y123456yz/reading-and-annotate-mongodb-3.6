@@ -137,7 +137,8 @@ featdoc:PRIMARY>
 //LockManager globalLockManager; 定义全局变量
 //DeadlockDetector._lockMgr为该类型
 
-//主要完成锁的冲突检测等，实现并发控制
+//注意LockManager和DistLockManager的区别
+//LockManager主要完成锁的冲突检测等，实现并发控制。DistLockManager主要是分布式锁管理
 class LockManager {
     MONGO_DISALLOW_COPYING(LockManager);
 

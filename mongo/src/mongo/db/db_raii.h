@@ -75,7 +75,8 @@ public:
     }
 
 private:
-    const Lock::DBLock _dbLock;
+    //包含一个DBLock和一个Database信息
+    const Lock::DBLock _dbLock;  
     Database* const _db; 
 };
 

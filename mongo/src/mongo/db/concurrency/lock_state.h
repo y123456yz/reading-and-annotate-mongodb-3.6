@@ -242,6 +242,8 @@ private:
 
     // Delays release of exclusive/intent-exclusive locked resources until the write unit of
     // work completes. Value of 0 means we are not inside a write unit of work.
+    //LockerImpl<>::beginWriteUnitOfWork()中自增，LockerImpl<>::endWriteUnitOfWork()自减，
+    //该类初始化的适合赋值为0
     int _wuowNestingLevel;
     std::queue<ResourceId> _resourcesToUnlockAtEndOfUnitOfWork;
 

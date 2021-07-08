@@ -135,15 +135,17 @@ std::string Lock::ResourceMutex::getName(ResourceId resourceId) {
     return ResourceIdFactory::nameForId(resourceId);
 }
 
-//也就是LockConflictsTable的MODE_X是否包含resId对应的mode,也就是_rid对应
-//的mode是否和MODE_X不相容
 
-//MODE_X和所有锁互斥，所以这里一般返回true
+
+//也就是LockConflictsTable的_rid.mode是否包含MODE_X
+//前者是否包含后者,也只有_rid的mode类型为MODE_X的适合才会返回TRUE
 bool Lock::ResourceMutex::isExclusivelyLocked(Locker* locker) {
     return locker->isLockHeldForMode(_rid, MODE_X);
 }
 
-//判断locker对应的mode是否和MODE_IS相容，只要locker对应类型不是X锁，则都是相容的
+//也就是LockConflictsTable的_rid.mode是否包含MODE_IS
+//前者是否包含后者,也只有_rid的mode类型为MODE_X的适合才会返回TRUE
+
 bool Lock::ResourceMutex::isAtLeastReadLocked(Locker* locker) {
     return locker->isLockHeldForMode(_rid, MODE_IS);
 }
@@ -170,7 +172,7 @@ Lock::GlobalLock::GlobalLock(OperationContext* opCtx,
                              EnqueueOnly enqueueOnly)
     : _opCtx(opCtx),
       _result(LOCK_INVALID),
-      //下面的Lock::GlobalLock::_enqueue会对resourceIdParallelBatchWriterMode资源类型信息进行锁
+      //下面的Lock::GlobalLock::_enqueue会对resourceIdParallelBatchWriterMode资源类型信息进行加锁
       _pbwm(opCtx->lockState(), resourceIdParallelBatchWriterMode),
       _isOutermostLock(!opCtx->lockState()->isLocked()) {
     _enqueue(lockMode, timeoutMs);

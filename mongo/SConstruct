@@ -27,6 +27,7 @@ import mongo.platform as mongo_platform
 import mongo.toolchain as mongo_toolchain
 import mongo.generators as mongo_generators
 
+
 EnsurePythonVersion(2, 7)
 EnsureSConsVersion(2, 5)
 
@@ -36,6 +37,7 @@ from buildscripts import moduleconfig
 import libdeps
 
 atexit.register(mongo.print_build_failures)
+
 
 def add_option(name, **kwargs):
 

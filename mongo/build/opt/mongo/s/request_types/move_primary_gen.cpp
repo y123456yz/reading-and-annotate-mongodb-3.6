@@ -14,15 +14,6 @@
 
 namespace mongo {
 
-/*
-static constexpr auto kMovePrimaryFieldName = "movePrimary"_sd;
-static constexpr auto kMoveprimaryFieldName = "moveprimary"_sd;
-static constexpr auto kToFieldName = "to"_sd;
-
-*/
-//db.adminCommand( { movePrimary : "test", to : "shard00 01" } )
-//构造movePrimary命令，早期可能是moveprimary，所以需要做兼容
-
 constexpr StringData MovePrimary::kMovePrimaryFieldName;
 constexpr StringData MovePrimary::kMoveprimaryFieldName;
 constexpr StringData MovePrimary::kToFieldName;
@@ -32,15 +23,11 @@ MovePrimary::MovePrimary() : _hasTo(false) {
     // Used for initialization only
 }
 
-////MoveDatabasePrimaryCommand::run, mongos收到movePrimary命令后解析
-////ConfigSvrMovePrimaryCommand::run cfg收到_configsvrMovePrimary命令后解析
 MovePrimary MovePrimary::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     MovePrimary object;
     object.parseProtected(ctxt, bsonObject);
     return object;
 }
-
-//命令解析
 void MovePrimary::parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     std::set<StringData> usedFields;
 
@@ -77,7 +64,7 @@ void MovePrimary::parseProtected(const IDLParserErrorContext& ctxt, const BSONOb
 
 }
 
-//构造movePrimary命令
+
 void MovePrimary::serialize(BSONObjBuilder* builder) const {
     invariant(_hasTo);
 
@@ -93,15 +80,13 @@ void MovePrimary::serialize(BSONObjBuilder* builder) const {
 
 }
 
-//转换为BSONobj
+
 BSONObj MovePrimary::toBSON() const {
     BSONObjBuilder builder;
     serialize(&builder);
     return builder.obj();
 }
 
-
-//下面是_configsvrMovePrimary，cfg收到后得相关处理
 constexpr StringData ConfigsvrMovePrimary::k_configsvrMovePrimaryFieldName;
 constexpr StringData ConfigsvrMovePrimary::kToFieldName;
 

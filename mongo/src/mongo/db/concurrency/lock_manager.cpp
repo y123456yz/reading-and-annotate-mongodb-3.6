@@ -145,7 +145,7 @@ static const int LockConflictsTable[] = {
     // MODE_IS     表示MODE_IS和MODE_X不相容
     (1 << MODE_X),
 
-    // MODE_IX	   表示MODE_IS和MODE_S、MODE_X不相容						
+    // MODE_IX	   表示MODE_IX和MODE_S、MODE_X不相容						
     (1 << MODE_S) | (1 << MODE_X),		
 
     // MODE_S      表示MODE_S和MODE_X、MODE_IX不相容
@@ -692,7 +692,7 @@ LockResult LockManager::lock(ResourceId resId, LockRequest* request, LockMode mo
 
 
 //说明第一次获取ResourceId资源的某种锁信息未成功，然后等待超时后，释放锁信息，重新获取锁，
-// 配合LockerImpl<>::lockComplete阅读(感觉只可能MMAP引擎会走到这里面来)
+// 配合LockerImpl<>::lockComplete阅读(LockerImpl<>::restoreLockState中可能会形成递归调用)
 //LockerImpl<>::lockBegin
 LockResult LockManager::convert(ResourceId resId, LockRequest* request, LockMode newMode) {
     // If we are here, we already hold the lock in some mode. In order to keep it simple, we do
@@ -1540,7 +1540,7 @@ const char* legacyModeName(LockMode mode) {
 
 //注意isModeCovered和conflicts的区别
 
-//也就是LockConflictsTable的coveringMode是否包含coveringMode
+//也就是LockConflictsTable的coveringMode是否包含mode
 bool isModeCovered(LockMode mode, LockMode coveringMode) {
     return (LockConflictsTable[coveringMode] | LockConflictsTable[mode]) ==
         LockConflictsTable[coveringMode];

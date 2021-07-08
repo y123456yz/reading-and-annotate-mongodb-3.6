@@ -240,6 +240,8 @@ public:
         //赋值见Lock::GlobalLock::GlobalLock
         ResourceLock _pbwm; 
         const bool _isOutermostLock;
+
+        //对应的资源信息为resourceIdGlobal，参考LockerImpl<>::_lockGlobalBegin
     };
 
 
@@ -321,6 +323,7 @@ storageEngine.writeOplog(...);
     //删：performSingleDeleteOp中实现查询的库锁、表锁加锁过程
     //改：performSingleUpdateOp中实现查询的库锁、表锁加锁过程
 
+    //AutoGetDb._dbLock为该类型,每个库DB都对应有一个DBLock
     class DBLock {
     public:
         DBLock(OperationContext* opCtx, StringData db, LockMode mode);
@@ -390,7 +393,7 @@ storageEngine.writeOplog(...);
     //      初始化构造会同时封装库锁和表锁
 
 
-    //AutoGetCollection._collLock为该类型
+    //AutoGetCollection._collLock为该类型,每个表collection都对应有一个CollectionLock
     //AutoGetCollection::AutoGetCollection  AutoGetCollectionForRead::AutoGetCollectionForRead这两个类
     // 初始化构造会同时封装库锁和表锁
     class CollectionLock {

@@ -60,6 +60,10 @@ class StatusWith;
  *   // practically be a no-op since it doesn't own the lock anymore.
  * }
  */
+
+//注意LockManager和DistLockManager的区别
+//LockManager主要完成锁的冲突检测等，实现并发控制。DistLockManager主要是分布式锁管理
+
 //DistLockManagerMock  ReplSetDistLockManager继承该类，shard分片模式对应ReplSetDistLockManager
 //分布式锁管理
 class DistLockManager {

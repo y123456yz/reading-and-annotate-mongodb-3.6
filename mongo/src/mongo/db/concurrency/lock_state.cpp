@@ -202,7 +202,6 @@ const Milliseconds DeadlockTimeout = Milliseconds(500);
 AtomicUInt64 idCounter(0);
 
 // Partitioned global lock statistics, so we don't hit the same bucket
-//单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
 
 //单次请求对应线程的锁统计在LockerImpl._stats中存储，全局锁统计在全局变量globalStats中存储
 PartitionedInstanceWideLockStats globalStats; //全局lock统计
@@ -613,7 +612,7 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
 //Lock::OplogIntentWriteLock::OplogIntentWriteLock
 
 //LockerImpl<>::lockComplete
-//LockerImpl<>::restoreLockState
+//LockerImpl<>::restoreLockState中可能引起递归调用
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lock(ResourceId resId,
                                          LockMode mode,
@@ -664,7 +663,8 @@ LockMode LockerImpl<IsForMMAPV1>::getLockMode(ResourceId resId) const {
 
 template <bool IsForMMAPV1>
 
-//也就是LockConflictsTable的coveringMode是否包含coveringMode
+//也就是LockConflictsTable的getLockMode(resId)是否包含mode
+//前者resId.mode是否包含后者mode
 bool LockerImpl<IsForMMAPV1>::isLockHeldForMode(ResourceId resId, LockMode mode) const {
     return isModeCovered(mode, getLockMode(resId));
 }
@@ -770,6 +770,7 @@ void LockerImpl<IsForMMAPV1>::getLockerInfo(LockerInfo* lockerInfo) const {
 }
 
 template <bool IsForMMAPV1>
+//QueryYield::yieldAllLocks  Lock::TempRelease::TempRelease调用
 bool LockerImpl<IsForMMAPV1>::saveLockStateAndUnlock(Locker::LockSnapshot* stateOut) {
     // We shouldn't be saving and restoring lock state from inside a WriteUnitOfWork.
     invariant(!inAWriteUnitOfWork());
@@ -947,6 +948,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
 //LockerImpl<>::lock
 
 //循环等待lock结果，直到LOCK_OK或者LOCK_DEADLOCK或者超时，超时时间timeout ms超时
+//LockerImpl<>::restoreLockState中可能引起递归调用
 template <bool IsForMMAPV1>
 LockResult LockerImpl<IsForMMAPV1>::lockComplete(ResourceId resId,
                                                  LockMode mode,

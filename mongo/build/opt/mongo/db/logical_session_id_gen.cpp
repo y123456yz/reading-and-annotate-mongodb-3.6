@@ -475,7 +475,7 @@ void OperationSessionInfo::parseProtected(const IDLParserErrorContext& ctxt, con
 
 }
 
-////BatchWriteExec::executeBatch
+
 void OperationSessionInfo::serialize(BSONObjBuilder* builder) const {
     if (_sessionId.is_initialized()) {
         BSONObjBuilder subObjBuilder(builder->subobjStart(kSessionIdFieldName));
@@ -503,7 +503,6 @@ OperationSessionInfoFromClient::OperationSessionInfoFromClient()  {
     // Used for initialization only
 }
 
-//initializeOperationSessionInfo调用
 OperationSessionInfoFromClient OperationSessionInfoFromClient::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     OperationSessionInfoFromClient object;
     object.parseProtected(ctxt, bsonObject);
@@ -565,7 +564,6 @@ SessionsCollectionFetchResultIndividualResult::SessionsCollectionFetchResultIndi
     // Used for initialization only
 }
 
-//TransactionReaperImpl中调用
 SessionsCollectionFetchResultIndividualResult SessionsCollectionFetchResultIndividualResult::parse(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject) {
     SessionsCollectionFetchResultIndividualResult object;
     object.parseProtected(ctxt, bsonObject);

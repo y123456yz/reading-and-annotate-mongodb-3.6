@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
-
 void testtest2(void)
 {
         usleep(50000);

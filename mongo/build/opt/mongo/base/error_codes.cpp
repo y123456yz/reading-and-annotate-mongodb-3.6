@@ -1067,8 +1067,6 @@ bool ErrorCodes::isNetworkError(Error err) {
             return false;
     }
 }
-
-//handleErrorµ÷ÓÃ
 bool ErrorCodes::isInterruption(Error err) {
     switch (err) {
         case Interrupted:

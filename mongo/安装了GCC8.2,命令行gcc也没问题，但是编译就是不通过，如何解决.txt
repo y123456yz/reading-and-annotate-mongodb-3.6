@@ -1,0 +1,53 @@
+[root@localhost mongo-r4.4.6]# python3 buildscripts/scons.py install-mongod --disable-warnings-as-errors
+scons: Reading SConscript files ...
+scons: running with args /usr/local/bin/python3 buildscripts/scons.py install-mongod --disable-warnings-as-errors
+scons version: 3.1.2
+python version: 3 7 0 'final' 0
+CC is gcc
+gcc found in $PATH at /usr/local/gcc-8.2.0/bin/gcc
+CXX is g++
+g++ found in $PATH at /usr/local/gcc-8.2.0/bin/g++
+Checking whether the C compiler works... no
+C compiler gcc doesn't work
+See /root/yyz/mongo-r4.4.6/build/scons/config.log for details
+[root@localhost mongo-r4.4.6]# cat /root/yyz/mongo-r4.4.6/build/scons/config.log
+file /root/yyz/mongo-r4.4.6/SConstruct,line 1363:
+        Configure(confdir = build/scons/opt/sconf_temp)
+scons: Configure: Checking whether the C compiler works... 
+scons: Configure: "build/scons/opt/sconf_temp/conftest_737c003a897167642b70f8cdde8a0eaf_0.c" is up to date.
+scons: Configure: The original builder output was:
+  |build/scons/opt/sconf_temp/conftest_737c003a897167642b70f8cdde8a0eaf_0.c <-
+  |  |
+  |  |int main(void)
+  |  |{
+  |  |    return 0;
+  |  |}
+  |  |
+  |
+gcc -o build/scons/opt/sconf_temp/conftest_737c003a897167642b70f8cdde8a0eaf_0_4e018b83dbae4a564d3abaec0d4c8465.o -c build/scons/opt/sconf_temp/conftest_737c003a897167642b70f8cdde8a0eaf_0.c
+sh: gcc: command not found
+scons: Configure: no
+
+
+手动执行有正常
+[root@localhost mongo-r4.4.6]# gcc -o build/scons/opt/sconf_temp/conftest_737c003a897167642b70f8cdde8a0eaf_0_4e018b83dbae4a564d3abaec0d4c8465.o -c build/scons/opt/sconf_temp/conftest_737c003a897167642b70f8cdde8a0eaf_0.c
+[root@localhost mongo-r4.4.6]# 
+[root@localhost mongo-r4.4.6]# 
+
+
+解决办法：假设GCC安装在 /usr/local/gcc-8.2.0/目录
+
+解决办法如下：
+ln -s /usr/local/gcc-8.2.0/bin/gcc /usr/bin
+ln -s /usr/local/gcc-8.2.0/bin/g++ /usr/bin
+
+注意，千万不要直接拷贝gcc g++到/usr/bin目录，否则编译还是会有各种头文件问题
+
+
+同理，如果是编译mongodb-4.4版本，需要GCC-8.2以上版本，同时需要安装python3，python3安装完毕，同样需要做软链接到/usr/bin，假设python3安装在/usr/local/python3目录
+
+ ln -s /usr/local/python3/bin/python3 /usr/local/bin/python3
+ ln -s /usr/local/python3/bin/pip3 /usr/local/bin/pip3
+
+另外，mongodb-3.6编译使用的是python2，因此注意python软链接到python2，如果是mongodb-4.4编译，则需要软链接python到python3
+
