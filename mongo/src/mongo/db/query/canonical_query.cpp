@@ -161,6 +161,8 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
     }
 
     std::unique_ptr<CollatorInterface> collator;
+	//用户自己自定排序器
+	//参考https://mongoing.com/archives/3912
     if (!qr->getCollation().isEmpty()) {
         auto statusWithCollator = CollatorFactoryInterface::get(opCtx->getServiceContext())
                                       ->makeFromBSON(qr->getCollation());
@@ -169,7 +171,8 @@ StatusWith<std::unique_ptr<CanonicalQuery>>
         }
         collator = std::move(statusWithCollator.getValue());
     }
-
+	//没指定排序器则用默认的
+	
     // Make MatchExpression.
     boost::intrusive_ptr<ExpressionContext> newExpCtx;
     if (!expCtx.get()) {

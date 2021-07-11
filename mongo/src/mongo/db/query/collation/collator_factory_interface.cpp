@@ -41,6 +41,7 @@ const auto getCollatorFactory =
 
 }  // namespace
 
+//²Î¿¼CanonicalQuery::canonicalize
 CollatorFactoryInterface* CollatorFactoryInterface::get(ServiceContext* serviceContext) {
     invariant(getCollatorFactory(serviceContext));
     return getCollatorFactory(serviceContext).get();
