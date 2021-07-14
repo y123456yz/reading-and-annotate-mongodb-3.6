@@ -52,6 +52,18 @@ void MatchExpression::_debugAddSpace(StringBuilder& debug, int level) const {
 
 bool MatchExpression::matchesBSON(const BSONObj& doc, MatchDetails* details) const {
     BSONMatchableDocument mydoc(doc);
+	
+//	---- matches(const MatchableDocument* doc, MatchDetails* details) Matches (9 in 7 files) ----
+//	Expression_expr.cpp (src\mongo\db\matcher):bool ExprMatchExpression::matches(const MatchableDocument* doc, MatchDetails* details) const {
+//	Expression_internal_schema_allowed_properties.h (src\mongo\db\matcher\schema):	  bool matches(const MatchableDocument* doc, MatchDetails* details) const final;
+//	Expression_internal_schema_max_properties.h (src\mongo\db\matcher\schema):	  bool matches(const MatchableDocument* doc, MatchDetails* details) const final {
+//	Expression_internal_schema_min_properties.h (src\mongo\db\matcher\schema):	  bool matches(const MatchableDocument* doc, MatchDetails* details) const final {
+//	Expression_tree.cpp (src\mongo\db\matcher):bool AndMatchExpression::matches(const MatchableDocument* doc, MatchDetails* details) const {
+//	Expression_tree.cpp (src\mongo\db\matcher):bool OrMatchExpression::matches(const MatchableDocument* doc, MatchDetails* details) const {
+//	Expression_tree.cpp (src\mongo\db\matcher):bool NorMatchExpression::matches(const MatchableDocument* doc, MatchDetails* details) const {
+//	Expression_where.cpp (src\mongo\db\matcher):bool WhereMatchExpression::matches(const MatchableDocument* doc, MatchDetails* details) const {
+//	Expression_where_noop.cpp (src\mongo\db\matcher):bool WhereNoOpMatchExpression::matches(const MatchableDocument* doc, MatchDetails* details) const {
+	//АэИз EqualityMatchExpression::matches
     return matches(&mydoc, details);
 }
 
@@ -60,6 +72,7 @@ bool MatchExpression::matchesBSONElement(BSONElement elem, MatchDetails* details
     return matches(&matchableDoc, details);
 }
 
+//
 void MatchExpression::setCollator(const CollatorInterface* collator) {
     for (size_t i = 0; i < numChildren(); ++i) {
         getChild(i)->setCollator(collator);

@@ -235,7 +235,7 @@ bool RegexMatchExpression::equivalent(const MatchExpression* other) const {
         _flags == realOther->_flags;
 }
 
-
+//parseRegexElement
 Status RegexMatchExpression::init(StringData path, const BSONElement& e) {
     if (e.type() != RegEx)
         return Status(ErrorCodes::BadValue, "regex not a regex");

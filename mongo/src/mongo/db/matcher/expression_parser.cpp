@@ -120,7 +120,7 @@ enum class DocumentParseLevel {
     kUserSubDocument,
 };
 
-//根据elem解析出number
+//根据elem解析出number，不能为复数
 StatusWith<long long> MatchExpressionParser::parseIntegerElementToNonNegativeLong(
     BSONElement elem) {
     auto number = parseIntegerElementToLong(elem);
@@ -218,7 +218,7 @@ stdx::function<StatusWithMatchExpression(StringData,
                                          DocumentParseLevel)>
 retrievePathlessParser(StringData name);
 
-//获取RegexMatchExpression
+//获取RegexMatchExpression  正则匹配
 StatusWithMatchExpression parseRegexElement(StringData name, BSONElement e) {
     if (e.type() != BSONType::RegEx)
         return {Status(ErrorCodes::BadValue, "not a regex")};
@@ -232,6 +232,7 @@ StatusWithMatchExpression parseRegexElement(StringData name, BSONElement e) {
 }
 
 //MatchExpressionParser::parse  parseSubField调用
+//返回比较类请求对于的ComparisonMatchExpression
 StatusWithMatchExpression parseComparison(
     StringData name,
     ComparisonMatchExpression* cmp,
@@ -242,6 +243,7 @@ StatusWithMatchExpression parseComparison(
 
     // Non-equality comparison match expressions cannot have a regular expression as the argument.
     // (e.g. {a: {$gt: /b/}} is illegal).
+    //正则表达式必须是EQ类型
     if (MatchExpression::EQ != cmp->matchType() && BSONType::RegEx == e.type()) {
         return {Status(ErrorCodes::BadValue,
                        str::stream() << "Can't have RegEx as arg to predicate over field '" << name

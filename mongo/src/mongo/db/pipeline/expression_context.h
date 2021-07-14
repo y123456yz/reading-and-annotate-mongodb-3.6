@@ -50,6 +50,7 @@
 #include "mongo/util/uuid.h"
 
 namespace mongo {
+//参考https://mongoing.com/archives/3912
 //FindCmd::run   CanonicalQuery::canonicalize中会用到
 class ExpressionContext : public RefCountable {
 public:

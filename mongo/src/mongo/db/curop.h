@@ -371,6 +371,7 @@ public:
      * 'opDescription' must be either an owned BSONObj or guaranteed to outlive the OperationContext
      * it is associated with.
      */
+    ///请求的原始请求obj存到该变量
     void setOpDescription_inlock(const BSONObj& opDescription) {
         _opDescription = opDescription;
     }
@@ -497,6 +498,8 @@ private:
     int _dbprofile{0};  // 0=off, 1=slow, 2=all
     std::string _ns; //集合名
     //赋值见curOpCommandSetup->setOpDescription_inlock,  beginQueryOp->setOpDescription_inlock对应OpMsg.body
+    ///请求的原始请求obj存到该变量
+    ///请求的原始请求obj存到该变量
     BSONObj _opDescription;
     BSONObj _originatingCommand;  // Used by getMore to display original command.
     OpDebug _debug;

@@ -126,8 +126,6 @@ public:
         LT,    //LTMatchExpression
         GT,    //GTMatchExpression
         GTE,
-
-        
         REGEX,
         MOD,
         EXISTS,
@@ -263,7 +261,7 @@ public:
     //
     // Determine if a document satisfies the tree-predicate.
     //
-
+    
     virtual bool matches(const MatchableDocument* doc, MatchDetails* details = nullptr) const = 0;
 
     virtual bool matchesBSON(const BSONObj& doc, MatchDetails* details = nullptr) const;
