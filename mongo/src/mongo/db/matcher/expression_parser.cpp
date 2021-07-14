@@ -27,6 +27,8 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kQuery
+#include "mongo/util/log.h"
 
 #include "mongo/platform/basic.h"
 
@@ -70,6 +72,7 @@
 #include "mongo/util/mongoutils/str.h"
 #include "mongo/util/string_map.h"
 
+
 namespace {
 
 using namespace mongo;
@@ -110,13 +113,16 @@ const double MatchExpressionParser::kLongLongMaxPlusOneAsDouble =
 enum class DocumentParseLevel {
     // Indicates that the parser is looking at the root level of the BSON object containing the
     // user's query predicate.
+    //root跟匹配
     kPredicateTopLevel,
     // Indicates that match expression nodes in this position will match against the complete
     // user document, as opposed to matching against a nested document or a subdocument inside
     // an array.
+    //指示此位置的匹配表达式节点将匹配完整的用户文档，而不是匹配数组内的嵌套文档或子文档。
     kUserDocumentTopLevel,
     // Indicates that match expression nodes in this position will match against a nested
     // document or a subdocument inside an array.
+    //指示此位置的匹配表达式节点将与数组内的嵌套文档或子文档匹配。
     kUserSubDocument,
 };
 
@@ -216,7 +222,7 @@ stdx::function<StatusWithMatchExpression(StringData,
                                          const ExtensionsCallback*,
                                          MatchExpressionParser::AllowedFeatureSet,
                                          DocumentParseLevel)>
-retrievePathlessParser(StringData name);
+retrievePathlessParser(StringData name);  //注册实现见下面的pathlessOperatorMap
 
 //获取RegexMatchExpression  正则匹配
 StatusWithMatchExpression parseRegexElement(StringData name, BSONElement e) {
@@ -358,7 +364,7 @@ StatusWithMatchExpression parse(const BSONObj& obj,
         ? DocumentParseLevel::kUserDocumentTopLevel
         : currentLevel;
 
-	//{ find: "product_2015", filter: { $and: [ { manual_state: 2 }, { task_destribute_detail: { $elemMatch: { state: 7, start_time: { $lte: "2021-02-03 15:27:44" } } } } ] }, limit: 20
+	//{ find: "product_xxx", filter: { $and: [ { manual_state: 2 }, { task_destribute_detail: { $elemMatch: { state: 7, start_time: { $lte: "2021-02-03 15:27:44" } } } } ] }, limit: 20
     for (auto e : obj) {
 		/*
 		and nor or形成tree数，例如
@@ -383,16 +389,17 @@ StatusWithMatchExpression parse(const BSONObj& obj,
 		//filter{}中的第一层operation只能是pathlessOperatorMap map表中操作符
         if (e.fieldName()[0] == '$') {
             auto name = e.fieldNameStringData().substr(1);
-			//根据name获取对应的回调func
+			//根据name获取对应的回调func  pathlessOperatorMap
             auto parseExpressionMatchFunction = retrievePathlessParser(name);
 
+			LOG(2) << "yang test StatusWithMatchExpression parse name: " << name;
             if (!parseExpressionMatchFunction) {
                 return {Status(ErrorCodes::BadValue,
                                str::stream() << "unknown top level operator: "
                                              << e.fieldNameStringData())};
             }
 
-			//执行name对应的func
+			//执行name对应的func  见pathlessOperatorMap
             auto parsedExpression = parseExpressionMatchFunction(
                 name, e, expCtx, extensionsCallback, allowedFeatures, currentLevel);
 
@@ -414,13 +421,18 @@ StatusWithMatchExpression parse(const BSONObj& obj,
             continue;
         }
 
+
 		//$xxx(xxx不是dbref相关的)，则走这个流程
 		//pathlessOperatorMap map表以外的opration请求走这个分支，例如pathlessOperatorMap表中的操作$eq $gt等
 		//DBRef以外的$请求操作符返回true，走这里
-		if (isExpressionDocument(e, false)) {
-			//{ aa : 0.99 }走该分支，{ aa : 0.99 }和{ aa: { $eq: "0.99" } }等价
-			//{"price":{$gt:2000,$lt:5000}}走该分支
 
+		//{ aa : 0.99 }走后面分支，{ aa: { $eq: "0.99" } }走本分支。  
+		if (isExpressionDocument(e, false)) {
+			LOG(2) << "yang test StatusWithMatchExpression parse isExpressionDocument name: " << 
+				e.fieldNameStringData() << ", obj: " << e.toString();
+			
+			//{"price":{$gt:2000,$lt:5000}}走该分支
+			
 			//这里面循环解析出子expression添加到root tree中
             auto s = parseSub(e.fieldNameStringData(),
                               e.Obj(),
@@ -433,6 +445,9 @@ StatusWithMatchExpression parse(const BSONObj& obj,
                 return s;
             continue;
         }
+
+		LOG(2) << "yang test StatusWithMatchExpression parse not-isExpressionDocument name: " << 
+			e.fieldNameStringData() << ", obj: " << e.toString();
 		
 		//$regex 正则请求，忽略
 		//类似db.user_info.find({"name":{"$regex":"liu"}})走该分支
@@ -445,7 +460,7 @@ StatusWithMatchExpression parse(const BSONObj& obj,
             continue;
         }
 
-		
+		//例如{ aa : 0.99 }走该分支, { aa: { $eq: "0.99" } }走上面的isExpressionDocument分支
         auto eq = parseComparison(
             e.fieldNameStringData(), new EqualityMatchExpression(), e, expCtx, allowedFeatures);
         if (!eq.isOK())
@@ -533,6 +548,10 @@ StatusWithMatchExpression parseDBRef(StringData name,
     return {std::move(eq)};
 }
 
+//模式校验，参考https://docs.mongodb.com/manual/reference/operator/query/jsonSchema/
+//db.createCollection( <collection>, { validator: { $jsonSchema: <schema> } } )
+//db.runCommand( { collMod: <collection>, validator:{ $jsonSchema: <schema> } } )
+//例如创建表时，指定表必须包含自定字段，并现在字段类型
 StatusWithMatchExpression parseJSONSchema(StringData name,
                                           BSONElement elem,
                                           const boost::intrusive_ptr<ExpressionContext>& expCtx,
@@ -1287,7 +1306,7 @@ db.test.find( {
 //parseTreeTopLevel构造上面的top1和top2 tree
 
 //$and $nor $or  operation的回调处理，参考pathlessOperatorMap
-//T分别对应AndMatchExpression NorMatchExpression  OrMatchExpression
+//T分别对应AndMatchExpression NorMatchExpression  OrMatchExpression，返回一个解析构造的T
 template <class T>   
 StatusWithMatchExpression parseTreeTopLevel(
     StringData name,
@@ -1531,7 +1550,8 @@ StatusWithMatchExpression parseNot(StringData name,
                                    const ExtensionsCallback* extensionsCallback,
                                    MatchExpressionParser::AllowedFeatureSet allowedFeatures,
                                    DocumentParseLevel currentLevel) {
-    if (elem.type() == BSONType::RegEx) {
+	//NOT可以和正则使用，或者和一个完整文档使用
+	if (elem.type() == BSONType::RegEx) {
         auto s = parseRegexElement(name, elem);
         if (!s.isOK())
             return s;
@@ -1560,6 +1580,7 @@ StatusWithMatchExpression parseNot(StringData name,
             return StatusWithMatchExpression(ErrorCodes::BadValue, "$not cannot have a regex");
 
     auto theNot = stdx::make_unique<NotMatchExpression>();
+	//NotMatchExpression::init
     s = theNot->init(theAnd.release());
     if (!s.isOK())
         return StatusWithMatchExpression(s);
@@ -1922,6 +1943,7 @@ StatusWithMatchExpression parseSubField(const BSONObj& context,
  * If the query is { x : { $gt : 5, $lt : 8 } },
  * 'e' is { $gt : 5, $lt : 8 }
  */
+//{ x : { $gt : 5, $lt : 8 } } 这个sub，对应的subfiled为{ $gt : 5, $lt : 8 }
 Status parseSub(StringData name,
                 const BSONObj& sub,
                 AndMatchExpression* root,
@@ -1962,6 +1984,7 @@ Status parseSub(StringData name,
         if (!s.isOK())
             return s.getStatus();
 
+		//添加到tree中
         if (s.getValue())
             root->add(s.getValue().release());
     }
@@ -2041,11 +2064,15 @@ MONGO_INITIALIZER(PathlessOperatorMap)(InitializerContext* context) {
             {"alwaysTrue", &parseAlwaysBoolean<AlwaysTrueMatchExpression>},
             {"and", &parseTreeTopLevel<AndMatchExpression>},
             {"atomic", &parseAtomicOrIsolated},
+            //例如db.test.find({name:"yangyazhou", xx:44, $comment: "Find even values."})，对应慢日志中会有同样的一条comment: "Find even values."打印
+            //对tree无任何影响
             {"comment", &parseComment},
             {"db", &parseDBRef},
+            //聚合相关
             {"expr", &parseExpr},
             {"id", &parseDBRef},
             {"isolated", &parseAtomicOrIsolated}, 
+            //例如创建表时，指定表必须包含自定字段，并限制字段类型
             {"jsonSchema", &parseJSONSchema},
             {"nor", &parseTreeTopLevel<NorMatchExpression>},
             {"or", &parseTreeTopLevel<OrMatchExpression>},
@@ -2059,6 +2086,8 @@ MONGO_INITIALIZER(PathlessOperatorMap)(InitializerContext* context) {
 //查询Operators参考https://docs.mongodb.com/manual/reference/operator/query/
 //注意部分operation没有在这两个map表中，可以本文件搜索
 // Maps from query operator string name to operator PathAcceptingKeyword.
+
+//MatchExpressionParser::parsePathAcceptingKeyword中使用，真正生效见parseSubField
 std::unique_ptr<StringMap<PathAcceptingKeyword>> queryOperatorMap;
 
 MONGO_INITIALIZER(MatchExpressionParser)(InitializerContext* context) {
