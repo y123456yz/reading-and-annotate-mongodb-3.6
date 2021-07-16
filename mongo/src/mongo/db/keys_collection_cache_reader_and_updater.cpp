@@ -76,13 +76,17 @@ KeysCollectionCacheReaderAndUpdater::KeysCollectionCacheReaderAndUpdater(
       _purpose(std::move(purpose)),
       _keyValidForInterval(keyValidForInterval) {}
 
+
+//KeysCollectionManagerSharding::enableKeyGenerator中构造KeysCollectionCacheReaderAndUpdater或者KeysCollectionCacheReader
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReaderAndUpdater::refresh(
     OperationContext* opCtx) {
 
+	//没使能，关闭了
     if (MONGO_FAIL_POINT(disableKeyGeneration)) {
         return {ErrorCodes::FailPointEnabled, "key generation disabled"};
     }
 
+	//不是3.6
     if (serverGlobalParams.featureCompatibility.getVersion() !=
         ServerGlobalParams::FeatureCompatibility::Version::kFullyUpgradedTo36) {
         return KeysCollectionCacheReader::refresh(opCtx);
@@ -153,6 +157,7 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReaderAndUpdater::getKey(
     return KeysCollectionCacheReader::getKey(forThisTime);
 }
 
+//KeysCollectionManagerSharding::_getKeyWithKeyIdCheck
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReaderAndUpdater::getKeyById(
     long long keyId, const LogicalTime& forThisTime) {
     return KeysCollectionCacheReader::getKeyById(keyId, forThisTime);

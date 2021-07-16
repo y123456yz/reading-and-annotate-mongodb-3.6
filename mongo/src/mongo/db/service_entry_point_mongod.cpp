@@ -283,6 +283,8 @@ void appendReplyMetadataOnError(OperationContext* opCtx, BSONObjBuilder* metadat
     }
 }
 
+
+
 void appendReplyMetadata(OperationContext* opCtx,
                          const OpMsgRequest& request,
                          BSONObjBuilder* metadataBob) {

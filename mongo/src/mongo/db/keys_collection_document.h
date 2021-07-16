@@ -45,6 +45,7 @@ namespace mongo {
  *     expiresAt: <LogicalTime, currently in Timestamp format>
  * }
  */
+//keys docÉú³ÉÏê¼ûKeysCollectionClientDirect::getNewKeys
 class KeysCollectionDocument {
 public:
     static const std::string ConfigNS;

@@ -110,8 +110,10 @@ StatusWith<KeysCollectionDocument> KeysCollectionManagerSharding::getKeyForSigni
     return _getKey(forThisTime);
 }
 
+//KeysCollectionManagerSharding::getKeyForValidation  KeysCollectionManagerSharding::getKeyForValidation
 StatusWith<KeysCollectionDocument> KeysCollectionManagerSharding::_getKeyWithKeyIdCheck(
     long long keyId, const LogicalTime& forThisTime) {
+    //KeysCollectionCacheReader::getKeyById
     auto keyStatus = _keysCache.getKeyById(keyId, forThisTime);
 
     if (!keyStatus.isOK()) {
@@ -144,6 +146,7 @@ void KeysCollectionManagerSharding::refreshNow(OperationContext* opCtx) {
     _refresher.refreshNow(opCtx);
 }
 
+//_initAndListen()(¸±±¾¼¯)  initializeGlobalShardingState(mongos)  LogicalTimeValidator::resetKeyManagerCache  
 void KeysCollectionManagerSharding::startMonitoring(ServiceContext* service) {
     _keysCache.resetCache();
     _refresher.setFunc([this](OperationContext* opCtx) { return _keysCache.refresh(opCtx); });
@@ -155,11 +158,13 @@ void KeysCollectionManagerSharding::stopMonitoring() {
     _refresher.stop();
 }
 
+//LogicalTimeValidator::enableKeyGenerator   
 void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, bool doEnable) {
     if (doEnable) {
         _refresher.switchFunc(opCtx, [this](OperationContext* opCtx) {
             KeysCollectionCacheReaderAndUpdater keyGenerator(
                 _purpose, _client.get(), _keyValidForInterval);
+			//KeysCollectionCacheReaderAndUpdater::refresh
             auto keyGenerationStatus = keyGenerator.refresh(opCtx);
 
             if (ErrorCodes::isShutdownError(keyGenerationStatus.getStatus().code())) {
@@ -176,6 +181,7 @@ void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, 
             return cacheRefreshStatus;
         });
     } else {
+    	//KeysCollectionCacheReader::refresh
         _refresher.switchFunc(
             opCtx, [this](OperationContext* opCtx) { return _keysCache.refresh(opCtx); });
     }

@@ -50,7 +50,7 @@ BSONObj makeEmptyMetadata() {
     return BSONObj();
 }
 
-//mongodb $readPreference配置信息  execCommandDatabase中调用
+//mongodb $readPreference配置信息  execCommandDatabase中调用 
 void readRequestMetadata(OperationContext* opCtx, const BSONObj& metadataObj) {
     BSONElement readPreferenceElem;
     BSONElement auditElem;

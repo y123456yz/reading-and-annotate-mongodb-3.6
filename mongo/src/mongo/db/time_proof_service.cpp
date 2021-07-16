@@ -41,7 +41,8 @@ namespace mongo {
  * are staying within the range so the range size is defined by the mask. This assumes that the
  * implementation has a form or high 32 bit: secs low 32 bit: increment.
  */
-const uint64_t kRangeMask = 0x0000'0000'0000'FFFF;
+//const uint64_t kRangeMask = 0x0000'0000'0000'FFFF; //yang add change
+const uint64_t kRangeMask = 0x000000000000FFFF
 
 TimeProofService::Key TimeProofService::generateRandomKey() {
     // SecureRandom only produces 64-bit numbers, so 3 is the minimum for 20 random bytes.

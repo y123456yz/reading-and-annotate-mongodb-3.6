@@ -46,6 +46,9 @@ class KeysCollectionClient;
  * - assumes that user does not manually update the keys collection.
  * - assumes that current process is the config primary.
  */
+ 
+//KeysCollectionManagerSharding::enableKeyGenerator中构造KeysCollectionCacheReaderAndUpdater或者KeysCollectionCacheReader
+//KeysCollectionCacheReaderAndUpdater继承KeysCollectionCacheReader
 class KeysCollectionCacheReaderAndUpdater : public KeysCollectionCacheReader {
 public:
     KeysCollectionCacheReaderAndUpdater(std::string purpose,

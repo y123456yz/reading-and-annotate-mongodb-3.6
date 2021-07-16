@@ -106,6 +106,7 @@ SignedLogicalTime LogicalTimeValidator::_getProof(const KeysCollectionDocument& 
     return newSignedTime;
 }
 
+//appendReplyMetadataOnError  appendReplyMetadata
 SignedLogicalTime LogicalTimeValidator::trySignLogicalTime(const LogicalTime& newTime) {
     auto keyStatusWith = _getKeyManagerCopy()->getKeyForSigning(nullptr, newTime);
     auto keyStatus = keyStatusWith.getStatus();
@@ -119,6 +120,7 @@ SignedLogicalTime LogicalTimeValidator::trySignLogicalTime(const LogicalTime& ne
     return _getProof(keyStatusWith.getValue(), newTime);
 }
 
+//appendRequiredFieldsToResponse
 SignedLogicalTime LogicalTimeValidator::signLogicalTime(OperationContext* opCtx,
                                                         const LogicalTime& newTime) {
     auto keyManager = _getKeyManagerCopy();
@@ -140,6 +142,7 @@ SignedLogicalTime LogicalTimeValidator::signLogicalTime(OperationContext* opCtx,
     return _getProof(keyStatusWith.getValue(), newTime);
 }
 
+//processCommandMetadata	readRequestMetadata
 Status LogicalTimeValidator::validate(OperationContext* opCtx, const SignedLogicalTime& newTime) {
     {
         stdx::lock_guard<stdx::mutex> lk(_mutex);
@@ -148,6 +151,7 @@ Status LogicalTimeValidator::validate(OperationContext* opCtx, const SignedLogic
         }
     }
 
+	//KeysCollectionManagerDirect::getKeyForValidation
     auto keyStatus =
         _getKeyManagerCopy()->getKeyForValidation(opCtx, newTime.getKeyId(), newTime.getTime());
     uassertStatusOK(keyStatus.getStatus());
@@ -175,7 +179,13 @@ void LogicalTimeValidator::shutDown() {
     _getKeyManagerCopy()->stopMonitoring();
 }
 
+////initializeSharding->initializeGlobalShardingState   mongo config角色会调用
+//ReplicationCoordinatorExternalStateImpl::shardingOnStepDownHook()
+//ReplicationCoordinatorExternalStateImpl::_shardingOnTransitionToPrimaryHook
+//SetFeatureCompatibilityVersionCommand::run中如果节点角色为config server的时候也会调用
 void LogicalTimeValidator::enableKeyGenerator(OperationContext* opCtx, bool doEnable) {
+
+	//KeysCollectionManagerSharding::enableKeyGenerator
     _getKeyManagerCopy()->enableKeyGenerator(opCtx, doEnable);
 }
 
@@ -216,6 +226,8 @@ void LogicalTimeValidator::resetKeyManager() {
     }
 }
 
+//LogicalTimeValidator._keyManager为该类型
+//LogicalTimeValidator::enableKeyGenerator调用
 std::shared_ptr<KeysCollectionManagerSharding> LogicalTimeValidator::_getKeyManagerCopy() {
     stdx::lock_guard<stdx::mutex> lk(_mutexKeyManager);
     invariant(_keyManager);

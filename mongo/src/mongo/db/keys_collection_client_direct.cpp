@@ -72,7 +72,9 @@ bool isRetriableError(ErrorCodes::Error code, Shard::RetryPolicy options) {
 
 KeysCollectionClientDirect::KeysCollectionClientDirect() : _rsLocalClient() {}
 
-StatusWith<std::vector<KeysCollectionDocument>> KeysCollectionClientDirect::getNewKeys(
+//数据写到"admin.system.keys"中，并返回对应的KeysCollectionDocument
+StatusWith<std::vector<KeysCollectionDocument>> 
+	KeysCollectionClientDirect::getNewKeys(
     OperationContext* opCtx, StringData purpose, const LogicalTime& newerThanThis) {
 
 
@@ -106,6 +108,7 @@ StatusWith<std::vector<KeysCollectionDocument>> KeysCollectionClientDirect::getN
     return keys;
 }
 
+//数据写入"admin.system.keys"中
 StatusWith<Shard::QueryResponse> KeysCollectionClientDirect::_query(
     OperationContext* opCtx,
     const ReadPreferenceSetting& readPref,

@@ -41,6 +41,7 @@ class LogicalTime;
 class BSONObj;
 class ShardingCatalogClient;
 
+//KeysCollectionClientDirect  KeysCollectionClientSharded 这两个类继承KeysCollectionClient
 class KeysCollectionClientSharded : public KeysCollectionClient {
 public:
     KeysCollectionClientSharded(ShardingCatalogClient*);

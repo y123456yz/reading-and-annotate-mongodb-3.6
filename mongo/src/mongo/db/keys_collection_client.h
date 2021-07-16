@@ -40,6 +40,7 @@ class OperationContext;
 class LogicalTime;
 class BSONObj;
 
+//KeysCollectionClientDirect  KeysCollectionClientSharded 这两个类继承KeysCollectionClient
 class KeysCollectionClient {
 public:
     virtual ~KeysCollectionClient() = default;

@@ -40,6 +40,8 @@ KeysCollectionCacheReader::KeysCollectionCacheReader(std::string purpose,
                                                      KeysCollectionClient* client)
     : _purpose(std::move(purpose)), _client(client) {}
 
+
+//KeysCollectionManagerSharding::enableKeyGenerator
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationContext* opCtx) {
     LogicalTime newerThanThis;
 
@@ -51,6 +53,9 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationC
         }
     }
 
+	//KeysCollectionClientDirect::getNewKeys
+	//KeysCollectionClientSharded::getNewKeys 
+	//写数据到"admin.system.keys"中，并返回对应的KeysCollectionDocument
     auto refreshStatus = _client->getNewKeys(opCtx, _purpose, newerThanThis);
 
     if (!refreshStatus.isOK()) {
@@ -60,6 +65,7 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationC
     auto& newKeys = refreshStatus.getValue();
 
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
+	//缓存到内存中
     for (auto&& key : newKeys) {
         _cache.emplace(std::make_pair(key.getExpiresAt(), std::move(key)));
     }
@@ -71,6 +77,8 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationC
     return _cache.crbegin()->second;
 }
 
+//KeysCollectionCacheReaderAndUpdater::getKeyById
+//KeysCollectionManagerSharding::_getKeyWithKeyIdCheck
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::getKeyById(
     long long keyId, const LogicalTime& forThisTime) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
@@ -81,6 +89,7 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::getKeyById(
         }
     }
 
+	//内存中找不到该keyID
     return {ErrorCodes::KeyNotFound,
             str::stream() << "Cache Reader No keys found for " << _purpose
                           << " that is valid for time: "
@@ -89,6 +98,7 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::getKeyById(
                           << keyId};
 }
 
+//缓存中查找key
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::getKey(
     const LogicalTime& forThisTime) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);

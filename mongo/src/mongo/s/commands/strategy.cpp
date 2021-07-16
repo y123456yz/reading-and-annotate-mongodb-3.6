@@ -104,6 +104,7 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
     }
 
     if (!LogicalTimeValidator::isAuthorizedToAdvanceClock(opCtx)) {
+		//LogicalTimeValidator::validate
         auto advanceClockStatus = logicalTimeValidator->validate(opCtx, signedTime);
 
         if (!advanceClockStatus.isOK()) {
@@ -117,6 +118,7 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
 /**
  * Append required fields to command response.
  */
+//LogicalTimeValidator::signLogicalTime
 void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* responseBuilder) {
     auto validator = LogicalTimeValidator::get(opCtx);
     if (validator->shouldGossipLogicalTime()) {
@@ -126,6 +128,7 @@ void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* res
             SignedLogicalTime dummySignedTime(now, TimeProofService::TimeProof(), 0);
             rpc::LogicalTimeMetadata(dummySignedTime).writeToMetadata(responseBuilder);
         } else {
+        	//LogicalTimeValidator::signLogicalTime
             auto currentTime = validator->signLogicalTime(opCtx, now);
             rpc::LogicalTimeMetadata(currentTime).writeToMetadata(responseBuilder);
         }

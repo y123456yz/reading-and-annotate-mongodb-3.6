@@ -42,6 +42,9 @@ class KeysCollectionClient;
  *
  * Note: This assumes that user does not manually update the keys collection.
  */
+
+//KeysCollectionManagerSharding::enableKeyGenerator中构造KeysCollectionCacheReaderAndUpdater或者KeysCollectionCacheReader
+//KeysCollectionCacheReaderAndUpdater继承KeysCollectionCacheReader
 class KeysCollectionCacheReader : public KeysCollectionCache {
 public:
     KeysCollectionCacheReader(std::string purpose, KeysCollectionClient* client);
@@ -64,9 +67,11 @@ public:
 
 private:
     const std::string _purpose;
+    //KeysCollectionClientDirect  KeysCollectionClientSharded 
     KeysCollectionClient* const _client;
 
     stdx::mutex _cacheMutex;
+    //key doc缓存到内存中，见KeysCollectionCacheReader::refresh
     std::map<LogicalTime, KeysCollectionDocument> _cache;  // expiresAt -> KeysDocument
 };
 
