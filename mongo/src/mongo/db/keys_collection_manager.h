@@ -44,6 +44,7 @@ extern int KeysRotationIntervalSec;
  * This is responsible for providing keys that can be used for HMAC computation. This also supports
  * automatic key rotation that happens on a configurable interval.
  */
+//KeysCollectionManagerDirect KeysCollectionManagerSharding¼Ì³ÐKeysCollectionManager
 class KeysCollectionManager {
 public:
     static const Seconds kKeyValidInterval;

@@ -50,6 +50,8 @@ KeysCollectionManagerDirect::KeysCollectionManagerDirect(std::string purpose,
       _keyValidForInterval(keyValidForInterval),
       _cache(kMaxCachedKeys) {}
 
+//LogicalTimeValidator::validate
+//cache中要是没找到，则从admin.system.keys中查找
 StatusWith<KeysCollectionDocument> KeysCollectionManagerDirect::getKeyForValidation(
     OperationContext* opCtx, long long keyId, const LogicalTime& forThisTime) {
     // First, attempt to find the key in our cache.

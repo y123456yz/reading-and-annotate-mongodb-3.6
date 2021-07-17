@@ -130,6 +130,7 @@ private:
     stdx::mutex _mutexKeyManager;  // protects _keyManager
     SignedLogicalTime _lastSeenValidTime;
     TimeProofService _timeProofService;
+    
     std::shared_ptr<KeysCollectionManagerSharding> _keyManager;
 };
 

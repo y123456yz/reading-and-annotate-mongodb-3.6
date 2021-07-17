@@ -73,6 +73,8 @@ bool isRetriableError(ErrorCodes::Error code, Shard::RetryPolicy options) {
 KeysCollectionClientDirect::KeysCollectionClientDirect() : _rsLocalClient() {}
 
 //数据写到"admin.system.keys"中，并返回对应的KeysCollectionDocument
+//查找keys表中小于newerThanThis时间的所有数据并返回
+
 StatusWith<std::vector<KeysCollectionDocument>> 
 	KeysCollectionClientDirect::getNewKeys(
     OperationContext* opCtx, StringData purpose, const LogicalTime& newerThanThis) {
@@ -82,12 +84,13 @@ StatusWith<std::vector<KeysCollectionDocument>>
     queryBuilder.append("purpose", purpose);
     queryBuilder.append("expiresAt", BSON("$gt" << newerThanThis.asTimestamp()));
 
+	//查找keys表中小于newerThanThis时间的所有数据
     auto findStatus = _query(opCtx,
                              ReadPreferenceSetting(ReadPreference::Nearest, TagSet{}),
                              repl::ReadConcernLevel::kLocalReadConcern,
                              NamespaceString(KeysCollectionDocument::ConfigNS),
                              queryBuilder.obj(),
-                             BSON("expiresAt" << 1),
+                             BSON("expiresAt" << 1), //正序排序
                              boost::none);
 
     if (!findStatus.isOK()) {

@@ -90,12 +90,14 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
     auto logicalClock = LogicalClock::get(opCtx);
     invariant(logicalClock);
 
+	//返回一个LogicalTimeMetadata类型  
     auto logicalTimeMetadata = rpc::LogicalTimeMetadata::readFromMetadata(cmdObj);
     if (!logicalTimeMetadata.isOK()) {
         return logicalTimeMetadata.getStatus();
     }
 
     auto logicalTimeValidator = LogicalTimeValidator::get(opCtx);
+	//获取logicalTimeMetadata中的SignedLogicalTime
     const auto& signedTime = logicalTimeMetadata.getValue().getSignedTime();
 
     // No need to check proof is no time is given.

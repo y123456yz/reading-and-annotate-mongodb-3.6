@@ -69,6 +69,7 @@ public:
     }
 
 private:
+
     SignedLogicalTime _clusterTime;
 };
 

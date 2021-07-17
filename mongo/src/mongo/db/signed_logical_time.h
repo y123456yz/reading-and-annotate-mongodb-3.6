@@ -38,6 +38,7 @@ namespace mongo {
  * The SignedLogicalTime class is a pair of value i.e. time and a signature i.e. _proof
  * The class is immutable and is used to hold the cryptographically protected LogicalTime.
  */
+//解析客户端请求的签名等信息，配合processCommandMetadata->LogicalTimeMetadata::readFromMetadata阅读
 class SignedLogicalTime {
 public:
     using TimeProof = TimeProofService::TimeProof;

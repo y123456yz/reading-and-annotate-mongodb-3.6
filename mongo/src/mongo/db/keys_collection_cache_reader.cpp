@@ -42,10 +42,13 @@ KeysCollectionCacheReader::KeysCollectionCacheReader(std::string purpose,
 
 
 //KeysCollectionManagerSharding::enableKeyGenerator
+//KeysCollectionManagerSharding::startMonitoring定期三个月刷新, startMonitoring
+//生成key doc存入keys表和缓存中
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationContext* opCtx) {
+	
     LogicalTime newerThanThis;
 
-    {
+    { //从缓存中能找到缓存中最新的expiresAt时间，则用这个时间，否则用当前时间
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
         auto iter = _cache.crbegin();
         if (iter != _cache.crend()) {
@@ -53,9 +56,10 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationC
         }
     }
 
-	//KeysCollectionClientDirect::getNewKeys
-	//KeysCollectionClientSharded::getNewKeys 
+	//KeysCollectionClientDirect::getNewKeys   
+	
 	//写数据到"admin.system.keys"中，并返回对应的KeysCollectionDocument
+	//查找keys表中小于newerThanThis时间的所有数据并返回
     auto refreshStatus = _client->getNewKeys(opCtx, _purpose, newerThanThis);
 
     if (!refreshStatus.isOK()) {

@@ -84,12 +84,14 @@ LogicalTimeValidator::LogicalTimeValidator(
     std::shared_ptr<KeysCollectionManagerSharding> keyManager)
     : _keyManager(keyManager) {}
 
+//LogicalTimeValidator::signLogicalTime   LogicalTimeValidator::trySignLogicalTime
 SignedLogicalTime LogicalTimeValidator::_getProof(const KeysCollectionDocument& keyDoc,
                                                   LogicalTime newTime) {
     auto key = keyDoc.getKey();
 
     // Compare and calculate HMAC inside mutex to prevent multiple threads computing HMAC for the
     // same cluster time.
+    //比较和计算互斥内的HMAC，防止多个线程在同一集群时间计算HMAC
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     // Note: _lastSeenValidTime will initially not have a proof set.
     if (newTime == _lastSeenValidTime.getTime() && _lastSeenValidTime.getProof()) {
@@ -120,7 +122,7 @@ SignedLogicalTime LogicalTimeValidator::trySignLogicalTime(const LogicalTime& ne
     return _getProof(keyStatusWith.getValue(), newTime);
 }
 
-//appendRequiredFieldsToResponse
+//appendRequiredFieldsToResponse   
 SignedLogicalTime LogicalTimeValidator::signLogicalTime(OperationContext* opCtx,
                                                         const LogicalTime& newTime) {
     auto keyManager = _getKeyManagerCopy();
@@ -146,12 +148,13 @@ SignedLogicalTime LogicalTimeValidator::signLogicalTime(OperationContext* opCtx,
 Status LogicalTimeValidator::validate(OperationContext* opCtx, const SignedLogicalTime& newTime) {
     {
         stdx::lock_guard<stdx::mutex> lk(_mutex);
+		//SignedLogicalTime::getTime
         if (newTime.getTime() <= _lastSeenValidTime.getTime()) {
             return Status::OK();
         }
     }
 
-	//KeysCollectionManagerDirect::getKeyForValidation
+	//KeysCollectionManagerSharding::getKeyForValidation
     auto keyStatus =
         _getKeyManagerCopy()->getKeyForValidation(opCtx, newTime.getKeyId(), newTime.getTime());
     uassertStatusOK(keyStatus.getStatus());
@@ -189,6 +192,7 @@ void LogicalTimeValidator::enableKeyGenerator(OperationContext* opCtx, bool doEn
     _getKeyManagerCopy()->enableKeyGenerator(opCtx, doEnable);
 }
 
+//是否需要认证
 bool LogicalTimeValidator::isAuthorizedToAdvanceClock(OperationContext* opCtx) {
     auto client = opCtx->getClient();
     // Note: returns true if auth is off, courtesy of

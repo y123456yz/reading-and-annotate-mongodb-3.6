@@ -743,6 +743,8 @@ void ReplicationCoordinatorExternalStateImpl::_shardingOnTransitionToPrimaryHook
         if (auto validator = LogicalTimeValidator::get(_service)) {
             validator->enableKeyGenerator(opCtx, true);
         }
+
+		//ShardingState::enabled
     } else if (ShardingState::get(opCtx)->enabled()) {
         invariant(serverGlobalParams.clusterRole == ClusterRole::ShardServer);
 

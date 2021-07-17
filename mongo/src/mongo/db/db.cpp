@@ -971,6 +971,7 @@ ExitCode _initAndListen(int listenPort) {
                 startupOpCtx->getServiceContext(),
                 makeShardingTaskExecutor(executor::makeNetworkInterface("AddShard-TaskExecutor")));
         } else if (replSettings.usingReplSets()) {  // standalone replica set
+        	//副本集keyManager对应KeysCollectionManagerSharding，见_initAndListen 
             auto keysCollectionClient = stdx::make_unique<KeysCollectionClientDirect>();
             auto keyManager = std::make_shared<KeysCollectionManagerSharding>(
                 KeysCollectionManager::kKeyManagerPurposeString,

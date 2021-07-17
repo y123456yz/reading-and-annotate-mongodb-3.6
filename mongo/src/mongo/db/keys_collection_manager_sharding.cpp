@@ -84,14 +84,18 @@ Milliseconds howMuchSleepNeedFor(const LogicalTime& currentTime,
 
 }  // unnamed namespace
 
+
+//mongod副本集keyManager对应KeysCollectionManagerSharding，见_initAndListen 
+//mongos初始化见initializeSharding->initializeGlobalShardingState
 KeysCollectionManagerSharding::KeysCollectionManagerSharding(
     std::string purpose, std::unique_ptr<KeysCollectionClient> client, Seconds keyValidForInterval)
-    : _client(std::move(client)),
-      _purpose(std::move(purpose)),
-      _keyValidForInterval(keyValidForInterval),
+    : _client(std::move(client)), //KeysCollectionClientDirect
+      _purpose(std::move(purpose)),//KeysCollectionManager::kKeyManagerPurposeString
+      _keyValidForInterval(keyValidForInterval), //KeysRotationIntervalSec，默认3个月
       _keysCache(_purpose, _client.get()) {}
 
 
+//LogicalTimeValidator::validate
 StatusWith<KeysCollectionDocument> KeysCollectionManagerSharding::getKeyForValidation(
     OperationContext* opCtx, long long keyId, const LogicalTime& forThisTime) {
     auto keyStatus = _getKeyWithKeyIdCheck(keyId, forThisTime);
@@ -100,6 +104,7 @@ StatusWith<KeysCollectionDocument> KeysCollectionManagerSharding::getKeyForValid
         return keyStatus;
     }
 
+	//刷新一下，然后重新获取id
     _refresher.refreshNow(opCtx);
 
     return _getKeyWithKeyIdCheck(keyId, forThisTime);
@@ -149,7 +154,10 @@ void KeysCollectionManagerSharding::refreshNow(OperationContext* opCtx) {
 //_initAndListen()(副本集)  initializeGlobalShardingState(mongos)  LogicalTimeValidator::resetKeyManagerCache  
 void KeysCollectionManagerSharding::startMonitoring(ServiceContext* service) {
     _keysCache.resetCache();
-    _refresher.setFunc([this](OperationContext* opCtx) { return _keysCache.refresh(opCtx); });
+    _refresher.setFunc([this](OperationContext* opCtx) { 
+		//KeysCollectionCacheReader::refresh
+		return _keysCache.refresh(opCtx); 
+		});
     _refresher.start(
         service, str::stream() << "monitoring keys for " << _purpose, _keyValidForInterval);
 }
@@ -159,9 +167,11 @@ void KeysCollectionManagerSharding::stopMonitoring() {
 }
 
 //LogicalTimeValidator::enableKeyGenerator   
+//_refresher注册，真正在_doPeriodicRefresh现场主循环运行
 void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, bool doEnable) {
     if (doEnable) {
         _refresher.switchFunc(opCtx, [this](OperationContext* opCtx) {
+			//构造KeysCollectionCacheReaderAndUpdater
             KeysCollectionCacheReaderAndUpdater keyGenerator(
                 _purpose, _client.get(), _keyValidForInterval);
 			//KeysCollectionCacheReaderAndUpdater::refresh
@@ -172,6 +182,7 @@ void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, 
             }
 
             // An error encountered by the keyGenerator should not prevent refreshing the cache
+            //KeysCollectionCacheReaderAndUpdater::refresh
             auto cacheRefreshStatus = _keysCache.refresh(opCtx);
 
             if (!keyGenerationStatus.isOK()) {
@@ -181,8 +192,8 @@ void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, 
             return cacheRefreshStatus;
         });
     } else {
-    	//KeysCollectionCacheReader::refresh
         _refresher.switchFunc(
+			//KeysCollectionCacheReader::refresh
             opCtx, [this](OperationContext* opCtx) { return _keysCache.refresh(opCtx); });
     }
 }
@@ -191,6 +202,7 @@ bool KeysCollectionManagerSharding::hasSeenKeys() {
     return _refresher.hasSeenKeys();
 }
 
+//LogicalTimeValidator::forceKeyRefreshNow  LogicalTimeValidator::signLogicalTime
 void KeysCollectionManagerSharding::PeriodicRunner::refreshNow(OperationContext* opCtx) {
     auto refreshRequest = [this]() {
         stdx::lock_guard<stdx::mutex> lk(_mutex);
@@ -217,6 +229,7 @@ void KeysCollectionManagerSharding::PeriodicRunner::refreshNow(OperationContext*
     }
 }
 
+//后台线程主循环
 void KeysCollectionManagerSharding::PeriodicRunner::_doPeriodicRefresh(
     ServiceContext* service, std::string threadName, Milliseconds refreshInterval) {
     Client::initThreadIfNotAlready(threadName);
@@ -322,6 +335,7 @@ void KeysCollectionManagerSharding::PeriodicRunner::switchFunc(OperationContext*
     setFunc(newRefreshStrategy);
 }
 
+//启动一个后台线程运行_doPeriodicRefresh
 void KeysCollectionManagerSharding::PeriodicRunner::start(ServiceContext* service,
                                                           const std::string& threadName,
                                                           Milliseconds refreshInterval) {

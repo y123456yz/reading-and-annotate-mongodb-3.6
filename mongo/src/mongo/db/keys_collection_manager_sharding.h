@@ -53,6 +53,12 @@ class KeysCollectionClient;
  * It maintains in internal background thread that is used to periodically refresh
  * the local key cache against the keys collection stored on the config servers.
  */
+//KeysCollectionManagerDirect KeysCollectionManagerSharding继承KeysCollectionManager
+//副本集keyManager对应KeysCollectionManagerSharding，见_initAndListen 
+//mongod副本集keyManager对应KeysCollectionManagerSharding，见_initAndListen 
+//mongos初始化见initializeSharding->initializeGlobalShardingState
+
+//LogicalTimeValidator._keyManager为该类型
 class KeysCollectionManagerSharding : public KeysCollectionManager {
 public:
     static const Seconds kKeyValidInterval;
@@ -190,7 +196,9 @@ private:
     const Seconds _keyValidForInterval;
 
     // No mutex needed since the members below have their own mutexes.
+    
     KeysCollectionCacheReader _keysCache;
+    //定期执行func回调
     PeriodicRunner _refresher;
 };
 

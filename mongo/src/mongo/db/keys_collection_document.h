@@ -46,6 +46,8 @@ namespace mongo {
  * }
  */
 //keys doc生成详见KeysCollectionClientDirect::getNewKeys
+
+//keys docs缓存在KeysCollectionManagerDirect._cache map表中
 class KeysCollectionDocument {
 public:
     static const std::string ConfigNS;

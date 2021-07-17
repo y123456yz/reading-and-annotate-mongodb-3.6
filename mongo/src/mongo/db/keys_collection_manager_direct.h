@@ -45,6 +45,9 @@ class ServiceContext;
  * This implementation of the KeysCollectionManager uses DBDirectclient to query the
  * keys collection local to this server.
  */
+
+//KeysCollectionManagerDirect KeysCollectionManagerShardingºÃ≥–KeysCollectionManager
+
 class KeysCollectionManagerDirect : public KeysCollectionManager {
 public:
     KeysCollectionManagerDirect(std::string purpose, Seconds keyValidForInterval);
@@ -67,6 +70,8 @@ private:
     const Seconds _keyValidForInterval;
 
     stdx::mutex _mutex;
+
+    //key docª∫¥ÊµΩ’‚¿Ô
     LRUCache<long long, KeysCollectionDocument> _cache;
 };
 

@@ -52,6 +52,7 @@ StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(const BSON
     return readFromMetadata(metadata.getField(fieldName()));
 }
 
+//processCommandMetadata->LogicalTimeMetadata::readFromMetadata
 StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(
     const BSONElement& metadataElem) {
     if (metadataElem.eoo()) {

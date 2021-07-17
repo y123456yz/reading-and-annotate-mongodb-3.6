@@ -45,6 +45,8 @@ class KeysCollectionClient;
 
 //KeysCollectionManagerSharding::enableKeyGenerator中构造KeysCollectionCacheReaderAndUpdater或者KeysCollectionCacheReader
 //KeysCollectionCacheReaderAndUpdater继承KeysCollectionCacheReader
+//KeysCollectionManagerSharding._keysCache为该类型
+
 class KeysCollectionCacheReader : public KeysCollectionCache {
 public:
     KeysCollectionCacheReader(std::string purpose, KeysCollectionClient* client);
