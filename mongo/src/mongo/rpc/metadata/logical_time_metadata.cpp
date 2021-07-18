@@ -113,7 +113,7 @@ StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(
 *     }
 */
 
-//appendRequiredFieldsToResponse
+//appendRequiredFieldsToResponse(mongos)   mongod通过这两个接口返回: appendReplyMetadata  appendReplyMetadataOnError
 //返回给客户端keyId
 void LogicalTimeMetadata::writeToMetadata(BSONObjBuilder* metadataBuilder) const {
     BSONObjBuilder subObjBuilder(metadataBuilder->subobjStart(fieldName()));

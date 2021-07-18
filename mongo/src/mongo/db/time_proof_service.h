@@ -43,6 +43,7 @@ namespace mongo {
 class TimeProofService {
 public:
     // This type must be synchronized with the library that generates SHA1 or other proof.
+    //签名认证参考SignedLogicalTime使用
     using TimeProof = SHA1Block;
     using Key = SHA1Block;
 

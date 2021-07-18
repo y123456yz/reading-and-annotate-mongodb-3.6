@@ -134,6 +134,7 @@ void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* res
 		*     }
 		*/
         auto now = LogicalClock::get(opCtx)->getClusterTime();
+		//如果客户端有足够的权限推进时钟，则返回true，非认证模式集群默认为true
         if (LogicalTimeValidator::isAuthorizedToAdvanceClock(opCtx)) {
             SignedLogicalTime dummySignedTime(now, TimeProofService::TimeProof(), 0);
             rpc::LogicalTimeMetadata(dummySignedTime).writeToMetadata(responseBuilder);
@@ -154,6 +155,9 @@ void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* res
         }
     }
 }
+
+//mongos流程ServiceEntryPointMongos::handleRequest->Strategy::clientCommand->runCommand
+//mongod流程:ServiceEntryPointMongod::handleRequest->runCommands->execCommandDatabase调用
 
 //runCommand中调用执行
 void execCommandClient(OperationContext* opCtx,

@@ -96,6 +96,8 @@ LogicalTime LogicalClock::getClusterTime() {
     return _clusterTime;
 }
 
+//ClusterTime 的实现就可以被分为两部分，一个是 ClusterTime 的增加（Tick），一个是 ClusterTime 的推进（Advance）。
+//参考https://mongoing.com/archives/77853
 Status LogicalClock::advanceClusterTime(const LogicalTime newTime) {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
 
@@ -111,6 +113,8 @@ Status LogicalClock::advanceClusterTime(const LogicalTime newTime) {
     return Status::OK();
 }
 
+//ClusterTime 的实现就可以被分为两部分，一个是 ClusterTime 的增加（Tick），一个是 ClusterTime 的推进（Advance）。
+//参考https://mongoing.com/archives/77853
 LogicalTime LogicalClock::reserveTicks(uint64_t nTicks) {
 
     invariant(nTicks > 0 && nTicks <= kMaxSignedInt);

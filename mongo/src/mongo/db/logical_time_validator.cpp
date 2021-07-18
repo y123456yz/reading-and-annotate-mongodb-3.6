@@ -50,7 +50,7 @@ const auto getLogicalClockValidator =
     ServiceContext::declareDecoration<std::unique_ptr<LogicalTimeValidator>>();
 
 stdx::mutex validatorMutex;  // protects access to decoration instance of LogicalTimeValidator.
-
+//这个代表时钟推进权限
 std::vector<Privilege> advanceClusterTimePrivilege;
 
 MONGO_INITIALIZER(InitializeAdvanceClusterTimePrivilegeVector)(InitializerContext* const) {
@@ -85,6 +85,7 @@ LogicalTimeValidator::LogicalTimeValidator(
     : _keyManager(keyManager) {}
 
 //LogicalTimeValidator::signLogicalTime   LogicalTimeValidator::trySignLogicalTime
+//生成新的时钟签名信息
 SignedLogicalTime LogicalTimeValidator::_getProof(const KeysCollectionDocument& keyDoc,
                                                   LogicalTime newTime) {
     auto key = keyDoc.getKey();
@@ -98,6 +99,8 @@ SignedLogicalTime LogicalTimeValidator::_getProof(const KeysCollectionDocument& 
         return _lastSeenValidTime;
     }
 
+	//根据time keys生成新的签名信息  
+	//TimeProofService::getProof
     auto signature = _timeProofService.getProof(newTime, key);
     SignedLogicalTime newSignedTime(newTime, std::move(signature), keyDoc.getKeyId());
 
@@ -123,7 +126,7 @@ SignedLogicalTime LogicalTimeValidator::trySignLogicalTime(const LogicalTime& ne
     return _getProof(keyStatusWith.getValue(), newTime);
 }
 
-//appendRequiredFieldsToResponse   
+//appendRequiredFieldsToResponse 调用本接口生成新的签名信息 
 SignedLogicalTime LogicalTimeValidator::signLogicalTime(OperationContext* opCtx,
                                                         const LogicalTime& newTime) {
     auto keyManager = _getKeyManagerCopy();
@@ -193,12 +196,14 @@ void LogicalTimeValidator::enableKeyGenerator(OperationContext* opCtx, bool doEn
     _getKeyManagerCopy()->enableKeyGenerator(opCtx, doEnable);
 }
 
-//是否需要认证
+//如果客户端有足够的权限推进时钟，则返回true，非认证模式集群默认为true
 bool LogicalTimeValidator::isAuthorizedToAdvanceClock(OperationContext* opCtx) {
     auto client = opCtx->getClient();
     // Note: returns true if auth is off, courtesy of
-    // AuthzSessionExternalStateServerCommon::shouldIgnoreAuthChecks.
+    // AuthzSessionExternalStateServerCommon::isAuthorizedForPrivileges.
+    //
     return AuthorizationSession::get(client)->isAuthorizedForPrivileges(
+    	//这个代表时钟推进权限
         advanceClusterTimePrivilege);
 }
 

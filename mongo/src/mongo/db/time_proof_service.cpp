@@ -56,6 +56,8 @@ TimeProofService::Key TimeProofService::generateRandomKey() {
                                                  SHA1Block::kHashLength));
 }
 
+//生成签名信息，并缓存到cache
+//LogicalTimeValidator::_getProof
 TimeProofService::TimeProof TimeProofService::getProof(LogicalTime time, const Key& key) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
     auto timeCeil = LogicalTime(Timestamp(time.asTimestamp().asULL() | kRangeMask));

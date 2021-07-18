@@ -284,7 +284,7 @@ void appendReplyMetadataOnError(OperationContext* opCtx, BSONObjBuilder* metadat
 }
 
 
-
+//execCommandDatabase 中调用，mongod获取到数据后，还需要追加例如时间验签信息
 void appendReplyMetadata(OperationContext* opCtx,
                          const OpMsgRequest& request,
                          BSONObjBuilder* metadataBob) {
@@ -309,7 +309,7 @@ void appendReplyMetadata(OperationContext* opCtx,
         if (serverGlobalParams.featureCompatibility.getVersion() ==
             ServerGlobalParams::FeatureCompatibility::Version::kFullyUpgradedTo36) {
             if (LogicalTimeValidator::isAuthorizedToAdvanceClock(opCtx)) {
-                // No need to sign cluster times for internal clients.
+                // No need to sign cluster times for internal clients.  例如mongos到mongod不需要签名验证
                 SignedLogicalTime currentTime(
                     LogicalClock::get(opCtx)->getClusterTime(), TimeProofService::TimeProof(), 0);
                 rpc::LogicalTimeMetadata logicalTimeMetadata(currentTime);
@@ -430,7 +430,7 @@ LogicalTime computeOperationTime(OperationContext* opCtx,
     return operationTime;
 }
 
-//runCommands->execCommandDatabase->runCommandImpl调用
+//runCommands->execCommandDatabase->runCommandImpl调用 mongod的调用流程
 bool runCommandImpl(OperationContext* opCtx,
                     Command* command,
                     const OpMsgRequest& request,
@@ -561,6 +561,7 @@ bool runCommandImpl(OperationContext* opCtx,
     inPlaceReplyBob.doneFast();
 
     BSONObjBuilder metadataBob;
+	//时间签名验证在这里返回给客户端
     appendReplyMetadata(opCtx, request, &metadataBob);
     replyBuilder->setMetadata(metadataBob.done());
 
@@ -818,6 +819,7 @@ void execCommandDatabase(OperationContext* opCtx,
         }
 
         BSONObjBuilder metadataBob;
+		//时间签名信息在这里面返回给客户端
         appendReplyMetadata(opCtx, request, &metadataBob);
 
         // Note: the read concern may not have been successfully or yet placed on the opCtx, so
