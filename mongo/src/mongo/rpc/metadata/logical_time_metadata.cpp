@@ -53,6 +53,7 @@ StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(const BSON
 }
 
 //processCommandMetadata->LogicalTimeMetadata::readFromMetadata
+//解析客户端的HMAC认证请求信息
 StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(
     const BSONElement& metadataElem) {
     if (metadataElem.eoo()) {
@@ -85,6 +86,7 @@ StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(
     int hashLength = 0;
     auto rawBinSignature = hashElem.binData(hashLength);
     BSONBinData proofBinData(rawBinSignature, hashLength, hashElem.binDataType());
+	//HMAC校验是否正常
     auto proofStatus = SHA1Block::fromBinData(proofBinData);
 
     if (!proofStatus.isOK()) {
@@ -97,10 +99,22 @@ StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(
         return status;
     }
 
+	//把从客户端解析出的认证信构造一个新的LogicalTimeMetadata
     return LogicalTimeMetadata(
         SignedLogicalTime(LogicalTime(ts), std::move(proofStatus.getValue()), keyId));
 }
 
+/*
+* logicalTime: {
+*     clusterTime: <Timestamp>,
+*     signature: {
+*         hash: <SHA1 hash of clusterTime as BinData>,
+*         keyId: <long long>
+*     }
+*/
+
+//appendRequiredFieldsToResponse
+//返回给客户端keyId
 void LogicalTimeMetadata::writeToMetadata(BSONObjBuilder* metadataBuilder) const {
     BSONObjBuilder subObjBuilder(metadataBuilder->subobjStart(fieldName()));
     _clusterTime.getTime().asTimestamp().append(subObjBuilder.bb(), kClusterTimeFieldName);

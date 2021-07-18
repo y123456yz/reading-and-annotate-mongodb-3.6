@@ -249,7 +249,7 @@ Lock::DBLock::DBLock(OperationContext* opCtx, StringData db, LockMode mode)
 
 	//LockerImpl<>::lock
 	//对该库加mode锁
-	log() << "yang test.... DB lock, db: " << db.toString()<< " lock mode:" << modeName(mode);
+	//log() << "yang test.... DB lock, db: " << db.toString()<< " lock mode:" << modeName(mode);
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode)); //OperationContext::lockState->LockerImpl<>::lock
 }
 
@@ -287,7 +287,7 @@ void Lock::DBLock::relockWithMode(LockMode newMode) {
     _opCtx->lockState()->unlock(_id);
     _mode = newMode;
 
-	log() << "yang test..relockWithMode.. DB lock,  lock mode:" << modeName(newMode);
+	//log() << "yang test..relockWithMode.. DB lock,  lock mode:" << modeName(newMode);
     invariant(LOCK_OK == _opCtx->lockState()->lock(_id, _mode));
 }
 
@@ -299,7 +299,7 @@ Lock::CollectionLock::CollectionLock(Locker* lockState, StringData ns, LockMode 
 
     dassert(_lockState->isDbLockedForMode(nsToDatabaseSubstring(ns),
                                           isSharedLockMode(mode) ? MODE_IS : MODE_IX));
-	log() << "yang test.... collection lock, ns: " << ns.toString()<< " lock mode:" << modeName(mode);
+	//log() << "yang test.... collection lock, ns: " << ns.toString()<< " lock mode:" << modeName(mode);
 	if (supportsDocLocking()) { //这里体现了表级别X锁和普通表文档级别锁的区别
 		//LockerImpl<>::lock
         _lockState->lock(_id, mode);
@@ -318,7 +318,7 @@ void Lock::CollectionLock::relockAsDatabaseExclusive(Lock::DBLock& dbLock) {
     dbLock.relockWithMode(MODE_X);
 
     // don't need the lock, but need something to unlock in the destructor
-    log() << "yang test..relockAsDatabaseExclusive.. lock,  lock mode:" << modeName(MODE_X);
+    //log() << "yang test..relockAsDatabaseExclusive.. lock,  lock mode:" << modeName(MODE_X);
     _lockState->lock(_id, MODE_IX);
 }
 
@@ -362,7 +362,7 @@ Lock::ParallelBatchWriterMode::~ParallelBatchWriterMode() {
 void Lock::ResourceLock::lock(LockMode mode) {
     invariant(_result == LOCK_INVALID);
 	//LockerImpl::lock
-	log() << "yang test.... ResourceLock lock, " << " lock mode:" << modeName(mode);
+	//log() << "yang test.... ResourceLock lock, " << " lock mode:" << modeName(mode);
     _result = _locker->lock(_rid, mode);
     invariant(_result == LOCK_OK);
 }

@@ -43,17 +43,20 @@ const OperationContext::Decoration<OperationTimeTrackerHolder> OperationTimeTrac
     OperationContext::declareDecoration<OperationTimeTrackerHolder>();
 }
 
+//appendRequiredFieldsToResponse 
 std::shared_ptr<OperationTimeTracker> OperationTimeTracker::get(OperationContext* opCtx) {
     auto timeTrackerHolder = OperationTimeTrackerHolder::get(opCtx);
     invariant(timeTrackerHolder.opTimeTracker);
     return timeTrackerHolder.opTimeTracker;
 }
 
+//appendRequiredFieldsToResponse 获取_maxOperationTime发送给客户端
 LogicalTime OperationTimeTracker::getMaxOperationTime() const {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     return _maxOperationTime;
 }
 
+//LogicalTimeMetadataHook::readReplyMetadata
 void OperationTimeTracker::updateOperationTime(LogicalTime newTime) {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     if (newTime > _maxOperationTime) {

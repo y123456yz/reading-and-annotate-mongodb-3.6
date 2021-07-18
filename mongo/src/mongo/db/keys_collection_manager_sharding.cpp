@@ -158,6 +158,7 @@ void KeysCollectionManagerSharding::startMonitoring(ServiceContext* service) {
 		//KeysCollectionCacheReader::refresh
 		return _keysCache.refresh(opCtx); 
 		});
+	//线程名  Thu Jul 15 21:10:16.121 D TRACKING [monitoring keys for HMAC] Cmd: NotSet, TrackingId: 60f033b80658be6c0c5d0220
     _refresher.start(
         service, str::stream() << "monitoring keys for " << _purpose, _keyValidForInterval);
 }
@@ -170,6 +171,7 @@ void KeysCollectionManagerSharding::stopMonitoring() {
 //_refresher注册，真正在_doPeriodicRefresh现场主循环运行
 void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, bool doEnable) {
     if (doEnable) {
+		//这里面生成新key
         _refresher.switchFunc(opCtx, [this](OperationContext* opCtx) {
 			//构造KeysCollectionCacheReaderAndUpdater
             KeysCollectionCacheReaderAndUpdater keyGenerator(

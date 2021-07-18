@@ -135,6 +135,7 @@ StatusWith<Shard::QueryResponse> KeysCollectionClientDirect::_query(
     MONGO_UNREACHABLE;
 }
 
+//KeysCollectionClientDirect::insertNewKey中调用
 Status KeysCollectionClientDirect::_insert(OperationContext* opCtx,
                                            const std::string& ns,
                                            const BSONObj& doc,
@@ -168,6 +169,10 @@ Status KeysCollectionClientDirect::_insert(OperationContext* opCtx,
     MONGO_UNREACHABLE;
 }
 
+//KeysCollectionClientDirect::insertNewKey副本集模式走该流程，则写到本地"admin.system.keys"
+//KeysCollectionClientSharded::insertNewKey分片模式走该流程，则写到config server"admin.system.keys"
+
+//KeysCollectionCacheReaderAndUpdater.cpp中的insertNewKey调用
 Status KeysCollectionClientDirect::insertNewKey(OperationContext* opCtx, const BSONObj& doc) {
     return _insert(
         opCtx, KeysCollectionDocument::ConfigNS, doc, ShardingCatalogClient::kMajorityWriteConcern);

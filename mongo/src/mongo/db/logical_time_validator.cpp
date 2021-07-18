@@ -108,6 +108,7 @@ SignedLogicalTime LogicalTimeValidator::_getProof(const KeysCollectionDocument& 
     return newSignedTime;
 }
 
+//配合LogicalTimeMetadata::readFromMetadata阅读，读取客户端请求验证
 //appendReplyMetadataOnError  appendReplyMetadata
 SignedLogicalTime LogicalTimeValidator::trySignLogicalTime(const LogicalTime& newTime) {
     auto keyStatusWith = _getKeyManagerCopy()->getKeyForSigning(nullptr, newTime);

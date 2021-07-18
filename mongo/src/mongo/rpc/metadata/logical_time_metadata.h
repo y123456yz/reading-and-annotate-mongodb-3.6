@@ -69,7 +69,7 @@ public:
     }
 
 private:
-
+    //SignedLogicalTime::toString()¿ÉÒÔ´òÓ¡×Ö·û´®
     SignedLogicalTime _clusterTime;
 };
 

@@ -883,7 +883,7 @@ LockResult LockerImpl<IsForMMAPV1>::lockBegin(ResourceId resId, LockMode mode) {
     LockRequest* request;
     bool isNew = true; //说明request是最新构造的，false说明是之前_requests已经存在的
 
-	log() << "yang test lockBegin, lockinfo: " << resId.toString();
+	//log() << "yang test lockBegin, lockinfo: " << resId.toString();
 	
 //#include "mongo/util/stacktrace.h"
 	//mallocFreeOStream << "lock test :" << ".\n";

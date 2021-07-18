@@ -46,6 +46,10 @@ StatusWith<std::vector<KeysCollectionDocument>> KeysCollectionClientSharded::get
         opCtx, purpose, newerThanThis, repl::ReadConcernLevel::kMajorityReadConcern);
 }
 
+//KeysCollectionClientDirect::insertNewKey副本集模式走该流程，则写到本地"admin.system.keys"
+//KeysCollectionClientSharded::insertNewKey分片模式走该流程，则写到config server"admin.system.keys"
+
+//KeysCollectionCacheReaderAndUpdater.cpp中的insertNewKey调用
 Status KeysCollectionClientSharded::insertNewKey(OperationContext* opCtx, const BSONObj& doc) {
     return _catalogClient->insertConfigDocument(
         opCtx, KeysCollectionDocument::ConfigNS, doc, ShardingCatalogClient::kMajorityWriteConcern);

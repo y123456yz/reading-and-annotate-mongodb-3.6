@@ -120,11 +120,19 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
 /**
  * Append required fields to command response.
  */
-//LogicalTimeValidator::signLogicalTime
+//execCommandClient
 void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* responseBuilder) {
     auto validator = LogicalTimeValidator::get(opCtx);
     if (validator->shouldGossipLogicalTime()) {
-        // Add $clusterTime.
+        // Add $clusterTime.  签名信息发送给客户端
+        /*
+		* logicalTime: {
+		*     clusterTime: <Timestamp>,
+		*     signature: {
+		*         hash: <SHA1 hash of clusterTime as BinData>,
+		*         keyId: <long long>
+		*     }
+		*/
         auto now = LogicalClock::get(opCtx)->getClusterTime();
         if (LogicalTimeValidator::isAuthorizedToAdvanceClock(opCtx)) {
             SignedLogicalTime dummySignedTime(now, TimeProofService::TimeProof(), 0);

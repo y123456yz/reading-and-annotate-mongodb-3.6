@@ -51,12 +51,15 @@ MONGO_FP_DECLARE(disableKeyGeneration);
  * servers. In other words, it is relying on the fact that this will always execute the write
  * locally and never remotely even if this node is no longer primary.
  */
+
 Status insertNewKey(OperationContext* opCtx,
                     KeysCollectionClient* client,
                     long long keyId,
                     const std::string& purpose,
                     const LogicalTime& expiresAt) {
     KeysCollectionDocument newKey(keyId, purpose, TimeProofService::generateRandomKey(), expiresAt);
+	//KeysCollectionClientDirect::insertNewKey副本集模式调用该流程，则写到本地"admin.system.keys"
+//KeysCollectionClientSharded::insertNewKey分片模式调用该流程，则写到config server"admin.system.keys"
     return client->insertNewKey(opCtx, newKey.toBSON());
 }
 
@@ -93,6 +96,8 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReaderAndUpdater::refresh(
     }
 
     auto currentTime = LogicalClock::get(opCtx)->getClusterTime();
+	//KeysCollectionClientDirect::getNewKeys
+	//从admin.system.keys中查找已有的key
     auto keyStatus = _client->getNewKeys(opCtx, _purpose, currentTime);
 
     if (!keyStatus.isOK()) {
@@ -106,8 +111,11 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReaderAndUpdater::refresh(
 
     long long keyId = currentTime.asTimestamp().asLL();
 
+	//
     if (keyIter == newKeys.cend()) {
+		//重新生成key的过期时间
         currentKeyExpiresAt = addSeconds(currentTime, _keyValidForInterval);
+		//写入admin.system.keys表
         auto status = insertNewKey(opCtx, _client, keyId, _purpose, currentKeyExpiresAt);
 
         if (!status.isOK()) {
@@ -149,6 +157,7 @@ StatusWith<KeysCollectionDocument> KeysCollectionCacheReaderAndUpdater::refresh(
         }
     }
 
+	//前面写入system.keys表后，这里重新刷新一下，从表中获取最新的
     return KeysCollectionCacheReader::refresh(opCtx);
 }
 
