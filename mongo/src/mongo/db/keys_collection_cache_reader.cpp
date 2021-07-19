@@ -43,6 +43,7 @@ KeysCollectionCacheReader::KeysCollectionCacheReader(std::string purpose,
 
 //KeysCollectionManagerSharding::enableKeyGenerator
 //KeysCollectionManagerSharding::startMonitoring定期三个月刷新, startMonitoring
+//KeysCollectionCacheReaderAndUpdater::refresh中写入新key，然后调用本接口从system.keys表中获取
 //生成key doc存入keys表和缓存中
 StatusWith<KeysCollectionDocument> KeysCollectionCacheReader::refresh(OperationContext* opCtx) {
 	

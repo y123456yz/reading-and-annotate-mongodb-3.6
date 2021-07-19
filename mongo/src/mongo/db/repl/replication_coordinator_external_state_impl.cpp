@@ -441,6 +441,7 @@ void ReplicationCoordinatorExternalStateImpl::onDrainComplete(OperationContext* 
     }
 }
 
+//ReplicationCoordinatorImpl::signalDrainComplete
 OpTime ReplicationCoordinatorExternalStateImpl::onTransitionToPrimary(OperationContext* opCtx,
                                                                       bool isV1ElectionProtocol) {
     invariant(opCtx->lockState()->isW());
@@ -686,6 +687,7 @@ void ReplicationCoordinatorExternalStateImpl::shardingOnStepDownHook() {
     }
 }
 
+//ReplicationCoordinatorExternalStateImpl::onTransitionToPrimary
 void ReplicationCoordinatorExternalStateImpl::_shardingOnTransitionToPrimaryHook(
     OperationContext* opCtx) {
     auto status = ShardingStateRecovery::recover(opCtx);

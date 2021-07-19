@@ -75,6 +75,8 @@ TimeProofService::TimeProof TimeProofService::getProof(LogicalTime time, const K
     return _cache->_proof;
 }
 
+//服务的接收客户端信息后，在LogicalTimeValidator::validate调用该接口校验
+//LogicalTimeValidator::validate
 Status TimeProofService::checkProof(LogicalTime time, const TimeProof& proof, const Key& key) {
     auto myProof = getProof(time, key);
     if (myProof != proof) {

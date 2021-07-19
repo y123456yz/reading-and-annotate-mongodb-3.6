@@ -872,6 +872,7 @@ private:
     stdx::thread _thread;  // Must be last so all other members are initialized before starting.
 };
 
+//RSDataSync::_run()
 void SyncTail::oplogApplication(ReplicationCoordinator* replCoord) {
     OpQueueBatcher batcher(this);
 

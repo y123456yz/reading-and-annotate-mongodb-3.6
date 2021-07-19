@@ -170,6 +170,7 @@ Status LogicalTimeValidator::validate(OperationContext* opCtx, const SignedLogic
     // received cluster times should have proofs.
     invariant(newProof);
 
+	//验签校验
     auto res = _timeProofService.checkProof(newTime.getTime(), newProof.get(), key);
     if (res != Status::OK()) {
         return res;
@@ -197,13 +198,14 @@ void LogicalTimeValidator::enableKeyGenerator(OperationContext* opCtx, bool doEn
 }
 
 //如果客户端有足够的权限推进时钟，则返回true，非认证模式集群默认为true
+//sasl认证的几个过程直接返回true
 bool LogicalTimeValidator::isAuthorizedToAdvanceClock(OperationContext* opCtx) {
     auto client = opCtx->getClient();
     // Note: returns true if auth is off, courtesy of
     // AuthzSessionExternalStateServerCommon::isAuthorizedForPrivileges.
     //
     return AuthorizationSession::get(client)->isAuthorizedForPrivileges(
-    	//这个代表时钟推进权限
+    	//这个代表时钟推进权限 ActionType::advanceClusterTime
         advanceClusterTimePrivilege);
 }
 

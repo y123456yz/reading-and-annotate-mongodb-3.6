@@ -38,6 +38,15 @@ namespace rpc {
 
 namespace {
 
+/*
+* logicalTime: {
+*     clusterTime: <Timestamp>,
+*     signature: {
+*         hash: <SHA1 hash of clusterTime as BinData>,
+*         keyId: <long long>
+*     }
+*/
+
 const char kClusterTimeFieldName[] = "clusterTime";
 const char kSignatureFieldName[] = "signature";
 const char kSignatureHashFieldName[] = "hash";

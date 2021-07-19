@@ -68,7 +68,17 @@ public:
     static const SignedLogicalTime kUninitialized;
 
 private:
+    /*
+    * logicalTime: {
+    *     clusterTime: <Timestamp>,
+    *     signature: {
+    *         hash: <SHA1 hash of clusterTime as BinData>,
+    *         keyId: <long long>
+    *     }
+    */
+
     LogicalTime _time;
+    //也就是hash字符串，根据key和time计算出的，见LogicalTimeValidator::_getProof
     boost::optional<TimeProof> _proof;
     long long _keyId{0};
 };

@@ -915,6 +915,7 @@ ReplicationCoordinator::ApplierState ReplicationCoordinatorImpl::getApplierState
     return _applierState;
 }
 
+//RSDataSync::_run()->SyncTail::oplogApplication->ReplicationCoordinatorImpl::signalDrainComplete
 void ReplicationCoordinatorImpl::signalDrainComplete(OperationContext* opCtx,
                                                      long long termWhenBufferIsEmpty) {
     // This logic is a little complicated in order to avoid acquiring the global exclusive lock

@@ -195,7 +195,7 @@ void KeysCollectionManagerSharding::enableKeyGenerator(OperationContext* opCtx, 
         });
     } else {
         _refresher.switchFunc(
-			//KeysCollectionCacheReader::refresh
+			//KeysCollectionCacheReader::refresh  这里从admin.system.keys表刷新获取最新的key信息
             opCtx, [this](OperationContext* opCtx) { return _keysCache.refresh(opCtx); });
     }
 }
