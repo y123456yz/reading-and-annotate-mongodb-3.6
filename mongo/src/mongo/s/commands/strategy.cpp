@@ -105,6 +105,7 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
         return Status::OK();
     }
 
+	//如果免验签，则跳过logicalTimeValidator->validate
     if (!LogicalTimeValidator::isAuthorizedToAdvanceClock(opCtx)) {
 		//LogicalTimeValidator::validate
         auto advanceClockStatus = logicalTimeValidator->validate(opCtx, signedTime);

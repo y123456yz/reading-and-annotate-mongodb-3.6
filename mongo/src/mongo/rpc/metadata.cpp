@@ -105,6 +105,7 @@ void readRequestMetadata(OperationContext* opCtx, const BSONObj& metadataObj) {
             if (serverGlobalParams.featureCompatibility.getVersion() ==
                 ServerGlobalParams::FeatureCompatibility::Version::kFullyUpgradedTo36) {
                 auto logicalTimeValidator = LogicalTimeValidator::get(opCtx);
+				//判断是否需要验签
                 if (!LogicalTimeValidator::isAuthorizedToAdvanceClock(opCtx)) {
                     if (!logicalTimeValidator) {
                         uasserted(ErrorCodes::CannotVerifyAndSignLogicalTime,
