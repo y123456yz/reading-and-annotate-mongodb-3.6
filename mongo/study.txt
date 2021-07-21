@@ -3782,3 +3782,18 @@ WiredTigerIndex::insert: key too large to index, failing
 
 如果是单字段索引过程，可以用hashed索引
 db.logcollection.ensureIndex({"Module":"hashed"})
+
+
+查看admin.system.keys表
+
+use admin;
+ 
+db.createRole({
+  role: "query_keys",
+  privileges: [
+     { resource: { db: "admin", collection: "system.keys"}, actions: [ "find" ] },
+  ],
+  roles: [  ]
+});
+ 
+db.grantRolesToUser("ADMIN", ["query_keys"])

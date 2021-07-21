@@ -3,7 +3,8 @@
 # List describing the ActionTypes that should be created.
 # Please note that the order of the elements is not guaranteed to be the same across versions.
 # This means that the integer value assigned to each ActionType and used internally in ActionSet
-# also may change between versions.    参考AuthorizationBuiltinRoles
+# also may change between versions.    参考AuthorizationBuiltinRole錽
+#RoleGraph::addPrivilegesForBuiltinRole 查看role权限
 ["addShard",
 "advanceClusterTime",
 "anyAction", # Special ActionType that represents *all* actions
