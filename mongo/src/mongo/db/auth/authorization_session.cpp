@@ -157,6 +157,7 @@ void AuthorizationSession::startRequest(OperationContext* opCtx) {
 }
 
 //CmdAuthenticate::_authenticateCR
+//doSaslStep认证成功后会调用
 Status AuthorizationSession::addAndAuthorizeUser(OperationContext* opCtx,
                                                  const UserName& userName) {
     User* user;
@@ -677,6 +678,7 @@ bool AuthorizationSession::isAuthorizedForPrivileges(const vector<Privilege>& pr
         return true;
 
     for (size_t i = 0; i < privileges.size(); ++i) {
+		//注意这里，只有认证成功后的账号才拥有对应账号权限，见函数里面具体实现
         if (!_isAuthorizedForPrivilege(privileges[i])) {
 			//log() << "yang test ................... isAuthorizedForPrivileges,  failed !!!!!!!!!!!!!!!!!!";
             return false;
@@ -921,7 +923,7 @@ bool AuthorizationSession::_isAuthorizedForPrivilege(const Privilege& privilege)
                 return true;
         }
     }
-
+	//认证成功后添加用户账号到该容器。见AuthorizationSession::addAndAuthorizeUser
 	//所有已认证的客户端都添加到_authenticatedUsers中
 	//遍历授权过的所有用户，和待验证的Resource比较，如果找到，则对比Action，所有的Action都找到的话，则通过验证。
     for (UserSet::iterator it = _authenticatedUsers.begin(); it != _authenticatedUsers.end();

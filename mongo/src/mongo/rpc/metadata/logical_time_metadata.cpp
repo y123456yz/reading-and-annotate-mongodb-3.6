@@ -65,6 +65,7 @@ StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(const BSON
 //解析客户端的HMAC认证请求信息
 StatusWith<LogicalTimeMetadata> LogicalTimeMetadata::readFromMetadata(
     const BSONElement& metadataElem) {
+    //客户端没有携带验签信息
     if (metadataElem.eoo()) {
         return LogicalTimeMetadata();
     }

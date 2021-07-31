@@ -197,6 +197,9 @@ void LogicalTimeValidator::enableKeyGenerator(OperationContext* opCtx, bool doEn
     _getKeyManagerCopy()->enableKeyGenerator(opCtx, doEnable);
 }
 
+
+//appendReplyMetadata  processCommandMetadata appendRequiredFieldsToResponse
+
 //如果客户端有足够的权限推进时钟，则返回true，非认证模式集群默认为true
 //sasl认证的几个过程直接返回true
 bool LogicalTimeValidator::isAuthorizedToAdvanceClock(OperationContext* opCtx) {

@@ -82,7 +82,8 @@ const auto kOperationTime = "operationTime"_sd;
 
 /**
  * Extract and process metadata from the command request body.
- */
+ */ 
+//execCommandClient调用
 Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
     ReadPreferenceSetting::get(opCtx) =
         uassertStatusOK(ReadPreferenceSetting::fromContainingBSON(cmdObj));
@@ -101,6 +102,7 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
     const auto& signedTime = logicalTimeMetadata.getValue().getSignedTime();
 
     // No need to check proof is no time is given.
+   //如果客户端没有携带签名信息，则直接这里返回OK
     if (signedTime.getTime() == LogicalTime::kUninitialized) {
         return Status::OK();
     }
@@ -121,7 +123,7 @@ Status processCommandMetadata(OperationContext* opCtx, const BSONObj& cmdObj) {
 /**
  * Append required fields to command response.
  */
-//execCommandClient
+//execCommandClient  
 void appendRequiredFieldsToResponse(OperationContext* opCtx, BSONObjBuilder* responseBuilder) {
     auto validator = LogicalTimeValidator::get(opCtx);
     if (validator->shouldGossipLogicalTime()) {

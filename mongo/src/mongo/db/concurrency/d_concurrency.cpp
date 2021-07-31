@@ -196,7 +196,7 @@ void Lock::GlobalLock::_enqueue(LockMode lockMode, unsigned timeoutMs) {
     }
 
 	//LockerImpl:lockGlobalBegin->LockerImpl<>::_lockGlobalBegin
-	log() << "yang test.... global lock, lock mode:" << modeName(lockMode);
+	//log() << "yang test.... global lock, lock mode:" << modeName(lockMode);
     _result = _opCtx->lockState()->lockGlobalBegin(lockMode, Milliseconds(timeoutMs));
 }
 

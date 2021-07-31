@@ -26,14 +26,14 @@ operationProfiling:
    slowOpThresholdMs: 100
    mode: slowOp
 
-#replication:
-#   oplogSizeMB: 10240
-#   replSetName: featdoc
+replication:
+   oplogSizeMB: 10240
+   replSetName: featdoc
 
-#security:
-#   keyFile: /home/yyz/mongodb-test/mongo1/keys/keyfile
-#   clusterAuthMode: keyFile
-#   authorization: enabled
+security:
+   keyFile: /data1/mongodb/test_auth_repl/8001/keys/keyfile
+   clusterAuthMode: keyFile
+   authorization: enabled
 
 #sharding:
 #   clusterRole: shardsvr

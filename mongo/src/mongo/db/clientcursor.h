@@ -290,6 +290,7 @@ private:
     const NamespaceString _nss;
 
     // The set of authenticated users when this cursor was created.
+    //认证成功后添加用户账号到该容器。见AuthorizationSession::addAndAuthorizeUser
     std::vector<UserName> _authenticatedUsers;
 
     // A logical session id for this cursor, if it is running inside of a session.
