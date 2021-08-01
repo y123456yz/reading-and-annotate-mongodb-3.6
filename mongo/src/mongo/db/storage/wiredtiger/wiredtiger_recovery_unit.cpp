@@ -143,7 +143,7 @@ void WiredTigerRecoveryUnit::beginUnitOfWork(OperationContext* opCtx) {
     _inUnitOfWork = true;
 }
 
-//WriteUnitOfWork::commit
+//WriteUnitOfWork::commit 
 void WiredTigerRecoveryUnit::commitUnitOfWork() {
     invariant(_inUnitOfWork);
     _inUnitOfWork = false;

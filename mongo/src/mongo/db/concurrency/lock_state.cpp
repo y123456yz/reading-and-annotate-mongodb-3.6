@@ -592,7 +592,8 @@ void LockerImpl<IsForMMAPV1>::endWriteUnitOfWork() {
         // Don't do anything unless leaving outermost WUOW.
         return;
     }
-	
+
+	//配合锁延迟释放接口阅读LockerImpl<>::unlock
     while (!_resourcesToUnlockAtEndOfUnitOfWork.empty()) {
         unlock(_resourcesToUnlockAtEndOfUnitOfWork.front());
         _resourcesToUnlockAtEndOfUnitOfWork.pop();
