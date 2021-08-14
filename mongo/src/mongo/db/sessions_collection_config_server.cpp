@@ -88,6 +88,7 @@ Status SessionsCollectionConfigServer::_generateIndexesIfNeeded(OperationContext
     return res.getStatus();
 }
 
+//system.sessions创建索引及启用分片等
 Status SessionsCollectionConfigServer::setupSessionsCollection(OperationContext* opCtx) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     {

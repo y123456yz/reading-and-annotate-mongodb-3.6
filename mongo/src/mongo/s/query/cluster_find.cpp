@@ -382,7 +382,7 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
             return cursorId;
         }
 
-		//从直到分片获取数据失败，说明可能路由信息不是最新得了
+		//从指定分片获取数据失败，说明可能路由信息不是最新得了
         const auto& status = cursorId.getStatus();
 
         if (!ErrorCodes::isStaleShardingError(status.code()) &&
@@ -397,7 +397,7 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
                << " on attempt " << retries << " of " << kMaxStaleConfigRetries << ": "
                << redact(status);
 
-		//从直到分片获取数据失败，说明可能路由信息不是最新得了，或者表已经被删除
+		//从指定分片获取数据失败，说明可能路由信息不是最新得了，或者表已经被删除
         catalogCache->onStaleConfigError(std::move(routingInfo));
     }
 

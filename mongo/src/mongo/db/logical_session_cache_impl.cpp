@@ -258,7 +258,7 @@ Status LogicalSessionCacheImpl::_reap(Client* client) {
 //mongos> db.system.sessions.find();
 //{ "_id" : { "id" : UUID("14c31e1f-c245-46ea-a229-7c31a4b042db"), "uid" : BinData(0,"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=") }, "lastUse" : ISODate("2021-05-13T19:17:23.232Z") }
 
-//向config server中的system.sessions发送update，同时upsert:true，没有则添加。也就是更新session内容
+//向system.sessions发送update，同时upsert:true，没有则添加。也就是更新session内容
 void LogicalSessionCacheImpl::_refresh(Client* client) {
     // Do not run this job if we are not in FCV 3.6
     if (serverGlobalParams.featureCompatibility.getVersion() !=
@@ -309,7 +309,7 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
 	// mongos对应SessionsCollectionSharded，见makeLogicalSessionCacheS
 	//2. mongos对应SessionsCollectionSharded::setupSessionsCollection
 
-	//获取指定config.system.sessions表对应得路由信息
+	////system.sessions创建索引及启用分片等
 	auto res = _sessionsColl->setupSessionsCollection(opCtx);
     if (!res.isOK()) {
         log() << "Sessions collection is not set up; "

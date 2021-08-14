@@ -28,6 +28,7 @@
 
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kCommand
 
+
 #include "mongo/platform/basic.h"
 
 #include "mongo/db/service_entry_point_mongod.h"

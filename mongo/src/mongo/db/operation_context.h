@@ -549,6 +549,8 @@ private:
     bool _writesAreReplicated = true;
 };
 
+//注意WriteUnitOfWork和RecoveryUnit的关系，WriteUnitOfWork的相关接口最终都会调用RecoveryUnit接口
+
 //WriteUnitOfWork 是事务框架提供给server层，方便执行事务的API。它是对OperationContext和RecoveryUnit的封装。
 //http://www.mongoing.com/archives/5476
 class WriteUnitOfWork { //使用可以参考insertDocuments  makeCollection    事务封装

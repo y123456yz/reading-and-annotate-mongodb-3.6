@@ -25,6 +25,10 @@
  * delete this exception statement from all source files in the program,
  * then also delete it in the license file.
  */
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kCommand
+	 
+#include "mongo/util/log.h"
+
 
 #include "mongo/platform/basic.h"
 
@@ -78,8 +82,14 @@ void initializeOperationSessionInfo(OperationContext* opCtx,
 	*/
 	//从requestBody内容按照mongo/db/logical_session_id.idl格式解析,并赋值给OperationSessionInfo类，通过osi返回
 	//OperationSessionInfoFromClient类见mongo/build/opt/mongo/db/logical_session_id_gen.h  logical_session_id_gen.cpp
+
+	//3.6参考官方说明:https://docs.mongodb.com/manual/reference/server-sessions/ 
+	//3.6 mongo shell每次请求都会带上lsid: { id: UUID("xxx-5b45-42c8-8f44-xxxxx") }
     auto osi = OperationSessionInfoFromClient::parse("OperationSessionInfo"_sd, requestBody);
 
+	log() << "yang test ............ initializeOperationSessionInfo txn number: ";// << ", getSessionId: " << osi.getSessionId().toBSON();
+ 	//OperationSessionInfoFromClient::getSessionId 
+ 	//lsid检查见//lsid检查见OperationContextSession::OperationContextSession
     if (osi.getSessionId()) {
         uassert(ErrorCodes::InvalidOptions,
                 str::stream() << "cannot pass logical session id unless fully upgraded to "

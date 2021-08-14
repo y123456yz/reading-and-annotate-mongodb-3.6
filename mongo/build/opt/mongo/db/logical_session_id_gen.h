@@ -154,6 +154,11 @@ private:
 /**
  * A struct representing a LogicalSessionId from external clients
  */
+/*
+test_auth_repl:PRIMARY> db.system.sessions.find()
+{ "_id" : { "id" : UUID("fccc737c-ae50-482a-8dd0-f6f6c3ea5dd1"), "uid" : BinData(0,"+wPZ15XoVmhjI2xqa5XHUcKMw2NurFuaFm0GSG4tt3A=") }, "lastUse" : ISODate("2021-08-14T11:35:54.174Z"), "user" : { "name" : "root3@admin" } }
+
+*/ //system.sessions表中的_id
 class LogicalSessionFromClient {
 public:
     static constexpr auto kIdFieldName = "id"_sd;
@@ -228,6 +233,7 @@ public:
     void serialize(BSONObjBuilder* builder) const;
     BSONObj toBSON() const;
 
+    //lsid检查见OperationContextSession::OperationContextSession
     const boost::optional<LogicalSessionFromClient>& getSessionId() const& { return _sessionId; }
     void getSessionId() && = delete;
     void setSessionId(boost::optional<LogicalSessionFromClient> value) & { _sessionId = std::move(value);  }
@@ -243,6 +249,7 @@ protected:
     void parseProtected(const IDLParserErrorContext& ctxt, const BSONObj& bsonObject);
 
 private:
+    //lsid检查见OperationContextSession::OperationContextSession
     boost::optional<LogicalSessionFromClient> _sessionId;
     boost::optional<std::int64_t> _txnNumber;
 };
