@@ -38,7 +38,7 @@
 #include "mongo/util/periodic_runner.h"
 
 namespace mongo {
-
+//LogicalSessionCacheImpl::_refresh
 LogicalSessionIdSet ServiceLiasonMongos::getActiveOpSessions() const {
     LogicalSessionIdSet activeSessions;
 

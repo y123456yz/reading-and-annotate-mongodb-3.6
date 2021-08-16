@@ -307,7 +307,7 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
 	//1. mongod对应makeSessionsCollection中构造使用，
 	// 和SessionsCollectionSharded	SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
 	// mongos对应SessionsCollectionSharded，见makeLogicalSessionCacheS
-	//2. mongos对应SessionsCollectionSharded::setupSessionsCollection
+	//2. mongos对应SessionsCollectionSharded::setupSessionsCollection  mongod对应SessionsCollectionRS::setupSessionsCollection
 
 	////system.sessions创建索引及启用分片等
 	auto res = _sessionsColl->setupSessionsCollection(opCtx);
@@ -357,6 +357,8 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
 
     LogicalSessionRecordSet activeSessionRecords{};
 
+	//mongod对应ServiceLiasonMongod::getActiveOpSessions()
+	//mongos对应ServiceLiasonMongos::getActiveOpSessions()
     auto runningOpSessions = _service->getActiveOpSessions();
 
     for (const auto& it : runningOpSessions) {
@@ -374,7 +376,7 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     //1. mongod对应makeSessionsCollection中构造使用，
 	// 和SessionsCollectionSharded	SessionsCollectionConfigServer SessionsCollectionRS SessionsCollectionStandalone同级
 	// mongos对应SessionsCollectionSharded，见makeLogicalSessionCacheS
-	//2. mongos对应SessionsCollectionSharded::refreshSessions
+	//2. mongos对应SessionsCollectionSharded::refreshSessions  mongod对应SessionsCollectionRS::refreshSessions
 
 	
 	//mongos> db.system.sessions.find();
@@ -437,7 +439,7 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     }
 }
 
-//EndSessionsCommand::run调用
+//EndSessionsCommand::run调用  //链接断开会调用该命令执行
 //_endingSessions专门记录end session信息
 void LogicalSessionCacheImpl::endSessions(const LogicalSessionIdSet& sessions) {
     stdx::lock_guard<stdx::mutex> lk(_cacheMutex);

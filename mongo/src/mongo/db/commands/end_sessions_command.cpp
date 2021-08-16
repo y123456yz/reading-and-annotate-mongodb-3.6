@@ -38,6 +38,7 @@
 
 namespace mongo {
 
+//链接断开会调用该命令执行
 class EndSessionsCommand final : public BasicCommand {
     MONGO_DISALLOW_COPYING(EndSessionsCommand);
 

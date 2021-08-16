@@ -40,6 +40,8 @@
 
 namespace mongo {
 
+//
+//LogicalSessionCacheImpl::_refresh
 LogicalSessionIdSet ServiceLiasonMongod::getActiveOpSessions() const {
     LogicalSessionIdSet activeSessions;
 

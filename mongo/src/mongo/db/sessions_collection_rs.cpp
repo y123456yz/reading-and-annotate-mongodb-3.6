@@ -186,16 +186,19 @@ Status SessionsCollectionRS::refreshSessions(OperationContext* opCtx,
 
 Status SessionsCollectionRS::removeRecords(OperationContext* opCtx,
                                            const LogicalSessionIdSet& sessions) {
+    //ÉÏÃæµÄdispatch
     return dispatch(kSessionsNamespaceString,
                     MODE_IX,
                     opCtx,
                     [&] {
                         DBDirectClient client(opCtx);
+						//SessionsCollection::doRemove
                         return doRemove(kSessionsNamespaceString,
                                         sessions,
                                         makeSendFnForBatchWrite(kSessionsNamespaceString, &client));
                     },
                     [&](DBClientBase* client) {
+                    	//SessionsCollection::doRemoveExternal
                         return doRemoveExternal(
                             kSessionsNamespaceString,
                             sessions,
