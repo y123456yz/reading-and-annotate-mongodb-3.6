@@ -814,7 +814,7 @@ WriteResult performUpdates(OperationContext* opCtx, const write_ops::Update& who
                 out.results.emplace_back(parseOplogEntryForUpdate(*entry));
                 continue;
             }
-        }
+        } 
 
         // TODO: don't create nested CurOp for legacy writes.
         // Add Command pointer to the nested CurOp.
@@ -934,6 +934,7 @@ static SingleWriteResult performSingleDeleteOp(OperationContext* opCtx,
     result.setN(n);
     return result;
 }
+
 
 //performDeletes(CmdDelete::runImpl)  performUpdates(CmdUpdate::runImpl)  performInserts(CmdInsert::runImpl)
 WriteResult performDeletes(OperationContext* opCtx, const write_ops::Delete& wholeOp) {

@@ -123,7 +123,7 @@ public:
      */
     void invalidateSessions(OperationContext* opCtx, boost::optional<BSONObj> singleSessionDoc);
 
-private:
+private: 
     struct SessionRuntimeInfo {
         SessionRuntimeInfo(LogicalSessionId lsid) : txnState(std::move(lsid)) {}
 
@@ -138,7 +138,7 @@ private:
 
         // Must only be accessed when the state is kInUse and only by the operation context, which
         // currently has it checked out
-        Session txnState;
+        Session txnState; 
     };
 
     using SessionRuntimeInfoMap = stdx::unordered_map<LogicalSessionId,
@@ -198,6 +198,7 @@ private:
  * Scoped object representing a checked-out session. See comments for the 'checkoutSession' method
  * for more information on its behaviour.
  */
+//CheckedOutSession.scopedSession成员为该类型
 class ScopedCheckedOutSession {
     MONGO_DISALLOW_COPYING(ScopedCheckedOutSession);
 
@@ -241,7 +242,11 @@ private:
  * Scoped object, which checks out the session specified in the passed operation context and stores
  * it for later access by the command. The session is installed at construction time and is removed
  * at destruction.
- */ //参考execCommandDatabase
+ */ 
+ 
+//performInserts  performUpdates  performDeletes 
+//OpObserverImpl::onInserts  OpObserverImpl::onDelete  OpObserverImpl::onUpdate
+//execCommandDatabase调用
 class OperationContextSession {
     MONGO_DISALLOW_COPYING(OperationContextSession);
 

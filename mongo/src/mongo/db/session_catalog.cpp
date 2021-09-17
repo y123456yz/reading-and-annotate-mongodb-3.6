@@ -54,11 +54,15 @@ struct CheckedOutSession {
     // This number gets incremented every time a request tries to check out this session, including
     // the cases when it was already checked out. Level of 0 means that it's available or is
     // completely released.
+
+	//OperationContextSession::OperationContextSession中自增，
+	//OperationContextSession::~OperationContextSession()自减
     int checkOutNestingLevel = 0;
 };
 
 const auto sessionTransactionTableDecoration =
     ServiceContext::declareDecoration<boost::optional<SessionCatalog>>();
+
 
 const auto operationSessionDecoration =
     OperationContext::declareDecoration<boost::optional<CheckedOutSession>>();
@@ -240,6 +244,8 @@ void SessionCatalog::_releaseSession(const LogicalSessionId& lsid) {
     sri->availableCondVar.notify_one();
 }
 
+//performInserts  performUpdates  performDeletes 
+//OpObserverImpl::onInserts  OpObserverImpl::onDelete  OpObserverImpl::onUpdate
 //execCommandDatabase调用
 OperationContextSession::OperationContextSession(OperationContext* opCtx, bool checkOutSession)
     : _opCtx(opCtx) {
@@ -262,7 +268,9 @@ OperationContextSession::OperationContextSession(OperationContext* opCtx, bool c
         checkedOutSession.emplace(sessionTransactionTable->checkOutSession(opCtx));
     }
 
+	//也就是CheckedOutSession或者SessionCatalog
     const auto session = checkedOutSession->scopedSession.get();
+	//CheckedOutSession::getSessionId
     invariant(opCtx->getLogicalSessionId() == session->getSessionId());
 
     checkedOutSession->checkOutNestingLevel++;

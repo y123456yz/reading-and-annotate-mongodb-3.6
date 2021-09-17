@@ -224,6 +224,7 @@ const BSONObj Session::kDeadEndSentinel(BSON("$incompleteOplogHistory" << 1));
 
 Session::Session(LogicalSessionId sessionId) : _sessionId(std::move(sessionId)) {}
 
+//OperationContextSession::OperationContextSession
 void Session::refreshFromStorageIfNeeded(OperationContext* opCtx) {
     invariant(!opCtx->lockState()->isLocked());
     invariant(repl::ReadConcernArgs::get(opCtx).getLevel() ==

@@ -27,6 +27,7 @@ namespace mongo {
 /**
  * A struct representing a LogicalSessionId
  */
+//Session._sessionId为该类型
 class LogicalSessionId {
 public:
     static constexpr auto kIdFieldName = "id"_sd;

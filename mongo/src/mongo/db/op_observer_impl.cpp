@@ -359,6 +359,7 @@ void OpObserverImpl::onInserts(OperationContext* opCtx,
     onWriteOpCompleted(opCtx, nss, session, stmtIdsWritten, lastOpTime, lastWriteDate);
 }
 
+
 void OpObserverImpl::onUpdate(OperationContext* opCtx, const OplogUpdateEntryArgs& args) {
     MONGO_FAIL_POINT_BLOCK(failCollectionUpdates, extraData) {
         auto collElem = extraData.getData()["collectionNS"];
@@ -422,6 +423,7 @@ auto OpObserverImpl::aboutToDelete(OperationContext* opCtx,
     auto* css = CollectionShardingState::get(opCtx, nss.ns());
     return css->makeDeleteState(doc);
 }
+
 
 void OpObserverImpl::onDelete(OperationContext* opCtx,
                               const NamespaceString& nss,

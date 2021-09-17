@@ -165,6 +165,7 @@ Status SessionsCollectionRS::setupSessionsCollection(OperationContext* opCtx) {
                     });
 }
 
+//LogicalSessionCacheImpl::_refresh调用，活跃session更新，没有则插入
 Status SessionsCollectionRS::refreshSessions(OperationContext* opCtx,
                                              const LogicalSessionRecordSet& sessions) {
     return dispatch(
@@ -173,11 +174,13 @@ Status SessionsCollectionRS::refreshSessions(OperationContext* opCtx,
         opCtx,
         [&] {
             DBDirectClient client(opCtx);
+			//SessionsCollection::doRefresh
             return doRefresh(kSessionsNamespaceString,
                              sessions,
                              makeSendFnForBatchWrite(kSessionsNamespaceString, &client));
         },
         [&](DBClientBase* client) {
+        	//SessionsCollection::doRefreshExternal
             return doRefreshExternal(kSessionsNamespaceString,
                                      sessions,
                                      makeSendFnForCommand(kSessionsNamespaceString, client));

@@ -148,6 +148,7 @@ Status LogicalSessionCacheImpl::refreshSessions(OperationContext* opCtx,
 
 //execCommandDatabase->initializeOperationSessionInfo调用
 void LogicalSessionCacheImpl::vivify(OperationContext* opCtx, const LogicalSessionId& lsid) {
+	//查找_activeSessions中是否有该lsid，没有则添加
     if (!promote(lsid).isOK()) {
 		//没找到，则把该lsid添加到
         startSession(opCtx, makeLogicalSessionRecord(opCtx, lsid, now()));
@@ -336,6 +337,8 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
         });
     };
 
+	//_activeSessions和_endingSessions替换后都为空的了，当已有链接上的session再次通过代理交互的时候会添加到_activeSessions
+	//如果一个刷新周期内已有session空闲，没有任何交互信息，则这个周期内该session不会有任何刷新
     {
         using std::swap;
         stdx::lock_guard<stdx::mutex> lk(_cacheMutex);
@@ -411,7 +414,8 @@ void LogicalSessionCacheImpl::_refresh(Client* client) {
     auto openCursorSessions = _service->getOpenCursorSessions();
 
     // think about pruning ending and active out of openCursorSessions
-    //SessionsCollectionSharded::findRemovedSessions
+
+    //mongos对应SessionsCollectionSharded::findRemovedSessions  mongod对应SessionsCollectionRS::findRemovedSessions
     //先查找，然后删除
     auto statusAndRemovedSessions = _sessionsColl->findRemovedSessions(opCtx, openCursorSessions);
 

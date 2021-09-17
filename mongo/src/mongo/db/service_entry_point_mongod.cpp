@@ -99,6 +99,8 @@ using logger::LogComponent;
 // so if it didn't, and the function it was given contains any of these whitelisted commands, they
 // would try to check out a session under a lock, which is not allowed.  Similarly,
 // refreshLogicalSessionCacheNow triggers a bulk update under a lock on the sessions collection.
+
+//这些命令需要做session检查
 const StringMap<int> cmdWhitelist = {{"delete", 1},
                                      {"eval", 1},
                                      {"$eval", 1},
@@ -662,7 +664,7 @@ void execCommandDatabase(OperationContext* opCtx,
         // servers may result in a deadlock when a server tries to check out a session it is already
         // using to service an earlier operation in the command's chain. To avoid this, only check
         // out sessions for commands that require them (i.e. write commands).
-        //构造OperationContextSession
+        //构造OperationContextSession::OperationContextSession
         OperationContextSession sessionTxnState(
             opCtx, cmdWhitelist.find(command->getName()) != cmdWhitelist.cend());
 

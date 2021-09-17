@@ -206,6 +206,8 @@ SessionsCollection::FindBatchFn SessionsCollection::makeFindFnForCommand(const N
 //{ "_id" : { "id" : UUID("14c31e1f-c245-46ea-a229-7c31a4b042db"), "uid" : BinData(0,"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=") }, "lastUse" : ISODate("2021-05-13T19:17:23.232Z") }
 //SessionsCollectionSharded::refreshSessions中调用
 //向ns对应db.collection发送update，同时upsert:true，没有则添加。也就是更新session内容
+
+//副本集在SessionsCollectionRS::refreshSessions调用
 Status SessionsCollection::doRefresh(const NamespaceString& ns,
                                      const LogicalSessionRecordSet& sessions,
                                      SendBatchFn send) {
@@ -241,6 +243,8 @@ Status SessionsCollection::doRefreshExternal(const NamespaceString& ns,
     return runBulkGeneric(makeT, add, sendLocal, sessions);
 }
 
+
+//副本集在SessionsCollectionRS::refreshSessions调用
 Status SessionsCollection::doRemove(const NamespaceString& ns,
                                     const LogicalSessionIdSet& sessions,
                                     SendBatchFn send) {

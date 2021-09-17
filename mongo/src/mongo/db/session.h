@@ -62,6 +62,7 @@ Session ÊÇ MongoDB 3.6 °æ±¾ÒıÈëµÄ¸ÅÄî£¬ÒıÈëÕâ¸öÌØĞÔÖ÷Òª¾ÍÊÇÎªÊµÏÖ¶àÎÄµµÊÂÎñ×ö×¼±
 
 ¿ÉÒÔ²Î¿¼:https://mongoing.com/%3Fp%3D6084
 */
+//SessionCatalog::SessionRuntimeInfo.txnStateÎª¸ÃÀàĞÍ
 class Session {
     MONGO_DISALLOW_COPYING(Session);
 
@@ -200,7 +201,7 @@ private:
                                       std::vector<StmtId> stmtIdsWritten,
                                       const repl::OpTime& lastStmtIdWriteTs);
     //lsid: ÇëÇóËùÔÚ Session µÄ ID£¬ Ò²³Æ logic session id
-    const LogicalSessionId _sessionId;
+    const LogicalSessionId _sessionId; 
 
     // Protects the member variables below.
     mutable stdx::mutex _mutex;
