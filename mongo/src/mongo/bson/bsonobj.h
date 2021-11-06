@@ -90,7 +90,7 @@ namespace mongo {
  Symbol:    a language symbol (say a python symbol).  same format as String.
  Code With Scope: <total size><String><Object>
  \endcode
- */
+ */ //整个BSONObj打印可以参考getRedactedCopyForLogging
 class BSONObj {
 public:
     // Declared in bsonobj_comparator_interface.h.

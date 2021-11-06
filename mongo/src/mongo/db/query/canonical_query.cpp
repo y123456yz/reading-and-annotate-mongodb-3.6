@@ -508,6 +508,7 @@ Status CanonicalQuery::isValid(MatchExpression* root, const QueryRequest& parsed
     return Status::OK();
 }
 
+//QueryPlanner::planµ÷ÓÃ
 std::string CanonicalQuery::toString() const {
     str::stream ss;
     ss << "ns=" << _qr->nss().ns();
