@@ -47,6 +47,7 @@ class OperationContext;
  *
  * Provides an interface to collect BSONObjs from system providers
  */
+//FTDCSimpleInternalCommandCollector
 class FTDCCollectorInterface {
     MONGO_DISALLOW_COPYING(FTDCCollectorInterface);
 

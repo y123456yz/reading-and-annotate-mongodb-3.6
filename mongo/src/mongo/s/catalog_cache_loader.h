@@ -50,12 +50,11 @@ class OperationContext;
  * retrieved from the persisted metadata store.
  */
 
-//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ShardServerCatalogCacheLoader(mongod实例)
 //见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
 
-
 //CatalogCache._cacheLoader为该类型   CatalogCacheLoader::set种赋值
-//ShardServerCatalogCacheLoader  ReadOnlyCatalogCacheLoader  ConfigServerCatalogCacheLoader继承该类
+//ShardServerCatalogCacheLoader    ConfigServerCatalogCacheLoader继承该类
 class CatalogCacheLoader {
 public:
     virtual ~CatalogCacheLoader() = default;
@@ -83,7 +82,9 @@ public:
                                    std::vector<ChunkType> chunks);
 
         // Information about the entire collection
+        //对应一个集合
         boost::optional<UUID> uuid;
+        //代表一个集群
         OID epoch;
         BSONObj shardKeyPattern;
         BSONObj defaultCollation;

@@ -319,10 +319,12 @@ void startFTDC(boost::filesystem::path& path,
         "hostInfo", "hostInfo", "", BSON("hostInfo" << 1)));
 
     // Install the new controller
+    //FTDCController::start()
     auto& staticFTDC = getFTDCController(getGlobalServiceContext());
 
     staticFTDC = std::move(controller);
 
+	//FTDCController::start()  对应循环体在FTDCController::doLoop()
     staticFTDC->start();
 }
 

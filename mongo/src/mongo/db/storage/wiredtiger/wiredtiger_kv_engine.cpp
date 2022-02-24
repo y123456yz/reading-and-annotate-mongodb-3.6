@@ -1098,6 +1098,7 @@ Status WiredTigerKVEngine::dropIdent(OperationContext* opCtx, StringData ident) 
 
     WiredTigerSession session(_conn);
 
+	//WiredTigerSession::drop
     int ret = session.getSession()->drop(
         session.getSession(), uri.c_str(), "force,checkpoint_wait=false");
     LOG(1) << "WT drop of  " << uri << " res " << ret;

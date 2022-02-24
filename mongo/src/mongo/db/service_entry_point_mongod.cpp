@@ -805,7 +805,7 @@ void execCommandDatabase(OperationContext* opCtx,
     } catch (const DBException& e) {
         // If we got a stale config, wait in case the operation is stuck in a critical section
         //增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
-		//读对应version版本检测：FindCmd::run->assertCanWrite_inlock、
+		//读对应version版本检测：FindCmd::run->checkShardVersionOrThrow、
 		//这两个地方版本异常返回的错误码都是ErrorCodes::StaleConfig
         if (e.code() == ErrorCodes::StaleConfig) {
             auto sce = dynamic_cast<const StaleConfigException*>(&e);

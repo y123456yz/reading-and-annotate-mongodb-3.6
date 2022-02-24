@@ -418,7 +418,7 @@ pad: "	  13080577566-76793693218-00011035587-01443926745-80818518372", yangtest1
         // expected collection version
         auto css = CollectionShardingState::get(opCtx, nss);
 		//增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
-		//读对应version版本检测：FindCmd::run->assertCanWrite_inlock、
+		//读对应version版本检测：FindCmd::run->checkShardVersionOrThrow、
 		// execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
 		
 		//shard version版本检查，如果mongos发送过来的shard version和期望的不一样，则返回mongos错误

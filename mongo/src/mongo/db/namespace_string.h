@@ -65,6 +65,7 @@ public:
 
     // Name for a shard's collections metadata collection, each document of which indicates the
     // state of a specific collection.
+    //²Î¿¼updateShardCollectionsEntry
     static constexpr StringData kShardConfigCollectionsCollectionName = "config.cache.collections"_sd;
 
     // Name for causal consistency's key collection.

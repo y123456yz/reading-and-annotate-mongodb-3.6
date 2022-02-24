@@ -32,9 +32,10 @@
 #include "mongo/util/concurrency/thread_pool.h"
 
 namespace mongo {
-//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ShardServerCatalogCacheLoader(mongod实例)
 //见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
 
+//ShardServerCatalogCacheLoader._configServerLoader为该类型，指向本分片对应的config server
 class ConfigServerCatalogCacheLoader final : public CatalogCacheLoader {
 public:
     ConfigServerCatalogCacheLoader();

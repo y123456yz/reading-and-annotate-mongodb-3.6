@@ -1026,6 +1026,7 @@ std::pair<BSONObj, NamespaceString> prepForApplyOpsIndexInsert(const BSONElement
 }
 // @return failure status if an update should have happened and the document DNE.
 // See replset initial sync code.
+//SyncTail::syncApply
 Status applyOperation_inlock(OperationContext* opCtx,
                              Database* db,
                              const BSONObj& op,

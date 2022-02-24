@@ -51,8 +51,7 @@
 namespace mongo {
 namespace {
 //forcePrimaryRefreshAndWaitForReplication：
-//	mongos向mongod shard server主节点发送forceRoutingTableRefresh命令，shard server主节点收到后，
-//	在FlushRoutingTableCacheUpdates::run中处理，注意这个是内部命令
+//从节点通过_flushRoutingTableCacheUpdates发送给主节点，主节点开始获取最新的路由信息
 //还有一个外部强制路由刷新db.adminCommand({"flushRouterConfig":1})
 class FlushRoutingTableCacheUpdates : public BasicCommand {
 public:
@@ -144,6 +143,7 @@ public:
 
         oss.waitForMigrationCriticalSectionSignal(opCtx);
 
+		//在build/opt/mongo/s/request_types/flush_routing_table_cache_updates_gen.h:中定义
         if (request.getSyncFromConfig()) {
             LOG(1) << "Forcing remote routing table refresh for " << nss;
             ChunkVersion unusedShardVersion;

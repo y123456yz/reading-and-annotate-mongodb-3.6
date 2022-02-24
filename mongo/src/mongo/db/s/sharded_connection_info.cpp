@@ -90,6 +90,7 @@ ChunkVersion ShardedConnectionInfo::getVersion(const std::string& ns) const {
     }
 }
 
+//setShardVersion√¸¡Ó…Ë÷√
 void ShardedConnectionInfo::setVersion(const std::string& ns, const ChunkVersion& version) {
     _versions[ns] = version;
 }

@@ -57,7 +57,7 @@ AtomicUInt64 taskIdGenerator{0};
 
 /**
  * Constructs the options for the loader thread pool.
- */
+ */ //每个线程名都有一个num，参考ShardServerCatalogCacheLoader::Task::Task
 ThreadPool::Options makeDefaultThreadPoolOptions() {
     ThreadPool::Options options;
     options.poolName = "ShardServerCatalogCacheLoader";
@@ -78,17 +78,21 @@ ThreadPool::Options makeDefaultThreadPoolOptions() {
  *
  * Returns ConflictingOperationInProgress if a chunk is found with a new epoch.
  */
+//把拿到的变化的collAndChunks信息更新到cache.chunks.库.表中
 Status persistCollectionAndChangedChunks(OperationContext* opCtx,
                                          const NamespaceString& nss,
                                          const CollectionAndChangedChunks& collAndChunks) {
     // Update the collections collection entry for 'nss' in case there are any new updates.
+    //config.cache.collections表中的nss表内容，代表一个分片集合信息
     ShardCollectionType update = ShardCollectionType(nss,
                                                      collAndChunks.uuid,
                                                      collAndChunks.epoch,
                                                      collAndChunks.shardKeyPattern,
                                                      collAndChunks.defaultCollation,
                                                      collAndChunks.shardKeyIsUnique);
-    Status status = updateShardCollectionsEntry(opCtx,
+	//把collAndChunks信息更新到"config.cache.collections"，没有则写入
+	//更新"config.cache.collections"表中的内容，更新分片表信息
+	Status status = updateShardCollectionsEntry(opCtx,
                                                 BSON(ShardCollectionType::ns() << nss.ns()),
                                                 update.toBSON(),
                                                 BSONObj(),
@@ -98,18 +102,21 @@ Status persistCollectionAndChangedChunks(OperationContext* opCtx,
     }
 
     // Mark the chunk metadata as refreshing, so that secondaries are aware of refresh.
+    //设置cache.collections表中的对应表的refreshing字段为true，标记当前真再刷新chunk路由信息
     status = setPersistedRefreshFlags(opCtx, nss);
     if (!status.isOK()) {
         return status;
     }
 
     // Update the chunks.
+    //更新config.cache.chunks.表 中的chunks信息到最新的chunks，先找出有表中和chunks有交集的chunk，然后删除插入新的chunks
     status = updateShardChunks(opCtx, nss, collAndChunks.changedChunks, collAndChunks.epoch);
     if (!status.isOK()) {
         return status;
     }
 
     // Mark the chunk metadata as done refreshing.
+    //设置cache.collections表中的对应表的refreshing字段为false，标记当前刷新chunk路由信息结束
     status =
         unsetPersistedRefreshFlags(opCtx, nss, collAndChunks.changedChunks.back().getVersion());
     if (!status.isOK()) {
@@ -129,10 +136,11 @@ Status persistCollectionAndChangedChunks(OperationContext* opCtx,
  * It is unsafe to call this when a task for 'nss' is running concurrently because the collection
  * could be dropped and recreated between reading the collection epoch and retrieving the chunk,
  * which would make the returned ChunkVersion corrupt.
- */
+ */ //ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince
 ChunkVersion getPersistedMaxVersion(OperationContext* opCtx, const NamespaceString& nss) {
     // Must read the collections entry to get the epoch to pass into ChunkType for shard's chunk
     // collection.
+    //查找config.cache.collections表中的nss表内容，只有该表启用了分片功能，config.cache.collections中才会有该表的一条数据
     auto statusWithCollection = readShardCollectionsEntry(opCtx, nss);
     if (statusWithCollection == ErrorCodes::NamespaceNotFound) {
         // There is no persisted metadata.
@@ -146,6 +154,9 @@ ChunkVersion getPersistedMaxVersion(OperationContext* opCtx, const NamespaceStri
                           << "'.",
             statusWithCollection.isOK());
 
+	//按照参数中指定条件读取"config.cache.chunks."中内容的最新一条数据，倒排序
+	//db.cache.chunks.db.collection.find().sort({lastmod:-1}).limit(1)
+	//读取db.cache.chunks.db.collection表中最大的一个chunk，也就是lastmod最大的chunk
     auto statusWithChunk =
         shardmetadatautil::readShardChunks(opCtx,
                                            nss,
@@ -174,21 +185,26 @@ ChunkVersion getPersistedMaxVersion(OperationContext* opCtx, const NamespaceStri
  * If 'version's epoch doesn't match persisted metadata, returns all persisted metadata.
  * If collections entry does not exist, throws NamespaceNotFound error. Can return an empty
  * chunks vector in CollectionAndChangedChunks without erroring, if collections entry IS found.
- */
+ */ 
+//如果version.epoll和config.cache.collections表epoll不一致则获取全量chunk数据，否则获取增量chunk数据
 CollectionAndChangedChunks getPersistedMetadataSinceVersion(OperationContext* opCtx,
                                                             const NamespaceString& nss,
                                                             ChunkVersion version,
                                                             const bool okToReadWhileRefreshing) {
     ShardCollectionType shardCollectionEntry =
+		//查找config.cache.collections表中的nss表内容，启用了分片功能的表这里面都会有记录
         uassertStatusOK(readShardCollectionsEntry(opCtx, nss));
 
     // If the persisted epoch doesn't match what the CatalogCache requested, read everything.
+    //config.cache.collections表中对应表的epoch和version请求中的epoll是否一致
     ChunkVersion startingVersion = (shardCollectionEntry.getEpoch() == version.epoch())
         ? version
         : ChunkVersion(0, 0, shardCollectionEntry.getEpoch());
 
+	//类似db.cache.chunks.db.coll.find({"lastmod" :{$gte:Timestamp(xx, xx)}}).sort({"lastmod" : 1})
     QueryAndSort diff = createShardChunkDiffQuery(startingVersion);
 
+	//获取({"lastmod" :{$gte:Timestamp(xx, xx)}}).sort({"lastmod" : 1})条件的增量数据，也就是获取增量chunk信息
     auto changedChunks = uassertStatusOK(
         readShardChunks(opCtx, nss, diff.query, diff.sort, boost::none, startingVersion.epoch()));
 
@@ -244,9 +260,8 @@ StatusWith<CollectionAndChangedChunks> getIncompletePersistedMetadataSinceVersio
  * collection 'nss' and then waits for the refresh to replicate to this node.
  */
 //forcePrimaryRefreshAndWaitForReplication：
-//  mongos向mongod shard server主节点发送forceRoutingTableRefresh命令，shard server主节点收到后，
-//  在FlushRoutingTableCacheUpdates::run中处理，注意这个是内部命令
-//还有一个外部强制路由刷新db.adminCommand({"flushRouterConfig":1})
+//从节点通过_flushRoutingTableCacheUpdates发送给主节点，主节点开始获取最新的路由信息
+
 
 //ShardServerCatalogCacheLoader::getChunksSince->ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince调用
 void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const NamespaceString& nss) {
@@ -284,8 +299,10 @@ ChunkVersion getLocalVersion(OperationContext* opCtx, const NamespaceString& nss
 
 }  // namespace
 
+
 ShardServerCatalogCacheLoader::ShardServerCatalogCacheLoader(
     std::unique_ptr<CatalogCacheLoader> configServerLoader)
+    //ShardServerCatalogCacheLoader._configServerLoader指向本分片对应的config server
     : _configServerLoader(std::move(configServerLoader)),
       _threadPool(makeDefaultThreadPoolOptions()) {
     _threadPool.startup();
@@ -320,6 +337,7 @@ void ShardServerCatalogCacheLoader::initializeReplicaSetRole(bool isPrimary) {
     }
 }
 
+//主从状态发生变化，则_term自增
 void ShardServerCatalogCacheLoader::onStepDown() {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     invariant(_role != ReplicaSetRole::None);
@@ -327,7 +345,6 @@ void ShardServerCatalogCacheLoader::onStepDown() {
     ++_term;
     _role = ReplicaSetRole::Secondary;
 }
-
 void ShardServerCatalogCacheLoader::onStepUp() {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     invariant(_role != ReplicaSetRole::None);
@@ -349,6 +366,7 @@ std::shared_ptr<Notification<void>>
         stdx::lock_guard<stdx::mutex> lock(_mutex);
         invariant(_role != ReplicaSetRole::None);
 
+		//记录当前节点状态，刷新路由过程中主从切换通过该值判断
         currentTerm = _term;
         isPrimary = (_role == ReplicaSetRole::Primary);
     }
@@ -364,6 +382,7 @@ std::shared_ptr<Notification<void>>
                 // We may have missed an OperationContextGroup interrupt since this operation began
                 // but before the OperationContext was added to the group. So we'll check that
                 // we're still in the same _term.
+                //主从状态发生变化或者节点处于shutdown状态
                 if (_term != currentTerm) {
                     callbackFn(context.opCtx(),
                                Status{ErrorCodes::Interrupted,
@@ -375,10 +394,11 @@ std::shared_ptr<Notification<void>>
             }
 
             try {
+				//主节点走该分支
                 if (isPrimary) {
                     _schedulePrimaryGetChunksSince(
                         context.opCtx(), nss, version, currentTerm, callbackFn, notify);
-                } else {
+                } else { //从节点走该分支
                     _runSecondaryGetChunksSince(context.opCtx(), nss, version, callbackFn);
                 }
             } catch (const DBException& ex) {
@@ -555,6 +575,7 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
 
     // Refresh the loader's metadata from the config server. The caller's request will
     // then be serviced from the loader's up-to-date metadata.
+    //ConfigServerCatalogCacheLoader::getChunksSince从config获取路由信息
     _configServerLoader->getChunksSince(nss, maxLoaderVersion, remoteRefreshCallbackFn);
 }
 
@@ -773,6 +794,10 @@ void ShardServerCatalogCacheLoader::_updatePersistedMetadata(OperationContext* o
     Status status =
         persistCollectionAndChangedChunks(opCtx, nss, task.collectionAndChangedChunks.get());
 
+	//主节点刷路由过程中stepdown，会频繁打印该日志
+	//Tue Feb 22 17:06:11.000 I SHARDING [ShardServerCatalogCacheLoader-0] PrimarySteppedDown: Failed to update the persisted chunk metadata for collection 'HDSS.MD_FCT_IER_DETAIL' from '0|0||000000000000000000000000' to '42277|54051||620cc3f8b8d642a2d9dcd717'. Will be retried. :: caused by :: Not primary while writing to config.cache.collections
+	//Tue Feb 22 17:06:11.000 I SHARDING [ShardServerCatalogCacheLoader-6] PrimarySteppedDown: Failed to update the persisted chunk metadata for collection 'HDSS.MD_FCT_IER_DETAIL' from '0|0||000000000000000000000000' to '42277|54051||620cc3f8b8d642a2d9dcd717'. Will be retried. :: caused by :: Not primary while writing to config.cache.collections
+	//Tue Feb 22 17:06:11.000 I SHARDING [ShardServerCatalogCacheLoader-0] PrimarySteppedDown: Failed to update the persisted chunk metadata for collection 'HDSS.MD_FCT_IER_DETAIL' from '0|0||000000000000000000000000' to '42277|54051||620cc3f8b8d642a2d9dcd717'. Will be retried. :: caused by :: Not primary while writing to config.cache.collections
     uassert(status.code(),
             str::stream() << "Failed to update the persisted chunk metadata for collection '"
                           << nss.ns()

@@ -231,7 +231,7 @@ void ShardingState::setGlobalInitMethodForTest(GlobalInitFunc func) {
 }
 
 //shard mongod增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
-//shard mongod读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+//shard mongod读对应version版本检测：FindCmd::run->checkShardVersionOrThrow
 
 
 //SetShardVersion::run   execCommandDatabase(shard server mongod)

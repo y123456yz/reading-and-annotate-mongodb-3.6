@@ -312,8 +312,8 @@ bool SyncTail::peek(OperationContext* opCtx, BSONObj* op) {
 Status SyncTail::syncApply(OperationContext* opCtx,
                            const BSONObj& op,
                            OplogApplication::Mode oplogApplicationMode,
-                           ApplyOperationInLockFn applyOperationInLock,
-                           ApplyCommandInLockFn applyCommandInLock,
+                           ApplyOperationInLockFn applyOperationInLock,  //applyOperation_inlock
+                           ApplyCommandInLockFn applyCommandInLock,      //applyCommand_inlock
                            IncrementOpsAppliedStatsFn incrementOpsAppliedStats) {
     // Count each log op application as a separate operation, for reporting purposes
     CurOp individualOp(opCtx);
@@ -322,6 +322,7 @@ Status SyncTail::syncApply(OperationContext* opCtx,
 
     const char* opType = op["op"].valuestrsafe();
 
+	//具体操作回放
     auto applyOp = [&](Database* db) {
         // For non-initial-sync, we convert updates to upserts
         // to suppress errors when replaying oplog entries.
@@ -354,7 +355,7 @@ Status SyncTail::syncApply(OperationContext* opCtx,
         return applyOp(ctx.db());
     }
 
-    if (isCrudOpType(opType)) {
+    if (isCrudOpType(opType)) { //增删改操作在这里
         return writeConflictRetry(opCtx, "syncApply_CRUD", nss.ns(), [&] {
             // DB lock always acquires the global lock
             Lock::DBLock dbLock(opCtx, nss.db(), MODE_IX);
@@ -388,6 +389,7 @@ Status SyncTail::syncApply(OperationContext* opCtx,
                     db);
 
             OldClientContext ctx(opCtx, actualNss.ns(), db, /*justCreated*/ false);
+			//applyOp在该函数上面
             return applyOp(ctx.db());
         });
     }

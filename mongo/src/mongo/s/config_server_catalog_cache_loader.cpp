@@ -63,7 +63,7 @@ ThreadPool::Options makeDefaultThreadPoolOptions() {
 
 /**
  * Structure repsenting the generated query and sort order for a chunk diffing operation.
- */
+ */ //参考getPersistedMetadataSinceVersion
 struct QueryAndSort {
     const BSONObj query;
     const BSONObj sort;
@@ -178,7 +178,7 @@ void ConfigServerCatalogCacheLoader::waitForCollectionFlush(OperationContext* op
     MONGO_UNREACHABLE;
 }
 
-//CatalogCache::_scheduleCollectionRefresh中调用，利用线程池异步处理function
+//ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince中调用，利用线程池异步处理function
 std::shared_ptr<Notification<void>> 
 	ConfigServerCatalogCacheLoader::getChunksSince(
     const NamespaceString& nss,

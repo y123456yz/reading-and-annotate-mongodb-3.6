@@ -184,7 +184,7 @@ private:
 };
 
 //增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
-//读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+//读对应version版本检测：FindCmd::run->checkShardVersionOrThrow
 
 
 //写必须走主节点判断及版本判断  performSingleUpdateOp中调用
@@ -721,7 +721,7 @@ static SingleWriteResult performSingleUpdateOp(OperationContext* opCtx,
         curOp.raiseDbProfileLevel(collection->getDb()->getProfilingLevel());
     }
 	//增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
-	//读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+	//读对应version版本检测：FindCmd::run->checkShardVersionOrThrow
 	// execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
 	//写必须走主节点判断及版本判断
     assertCanWrite_inlock(opCtx, ns);

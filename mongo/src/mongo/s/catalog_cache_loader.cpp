@@ -63,8 +63,9 @@ Sharding_initialization_mongod.cpp (src\mongo\db\s):            CatalogCacheLoad
 Sharding_initialization_mongod.cpp (src\mongo\db\s):        CatalogCacheLoader::set(service, stdx::make_unique<ConfigServerCatalogCacheLoader>());
 
 */
-//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ShardServerCatalogCacheLoader(mongod实例)
 //见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+
 
 void CatalogCacheLoader::set(ServiceContext* serviceContext,
                              std::unique_ptr<CatalogCacheLoader> loader) {

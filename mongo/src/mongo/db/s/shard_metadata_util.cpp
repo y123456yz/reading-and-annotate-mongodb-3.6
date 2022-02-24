@@ -70,6 +70,7 @@ Status getStatusFromWriteCommandResponse(const BSONObj& commandResult) {
 
 }  // namespace
 
+//类似db.cache.chunks.db.coll.find({"lastmod" :{$gte:Timestamp(xx, xx)}}).sort({"lastmod" : 1})
 QueryAndSort createShardChunkDiffQuery(const ChunkVersion& collectionVersion) {
     return {BSON(ChunkType::lastmod() << BSON("$gte" << Timestamp(collectionVersion.toLong()))),
             BSON(ChunkType::lastmod() << 1)};
@@ -87,6 +88,10 @@ std::string RefreshState::toString() const {
                          << lastRefreshedCollectionVersion.toString();
 }
 
+//persistCollectionAndChangedChunks
+// Mark the chunk metadata as refreshing, so that secondaries are aware of refresh.
+
+//设置cache.collections表中的对应表的refreshing字段为true，标记当前真再刷新chunk路由信息
 Status setPersistedRefreshFlags(OperationContext* opCtx, const NamespaceString& nss) {
     // Set 'refreshing' to true.
     BSONObj update = BSON(ShardCollectionType::refreshing() << true);
@@ -94,12 +99,14 @@ Status setPersistedRefreshFlags(OperationContext* opCtx, const NamespaceString& 
         opCtx, BSON(ShardCollectionType::ns() << nss.ns()), update, BSONObj(), false /*upsert*/);
 }
 
+//设置cache.collections表中的对应表的refreshing字段为false，标记当前刷新chunk路由信息结束
 Status unsetPersistedRefreshFlags(OperationContext* opCtx,
                                   const NamespaceString& nss,
                                   const ChunkVersion& refreshedVersion) {
     // Set 'refreshing' to false and update the last refreshed collection version.
     BSONObjBuilder updateBuilder;
     updateBuilder.append(ShardCollectionType::refreshing(), false);
+	//记录更新的chunks中最大chunk的版本信息
     updateBuilder.appendTimestamp(ShardCollectionType::lastRefreshedCollectionVersion(),
                                   refreshedVersion.toLong());
 
@@ -140,6 +147,8 @@ StatusWith<RefreshState> getPersistedRefreshFlags(OperationContext* opCtx,
                             : ChunkVersion(0, 0, entry.getEpoch())};
 }
 
+//getPersistedMaxVersion  
+//查找config.cache.collections表中的nss表内容，启用了分片功能的表这里面都会有记录
 StatusWith<ShardCollectionType> readShardCollectionsEntry(OperationContext* opCtx,
                                                           const NamespaceString& nss) {
 
@@ -148,6 +157,7 @@ StatusWith<ShardCollectionType> readShardCollectionsEntry(OperationContext* opCt
     try {
         DBDirectClient client(opCtx);
         std::unique_ptr<DBClientCursor> cursor =
+			//config.cache.collections表
             client.query(ShardCollectionType::ConfigNS.c_str(), fullQuery, 1);
         if (!cursor) {
             return Status(ErrorCodes::OperationFailed,
@@ -177,6 +187,7 @@ StatusWith<ShardCollectionType> readShardCollectionsEntry(OperationContext* opCt
     }
 }
 
+//更新"config.cache.collections"表中的内容，更新分片表信息
 Status updateShardCollectionsEntry(OperationContext* opCtx,
                                    const BSONObj& query,
                                    const BSONObj& update,
@@ -222,6 +233,8 @@ Status updateShardCollectionsEntry(OperationContext* opCtx,
     }
 }
 
+//getPersistedMaxVersion
+//按照参数中指定条件读取"config.cache.chunks."中内容
 StatusWith<std::vector<ChunkType>> readShardChunks(OperationContext* opCtx,
                                                    const NamespaceString& nss,
                                                    const BSONObj& query,
@@ -263,6 +276,8 @@ StatusWith<std::vector<ChunkType>> readShardChunks(OperationContext* opCtx,
     }
 }
 
+//persistCollectionAndChangedChunks
+//更新config.cache.chunks.表 中的chunks信息到最新的chunks，先找出有表中和chunks有交集的chunk，然后删除插入新的chunks
 Status updateShardChunks(OperationContext* opCtx,
                          const NamespaceString& nss,
                          const std::vector<ChunkType>& chunks,
@@ -299,13 +314,19 @@ Status updateShardChunks(OperationContext* opCtx,
          * {_id: 14, max: 19, version 7.1}
          * {_id: 19, max: 22, version 2.0}
          *
+
+icmgo-test36_0:SECONDARY> db.cache.chunks.testdb2.testcol.find()
+{ "_id" : { "id" : 1 }, "max" : { "id" : 490013220 }, "shard" : "icmgo-test36_0", "lastmod" : Timestamp(3, 0) }
+{ "_id" : { "id" : 490013220 }, "max" : { "id" : 990022103 }, "shard" : "icmgo-test36_0", "lastmod" : Timestamp(4, 0) }
+{ "_id" : { "id" : NumberLong("4150084103") }, "max" : { "id" : NumberLong("4810100663") }, "shard" : "icmgo-test36_1", "lastmod" : Timestamp(4, 3) }
          */
         for (auto& chunk : chunks) {
+			//epoch必须一致
             invariant(chunk.getVersion().hasEqualEpoch(currEpoch));
 
             // Delete any overlapping chunk ranges. Overlapping chunks will have a min value
             // ("_id") between (chunk.min, chunk.max].
-            //
+            // 把有交集的chunk先删除，然后插入新的
             // query: { "_id" : {"$gte": chunk.min, "$lt": chunk.max}}
             auto deleteCommandResponse = client.runCommand([&] {
                 write_ops::Delete deleteOp(chunkMetadataNss);

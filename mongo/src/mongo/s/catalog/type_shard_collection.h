@@ -67,7 +67,7 @@ class StatusWith;
  *   }
  *
  * enterCriticalSectionCounter is currently just an OpObserver signal, thus otherwise ignored here.
- */
+ */ //config.cache.collections表中的nss表内容   persistCollectionAndChangedChunks中会使用
 class ShardCollectionType {
 public:
     // Name of the collections collection on the shard server.
@@ -115,6 +115,7 @@ public:
     }
     void setUUID(UUID uuid);
 
+    //一个集群，多个表启用分片功能，每个表都会有一个epoch，参考cache.collections表
     //标识集合的唯一实例，用于辨识集合是否发生了变化。只有当 collection 被 drop 或者 collection的shardKey发生refined时 会重新生成
     const OID& getEpoch() const {
         return _epoch;
@@ -164,6 +165,7 @@ private:
     boost::optional<UUID> _uuid;
 
     // Uniquely identifies this instance of the collection, in case of drop/create.
+    //一个集群，多个表启用分片功能，每个表都会有一个epoch，参考cache.collections表
     OID _epoch;
 
     // Sharding key. If collection is dropped, this is no longer required.

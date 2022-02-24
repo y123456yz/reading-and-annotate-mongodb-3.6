@@ -43,6 +43,8 @@
 namespace mongo {
 
 const std::string ChunkType::ConfigNS = "config.chunks";
+//分片集群分片mongod主节点会获取config server的chunk数据写入config.cache.chunks.库.表名中   
+//config.cache.chunks.xxx中每个表存一个本表的路由chunk信息
 const std::string ChunkType::ShardNSPrefix = "config.cache.chunks.";
 
 const BSONField<std::string> ChunkType::name("_id");

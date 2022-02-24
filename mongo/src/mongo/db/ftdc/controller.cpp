@@ -45,6 +45,14 @@
 #include "mongo/util/log.h"
 #include "mongo/util/time_support.h"
 
+//https://docs.mongodb.com/manual/reference/parameters/
+/*
+diagnosticDataCollectionEnabled
+diagnosticDataCollectionDirectoryPath
+diagnosticDataCollectionDirectorySizeMB
+diagnosticDataCollectionFileSizeMB
+diagnosticDataCollectionPeriodMillis
+*/
 namespace mongo {
 
 Status FTDCController::setEnabled(bool enabled) {
@@ -80,6 +88,7 @@ void FTDCController::setMaxFileSizeBytes(std::uint64_t size) {
     _condvar.notify_one();
 }
 
+//ExportedFTDCArchiveChunkSizeParameter
 void FTDCController::setMaxSamplesPerArchiveMetricChunk(size_t size) {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     _configTemp.maxSamplesPerArchiveMetricChunk = size;
@@ -241,6 +250,7 @@ void FTDCController::doLoop() {
                     _mgr = uassertStatusOK(std::move(swMgr));
                 }
 
+				//FTDCCollectorCollection::collect
                 auto collectSample = _periodicCollectors.collect(client);
 
                 Status s = _mgr->writeSampleAndRotateIfNeeded(

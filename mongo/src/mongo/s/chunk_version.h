@@ -227,6 +227,8 @@ public:
     //
 
     // Can we write to this data and not have a problem?
+    //16代表主版本号，3代表子版本号，6204b0e1b8d642a2d976b762代表纪元epoch
+    //shardVersion: [ Timestamp(16, 3), ObjectId('6204b0e1b8d642a2d976b762') ]
     bool isWriteCompatibleWith(const ChunkVersion& otherVersion) const {
         if (!hasEqualEpoch(otherVersion))
             return false;
@@ -436,6 +438,8 @@ private:
     //版本 majority | minorVersion
     uint64_t _combined;
 
+    //该chunk信息对应表的epoll
+    //一个集群，多个表启用分片功能，每个表都会有一个epoch，参考cache.collections表
     OID _epoch;
 };
 

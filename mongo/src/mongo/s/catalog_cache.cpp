@@ -136,6 +136,8 @@ std::shared_ptr<ChunkManager>
 
 }  // namespace
 
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
 CatalogCache::CatalogCache(CatalogCacheLoader& cacheLoader) : _cacheLoader(cacheLoader) {}
 
 CatalogCache::~CatalogCache() = default;
@@ -205,13 +207,13 @@ StatusWith<CachedCollectionRoutingInfo>
 		//获取nss对应的CollectionRoutingInfoEntry，也就是该集合对应的chunk分布
         auto& collEntry = it->second;
 
-		//注意这里只有needsRefresh为true的才需要路由刷新
+		//注意这里只有needsRefresh为true的才需要路由刷新，例如执行了db.adminCommand({"flushRouterConfig":1})，则缓存中信息全部情况就需要重新获取路由信息
         if (collEntry.needsRefresh) { //该集合的路由信息需要重新刷新
             auto refreshNotification = collEntry.refreshCompletionNotification;
             if (!refreshNotification) {
                 refreshNotification = (collEntry.refreshCompletionNotification =
                                            std::make_shared<Notification<Status>>());
-				//获取dbEntry库下对应的nss集合的chunks路由信息
+				//获取dbEntry库下对应的nss集合的chunks路由信息，如果是第一次获取路由信息collEntry.routingInfo为null
                 _scheduleCollectionRefresh(ul, dbEntry, std::move(collEntry.routingInfo), nss, 1);
             }
 
@@ -245,6 +247,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
     return getCollectionRoutingInfo(opCtx, NamespaceString(ns));
 }
 
+//强制对缓存中的nss表进行路由更新
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
     //设置needsRefresh为true，这样getCollectionRoutingInfo就需要路由刷新
@@ -369,6 +372,7 @@ void CatalogCache::purgeDatabase(StringData dbName) {
  * Non-blocking method, which removes all databases (including their collections) from the
  * cache.
  */
+//清除本地database信息  db.adminCommand({"flushRouterConfig":1}),执行该命令后，内存中的库表信息及其chunk路由信息就没了
 void CatalogCache::purgeAllDatabases() {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
     _databases.clear();
@@ -376,6 +380,7 @@ void CatalogCache::purgeAllDatabases() {
 
 //CatalogCache::getCollectionRoutingInfo  CatalogCache::getDatabase调用
 //首先从cachez中获取，如果cache没有则从cfg复制集的config.database和config.collections中获取dbName库及其下面的表信息
+//从新从config server获取了库表信息，标记表需要从新获取路由信息，needsRefresh置为true
 std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(OperationContext* opCtx,
                                                                             StringData dbName) {
     stdx::lock_guard<stdx::mutex> lg(_mutex);
@@ -428,13 +433,16 @@ std::shared_ptr<CatalogCache::DatabaseInfoEntry> CatalogCache::_getDatabase(Oper
 //获取dbEntry库下对应的nss集合的chunks路由信息 
 //CatalogCache::getCollectionRoutingInfo中调用
 void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
+											  //内存中db相关信息
                                               std::shared_ptr<DatabaseInfoEntry> dbEntry,
+                                              //内存中该nss对应表的路由信息
                                               std::shared_ptr<ChunkManager> existingRoutingInfo,
+                                              //表名
                                               NamespaceString const& nss,
                                               int refreshAttempt) {
     Timer t;
 
-	//本地缓存的ChunkVersion信息
+	//本地缓存的ChunkVersion信息，也就是内存中当前的collection version
     const ChunkVersion startingCollectionVersion =
         (existingRoutingInfo ? existingRoutingInfo->getVersion() : ChunkVersion::UNSHARDED());
 
@@ -529,7 +537,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
           << startingCollectionVersion;
 
     try {
-		//ConfigServerCatalogCacheLoader::getChunksSince  
+		//ShardServerCatalogCacheLoader::getChunksSince  
 		//异步获取集合chunk信息，也就是把refreshCallback丢到线程池中执行
         _cacheLoader.getChunksSince(nss, startingCollectionVersion, refreshCallback);
     } catch (const DBException& ex) {

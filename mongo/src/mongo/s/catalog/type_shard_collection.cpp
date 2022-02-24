@@ -38,7 +38,15 @@
 #include "mongo/util/assert_util.h"
 
 namespace mongo {
-
+/*
+icmgo-test36_0:SECONDARY> db.cache.collections.find()
+{ "_id" : "config.system.sessions", "epoch" : ObjectId("620482cfb8d642a2d9749227"), "key" : { "_id" : 1 }, "unique" : false, "uuid" : UUID("3da62ee7-25de-4e09-9a6f-0c8504805ee0"), "refreshing" : false, "lastRefreshedCollectionVersion" : Timestamp(1, 0) }
+{ "_id" : "testdb2.testcol", "epoch" : ObjectId("6204b0e1b8d642a2d976b762"), "key" : { "id" : 1 }, "unique" : false, "uuid" : UUID("4dc2e599-db33-48cf-8546-7c04f63d9af0"), "refreshing" : false, "lastRefreshedCollectionVersion" : Timestamp(17, 1), "enterCriticalSectionCounter" : 4 }
+{ "_id" : "HDSS.MD_FCT_IER_DETAIL", "epoch" : ObjectId("620cc3f8b8d642a2d9dcd717"), "key" : { "tranKey" : 1 }, "unique" : false, "uuid" : UUID("3c6f2605-8976-4e1f-b278-4c911bd66e79"), "refreshing" : false, "lastRefreshedCollectionVersion" : Timestamp(42278, 1), "enterCriticalSectionCounter" : 1 }
+{ "_id" : "HDSS.testcoll", "epoch" : ObjectId("620ddfccb8d642a2d9efe480"), "key" : { "_id" : 1 }, "unique" : false, "uuid" : UUID("5a1586ce-771a-4515-b82e-594fe4ea6bfc"), "refreshing" : false, "lastRefreshedCollectionVersion" : Timestamp(1, 0) }
+{ "_id" : "HDSS.testcoll2", "epoch" : ObjectId("620de041b8d642a2d9efe9df"), "key" : { "_id" : 1 }, "unique" : false, "uuid" : UUID("40e39758-12f9-4aeb-afd8-e8fd8620cddd"), "refreshing" : false, "lastRefreshedCollectionVersion" : Timestamp(1, 0) }
+icmgo-test36_0:SECONDARY> 
+*/
 const std::string ShardCollectionType::ConfigNS =
     NamespaceString::kShardConfigCollectionsCollectionName.toString();
 
@@ -48,7 +56,9 @@ const BSONField<OID> ShardCollectionType::epoch("epoch");
 const BSONField<BSONObj> ShardCollectionType::keyPattern("key");
 const BSONField<BSONObj> ShardCollectionType::defaultCollation("defaultCollation");
 const BSONField<bool> ShardCollectionType::unique("unique");
+//设置cache.collections表中的对应表的refreshing字段为true，标记当前真再刷新chunk路由信息
 const BSONField<bool> ShardCollectionType::refreshing("refreshing");
+//记录更新的chunks中最大chunk的版本信息
 const BSONField<Date_t> ShardCollectionType::lastRefreshedCollectionVersion(
     "lastRefreshedCollectionVersion");
 const BSONField<int> ShardCollectionType::enterCriticalSectionCounter(

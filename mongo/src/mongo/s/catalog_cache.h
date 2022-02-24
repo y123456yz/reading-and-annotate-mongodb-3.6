@@ -54,6 +54,7 @@ static constexpr int kMaxNumStaleVersionRetries = 10;
  * writes happen through the ShardingCatalogManager and the cache hierarchy needs to be invalidated.
  //MetadataManager和CatalogCache可以参考https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 
+强制路由刷新db.adminCommand( { flushRouterConfig: 1 } )，In MongoDB 4.0.5 and earlier (and 3.6.10 and earlier)以上版本才支持
  */ 
 //cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
 //见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
@@ -166,7 +167,7 @@ private:
 
     /**
      * Cache entry describing a database.
-     */ //CachedDatabaseInfo._db为该类型
+     */ //CachedDatabaseInfo._db  CatalogCache._databases为该类型
     struct DatabaseInfoEntry {
         //该DB的主分片ID
         ShardId primaryShardId;
@@ -203,6 +204,7 @@ private:
     stdx::mutex _mutex;
 
     // Map from DB name to the info for that database
+    //库表及其表中的chunk信息都记录在这里面，一个DB对应map中的一个成员
     DatabaseInfoMap _databases; 
 };
 

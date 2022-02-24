@@ -41,9 +41,8 @@ namespace {
 
 	
 //forcePrimaryRefreshAndWaitForReplication：
-//	mongos向mongod shard server主节点发送forceRoutingTableRefresh命令，shard server主节点收到后，
-//	在FlushRoutingTableCacheUpdates::run中处理，注意这个是内部命令
-//还有一个外部强制路由刷新db.adminCommand({"flushRouterConfig":1})
+//从节点通过_flushRoutingTableCacheUpdates发送给主节点，主节点开始获取最新的路由信息
+
 class FlushRouterConfigCmd : public BasicCommand {
 public:
     FlushRouterConfigCmd() : BasicCommand("flushRouterConfig", "flushrouterconfig") {}

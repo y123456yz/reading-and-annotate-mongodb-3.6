@@ -124,6 +124,7 @@ void ShardingCatalogManager::shutDown() {
     _executorForAddShard->join();
 }
 
+//_shardingOnTransitionToPrimaryHook
 Status ShardingCatalogManager::initializeConfigDatabaseIfNeeded(OperationContext* opCtx) {
     {
         stdx::lock_guard<stdx::mutex> lk(_mutex);
@@ -206,6 +207,8 @@ Status ShardingCatalogManager::_initConfigVersion(OperationContext* opCtx) {
     return Status::OK();
 }
 
+//ShardingCatalogManager::initializeConfigDatabaseIfNeeded
+//config¿â±í´´½¨
 Status ShardingCatalogManager::_initConfigIndexes(OperationContext* opCtx) {
     const bool unique = true;
     auto configShard = Grid::get(opCtx)->shardRegistry()->getConfigShard();

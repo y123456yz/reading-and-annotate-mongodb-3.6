@@ -45,7 +45,7 @@ namespace mongo {
  * retrieves chunk metadata from the shard persisted chunk metadata.
  */
  
-//cfg对应ConfigServerCatalogCacheLoader，mongod对应ReadOnlyCatalogCacheLoader(只读节点)或者ConfigServerCatalogCacheLoader(mongod实例)
+//cfg对应ConfigServerCatalogCacheLoader，mongod对应ShardServerCatalogCacheLoader(mongod实例)
 //见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
 
 class ShardServerCatalogCacheLoader : public CatalogCacheLoader {
@@ -342,6 +342,7 @@ private:
         OperationContext* opCtx, const NamespaceString& nss, const ChunkVersion& version);
 
     // Used by the shard primary to retrieve chunk metadata from the config server.
+    //该分片对应的config server配置
     const std::unique_ptr<CatalogCacheLoader> _configServerLoader;
 
     // Thread pool used to load chunk metadata.
@@ -357,6 +358,7 @@ private:
 
     // This value is bumped every time the set of currently scheduled tasks should no longer be
     // running. This includes, replica set state transitions and shutdown.
+    //本节点主从状态发生变化，或者节点shutdown则自增
     long long _term{0};
 
     // Indicates whether this server is the primary or not, so that the appropriate loading action

@@ -230,7 +230,7 @@ void CollectionShardingState::clearMigrationSourceManager(OperationContext* opCt
 //Write_ops_exec.cpp (src\mongo\db\ops):    CollectionShardingState::get(opCtx, ns)->checkShardVersionOrThrow(opCtx);
 
 //增、删、改对应版本检测：performSingleUpdateOp->assertCanWrite_inlock
-//读对应version版本检测：FindCmd::run->assertCanWrite_inlock
+//读对应version版本检测：FindCmd::run->checkShardVersionOrThrow
 
 //如果mongos发送过来的版本号和本地元数据不一致，则抛出异常，然后再
 //  execCommandDatabase->onStaleShardVersion从congfig获取最新路由信息
@@ -519,7 +519,7 @@ void CollectionShardingState::_onConfigDeleteInvalidateCachedMetadataAndNotify(
 }
 
 //checkShardVersionOrThrow调用
-//mongos发送过来的版本信息和本地版本信息做比较
+//mongos发送过来的版本信息和本地版本信息做比较   只有从mongos过来才会携带版本信息，直接范围mongod不会
 bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
                                                    std::string* errmsg,
                                                    ChunkVersion* expectedShardVersion,
@@ -528,6 +528,7 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
 
     auto& oss = OperationShardingState::get(opCtx);
 
+	log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 111";
     // If there is a version attached to the OperationContext, use it as the received version.
     // Otherwise, get the received version from the ShardedConnectionInfo.
     if (oss.hasShardVersion()) {
@@ -539,17 +540,22 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
             // There is no shard version information on either 'opCtx' or 'client'. This means that
             // the operation represented by 'opCtx' is unversioned, and the shard version is always
             // OK for unversioned operations.
+            log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 111 xx";
             return true;
         }
 
         *expectedShardVersion = info->getVersion(_nss.ns());
     }
-
+	
     // An operation with read concern 'available' should never have shardVersion set.
     invariant(repl::ReadConcernArgs::get(opCtx).getLevel() !=
               repl::ReadConcernLevel::kAvailableReadConcern);
 
+	log() << "yang test ... CollectionShardingState::_checkShardVersionOk, expectedShardVersion:" 
+			<< expectedShardVersion->toString();
+	
     if (ChunkVersion::isIgnoredVersion(*expectedShardVersion)) {
+		log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 22";
         return true;
     }
 
@@ -557,6 +563,9 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
     auto metadata = getMetadata();
 	//本地缓存的元数据版本信息
     *actualShardVersion = metadata ? metadata->getShardVersion() : ChunkVersion::UNSHARDED();
+	log() << "yang test ... CollectionShardingState::_checkShardVersionOk, expectedShardVersion:" 
+				<< expectedShardVersion->toString() << ", actualShardVersion: " 
+				<< actualShardVersion->toString();
 
     if (_sourceMgr) {
         const bool isReader = !opCtx->lockState()->isWriteLocked();
@@ -572,7 +581,9 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
         }
     }
 
+	//只比较主版本号
     if (expectedShardVersion->isWriteCompatibleWith(*actualShardVersion)) {
+		//log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 33";
         return true;
     }
 
