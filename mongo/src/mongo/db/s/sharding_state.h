@@ -135,7 +135,9 @@ ocloud_HTZjQeZL_shard_1:PRIMARY> db.runCommand("shardingState")
 参考官方说明: https://docs.mongodb.com/manual/reference/command/shardingState/#dbcmd.shardingState
 
 ShardingState::getNS中把ShardingState和CollectionShardingState联系起来
-*/
+*/ 
+//注意Shard 和 shardingState的关系
+//代表一个分片集群的某个分片
 class ShardingState {
     MONGO_DISALLOW_COPYING(ShardingState);
 
@@ -411,6 +413,7 @@ private:
     stdx::condition_variable _initializationFinishedCondition;
 
     // Sets the shard name for this host (comes through setShardVersion)
+    //本shard名称
     std::string _shardName;
 
     // Cache of collection metadata on this shard. It is not safe to look-up values from this map

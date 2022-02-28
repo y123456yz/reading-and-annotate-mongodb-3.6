@@ -79,7 +79,7 @@ ChunkManager::ChunkManager(NamespaceString nss,
       _collectionVersion(collectionVersion) {}
 
 //通过shardkey找到对应的chunk信息
-//根据请求中解析出的shardkey信息，获取对应chunk信息
+//根据请求中解析出的shardkey信息，获取对应chunk信息，从而确认该条数据应该落到那个shard
 std::shared_ptr<Chunk> ChunkManager::findIntersectingChunk(const BSONObj& shardKey,
                                                            const BSONObj& collation) const {
     const bool hasSimpleCollation = (collation.isEmpty() && !_defaultCollator) ||

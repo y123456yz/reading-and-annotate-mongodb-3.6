@@ -331,6 +331,7 @@ private:
     // ranges must cover the complete space from [MinKey, MaxKey).
     //路由表缓存在这里  ChunkManager::toString可以打印mongos缓存得路由表
     ////map表的 key为chunk.getMax()，value为chunk，参考ChunkManager::makeUpdated
+    //mongos获取到客户端请求后，获取shardkey值，然后进行快速二分查找获取到对应chunk，参考ChunkManager::findIntersectingChunk
     const ChunkMap _chunkMap;
 
     // Different transformations of the chunk map for efficient querying

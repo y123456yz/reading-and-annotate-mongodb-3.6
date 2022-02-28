@@ -247,7 +247,7 @@ Status BatchWriteOp::targetBatch(const NSTargeter& targeter, //ChunkManagerTarge
     //
     // Targeting of unordered batches is fairly simple - each remaining write op is targeted,
     // and each of those targeted writes are grouped into a batch for a particular shard
-    // endpoint.
+    // endpoint. 
     //
     // Targeting of ordered batches is a bit more complex - to respect the ordering of the
     // batch, we can only send:

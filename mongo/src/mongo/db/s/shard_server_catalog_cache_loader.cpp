@@ -222,10 +222,12 @@ CollectionAndChangedChunks getPersistedMetadataSinceVersion(OperationContext* op
  *
  * If the epoch changes while reading the chunks, returns an empty object.
  */
+//获取db.cache.chunks.db.coll表chunks过程中如果变化的chunks过多，则需要时间。获取chunks过程中，有可能表被删除了，因此还需要检查一次epoch
 StatusWith<CollectionAndChangedChunks> getIncompletePersistedMetadataSinceVersion(
     OperationContext* opCtx, const NamespaceString& nss, ChunkVersion version) {
 
     try {
+		//如果version.epoll和config.cache.collections表epoll不一致则获取全量chunk数据，否则获取增量chunk数据
         CollectionAndChangedChunks collAndChunks =
             getPersistedMetadataSinceVersion(opCtx, nss, version, false);
         if (collAndChunks.changedChunks.empty()) {
@@ -237,6 +239,7 @@ StatusWith<CollectionAndChangedChunks> getIncompletePersistedMetadataSinceVersio
         // an epoch change between reading the collections entry and reading the chunk metadata
         // would invalidate the chunks.
 
+		//查找config.cache.collections表中的nss表内容，启用了分片功能的表这里面都会有记录
         auto afterShardCollectionsEntry = uassertStatusOK(readShardCollectionsEntry(opCtx, nss));
         if (collAndChunks.epoch != afterShardCollectionsEntry.getEpoch()) {
             // The collection was dropped and recreated since we began. Return empty results.
@@ -267,7 +270,7 @@ StatusWith<CollectionAndChangedChunks> getIncompletePersistedMetadataSinceVersio
 void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const NamespaceString& nss) {
     auto const shardingState = ShardingState::get(opCtx);
     invariant(shardingState->enabled());
-
+	
     auto selfShard = uassertStatusOK(
         Grid::get(opCtx)->shardRegistry()->getShard(opCtx, shardingState->getShardName()));
 
@@ -275,6 +278,7 @@ void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const Nam
         opCtx,
         ReadPreferenceSetting{ReadPreference::PrimaryOnly},
         "admin",
+        //"_flushRoutingTableCacheUpdates"和"forceRoutingTableRefresh"等价，参考FlushRoutingTableCacheUpdates()
         BSON("forceRoutingTableRefresh" << nss.ns()),
         Seconds{30},
         Shard::RetryPolicy::kIdempotent));

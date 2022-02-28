@@ -147,7 +147,7 @@ StatusWith<RefreshState> getPersistedRefreshFlags(OperationContext* opCtx,
                             : ChunkVersion(0, 0, entry.getEpoch())};
 }
 
-//getPersistedMaxVersion  
+//getPersistedMaxVersion  getIncompletePersistedMetadataSinceVersion
 //查找config.cache.collections表中的nss表内容，启用了分片功能的表这里面都会有记录
 StatusWith<ShardCollectionType> readShardCollectionsEntry(OperationContext* opCtx,
                                                           const NamespaceString& nss) {

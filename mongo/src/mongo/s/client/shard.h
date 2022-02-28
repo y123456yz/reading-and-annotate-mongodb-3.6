@@ -49,7 +49,10 @@ class RemoteCommandTargeter;
 /**
  * Presents an interface for talking to shards, regardless of whether that shard is remote or is
  * the current (local) shard.
- */ //ShardFactory::createShard中构造
+ */ 
+
+//ShardFactory::createShard中构造  Grid::get(opCtx)->shardRegistry()->getShard获取指定shard
+//注意Shard 和 shardingState的关系
 class Shard {
 public:
     struct CommandResponse {
