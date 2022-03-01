@@ -46,7 +46,7 @@ namespace mongo {
  */
  
 //cfg对应ConfigServerCatalogCacheLoader，mongod对应ShardServerCatalogCacheLoader(mongod实例)
-//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer->initializeSharding
 
 class ShardServerCatalogCacheLoader : public CatalogCacheLoader {
     MONGO_DISALLOW_COPYING(ShardServerCatalogCacheLoader);

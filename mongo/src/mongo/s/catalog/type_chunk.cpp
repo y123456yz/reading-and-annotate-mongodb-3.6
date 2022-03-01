@@ -166,6 +166,7 @@ ChunkType::ChunkType(NamespaceString nss, ChunkRange range, ChunkVersion version
       _version(version),
       _shard(std::move(shardId)) {}
 
+//Ω‚Œˆchunk–≈œ¢
 StatusWith<ChunkType> ChunkType::fromConfigBSON(const BSONObj& source) {
     ChunkType chunk;
 

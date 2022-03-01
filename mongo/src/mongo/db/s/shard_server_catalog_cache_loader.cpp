@@ -77,7 +77,9 @@ ThreadPool::Options makeDefaultThreadPoolOptions() {
  * collections.
  *
  * Returns ConflictingOperationInProgress if a chunk is found with a new epoch.
- */
+ */ 
+
+//ShardServerCatalogCacheLoader::_updatePersistedMetadata
 //把拿到的变化的collAndChunks信息更新到cache.chunks.库.表中
 Status persistCollectionAndChangedChunks(OperationContext* opCtx,
                                          const NamespaceString& nss,
@@ -294,7 +296,9 @@ void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const Nam
  * metadata for the namespace, returns ChunkVersion::UNSHARDED(), since only metadata for sharded
  * collections is persisted.
  */
+//获取nss表的版本信息，从config.cache.collections中读取"lastRefreshedCollectionVersion" : Timestamp(13, 4)
 ChunkVersion getLocalVersion(OperationContext* opCtx, const NamespaceString& nss) {
+	//config.cache.collections表中的nss表内容refreshing字段，表示当前是否真在刷新全量路由或者增量路由
     auto swRefreshState = getPersistedRefreshFlags(opCtx, nss);
     if (swRefreshState == ErrorCodes::NamespaceNotFound)
         return ChunkVersion::UNSHARDED();
@@ -325,6 +329,8 @@ ShardServerCatalogCacheLoader::~ShardServerCatalogCacheLoader() {
     invariant(_contexts.isEmpty());
 }
 
+//配合_getCompletePersistedMetadataForSecondarySinceVersion阅读
+//CollectionVersionLogOpHandler调用
 void ShardServerCatalogCacheLoader::notifyOfCollectionVersionUpdate(const NamespaceString& nss) {
     _namespaceNotifications.notifyChange(nss);
 }
@@ -349,6 +355,8 @@ void ShardServerCatalogCacheLoader::onStepDown() {
     ++_term;
     _role = ReplicaSetRole::Secondary;
 }
+
+//_shardingOnTransitionToPrimaryHook
 void ShardServerCatalogCacheLoader::onStepUp() {
     stdx::lock_guard<stdx::mutex> lock(_mutex);
     invariant(_role != ReplicaSetRole::None);
@@ -502,6 +510,9 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
         }
 
         // If there are no enqueued tasks, get the max persisted
+	    //按照参数中指定条件读取"config.cache.chunks."中内容的最新一条数据，倒排序
+		//db.cache.chunks.db.collection.find().sort({lastmod:-1}).limit(1)
+		//读取db.cache.chunks.db.collection表中最大的一个chunk，也就是lastmod最大的chunk
         return getPersistedMaxVersion(opCtx, nss);
     }();
 
@@ -528,7 +539,7 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
                   << maxLoaderVersion << " and no metadata was found.";
         } else if (swCollectionAndChangedChunks.isOK()) {
             auto& collAndChunks = swCollectionAndChangedChunks.getValue();
-
+			//epoch检查
             if (collAndChunks.changedChunks.back().getVersion().epoch() != collAndChunks.epoch) {
                 swCollectionAndChangedChunks =
                     Status{ErrorCodes::ConflictingOperationInProgress,
@@ -580,9 +591,21 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
     // Refresh the loader's metadata from the config server. The caller's request will
     // then be serviced from the loader's up-to-date metadata.
     //ConfigServerCatalogCacheLoader::getChunksSince从config获取路由信息
+    //拉取cfg中config.chunks表对应版本大于本地缓存lastmod的所有增量变化的chunk
     _configServerLoader->getChunksSince(nss, maxLoaderVersion, remoteRefreshCallbackFn);
 }
 
+
+/**
+ * Loads chunk metadata from the shard persisted metadata store and any in-memory tasks with
+ * terms matching 'term' enqueued to update that store, GTE to 'catalogCacheSinceVersion'.
+ *
+ * Will return an empty CollectionAndChangedChunks object if no metadata is found (collection
+ * was dropped).
+ *
+ * Only run on the shard primary.
+ */
+//ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince
 StatusWith<CollectionAndChangedChunks> ShardServerCatalogCacheLoader::_getLoaderMetadata(
     OperationContext* opCtx,
     const NamespaceString& nss,
@@ -658,6 +681,19 @@ StatusWith<CollectionAndChangedChunks> ShardServerCatalogCacheLoader::_getLoader
     }
 }
 
+/**
+ * Loads chunk metadata from all in-memory tasks enqueued to update the shard persisted metadata
+ * store for collection 'nss' that is GTE 'catalogCacheSinceVersion'. If
+ * 'catalogCacheSinceVersion's epoch does not match that of the metadata enqueued, returns all
+ * metadata. Ignores tasks with terms that do not match 'term': these are no longer valid.
+ *
+ * The bool returned in the pair indicates whether there are any tasks enqueued. If none are, it
+ * is false. If it is true, and the CollectionAndChangedChunks returned is empty, this indicates
+ * a drop was enqueued and there is no metadata.
+ *
+ * Only run on the shard primary.
+ */
+
 std::pair<bool, CollectionAndChangedChunks> ShardServerCatalogCacheLoader::_getEnqueuedMetadata(
     const NamespaceString& nss,
     const ChunkVersion& catalogCacheSinceVersion,
@@ -693,8 +729,10 @@ std::pair<bool, CollectionAndChangedChunks> ShardServerCatalogCacheLoader::_getE
     return std::make_pair(true, collAndChunks);
 }
 
+//_schedulePrimaryGetChunksSince
 Status ShardServerCatalogCacheLoader::_ensureMajorityPrimaryAndScheduleTask(
     OperationContext* opCtx, const NamespaceString& nss, Task task) {
+    //写一个noop到多数派节点成功才返回，如果这时候主从延迟过高，则这里会卡顿
     Status linearizableReadStatus = waitForLinearizableReadConcern(opCtx);
     if (!linearizableReadStatus.isOK()) {
         return {linearizableReadStatus.code(),
@@ -766,6 +804,8 @@ void ShardServerCatalogCacheLoader::_runTasks(const NamespaceString& nss) {
     }
 }
 
+//ShardServerCatalogCacheLoader::_runTasks
+//把task对应的chunk更新到cache.chunks.库.表中
 void ShardServerCatalogCacheLoader::_updatePersistedMetadata(OperationContext* opCtx,
                                                              const NamespaceString& nss) {
     stdx::unique_lock<stdx::mutex> lock(_mutex);
@@ -795,6 +835,7 @@ void ShardServerCatalogCacheLoader::_updatePersistedMetadata(OperationContext* o
         return;
     }
 
+	////把拿到的变化的collAndChunks信息更新到cache.chunks.库.表中
     Status status =
         persistCollectionAndChangedChunks(opCtx, nss, task.collectionAndChangedChunks.get());
 

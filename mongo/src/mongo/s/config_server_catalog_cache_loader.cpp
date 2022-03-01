@@ -125,6 +125,7 @@ CollectionAndChangedChunks getChangedChunks(OperationContext* opCtx,
     std::vector<ChunkType> changedChunks;
     repl::OpTime opTime;
     uassertStatusOK(
+		//ShardingCatalogClientImpl::getChunks
         Grid::get(opCtx)->catalogClient()->getChunks(opCtx,
                                                      diffQuery.query,
                                                      diffQuery.sort,
@@ -178,7 +179,10 @@ void ConfigServerCatalogCacheLoader::waitForCollectionFlush(OperationContext* op
     MONGO_UNREACHABLE;
 }
 
-//ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince中调用，利用线程池异步处理function
+//ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(mongod主节点)  
+//CatalogCache::_scheduleCollectionRefresh(mongos)中调用，利用线程池异步处理function
+//拉取cfg中config.chunks表对应版本大于本地缓存lastmod的所有增量变化的chunk
+
 std::shared_ptr<Notification<void>> 
 	ConfigServerCatalogCacheLoader::getChunksSince(
     const NamespaceString& nss,
@@ -192,6 +196,8 @@ std::shared_ptr<Notification<void>>
 
         auto swCollAndChunks = [&]() -> StatusWith<CollectionAndChangedChunks> {
             try {
+				
+				//拉取cfg中config.chunks表对应版本大于本地缓存lastmod的所有增量变化的chunk
                 return getChangedChunks(opCtx.get(), nss, version);
             } catch (const DBException& ex) {
                 return ex.toStatus();

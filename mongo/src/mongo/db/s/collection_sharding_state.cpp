@@ -92,6 +92,7 @@ private:
  * Used to notify the catalog cache loader of a new collection version and invalidate the in-memory
  * routing table cache once the oplog updates are committed and become visible.
  */
+//CollectionShardingState::_onConfigCollectionsUpdateOp   _onConfigDeleteInvalidateCachedMetadataAndNotify
 class CollectionVersionLogOpHandler final : public RecoveryUnit::Change {
 public:
     CollectionVersionLogOpHandler(OperationContext* opCtx, const NamespaceString& nss)
@@ -455,6 +456,7 @@ void CollectionShardingState::onDropCollection(OperationContext* opCtx,
     }
 }
 
+//对表config.cache.collections进行跟新操作
 void CollectionShardingState::_onConfigCollectionsUpdateOp(OperationContext* opCtx,
                                                            const BSONObj& query,
                                                            const BSONObj& update,
@@ -482,6 +484,7 @@ void CollectionShardingState::_onConfigCollectionsUpdateOp(OperationContext* opC
         // Need the WUOW to retain the lock for CollectionVersionLogOpHandler::commit().
         AutoGetCollection autoColl(opCtx, updatedNss, MODE_IX);
 
+		//对cache.collections表的lastRefreshedCollect字段进行更新，则注册CollectionVersionLogOpHandler
         if (setField.hasField(ShardCollectionType::lastRefreshedCollectionVersion.name())) {
             opCtx->recoveryUnit()->registerChange(
                 new CollectionVersionLogOpHandler(opCtx, updatedNss));
@@ -495,6 +498,7 @@ void CollectionShardingState::_onConfigCollectionsUpdateOp(OperationContext* opC
         }
     }
 }
+
 
 void CollectionShardingState::_onConfigDeleteInvalidateCachedMetadataAndNotify(
     OperationContext* opCtx, const BSONObj& query) {

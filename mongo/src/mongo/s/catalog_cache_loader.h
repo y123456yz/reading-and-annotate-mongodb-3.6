@@ -51,7 +51,8 @@ class OperationContext;
  */
 
 //cfg对应ConfigServerCatalogCacheLoader，mongod对应ShardServerCatalogCacheLoader(mongod实例)
-//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer
+//见initializeGlobalShardingStateForMongod，mongos对应ConfigServerCatalogCacheLoader，见runMongosServer->initializeSharding
+
 
 //CatalogCache._cacheLoader为该类型   CatalogCacheLoader::set种赋值
 //ShardServerCatalogCacheLoader    ConfigServerCatalogCacheLoader继承该类

@@ -738,6 +738,7 @@ Status ShardingCatalogClientImpl::getDatabasesForShard(OperationContext* opCtx,
     return Status::OK();
 }
 
+//getChangedChunks
 Status ShardingCatalogClientImpl::getChunks(OperationContext* opCtx,
                                             const BSONObj& query,
                                             const BSONObj& sort,

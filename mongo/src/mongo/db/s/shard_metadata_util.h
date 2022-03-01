@@ -62,6 +62,7 @@ struct QueryAndSort {
 /**
  * Subset of the shard's collections collection document that relates to refresh state.
  */
+//参考getPersistedRefreshFlags，通过config.cache.collections表中的nss表内容refreshing lastRefreshedCollect相关信息
 struct RefreshState {
     bool operator==(const RefreshState& other) const;
 

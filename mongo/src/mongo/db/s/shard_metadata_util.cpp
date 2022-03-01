@@ -117,6 +117,7 @@ Status unsetPersistedRefreshFlags(OperationContext* opCtx,
                                        false /*upsert*/);
 }
 
+//config.cache.collections表中的nss表内容refreshing字段，表示当前是否真在刷新全量路由或者增量路由
 StatusWith<RefreshState> getPersistedRefreshFlags(OperationContext* opCtx,
                                                   const NamespaceString& nss) {
     auto statusWithCollectionEntry = readShardCollectionsEntry(opCtx, nss);
@@ -158,6 +159,7 @@ StatusWith<ShardCollectionType> readShardCollectionsEntry(OperationContext* opCt
         DBDirectClient client(opCtx);
         std::unique_ptr<DBClientCursor> cursor =
 			//config.cache.collections表
+			//DBDirectClient::query
             client.query(ShardCollectionType::ConfigNS.c_str(), fullQuery, 1);
         if (!cursor) {
             return Status(ErrorCodes::OperationFailed,
@@ -214,6 +216,7 @@ Status updateShardCollectionsEntry(OperationContext* opCtx,
             builder.append("$inc", inc);
         }
 
+		//DBDirectClient::runCommand
         auto commandResponse = client.runCommand([&] {
             write_ops::Update updateOp(NamespaceString{ShardCollectionType::ConfigNS});
             updateOp.setUpdates({[&] {
@@ -358,6 +361,7 @@ icmgo-test36_0:SECONDARY> db.cache.chunks.testdb2.testcol.find()
     }
 }
 
+//删除config.cache.collections中指定表的数据，同时删除config.cache.chunks.db.collection表
 Status dropChunksAndDeleteCollectionsEntry(OperationContext* opCtx, const NamespaceString& nss) {
     try {
         DBDirectClient client(opCtx);

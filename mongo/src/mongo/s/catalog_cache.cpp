@@ -537,7 +537,8 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
           << startingCollectionVersion;
 
     try {
-		//ShardServerCatalogCacheLoader::getChunksSince  
+		//分片mongod对应ShardServerCatalogCacheLoader::getChunksSince  
+		//mongos对应ConfigServerCatalogCacheLoader::getChunksSince  
 		//异步获取集合chunk信息，也就是把refreshCallback丢到线程池中执行
         _cacheLoader.getChunksSince(nss, startingCollectionVersion, refreshCallback);
     } catch (const DBException& ex) {
