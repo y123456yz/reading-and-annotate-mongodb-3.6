@@ -73,6 +73,7 @@ public:
     /**
      * Used as a return value for getChunksSince.
      */
+    //²Î¿¼getEnqueuedMetadataForTerm   getChangedChunks
     struct CollectionAndChangedChunks {
         CollectionAndChangedChunks();
         CollectionAndChangedChunks(boost::optional<UUID> uuid,

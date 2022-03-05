@@ -63,6 +63,7 @@ private:
     uint64_t _targetKillCount;
 };
 
+//task¹¹½¨¼û_schedulePrimaryGetChunksSince
 class Task {
 public:
     Task() : _group(NULL), _killed(0) {}

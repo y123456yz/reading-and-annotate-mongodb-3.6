@@ -234,6 +234,7 @@ private:
         std::shared_ptr<stdx::condition_variable> _activeTaskCompletedCondVar;
     };
 
+    //每个表对应一个task链表
     typedef std::map<NamespaceString, TaskList> TaskLists;
 
     /**
@@ -354,6 +355,9 @@ private:
     stdx::mutex _mutex;
 
     // Map to track in progress persisted cache updates on the shard primary.
+    //每个表对应一个task链表
+    //从config获取的chunks信息首先存到该tasklist中，然后后台线程会写入到config.cache.chunks.db.collection中，写入完成后
+    //清理出本tasklist
     TaskLists _taskLists;
 
     // This value is bumped every time the set of currently scheduled tasks should no longer be
