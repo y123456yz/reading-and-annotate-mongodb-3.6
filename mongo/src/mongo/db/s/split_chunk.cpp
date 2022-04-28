@@ -90,7 +90,7 @@ bool checkIfSingleDoc(OperationContext* opCtx,
  * Checks the collection's metadata for a successful split on the specified chunkRange using the
  * specified splitKeys. Returns false if the metadata's chunks don't match the new chunk
  * boundaries exactly.
- */
+ */ 
 bool checkMetadataForSuccessfulSplitChunk(OperationContext* opCtx,
                                           const NamespaceString& nss,
                                           const ChunkRange& chunkRange,

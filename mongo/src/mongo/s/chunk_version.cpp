@@ -163,6 +163,7 @@ StatusWith<ChunkVersion> ChunkVersion::parseFromBSONForChunk(const BSONObj& obj)
     return chunkVersion;
 }
 
+//从obj中解析出lastmod字段，也就是chunkversion
 StatusWith<ChunkVersion> ChunkVersion::parseFromBSONWithFieldAndSetEpoch(const BSONObj& obj,
                                                                          StringData field,
                                                                          const OID& epoch) {

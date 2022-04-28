@@ -330,6 +330,7 @@ public:
     }
 
     /** Return long long value for this field. MUST be NumberLong type. */
+    //可以参考ChunkVersion fromBSON，例如lastmod: Timestamp(42277, 3330879)为该类型
     long long _numberLong() const {
         return ConstDataView(value()).read<LittleEndian<long long>>();
     }

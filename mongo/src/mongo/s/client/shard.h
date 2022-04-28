@@ -86,6 +86,7 @@ public:
         repl::OpTime opTime;
     };
 
+    //参考runCommandWithFixedRetryAttempts isRetriableError，决定执行某个SQL时候的重试策略
     enum class RetryPolicy {
         kIdempotent,
         kNotIdempotent,

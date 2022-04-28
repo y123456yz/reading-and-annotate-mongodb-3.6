@@ -35,6 +35,7 @@
 
 namespace mongo {
 
+//server层实际上用的系统malloc， wiredtiger引擎层用的tcmalloc，参考os_alloc.c
 void* mongoMalloc(size_t size) {
     void* x = std::malloc(size);
     if (x == NULL) {

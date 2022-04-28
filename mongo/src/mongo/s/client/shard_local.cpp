@@ -84,6 +84,7 @@ bool ShardLocal::isRetriableError(ErrorCodes::Error code, RetryPolicy options) {
         return false;
     }
 
+	//如果是因为WriteConcernFailed相关的错误，则可以重试执行SQL，否则不重试
     if (options == RetryPolicy::kIdempotent) {
         return code == ErrorCodes::WriteConcernFailed;
     } else {

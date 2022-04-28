@@ -63,7 +63,7 @@ class WiredTigerSizeStorer;
 //也就是KVStorageEngine类包含有WiredTigerKVEngine类成员
 
 
-////KVStorageEngine._engine
+//KVStorageEngine._engine
 
 //WiredTigerFactory::create中new该类,然后存放到KVStorageEngine::_engine成员中
 class WiredTigerKVEngine final : public KVEngine {

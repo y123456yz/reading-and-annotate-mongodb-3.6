@@ -13,8 +13,9 @@
  * we provide an option to use TCMalloc explicitly.
  * This is important on Windows which does not have a builtin mechanism
  * to replace C run-time memory management functions with alternatives.
- */
-#ifdef HAVE_LIBTCMALLOC
+ */ 
+//在编译wiredtiger源码的时候会生成  server层实际上没有使用tcmalloc,参考allocator.cpp
+#ifdef HAVE_LIBTCMALLOC  
 #include <gperftools/tcmalloc.h>
 
 #define	calloc			tc_calloc

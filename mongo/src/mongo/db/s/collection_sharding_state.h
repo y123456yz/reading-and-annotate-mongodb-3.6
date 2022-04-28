@@ -56,8 +56,12 @@ class Timestamp;
  * Synchronization rules: In order to look-up this object in the instance's sharding map, one must
  * have some lock on the respective collection.
  */ 
+//注意三个的区别CollectionShardingState OperationShardingState  ShardingState ShardedConnectionInfo可以参考GetShardVersion::run
 //CollectionShardingState::get(opCtx, nss)获取
 //ShardingState::getNS中会构造使用，同时在该接口把ShardingState和CollectionShardingState联系起来
+
+
+//shardingState管理CollectionShardingState每个表元数据信息，每个CollectionShardingState对应一个MetadataManager
 class CollectionShardingState {
     MONGO_DISALLOW_COPYING(CollectionShardingState);
 

@@ -293,6 +293,8 @@ StatusWith<std::vector<StorageEngine::CollectionIndexNamePair>>
             }
 
 			//_mdb_catalog.wt元数据有该索引，但是WiredTiger.wt元数据中却没用该索引，则说明需要重做该索引
+
+			//例如主加索引，同步到从节点后，从挂了，重启后就会到这里，部分mongodb版本可以通过--noIndexBuildRetry跳过
             log() << "Expected index data is missing, rebuilding. NS: " << coll
                   << " Index: " << indexName << " Ident: " << indexIdent;
 

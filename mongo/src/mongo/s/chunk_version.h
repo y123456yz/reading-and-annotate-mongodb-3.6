@@ -288,7 +288,7 @@ public:
     //
     // { version : <TS> } and { version : [<TS>,<OID>] } format
     //
-    
+    //下面的ChunkVersion fromBSON中调用
     static ChunkVersion fromBSON(const BSONElement& el, const std::string& prefix, bool* canParse) {
         *canParse = true;
 
@@ -320,7 +320,7 @@ public:
         return fromBSON(obj, prefix, &canParse);
     }
 
-    //OperationShardingState::initializeShardVersion调用
+    //OperationShardingState::initializeShardVersion  ChunkVersion::parseFromBSONWithFieldAndSetEpoch调用
     static ChunkVersion fromBSON(const BSONObj& obj, const std::string& prefixIn, bool* canParse) {
         *canParse = true;
 
@@ -332,6 +332,7 @@ public:
         }
         // TODO: use ChunkType::lastmod()
         // NOTE: type_chunk.h includes this file
+        //分片集群分片中的config.cache.chunks表中lastmode代表chunk版本信息
         else if (prefixIn == "" && !obj["lastmod"].eoo()) {
             prefix = (std::string) "lastmod";
         }

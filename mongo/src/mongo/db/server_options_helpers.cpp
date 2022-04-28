@@ -1103,6 +1103,7 @@ Status storeServerOptions(const moe::Environment& params) {
     return Status::OK();
 }
 
+//≤ª π”√memlock
 ExportedServerParameter<std::vector<std::string>, ServerParameterType::kStartupOnly>
     SecureAllocatorDomains(ServerParameterSet::getGlobal(),
                            "disabledSecureAllocatorDomains",

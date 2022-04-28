@@ -264,11 +264,20 @@ StatusWith<CollectionAndChangedChunks> getIncompletePersistedMetadataSinceVersio
  * Sends _flushRoutingTableCacheUpdates to the primary to force it to refresh its routing table for
  * collection 'nss' and then waits for the refresh to replicate to this node.
  */
+
+/*
+以下情况下，该命令不会返回从节点会卡住: 4.0.3版本
+Fri Mar 18 13:14:46.868 I SHARDING [ShardServerCatalogCacheLoader-1927] Failed to persist chunk metadata update for collection 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_DB.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_COLLECTION :: caused by :: InvalidNamespace: Failed to update the persisted chunk metadata for collection 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_DB.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_COLLECTION' from '0|0||000000000000000000000000' to '1|0||62333e4eb3e60f88b9e94ecc'. Will be retried. :: caused by :: fully qualified namespace config.cache.chunks.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_DB.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_COLLECTION is too long (max is 120 bytes)
+
+*/
+
+
 //forcePrimaryRefreshAndWaitForReplication：
 //从节点通过_flushRoutingTableCacheUpdates发送给主节点，主节点开始获取最新的路由信息
 
 
 //ShardServerCatalogCacheLoader::getChunksSince->ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince调用
+//主节点收到该命令后执行的地方见FlushRoutingTableCacheUpdates
 void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const NamespaceString& nss) {
     auto const shardingState = ShardingState::get(opCtx);
     invariant(shardingState->enabled());
@@ -276,17 +285,21 @@ void forcePrimaryRefreshAndWaitForReplication(OperationContext* opCtx, const Nam
     auto selfShard = uassertStatusOK(
         Grid::get(opCtx)->shardRegistry()->getShard(opCtx, shardingState->getShardName()));
 
+	//通过主节点执行FlushRoutingTableCacheUpdates()获取到真正的返回结果
+	//FlushRoutingTableCacheUpdates一定要等迁移关键阶段结束才返回，注意这里可能等待很长一段时间，但是这里限制了30秒，所以还好，最多30秒返回
     auto cmdResponse = uassertStatusOK(selfShard->runCommandWithFixedRetryAttempts(
         opCtx,
         ReadPreferenceSetting{ReadPreference::PrimaryOnly},
         "admin",
         //"_flushRoutingTableCacheUpdates"和"forceRoutingTableRefresh"等价，参考FlushRoutingTableCacheUpdates()
         BSON("forceRoutingTableRefresh" << nss.ns()),
-        Seconds{30},
+        Seconds{30}, //等待超时时间30秒
+        //如果是因为WriteConcernFailed相关的错误，则可以重试执行SQL，否则不重试
         Shard::RetryPolicy::kIdempotent));
 
     uassertStatusOK(cmdResponse.commandStatus);
 
+	//一直等主节点的op time到来才会返回，这里可能会阻塞，如果有主从延迟
     uassertStatusOK(repl::ReplicationCoordinator::get(opCtx)->waitUntilOpTimeForRead(
         opCtx, {LogicalTime::fromOperationTime(cmdResponse.response), boost::none}));
 }
@@ -469,6 +482,7 @@ void ShardServerCatalogCacheLoader::waitForCollectionFlush(OperationContext* opC
 
         // It is not safe to use taskList after this call, because it will unlock and lock the tasks
         // mutex, so we just loop around.
+        //
         taskList.waitForActiveTaskCompletion(lg);
     }
 }
@@ -480,7 +494,8 @@ void ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince(
     const NamespaceString& nss,
     const ChunkVersion& catalogCacheSinceVersion,
     stdx::function<void(OperationContext*, StatusWith<CollectionAndChangedChunks>)> callbackFn) {
-    forcePrimaryRefreshAndWaitForReplication(opCtx, nss);
+	//从节点通过_flushRoutingTableCacheUpdates发送给主节点，主节点开始获取最新的路由信息
+	forcePrimaryRefreshAndWaitForReplication(opCtx, nss);
 
     // Read the local metadata.
     auto swCollAndChunks =
@@ -489,6 +504,7 @@ void ShardServerCatalogCacheLoader::_runSecondaryGetChunksSince(
 }
 
 //primary调用_schedulePrimaryGetChunksSince，secondary调用_runSecondaryGetChunksSince
+//ShardServerCatalogCacheLoader::getChunksSince
 void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
     OperationContext* opCtx,
     const NamespaceString& nss,
@@ -503,6 +519,7 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
             stdx::lock_guard<stdx::mutex> lock(_mutex);
             auto taskListIt = _taskLists.find(nss);
 
+			//队列queue中的也就是内存中的，也就是从config server获取到的chunk，还没有写入config.cache.chunks.db.collection中的
             if (taskListIt != _taskLists.end() &&
                 taskListIt->second.hasTasksFromThisTerm(termScheduled)) {
                 // Enqueued tasks have the latest metadata
@@ -554,10 +571,12 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
                                << collAndChunks.changedChunks.back().getVersion().epoch().toString()
                                << "'. Collection was dropped and recreated."};
             } else {
+            	//可以通过 db.adminCommand({_flushRoutingTableCacheUpdates: "test.MD_FCT_IER_DETAIL", syncFromConfig: true});强制走到该流程
                 if ((collAndChunks.epoch != maxLoaderVersion.epoch()) ||
                     (collAndChunks.changedChunks.back().getVersion() > maxLoaderVersion)) {
                     //写一个noop到多数节点成功，然后将task任务添加到线程池任务队列中，task任务实际上就是_runTasks中把拿到的
                     //变化的chunks写到本地config cache chunks表中
+                    log() << "yang test 111.  _schedulePrimaryGetChunksSince";
                     Status scheduleStatus = _ensureMajorityPrimaryAndScheduleTask(
                         opCtx,
                         nss,
@@ -567,6 +586,7 @@ void ShardServerCatalogCacheLoader::_schedulePrimaryGetChunksSince(
                         notify->set();
                         return;
                     }
+					log() << "yang test 222.  _schedulePrimaryGetChunksSince";
                 }
 
 				//到这里的时间消耗是从config获取变化的chunk信息到本地的时间
@@ -754,6 +774,7 @@ std::pair<bool, CollectionAndChangedChunks> ShardServerCatalogCacheLoader::_getE
 Status ShardServerCatalogCacheLoader::_ensureMajorityPrimaryAndScheduleTask(
     OperationContext* opCtx, const NamespaceString& nss, Task task) {
     //写一个noop到多数派节点成功才返回，如果这时候主从延迟过高，则这里会卡顿
+    log() << "yang test .... 1111 _ensureMajorityPrimaryAndScheduleTask";
     Status linearizableReadStatus = waitForLinearizableReadConcern(opCtx);
     if (!linearizableReadStatus.isOK()) {
         return {linearizableReadStatus.code(),
@@ -767,7 +788,7 @@ Status ShardServerCatalogCacheLoader::_ensureMajorityPrimaryAndScheduleTask(
     const bool wasEmpty = _taskLists[nss].empty();
     _taskLists[nss].addTask(std::move(task));
 
-    if (wasEmpty) {
+    if (wasEmpty) { //同一个表只会有一个task任务运行
         Status status = _threadPool.schedule([this, nss]() { _runTasks(nss); });
         if (!status.isOK()) {
             log() << "Cache loader failed to schedule persisted metadata update"
@@ -936,6 +957,7 @@ ShardServerCatalogCacheLoader::Task::Task(
     if (statusWithCollectionAndChangedChunks.isOK()) {
         collectionAndChangedChunks = statusWithCollectionAndChangedChunks.getValue();
         invariant(!collectionAndChangedChunks->changedChunks.empty());
+		//本次从config server获取到的增量chunk的最大版本信息
         maxQueryVersion = collectionAndChangedChunks->changedChunks.back().getVersion();
     } else {
     	//
@@ -982,6 +1004,7 @@ void ShardServerCatalogCacheLoader::TaskList::pop_front() {
     _activeTaskCompletedCondVar->notify_all();
 }
 
+//waitForCollectionFlush
 void ShardServerCatalogCacheLoader::TaskList::waitForActiveTaskCompletion(
     stdx::unique_lock<stdx::mutex>& lg) {
     // Increase the use_count of the condition variable shared pointer, because the entire task list

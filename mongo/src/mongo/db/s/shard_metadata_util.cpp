@@ -259,9 +259,11 @@ StatusWith<std::vector<ChunkType>> readShardChunks(OperationContext* opCtx,
                               << " from local storage",
                 cursor);
 
+		log() << "yang test ..111... readShardChunks query:" <<  fullQuery.toString();
         std::vector<ChunkType> chunks;
         while (cursor->more()) {
             BSONObj document = cursor->nextSafe().getOwned();
+			//log() << "yang test ..d2222... readShardChunks query:" <<  document.getOwned().toString();
             auto statusWithChunk = ChunkType::fromShardBSON(document, epoch);
             if (!statusWithChunk.isOK()) {
                 return {statusWithChunk.getStatus().code(),
@@ -270,9 +272,18 @@ StatusWith<std::vector<ChunkType>> readShardChunks(OperationContext* opCtx,
                                       << statusWithChunk.getStatus().reason()};
             }
 
+			//log() << "yang test ..333... readShardChunks version:" << statusWithChunk.getValue().getVersion();
             chunks.push_back(std::move(statusWithChunk.getValue()));
         }
 
+		/*
+		Sun Mar 27 13:44:25.167 I SHARDING [ShardServerCatalogCacheLoader-14] yang test ..111... readShardChunks query:{ query: {}, orderby: { lastmod: -1 } }
+		Sun Mar 27 13:44:25.167 I SHARDING [ShardServerCatalogCacheLoader-14] yang test ..d2222... readShardChunks query:{ _id: { tranKey: "13882229513720220204999999999999999999" }, max: { tranKey: "13883064F3ADA123458F51F0576AF0D6" }, shard: "cmgo-rv5edgnd_0", lastmod: Timestamp(42277, 3330879) }
+		Sun Mar 27 13:44:25.167 I SHARDING [ShardServerCatalogCacheLoader-14] yang test ..333... readShardChunks version:42277|54079||623c0ce20a1bb4f96d5ca748
+
+          上面三行log会输出下面日志，注意version小版本lastmod: Timestamp(42277, 3330879)到了version:42277|54079，这里有不一致?????????????/
+		*/
+		
         return chunks;
     } catch (const DBException& ex) {
         return ex.toStatus();

@@ -41,6 +41,7 @@
 
 namespace mongo {
 
+
 CollectionMetadata::CollectionMetadata(std::shared_ptr<ChunkManager> cm, const ShardId& thisShardId)
     : _cm(std::move(cm)),
       _thisShardId(thisShardId),
@@ -51,6 +52,7 @@ CollectionMetadata::CollectionMetadata(std::shared_ptr<ChunkManager> cm, const S
     invariant(_cm->getVersion().isSet());
     invariant(_cm->getVersion() >= _shardVersion);
 
+	//注意这里有遍历，这里可能会很慢
     for (const auto& chunk : _cm->chunks()) {
         if (chunk->getShardId() != _thisShardId)
             continue;

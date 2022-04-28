@@ -572,6 +572,8 @@ ScopedCollectionMetadata& ScopedCollectionMetadata::operator=(ScopedCollectionMe
     return *this;
 }
 
+
+//ScopedCollectionMetadata的operator->()走到这里
 CollectionMetadata* 
   ScopedCollectionMetadata::getMetadata() const {
     return _metadataTracker ? &_metadataTracker->metadata : nullptr;

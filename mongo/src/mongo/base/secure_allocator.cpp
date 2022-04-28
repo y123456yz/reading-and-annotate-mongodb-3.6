@@ -219,6 +219,7 @@ void systemDeallocate(void* ptr, std::size_t bytes) {
 #error "Could not determine a way to map anonymous memory, required for secure allocation"
 #endif
 
+//下面的Allocation使用
 void* systemAllocate(std::size_t bytes) {
     // Flags:
     //
@@ -279,6 +280,7 @@ void systemDeallocate(void* ptr, std::size_t bytes) {
  * match with an equivalent unlock and unmap on destruction.  Pages are rounded up to the nearest
  * page size and allocate returns aligned pointers.
  */
+//下面的secure_allocator_details中使用
 class Allocation {
     MONGO_DISALLOW_COPYING(Allocation);
 
@@ -321,8 +323,12 @@ private:
     std::size_t _remaining;  // Remaining bytes
 };
 
+
+
+//下面这些实际上没用
 // See secure_allocator_details::allocate for a more detailed comment on what these are used for
 stdx::mutex allocatorMutex;  // Protects the values below
+//封装到secure_allocator_details中，参考下面allocate
 stdx::unordered_map<void*, std::shared_ptr<Allocation>> secureTable;
 std::shared_ptr<Allocation> lastAllocation = nullptr;
 
@@ -346,7 +352,7 @@ namespace secure_allocator_details {
  * last page around, giving out pointers from that page if its possible to do so.  We also keep an
  * unordered_map of all the allocations we've handed out, which hold shared_ptrs that get rid of
  * pages when we're not using them anymore.
- */
+ */ //allocateWrapper中调用
 void* allocate(std::size_t bytes, std::size_t alignOf) {
     stdx::lock_guard<stdx::mutex> lk(allocatorMutex);
 
@@ -369,7 +375,7 @@ void* allocate(std::size_t bytes, std::size_t alignOf) {
  * Deallocates a secure allocation.
  *
  * We zero memory before derefing the associated allocation.
- */
+ */ //deallocateWrapper中调用
 void deallocate(void* ptr, std::size_t bytes) {
     secureZeroMemory(ptr, bytes);
 

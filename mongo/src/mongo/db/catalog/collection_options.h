@@ -132,10 +132,12 @@ struct CollectionOptions {
     } autoIndexId = DEFAULT;
 
     // user flags
+    //https://www.zhihu.com/question/52124985?sort=created 可以参考这里
     enum UserFlags {
         Flag_UsePowerOf2Sizes = 1 << 0,
         Flag_NoPadding = 1 << 1,
     };
+    
     int flags = Flag_UsePowerOf2Sizes;  // a bitvector of UserFlags
     bool flagsSet = false;
 

@@ -49,6 +49,8 @@ class ScopedCollectionMetadata;
 
 //MetadataManager和CatalogCache可以参考https://developer.aliyun.com/article/778536?spm=a2c6h.17698244.wenzhang.9.7b934d126DdIOU
 //CollectionShardingState._metadataManager  ScopedCollectionMetadata._metadataManager成员为该类型
+
+//shardingState管理CollectionShardingState每个表元数据信息，每个CollectionShardingState对应一个MetadataManager
 class MetadataManager {
     MONGO_DISALLOW_COPYING(MetadataManager);
 
@@ -268,6 +270,7 @@ private:
 };
 
 //集合元数据信息存在该结构中，参考CollectionShardingState::getMetadata()
+//ScopedCollectionMetadata和CollectionMetadata的关系参考ScopedCollectionMetadata中的operator->()   
 class ScopedCollectionMetadata {
     MONGO_DISALLOW_COPYING(ScopedCollectionMetadata);
 
@@ -286,8 +289,9 @@ public:
      * Dereferencing the ScopedCollectionMetadata dereferences the private CollectionMetadata.
      */
     CollectionMetadata* getMetadata() const;
-    
+    //ScopedCollectionMetadata的operator->()
     CollectionMetadata* operator->() const {
+        //ScopedCollectionMetadata::getMetadata()  这里和CollectionMetadata关联
         return getMetadata();
     }
 

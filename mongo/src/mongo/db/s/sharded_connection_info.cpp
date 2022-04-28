@@ -65,7 +65,7 @@ ShardedConnectionInfo::ShardedConnectionInfo() {
 }
 
 ShardedConnectionInfo::~ShardedConnectionInfo() = default;
-
+//client是mongos过来的连接
 ShardedConnectionInfo* ShardedConnectionInfo::get(Client* client, bool create) {
     auto& current = clientSCI(client);
 
@@ -90,7 +90,7 @@ ChunkVersion ShardedConnectionInfo::getVersion(const std::string& ns) const {
     }
 }
 
-//setShardVersion命令设置
+//setShardVersion命令设置  内部命令SetShardVersion::run中使用
 void ShardedConnectionInfo::setVersion(const std::string& ns, const ChunkVersion& version) {
     _versions[ns] = version;
 }

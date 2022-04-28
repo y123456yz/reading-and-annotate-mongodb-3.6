@@ -60,6 +60,10 @@ mongos> db.runCommand({getShardVersion :"xx.xx"})
         }
 }
 mongos> 
+
+//collection version 为 sharded collection 在所有shard上最高的 chunk version
+//shard version为本分片该collection最大的版本信息，也就是本分片config.cache.chunks.db.collection中最大的版本号；
+//collection version为该表在所有分片的版本信息的最大值，也就是config server中该表版本信息的最大值
 */
 class GetShardVersion : public BasicCommand {
 public:

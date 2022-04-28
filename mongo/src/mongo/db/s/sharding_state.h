@@ -136,8 +136,11 @@ ocloud_HTZjQeZL_shard_1:PRIMARY> db.runCommand("shardingState")
 
 ShardingState::getNS中把ShardingState和CollectionShardingState联系起来
 */ 
+//注意三个的区别CollectionShardingState OperationShardingState  ShardingState ShardedConnectionInfo可以参考GetShardVersion::run
+
+
+//db.runCommand({ shardingState: 1 })查看所有表的路由版本信息，包括所有库表，看上面的打印
 //注意Shard 和 shardingState的关系
-//代表一个分片集群的某个分片
 class ShardingState {
     MONGO_DISALLOW_COPYING(ShardingState);
 
@@ -419,6 +422,7 @@ private:
     // Cache of collection metadata on this shard. It is not safe to look-up values from this map
     // without holding some form of collection lock. It is only safe to add/remove values when
     // holding X lock on the respective namespace.
+    //管理所有集合的元数据信息, 注意4.X开始由CollectionShardingStateMap管理，ShardingState不在管理CollectionShardingState
     CollectionShardingStateMap _collections;
 
     // The id for the cluster this shard belongs to.

@@ -43,7 +43,8 @@ namespace {
 
 /**
  * Name of FTDC collector to create.
- */
+ */  
+//LinuxSystemMetricsCollector中构造使用
 constexpr auto kSystemMetricsCollector = "systemMetrics";
 
 }  // namespace

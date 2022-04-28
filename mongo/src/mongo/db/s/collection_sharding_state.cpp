@@ -143,12 +143,14 @@ CollectionShardingState* CollectionShardingState::get(OperationContext* opCtx,
     return CollectionShardingState::get(opCtx, nss.ns());
 }
 
+//从ShardingState中查找是否有该CollectionShardingState
 CollectionShardingState* CollectionShardingState::get(OperationContext* opCtx,
                                                       const std::string& ns) {
     // Collection lock must be held to have a reference to the collection's sharding state
     dassert(opCtx->lockState()->isCollectionLockedForMode(ns, MODE_IS));
 
     ShardingState* const shardingState = ShardingState::get(opCtx);
+	//ShardingState::getNS
     return shardingState->getNS(ns, opCtx);
 }
 
@@ -162,6 +164,7 @@ ScopedCollectionMetadata CollectionShardingState::getMetadata() {
 //ShardingState::_refreshMetadata  MigrationSourceManager::commitChunkMetadataOnConfig调用
 void CollectionShardingState::refreshMetadata(OperationContext* opCtx,
                                               std::unique_ptr<CollectionMetadata> newMetadata) {
+    //注意这里是一把X锁检查
     invariant(opCtx->lockState()->isCollectionLockedForMode(_nss.ns(), MODE_X));
 	//MetadataManager::refreshActiveMetadata
     _metadataManager->refreshActiveMetadata(std::move(newMetadata));
@@ -529,13 +532,15 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
                                                    ChunkVersion* expectedShardVersion,
                                                    ChunkVersion* actualShardVersion) {
     auto* const client = opCtx->getClient();
-
+	  
     auto& oss = OperationShardingState::get(opCtx);
 
-	log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 111";
+	//log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 111";
     // If there is a version attached to the OperationContext, use it as the received version.
     // Otherwise, get the received version from the ShardedConnectionInfo.
-    if (oss.hasShardVersion()) {
+    
+     //execCommandDatabase->OperationShardingState::initializeShardVersion中解析出来
+    if (oss.hasShardVersion()) {//也就是请求中是否有携带版本信息  
 		//OperationShardingState::getShardVersion
         *expectedShardVersion = oss.getShardVersion(_nss);
     } else {
@@ -544,7 +549,7 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
             // There is no shard version information on either 'opCtx' or 'client'. This means that
             // the operation represented by 'opCtx' is unversioned, and the shard version is always
             // OK for unversioned operations.
-            log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 111 xx";
+            //log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 111 xx";
             return true;
         }
 
@@ -555,11 +560,11 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
     invariant(repl::ReadConcernArgs::get(opCtx).getLevel() !=
               repl::ReadConcernLevel::kAvailableReadConcern);
 
-	log() << "yang test ... CollectionShardingState::_checkShardVersionOk, expectedShardVersion:" 
-			<< expectedShardVersion->toString();
+	//log() << "yang test ... CollectionShardingState::_checkShardVersionOk, expectedShardVersion:" 
+	//		<< expectedShardVersion->toString();
 	
     if (ChunkVersion::isIgnoredVersion(*expectedShardVersion)) {
-		log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 22";
+		//log() << "yang test ............... CollectionShardingState::_checkShardVersionOk 22";
         return true;
     }
 

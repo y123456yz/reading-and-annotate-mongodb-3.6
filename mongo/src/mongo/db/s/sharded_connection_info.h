@@ -42,7 +42,7 @@ class ServiceContext;
 /**
  * There is one instance of these per each connection from mongos. Holds version state for each
  * namespace.
- */
+ */ //client是mongos过来的连接  //setShardVersion命令设置  内部命令SetShardVersion::run中使用
 class ShardedConnectionInfo {
     MONGO_DISALLOW_COPYING(ShardedConnectionInfo);
 

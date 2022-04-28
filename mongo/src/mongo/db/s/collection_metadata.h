@@ -51,13 +51,17 @@ class ChunkType;
  * This class's chunk mapping is immutable once constructed.
  */
 
-//注意CollectionMetadata和CachedCollectionRoutingInfo区别
+//注意CollectionMetadata(mongod内存中路由信息)和CachedCollectionRoutingInfo(mongos内存中路由信息)区别
 
  
 //CollectionMetadataTracker.metadata为该类型
 //参考ShardingState::_refreshMetadata使用方式
 //注意ChunkManager和CollectionMetadata的关系，参考ShardingState::_refreshMetadata
 //最终最新的集合元数据信息添加到MetadataManager._metadata列表中,参考MetadataManager::refreshActiveMetadata->MetadataManager::_setActiveMetadata
+
+
+//ShardingState::_refreshMetadata中构造使用
+//ScopedCollectionMetadata和CollectionMetadata的关系参考ScopedCollectionMetadata中的operator->()   
 class CollectionMetadata {
 public:
     /**
@@ -131,7 +135,7 @@ public:
         return _cm->getVersion();
     }
 
-    //MigrationSourceManager::MigrationSourceManager会调用
+    //MigrationSourceManager::MigrationSourceManager  GetShardVersion::run会调用  
     ChunkVersion getShardVersion() const {
         return _shardVersion;
     }
@@ -197,6 +201,8 @@ private:
     ShardId _thisShardId;
 
     // highest ChunkVersion for which this metadata's information is accurate
+    //例如db.runCommand({getShardVersion :"test.test"})命令中的获取版本信息会走到这里
+    //表在本分片的最大版本信息，类似db.cache.chunks.test.test.find({"shard" : "mongodb_shard2"}).sort({lastmod:-1}).limit(1)
     ChunkVersion _shardVersion;
 
     // Map of chunks tracked by this shard

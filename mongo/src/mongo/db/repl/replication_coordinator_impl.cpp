@@ -1210,6 +1210,7 @@ Status ReplicationCoordinatorImpl::_validateReadConcern(OperationContext* opCtx,
     return Status::OK();
 }
 
+//例如从节点刷路由forcePrimaryRefreshAndWaitForReplication
 Status ReplicationCoordinatorImpl::waitUntilOpTimeForRead(OperationContext* opCtx,
                                                           const ReadConcernArgs& readConcern) {
     auto verifyStatus = _validateReadConcern(opCtx, readConcern);

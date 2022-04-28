@@ -71,7 +71,7 @@ const int kMaxInconsistentRoutingInfoRefreshAttempts = 3;
 //跟新新的chunk信息swCollectionAndChangedChunks到nss对应的existingRoutingInfo
 //返回nss对应的ChunkManager   
 
-//CatalogCache::_scheduleCollectionRefresh调用
+//CatalogCache::_scheduleCollectionRefresh调用   如果chunks过多,这里增量数据替换会秒级卡顿
 std::shared_ptr<ChunkManager> 
  refreshCollectionRoutingInfo(
     OperationContext* opCtx,
@@ -210,6 +210,8 @@ StatusWith<CachedCollectionRoutingInfo>
 		//注意这里只有needsRefresh为true的才需要路由刷新，例如执行了db.adminCommand({"flushRouterConfig":1})，则缓存中信息全部情况就需要重新获取路由信息
         if (collEntry.needsRefresh) { //该集合的路由信息需要重新刷新
             auto refreshNotification = collEntry.refreshCompletionNotification;
+
+			//真正获取路由交由后台ShardServerCatalogCacheLoader线程池完成
             if (!refreshNotification) {
                 refreshNotification = (collEntry.refreshCompletionNotification =
                                            std::make_shared<Notification<Status>>());
@@ -220,6 +222,7 @@ StatusWith<CachedCollectionRoutingInfo>
             // Wait on the notification outside of the mutex
             ul.unlock();
 
+			//等待后台线程通知
             auto refreshStatus = [&]() {
                 try {
                     return refreshNotification->get(opCtx);
@@ -248,6 +251,7 @@ StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfo(
 }
 
 //强制对缓存中的nss表进行路由更新
+//ShardingState::_refreshMetadata
 StatusWith<CachedCollectionRoutingInfo> CatalogCache::getCollectionRoutingInfoWithRefresh(
     OperationContext* opCtx, const NamespaceString& nss) {
     //设置needsRefresh为true，这样getCollectionRoutingInfo就需要路由刷新
@@ -468,6 +472,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         } else {
             // Leave needsRefresh to true so that any subsequent get attempts will kick off
             // another round of refresh
+            //刷新路由完成，通知用户conn请求线程  配合CatalogCache::getCollectionRoutingInfo
             collEntry.refreshCompletionNotification->set(status);
             collEntry.refreshCompletionNotification = nullptr;
         }
@@ -481,7 +486,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
         StatusWith<CatalogCacheLoader::CollectionAndChangedChunks> swCollAndChunks) noexcept {
         std::shared_ptr<ChunkManager> newRoutingInfo;
         try {
-			//从cfg获取最新的路由信息
+			//从cfg获取最新的路由信息  chunks百万级这里会卡顿
             newRoutingInfo = refreshCollectionRoutingInfo(
                 opCtx, nss, std::move(existingRoutingInfo), std::move(swCollAndChunks));
         } catch (const DBException& ex) {
@@ -499,6 +504,7 @@ void CatalogCache::_scheduleCollectionRefresh(WithLock lk,
 
 		//刷新到最新路由信息了，needsRefresh置为false，例如多个请求过来，则第一个请求刷新路由后，后面的请求就无需刷路由了
         collEntry.needsRefresh = false;
+		//刷新路由完成，通知用户conn请求线程  配合CatalogCache::getCollectionRoutingInfo
         collEntry.refreshCompletionNotification->set(Status::OK());
         collEntry.refreshCompletionNotification = nullptr;
 

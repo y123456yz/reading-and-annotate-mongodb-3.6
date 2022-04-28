@@ -292,6 +292,7 @@ void startFTDC(boost::filesystem::path& path,
     // hurt ftdc compression efficiency, because its output varies depending on the list of active
     // migrations.
     // TODO: do we need to enable "sharding" on MongoS?
+    //Ò²¾ÍÊÇdb.runCommand( { serverStatus: 1, tcmalloc: true,sharding:false } )
     controller->addPeriodicCollector(stdx::make_unique<FTDCSimpleInternalCommandCollector>(
         "serverStatus",
         "serverStatus",

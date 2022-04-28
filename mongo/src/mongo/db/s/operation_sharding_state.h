@@ -46,7 +46,10 @@ class OperationContext;
  * The metadata for a particular operation can be retrieved using the get() method.
  *
  * Note: This only supports storing the version for a single namespace.
- */
+ */  
+//注意三个的区别CollectionShardingState OperationShardingState  ShardingState ShardedConnectionInfo可以参考GetShardVersion::run
+
+//mongos转发客户端请求到mongod的时候会带上版本信息
 class OperationShardingState {
     MONGO_DISALLOW_COPYING(OperationShardingState);
 

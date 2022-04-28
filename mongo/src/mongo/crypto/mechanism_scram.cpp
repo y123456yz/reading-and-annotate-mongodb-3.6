@@ -89,6 +89,7 @@ SHA1Block generateSaltedPassword(const SCRAMPresecrets& presecrets) {
     return saltedPassword;
 }
 
+
 SCRAMSecrets generateSecrets(const SCRAMPresecrets& presecrets) {
     SHA1Block saltedPassword = generateSaltedPassword(presecrets);
     return generateSecrets(saltedPassword);

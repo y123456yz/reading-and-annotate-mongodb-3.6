@@ -49,7 +49,7 @@
 namespace mongo {
 
 namespace {
-constexpr uint64_t kBatchDocs = 5'000;
+constexpr uint64_t kBatchDocs = 5000;
 constexpr uint64_t kBatchBytes = 20'000'000;
 
 

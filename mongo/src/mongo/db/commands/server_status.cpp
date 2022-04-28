@@ -65,6 +65,7 @@ using std::map;
 using std::string;
 using std::stringstream;
 
+//db.serverstatus()执行，或者FTDCSimpleInternalCommandCollector中ftdc诊断自动构造命令执行
 class CmdServerStatus : public BasicCommand {
 public:
     CmdServerStatus() : BasicCommand("serverStatus"), _started(Date_t::now()), _runCalled(false) {}
@@ -91,12 +92,14 @@ public:
     bool run(OperationContext* opCtx,
              const string& dbname,
              const BSONObj& cmdObj,
+             //返回给客户端的信息
              BSONObjBuilder& result) {
         _runCalled = true;
 
         const auto service = opCtx->getServiceContext();
         const auto clock = service->getFastClockSource();
         const auto runStart = clock->now();
+		//用于记录日志 Wed Feb  9 00:16:22.751 I COMMAND  [conn359143] serverStatus was very slow: { after basic xxxx
         BSONObjBuilder timeBuilder(256);
 
         const auto authSession = AuthorizationSession::get(Client::getCurrent());
@@ -117,7 +120,7 @@ public:
                                  durationCount<Milliseconds>(clock->now() - runStart));
 
         // --- all sections
-
+		//有那些section可以搜索 public ServerStatusSection {，都在该类得继承类中实现具体section
         for (SectionMap::const_iterator i = _sections.begin(); i != _sections.end(); ++i) {
             ServerStatusSection* section = i->second;
 

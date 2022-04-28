@@ -858,6 +858,7 @@ void ReplicationCoordinatorImpl::_startElectSelfIfEligibleV1(
     }
 
     switch (reason) {
+		//_cancelAndRescheduleElectionTimeout_inlock
         case TopologyCoordinator::StartElectionReason::kElectionTimeout:
             log() << "Starting an election, since we've seen no PRIMARY in the past "
                   << _rsConfig.getElectionTimeoutPeriod();

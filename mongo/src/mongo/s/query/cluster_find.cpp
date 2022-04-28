@@ -150,6 +150,7 @@ StatusWith<std::unique_ptr<QueryRequest>> transformQueryForShards(const QueryReq
     return std::move(newQR);
 }
 
+//ClusterFind::runQuery
 StatusWith<CursorId> runQueryWithoutRetrying(OperationContext* opCtx,
                                              const CanonicalQuery& query,
                                              const ReadPreferenceSetting& readPref,
@@ -333,6 +334,7 @@ StatusWith<CursorId> runQueryWithoutRetrying(OperationContext* opCtx,
 
 const size_t ClusterFind::kMaxStaleConfigRetries = 10;
 
+//ClusterFindCmd::run
 StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
                                            const CanonicalQuery& query,
                                            const ReadPreferenceSetting& readPref,
@@ -385,6 +387,7 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
 		//从指定分片获取数据失败，说明可能路由信息不是最新得了
         const auto& status = cursorId.getStatus();
 
+		
         if (!ErrorCodes::isStaleShardingError(status.code()) &&
             status != ErrorCodes::ShardNotFound) {
             // Errors other than trying to reach a non existent shard or receiving a stale
@@ -392,12 +395,12 @@ StatusWith<CursorId> ClusterFind::runQuery(OperationContext* opCtx,
             // replication retries happen at the level of the AsyncResultsMerger.
             return status;
         }
-
+		//路由版本信息不对引起的异常，需要从config获取最新路由信息重试
         LOG(1) << "Received error status for query " << redact(query.toStringShort())
                << " on attempt " << retries << " of " << kMaxStaleConfigRetries << ": "
                << redact(status);
 
-		//从指定分片获取数据失败，说明可能路由信息不是最新得了，或者表已经被删除
+		//从指定分片获取数据失败，说明可能路由信息不是最新得了，或者表已经被删除，需要从config获取最新路由信息
         catalogCache->onStaleConfigError(std::move(routingInfo));
     }
 

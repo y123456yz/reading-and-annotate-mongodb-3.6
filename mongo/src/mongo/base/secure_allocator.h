@@ -48,13 +48,18 @@ namespace secure_allocator_details {
 void* allocate(std::size_t bytes, std::size_t alignOf);
 void deallocate(void* ptr, std::size_t bytes);
 
+//下面的SecureAllocatorDomain使用
+//SecureAllocatorDomain::SecureAllocator::allocate
 inline void* allocateWrapper(std::size_t bytes, std::size_t alignOf, bool secure) {
     if (secure) {
+        //走mlock流程
         return allocate(bytes, alignOf);
     } else {
         return mongoMalloc(bytes);
     }
 }
+
+//SecureAllocatorDomain::SecureAllocator::deallocate
 inline void deallocateWrapper(void* ptr, std::size_t bytes, bool secure) {
     if (secure) {
         return deallocate(ptr, bytes);
@@ -85,7 +90,7 @@ inline void deallocateWrapper(void* ptr, std::size_t bytes, bool secure) {
  * allocator_traits.
  *
  * See also: http://howardhinnant.github.io/allocator_boilerplate.html
- */
+ */ //scram::generateSecrets中使用SecureHandle
 template <typename DomainTraits>
 struct SecureAllocatorDomain {
     template <typename T>
@@ -129,6 +134,7 @@ struct SecureAllocatorDomain {
 
         pointer allocate(size_type n) {
             return static_cast<pointer>(secure_allocator_details::allocateWrapper(
+                                                        //peg()决定是走mlock流程还是普通malloc流程
                 sizeof(value_type) * n, std::alignment_of<T>::value, DomainTraits::peg()));
         }
 
@@ -138,6 +144,7 @@ struct SecureAllocatorDomain {
 
         void deallocate(pointer ptr, size_type n) {
             return secure_allocator_details::deallocateWrapper(
+                                                         //peg()决定是走mlock流程还是普通malloc流程
                 static_cast<void*>(ptr), sizeof(value_type) * n, DomainTraits::peg());
         }
 
@@ -220,6 +227,7 @@ struct SecureAllocatorDomain {
      * run,
      * but all other operations will invariant.
      */
+    //scram::generateSecrets中使用
     template <typename T>
     class SecureHandle {
     public:
@@ -321,6 +329,7 @@ struct SecureAllocatorAuthDomainTrait {
     static constexpr StringData DomainType = "auth"_sd;
 };
 
+//SCRAMSecrets中使用
 using SecureAllocatorAuthDomain =
     SecureAllocatorDomain<TraitNamedDomain<SecureAllocatorAuthDomainTrait>>;
 

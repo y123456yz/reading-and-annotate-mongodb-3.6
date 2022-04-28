@@ -140,6 +140,7 @@ private:
         // Either the highest chunk version in 'collectionAndChangedChunks' or the same as
         // 'minQueryVersion' if 'dropped' is true.
         // Used by the TaskList below to enforce consistent updates are applied.
+        // 本次从config server获取到的增量chunk的最大版本信息
         ChunkVersion maxQueryVersion;
 
         // Indicates whether the collection metadata must be cleared.

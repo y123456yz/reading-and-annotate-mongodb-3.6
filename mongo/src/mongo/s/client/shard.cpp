@@ -141,6 +141,7 @@ StatusWith<Shard::CommandResponse> Shard::runCommand(OperationContext* opCtx,
     MONGO_UNREACHABLE;
 }
 
+//执行某个SQL，等待返回结果
 StatusWith<Shard::CommandResponse> Shard::runCommandWithFixedRetryAttempts(
     OperationContext* opCtx,
     const ReadPreferenceSetting& readPref,
@@ -151,20 +152,23 @@ StatusWith<Shard::CommandResponse> Shard::runCommandWithFixedRetryAttempts(
         opCtx, readPref, dbName, cmdObj, Milliseconds::max(), retryPolicy);
 }
 
+//执行某个SQL，等待返回结果
 StatusWith<Shard::CommandResponse> Shard::runCommandWithFixedRetryAttempts(
     OperationContext* opCtx,
     const ReadPreferenceSetting& readPref,
     const std::string& dbName,
     const BSONObj& cmdObj,
     Milliseconds maxTimeMSOverride,
+    //重试策略，决定是否需要重试
     RetryPolicy retryPolicy) {
     for (int retry = 1; retry <= kOnErrorNumRetries; ++retry) {
+		//被kill了则直接返回
         auto interruptStatus = opCtx->checkForInterruptNoAssert();
         if (!interruptStatus.isOK()) {
             return interruptStatus;
         }
 
-		//Shard::runCommand
+		//Shard::runCommand 执行结果获取返回的结果信息
         auto swResponse = _runCommand(opCtx, readPref, dbName, maxTimeMSOverride, cmdObj);
         auto status = _getEffectiveStatus(swResponse);
         if (retry < kOnErrorNumRetries && isRetriableError(status.code(), retryPolicy)) {

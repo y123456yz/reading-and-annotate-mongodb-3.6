@@ -1097,12 +1097,17 @@ bool ErrorCodes::isNotMasterError(Error err) {
             return false;
     }
 }
+
+//代理转发版本信息问题用这里判断
 bool ErrorCodes::isStaleShardingError(Error err) {
     switch (err) {
+		//StaleConfigException中生成
         case StaleConfig:
             return true;
+		//serializeReply  CollectionMetadata::checkChunkIsValid  BatchWriteExec::executeBatch
         case StaleShardVersion:
             return true;
+		//CursorResponse::parseFromBSON  checkMetadataForSuccessfulSplitChunk
         case StaleEpoch:
             return true;
         default:

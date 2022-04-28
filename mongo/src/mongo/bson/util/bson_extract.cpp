@@ -164,6 +164,7 @@ Status bsonExtractBooleanFieldWithDefault(const BSONObj& object,
     return status;
 }
 
+//从object中获取fieldName字段内容，存储到out中
 Status bsonExtractStringField(const BSONObj& object, StringData fieldName, std::string* out) {
     BSONElement element;
     Status status = bsonExtractTypedField(object, fieldName, String, &element);

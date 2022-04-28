@@ -53,6 +53,14 @@ namespace {
 //forcePrimaryRefreshAndWaitForReplication：
 //从节点通过_flushRoutingTableCacheUpdates发送给主节点，主节点开始获取最新的路由信息
 //还有一个外部强制路由刷新db.adminCommand({"flushRouterConfig":1})
+
+/*
+以下情况下，该命令不会返回从节点会卡住:
+Fri Mar 18 13:14:46.868 I SHARDING [ShardServerCatalogCacheLoader-1927] Failed to persist chunk metadata update for collection 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_DB.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_COLLECTION :: caused by :: InvalidNamespace: Failed to update the persisted chunk metadata for collection 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_DB.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_COLLECTION' from '0|0||000000000000000000000000' to '1|0||62333e4eb3e60f88b9e94ecc'. Will be retried. :: caused by :: fully qualified namespace config.cache.chunks.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_DB.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_COLLECTION is too long (max is 120 bytes)
+
+*/
+
+//db.adminCommand({_flushRoutingTableCacheUpdates: ns1, syncFromConfig: false}));命令，内部命令
 class FlushRoutingTableCacheUpdates : public BasicCommand {
 public:
     // Support deprecated name 'forceRoutingTableRefresh' for backwards compatibility with 3.6.0.
@@ -125,6 +133,9 @@ public:
             IDLParserErrorContext("_FlushRoutingTableCacheUpdatesRequest"), cmdObj);
 
         {
+			
+			//注意三个的区别CollectionShardingState OperationShardingState	ShardingState ShardedConnectionInfo可以参考GetShardVersion::run
+			
             AutoGetCollection autoColl(opCtx, nss, MODE_IS);
 
             // If the primary is in the critical section, secondaries must wait for the commit to
@@ -141,6 +152,7 @@ public:
             }
         }
 
+		//一定要等迁移关键阶段结束才返回，注意这里可能等待很长一段时间
         oss.waitForMigrationCriticalSectionSignal(opCtx);
 
 		//在build/opt/mongo/s/request_types/flush_routing_table_cache_updates_gen.h:中定义
@@ -153,6 +165,7 @@ public:
 
         CatalogCacheLoader::get(opCtx).waitForCollectionFlush(opCtx, nss);
 
+		//last op time 返回给从节点
         repl::ReplClientInfo::forClient(opCtx->getClient()).setLastOpToSystemLastOpTime(opCtx);
 
         return true;

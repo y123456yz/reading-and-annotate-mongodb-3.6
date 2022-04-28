@@ -351,6 +351,7 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
 
 }  // namespace
 
+//ServiceEntryPointMongos::handleRequest
 DbResponse Strategy::queryOp(OperationContext* opCtx, const NamespaceString& nss, DbMessage* dbm) {
     globalOpCounters.gotQuery();
 

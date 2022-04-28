@@ -82,6 +82,7 @@ using CallbackArgs = executor::TaskExecutor::CallbackArgs;
 
 namespace {
 
+//全局的
 const auto getShardingState = ServiceContext::declareDecoration<ShardingState>();
 
 /**
@@ -138,7 +139,7 @@ void ShardingState::setEnabledForTest(const std::string& shardName) {
 }
 
 Status ShardingState::canAcceptShardedCommands() const {
-	LOG(1) << "yang test ...............serverGlobalParams.clusterRole:" << (int)serverGlobalParams.clusterRole;
+	//LOG(1) << "yang test ...............serverGlobalParams.clusterRole:" << (int)serverGlobalParams.clusterRole;
     if (serverGlobalParams.clusterRole != ClusterRole::ShardServer) {
         return {ErrorCodes::NoShardingEnabled,
                 "Cannot accept sharding commands if not started with --shardsvr"};
@@ -191,6 +192,7 @@ Status ShardingState::updateConfigServerOpTimeFromMetadata(OperationContext* opC
     return Status::OK();
 }
 
+//如果没找到则直接新建一个CollectionShardingState
 CollectionShardingState* ShardingState::getNS(const std::string& ns, OperationContext* opCtx) {
     stdx::lock_guard<stdx::mutex> lk(_mutex);
     CollectionShardingStateMap::iterator it = _collections.find(ns);
@@ -504,7 +506,8 @@ StatusWith<bool> ShardingState::initializeShardingAwarenessIfNeeded(OperationCon
     }
 }
 
-//ShardingState::refreshMetadataNow  ShardingState::onStaleShardVersion调用  
+//db.adminCommand({_flushRoutingTableCacheUpdates: ns1, syncFromConfig: false}));命令，内部命令
+//ShardingState::refreshMetadataNow(主动触发，如moveChunk)  ShardingState::onStaleShardVersion(被动触发，如mongos版本比本地高)调用  
 //更新元数据信息，返回chunk版本信息
 ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const NamespaceString& nss) {
     invariant(!opCtx->lockState()->isLocked());
@@ -522,6 +525,8 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 	//获取集合chunks路由信息  routingInfo为CachedCollectionRoutingInfo类型
 	//通过这里把chunks路由信息和metadata元数据信息关联起来
 	//(元数据刷新，通过这里把chunks路由信息和metadata元数据信息关联起来)流程： 
+
+	//从config server获取最新路由信息
 	//    ShardingState::_refreshMetadata->CatalogCache::getShardedCollectionRoutingInfoWithRefresh
     const auto routingInfo = uassertStatusOK(
         Grid::get(opCtx)->catalogCache()->getCollectionRoutingInfoWithRefresh(opCtx, nss));
@@ -534,6 +539,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
         // No chunk manager, so unsharded.
 
         // Exclusive collection lock needed since we're now changing the metadata
+        //注意这里有X锁
         AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
 
         auto css = CollectionShardingState::get(opCtx, nss);
@@ -545,7 +551,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 
     {
         AutoGetCollection autoColl(opCtx, nss, MODE_IS);
-		//获取CollectionShardingState，对应当前mongos缓存的路由相关信息
+		//获取CollectionShardingState，对应当前内存缓存的路由相关信息
         auto css = CollectionShardingState::get(opCtx, nss);
 
         // We already have newer version  
@@ -560,14 +566,16 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
             css->getMetadata()->getCollVersion() >= cm->getVersion()) {
             LOG(1) << "Skipping refresh of metadata for " << nss << " "
                    << css->getMetadata()->getCollVersion() << " with an older " << cm->getVersion();
-			//直接返回ChunkVersion
+			//直接返回本地内存中的ChunkVersion
 			return css->getMetadata()->getShardVersion();
         }
     }
 
     // Exclusive collection lock needed since we're now changing the metadata
+    //注意这里表是X锁，这个表的所有操作需要等待
     AutoGetCollection autoColl(opCtx, nss, MODE_IX, MODE_X);
 
+	//和上面的css重复了
     auto css = CollectionShardingState::get(opCtx, nss);
 
     // We already have newer version
@@ -586,6 +594,7 @@ ChunkVersion ShardingState::_refreshMetadata(OperationContext* opCtx, const Name
 
 	
 	//把最新获取到的路由信息cm和shardId构造对应CollectionMetadata
+	//注意这里有遍历，这里可能会很慢
     std::unique_ptr<CollectionMetadata> newCollectionMetadata =
         stdx::make_unique<CollectionMetadata>(cm, shardId);
 

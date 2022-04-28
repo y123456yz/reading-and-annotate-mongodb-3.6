@@ -36,7 +36,8 @@
 
 namespace mongo {
 
-//mongodb头部外的报文体内容相关，配合ConstView阅读
+ //mongodb头部外的报文体内容相关，配合ConstView阅读
+//可以参考ChunkVersion fromBSON，例如lastmod: Timestamp(42277, 3330879)为该类型
 class ConstDataView {
 public:
     typedef const char* bytes_type;

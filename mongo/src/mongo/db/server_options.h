@@ -249,6 +249,7 @@ extern ServerGlobalParams serverGlobalParams;
 
 template <typename NameTrait>
 struct TraitNamedDomain {
+    //该接口在SecureAllocatorDomain类中的相关接口中生效，决定走mlock流程还是普通malloc流程
     static bool peg() {
         const auto& dsmd = serverGlobalParams.disabledSecureAllocatorDomains;
         const auto contains = [&](StringData dt) {

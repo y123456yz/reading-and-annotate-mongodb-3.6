@@ -41,7 +41,7 @@ class FTDCController;
 /**
  * Base class for system metrics collectors. Sets collector name to a common name all system metrics
  * collectors to use.
- */
+ */ //LinuxSystemMetricsCollector中构造使用
 class SystemMetricsCollector : public FTDCCollectorInterface {
 public:
     std::string name() const final;

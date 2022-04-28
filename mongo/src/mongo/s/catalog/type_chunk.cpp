@@ -239,11 +239,20 @@ BSONObj ChunkType::toConfigBSON() const {
     return builder.obj();
 }
 
+/*
+cmgo-rv5edgnd_0:PRIMARY> db.cache.chunks.test.MD_FCT_IER_DETAIL.find({}).sort(
+{lastmod:-1}).limit(1)
+{ "_id" : { "tranKey" : "13882229513720220204999999999999999999" }, "max" : { 
+"tranKey" : "13883064F3ADA123458F51F0576AF0D6" }, "shard" : "cmgo-rv5edgnd_0"
+, "lastmod" : Timestamp(42277, 3330879) }
+cmgo-rv5edgnd_0:PRIMARY> 
+*/
 StatusWith<ChunkType> ChunkType::fromShardBSON(const BSONObj& source, const OID& epoch) {
     ChunkType chunk;
 
     {
         BSONElement minKey;
+		//min也就是id
         Status minKeyStatus = extractObject(source, minShardID.name(), &minKey);
         if (!minKeyStatus.isOK()) {
             return minKeyStatus;
@@ -255,6 +264,7 @@ StatusWith<ChunkType> ChunkType::fromShardBSON(const BSONObj& source, const OID&
             return maxKeyStatus;
         }
 
+		//max必须大于min
         if (SimpleBSONObjComparator::kInstance.evaluate(minKey.Obj() >= maxKey.Obj())) {
             return {ErrorCodes::FailedToParse,
                     str::stream() << "min: " << minKey.Obj() << " should be less than max: "
@@ -267,6 +277,7 @@ StatusWith<ChunkType> ChunkType::fromShardBSON(const BSONObj& source, const OID&
 
     {
         std::string chunkShard;
+		//shard字段
         Status status = bsonExtractStringField(source, shard.name(), &chunkShard);
         if (!status.isOK())
             return status;
@@ -275,10 +286,12 @@ StatusWith<ChunkType> ChunkType::fromShardBSON(const BSONObj& source, const OID&
 
     {
         auto statusWithChunkVersion =
+			//解析lastmod  //从obj中解析出lastmod字段，也就是chunkversion
             ChunkVersion::parseFromBSONWithFieldAndSetEpoch(source, lastmod.name(), epoch);
         if (!statusWithChunkVersion.isOK()) {
             return statusWithChunkVersion.getStatus();
         }
+		//chunk version来源也就是lastmod
         chunk._version = std::move(statusWithChunkVersion.getValue());
     }
 
