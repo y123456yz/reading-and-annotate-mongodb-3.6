@@ -163,6 +163,8 @@ StatusWith<CachedDatabaseInfo> CatalogCache::getDatabase(OperationContext* opCtx
 //DropCmd::run RenameCollectionCmd  ClusterFind::runQuery  FindAndModifyCmd::run  CollectionStats::run
 //ClusterAggregate::runAggregate    getExecutionNsRoutingInfo  dispatchShardPipeline
 //ChunkManagerTargeter::init调用，获取集合路由缓存信息
+
+//CatalogCache::getShardedCollectionRoutingInfoWithRefresh
 StatusWith<CachedCollectionRoutingInfo> 
 //CatalogCache::onStaleConfigError和CatalogCache::invalidateShardedCollection对needsRefresh设置为true
 //这时候才会从cfg获取最新路由信息

@@ -47,6 +47,7 @@ public:
         _holder.swap(other._holder);
     }
 
+    //例如Message::setData接收的数据就会通过这里分配内存    
     static SharedBuffer allocate(size_t bytes) {
         return takeOwnership(mongoMalloc(sizeof(Holder) + bytes), bytes);
     }

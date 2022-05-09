@@ -1103,7 +1103,8 @@ Status storeServerOptions(const moe::Environment& params) {
     return Status::OK();
 }
 
-//不使用memlock
+//不使用memlock,SecureAllocatorDomain会根据该配置觉得进行security内存分配还是普通内存分配
+//TraitNamedDomain中生效判断
 ExportedServerParameter<std::vector<std::string>, ServerParameterType::kStartupOnly>
     SecureAllocatorDomains(ServerParameterSet::getGlobal(),
                            "disabledSecureAllocatorDomains",

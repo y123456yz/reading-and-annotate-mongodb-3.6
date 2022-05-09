@@ -52,9 +52,10 @@ void deallocate(void* ptr, std::size_t bytes);
 //SecureAllocatorDomain::SecureAllocator::allocate
 inline void* allocateWrapper(std::size_t bytes, std::size_t alignOf, bool secure) {
     if (secure) {
-        //走mlock流程
+        //最终走mlock流程
         return allocate(bytes, alignOf);
     } else {
+        //走std::malloc普通内存分配流程
         return mongoMalloc(bytes);
     }
 }
@@ -144,7 +145,8 @@ struct SecureAllocatorDomain {
 
         void deallocate(pointer ptr, size_type n) {
             return secure_allocator_details::deallocateWrapper(
-                                                         //peg()决定是走mlock流程还是普通malloc流程
+               //TraitNamedDomain
+                //peg()决定是走mlock流程还是普通malloc流程
                 static_cast<void*>(ptr), sizeof(value_type) * n, DomainTraits::peg());
         }
 
@@ -329,10 +331,11 @@ struct SecureAllocatorAuthDomainTrait {
     static constexpr StringData DomainType = "auth"_sd;
 };
 
-//SCRAMSecrets中使用
+//SCRAMSecrets中使用，security内存分配走该domain
 using SecureAllocatorAuthDomain =
     SecureAllocatorDomain<TraitNamedDomain<SecureAllocatorAuthDomainTrait>>;
 
+//普通内存分配走该domain
 using SecureAllocatorDefaultDomain = SecureAllocatorDomain<SecureAllocatorDefaultDomainTrait>;
 
 template <typename T>

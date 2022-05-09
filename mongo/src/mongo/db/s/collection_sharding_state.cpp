@@ -603,6 +603,7 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
 
     // Check epoch first, to send more meaningful message, since other parameters probably won't
     // match either.
+    //
     if (actualShardVersion->epoch() != expectedShardVersion->epoch()) {
         *errmsg = str::stream() << "version epoch mismatch detected for " << _nss.ns() << ", "
                                 << "the collection may have been dropped and recreated";
@@ -621,6 +622,7 @@ bool CollectionShardingState::_checkShardVersionOk(OperationContext* opCtx,
         return false;
     }
 
+	//mongos收到mongod返回的该异常信息后，mongo::runCommand中会检查该异常，然后重试
     if (actualShardVersion->majorVersion() != expectedShardVersion->majorVersion()) {
         // Could be > or < - wanted is > if this is the source of a migration, wanted < if this is
         // the target of a migration

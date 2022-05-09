@@ -506,7 +506,7 @@ public:
     void setData(int operation, const char* msgdata, size_t len) {
         verify(empty());
         size_t dataLen = len + sizeof(MsgData::Value) - 4;
-        _buf = SharedBuffer::allocate(dataLen);
+        _buf = SharedBuffer::allocate(dataLen); 
         MsgData::View d = _buf.get();
         if (len)
             memcpy(d.data(), msgdata, len);

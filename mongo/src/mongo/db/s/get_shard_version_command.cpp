@@ -139,7 +139,7 @@ mongodb_4.0_shard2:PRIMARY>
 //collection version为该表在所有分片的版本信息的最大值，也就是config server中该表版本信息的最大值
 */ 
 //db.runCommand({getShardVersion :"test.test"})
-//db.runCommand({getShardVersion: "test.test", fullMetadata: true});
+//db.runCommand({getShardVersion: "test.test", fullMetadata: false});
 class GetShardVersion : public BasicCommand {
 public:
     GetShardVersion() : BasicCommand("getShardVersion") {}

@@ -255,6 +255,8 @@ struct TraitNamedDomain {
         const auto contains = [&](StringData dt) {
             return std::find(dsmd.begin(), dsmd.end(), dt) != dsmd.end();
         };
+
+        //注意这里，如果disabledSecureAllocatorDomains配置为*，直接false
         static const bool ret = !(contains("*"_sd) || contains(NameTrait::DomainType));
         return ret;
     }

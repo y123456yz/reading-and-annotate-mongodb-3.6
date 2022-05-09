@@ -305,7 +305,7 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
 
     initializeOperationSessionInfo(opCtx, request.body, command->requiresAuth(), true, true);
 
-    int loops = 5;
+    int loops = 5; //该版本默认重试5次，高版本4.4  5.0重试次数通过kMaxNumStaleVersionRetries限制
 
     while (true) {
         builder.resetToEmpty();
@@ -313,7 +313,7 @@ void runCommand(OperationContext* opCtx, const OpMsgRequest& request, BSONObjBui
 			LOG(2) << "yang test   run command " << request.getDatabase() << ".$cmd" << ' '  << command->getRedactedCopyForLogging(request.body) << ' ' << request.getCommandName();
 			execCommandClient(opCtx, command, request, builder); //执行命令
             return;
-        } catch (const StaleConfigException& e) {
+        } catch (const StaleConfigException& e) { //mongod确定版本信息不对，这这里会重试，最多重试5次
             if (e.getns().empty()) {
                 // This should be impossible but older versions tried incorrectly to handle it here.
                 log() << "Received a stale config error with an empty namespace while executing "
